@@ -3,24 +3,50 @@
 namespace App\Http\Controllers\Inspection\Ohc;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\ImportCurrentNewExtCodeDailingJob;
 use App\Models\Inspection\Ohc\CurrentNewExtCodeDialing;
+use App\Models\Master\Department;
+use App\Models\Master\Employee;
 use App\Models\Master\Unit;
+use App\Models\UploadLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Exception;
 use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Response;
+use Spatie\SimpleExcel\SimpleExcelWriter;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
 
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Border;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
+use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
+use PhpOffice\PhpSpreadsheet\RichText\RichText;
+use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 class CurrentNewExtCodeDialingController extends Controller
 {
     private $current_new_ext_code;
     private $unit;
+    private $department;
+    private $employee;
+    private $uploadlog;
+
 
 
     public function __construct()
     {
         $this->current_new_ext_code = new CurrentNewExtCodeDialing();
         $this->unit = new Unit();
+        $this->department = new Department();
+        $this->employee = new Employee();
+        $this->uploadlog = new UploadLog();
 
     }
 
@@ -44,13 +70,16 @@ class CurrentNewExtCodeDialingController extends Controller
                         ->addColumn('created_date', function ($row) {
                             return Displaydatetimeformat($row->created_at);
                         })
+                        ->addColumn('created_date', function ($row) {
+                            return Displaydatetimeformat($row->created_at);
+                        })
                         ->addColumn('created_by', function ($row) {
                             return getUsername($row->created_by);
                         })
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            $btn = '<a href="' . admin_url('ohc/master/first-aid-stock/view/' . encryptId($row->id)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
-                            $btn .= '<a href="' . admin_url('ohc/master/first-aid-stock/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
+                            $btn = '<a href="' . admin_url('ohc/current-new-ext-code-dialing/view/' . encryptId($row->id)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
+                            $btn .= '<a href="' . admin_url('ohc/current-new-ext-code-dialing/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
                             $btn .= '<a href="javascript:void(0);"  data-id="' . encryptId($row->id) . '" class="recordDelete" title="Delete"><i class="fa-solid fa-trash text-danger" ></i></i></a> ';
                             return $btn;
                         })
@@ -67,7 +96,12 @@ class CurrentNewExtCodeDialingController extends Controller
                 }
             }
         }
-        return view('inspection.inspection_ohc.current_new_ext_code_dialing.list');
+        $unitList = $this->unit->getUnitList();
+
+        $data = array(
+            'unitList' => $unitList,
+        );
+        return view('inspection.inspection_ohc.current_new_ext_code_dialing.list', $data);
     }
 
     public function Add(Request $request)
@@ -81,6 +115,438 @@ class CurrentNewExtCodeDialingController extends Controller
             return view('inspection.inspection_ohc.current_new_ext_code_dialing.add', $data);
         } catch (Exception $ex) {
             report($ex);
+        }
+    }
+
+    public function Store(Request $request)
+    {
+        try {
+            $rules = [
+                'unit_id.*'        => 'required',
+                'department_id.*'  => 'required',
+                'emp_name.*'       => 'required',
+                'number.*'         => 'required',
+            ];
+            
+            $messages = [
+                'unit_id.*.required'        => 'Please select a unit for each row.',
+                'department_id.*.required'  => 'Please select a department for each row.',
+                'emp_name.*.required'       => 'Please enter the employee name for each row.',
+                'number.*.required'         => 'Please enter the number .',
+            ];
+            
+            $validator = Validator::make($request->all(), $rules, $messages);
+            
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator)->withInput();
+            }
+            
+
+            try {
+
+                $current_new_ext_code = $this->current_new_ext_code->store();
+
+
+                Session::flash('success', 'Your data has been created successfully!');
+            } catch (Exception $ex) {
+                dd($ex);
+                Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            }
+
+            return redirect(admin_url('ohc/current-new-ext-code-dialing/list'));
+        } catch (Exception $ex) {
+
+            dd($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/current-new-ext-code-dialing/list'));
+        }
+    }
+
+    public function View(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+            if (Auth::check()) {
+                $current_new_ext_code = $this->current_new_ext_code->selectOne($id);
+
+                $data = array(
+                    'current_new_ext_code' => $current_new_ext_code,
+                );
+            }
+            return view('inspection.inspection_ohc.current_new_ext_code_dialing.view', $data);
+        } catch (Exception $ex) {
+            dd($ex);
+            report($ex);
+        }
+    }
+
+    public function Edit(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+
+            $current_new_ext_code = $this->current_new_ext_code->find($id);
+
+            $unitList = $this->unit->getUnitList();
+
+            $data = array(
+                'unitList' => $unitList,
+                'current_new_ext_code' => $current_new_ext_code,
+
+            );
+            // dd($data);
+
+            return view('inspection.inspection_ohc.current_new_ext_code_dialing.edit', $data);
+        } catch (Exception $error) {
+            report($error->getMessage());
+        }
+    }
+
+    public function Update(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+            $rules = [
+                'unit_id.*'        => 'required',
+                'department_id.*'  => 'required',
+                'emp_name.*'       => 'required',
+                'number.*'         => 'required',
+            ];
+            
+            $messages = [
+                'unit_id.*.required'        => 'Please select a unit for each row.',
+                'department_id.*.required'  => 'Please select a department for each row.',
+                'emp_name.*.required'       => 'Please enter the employee name for each row.',
+                'number.*.required'         => 'Please enter the number .',
+            ];
+            
+            $validator = Validator::make($request->all(), $rules, $messages);
+            
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator)->withInput();
+            }
+
+            $this->current_new_ext_code->updates($id);
+
+            Session::flash('success', 'Your data has been updated successfully!');
+            return redirect(admin_url('ohc/current-new-ext-code-dialing/list'));
+        } catch (Exception $ex) {
+            report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/current-new-ext-code-dialing/list'));
+        }
+    }
+
+    public function Uniquecheck(Request $request)
+    {
+        if ($request->ajax()) {
+            $unit_id = decryptId($request->unit_id);
+            $department_id = decryptId($request->department_id);
+            $emp_name_id = decryptId($request->emp_name_id);
+            $number = $request->number;
+            $id = decryptId($request->id);
+            if ($id == '') {
+                $record = $this->current_new_ext_code->uniqueCheck($unit_id, $department_id, $emp_name_id, $number);
+            } else {
+                $record = $this->current_new_ext_code->ExistuniqueCheck($unit_id, $department_id, $emp_name_id, $number, $id);
+            }
+            if (count($record) > 0) {
+                return Response::json(false);
+            }
+            return Response::json(true);
+        }
+    }
+
+
+    public function ExportExcel(Request $request)
+    {
+
+        try {
+            $allData = $this->current_new_ext_code->exportdata();
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            }
+            $spreadsheet = new Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
+
+            $sheet->getColumnDimension('A')->setWidth(12);
+            $sheet->getColumnDimension('B')->setWidth(20);
+            $sheet->getColumnDimension('C')->setWidth(20);
+            $sheet->getColumnDimension('D')->setWidth(20);
+
+            $row = 1;
+
+            $leftLogoPath = public_path('assets/images/logo-dark.png');
+            if (file_exists($leftLogoPath)) {
+                $drawing = new Drawing();
+                $drawing->setName('KARAM Logo');
+                $drawing->setPath($leftLogoPath);
+                $drawing->setCoordinates('A1');
+                $drawing->setHeight(60);
+                $drawing->setWorksheet($sheet);
+            }
+
+            $sheet->mergeCells('A1:B3');
+            $sheet->getStyle('A1:B3')->applyFromArray([
+                'borders' => [
+                    'outline' => ['borderStyle' => Border::BORDER_THIN],
+                ],
+            ]);
+
+            $sheet->mergeCells("C1:D3");
+            $sheet->setCellValue("C1", "EOU Global Dialing");
+            $sheet->getStyle("C1:D3")->applyFromArray([
+                'font' => ['bold' => true, 'size' => 16],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+                'borders' => [
+                    'outline' => ['borderStyle' => Border::BORDER_THIN],
+                ],
+            ]);
+
+            $headerRow = $row;
+
+            $headerRow = 4;
+
+            // --- HEADER ROW ---
+            $sheet->setCellValue("A{$headerRow}", "Sr.NO");
+            $sheet->setCellValue("B{$headerRow}", "Department");
+            $sheet->setCellValue("C{$headerRow}", "Employee Name");
+            $sheet->setCellValue("D{$headerRow}", "Code");
+            $sheet->getRowDimension($headerRow)->setRowHeight(15);
+
+
+            $sheet->getStyle("A{$headerRow}:D{$headerRow}")->applyFromArray([
+                'font' => ['bold' => true],
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+            ]);
+
+            $dataRow = $headerRow + 1;
+
+            foreach ($allData as $unitName => $items) {
+                $sheet->mergeCells("A{$dataRow}:D{$dataRow}");
+                $sheet->setCellValue("A{$dataRow}", strtoupper($unitName));
+                $sheet->getRowDimension($dataRow)->setRowHeight(20);
+
+                $sheet->getStyle("A{$dataRow}:D{$dataRow}")->applyFromArray([
+                    'font' => ['bold' => true],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                    'fill' => [
+                        'fillType' => Fill::FILL_SOLID,
+                        'startColor' => ['rgb' => 'F4B2B2'], 
+                    ],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                ]);
+                $dataRow++;
+            
+                $groupedByDept = $items->groupBy('department_name');
+            
+                foreach ($groupedByDept as $deptName => $deptItems) {
+                    $sheet->mergeCells("A{$dataRow}:D{$dataRow}");
+                    $sheet->setCellValue("A{$dataRow}", strtoupper($deptName));
+                    $sheet->getRowDimension($dataRow)->setRowHeight(20);
+
+                    $sheet->getStyle("A{$dataRow}:D{$dataRow}")->applyFromArray([
+                        'font' => ['bold' => true],
+                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_LEFT, 'vertical' => Alignment::VERTICAL_CENTER],
+                        'fill' => [
+                            'fillType' => Fill::FILL_SOLID,
+                            'startColor' => ['rgb' => 'D9EDF7'], 
+                        ],
+                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    ]);
+                    $dataRow++;
+            
+                    $sr = 1;
+                    foreach ($deptItems as $detail) {
+                        $sheet->setCellValue("A{$dataRow}", $sr);
+                        $sheet->setCellValue("B{$dataRow}", $detail['department_name']);
+                        $sheet->setCellValue("C{$dataRow}", $detail['emp_name']);
+                        $sheet->setCellValue("D{$dataRow}", $detail['number'] ?? '');
+            
+                        $sheet->getStyle("A{$dataRow}:D{$dataRow}")->applyFromArray([
+                            'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                            'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                        ]);
+            
+                        $dataRow++;
+                        $sr++;
+                    }
+                }
+            }
+
+
+            $writer = new Xlsx($spreadsheet);
+            $fileName = 'Current New Ext Dialing Code .xlsx';
+            $filePath = storage_path("app/public/$fileName");
+            $writer->save($filePath);
+
+            return response()->download($filePath)->deleteFileAfterSend(true);
+           
+        } catch (Exception $ex) {
+            dd($ex);
+            report($ex);
+        }
+    }
+
+    public function ExportPdf(Request $request)
+    {
+
+        try {
+
+            ini_set("pcre.backtrack_limit", "5000000");
+
+            $allData = $this->current_new_ext_code->exportdata();
+
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            }elseif(count($allData) > 20){
+                return redirect()->back()->with('error',   __('inspection.excess_error'));
+            }
+
+            $data = array(
+                'content' => $allData,
+            );
+
+            $property = [
+                'tempDir' => 'public/pdf/temp/',
+                'mode' => 'c',
+                'margin_left' => 10,
+                'margin_right' => 10,
+                'margin_top' => 10,
+
+            ];
+
+            $mpdf = new \Mpdf\Mpdf($property);
+            $mpdf->setAutoTopMargin = 'stretch';
+
+            $view = view('inspection.inspection_ohc.current_new_ext_code_dialing.pdf', $data);
+            $html = $view->render();
+
+            $mpdf->WriteHTML($html);
+
+            $filename = "Code Dailing.pdf";
+            $mpdf->Output($filename, 'D');
+        } catch (Exception $ex) {
+
+            report($ex);
+        }
+    }
+
+    public function Import(Request $request)
+    {
+        $data = array();
+
+        return view('inspection.inspection_ohc.current_new_ext_code_dialing.import', $data);
+    }
+
+    public function DownloadSample(Request $request)
+    {
+        $filedetails =  exportsamplefile('code_dailing');
+        $filePath = $filedetails->sample_file;
+        $customFileName = $filedetails->file_name;
+        return Response::download($filePath, $customFileName);
+    }
+
+
+    public function ImportSubmit(Request $request)
+    {
+        // dd($request->all());
+        try {
+            $file = $request->file('code_dailing_file');
+
+            $rules = [
+                'code_dailing_file' => 'required',
+            ];
+            $messages = [
+                'code_dailing_file.required' => 'Please upload a file',
+            ];
+
+            $validator = Validator::make($request->all(), $rules, $messages);
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator)->withInput();
+            }
+
+            if ($file != null) {
+                $uploadpath = 'public/uploads/inspection/ohc/code_dailing';
+                $folderPath = public_path('uploads/inspection/ohc/code_dailing');
+                if (!File::exists($folderPath)) {
+                    File::makeDirectory($folderPath, 0755, true);
+                }
+
+                $filenewname = time() . Str::random('10') . '.' . $file->getClientOriginalExtension();
+
+                $fileName = $file->getClientOriginalName();
+                $fileSize = $file->getSize();
+
+                $fileExt = $file->getClientOriginalExtension();
+
+                $file->move($uploadpath, $filenewname);
+
+                $path = $uploadpath . "/" . $filenewname;
+                $user_id = Auth::id();
+
+                $insert_data = array(
+                    'upload_type' => 14,
+                    'upload_status' => 0,
+                    'file_name' => $filenewname,
+                    'file_orgname' => $fileName,
+                    'file_path' => $path,
+                    'file_size' => $fileSize,
+                    'file_extension' => $fileExt,
+                    'created_by' => $user_id,
+                );
+
+                $insert_id =  $this->uploadlog->create($insert_data)->id;
+
+                $details = [
+                    "user_id" => $user_id,
+                    "log_id" => $insert_id,
+                    "path" => $path,
+                ];
+
+                dispatch(new ImportCurrentNewExtCodeDailingJob($details));
+                // dispatch((new ImportFirstAidEquipmentJob($details))->onQueue('equipmentimport'));
+            }
+
+            $insert_data['log_id'] = $insert_id;
+            $insert_data['Uploded_by'] = Auth::user()->toArray();
+
+            Session::flash('success', __('Current New Ext Code Dailing Uploaded sucessfully'));
+            return redirect(admin_url('ohc/current-new-ext-code-dialing/list'));
+        } catch (Exception $ex) {
+            Session::flash('error', __('Current New Ext Code Dailing to be taken upload failed'));
+            return redirect(admin_url('ohc/current-new-ext-code-dialing/list'));
+        }
+    }
+
+
+    public function StatusChange(Request $request)
+    {
+
+        try {
+            $id = decryptId($request->id);
+
+            $this->current_new_ext_code->statuschange($id);
+
+            return response()->json(['status' => 'success', 'msg' => __('Current New Ext Code Dialing Detail Status is changed')], 200);
+        } catch (Exception $ex) {
+
+            return response()->json(['status' => 'error', 'msg' => 'Something went wrong, Please try after sometimes!'], 406);
+        }
+    }
+
+    public function Delete(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+
+            $this->current_new_ext_code->deleterecord($id);
+
+            return response()->json(['status' => 'success', 'msg' => __('Current New Ext Code Dialing Detailwas deleted successfully')], 200);
+        } catch (Exception $ex) {
+
+            return response()->json(['status' => 'error', 'msg' => 'Something went wrong, Please try after sometimes!'], 406);
         }
     }
 }

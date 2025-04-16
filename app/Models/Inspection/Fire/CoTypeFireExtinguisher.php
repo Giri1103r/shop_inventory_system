@@ -3,6 +3,7 @@
 namespace App\Models\Inspection\Fire;
 
 use App\Scopes\TrashScope;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 
@@ -13,6 +14,7 @@ class CoTypeFireExtinguisher extends Model
     protected $fillable = [
         'id',
         'document_reference_id',
+        'observation_needed',
         'inspection_date',
         'location',
         'shift',
@@ -39,6 +41,10 @@ class CoTypeFireExtinguisher extends Model
         'updated_by',
         'created_at',
         'updated_at',
+        'ehs_officer_verified_at',
+        'l1_manager_updated_at',
+        'l2_manager_updated_at',
+        'fire_associate_updated_at',
     ];
 
     protected $attributes = [
@@ -51,9 +57,10 @@ class CoTypeFireExtinguisher extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_co_type_fire_extinguisher.*', 'inspection_shift_option.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*', 'inspection_co_type_fire_extinguisher.id as fire_co_type_id')
+        $query = $this->select('inspection_co_type_fire_extinguisher.*','inspection_static_docno.*', 'inspection_shift_option.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*', 'inspection_co_type_fire_extinguisher.id as fire_co_type_id')
             ->leftJoin('masters_location', 'inspection_co_type_fire_extinguisher.location', '=', 'masters_location.id')
             ->leftJoin('inspection_shift_option', 'inspection_co_type_fire_extinguisher.shift', '=', 'inspection_shift_option.id')
+            ->leftJoin('inspection_static_docno', 'inspection_co_type_fire_extinguisher.document_reference_id', '=', 'inspection_static_docno.id')
             ->leftJoin('masters_unit', 'inspection_co_type_fire_extinguisher.unit', '=', 'masters_unit.id')
             ->leftJoin('inspection_frequency_option', 'inspection_co_type_fire_extinguisher.frequency', '=', 'inspection_frequency_option.id');
 
@@ -148,7 +155,8 @@ class CoTypeFireExtinguisher extends Model
             'location' => decryptId($request->location_id),
             'shift' => decryptId($request->shift_id),
             'next_due' => DBdateformat($request->next_due),
-            'observation' => $request->observation,
+            // 'observation' => $request->observation,
+            'observation_needed' => decryptId($request->observation_needed),
             'unit' => decryptId($request->unit_id),
             'frequency' => decryptId($request->frequency_id),
             'inspection_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,
@@ -163,11 +171,21 @@ class CoTypeFireExtinguisher extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_co_type_fire_extinguisher.*', 'inspection_shift_option.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*')
+        $query = $this->select('inspection_co_type_fire_extinguisher.*',
+                'inspection_shift_option.*',
+                'masters_unit.*', 'masters_location.*',
+                'inspection_frequency_option.*',
+                'inspection_co_type_fire_extinguisher_details.*',
+                'inspection_static_docno.*',
+                'inspection_co_type_fire_extinguisher.created_by as checked_by','inspection_co_type_fire_extinguisher.id as fire_id',
+                'inspection_co_type_fire_extinguisher_details.type as extinguisher_type'
+            )
             ->leftJoin('masters_location', 'inspection_co_type_fire_extinguisher.location', '=', 'masters_location.id')
             ->leftJoin('inspection_shift_option', 'inspection_co_type_fire_extinguisher.shift', '=', 'inspection_shift_option.id')
             ->leftJoin('masters_unit', 'inspection_co_type_fire_extinguisher.unit', '=', 'masters_unit.id')
-            ->leftJoin('inspection_frequency_option', 'inspection_co_type_fire_extinguisher.frequency', '=', 'inspection_frequency_option.id');
+            ->leftJoin('inspection_frequency_option', 'inspection_co_type_fire_extinguisher.frequency', '=', 'inspection_frequency_option.id')
+            ->leftJoin('inspection_co_type_fire_extinguisher_details', 'inspection_co_type_fire_extinguisher.id', '=', 'inspection_co_type_fire_extinguisher_details.inspection_id')
+            ->leftJoin('inspection_static_docno', 'inspection_co_type_fire_extinguisher.document_reference_id', '=', 'inspection_static_docno.id');
 
         if (isset($request->search) && isset($request->search['value']) && $request->search['value'] != '') {
             $search = $request->search['value'];
@@ -202,7 +220,9 @@ class CoTypeFireExtinguisher extends Model
         }
         $query->orderBy('inspection_co_type_fire_extinguisher.id', 'DESC');
 
-        return  $query->get();
+        return $query->get()->groupBy('inspection_id');
+
+        return $query->get();
     }
 
 
@@ -217,6 +237,7 @@ class CoTypeFireExtinguisher extends Model
                 'inspection_status' => INSPECTION_APPROVED,
                 'updated_by' => Auth::id(),
                 'remarks' => $request->remarks,
+                'ehs_officer_verified_at' => Carbon::now(),
             ];
             $this->where('id', $id)->update($update_array);
         } else {
@@ -225,6 +246,7 @@ class CoTypeFireExtinguisher extends Model
                 'inspection_status' => WAITING_FOR_CAPA_ACTION,
                 'updated_by' => Auth::id(),
                 'capa_recomendation' => $request->remarks,
+                'ehs_officer_verified_at' => Carbon::now(),
             ];
             $this->where('id', $id)->update($update_array);
         }
@@ -237,6 +259,7 @@ class CoTypeFireExtinguisher extends Model
             'capa_remarks' => $request->capa_remarks,
             'updated_by' => Auth::id(),
             'inspection_status' => WAITING_FOR_CAPA_VERIFICATION,
+            'fire_associate_updated_at' => Carbon::now(),
         ];
         $this->where('id', $id)->update($update_array);
     }
@@ -250,6 +273,7 @@ class CoTypeFireExtinguisher extends Model
                 'updated_by' => Auth::id(),
                 'inspection_status' => WAITING_FOR_L1_VERIFICATION,
                 'capa_ehs_remarks' => $remarks,
+                'ehs_officer_verified_at' => Carbon::now(),
             ];
             $this->where('id', $id)->update($update_array);
         } else {
@@ -258,6 +282,7 @@ class CoTypeFireExtinguisher extends Model
                 'updated_by' => Auth::id(),
                 'inspection_status' => EHS_OFFICER_REJECTED,
                 'capa_ehs_remarks' => $remarks,
+                'ehs_officer_verified_at' => Carbon::now(),
             ];
             $this->where('id', $id)->update($update_array);
         }
@@ -271,6 +296,7 @@ class CoTypeFireExtinguisher extends Model
                 'updated_by' => Auth::id(),
                 'inspection_status' => WAITING_FOR_L2_VERIFICATION,
                 'level_one_manager_remarks' => $remarks,
+                'l1_manager_updated_at' => Carbon::now(),
             ];
             $this->where('id', $id)->update($update_array);
         } else {
@@ -279,6 +305,7 @@ class CoTypeFireExtinguisher extends Model
                 'updated_by' => Auth::id(),
                 'inspection_status' => L1_MANAGER_REJECTED,
                 'level_one_manager_remarks' => $remarks,
+                'l1_manager_updated_at' => Carbon::now(),
             ];
             $this->where('id', $id)->update($update_array);
         }
@@ -293,6 +320,7 @@ class CoTypeFireExtinguisher extends Model
                 'updated_by' => Auth::id(),
                 'inspection_status' => INSPECTION_APPROVED,
                 'level_two_manager_remarks' => $remarks,
+                'l2_manager_updated_at' => Carbon::now(),
             ];
             $this->where('id', $id)->update($update_array);
         } else {
@@ -301,6 +329,7 @@ class CoTypeFireExtinguisher extends Model
                 'updated_by' => Auth::id(),
                 'inspection_status' => L2_MANAGER_REJECTED,
                 'level_two_manager_remarks' => $remarks,
+                'l2_manager_updated_at' => Carbon::now(),
             ];
             $this->where('id', $id)->update($update_array);
         }

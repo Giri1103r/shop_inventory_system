@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Inspection\Ohc;
 
 use App\Http\Controllers\Controller;
 use App\Mail\Inspection\Safety\SafetyInspection;
+use App\Models\Inspection\InspectionStaticDocno;
 use App\Models\Inspection\Master\ChecklistOptionType;
 use App\Models\Inspection\Master\ChecklistSubTypeData;
 use App\Models\Inspection\Master\ChecklistSubTypeDataName;
@@ -44,6 +45,7 @@ class WeeklyAmbulanceController extends Controller
     private $signature;
     private $location;
     private $inspection_ohc_status_log;
+    private $document_reference;
 
 
 
@@ -54,6 +56,7 @@ class WeeklyAmbulanceController extends Controller
         $this->upload_log = new UploadLog();
         $this->unit = new Unit();
         $this->department = new Department();
+        $this->document_reference = new InspectionStaticDocno();
         $this->shift = new Shift();
         $this->checklist_type = new ChecklistType();
         $this->sub_type_data = new ChecklistSubTypeData();
@@ -78,17 +81,26 @@ class WeeklyAmbulanceController extends Controller
                         ->addColumn('status', function ($row) {
                             $text = "<span style='color:red'>In-Active</span>";
                             if ($row->status == 1) {
-                                $text = "<span style='color:green;cursor:pointer' class='statusChange' data-id='" . encryptId($row->id) . "' data-type='1'>Active</span>";
+                                $text = "<span style='color:green;cursor:pointer' class='statusChange' data-id='" . encryptId($row->inspection_id) . "' data-type='1'>Active</span>";
                             } else if ($row->status == 0) {
-                                $text = "<span style='color:red;cursor:pointer' class='statusChange' data-id='" . encryptId($row->id) . "' data-type='0'>In-Active</span>";
+                                $text = "<span style='color:red;cursor:pointer' class='statusChange' data-id='" . encryptId($row->inspection_id) . "' data-type='0'>In-Active</span>";
                             }
                             return $text;
                         })
                         ->addColumn('created_date', function ($row) {
                             return Displaydateformat($row->created_at);
                         })
-                        ->addColumn('created_by', function ($row) {
-                            return getUsername($row->created_by);
+                        ->addColumn('created_date', function ($row) {
+                            return Displaydateformat($row->created_at);
+                        })
+                        ->addColumn('unit', function ($row) {
+                            return ($row->unit_name);
+                        })
+                        ->addColumn('location', function ($row) {
+                            return ($row->location_name);
+                        })
+                        ->addColumn('inspection_created_by', function ($row) {
+                            return getUsername($row->inspection_created_by);
                         })
                         ->addColumn('approve_status', function ($row) {
                             $text = '';
@@ -128,25 +140,25 @@ class WeeklyAmbulanceController extends Controller
                         ->addColumn('action', function ($row) {
                             $btn = '';
 
-                            $btn .=  '<a href="' . admin_url('ohc/weekly-ambulance/inspection/checklist/view/' . encryptId($row->id)) . '" class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a>';
+                            $btn .=  '<a href="' . admin_url('ohc/weekly-ambulance/inspection/checklist/view/' . encryptId($row->inspection_id)) . '" class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a>';
 
                             if ($row->approve_status == WAITING_FOR_EHS_OFFICER_VERIFICATION && (CheckUserRole(ROLE_EHS_OFFICER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('ohc/weekly-ambulance/inspection/checklist/verification/' . encryptId($row->id)) . '/ehs" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('ohc/weekly-ambulance/inspection/checklist/verification/' . encryptId($row->inspection_id)) . '/ehs" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if (($row->approve_status == WAITING_FOR_CAPA_ACTION || $row->approve_status == L2_MANAGER_REJECTED || $row->approve_status == EHS_OFFICER_REJECTED || $row->approve_status == L1_MANAGER_REJECTED) && (CheckUserRole(ROLE_FIRE_ASSOCIATES) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('ohc/weekly-ambulance/inspection/checklist/verification/' . encryptId($row->id)) . '/capa" class="" title="' . __('inspection.capa_action') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('ohc/weekly-ambulance/inspection/checklist/verification/' . encryptId($row->inspection_id)) . '/capa" class="" title="' . __('inspection.capa_action') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if ($row->approve_status == WAITING_FOR_CAPA_VERIFICATION && (CheckUserRole(ROLE_EHS_OFFICER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('ohc/weekly-ambulance/inspection/checklist/verification/' . encryptId($row->id)) . '/ehsVerify" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('ohc/weekly-ambulance/inspection/checklist/verification/' . encryptId($row->inspection_id)) . '/ehsVerify" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if ($row->approve_status == WAITING_FOR_L1_VERIFICATION && (CheckUserRole(ROLE_L1_MANAGER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('ohc/weekly-ambulance/inspection/checklist/verification/' . encryptId($row->id)) . '/level-one-manager" class="" title="' . __('inspection.l1_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('ohc/weekly-ambulance/inspection/checklist/verification/' . encryptId($row->inspection_id)) . '/level-one-manager" class="" title="' . __('inspection.l1_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if ($row->approve_status == WAITING_FOR_L2_VERIFICATION && (CheckUserRole(ROLE_L2_MANAGER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('ohc/weekly-ambulance/inspection/checklist/verification/' . encryptId($row->id)) . '/level-two-manager" class="" title="' . __('inspection.l2_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('ohc/weekly-ambulance/inspection/checklist/verification/' . encryptId($row->inspection_id)) . '/level-two-manager" class="" title="' . __('inspection.l2_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
 
-                            $btn .= '<a href="' . admin_url('ohc/weekly-ambulance/inspection/checklist/generalpdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
+                            $btn .= '<a href="' . admin_url('ohc/weekly-ambulance/inspection/checklist/generalpdf/' . encryptId($row->inspection_id)) . '" style="margin-right: 5px;" title="PDF">
                             <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
                         </a>';
                             return $btn;
@@ -163,8 +175,15 @@ class WeeklyAmbulanceController extends Controller
                 }
             }
         }
-
-        return view('inspection.inspection_ohc.weekly_ambulance.list');
+        $location = $this->location->getLocationname();
+        $shift = $this->shift->getShiftname();
+        $unit = $this->unit->getunit();
+        $data = array(
+            'unit' => $unit,
+            'shift' => $shift,
+            'location' => $location,
+        );
+        return view('inspection.inspection_ohc.weekly_ambulance.list',$data);
     }
 
 
@@ -179,11 +198,13 @@ class WeeklyAmbulanceController extends Controller
             $getoption = string_to_array($options->type);
             $location = $this->location->getLocationname();
             $signature_upload = $this->user->getSignature();
+            $document_no = $this->document_reference->selectUsingName('WeeklyAmbulanceInspectionChecklist');
             $data = array(
                 'unit' => $unit,
                 'shift' => $shift,
                 'checklist_details' =>  $checklist_details,
                 'location' => $location,
+                'document_no' => $document_no,
                 'getoption' => $getoption,
                 'signature_upload' => $signature_upload,
 
@@ -300,7 +321,7 @@ class WeeklyAmbulanceController extends Controller
 
                 $requestorsignature =  $weekAmbualance->created_by;
 
-
+                $document_no = $this->document_reference->selectUsingName('WeeklyAmbulanceInspectionChecklist');
                 $requestor_signature = $this->signature->requestorSignature($id, $requestorsignature, $type);
 
                 $data = array(
@@ -310,6 +331,7 @@ class WeeklyAmbulanceController extends Controller
                     'getoption' => $getoption,
                     'requestorsignature' => $requestor_signature,
                     'statuslog' => $statuslog,
+                    'document_no' => $document_no,
                 );
             }
             return view('inspection.inspection_ohc.weekly_ambulance.view', $data);
@@ -334,7 +356,7 @@ class WeeklyAmbulanceController extends Controller
 
                 $requestorsignature =  $weekAmbualance->created_by;
 
-
+                $document_no = $this->document_reference->selectUsingName('WeeklyAmbulanceInspectionChecklist');
                 $requestor_signature = $this->signature->requestorSignature($id, $requestorsignature, $type);
 
 
@@ -345,6 +367,7 @@ class WeeklyAmbulanceController extends Controller
                     'checklist_details' =>  $checklist_details,
                     'getoption' => $getoption,
                     'requestorsignature' => $requestor_signature,
+                    'document_no' => $document_no,
 
                 );
             }
@@ -750,9 +773,6 @@ class WeeklyAmbulanceController extends Controller
 
             $header = [
                 __("common.sno"),
-                'Document Number',
-                'Review date',
-                'Issued Date',
                 'Next Due On',
                 'Date Of Inspection',
                 'Shift',
@@ -768,17 +788,14 @@ class WeeklyAmbulanceController extends Controller
 
                 $export = [];
                 $export[] =  $i;
-                $export[] =  $data->doc_no;
-                $export[] =  $data->revision_date;
-                $export[] =  Displaydateformat($data->issue_date);
                 $export[] = Displaydateformat($data->next_due);
                 $export[] = Displaydateformat($data->date_of_inspection);
-                $export[] =  getShift($data->shift);
-                $export[] =  getLocationname($data->location);
-                $export[] =  getUnitname($data->unit);
+                $export[] =  ($data->shift);
+                $export[] =  ($data->location_name);
+                $export[] =  getUnitname($data->unit_name);
                 $export[] =  getInspectionStatus($data->approve_status);;
-                $export[] =  getusername($data->created_by);
-                $export[] =  Displaydateformat($data->created_at);
+                $export[] =  getusername($data->inspection_created_by);
+                $export[] =  Displaydateformat($data->inspection_created_at);
 
                 $exportData[] = $export;
 
@@ -808,12 +825,10 @@ class WeeklyAmbulanceController extends Controller
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
             }
+            $document_no = $this->document_reference->selectUsingName('WeeklyAmbulanceInspectionChecklist');
 
             $header = [
                 __("common.sno"),
-                'Document Number',
-                'Review date',
-                'Issued Date',
                 'Next Due On',
                 'Date Of Inspection',
                 'Shift',
@@ -827,6 +842,7 @@ class WeeklyAmbulanceController extends Controller
             $data = array(
                 'header' => $header,
                 'content' => $allData,
+                'document_no' => $document_no,
                 'pagetitle' => "Weekly Ambulance Inspection Checklist",
             );
 
@@ -853,7 +869,7 @@ class WeeklyAmbulanceController extends Controller
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 
-            report($ex);
+            dd($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/weekly-ambulance/inspection/checklist/list'));
         }
@@ -874,6 +890,7 @@ class WeeklyAmbulanceController extends Controller
                 $checklist_details = getCheckListQuestion(WEEKLY_AMBULANCE_INSPECTION_CHECKLIST);
                 $options =  getoption(WEEKLY_AMBULANCE_INSPECTION_CHECKLIST);
                 $getoption = string_to_array($options->type);
+                $document_no = $this->document_reference->selectUsingName('WeeklyAmbulanceInspectionChecklist');
             }
             $data = [
                 'weeklyAmbulance' => $weeklyAmbulance,
@@ -881,6 +898,7 @@ class WeeklyAmbulanceController extends Controller
                 'inspectionCkeclist' => $inspectionCkeclist,
                 'checklist_details' =>  $checklist_details,
                 'getoption' => $getoption,
+                'document_no' => $document_no,
                 'pagetitle' => "Weekly Ambulance Inspection Checklist",
             ];
 

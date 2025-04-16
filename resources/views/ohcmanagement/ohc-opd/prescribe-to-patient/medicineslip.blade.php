@@ -285,8 +285,7 @@
                 <tr>
                     <td colspan="3" style="border: 1px solid black; height:30;">Signature Safety Department</td>
                     <td colspan="9" style="border: 1px solid black; height:30;">Hospital
-                        Address:KBC-27,Sector-B,Opp. Phonix Mall,
-                        Kanpur Road,AlamBagh Lucknow-226010</td>
+                        Address:{{$hospital->address}}</td>
 
                 </tr>
                 <tr>
@@ -297,15 +296,15 @@
                 <tr>
                     <td colspan="4"
                         style="border: 1px solid black; height:30px; text-align: center; vertical-align: middle;">
-                        SKD Hospital <br> +91 8388526262 <br> 0522-4044111/4021010
+                       {{$hospital->hospital_name}} <br>{{$hospital->mobile_no}}  <br> {{$hospital->tel_no}}
                     </td>
                     <td colspan="4"
                         style="border: 1px solid black; height:30px; text-align: center; vertical-align: middle;">
-                        Occupational Health Center <br> 9653038762
+                        Occupational Health Center <br>  8888
                     </td>
                     <td colspan="4"
                         style="border: 1px solid black; height:30px; text-align: center; vertical-align: middle;">
-                        Safety Officer <br> 9076843512, 8009785601, 9695001116, 9559996662
+                        Safety Officer <br> 9076843512, 9661695452, 8795258352, 8528889507
                     </td>
                 </tr>
 

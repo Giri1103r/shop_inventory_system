@@ -35,43 +35,48 @@
                                         action="{{ admin_url('ohc/first-aider/add/submit') }}" autocomplete="off"
                                         enctype="multipart/form-data">
                                         @csrf
-                                        <input type="hidden" value="3" name="ohc_type">
+
                                         <div class="row">
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Document Number</label>
+                                                    <label class="form-label require">{{ __('inspection.doc_no') }}</label>
                                                     <input type="text" name="document_no" id = "document_no"
-                                                        class="form-control">
+                                                        class="form-control" placeholder="Enter the Document Number"
+                                                        value="{{ $document_no->doc_no }}" readonly>
+                                                    @error('doc_no')
+                                                        <div class="error">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label for="rate" class="form-label require ">Issued
-                                                        Date</label>
+                                                    <label
+                                                        class="form-label require">{{ __('inspection.issue_date') }}</label>
                                                     <div class="input-group date form-input custom-height">
                                                         <input type="text" name="issue_date" id="issue_date"
-                                                            class="form-control"autocomplete="off">
+                                                            class="form-control"autocomplete="off"
+                                                            value="{{ displaydateformat($document_no->issue_date) }}"
+                                                            readonly>
                                                         <div class="input-group-addon input-group-text">
                                                             <span class="fa fa-calendar"></span>
                                                         </div>
                                                     </div>
                                                 </div>
+
+                                                @error('issue_date')
+                                                    <div class="error">{{ $message }}</div>
+                                                @enderror
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label for="rate" class="form-label require ">Review
-                                                        Date</label>
-                                                    <div class="input-group date form-input custom-height">
-                                                        <input type="text" value="{{ getDocumentReviewDate('0') }}"
-                                                            name="review_date" id="review_date" class="form-control"
-                                                            autocomplete="off" readonly>
-
-                                                        <div class="input-group-addon input-group-text">
-                                                            <span class="fa fa-calendar"></span>
-                                                        </div>
-                                                    </div>
+                                                    <label
+                                                        class="form-label require">{{ __('inspection.rev_date') }}</label>
+                                                    <input type="text" name="review_date" id = "review_date"
+                                                        class="form-control" value="{{ $document_no->rev_dt }}" readonly>
                                                 </div>
                                             </div>
+                                            <input type="hidden" name="document_reference_id"
+                                                value="{{ encryptId($document_no->id) }}">
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label for="rate" class="form-label require ">
@@ -243,102 +248,102 @@
             let rowCount = 1;
 
             $(".add-row").click(function() {
-    let rowCount = $('#medicine-tbody tr').length;
-    let newRow = `
-        <tr>
-            <td>
-                <div class="form-group form-input">
-                    <label class="require">Unit Name</label>
-                    <select name="unit_id[${rowCount}]" class="form-control unit-select select2" style="width: 100%">
-                        <option value="">Select the Unit Name</option>
-                        @foreach ($unit as $list)
-                            <option value="{{ encryptId($list->id) }}">{{ $list->unit_name }}</option>
-                        @endforeach
-                    </select>
-                </div>
-            </td>
-            <td>
-                <div class="form-group form-input">
-                    <label class="require">Department</label>
-                    <select name="department_id[${rowCount}]" class="form-control department-select select2" style="width:100%">
-                        <option value="">Select Department</option>
-                    </select>
-                </div>
-            </td>
-            <td>
-                <div class="form-group form-input">
-                    <label class="require">Employee Name</label>
-                    <select name="emp_name[${rowCount}]" class="form-control emp-select select2" style="width:100%">
-                        <option value="">Select Employee</option>
-                    </select>
-                </div>
-            </td>
-            <td>
-                <div class="form-group form-input">
-                    <label class="require">Designation</label>
-                    <input type="text" name="designation_id[${rowCount}]" class="form-control designation-field" readonly>
-                </div>
-            </td>
-            <td>
-                <div class="form-group form-input">
-                    <label class="require">Mobile Number</label>
-                    <input type="text" name="mobile_no[${rowCount}]" class="form-control mobile-field" readonly>
-                </div>
-            </td>
-            <td>
-                <div class="d-flex justify-content-center align-items-center bg-danger mt-2 ml-2 text-white rounded delete-row" style="width: 30px; height: 30px; cursor: pointer;">
-                    <i class="fa-solid fa-trash"></i>
-                </div>
-            </td>
-        </tr>
-    `;
+                let rowCount = $('#medicine-tbody tr').length;
+                let newRow = `
+                        <tr>
+                            <td>
+                                <div class="form-group form-input">
+                                    <label class="require">Unit Name</label>
+                                    <select name="unit_id[${rowCount}]" class="form-control unit-select select2" style="width: 100%">
+                                        <option value="">Select the Unit Name</option>
+                                        @foreach ($unit as $list)
+                                            <option value="{{ encryptId($list->id) }}">{{ $list->unit_name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-group form-input">
+                                    <label class="require">Department</label>
+                                    <select name="department_id[${rowCount}]" class="form-control department-select select2" style="width:100%">
+                                        <option value="">Select Department</option>
+                                    </select>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-group form-input">
+                                    <label class="require">Employee Name</label>
+                                    <select name="emp_name[${rowCount}]" class="form-control emp-select select2" style="width:100%">
+                                        <option value="">Select Employee</option>
+                                    </select>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-group form-input">
+                                    <label class="require">Designation</label>
+                                    <input type="text" name="designation_id[${rowCount}]" class="form-control designation-field" readonly>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-group form-input">
+                                    <label class="require">Mobile Number</label>
+                                    <input type="text" name="mobile_no[${rowCount}]" class="form-control mobile-field" readonly>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="d-flex justify-content-center align-items-center bg-danger mt-2 ml-2 text-white rounded delete-row" style="width: 30px; height: 30px; cursor: pointer;">
+                                    <i class="fa-solid fa-trash"></i>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
 
-    // Append the new row first
-    $('#medicine-tbody').append(newRow);
+                // Append the new row first
+                $('#medicine-tbody').append(newRow);
 
-    // Initialize Select2 for new elements
-    $('.select2').select2({
-        width: '100%'
-    });
+                // Initialize Select2 for new elements
+                $('.select2').select2({
+                    width: '100%'
+                });
 
-    // Now apply validation rules
-    $('select[name="unit_id[' + rowCount + ']"]').rules('add', {
-        required: true,
-        messages: {
-            required: 'This unit name is required'
-        }
-    });
+                // Now apply validation rules
+                $('select[name="unit_id[' + rowCount + ']"]').rules('add', {
+                    required: true,
+                    messages: {
+                        required: 'This unit name is required'
+                    }
+                });
 
-    $('select[name="department_id[' + rowCount + ']"]').rules('add', {
-        required: true,
-        messages: {
-            required: 'This department name is required'
-        }
-    });
+                $('select[name="department_id[' + rowCount + ']"]').rules('add', {
+                    required: true,
+                    messages: {
+                        required: 'This department name is required'
+                    }
+                });
 
-    $('select[name="emp_name[' + rowCount + ']"]').rules('add', {
-        required: true,
-        messages: {
-            required: 'This Employee name is required'
-        }
-    });
+                $('select[name="emp_name[' + rowCount + ']"]').rules('add', {
+                    required: true,
+                    messages: {
+                        required: 'This Employee name is required'
+                    }
+                });
 
-    $('input[name="designation_id[' + rowCount + ']"]').rules('add', {
-        required: true,
-        messages: {
-            required: 'This Designation name is required'
-        }
-    });
+                $('input[name="designation_id[' + rowCount + ']"]').rules('add', {
+                    required: true,
+                    messages: {
+                        required: 'This Designation name is required'
+                    }
+                });
 
-    $('input[name="mobile_no[' + rowCount + ']"]').rules('add', {
-        required: true,
-        messages: {
-            required: 'This mobile number is required'
-        }
-    });
-});
+                $('input[name="mobile_no[' + rowCount + ']"]').rules('add', {
+                    required: true,
+                    messages: {
+                        required: 'This mobile number is required'
+                    }
+                });
+            });
 
-            // Load departments based on unit selection
+
             $(document).on('change', '.unit-select', function() {
                 let unitId = $(this).val();
                 let row = $(this).closest('tr');
@@ -372,7 +377,7 @@
                 }
             });
 
-            // Load employees based on unit and department selection
+
             $(document).on('change', '.unit-select, .department-select', function() {
                 let row = $(this).closest('tr');
                 let unitId = row.find('.unit-select').val();
@@ -380,7 +385,7 @@
 
                 if (unitId && departmentId) {
                     $.ajax({
-                        url: "{{ admin_url('ohc/first-aider/emplyeename') }}",
+                        url: "{{ admin_url('ohc/first-aider/employeename') }}",
                         type: 'GET',
                         data: {
                             unit_id: unitId,
@@ -392,7 +397,7 @@
                             empSelect.empty().append(
                                 '<option value="">Select Employee</option>');
                             $.each(response.employee, function(index, employee) {
-                                empSelect.append('<option value="' + employee.login_id +
+                                empSelect.append('<option value="' + employee.id +
                                     '">' + employee.emp_name + '</option>');
                             });
                         },
@@ -409,7 +414,7 @@
                 }
             });
 
-            // Load employee details
+
             $(document).on('change', '.emp-select', function() {
                 let emp_id = $(this).val();
                 let row = $(this).closest('tr');

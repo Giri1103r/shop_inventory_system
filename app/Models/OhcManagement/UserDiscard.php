@@ -16,7 +16,7 @@ class UserDiscard extends Model
         'batch_no',
         'quantity',
         'expire_medicine',
-        'discard_date',
+        'expire_date',
         'approved_by',
         'approve_status',
         'unit_id',
@@ -58,23 +58,25 @@ class UserDiscard extends Model
             $query = $query->where('ohc_management_discard.unit_id', decryptId($request->unit_id));
         }
 
-        $org_total_counts = $query->count();
-
+        $totalFilteredRecords = $query->count();
         if ($request->length != -1) {
             $query->offset($request->start)->limit($request->length);
         }
-        $query->orderBy('id', 'desc');
+
+        $query->orderBy('id', 'DESC');
         $data = $query->get();
-        $total_records = $data->count();
+
+
+        $org_total_counts = $this->count();
 
         return [
             'data' => $data,
             'total_records' => $org_total_counts,
-            'filter_records' => $total_records,
+            'filter_records' => $totalFilteredRecords,
         ];
     }
 
-    public function store($id, $remarks,$expire_medicine)
+    public function store($id, $remarks, $expire_medicine)
     {
         $request = request();
         $today = Carbon::today();
@@ -82,15 +84,15 @@ class UserDiscard extends Model
         $insert_array = [
             'medicine_id' => $expire_medicine->medicine_id,
             'quantity' => $request->quantity,
-            'discard_date' =>  $today,
-            'unit_id' =>  decryptId($request->unit_id),
+            'expire_date' =>  $today,
+            'unit_id' =>  Auth::user()->unit_id,
             'expire_medicine_id' => $expire_medicine->id,
-            'expire_id'=> $id,
-            'remarks'=>$request->remarks,
+            'expire_id' => $id,
+            'remarks' => $request->remarks,
             'approve_status' => OHC_DISCARD_EHS_APPROVAL_PENDING,
             'created_by' => Auth::id(),
         ];
-       return $this->create($insert_array);
+        return $this->create($insert_array);
     }
     public function selectOne($id)
     {
@@ -111,7 +113,7 @@ class UserDiscard extends Model
     {
 
         $data  = $this->select('ohc_management_discard.*')->where('id', $id)
-            ->update(['approve_status'=>$updateData['approve_status'],'approver_remarks'=>$updateData['remarks'],'approved_by'=>Auth::id()]);
+            ->update(['approve_status' => $updateData['approve_status'], 'approver_remarks' => $updateData['remarks'], 'approved_by' => Auth::id()]);
         return $data;
     }
     public function statuschange($id)
@@ -157,7 +159,7 @@ class UserDiscard extends Model
             });
         }
 
-        $query->orderBy('discard_id', 'DESC');
+        $query->orderBy('ohc_management_discard.id', 'DESC');
 
         return  $query->get();
     }

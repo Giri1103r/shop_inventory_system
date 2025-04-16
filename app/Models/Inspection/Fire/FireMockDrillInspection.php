@@ -3,6 +3,7 @@
 namespace App\Models\Inspection\Fire;
 
 use Carbon\Carbon;
+use App\Scopes\TrashScope;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 
@@ -13,7 +14,22 @@ class FireMockDrillInspection extends Model
     protected $fillable = [
         'id',
         'document_reference_id',
+        'date_of_closure',
+        'inspection_date',
         'inspection_status',
+        'checked_by',
+        'verified_by',
+        'approved_by',
+        'description',
+        'remarks',
+        'inspection_status',
+        'capa_recomendation',
+        'capa_remarks',
+        'level_one_manager_remarks',
+        'level_two_manager_remarks',
+        'capa_ehs_remarks',
+        'l1_manager_verified_by',
+        'l2_manager_verified_by',
         'created_by',
         'updated_by',
         'created_at',
@@ -31,27 +47,24 @@ class FireMockDrillInspection extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_fire_mock_drill_observation.*');
+        $query = $this->select('inspection_fire_mock_drill_observation.*', 'inspection_static_docno.*', 'inspection_fire_mock_drill_observation.id as inspection_id')
+            ->leftJoin('inspection_static_docno', 'inspection_fire_mock_drill_observation.document_reference_id', '=', 'inspection_static_docno.id');
         $org_total =  $query;
         $org_total_counts = $org_total->count();
 
         if (isset($request->search) && isset($request->search['value']) && $request->search['value'] != '') {
             $search = $request->search['value'];
-            $query = $query->where(function ($query) use ($search) {
-                $query->orWhereRaw('doc_no LIKE "%' . $search . '%"');
-                $query->orWhereRaw('issue_date LIKE "%' . $search . '%"');
-            });
-        }
-
-        if (isset($request->document_number) && $request->document_number) {
-            $query = $query->where('inspection_fire_mock_drill_observation.doc_no', 'LIKE', '%' . $request->document_number . '%');
+            $query = $query->where(function ($query) use ($search) {});
         }
         if (isset($request->issue_date) && $request->issue_date) {
-            $query = $query->whereDate('inspection_forklift_inpsection_monthly.issue_date', '=', DBdateformat($request->issue_date));
+            $query = $query->where('inspection_fire_mock_drill_observation.issue_date', 'LIKE', '%' . $request->issue_date . '%');
+        }
+        if (isset($request->rev_date) && $request->rev_date) {
+            $query = $query->where('inspection_fire_mock_drill_observation.revision_data', 'LIKE', '%' . $request->rev_date . '%');
         }
 
         if (isset($request->inspection_status) && $request->inspection_status) {
-            $query = $query->where('inspection_fire_mock_drill_observation.observation_status', decryptId($request->inspection_status));
+            $query = $query->where('inspection_fire_mock_drill_observation.inspection_status', decryptId($request->inspection_status));
         }
 
         if (isset($request->order) && count($request->order) > 0) {
@@ -64,11 +77,11 @@ class FireMockDrillInspection extends Model
                 case "issue_date":
                     $query = $query->orderBy('inspection_fire_mock_drill_observation.issue_date', $columnorder);
                     break;
-                case "doc_no":
-                    $query = $query->orderBy('inspection_fire_mock_drill_observation.doc_no', $columnorder);
+                case "document_number":
+                    $query = $query->orderBy('inspection_fire_mock_drill_observation.document_number', $columnorder);
                     break;
                 case "inspection_status":
-                    $query = $query->orderBy('inspection_fire_mock_drill_observation.observation_status', $columnorder);
+                    $query = $query->orderBy('inspection_fire_mock_drill_observation.inspection_status', $columnorder);
                     break;
                 case "created_by":
                     $query = $query->orderBy('inspection_fire_mock_drill_observation.created_by', $columnorder);
@@ -99,97 +112,167 @@ class FireMockDrillInspection extends Model
         return $datas;
     }
 
-
     public function store()
     {
         $request = request();
+
         $data = array(
             'document_reference_id' => decryptId($request->document_reference_id),
             'inspection_date' => DBdateformat($request->inspection_date),
-            'created_by' => Auth::id(),
             'inspection_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,
+            'created_by' => Auth::id(),
+            'checked_by' => Auth::id(),
         );
-
         return $this->create($data);
     }
-
 
     public function exportdata()
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_fire_mock_drill_observation.*');
+        $query = $this->select('inspection_fire_mock_drill_observation.*', 'inspection_static_docno.*', 'inspection_fire_mock_drill_observation_details.*', 'inspection_static_docno.*', 'inspection_fire_mock_drill_observation.id as fire_id', 'inspection_fire_mock_drill_observation.created_by as checked_by', 'inspection_fire_mock_drill_observation.updated_by as verified_by')
+            ->leftJoin('inspection_fire_mock_drill_observation_details', 'inspection_fire_mock_drill_observation.id', '=', 'inspection_fire_mock_drill_observation_details.inspection_id')
+            ->leftJoin('inspection_static_docno', 'inspection_fire_mock_drill_observation.document_reference_id', '=', 'inspection_static_docno.id');
         if (isset($request->search) && isset($request->search['value']) && $request->search['value'] != '') {
             $search = $request->search['value'];
-            $query = $query->where(function ($query) use ($search) {
-                $query->orWhereRaw('doc_no LIKE "%' . $search . '%"');
-                $query->orWhereRaw('issue_date LIKE "%' . $search . '%"');
-                $query->orWhereRaw('revision_data LIKE "%' . $search . '%"');
-            });
+            $query = $query->where(function ($query) use ($search) {});
         }
 
         if (isset($request->document_number) && $request->document_number) {
-            $query = $query->where('inspection_fire_mock_drill_observation.doc_no', 'LIKE', '%' . $request->document_number . '%');
+            $query = $query->where('inspection_fire_mock_drill_observation.document_number', 'LIKE', '%' . $request->document_number . '%');
         }
         if (isset($request->issue_date) && $request->issue_date) {
-            $query = $query->whereDate('inspection_forklift_inpsection_monthly.issue_date', '=', DBdateformat($request->issue_date));
+            $query = $query->where('inspection_fire_mock_drill_observation.issue_date', 'LIKE', '%' . $request->issue_date . '%');
         }
         if (isset($request->rev_date) && $request->rev_date) {
             $query = $query->where('inspection_fire_mock_drill_observation.revision_data', 'LIKE', '%' . $request->rev_date . '%');
         }
 
         if (isset($request->inspection_status) && $request->inspection_status) {
-            $query = $query->where('inspection_fire_mock_drill_observation.observation_status', decryptId($request->inspection_status));
+            $query = $query->where('inspection_fire_mock_drill_observation.inspection_status', decryptId($request->inspection_status));
         }
-        $query->orderBy('id', 'DESC');
+        $query->orderBy('inspection_fire_mock_drill_observation.id', 'DESC');
 
-        return  $query->get();
+        $data = $query->get();
+        if ($data) {
+            return $data->groupBy('fire_id');
+        } else {
+            return $data;
+        }
+    }
+
+
+
+    public function EHSOfficerUpdate($id)
+    {
+
+        $request = request();
+        if ($request->is_passed == 1) {
+            $update_array = [
+                'verified_by' => Auth::id(),
+                'approved_by' => Auth::id(),
+                'inspection_status' => INSPECTION_APPROVED,
+                'updated_by' => Auth::id(),
+                'remarks' => $request->remarks,
+                'date_of_closure' => DBdateformat(Carbon::now()),
+            ];
+            $this->where('id', $id)->update($update_array);
+        } else {
+            $update_array = [
+                'verified_by' => Auth::id(),
+                'inspection_status' => WAITING_FOR_CAPA_ACTION,
+                'updated_by' => Auth::id(),
+                'capa_recomendation' => $request->remarks,
+            ];
+            $this->where('id', $id)->update($update_array);
+        }
+    }
+
+    public function capaSubmit($id)
+    {
+        $request = request();
+        $update_array = [
+            'capa_remarks' => $request->capa_remarks,
+            'updated_by' => Auth::id(),
+            'inspection_status' => WAITING_FOR_CAPA_VERIFICATION,
+        ];
+        $this->where('id', $id)->update($update_array);
+    }
+
+    public function capaVerifySubmit($id, $status, $remarks)
+    {
+        $request = request();
+        if ($status == 1) {
+            $update_array = [
+                'verified_by' => Auth::id(),
+                'updated_by' => Auth::id(),
+                'inspection_status' => WAITING_FOR_L1_VERIFICATION,
+                'capa_ehs_remarks' => $remarks,
+            ];
+            $this->where('id', $id)->update($update_array);
+        } else {
+            $update_array = [
+                'verified_by' => Auth::id(),
+                'updated_by' => Auth::id(),
+                'inspection_status' => EHS_OFFICER_REJECTED,
+                'capa_ehs_remarks' => $remarks,
+            ];
+            $this->where('id', $id)->update($update_array);
+        }
+    }
+
+    public function levelOneManagerSubmit($id, $status, $remarks)
+    {
+        if ($status == 1) {
+            $update_array = [
+                'l1_manager_verified_by' => Auth::id(),
+                'updated_by' => Auth::id(),
+                'inspection_status' => WAITING_FOR_L2_VERIFICATION,
+                'level_one_manager_remarks' => $remarks,
+            ];
+            $this->where('id', $id)->update($update_array);
+        } else {
+            $update_array = [
+                'l1_manager_verified_by' => Auth::id(),
+                'updated_by' => Auth::id(),
+                'inspection_status' => L1_MANAGER_REJECTED,
+                'level_one_manager_remarks' => $remarks,
+            ];
+            $this->where('id', $id)->update($update_array);
+        }
+    }
+
+    public function levelTwoManagerSubmit($id, $status, $remarks)
+    {
+        if ($status == 1) {
+            $update_array = [
+                'l2_manager_verified_by' => Auth::id(),
+                'approved_by' => Auth::id(),
+                'updated_by' => Auth::id(),
+                'inspection_status' => INSPECTION_APPROVED,
+                'level_two_manager_remarks' => $remarks,
+                'date_of_closure' => DBdateformat(Carbon::now()),
+            ];
+            $this->where('id', $id)->update($update_array);
+        } else {
+            $update_array = [
+                'l2_manager_verified_by' => Auth::id(),
+                'updated_by' => Auth::id(),
+                'inspection_status' => L2_MANAGER_REJECTED,
+                'level_two_manager_remarks' => $remarks,
+            ];
+            $this->where('id', $id)->update($update_array);
+        }
     }
 
 
     public function selectOne($id)
     {
-        return $this->where('id', $id)->first();
-    }
-    public function GetLastMonthObservation($id)
-    {
-        $data = $this->where('id', $id)->first();
-        $current_month = $data->month;
-        $current_year = $data->created_at->year;
-
-        $month = Carbon::parse($current_month)->month;
-        $last_month = $month - 1;
-
-        if ($last_month == 0) {
-            $last_month = 12;
-            $current_year -= 1;
-        }
-
-        $last_month_name = Carbon::createFromFormat('m', $last_month)->format('F');
-
-        $last_month_record = $this->where('month', $last_month_name)
-            ->whereYear('created_at', $current_year)
-            ->get();
-
-        return $last_month_record;
+        return $this->where('id', $id)->where('status', 1)->where('trash', 'NO')->first();
     }
 
-    public function approvalSubmit($id, $status, $remarks)
+    protected static function booted()
     {
-        $request = Request();
-        if ($status == 1) {
-            $update_array = [
-                'updated_by' => Auth::id(),
-                'observation_status' => OBSERVATION_APPROVED,
-                'approval_remarks' => $remarks,
-            ];
-        } else {
-            $update_array = [
-                'updated_by' => Auth::id(),
-                'observation_status' => OBSERVATION_REJECTED,
-                'approval_remarks' => $remarks,
-            ];
-        }
-        $this->where('id', $id)->update($update_array);
+        static::addGlobalScope(new TrashScope('inspection_fire_mock_drill_observation'));
     }
 }

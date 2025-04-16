@@ -201,69 +201,126 @@
             </tr>
         </table>
     </div>
-    <table style="width: 100%; border-collapse: collapse; text-align: center;">
-        <thead>
-            <tr>
-                <th rowspan="2" style="border: 2px solid black; padding: 8px; background-color: #ddd;">SR. NO.</th>
-                <th rowspan="2" style="border: 2px solid black; padding: 8px; background-color: #ddd;">LOCATION</th>
-                <th rowspan="2" style="border: 2px solid black; padding: 8px; background-color: #ddd;">RESOURCE CODE
-                </th>
-                <th colspan="4"
-                    style="border: 2px solid black; padding: 8px; background-color: #ccc; font-weight: bold;">CHECK
-                    ITEMS</th>
-                <th colspan="4"
-                    style="border: 2px solid black; padding: 8px; background-color: #f0f0f0; font-weight: bold;">WATER
-                </th>
-                <th rowspan="2" style="border: 2px solid black; padding: 8px; background-color: #ddd;">REMARK</th>
-            </tr>
-            <tr>
-                <th style="border: 2px solid black; padding: 8px; background-color: #eee; font-weight: bold;">VALVE</th>
-                <th style="border: 2px solid black; padding: 8px; background-color: #eee; font-weight: bold;">HANDS-FREE
-                    STAY OPEN VALVE</th>
-                <th style="border: 2px solid black; padding: 8px; background-color: #eee; font-weight: bold;">FOOT PEDAL
-                    VALVE</th>
-                <th style="border: 2px solid black; padding: 8px; background-color: #eee; font-weight: bold;">EYEWASH
-                    HEADS</th>
-                <th style="border: 2px solid black; padding: 8px; background-color: #eee; font-weight: bold;">RECEPTACLE
-                </th>
-                <th style="border: 2px solid black; padding: 8px; background-color: #eee; font-weight: bold;">QUALITY
-                </th>
-                <th style="border: 2px solid black; padding: 8px; background-color: #eee; font-weight: bold;">PRESSURE
-                </th>
-                <th style="border: 2px solid black; padding: 8px; background-color: #eee; font-weight: bold;">
-                    TEMPERATURE (15-35°C)</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach ($inspection as $details)
-                <tr>
-                    <td style="border: 2px solid black; padding: 8px;">{{ $details->sr_no }}</td>
-                    <td style="border: 2px solid black; padding: 8px;">{{ getLocationName($details->location) }}</td>
-                    <td style="border: 2px solid black; padding: 8px;">{{ $details->resource_code }}</td>
-                    <td style="border: 2px solid black; padding: 8px;">{{ $details->value }}</td>
-                    <td style="border: 2px solid black; padding: 8px;">{{ $details->hand_free_stay_open_value }}</td>
-                    <td style="border: 2px solid black; padding: 8px;">{{ $details->foot_pedal_value }}</td>
-                    <td style="border: 2px solid black; padding: 8px;">{{ $details->eyewash_heads_value }}</td>
-                    <td style="border: 2px solid black; padding: 8px;">{{ $details->receptacle }}</td>
-                    <td style="border: 2px solid black; padding: 8px;">
-                        @if ($details->water == GOOD)
-                            Good
-                        @elseif($details->water == FAIR)
-                            Fair
-                        @elseif($details->water == POOR)
-                            Poor
-                        @else
-                            Unknown
-                        @endif
-                    </td>
-                    <td style="border: 2px solid black; padding: 8px;">{{ $details->pressure }}</td>
-                    <td style="border: 2px solid black; padding: 8px;">{{ $details->temperature }}</td>
-                    <td style="border: 2px solid black; padding: 8px;">{{ $details->remarks }}</td>
-                </tr>
-            @endforeach
-        </tbody>
-    </table>
+    <br>
+    <table
+        style="width: 100%; border-collapse: collapse; margin-bottom: 20px; font-family: Arial, sans-serif; font-size: 13px;">
+        <tr>
+            <td colspan="3" style="border: 1px solid black; padding: 6px; background-color: #ddd;"><strong>DATE OF
+                    INSPECTION:</strong> {{ Displaydateformat($inspection_details->date_of_inspection) ?? '' }}</td>
+            <td colspan="3" style="border: 1px solid black; padding: 6px; background-color: #ddd;">
+                <strong>LOCATION:</strong>
+                {{ getLocationName($inspection_details->location) ?? '' }}</td>
+            <td colspan="3" style="border: 1px solid black; padding: 6px; background-color: #ddd;"><strong>NEXT DUE
+                    ON:</strong>
+                {{ Displaydateformat($inspection_details->next_due) ?? '' }}</td>
+            <td colspan="3" style="border: 1px solid black; padding: 6px; background-color: #ddd;">
+                <strong>UNIT:</strong>
+                {{ GetUnitName($inspection_details->unit) ?? '' }}</td>
+        </tr>
+        <tr>
+            <td colspan="6" style="border: 1px solid black; padding: 6px; background-color: #ddd;">
+                <strong>SHIFT:</strong>
+                {{ GetShiftName($inspection_details->shift) ?? '' }}</td>
+            <td colspan="6" style="border: 1px solid black; padding: 6px; background-color: #ddd;">
+                <strong>FREQUENCY:</strong>
+                {{ GetFrequencyName($inspection_details->frequency) ?? '' }}</td>
+        </tr>
 
+        <tr>
+            <th rowspan="2" style="border: 2px solid black; padding: 6px; background-color: #ddd;">SR. NO.
+            </th>
+            <th rowspan="2" style="border: 2px solid black; padding: 6px; background-color: #ddd;">LOCATION
+            </th>
+            <th rowspan="2" style="border: 2px solid black; padding: 6px; background-color: #ddd;">RESOURCE
+                CODE</th>
+            <th colspan="4" style="border: 2px solid black; padding: 6px; background-color: #ccc;">CONDITION
+            </th>
+            <th colspan="4" style="border: 2px solid black; padding: 6px; background-color: #ddd;">WATER
+            </th>
+            <th rowspan="2" style="border: 2px solid black; padding: 6px; background-color: #ddd;">REMARK
+            </th>
+        </tr>
+
+        <tr>
+            <th style="border: 2px solid black; padding: 6px; background-color: #eee;">VALVE</th>
+            <th style="border: 2px solid black; padding: 6px; background-color: #eee;">HANDS-FREE STAY OPEN
+                VALVE</th>
+            <th style="border: 2px solid black; padding: 6px; background-color: #eee;">FOOT PEDAL VALVE</th>
+            <th style="border: 2px solid black; padding: 6px; background-color: #eee;">EYEWASH HEADS</th>
+            <th style="border: 2px solid black; padding: 6px; background-color: #eee;">RECEPTACLE</th>
+            <th style="border: 2px solid black; padding: 6px; background-color: #eee;">QUALITY</th>
+            <th style="border: 2px solid black; padding: 6px; background-color: #eee;">PRESSURE</th>
+            <th style="border: 2px solid black; padding: 6px; background-color: #eee;">TEMPERATURE (15–35°C)
+            </th>
+        </tr>
+
+        @foreach ($inspection as $details)
+            <tr>
+                <td style="border: 2px solid black; padding: 6px;">{{ $details->sr_no }}</td>
+                <td style="border: 2px solid black; padding: 6px;">{{ getLocationName($details->location) }}</td>
+                <td style="border: 2px solid black; padding: 6px;">{{ $details->resource_code }}</td>
+                <td style="border: 2px solid black; padding: 6px;">{{ $details->value }}</td>
+                <td style="border: 2px solid black; padding: 6px;">{{ $details->hand_free_stay_open_value }}</td>
+                <td style="border: 2px solid black; padding: 6px;">{{ $details->foot_pedal_value }}</td>
+                <td style="border: 2px solid black; padding: 6px;">{{ $details->eyewash_heads_value }}</td>
+                <td style="border: 2px solid black; padding: 6px;">{{ $details->receptacle }}</td>
+                <td style="border: 2px solid black; padding: 6px;">
+                    @if ($details->quality == 'GOOD')
+                        Good
+                    @elseif($details->quality == 'FAIR')
+                        Fair
+                    @elseif($details->quality == 'POOR')
+                        Poor
+                    @else
+                        Unknown
+                    @endif
+                </td>
+                <td style="border: 2px solid black; padding: 6px;">{{ $details->pressure }}</td>
+                <td style="border: 2px solid black; padding: 6px;">{{ $details->temperature }}</td>
+                <td style="border: 2px solid black; padding: 6px;">{{ $details->remarks }}</td>
+            </tr>
+        @endforeach
+        <tr>
+            <td colspan="4" style="border: 2px solid black; padding: 6px; text-align: center;">
+                <div class="view_data">
+                    @if (!empty($inspection_details->created_by))
+                        <img src="{{ admin_url($checked_by) }}" alt=""
+                            style="max-height: 60px; display: block; margin: 0 auto 5px;">
+                        <p style="margin: 0;">Checked By:- {{ getUsername($inspection_details->created_by) }}</p>
+                    @else
+                        <p style="margin: 0;">Checked By:- Not yet checked</p>
+                    @endif
+                </div>
+            </td>
+            <td colspan="4" style="border: 2px solid black; padding: 6px; text-align: center;">
+                <div class="view_data">
+                    @if (!empty($inspection_details->verified_by))
+                        <img src="{{ admin_url($verified_by) }}" alt=""
+                            style="max-height: 60px; display: block; margin: 0 auto 5px;">
+                        <p style="margin: 0;">Verified By:- {{ getUsername($inspection_details->verified_by) }}
+                        </p>
+                    @else
+                        <p style="margin: 0;">Verified By:- Not yet verified</p>
+                    @endif
+                </div>
+            </td>
+            <td colspan="4" style="border: 2px solid black; padding: 6px; text-align: center;">
+                <div class="view_data">
+                    @if (!empty($inspection_details->approved_by))
+                        <img src="{{ admin_url($approved_by) }}" alt=""
+                            style="max-height: 60px; display: block; margin: 0 auto 5px;">
+                        <p style="margin: 0;">Approved By:- {{ getUsername($inspection_details->approved_by) }}
+                        </p>
+                    @else
+                        <p style="margin: 0;">Approved By:- Not yet approved</p>
+                    @endif
+                </div>
+            </td>
+        </tr>
+    </table>
+    
+
+    <br>
 
 
     @if ($inspection_details->inspection_status != WAITING_FOR_EHS_OFFICER_VERIFICATION)

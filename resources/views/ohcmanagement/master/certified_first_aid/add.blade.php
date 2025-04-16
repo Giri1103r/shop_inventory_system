@@ -47,6 +47,9 @@
                                                                 {{ $list->unit_name }}</option>
                                                         @endforeach
                                                     </select>
+                                                    @error('unit_id')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -57,6 +60,9 @@
                                                         <option value="">Select Department </option>
 
                                                     </select>
+                                                    @error('department_id')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -66,6 +72,9 @@
                                                         style="width: 100%">
                                                         <option value="">Select the Employee ID</option>
                                                     </select>
+                                                    @error('emp_id')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -74,6 +83,9 @@
                                                     <input type="text" name="certifier_name" id="certifier_name"
                                                         class="form-control"
                                                         placeholder="Enter the Certified First Aider Name" readonly>
+                                                    @error('certifier_name')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
@@ -81,6 +93,9 @@
                                                     <label class="form-label require">Mobile Number</label>
                                                     <input type="text" name="mobile_no" id="mobile_no"
                                                         class="form-control" placeholder="Mobile Number">
+                                                    @error('mobile_no')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                             </div>
 
@@ -88,6 +103,9 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Address</label>
                                                     <textarea name="address" class="form-control" placeholder="Enter the Address"></textarea>
+                                                    @error('address')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                             </div>
                                         </div>
@@ -301,7 +319,7 @@
                         console.log(`There are ${errors} validation errors.`);
                         validator.errorList.forEach(function(error) {
                             console.log(
-                            `Field: ${error.element.name}, Error: ${error.message}`);
+                                `Field: ${error.element.name}, Error: ${error.message}`);
                         });
                     }
                 },

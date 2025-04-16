@@ -123,7 +123,7 @@
                 </td>
                 <td border="0"
                     style="width:50%;float:right;text-align:right;font-size: 24px;font-weight:bold;font-family: Georgia, serif;">
-                    FIRST AID BAG INSPECTION CHECKLIST</td>
+                   WEEKLY FIRST AID BAG INSPECTION CHECKLIST</td>
             </tr>
         </table>
     </htmlpageheader>
@@ -159,7 +159,7 @@
         <tr>
             <td width="50%" style="padding:5px;"><b>Documnet No</b></td>
             <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">{{ $inspection_details->doc_no }}
+            <td width="48%" style="padding:5px;">{{ $document_no->doc_no }}
             </td>
         </tr>
 
@@ -167,14 +167,14 @@
             <td width="50%" style="padding:5px;"><b>Issue Date</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
-                {{ Displaydateformat(isset($inspection_details->issue_date) ? $inspection_details->issue_date : '') }}
+                {{ Displaydateformat(isset($document_no->issue_date) ? $document_no->issue_date : '') }}
             </td>
         </tr>
         <tr>
             <td width="50%" style="padding:5px;"><b>Revision Date</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
-                {{ $inspection_details->revision_date }}
+                {{ $document_no->rev_dt }}
             </td>
         </tr>
 

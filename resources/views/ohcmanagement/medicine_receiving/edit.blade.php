@@ -35,7 +35,7 @@
                                             value="{{ encryptId($medicine_receiving->id) }}">
                                         <hr>
                                         <div class="row">
-                                          
+
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label for="medicine_name" class="form-label require ">Medicine
@@ -50,22 +50,27 @@
                                                                 {{ getmedicinename($list->medicine_id) }}</option>
                                                         @endforeach
                                                     </select>
+                                                    @error('medicine_id')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label for="hsn_id" class="form-label require">HSN Number</label>
-                                                    <input type="text" name="hsn_id" id="hsn_id"
-                                                        class="form-control"  value="{{ $medicine_receiving->hsn_id }}">
-
+                                                    <input type="text" name="hsn_id" id="hsn_id" class="form-control"
+                                                        value="{{ $medicine_receiving->hsn_id }}">
+                                                    @error('hsn_id')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label for="pack_id" class="form-label require ">Pack Detatils</label>
                                                     <input type="text" name="pack_display" id="pack_id"
-                                                    class="form-control" readonly value="{{ $hsn->pack }}">
-                                                <input type="hidden" name="pack_id" id="pack_hidden_id">
+                                                        class="form-control" readonly value="{{ $hsn->pack }}">
+                                                    <input type="hidden" name="pack_id" id="pack_hidden_id">
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -73,6 +78,10 @@
                                                     <label for="quantity" class="form-label require ">Quantity</label>
                                                     <input type="text" name="quantity" id="quantity"
                                                         class="form-control"value={{ $medicine_receiving->quantity }}>
+
+                                                    @error('quantity')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -81,6 +90,10 @@
                                                         Number</label>
                                                     <input type="text" name="batch_number" id="batch_number"
                                                         value={{ $medicine_receiving->batch_number }} class="form-control">
+
+                                                    @error('batch_number')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -88,14 +101,26 @@
                                                     <label for="rate" class="form-label require ">Rate</label>
                                                     <input type="text" name="rate" id="rate"
                                                         class="form-control"value={{ $medicine_receiving->rate }}>
+                                                    @error('expire_date')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label for="rate" class="form-label require ">Expire Date</label>
-                                                    <input type="text" name="expire_date" id="expire_date"
-                                                        value={{ displaydateformat($medicine_receiving->expire_date) }}
-                                                        class="form-control">
+
+                                                    <div class="input-group date form-input custom-height">
+                                                        <input type="text" name="expire_date" id="expire_date"
+                                                            value={{ displaydateformat($medicine_receiving->expire_date) }}
+                                                            class="form-control">
+                                                        <div class="input-group-addon input-group-text">
+                                                            <span class="fa fa-calendar"></span>
+                                                        </div>
+                                                    </div>
+                                                    @error('expire_date')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -113,6 +138,9 @@
                                                             </option>
                                                         @endforeach
                                                     </select>
+                                                    @error('vendor_id')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                             </div>
 

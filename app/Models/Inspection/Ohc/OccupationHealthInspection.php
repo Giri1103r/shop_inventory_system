@@ -14,9 +14,7 @@ class OccupationHealthInspection extends Model
 
     protected $fillable = [
         'checklist',
-        'doc_no',
-        'issue_date',
-        'revision_date',
+       'document_reference_id',
         'date_of_inspection',
         'location',
         'shift',
@@ -56,34 +54,55 @@ class OccupationHealthInspection extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_ohc_occupational_health_inspection.*');
+
+
+        $query = $this->select(
+            'inspection_ohc_occupational_health_inspection.*',
+            'inspection_static_docno.*',
+            'masters_unit.*',
+            'masters_location.*',
+            'inspection_shift_option.*',
+            'inspection_ohc_occupational_health_inspection.id as inspection_id',
+            'inspection_ohc_occupational_health_inspection.status as inspection_status',
+        )
+        ->leftJoin('masters_unit', 'inspection_ohc_occupational_health_inspection.unit', '=', 'masters_unit.id')
+        ->leftJoin('masters_location', 'inspection_ohc_occupational_health_inspection.location', '=', 'masters_location.id')
+        ->leftJoin('inspection_shift_option', 'inspection_ohc_occupational_health_inspection.shift', '=', 'inspection_shift_option.id')
+
+            ->leftJoin(
+                'inspection_static_docno',
+                'inspection_ohc_occupational_health_inspection.document_reference_id',
+                '=',
+                'inspection_static_docno.id'
+            );
+
 
         // dd($query);
         $org_total =  $query;
         $org_total_counts = $org_total->count();
 
-        if ($request->search['value'] != null || $request->search['value'] != '') {
+        if (isset($request->search['value']) && $request->search['value'] != '') {
             $search = $request->search['value'];
-
-            $query->where(function ($query) use ($search) {
+            $query = $query->where(function ($query) use ($search) {
                 $query
-                    ->orWhere('doc_no', 'LIKE', '%' . $search . '%')
-                    ->orWhere('revision_date', 'LIKE', '%' . $search . '%');
+                    ->orWhere('masters_unit.unit_name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('inspection_shift_option.shift', 'LIKE', '%' . $search . '%')
+                    ->orWhere('masters_location.location_name', 'LIKE', '%' . $search . '%');
             });
         }
-        if (isset($request->document_number) && $request->document_number) {
-            $query = $query->where('inspection_ohc_occupational_health_inspection.doc_no', 'LIKE', '%' . $request->document_number . '%');
-        }
-        if (isset($request->issue_date) && $request->issue_date) {
-            $query = $query->where('inspection_ohc_occupational_health_inspection.issue_date', DBdateformat($request->issue_date));
-        }
-        if (isset($request->rev_date) && $request->rev_date) {
-            $query = $query->where('inspection_ohc_occupational_health_inspection.revision_date', 'LIKE', '%' . $request->rev_date . '%');
-        }
+
         if (isset($request->status) && $request->status) {
             $query = $query->where('inspection_ohc_occupational_health_inspection.approve_status',decryptId( $request->status));
         }
-
+        if (isset($request->unit_id) && $request->unit_id) {
+            $query = $query->where('inspection_ohc_occupational_health_inspection.unit', decryptId($request->unit_id));
+        }
+        if (isset($request->shift) && $request->shift) {
+            $query = $query->where('inspection_ohc_occupational_health_inspection.shift', decryptId($request->shift));
+        }
+        if (isset($request->location_id) && $request->location_id) {
+            $query = $query->where('inspection_ohc_occupational_health_inspection.location', decryptId($request->location_id));
+        }
         if (isset($request->order) && count($request->order) > 0) {
             $columnName = $request->order[0]['column'];
             $columnorder = $request->order[0]['dir'];
@@ -139,13 +158,13 @@ class OccupationHealthInspection extends Model
 
         $insert_array = [
             'checklist' => json_encode($responses),
-            'doc_no' => $request->document_no,
-            'issue_date' => DBdateformat($request->issue_date),
+
             'shift' => decryptId($request->shift),
+            'frequency' => decryptId($request->frequency_id),
             'location' => decryptId($request->location_id),
             'unit' => decryptId($request->unit_id),
             'next_due' => DBdateformat($request->next_due_on),
-            'revision_date' => $request->review_date,
+            'document_reference_id' => decryptId($request->document_reference_id),
             'date_of_inspection' => DBdateformat($request->date_of_inspection),
             'approve_status'=>WAITING_FOR_EHS_OFFICER_VERIFICATION,
             'created_by' => Auth::id(),
@@ -259,24 +278,21 @@ class OccupationHealthInspection extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_ohc_occupational_health_inspection.*');
-        if (isset($request->document_number) && $request->document_number) {
-            $query = $query->where('inspection_ohc_occupational_health_inspection.doc_no',  $request->document_number);
-        }
-        if (isset($request->issue_date) && $request->issue_date) {
-            $query = $query->where('inspection_ohc_occupational_health_inspection.issue_date', DBdateformat($request->issue_date));
-        }
-        if (isset($request->rev_date) && $request->rev_date) {
-            $query = $query->where('inspection_ohc_occupational_health_inspection.revision_date', $request->rev_date );
-        }
 
-        if (!empty($request->status)) {
-            $status = decryptId($request->status);
-
-                $query->where('inspection_ohc_occupational_health_inspection.approve_status',  $status );
-
-        }
-
+        $query = $this->select(
+            'inspection_ohc_occupational_health_inspection.*');
+            if (isset($request->status) && $request->status) {
+                $query = $query->where('inspection_ohc_occupational_health_inspection.approve_status',decryptId( $request->status));
+            }
+            if (isset($request->unit_id) && $request->unit_id) {
+                $query = $query->where('inspection_ohc_occupational_health_inspection.unit', decryptId($request->unit_id));
+            }
+            if (isset($request->shift) && $request->shift) {
+                $query = $query->where('inspection_ohc_occupational_health_inspection.shift', decryptId($request->shift));
+            }
+            if (isset($request->location_id) && $request->location_id) {
+                $query = $query->where('inspection_ohc_occupational_health_inspection.location', decryptId($request->location_id));
+            }
 
         if (isset($request->order) && count($request->order) > 0) {
             $columnName = $request->order[0]['column'];
@@ -306,7 +322,7 @@ class OccupationHealthInspection extends Model
             }
         }
 
-        $query->orderBy('id', 'DESC');
+        $query->orderBy('inspection_ohc_occupational_health_inspection.id', 'DESC');
 
         return  $query->get();
     }

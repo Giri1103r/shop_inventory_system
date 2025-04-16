@@ -35,7 +35,7 @@ class OHCHygieneCleaningChecklist extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_ohc_hygiene_checklist.*')
+        $query = $this->select('inspection_ohc_hygiene_checklist.*', 'inspection_shift_option.*', 'inspection_ohc_hygiene_checklist.id as inspection_id', 'inspection_ohc_hygiene_checklist.created_by as checked_by', 'inspection_ohc_hygiene_checklist.updated_by as verified_by')
             ->leftjoin('inspection_shift_option', 'inspection_shift_option.id', '=', 'inspection_ohc_hygiene_checklist.shift_id');
 
 
@@ -100,7 +100,7 @@ class OHCHygieneCleaningChecklist extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_ohc_hygiene_checklist.*')
+        $query = $this->select('inspection_ohc_hygiene_checklist.*', 'inspection_shift_option.*', 'inspection_ohc_hygiene_checklist.id as inspection_id', 'inspection_ohc_hygiene_checklist.created_by as checked_by', 'inspection_ohc_hygiene_checklist.updated_by as verified_by')
             ->leftjoin('inspection_shift_option', 'inspection_shift_option.id', '=', 'inspection_ohc_hygiene_checklist.shift_id');
 
 

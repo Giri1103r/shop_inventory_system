@@ -66,7 +66,7 @@ class SafetyPermitController extends BaseController
 
                 $safety_permit_array->where(function ($query) use ($searchDate, $search) {
                     $query->whereDate('ptw_safety.date', $searchDate)
-                          ->orWhere('ptw_safety.permit_id', $search);
+                        ->orWhere('ptw_safety.permit_id', $search);
                 });
             }
 
@@ -161,36 +161,63 @@ class SafetyPermitController extends BaseController
                     }
                 }
 
-                $stateIsolationLoto = json_decode($safetypermit->state_isolation_loto, true);
-                $state_of_isolation = [];
-
-                $items = ['Air', 'Gas', 'Electrical', 'Water/Liquid'];
-
+                $stateIsolationLoto = json_decode($safetypermit->state_isolation_loto, true) ?? [];
                 $state_of_isolation = [];
                 $other_if_any = [];
+// dd($stateIsolationLoto);
+$knownItems = ['Air', 'Gas', 'Electrical', 'Water/Liquid'];
 
-                foreach ($items as $item) {
+                foreach ($knownItems as $item) {
                     $key = strtolower(str_replace('/', '_', $item));
 
+                    // Determine the correct image path
+                    switch ($item) {
+                        case 'Air':
+                            $imagePath = 'public/assets/images/safetypermit/person.png';
+                            break;
+                        case 'Gas':
+                            $imagePath = 'public/assets/images/safetypermit/natural-gas.png';
+                            break;
+                        case 'Electrical':
+                            $imagePath = 'public/assets/images/safetypermit/electrician.png';
+                            break;
+                        case 'Water/Liquid':
+                            $imagePath = 'public/assets/images/safetypermit/leak.png';
+                            break;
+                        default:
+                            $imagePath = 'public/assets/images/safetypermit/default.png'; // fallback
+                    }
+
                     $state_of_isolation[$key] = [
-                        'image' => asset('assets/images/safetypermit/person.png'),
+                        'image' => $imagePath,
                         'name' => $item,
                         'checked' => in_array($item, $stateIsolationLoto) ? 'Yes' : 'No'
-
                     ];
-                    $isolationpanel = [
-                        'image' => asset('assets/images/safetypermit/person.png'),
-                        'name' => "Isolation fire panel",
-                        'checked' => $safetypermit->isolationpanel_checkbox ? 'Yes' : 'No'
 
-                    ];
-                    $isolationpaneldescription = [
 
-                        'name' => "Isolation fire panel Description",
-                        'checked' => $safetypermit->isolationpanel_description
 
-                    ];
                 }
+                foreach ($stateIsolationLoto as $item) {
+                    if (!in_array($item, $knownItems)) {
+                        $other_if_any[] = [
+                            'other_if_any' => $item,
+
+                        ];
+                    }
+                }
+                $isolationpanel = [
+                    'image' => ('public/assets/images/safetypermit/fire.png'),
+                    'name' => "Isolation fire panel",
+                    'checked' => $safetypermit->isolationpanel_checkbox ? 'Yes' : 'No'
+                ];
+
+                $isolationpaneldescription = [
+                    'name' => "Isolation fire panel Description",
+                    'isolationpanel_description' => $safetypermit->isolationpanel_description
+                ];
+
+
+
                 $protective_equip = [];
 
                 foreach ($safetypermit->mapped_protective_equip as $job => $details) {
@@ -253,7 +280,7 @@ class SafetyPermitController extends BaseController
                 if (!empty($getEhSverification->file_paths)) {
                     foreach (explode(',', $getEhSverification->file_paths) as $file) {
                         $file_paths[] = [
-                            'filepath' => trim($file)
+                            'file_path' => trim($file)
                         ];
                     }
                 }
@@ -304,25 +331,25 @@ class SafetyPermitController extends BaseController
                         'job_description' => $safetypermit->job_description,
 
                         'shut_down' => [
-                            'images' => asset('assets/images/safetypermit/power-off.png'),
+                            'images' => ('public/assets/images/safetypermit/power-off.png'),
                             'name' => "Shut Down Required",
                             'shutdown_req_checked' => $safetypermit->shutdown_req == 1 ? 'Yes' : 'No',
                         ],
 
                         'shut_down_takenby' => [
-                            'images' => asset('assets/images/safetypermit/profile.png'),
+                            'images' => ('public/assets/images/safetypermit/profile.png'),
                             'name' => "Taken By (Name & Department)",
                             'shut_down_takenby' => $safetypermit->shut_down_takenby,
                         ],
 
                         'loto_req' => [
-                            'images' => asset('assets/images/safetypermit/process.png'),
+                            'images' => ('public/assets/images/safetypermit/process.png'),
                             'name' => "Isolation/LOTO Required",
                             'loto_req_checked' => $safetypermit->loto_req == 1 ? 'Yes' : 'No',
                         ],
 
                         'loto_req_takenby' => [
-                            'images' => asset('assets/images/safetypermit/profile.png'),
+                            'images' => ('public/assets/images/safetypermit/profile.png'),
                             'name' => "Taken By (Name & Department)",
                             'loto_takenby' => $safetypermit->loto_takenby,
                         ],
@@ -335,7 +362,12 @@ class SafetyPermitController extends BaseController
                         ],
                     ],
 
-                    'state_of_isolation' => $state_of_isolation,
+                    'state_of_isolation' =>
+                    $state_of_isolation,
+                    'other_if_any' => $other_if_any,
+                    'isolationpanel' => $isolationpanel,
+                    'isolationpaneldescription' => $isolationpaneldescription,
+
                     'confined_space_entry' => [
                         'o2' => [
                             'name' => "O2%",
@@ -359,7 +391,7 @@ class SafetyPermitController extends BaseController
                         ],
                         'register_entry_exits' => [
                             'name' => "Register for entry & exits ",
-                            "register_entry_exits_checked" => $confined_space_entry && $confined_space_entry->register_entry_exits  == 1 ? 'Yes' : 'No',
+                            'register_entry_exits_checked' => isset($confined_space_entry->register_entry_exits) && $confined_space_entry->register_entry_exits == 1 ? 'Yes' : 'No',
                         ],
                         'other_gas' => [
                             'name' => "Any Other Gas / PPM",
@@ -377,13 +409,13 @@ class SafetyPermitController extends BaseController
 
                     'protective_equipments_worn' => [
                         'images' => [
-                            url('public/assets/images/safetypermit/gloves.png'),
-                            url('public/assets/images/safetypermit/helmet.png'),
-                            url('public/assets/images/safetypermit/shoes.png'),
-                            url('public/assets/images/safetypermit/gloves (1).png'),
-                            url('public/assets/images/safetypermit/boots (1).png'),
-                            url('public/assets/images/safetypermit/boots.png'),
-                            url('public/assets/images/safetypermit/safety-goggles.png'),
+                            ('public/assets/images/safetypermit/gloves.png'),
+                            ('public/assets/images/safetypermit/helmet.png'),
+                            ('public/assets/images/safetypermit/shoes.png'),
+                            ('public/assets/images/safetypermit/gloves (1).png'),
+                            ('public/assets/images/safetypermit/boots (1).png'),
+                            ('public/assets/images/safetypermit/boots.png'),
+                            ('public/assets/images/safetypermit/safety-goggles.png'),
                         ],
                         'protective_equipments_worn' => $protective_equip,
                     ],
@@ -395,10 +427,10 @@ class SafetyPermitController extends BaseController
                     ],
                     'equipment_involved_job' => [
                         'images' => [
-                            url('public/assets/images/safetypermit/flash.png'),
-                            url('public/assets/images/safetypermit/shoes.png'),
-                            url('public/assets/images/safetypermit/gloves (1).png'),
-                            url('public/assets/images/safetypermit/gloves.png'),
+                            ('public/assets/images/safetypermit/flash.png'),
+                            ('public/assets/images/safetypermit/shoes.png'),
+                            ('public/assets/images/safetypermit/gloves (1).png'),
+                            ('public/assets/images/safetypermit/gloves.png'),
 
                         ],
                         'equipment_involved_job' => $equipment_involve,
@@ -448,19 +480,9 @@ class SafetyPermitController extends BaseController
                         'approver_name' => $getEhSverification->approve_reject_by ?? '',
                         'date' => isset($getEhSverification->date) ? Displaydateformat($getEhSverification->date) : '',
                         'additional_suggestion' => $getEhSverification->remarks ?? '',
-                        'signature' => $file_paths // Use the correctly structured array
+                        'signature' => $file_paths
                     ],
-                    'permit_extention' => [
-                        'approver_name' => getUsername(isset($getsafetyPermitExtension->created_by) ? $getsafetyPermitExtension->created_by : ''),
-                        'date' =>  isset($getsafetyPermitExtension->date) ? Displaydateformat($getsafetyPermitExtension->date) : '',
-                        'time' => isset($getsafetyPermitExtension->to_time) ? $getsafetyPermitExtension->to_time : '',
-                        'remarks' => isset($getsafetyPermitExtension->remarks) ? $getsafetyPermitExtension->remarks : ''
-                    ],
-                    'permit_extention_approval' => [
-                        'approver_name' => isset($getpermitextensionapproval->approve_reject_by) ? $getpermitextensionapproval->approve_reject_by : '',
-                        'date' =>  isset($getpermitextensionapproval->date) ? Displaydateformat($getpermitextensionapproval->date) : '',
-                        'remarks' => isset($getpermitextensionapproval->remarks) ? $getpermitextensionapproval->remarks : ''
-                    ],
+
                     'ehs_head_approval' => [
                         'approver_name' => isset($getEhsapproval->approve_reject_by) ? $getEhsapproval->approve_reject_by : '',
                         'date' =>  isset($getEhsapproval->date) ? Displaydateformat($getEhsapproval->date) : '',
@@ -483,8 +505,6 @@ class SafetyPermitController extends BaseController
                 ];
 
                 return $this->sendResponse($success, 'Safety Permit Details');
-            } else {
-                return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
             }
         } catch (Exception $ex) {
             report($ex);
@@ -838,7 +858,7 @@ class SafetyPermitController extends BaseController
                 'exact_location_job' => $safetypermit->exact_location_job ?? '-',
                 'job_location_area' => $safetypermit->job_location_area ?? '-',
                 'created_by' => isset($safetypermit->created_by) ? getUsername($safetypermit->created_by) : '-',
-                'qr_code' => $qrBase64,
+
             ];
 
             return $this->sendResponse($success, 'Safety Permit Qr Code');

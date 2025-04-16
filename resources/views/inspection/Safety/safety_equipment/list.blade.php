@@ -23,30 +23,50 @@
                             <div class="card-body">
                                 <div class="col-md-12">
                                     <div class="row">
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="document_number"
-                                                class="form-label ">{{ __('inspection.doc_no') }}</label>
-                                            <input type="text" name="document_number" id="document_number"
-                                                class="form-control">
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label
+                                                    class="form-label require">{{ __('inspection.equipment_name') }}</label>
+                                                <select name="equipment_name" id="equipment_name"
+                                                    class=" form-control single-select" style="width: 100%">
+                                                    <option value="">Select Equipment</option>
+                                                    @foreach ($equipment as $equipment)
+                                                        <option value="{{ encryptId($equipment->id) }}">
+                                                            {{ $equipment->equipment_name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
                                         </div>
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="issue_date"
-                                                class="form-label ">{{ __('inspection.issue_date') }}</label>
-                                            <input type="text" name="issue_date" id="issue_date" class="form-control">
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label require">{{ __('inspection.item_code') }}</label>
+                                                <input type="text" name="item_code" id = "item_code"
+                                                    class="form-control">
+                                            </div>
                                         </div>
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="rev_date"
-                                                class="form-label ">{{ __('inspection.rev_date') }}</label>
-                                            <input type="text" name="rev_date" id="rev_date" class="form-control">
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label
+                                                    class="form-label require">{{ __('inspection.standard_norms') }}</label>
+                                                <select name="standard_norms" id="standard_norms"
+                                                    class=" form-control single-select" style="width: 100%">
+                                                    <option value="">Select Standard/Norms</option>
+                                                    <option value="{{ encryptId(STANDARD) }}">
+                                                        STANDARD</option>
+                                                    <option value="{{ encryptId(NORMS) }}">
+                                                        NORMS</option>
+                                                </select>
+                                            </div>
                                         </div>
 
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="inspection_status" class="form-label ">{{ __('common.status') }}</label>
-                                            <select name="inspection_status" id="inspection_status" style="width: 100%"
+                                            <label for="inspection_status"
+                                                class="form-label ">{{ __('common.status') }}</label>
+                                            <select name="status" id="status" style="width: 100%"
                                                 class="form-control single-select">
                                                 <option value="">Select Status</option>
-                                                <option value="{{encryptId('1')}}">Active</option>
-                                                <option value="{{encryptId('2')}}">InActive</option>
+                                                <option value="{{ encryptId('1') }}">Active</option>
+                                                <option value="{{ encryptId('0') }}">InActive</option>
 
                                             </select>
                                         </div>
@@ -70,9 +90,9 @@
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
-                                        <th>{{ __('inspection.doc_no') }}</th>
-                                        <th>{{ __('inspection.issue_date') }}</th>
-                                        <th>{{ __('inspection.rev_date') }}</th>
+                                        <th>{{ __('inspection.equipment_name') }}</th>
+                                        <th>{{ __('inspection.item_code') }}</th>
+                                        <th>{{ __('inspection.standard_norms') }}</th>
                                         <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.action') }}</th>
                                     </tr>
@@ -132,10 +152,10 @@
                                 .attr('content')
                         },
                         data: function(d) {
-                            d.document_number = $('#document_number').val();
-                            d.issue_date = $('#issue_date').val();
-                            d.rev_date = $('#rev_date').val();
-                            d.inspection_status = $('#inspection_status').val();
+                            d.equipment_name = $('#equipment_name').val();
+                            d.item_code = $('#item_code').val();
+                            d.standard_norms = $('#standard_norms').val();
+                            d.status = $('#status').val();
                         },
                         error: function(xhr, error, code) {
                             if (xhr.status === 419) {
@@ -151,16 +171,16 @@
                         },
 
                         {
-                            data: 'doc_no',
-                            name: 'doc_no',
+                            data: 'equipment_name',
+                            name: 'equipment_name',
                         },
                         {
-                            data: 'issue_date',
-                            name: 'issue_date',
+                            data: 'item_code',
+                            name: 'item_code',
                         },
                         {
-                            data: 'revision_data',
-                            name: 'revision_data',
+                            data: 'standard_norms',
+                            name: 'standard_norms',
                         },
                         {
                             data: 'status',
@@ -195,9 +215,9 @@
                                     text: '{{ __('common.pdf') }}',
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
-                                        document_number = $('#document_number').val();
-                                        issue_date = $('#issue_date').val();
-                                        rev_date = $('#rev_date').val();
+                                        equipment_name = $('#equipment_name').val();
+                                        item_code = $('#item_code').val();
+                                        standard_norms = $('#standard_norms').val();
                                         status = $('#status').val();
 
                                         $(".dt-button").removeClass('processing');
@@ -205,9 +225,9 @@
                                         window.location.href =
                                             "{{ admin_url('safety/fire-safety-equipment/export/pdf') }}" +
                                             '?search=' + searchValue +
-                                            '&document_number=' + document_number +
-                                            '&issue_date=' + issue_date +
-                                            '&rev_date=' + rev_date +
+                                            '&equipment_name=' + equipment_name +
+                                            '&item_code=' + item_code +
+                                            '&standard_norms=' + standard_norms +
                                             '&status=' + status
                                     }
                                 },
@@ -216,18 +236,18 @@
                                     text: '{{ __('common.excel') }}',
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
-                                        document_number = $('#document_number').val();
-                                        issue_date = $('#issue_date').val();
-                                        rev_date = $('#rev_date').val();
+                                        equipment_name = $('#equipment_name').val();
+                                        item_code = $('#item_code').val();
+                                        standard_norms = $('#standard_norms').val();
                                         status = $('#status').val();
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
                                             "{{ admin_url('safety/fire-safety-equipment/export/excel') }}" +
                                             '?search=' + searchValue +
-                                            '&document_number=' + document_number +
-                                            '&issue_date=' + issue_date +
-                                            '&rev_date=' + rev_date +
+                                            '&equipment_name=' + equipment_name +
+                                            '&item_code=' + item_code +
+                                            '&standard_norms=' + standard_norms +
                                             '&status=' + status
                                     }
                                 },
@@ -289,7 +309,7 @@
 
                         if (result.value) {
                             $.ajax({
-                                url: "{{ admin_url('safety/fire-safety-equipment/list/status') }}",
+                                url: "{{ admin_url('safety/fire-safety-equipment/status') }}",
                                 type: 'post',
 
                                 data: {
@@ -357,7 +377,7 @@
 
                         if (result.value) {
                             $.ajax({
-                                url: "{{ admin_url('safety/fire-safety-equipment/list/delete') }}",
+                                url: "{{ admin_url('safety/fire-safety-equipment/delete') }}",
                                 type: 'post',
                                 headers: {
                                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]')

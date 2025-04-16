@@ -3,9 +3,11 @@
 namespace App\Models\Inspection\GembaWalk;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Scopes\TrashScope;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class GembaWalk extends Model
 {
@@ -20,6 +22,7 @@ class GembaWalk extends Model
         'date',
         'shift_id',
         'gemba_walk_status',
+        'observation_needed',
         'status',
         'trash',
         'created_by',
@@ -53,7 +56,6 @@ class GembaWalk extends Model
                     ->orWhere('inspection_gemba_walk.gemba_walk_auto_id', 'LIKE', '%' . $search . '%')
                     ->orWhere('inspection_shift_option.shift', 'LIKE', '%' . $search . '%')
                     ->orWhere('inspection_gemba_walk.date', 'LIKE', '%' . DBdateformat($search) . '%');
-
             });
         }
 
@@ -99,14 +101,13 @@ class GembaWalk extends Model
     {
         $request = request();
         $insert_array = array(
-            'gemba_walk_auto_id' => $request->gemba_walk_id,
             'document_reference_id' => $request->document_reference_id,
             'date' => DBdateformat($request->document_upload_date),
             'shift_id' => decryptId($request->shift),
+            'observation_needed'=>decryptId($request->observation_needed),
             'gemba_walk_status' => GEMBA_WALK_INSPECTION_WAITING_FOR_CAPA_ACTION,
             'created_by' => Auth::id()
         );
-        // dd($insert_array);
         return $this->create($insert_array);
     }
 
@@ -122,7 +123,10 @@ class GembaWalk extends Model
 
         )
             ->leftJoin('inspection_gemba_walk_checklist', 'inspection_gemba_walk_checklist.gemba_walk_id', '=', 'inspection_gemba_walk.id')
-            ->leftJoin('inspection_gemba_walk_checklist_files', 'inspection_gemba_walk_checklist_files.gemba_walk_checklist_id', '=', 'inspection_gemba_walk_checklist.id')
+            ->leftJoin('inspection_gemba_walk_checklist_files', function ($join) {
+                $join->on('inspection_gemba_walk_checklist_files.gemba_walk_checklist_id', '=', 'inspection_gemba_walk_checklist.id')
+                     ->where('inspection_gemba_walk_checklist_files.file_type', '=', 3); 
+            })
             ->where('inspection_gemba_walk.id', $id)
             ->get();
 
@@ -170,10 +174,6 @@ class GembaWalk extends Model
         return $this->where('inspection_gemba_walk.id', $id)->where('status', 1)->first();
     }
 
-
-
-
-
     public function updateStatus($gembaWalk_id, $gembaWalk_status)
     {
         $request = request();
@@ -189,9 +189,29 @@ class GembaWalk extends Model
     {
         $request = request();
         $search = '';
-       $query = $this->select('inspection_gemba_walk.*', 'inspection_gemba_walk_status.status_name', 'inspection_gemba_walk_status.bg_color', 'inspection_shift_option.shift')
-            ->leftJoin('inspection_shift_option', 'inspection_shift_option.id', '=', 'inspection_gemba_walk.shift_id')
-            ->leftJoin('inspection_gemba_walk_status', 'inspection_gemba_walk_status.id', '=', 'inspection_gemba_walk.gemba_walk_status');
+      
+        $query = $this->select(
+            'inspection_gemba_walk.*',
+            'inspection_gemba_walk.id as inspection_id',
+            'inspection_gemba_walk.created_by as inspection_created_by',
+            'inspection_gemba_walk.updated_by as verified_by',
+
+            'inspection_gemba_walk_status.status_name',
+            'inspection_gemba_walk_status.bg_color',
+            'inspection_shift_option.shift',
+            'inspection_gemba_walk_checklist.*',
+            'inspection_static_docno.*',
+            'inspection_gemba_walk_checklist_files.file_path'
+        )
+        ->leftJoin('inspection_gemba_walk_checklist', 'inspection_gemba_walk_checklist.gemba_walk_id', '=', 'inspection_gemba_walk.id')
+        ->leftJoin('inspection_gemba_walk_checklist_files', function ($join) {
+            $join->on('inspection_gemba_walk_checklist_files.gemba_walk_checklist_id', '=', 'inspection_gemba_walk_checklist.id')
+                 ->where('inspection_gemba_walk_checklist_files.file_type', '=', 3); 
+        })
+        ->leftJoin('inspection_shift_option', 'inspection_shift_option.id', '=', 'inspection_gemba_walk.shift_id')
+        ->leftJoin('inspection_gemba_walk_status', 'inspection_gemba_walk_status.id', '=', 'inspection_gemba_walk.gemba_walk_status')
+        ->leftJoin('inspection_static_docno', 'inspection_gemba_walk.document_reference_id', '=', 'inspection_static_docno.id');
+
         if ($request->search != null || $request->search != '') {
             $search = $request->search;
 
@@ -200,11 +220,10 @@ class GembaWalk extends Model
                     ->orWhere('inspection_gemba_walk.gemba_walk_auto_id', 'LIKE', '%' . $search . '%')
                     ->orWhere('inspection_shift_option.shift', 'LIKE', '%' . $search . '%')
                     ->orWhere('inspection_gemba_walk.date', 'LIKE', '%' . DBdateformat($search) . '%');
-
             });
         }
-        if ($request->has('doc_no') && $request->doc_no) {
-            $query = $query->where('inspection_gemba_walk.gemba_walk_auto_id', 'LIKE', '%' . $request->doc_no . '%');
+        if ($request->has('gemba_walk_auto_id') && $request->gemba_walk_auto_id) {
+            $query = $query->where('inspection_gemba_walk.gemba_walk_auto_id', 'LIKE', '%' . $request->gemba_walk_auto_id . '%');
         }
 
         if ($request->has('date') && $request->date) {
@@ -220,9 +239,22 @@ class GembaWalk extends Model
         if ($request->has('shift') && $request->shift) {
             $query = $query->where('inspection_gemba_walk.shift_id',  decryptId($request->shift));
         }
-        
-        $query->orderBy('id', 'DESC');
+        $query->orderBy('inspection_gemba_walk.id', 'DESC');
+        $results = $query->get();
+        $query = $results->groupBy('gemba_walk_id');
 
-        return  $query->get();
+        return  $query;
+    }
+
+
+
+    protected static function booted()
+    {
+        static::addGlobalScope(new TrashScope('inspection_gemba_walk'));
+        static::created(function ($model) {
+
+            $uniqueId = 'GMB-' . str_pad($model->id, 5, '0', STR_PAD_LEFT);
+            $model->update(['gemba_walk_auto_id' => $uniqueId]);
+        });
     }
 }

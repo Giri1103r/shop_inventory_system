@@ -17,9 +17,9 @@ class FirstAidRecordDetails extends Model
 
     protected $fillable = [
         'id',
-        'document_number',
-        'issue_date',
-        'revision_date',
+        'document_reference_id',
+        'month',
+        'year',
         'overall_total_number_of_first_aid',
         'status',
         'trash',
@@ -38,8 +38,9 @@ class FirstAidRecordDetails extends Model
     {
         $request = request();
         $search = '';
+
         $query = $this->select('ohc_first_aid_record_details.*');
-      
+
         $org_total =  $query;
         $org_total_counts = $org_total->count();
 
@@ -48,24 +49,18 @@ class FirstAidRecordDetails extends Model
 
             $query->where(function ($query) use ($search) {
                 $query
-                    ->orWhere('document_number', 'LIKE', '%' . $search . '%')
-                    ->orWhere('issue_date', 'LIKE', '%' . $search . '%')
-                    ->orWhere('revision_date', 'LIKE', '%' . $search . '%');
+                    ->orWhere('month', 'LIKE', '%' . $search . '%')
+                    ->orWhere('year', 'LIKE', '%' . $search . '%');
             });
         }
 
-        if ($request->has('document_number') && $request->document_number) {
-            $query = $query->where('document_number', 'LIKE', '%' . $request->document_number . '%');
+        if ($request->has('month') && $request->month) {
+            $query = $query->where('month', 'LIKE', '%' . $request->month . '%');
         }
-        if (isset($request->issue_date) && $request->issue_date) {
-            $query = $query->whereDate('issue_date', '=', DBdateformat($request->issue_date));
+        if ($request->has('year') && $request->year) {
+            $query = $query->where('year', 'LIKE', '%' . $request->year . '%');
         }
-        if ($request->has('revision_date') && $request->revision_date) {
-            $query = $query->where('revision_date', 'LIKE', '%' . $request->revision_date . '%');
-        }
-        if ($request->has('status') && $request->status) {
-            $query = $query->where('status', decryptId($request->status));
-        }
+
         $data_count = $query;
         $total_records = $data_count->count();
 
@@ -88,21 +83,36 @@ class FirstAidRecordDetails extends Model
     public function store()
     {
         $request = request();
-       
+
         $insert_array = array(
-            'document_number' => $request->document_number,
-            'issue_date' => DBdateformat($request->issue_date),
-            'revision_date' => $request->revision_date,
+            'document_reference_id' => decryptId($request->document_reference_id),
+            'month' => $request->month,
+            'year' => $request->year,
             'created_by' => Auth::id(),
-            'overall_total_number_of_first_aid' => $request->overall_total_number_of_first_aid, 
+            'overall_total_number_of_first_aid' => $request->overall_total_number_of_first_aid,
         );
-    
+
         return $this->create($insert_array);
     }
 
     public function selectOne($id)
     {
-        return $this->where('id', $id)->first();
+        return $this->where('id', $id)->where('status', 1)->where('trash', 'NO')->first();
+    }
+
+    public function UniqueCheck($month, $year)
+    {
+        return $this->where('month', $month)
+            ->where('year', $year)
+            ->get();
+    }
+
+    public function ExistuniqueCheck($month, $year, $id)
+    {
+        return $this->where('month', $month)
+            ->where('year', $year)
+            ->where('id', '!=', $id)
+            ->get();
     }
 
     public function statuschange($id)
@@ -126,36 +136,47 @@ class FirstAidRecordDetails extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('ohc_first_aid_record_details.*');
+
+        $query = $this->select(
+            'ohc_first_aid_record_details.*',
+            'ohc_first_aid_record_checklist.*',
+            'masters_department.*',
+            'masters_unit.*',
+            'ohc_first_aid_record_details.created_by as checked_by',
+            'ohc_first_aid_record_details.id as first_aid_record_id'
+        )
+            ->leftJoin('ohc_first_aid_record_checklist', 'ohc_first_aid_record_details.id', '=', 'ohc_first_aid_record_checklist.ohc_first_aid_record_details_id')
+            ->leftJoin('masters_department', 'ohc_first_aid_record_checklist.department', '=', 'masters_department.id')
+            ->leftJoin('masters_unit', 'ohc_first_aid_record_checklist.unit', '=', 'masters_unit.id')
+            ->where('ohc_first_aid_record_details.trash', 'NO');
+
+
         if ($request->search != null || $request->search != '') {
             $search = $request->search;
 
-            $query =  $query->Where(function ($query) use ($search) { 
-                $query->orWhere('document_number', 'LIKE', '%' . $search . '%')
-                    ->orWhere('issue_date', 'LIKE', '%' . $search . '%')
-                    ->orWhere('revision_date', 'LIKE', '%' . $search . '%');
+            $query =  $query->Where(function ($query) use ($search) {
+                $query->orWhere('month', 'LIKE', '%' . $search . '%')
+                    ->orWhere('year', 'LIKE', '%' . $search . '%');
             });
         }
-        if ($request->has('document_number') && $request->document_number) {
-            $query = $query->where('document_number', 'LIKE', '%' . $request->document_number . '%');
+        if ($request->has('month') && $request->month) {
+            $query = $query->where('month', 'LIKE', '%' . $request->month . '%');
         }
-        if (isset($request->issue_date) && $request->issue_date) {
-            $query = $query->whereDate('issue_date', '=', DBdateformat($request->issue_date));
+        if ($request->has('year') && $request->year) {
+            $query = $query->where('year', 'LIKE', '%' . $request->year . '%');
         }
-        if ($request->has('revision_date') && $request->revision_date) {
-            $query = $query->where('revision_date', 'LIKE', '%' . $request->revision_date . '%');
-        }
-        if ($request->has('status') && $request->status) {
-            $query = $query->where('status', decryptId($request->status));
-        }
-        $query->orderBy('id', 'DESC');
+        $query->orderBy('ohc_first_aid_record_details.id', 'DESC');
 
-        return  $query->get();
+        $data = $query->get();
+        if ($data) {
+            return $data = $data->groupBy('ohc_first_aid_record_details_id');
+        }else{
+            return $data;
+        }
     }
 
-    protected static function booted()
-    {
-        static::addGlobalScope(new TrashScope('ohc_first_aid_record_details'));
-    }
-
+    // protected static function booted()
+    // {
+    //     static::addGlobalScope(new TrashScope('ohc_first_aid_record_details'));
+    // }
 }

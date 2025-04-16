@@ -7,9 +7,11 @@ use App\Http\Controllers\Controller;
 use App\Mail\PpeExemptionEmail;
 use App\Mail\PpeExemptionRejectEmail;
 use App\Mail\PpeExemptionRequestorEmail;
+use App\Models\Master\Employee;
 use App\Models\Master\PpeExemption;
 use App\Models\Master\PpeRequest;
 use App\Models\Master\PpeType;
+use App\Models\Master\Work;
 use App\Models\Ppemanagement\PpeFiles;
 use App\Models\Statuslog;
 use App\Models\User;
@@ -74,11 +76,11 @@ class PpeExemptionController extends BaseController
 
             if (!empty($search)) {
                 $searchDate = DBdateformat($search);
-                $ppe_exemption_array->where(function ($query) use ($search,$searchDate) {
+                $ppe_exemption_array->where(function ($query) use ($search, $searchDate) {
                     $query->orWhere('ppe_ppeexemption.emp_id', 'LIKE', "%{$search}%")
-                    ->orWhereDate('ppe_ppeexemption.created_at', 'LIKE', "%{$searchDate}%")
-                    ->orWhere('masters_department.department_name', 'LIKE', "%{$search}%")
-                    ->orWhere('masters_unit.unit_name', 'LIKE', "%{$search}%")
+                        ->orWhereDate('ppe_ppeexemption.created_at', 'LIKE', "%{$searchDate}%")
+                        ->orWhere('masters_department.department_name', 'LIKE', "%{$search}%")
+                        ->orWhere('masters_unit.unit_name', 'LIKE', "%{$search}%")
 
                         ->orWhere('ppe_ppeexemption.emp_name', 'LIKE', "%{$search}%");
                 });
@@ -168,12 +170,37 @@ class PpeExemptionController extends BaseController
                 if ($validator->fails()) {
                     return $this->sendError('Validation Error', $validator->errors(), 422);
                 }
+
+                if ($request->request_for == 1) {
+
+                    $employee = User::where('employee_id', $request->emp_id)
+                        ->select('unit_id', 'department_id', 'company_id')
+                        ->first();
+
+                    $unit = $employee->unit_id;
+                    $department = $employee->department_id;
+
+
+                    $company = $employee->company_id ?? null;
+                } elseif ($request->request_for == 2) {
+                    $work = Work::where('emp_id', $request->emp_id)
+                        ->select('unit', 'department', 'company')
+                        ->first();
+
+                    $unit = $work->unit ?? null;
+                    $department = $work->department;
+                    $company = $work->company ?? null;
+                } else {
+                    $unit = Auth::user()->unit_id;
+                    $department = Auth::user()->department_id;
+                    $company = Auth::user()->company_id;
+                }
                 $insert_array = [
                     'emp_id' => $request->emp_id,
                     'emp_name' => $request->emp_name,
-                    'department' =>  $request->department,
-                    'unit' => Auth::user()->unit_id,
-                    'company' => Auth::user()->company_id,
+                    'department' => $department,
+                    'unit' => $unit,
+                    'company' =>  $company,
                     'request_for' => $request->request_for,
                     'from_date' => DBdateformat($request->from_date),
                     'to_date' => DBdateformat($request->to_date),
@@ -247,8 +274,6 @@ class PpeExemptionController extends BaseController
                 ];
 
                 return $this->sendResponse($success, 'PPE Exemption Created successfully');
-            } else {
-                return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
             }
         } catch (Exception $ex) {
             report($ex);
@@ -274,9 +299,9 @@ class PpeExemptionController extends BaseController
                     STATUS_HOD_APPROVED => 'HOD Approved',
                     STATUS_USER_APPLIED => 'User Applied',
                     STATUS_HOD_REJECTED => 'HOD Rejected',
-                    STATUS_EHS_APPROVAL_PENDING => 'EHS Officer Approval Pending',
-                    STATUS_EHS_APPROVED => 'EHS Officer Approved',
-                    STATUS_EHS_REJECTED => 'EHS Officer Rejected',
+                    STATUS_EHS_APPROVAL_PENDING => 'EHS  Head Approval Pending',
+                    STATUS_EHS_APPROVED => 'EHS  Head Approved',
+                    STATUS_EHS_REJECTED => 'EHS  Head Rejected',
                     STATUS_ISSUED => 'Issued'
                 ];
 
@@ -290,17 +315,16 @@ class PpeExemptionController extends BaseController
                             'created_by' => getusername($value->created_by),
                             'created_at' => Displaydateformat($value->created_at),
                         ];
-
-                        $ppestatuslog[] = [
-                            'from_status' =>'EHS Head Approval Pending',
-                            'to_status' => '-',
-                            'remarks' =>'-',
-                            'created_by' => '-',
-                            'created_at' => '-',
-                        ];
-
+                        if ($value->from_status == STATUS_USER_APPLIED) {
+                            $ppestatuslog[] = [
+                                'from_status' => 'EHS Head Approval Pending',
+                                'to_status' => '-',
+                                'remarks' => '-',
+                                'created_by' => '-',
+                                'created_at' => '-',
+                            ];
+                        }
                     }
-
                 }
                 $files = [];
                 if (!empty($ppefiles)) {
@@ -319,14 +343,14 @@ class PpeExemptionController extends BaseController
                     'from_date' => Displaydateformat($details->from_date),
                     'to_date' => Displaydateformat($details->to_date),
                     'reason' => ($details->reason),
-                    'files'=> $files,
+                    'files' => $files,
                     'created_by' => getusername($details->created_by),
                     'created_at' => Displaydateformat($details->created_at),
                     'status_log' => $ppestatuslog,
 
                 ];
 
-                return $this->sendResponse($success, 'PPE Request Details');
+                return $this->sendResponse($success, 'PPE Exemption Details');
             } else {
                 return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
             }

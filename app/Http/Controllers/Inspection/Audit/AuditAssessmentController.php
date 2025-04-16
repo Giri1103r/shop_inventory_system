@@ -76,6 +76,10 @@ class AuditAssessmentController extends Controller
                             // if (CheckUserRole(ROLE_SUPERADMIN)) {
                                 // $btn .= '<a href="' . admin_url('inspection/master/checklist-sub-type/edit/' . encryptId($row->id)) . '" class="edit-icon " title="' . __('common.edit') . '"><i class="fa-solid fa-pen-to-square"></i> ';
                             // }
+
+                            $btn .= '<a href="' . admin_url('audit/assessment/generalpdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
+                            <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
+                        </a>';
                             return $btn;
                         })
                         ->rawColumns(['action', 'created_date', 'created_by', 'status'])
@@ -182,59 +186,15 @@ class AuditAssessmentController extends Controller
         }
     }
 
-    public function edit($id)
-    {
-        try {
-            $id = decryptId($id);
-            $checklist_subtype = $this->checklist_subtype->selectOne($id);
-            $checklist_sub_type =   $this->checklist_subtype->find($id);
-            $checklist_types  = $this->checklist_type->select('id', 'category_name')->where('status', '1')->get();
-            $data = array(
-                'checklist_sub_type' => $checklist_sub_type,
-                'checklist_types' => $checklist_types,
-            );
-            return view('inspection.inspection_audit.auditAssessment.edit', $data);
-        } catch (Exception $error) {
-            report($error->getMessage());
-        }
-    }
 
-    public function update(Request $request)
-    {
-        try {
-            $id = decryptId($request->id);
-
-            $rules = [
-                'category_id' => 'required',
-                'subcategory_name' => 'required',
-            ];
-            $messages = [
-                'category_id.required' => 'Please enter Category',
-                'subcategory_name.requred' => 'Please enter Sub category name',
-            ];
-            $validator = Validator::make($request->all(), $rules, $messages);
-            if ($validator->fails()) {
-                return redirect()->back()->withErrors($validator)->withInput();
-            }
-            $this->checklist_subtype->updates($id);
-
-
-            Session::flash('success', 'Checklist Category updated successfully!');
-            return redirect(admin_url('audit/assessment/list'));
-        } catch (Exception $ex) {
-
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('audit/assessment/list'));
-        }
-    }
 
     public function statusChange(Request $request)
     {
         try {
             $id = decryptId($request->id);
-            $this->checklist_subtype->statuschange($id);
+            $this->audit_assessment->statuschange($id);
 
-            return response()->json(['status' => 'success', 'msg' => 'Checklist Category status changed'], 200);
+            return response()->json(['status' => 'success', 'msg' => '6S Audit Assessment status changed'], 200);
         } catch (Exception $ex) {
 
             return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
@@ -339,76 +299,45 @@ class AuditAssessmentController extends Controller
         return view('master.checklist_subtype.import', $data);
     }
 
-    public function downloadSample()
-    {
-
-        $filedetails =  exportsamplefile('checklist_type');
-        $filePath = $filedetails->sample_file;
-        $customFileName = $filedetails->file_name;
-
-        return redirect(url($filePath));
-    }
-
-    public function importSubmit(Request $request)
+    public function generalpdf($id)
     {
         try {
-            $file = $request->file('checklist_type_file_upload');
-            $rules = [
-                'checklist_type_file_upload' => 'required',
-            ];
-            $messages = [
-                'checklist_type_file_upload.required' => 'Please upload a file',
-            ];
-            $validator = Validator::make($request->all(), $rules, $messages);
-            if ($validator->fails()) {
-                return redirect()->back()->withErrors($validator)->withInput();
+            $audit_id = decryptId($id);
+            if (Auth::check()) {
+            
+                $audit_assessment =   $this->audit_assessment->selectOne($audit_id);
+                $audit_assessmentCkeclist = json_decode($audit_assessment);
+                $checklist_details = getCheckListQuestion(CHECKLIST_AUDIT_ASSESSMENT);
+                $options =  getoption(CHECKLIST_AUDIT_ASSESSMENT);
+                $getoption = string_to_array($options->type);
             }
-            if ($file != null) {
+            $data = [
+                'audit_assessment' => $audit_assessment,
+                'getoption' => $getoption,
+                'pagetitle' => "6S Audit Assessment",
+            ];
 
-                $uploadpath = 'uploads/checklist_type';
+            $property = [
+                'tempDir' => 'public/pdf/temp/',
+                'mode' => 'c',
+                'margin_left' => 10,
+                'margin_right' => 10,
+                'margin_top' => 10,
 
-                $filenewname = time() . Str::random('16') . '.' . $file->getClientOriginalExtension();
+            ];
 
-                $fileName = $file->getClientOriginalName();
-                $fileSize = $file->getSize();
+            $mpdf = new \Mpdf\Mpdf($property);
+            $mpdf->setAutoTopMargin = 'stretch';
 
-                $fileExt = $file->getClientOriginalExtension();
+            $html = view('inspection.inspection_audit.auditAssessment.viewpdf', $data)->render();
+            $mpdf->WriteHTML($html);
 
-                uploadFile($file, $uploadpath, $filenewname);
-
-                $path = $uploadpath . "/" . $filenewname;
-                $user_id = Auth::id();
-
-                $insert_data = array(
-                    'upload_type' => checklist_type_UPLOAD,
-                    'upload_status' => 0,
-                    'file_name' => $filenewname,
-                    'file_orgname' => $fileName,
-                    'file_path' => $path,
-                    'file_size' => $fileSize,
-                    'file_extension' => $fileExt,
-                    'created_by' => $user_id,
-                );
-
-                $insert_id =  $this->upload_log->create($insert_data)->id;
-
-                $details = [
-                    "user_id" => $user_id,
-                    "log_id" => $insert_id,
-                    "path" => $path,
-                ];
-
-                dispatch(new ImportChecklistCategoryJob($details));
-            }
-            $insert_data['log_id'] = $insert_id;
-            $insert_data['Uploded_by'] = Auth::user()->toArray();
-
-            Session::flash('success', 'Permit Checklist Category Upload Successfull');
-            return redirect(admin_url('inspection/checklist-type/list'));
+            $filename = "6S Audit Assessment.pdf";
+            return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            report($ex);
-            Session::flash('error', 'Permit Checklist Category failed!');
-            return redirect(admin_url('inspection/checklist-type/list'));
+            dd($ex);
+            return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
         }
     }
+
 }

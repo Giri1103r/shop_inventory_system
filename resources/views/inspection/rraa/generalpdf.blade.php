@@ -160,20 +160,21 @@
             <td width="50%" style="padding:5px;"><b>Document Number</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
-                {{ isset($rraa_details->document_number) ? $rraa_details->document_number : '' }}</td>
+                {{ isset($document_no->doc_no) ? $document_no->doc_no : '' }}
+            </td>
         </tr>
         <tr>
             <td width="50%" style="padding:5px;"><b>Issue Date</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
-                {{ Displaydateformat(isset($rraa_details->issue_date) ? $rraa_details->issue_date : '') }}
+                {{ Displaydateformat(isset($document_no->issue_date) ? $document_no->issue_date : '') }}
             </td>
         </tr>
         <tr>
             <td width="50%" style="padding:5px;"><b>Revision & Data</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
-                {{ isset($rraa_details->revision_date) ? $rraa_details->revision_date : '' }}
+                {{ isset($document_no->rev_dt) ? $document_no->rev_dt : '' }}
             </td>
         </tr>
         <tr>
@@ -205,7 +206,6 @@
     <table style="width: 100%; border-collapse: collapse; text-align: center;">
         <thead>
             <tr>
-                <th style="border: 2px solid black; padding: 8px; background-color: #ddd;">SR. NO.</th>
                 <th style="border: 2px solid black; padding: 8px; background-color: #ddd;">SERIAL NUMBER</th>
                 <th style="border: 2px solid black; padding: 8px; background-color: #ddd;">CATEGORY</th>
                 <th style="border: 2px solid black; padding: 8px; background-color: #ddd;">OHS COMPLIANCE INDEX</th>
@@ -220,34 +220,18 @@
             </tr>
         </thead>
         <tbody>
-            @foreach ($rraa_checkList as $item)
             <tr>
-                <td style="border: 2px solid black; padding: 8px;">{{ $loop->iteration }}</td>
-                <td style="border: 2px solid black; padding: 8px;">{{ isset($item->serial_number) ? $item->serial_number : '' }}</td>
-                <td style="border: 2px solid black; padding: 8px;">{{ getCategoryname($item->category) }}</td>
-                <td style="border: 2px solid black; padding: 8px;">{{ isset($item->ohs_compliance_index) ? $item->ohs_compliance_index : '' }}</td>
-                <td style="border: 2px solid black; padding: 8px;">{{ getFrequencyname($item->frequency) }}</td>
-                <td style="border: 2px solid black; padding: 8px;">{{ isset($item->scope) ? $item->scope : '' }}</td>
-                <td style="border: 2px solid black; padding: 8px;">{{ getUsername($item->responsibility) }}</td>
-                <td style="border: 2px solid black; padding: 8px;">{{ isset($item->authority) ? $item->authority : '' }}</td>
-                <td style="border: 2px solid black; padding: 8px;">{{ isset($item->accountability) ? $item->accountability : '' }}</td>
-                <td style="border: 2px solid black; padding: 8px;">{{ isset($item->remark) ? $item->remark : '' }}</td>
-                <td style="border: 2px solid black; padding: 8px;">{{ getUsername(isset($item->created_by) ? $item->created_by : '') }}</td>
-                <td style="border: 2px solid black; padding: 8px;">{{ displayDateformat($item->created_at) }}</td>
-            </tr>
-            @endforeach
-            @php
-                $signature = GetSignature(
-                    $inspection_details->created_by,
-                    $inspection_details->id,
-                    RRAA_INSPECTION,
-                );
-            @endphp
-            <tr>
-                <td colspan="12" style="border: 2px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
-                    <img src="{{ admin_url($signature) }}" alt="Checked By Signature" style="height: 50px;">
-                    <div>Checked & Prepared By: {{ getUsername($inspection_details->created_by) }}</div>
-                </td>
+                <td style="border: 2px solid black; padding: 8px;">{{ isset($rraa_details->serial_number) ? $rraa_details->serial_number : '' }}</td>
+                <td style="border: 2px solid black; padding: 8px;">{{ getCategoryname($rraa_details->category) }}</td>
+                <td style="border: 2px solid black; padding: 8px;">{{ isset($rraa_details->ohs_compliance_index) ? $rraa_details->ohs_compliance_index : '' }}</td>
+                <td style="border: 2px solid black; padding: 8px;">{{ getFrequencyname($rraa_details->frequency) }}</td>
+                <td style="border: 2px solid black; padding: 8px;">{{ isset($rraa_details->scope) ? $rraa_details->scope : '' }}</td>
+                <td style="border: 2px solid black; padding: 8px;">{{ getUsername($rraa_details->responsibility) }}</td>
+                <td style="border: 2px solid black; padding: 8px;">{{ isset($rraa_details->authority) ? $rraa_details->authority : '' }}</td>
+                <td style="border: 2px solid black; padding: 8px;">{{ isset($rraa_details->accountability) ? $rraa_details->accountability : '' }}</td>
+                <td style="border: 2px solid black; padding: 8px;">{{ isset($rraa_details->remark) ? $rraa_details->remark : '' }}</td>
+                <td style="border: 2px solid black; padding: 8px;">{{ getUsername(isset($rraa_details->created_by) ? $rraa_details->created_by : '') }}</td>
+                <td style="border: 2px solid black; padding: 8px;">{{ displayDateformat($rraa_details->created_at) }}</td>
             </tr>
         </tbody>
     </table>

@@ -119,7 +119,7 @@ class MedicalFitnessCertificateController extends Controller
                     return response()->json($datatables->getData());
                 } catch (Exception $ex) {
                     report($ex);
-                    return response()->json(['status' => 'error', 'msg' => __('ppe.please_try_after_some_time')], 406);
+                    return response()->json(['status' => 'error', 'msg' => __('ohc.please_try_after_some_time')], 406);
                 }
             }
         }
@@ -149,7 +149,7 @@ class MedicalFitnessCertificateController extends Controller
                 'emp_name' => 'required',
                 'date' => 'required',
                 'remarks' => 'required',
-
+                'company_id.required' => 'Date is required',
 
             ];
 
@@ -176,9 +176,9 @@ class MedicalFitnessCertificateController extends Controller
                 $mailsubject = 'Medical Fitness Check';
                 $user_role = ROLE_DOCTOR;
 
-
-                $userids = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->pluck('id')->toArray();
-                $users = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->get();
+                $data = $this->medical_fitness_certificate->selectOne($id);
+                $userids = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->where('company_id', $data->company_id)->pluck('id')->toArray();
+                $users = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->where('company_id', $data->company_id)->get();
 
                 if (count($users) > 0) {
 
@@ -187,6 +187,7 @@ class MedicalFitnessCertificateController extends Controller
                         $email_id = $user->email;
 
                         if ($email_id != '' || $email_id != null) {
+
                             $data = $this->medical_fitness_certificate->selectOne($id);
                             $details  = $data->toArray();
 
@@ -232,7 +233,7 @@ class MedicalFitnessCertificateController extends Controller
 
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('ohc/medical-fitness/ist'));
+            return redirect(admin_url('ohc/medical-fitness/list'));
         }
     }
 
@@ -252,7 +253,7 @@ class MedicalFitnessCertificateController extends Controller
                     'ehsheadlog' => $ehsheadlog,
 
                 );
-               
+
             }
             return view('ohcmanagement.medical_fitness_certificate.view', $data);
         } catch (Exception $ex) {
@@ -497,14 +498,10 @@ class MedicalFitnessCertificateController extends Controller
             if (Auth::check()) {
                 $medicalfitness = $this->medical_fitness_certificate->selectOne($id);
 
-
-
                 $data = array(
                     'medicalfitness' => $medicalfitness,
-
-
                 );
-                // dd($data);
+
             }
 
             return view('ohcmanagement.medical_fitness_certificate.edit', $data);
@@ -522,6 +519,7 @@ class MedicalFitnessCertificateController extends Controller
                 'emp_id' => 'required',
                 'emp_name' => 'required',
                 'date' => 'required',
+                'company_id' => 'required',
                 'remarks' => 'required',
 
 
@@ -532,13 +530,13 @@ class MedicalFitnessCertificateController extends Controller
                 'emp_id.required' => 'Employee Id is required',
                 'emp_name.required' => 'Emp Name is required',
                 'date.required' => 'Date is required',
+                'company_id.required' => 'Date is required',
                 'remarks.required' => 'remarks is required',
 
             ];
 
             $validator = Validator::make($request->all(), $rules, $messages);
             if ($validator->fails()) {
-                dd($validator->errors());
                 return redirect()->back()->withErrors($validator)->withInput();
             }
 
@@ -547,7 +545,7 @@ class MedicalFitnessCertificateController extends Controller
 
 
                 $this->medical_fitness_certificate->updates($id);
-                // $this->ohc_status->medicalfitnessstore($id);
+
                 $mailsubject = 'Medical Fitness Check';
                 $user_role = ROLE_DOCTOR;
 
@@ -556,45 +554,44 @@ class MedicalFitnessCertificateController extends Controller
                 $users = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->get();
 
                 if (count($users) > 0) {
+                    $data = $this->medical_fitness_certificate->selectOne($id);
+                    $permitrray  = $data->toArray();
 
                     foreach ($users as $user) {
-
                         $email_id = $user->email;
 
-                        if ($email_id != '' || $email_id != null) {
-                            $data = $this->medical_fitness_certificate->selectOne($id);
-                            $permitrray  = $data->toArray();
+                        if (!empty($email_id)) {
+                            $permitrray['name'] = $user->name;
+                            $permitrray['email_id'] =  $email_id;
+                            $permitrray['mail_subject'] = $mailsubject;
 
-                            $data['name'] = $user->name;
-                            $data['email_id'] =  $email_id;
-                            $data['mail_subject'] = $mailsubject;
-
-                            Mail::to($data['email_id'])->queue(new FitnessEmail($data));
+                            Mail::to($email_id)->queue(new FitnessEmail($permitrray));
                         }
                     }
+
+                    /**
+                     * Send Web notification
+                     */
+                    $notificationData = array(
+                        'notification_type' => 4,
+                        'module_type' => 1,
+                        'notification_message' => $mailsubject,
+                        'mobile_notification' => json_encode(array(
+                            'title' => $mailsubject,
+                            'message' => ($data->emp_name) . ' is Submitted the Fitness Certificate for the Doctor Approval by ' . getUsername($data->created_by),
+                            'icon' => admin_url('public/assets/icons/occupational-therapy.png'),
+                            'id' => $data->id,
+                            'module' => 1,
+                        )),
+                        'web_link' => admin_url('ohc/medical-fitness/approval/view/' . encryptId($data->id)),
+                        'assigned_user' => array_to_string($userids),
+                        'created_by' => Auth::id(),
+                    );
+                    notificationSave($notificationData);
+
+                    Session::flash('success', 'Your data has been updated successfully!');
                 }
 
-
-                /**
-                 * Send Web notification
-                 */
-
-                $notificationData = array(
-                    'notification_type' => 4,
-                    'module_type' => 1,
-                    'notification_message' => $mailsubject,
-                    'mobile_notification' => json_encode(array(
-                        'title' => $mailsubject,
-                        'message' => ($data->emp_name) . 'is Submitted the Fitness Certificate for the Doctor Approval' . getUsername($data->created_by),
-                        'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
-                        'id' => $data->id,
-                        'module' => 1,
-                    )),
-                    'web_link' =>  admin_url('ohc/medical-fitness/approval/view/' . encryptId($data->id)),
-                    'assigned_user' => array_to_string($userids),
-                    'created_by' => Auth::id(),
-                );
-                notificationSave($notificationData);
                 Session::flash('success', 'Your data has been updated successfully!');
             } catch (Exception $ex) {
                 report($ex);
@@ -627,6 +624,7 @@ class MedicalFitnessCertificateController extends Controller
                 __("common.sno"),
                 'Employee Code',
                 'Employee Name',
+                'Company Name',
                 ' Date',
                 'Remarks',
                 'From Status',
@@ -641,7 +639,8 @@ class MedicalFitnessCertificateController extends Controller
                 $export = [];
                 $export[] =  $i;
                 $export[] =  ($data->emp_id);
-                $export[] =  gethsn($data->emp_name);
+                $export[] =  ($data->emp_name);
+                $export[] =  getCompanyname($data->company_id);
                 $export[] = displaydateformat($data->date);
                 $export[] =  $data->remarks;
                 if ($data->approve_status ==STATUS_OHC_MEDICAL_DOCTOR_APPROVAL_PENDING ) {
@@ -686,6 +685,8 @@ class MedicalFitnessCertificateController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/medical-fitness/list'));
         }
     }
 
@@ -747,7 +748,7 @@ class MedicalFitnessCertificateController extends Controller
                 __("common.sno"),
                 'Employee Code',
                 'Employee Name',
-
+                'Company Name',
                 ' Date',
                 'Remarks',
                 'From Status',
@@ -786,6 +787,8 @@ class MedicalFitnessCertificateController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/medical-fitness/list'));
         }
     }
 }

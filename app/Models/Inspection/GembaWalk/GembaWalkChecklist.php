@@ -18,7 +18,6 @@ class GembaWalkChecklist extends Model
 
     protected $fillable = [
         'gemba_walk_id',
-        'gemba_walk_checklist_no',
         'location_id',
         'unit_id',
         'date_of_observation',
@@ -30,7 +29,7 @@ class GembaWalkChecklist extends Model
         'responsibility_id',
         'gemba_walk_checklist_status',
         'remark',
-        'observation',
+        // 'observation',
         'status',
         'trash',
         'created_by',
@@ -55,7 +54,6 @@ class GembaWalkChecklist extends Model
             foreach ($gembaWalkData as $index => $walk) {
                 $data = [
                     'gemba_walk_id' => $gembaWalk_id,
-                    'gemba_walk_checklist_no' => $walk['gemba_walk_report_no'],
                     'location_id' => decryptId($walk['location_id']),
                     'unit_id' => decryptId($walk['unit_id']),
                     'date_of_observation' => DBdateformat($walk['date_of_observation']),
@@ -67,7 +65,7 @@ class GembaWalkChecklist extends Model
                     'responsibility_id' => decryptId($walk['responsibility_id']),
                     'gemba_walk_checklist_status' => $walk['current_status'],
                     'remark' => $walk['checklist_remark'],
-                    'observation' => json_encode($walk['checklist_observation']),
+                    // 'observation' => json_encode($walk['checklist_observation']),
                     'created_by' => Auth::id()
                 ];
 

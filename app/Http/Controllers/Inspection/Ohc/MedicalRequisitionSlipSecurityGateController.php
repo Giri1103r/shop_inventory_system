@@ -24,6 +24,16 @@ use App\Models\Inspection\Ohc\OhcSignature;
 use App\Models\Inspection\Ohc\InspectionOhcStatuslog;
 use Illuminate\Support\Facades\Mail;
 use Spatie\SimpleExcel\SimpleExcelWriter;
+use App\Models\Inspection\InspectionStaticDocno;
+
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Border;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
+use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
+use PhpOffice\PhpSpreadsheet\RichText\RichText;
 
 class MedicalRequisitionSlipSecurityGateController extends Controller
 {
@@ -38,7 +48,7 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
     private $medicine_requisition_fdo_details;
     private $signature;
     private $inspection_ohc_status_log;
-
+    private $document_reference;
     private $location;
     public function __construct()
     {
@@ -53,7 +63,7 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
         $this->user = new User();
         $this->signature = new OhcSignature();
         $this->inspection_ohc_status_log = new InspectionOhcStatuslog();
-
+        $this->document_reference = new InspectionStaticDocno();
         $this->medicine_requisition_fdo_details = new MedicineRequistionSlipfdodetails();
     }
 
@@ -69,17 +79,20 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
                         ->addColumn('status', function ($row) {
                             $text = "<span style='color:red'>In-Active</span>";
                             if ($row->status == 1) {
-                                $text = "<span style='color:green;cursor:pointer' class='statusChange' data-id='" . encryptId($row->id) . "' data-type='1'>Active</span>";
+                                $text = "<span style='color:green;cursor:pointer' class='statusChange' data-id='" . encryptId($row->inspection_id) . "' data-type='1'>Active</span>";
                             } else if ($row->status == 0) {
-                                $text = "<span style='color:red;cursor:pointer' class='statusChange' data-id='" . encryptId($row->id) . "' data-type='0'>In-Active</span>";
+                                $text = "<span style='color:red;cursor:pointer' class='statusChange' data-id='" . encryptId($row->inspection_id) . "' data-type='0'>In-Active</span>";
                             }
                             return $text;
                         })
                         ->addColumn('created_date', function ($row) {
                             return Displaydateformat($row->created_at);
                         })
-                        ->addColumn('issue_date', function ($row) {
-                            return Displaydateformat($row->issue_date);
+                        ->addColumn('unit', function ($row) {
+                            return ($row->unit_name);
+                        })
+                        ->addColumn('department', function ($row) {
+                            return ($row->department_name);
                         })
                         ->addColumn('created_by', function ($row) {
                             return getUsername($row->created_by);
@@ -112,16 +125,18 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
                         })
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            $btn .= '<a href="' . admin_url('ohc/medical-requisition-slip/fdo-security-gate/view/' . encryptId($row->id)) . '" class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a>';
+                            $btn .= '<a href="' . admin_url('ohc/medical-requisition-slip/fdo-security-gate/view/' . encryptId($row->inspection_id)) . '" class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a>';
 
                             if (((checkUserRole(ROLE_SAFETY_OFFICER) && $row->approve_status == SAFETY_OFFICER_APPROVAL_PENDING) || (checkUserRole(ROLE_SUPERADMIN) && $row->approve_status == SAFETY_OFFICER_APPROVAL_PENDING)) || ((checkUserRole(ROLE_MEDICAL_ASSISTANT) && $row->approve_status == SAFETY_OFFICER_APPROVAL_PENDING) || (checkUserRole(ROLE_SUPERADMIN) && $row->approve_status == SAFETY_OFFICER_APPROVAL_PENDING))) {
-                                $btn .= '<a href="' . admin_url('ohc/medical-requisition-slip/fdo-security-gate/approval/view/' . encryptId($row->id)) . '" class="" title="Action"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('ohc/medical-requisition-slip/fdo-security-gate/approval/view/' . encryptId($row->inspection_id)) . '" class="" title="Action"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
 
-                            $btn .= '<a href="' . admin_url('ohc/medical-requisition-slip/fdo-security-gate/generalpdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
+                            $btn .= '<a href="' . admin_url('ohc/medical-requisition-slip/fdo-security-gate/generalpdf/' . encryptId($row->inspection_id)) . '" style="margin-right: 5px;" title="PDF">
                             <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
                         </a>';
-
+              $btn .= '<a href="' . admin_url('ohc/medical-requisition-slip/fdo-security-gate/generalExcel/' . encryptId($row->inspection_id)) . '" style="margin-right: 5px;" title="PDF">
+                   <i class="fas fa-file-excel" style="color: #1D6F42;" aria-hidden="true"></i>
+                </a>';
                             return   $btn;
                         })
                         ->rawColumns(['action', 'issue_date', 'created_by', 'approve_status', 'issue_date'])
@@ -137,8 +152,13 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
                 }
             }
         }
+        $unit = $this->unit->getunit();
+        $data = array(
+            'unit' => $unit,
 
-        return view('inspection.inspection_ohc.medical_requisition_slip_security_gate.list');
+
+        );
+        return view('inspection.inspection_ohc.medical_requisition_slip_security_gate.list', $data);
     }
 
     public function Add(Request $request)
@@ -149,10 +169,12 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
             $medicine = $this->inventory->getstockdata();
             $signature_upload = $this->user->getSignature();
             $location = $this->location->getLocationname();
+            $document_no = $this->document_reference->selectUsingName('MedicalRequisitionSlipFdoSecurityGate');
             $data = array(
                 'unit' => $unit,
                 'shift' => $shift,
                 'medicine' => $medicine,
+                'document_no' => $document_no,
                 'signature_upload' => $signature_upload,
 
             );
@@ -232,7 +254,7 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
                 }
 
                 $notificationData = array(
-                    'notification_type' => 1,
+                     'notification_type' =>OHC_INSPECTION,
                     'module_type' => 1,
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(
@@ -270,6 +292,7 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
             $id = decryptId($request->id);
             if (Auth::check()) {
                 $medicine_requisition_fdo_details = $this->medicine_requisition_fdo_details->Selectone($id);
+                // dd(  $medicine_requisition_fdo_details)
                 $medicine_requisition_fdo_checklist_details = $this->medicine_requisition_fdo_checklist->Selectone($id);
                 $type = OHC_TYPE_MEDICINE_REQUISTION_FDO;
                 $safetytype = SAFETY_OFFICER_APPROVAL_PENDING;
@@ -289,6 +312,7 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
                 if (!empty($safetyofficer) && !empty($safetyofficer->approved_by)) {
                     $approversignatureview = $this->user->where('id', $safetyofficer->approved_by)->first();
                 }
+                $document_no = $this->document_reference->selectUsingName('MedicalRequisitionSlipFdoSecurityGate');
                 $data = array(
                     'medicinerequisition' => $medicine_requisition_fdo_details,
                     'medicine_requisition_fdo_checklist' => $medicine_requisition_fdo_checklist_details,
@@ -298,6 +322,7 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
                     'safetyofficersignature' => $safetyofficersignature,
                     'approversignatureview' => $approversignatureview,
                     'signatureview' => $signatureview,
+                    'document_no' => $document_no,
 
                 );
             }
@@ -333,6 +358,8 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
                 if (!empty($safetyofficer) && !empty($safetyofficer->approved_by)) {
                     $approversignatureview = $this->user->where('id', $safetyofficer->approved_by)->first();
                 }
+
+                $document_no = $this->document_reference->selectUsingName('MedicalRequisitionSlipFdoSecurityGate');
                 $data = array(
                     'medicinerequisition' => $medicine_requisition_fdo_details,
                     'medicine_requisition_fdo_checklist' => $medicine_requisition_fdo_checklist_details,
@@ -342,6 +369,7 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
                     'safetyofficersignature' => $safetyofficersignature,
                     'approversignatureview' => $approversignatureview,
                     'signatureview' => $signatureview,
+                    'document_no' => $document_no,
                 );
             }
             return view('inspection.inspection_ohc.medical_requisition_slip_security_gate.approval', $data);
@@ -371,11 +399,13 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
 
                 $requestor_signature = $this->signature->requestorSignature($id, $requestorsignature, $type);
                 $signatureview = $this->user->where('id', $requestorsignature)->first();
-                $approversignatureview = null; // Initialize the variable
+                $approversignatureview = null;
 
                 if (!empty($safetyofficer) && !empty($safetyofficer->approved_by)) {
                     $approversignatureview = $this->user->where('id', $safetyofficer->approved_by)->first();
                 }
+
+                $document_no = $this->document_reference->selectUsingName('MedicalRequisitionSlipFdoSecurityGate');
             }
 
             $data = [
@@ -384,6 +414,7 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
                 'statuslog' => $statuslog,
                 'safetyofficer' => $safetyofficer,
                 'requestorsignature' => $requestor_signature,
+                'document_no' => $document_no,
                 'safetyofficersignature' => $safetyofficersignature,
                 'approversignatureview' => $approversignatureview,
                 'signatureview' => $signatureview,
@@ -391,7 +422,7 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
             ];
 
             $property = [
-                'tempDir' => storage_path('app/public/pdf/temp/'), // Corrected path
+                'tempDir' => storage_path('app/public/pdf/temp/'),
                 'mode' => 'c',
                 'margin_left' => 10,
                 'margin_right' => 10,
@@ -452,7 +483,7 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
                     ];
                     $mailsubject = 'Medical Requisition Slip- Fdo & Security Gate Approved';
                     $notificationData = array(
-                        'notification_type' => 1,
+                         'notification_type' =>OHC_INSPECTION,
                         'module_type' => 1,
                         'notification_message' => $mailsubject,
                         'mobile_notification' => json_encode(array(
@@ -487,7 +518,7 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
                     ];
                     $mailsubject = 'Medical Requisition Slip- Fdo & Security Gate Rejected';
                     $notificationData = array(
-                        'notification_type' => 1,
+                         'notification_type' =>OHC_INSPECTION,
                         'module_type' => 1,
                         'notification_message' => $mailsubject,
                         'mobile_notification' => json_encode(array(
@@ -563,13 +594,13 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
                 $export = [];
                 $export[] =  $i;
                 $export[] =  $data->doc_no;
-                $export[] =  $data->revision_date;
+                $export[] =  $data->rev_dt;
                 $export[] =  Displaydateformat($data->issue_date);
-                $export[] =  getUnitname($data->unit);
-                $export[] =  getUnitname($data->department);
+                $export[] =  ($data->unit_name);
+                $export[] =  ($data->department_name);
                 $export[] = getohcrequisitionfloorstatus($data->approve_status);
-                $export[] =  getusername($data->created_by);
-                $export[] =  Displaydateformat($data->created_at);
+                $export[] =  getusername($data->inspection_created_by);
+                $export[] =  Displaydateformat($data->inspection_created_at);
 
                 $exportData[] = $export;
 
@@ -595,7 +626,11 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
         try {
 
             $allData = $this->medicine_requisition_fdo_details->exportdata();
-
+            if ($allData->count() > 20) {
+                Session::flash('error', 'Export Data has Exceed the Limit 20!');
+                return redirect(admin_url('ohc/medical-requisition-slip/fdo-security-gate/list'));
+            }
+            $document_no = $this->document_reference->selectUsingName('MedicalRequisitionSlipFdoSecurityGate');
 
 
             $header = [
@@ -613,6 +648,7 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
             $data = array(
                 'header' => $header,
                 'content' => $allData,
+                'document_no' => $document_no,
                 'pagetitle' => "Medical Requisition Slip- Fdo & Security Gate",
             );
 
@@ -636,7 +672,7 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
             $mpdf->WriteHTML($html);
 
             $filename = "Medical Requisition Slip- Fdo & Security Gate.pdf";
-            $mpdf->Output($filename, 'D');
+            $mpdf->Output($filename, 'I');
         } catch (Exception $ex) {
 
             dd($ex);
@@ -644,4 +680,195 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
             return redirect(admin_url('ohc/medical-requisition-slip/fdo-security-gate/list'));
         }
     }
+
+
+    public function generalExcel(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+            $spreadsheet = new Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
+            $document_no = $this->document_reference->selectUsingName('MedicalRequisitionSlipFdoSecurityGate');
+
+            $medicine_requisition_fdo_details = $this->medicine_requisition_fdo_details->Selectone($id);
+            $medicine_requisition_fdo_checklist_details = $this->medicine_requisition_fdo_checklist->Selectone($id);
+            $safetyofficerSignature = GetOHCSignature($medicine_requisition_fdo_details->approved_by, $id, OHC_TYPE_MEDICINE_REQUISTION_FDO);
+            $RequestorSignature = GetOHCSignature($medicine_requisition_fdo_details->created_by, $id, OHC_TYPE_MEDICINE_REQUISTION_FDO);
+            $logoPath = public_path('assets/images/logo-dark.png');
+
+            if (file_exists($logoPath)) {
+                $drawing = new Drawing();
+                $drawing->setName('Logo');
+                $drawing->setDescription('Company Logo');
+                $drawing->setPath($logoPath);
+                $drawing->setCoordinates('A1');
+                $drawing->setOffsetX(5);
+                $drawing->setOffsetY(5);
+                $drawing->setWidth(60);
+                $drawing->setHeight(60);
+                $drawing->setWorksheet($sheet);
+            }
+
+            $sheet->mergeCells("C1:L3");
+            $sheet->setCellValue("C1", "MEDICAL REQUISITION ISSUE SLIP\nPN INTERNATIONAL PVT. LTD.");
+            $sheet->getStyle("C1")->applyFromArray([
+                'font' => ['bold' => true, 'size' => 14],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+                'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['rgb' => 'FFFFFF']]
+            ]);
+
+            $headerLabels = [
+                'M1:N1' => 'Doc. No.',
+                'M2:N2' => 'Issue Dt.',
+                'M3:N3' => 'Rev. & Dt.',
+            ];
+
+            foreach ($headerLabels as $cellRange => $label) {
+                $cell = explode(':', $cellRange)[0];
+                $sheet->mergeCells($cellRange)->setCellValue($cell, $label);
+                $sheet->getStyle($cell)->applyFromArray([
+                    'font' => ['bold' => true],
+                    'alignment' => [
+                        'horizontal' => Alignment::HORIZONTAL_CENTER,
+                        'vertical' => Alignment::VERTICAL_CENTER,
+                    ],
+                ]);
+            }
+
+            $sheet->setCellValue("O1", $document_no->doc_no);
+            $sheet->setCellValue("O2", Displaydateformat($document_no->issue_date));
+            $sheet->setCellValue("O3", $document_no->rev_dt);
+
+            $sheet->getStyle("M1:O3")->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THICK, 'color' => ['argb' => '000000']]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+            ]);
+
+            $department = getdepartment($medicine_requisition_fdo_details->department);
+            $unit = getUnitname($medicine_requisition_fdo_details->unit);
+            $date = Displaydateformat($medicine_requisition_fdo_details->date);
+
+            $infoData = [
+                'A4:E4' => ['label' => 'DEPARTMENT :- ', 'value' => $department],
+                'F4:K4' => ['label' => 'UNIT :- ', 'value' => $unit],
+                'L4:O4' => ['label' => 'DATE :- ', 'value' => $date],
+            ];
+
+            foreach ($infoData as $range => $data) {
+                $cell = explode(':', $range)[0];
+
+                $richText = new RichText();
+                $richText->createTextRun($data['label'])->getFont()->setBold(true);
+                $richText->createText($data['value']);
+
+                $sheet->mergeCells($range);
+                $sheet->getCell($cell)->setValue($richText);
+            }
+
+            $sheet->getStyle("A4:O4")->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THICK, 'color' => ['argb' => '000000']]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+            ]);
+
+            $sheet->mergeCells("A5:C5")->setCellValue("A5", "SERIAL NO");
+            $sheet->mergeCells("D5:H5")->setCellValue("D5", "NAME OF THE MEDICINE");
+            $sheet->mergeCells("I5:K5")->setCellValue("I5", "QUANTITY");
+            $sheet->mergeCells("L5:O5")->setCellValue("L5", "REMARKS");
+
+            $sheet->getStyle("A5:O5")->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THICK]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                'font' => ['bold' => true],
+            ]);
+
+            $row = 6;
+            foreach ($medicine_requisition_fdo_checklist_details as $index => $detail) {
+                $sheet->mergeCells("A$row:C$row")->setCellValue("A$row", $index + 1);
+                $medicineName = getMedicinename($detail->medicine_id) ?? '';
+                $sheet->mergeCells("D$row:H$row")->setCellValue("D$row", $medicineName);
+                $sheet->mergeCells("I$row:K$row")->setCellValue("I$row", $detail->quantity ?? '');
+                $sheet->mergeCells("L$row:O$row")->setCellValue("L$row", $detail->remarks ?? '');
+
+                $sheet->getStyle("A$row:O$row")->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THICK]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_LEFT, 'vertical' => Alignment::VERTICAL_CENTER],
+                ]);
+
+                $row++;
+            }
+
+            $signatureStartRow = $row;
+            $signatureEndRow = $signatureStartRow + 3;
+            $labelRow = $signatureEndRow + 1;
+            $imageHeight = 60;
+
+            // Requestor Signature
+            $sheet->mergeCells("A{$signatureStartRow}:G{$signatureEndRow}");
+            if (file_exists($RequestorSignature)) {
+                $drawing = new Drawing();
+                $drawing->setName('Requestor Signature');
+                $drawing->setDescription('Requestor Signature');
+                $drawing->setPath($RequestorSignature);
+                $drawing->setCoordinates("A{$signatureStartRow}");
+                $drawing->setOffsetX(110);
+                $drawing->setOffsetY(10);
+                $drawing->setWidth($imageHeight);
+                $drawing->setHeight($imageHeight);
+                $drawing->setWorksheet($sheet);
+            }
+
+            $sheet->mergeCells("A{$labelRow}:G{$labelRow}")->setCellValue("A{$labelRow}", "Requestor Signature");
+
+            // Medical Officer Signature
+            $sheet->mergeCells("H{$signatureStartRow}:O{$signatureEndRow}");
+            if (file_exists($safetyofficerSignature)) {
+                $drawing = new Drawing();
+                $drawing->setName('Medical Officer Signature');
+                $drawing->setDescription('Medical Officer Signature');
+                $drawing->setPath($safetyofficerSignature);
+                $drawing->setCoordinates("H{$signatureStartRow}");
+                $drawing->setOffsetX(130);
+                $drawing->setOffsetY(10);
+                $drawing->setWidth($imageHeight);
+                $drawing->setHeight($imageHeight);
+                $drawing->setWorksheet($sheet);
+            }
+
+            $sheet->mergeCells("H{$labelRow}:O{$labelRow}")->setCellValue("H{$labelRow}", "Medical Officer Signature");
+
+            $sheet->getStyle("A{$labelRow}:G{$labelRow}")->applyFromArray([
+                'font' => ['bold' => true],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+            ]);
+
+            $sheet->getStyle("H{$labelRow}:O{$labelRow}")->applyFromArray([
+                'font' => ['bold' => true],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+            ]);
+
+            $sheet->getStyle("A{$signatureStartRow}:G{$signatureEndRow}")->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THICK]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+            ]);
+
+            $sheet->getStyle("H{$signatureStartRow}:O{$signatureEndRow}")->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THICK]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+            ]);
+
+            $fileName = 'Medical Requisition Slip- Fdo & Security Gate.xlsx';
+            $writer = new Xlsx($spreadsheet);
+
+            return response()->streamDownload(function () use ($writer) {
+                $writer->save('php://output');
+            }, $fileName, [
+                'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            ]);
+        } catch (\Exception $ex) {
+            report($ex);
+            Session::flash('error', 'Something went wrong!');
+            return redirect(admin_url('ohc/medical-requisition-slip/fdo-security-gate/list'));
+        }
+    }
+
 }

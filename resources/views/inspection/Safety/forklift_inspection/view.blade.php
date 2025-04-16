@@ -192,7 +192,7 @@
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label ">{{ __('inspection.level_one_manager') }}</label>
+                                                            class="form-label ">{{ __('inspection.verified_by') }}</label>
                                                         <div class="view_data">
                                                             {{ getUserName($inspection_details->updated_by) }}
                                                         </div>
@@ -202,7 +202,7 @@
                                                     <div class="form-group form-input">
                                                         <label class="form-label ">{{ __('inspection.date') }}</label>
                                                         <div class="view_data">
-                                                            {{ Displaydateformat($inspection_details->created_at) }}
+                                                            {{ Displaydateformat($inspection_details->updated_at) }}
                                                         </div>
                                                     </div>
                                                 </div>

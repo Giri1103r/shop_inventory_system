@@ -33,168 +33,158 @@
                                     @csrf
 
                                     <div class="basic-form">
-                                        <div class="card-body">
 
-                                            <div class="row">
-                                                <div class="card-header-inner d-flex justify-content-between">
-                                                    <h4 class="text-white"> Monthly Audit Plan</h4>
-                                                    <button class="btn btn-primary mb-2 addmorebutton"
-                                                        data-block='lesson_learned_block' data-row='lesson_learned_row'
-                                                        type="button" id="dynamic-add-more"
-                                                        style="margin-left: 10px;   width: 84px;">
+                                        <div class="form-wrapper">
+                                            <div class="row mt-4 form-set">
+                                                <div class="card-header-inner p-2">
+                                                    <h4 class="text-white">Monthly Audit Plan</h4>
+                                                </div>
+
+                                                <div class="d-flex justify-content-end align-items-center gap-2 m-2">
+                                                    <button class="btn btn-primary add-row" type="button" id="add-row"
+                                                        style="min-width: 130px;">
                                                         Add
                                                     </button>
-                                                </div>
-                                            </div>
 
-                                            <div id="lesson_learned_block">
-
-                                                <div class="row lesson_learned_row" style="margin-top: 20px;">
-
-                                                    <div class="col-md-4 mb-3">
-                                                        <div class="form-group form-input">
-                                                            <label class="form-label require">Auditee Name</label>
-                                                            <input type="text" name="monthly_audit[1][auditee_name]"
-                                                                id = "auditee_name_1" class="form-control"
-                                                                placeholder="Enter Auditee Name">
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="col-md-4 mb-3">
-                                                        <div class="form-group form-input">
-                                                            <label for="unit_id" class="form-label require">
-                                                                Unit</label>
-                                                            <select name="monthly_audit[1][unit_id]" id="unit_id_1"
-                                                                class=" form-control single-select" style="width: 100%">
-                                                                <option value="">Select Unit</option>
-                                                                @foreach ($unitList as $unit)
-                                                                    <option value="{{ encryptId($unit->id) }}">
-                                                                        {{ $unit->unit_name }}</option>
-                                                                @endforeach
-                                                            </select>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="col-md-4 mb-3">
-                                                        <div class="form-group form-input">
-                                                            <label for="unit_id" class="form-label require">
-                                                                Task Name</label>
-                                                            <select name="monthly_audit[1][task_name]" id="task_name_1"
-                                                                class=" form-control single-select" style="width: 100%">
-                                                                <option value="">Select Unit</option>
-                                                                @foreach ($audit_task as $task)
-                                                                    <option value="{{ encryptId($task->id) }}">
-                                                                        {{ $task->task_name }}</option>
-                                                                @endforeach
-                                                            </select>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="col-md-4">
-                                                        <div class="form-group form-input">
-                                                            <label for="unit_id" class="form-label require">Compliance
-                                                                Category
-                                                            </label>
-                                                            <select name="monthly_audit[1][compliance_category]"
-                                                                id="compliance_category_1"
-                                                                class=" form-control single-select" style="width: 100%">
-                                                                <option value="">Select Category</option>
-                                                                <option value="{{ encryptId(FIRE) }}">Fire</option>
-                                                                <option value="{{ encryptId(HEALTH) }}">Health</option>
-                                                                <option value="{{ encryptId(SAFETY) }}">Saftey</option>
-                                                                <option value="{{ encryptId(MIS) }}">MIS</option>
-                                                            </select>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="col-md-4 mb-2">
-                                                        <div class="form-group form-input">
-                                                            <label class="form-label require">Reference Doc.No
-                                                            </label>
-                                                            <input type="text" name="monthly_audit[1][reference_doc_no]"
-                                                                id = "reference_doc_no_1" class="form-control"
-                                                                placeholder="Enter Reference Doc.No">
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="col-md-4 mb-2">
-                                                        <div class="form-group form-input">
-                                                            <label class="form-label require">Frequency</label>
-                                                            <select name="monthly_audit[1][frequency_id]"
-                                                                id="frequency_id_1" class="form-control single-select"
-                                                                style="width: 100%">
-                                                                <option value="">Select the Frequency</option>
-                                                                @foreach ($frequency as $frequency)
-                                                                    <option value="{{ encryptId($frequency->id) }}">
-                                                                        {{ $frequency->frequency_name }}</option>
-                                                                @endforeach
-                                                            </select>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="col-md-4 mb-2">
-                                                        <div class="form-group form-input">
-                                                            <label class="form-label require"> Direct / In-Direct
-                                                            </label>
-                                                            <select name="monthly_audit[1][direct_in_direct]"
-                                                                id="direct_in_direct_1" class=" form-control single-select"
-                                                                style="width: 100%">
-                                                                <option value="">Select Category</option>
-                                                                <option value="1">Direct</option>
-                                                                <option value="0">In-Direct</option>
-                                                            </select>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="col-md-4 mb-2">
-                                                        <label class="form-label ">Status (Yes/No)</label>
-                                                        <div class="mb-3 form-input">
-                                                            <input type="radio" name="monthly_audit[1][status]"
-                                                                value="1">
-                                                            <label for="yes">YES</label>
-
-                                                            <input type="radio" name="monthly_audit[1][status]"
-                                                                value="0">
-                                                            <label for="no">NO</label>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="col-md-4 mb-2">
-                                                        <div class="form-group form-input">
-                                                            <label class="form-label require">Points
-                                                            </label>
-                                                            <input type="number" name="monthly_audit[1][points]"
-                                                                id = "points_1" class="form-control"
-                                                                placeholder="Enter Points">
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="col-md-4 mt-2">
-                                                        <div class="form-group form-input require">
-                                                            <label class="form-label">Remark</label>
-                                                            <textarea class="form-control" name="monthly_audit[1][remark]" id="remark_1"></textarea>
-
-                                                        </div>
-                                                    </div>
-
-
-                                                    <div class="col-md-2 text-right mt-3">
-                                                        <button class="btn btn-danger removerowdata" type="button"
-                                                            style="margin:10px;"><i class="fa fa-trash"></i></button>
-
-                                                    </div>
-
-                                                    <hr class="mt-4">
+                                                    <button type="button"
+                                                        class="btn btn-danger remove-row d-flex align-items-center"
+                                                        style="min-width: 130px;">
+                                                        <i class="fa-solid fa-trash me-2"></i> Remove
+                                                    </button>
                                                 </div>
 
-                                            </div>
 
-                                            <div class="submit-button" style="text-align: right;">
-                                                <x-button-submit class="submit"></x-button-submit>
-                                                <x-button-reset class=""></x-button-reset>
-                                                <x-button-cancel
-                                                    href="{{ admin_url('ohc/health-instrument/calibration-track-sheet/list') }}"></x-button-cancel>
+                                                <div class="col-md-4 mb-3">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label require">Auditee Name</label>
+                                                        <input type="text" name="auditee_name[1]" id = "auditee_name[1]"
+                                                            class="form-control" placeholder="Enter Auditee Name">
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4 mb-3">
+                                                    <div class="form-group form-input">
+                                                        <label for="unit_id" class="form-label require">
+                                                            Unit</label>
+                                                        <select name="unit_id[1]" id="unit_id[1]"
+                                                            class=" form-control single-select" style="width: 100%">
+                                                            <option value="">Select Unit</option>
+                                                            @foreach ($unitList as $unit)
+                                                                <option value="{{ encryptId($unit->id) }}">
+                                                                    {{ $unit->unit_name }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4 mb-3">
+                                                    <div class="form-group form-input">
+                                                        <label for="unit_id" class="form-label require">
+                                                            Task Name</label>
+                                                        <select name="task_name[1]" id="task_name[1]"
+                                                            class=" form-control single-select" style="width: 100%">
+                                                            <option value="">Select Unit</option>
+                                                            @foreach ($audit_task as $task)
+                                                                <option value="{{ encryptId($task->id) }}">
+                                                                    {{ $task->task_name }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <div class="form-group form-input">
+                                                        <label for="unit_id" class="form-label require">Compliance
+                                                            Category
+                                                        </label>
+                                                        <select name="compliance_category[1]" id="compliance_category[1]"
+                                                            class=" form-control single-select" style="width: 100%">
+                                                            <option value="">Select Category</option>
+                                                            <option value="{{ encryptId(FIRE) }}">Fire</option>
+                                                            <option value="{{ encryptId(HEALTH) }}">Health</option>
+                                                            <option value="{{ encryptId(SAFETY) }}">Saftey</option>
+                                                            <option value="{{ encryptId(MIS) }}">MIS</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label require">Reference Doc.No
+                                                        </label>
+                                                        <input type="text" name="reference_doc_no[1]"
+                                                            id = "reference_doc_no[1]" class="form-control"
+                                                            placeholder="Enter Reference Doc.No">
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label require">Frequency</label>
+                                                        <select name="frequency_id[1]" id="frequency_id[1]"
+                                                            class="form-control single-select" style="width: 100%">
+                                                            <option value="">Select the Frequency</option>
+                                                            @foreach ($frequency as $freq)
+                                                                <option value="{{ encryptId($freq->id) }}">
+                                                                    {{ $freq->frequency_name }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label require"> Direct / In-Direct
+                                                        </label>
+                                                        <select name="direct_in_direct[1]" id="direct_in_direct[1]"
+                                                            class=" form-control single-select" style="width: 100%">
+                                                            <option value="">Select Category</option>
+                                                            <option value="1">Direct</option>
+                                                            <option value="0">In-Direct</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4 mb-2">
+                                                    <label class="form-label ">Status (Yes/No)</label>
+                                                    <div class="mb-3 form-input">
+                                                        <input type="radio" name="status[1]" value="1">
+                                                        <label for="yes">YES</label>
+
+                                                        <input type="radio" name="status[1]" value="0">
+                                                        <label for="no">NO</label>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label require">Points
+                                                        </label>
+                                                        <input type="number" name="points[1]" id = "points[1]"
+                                                            class="form-control" placeholder="Enter Points">
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4 mt-2">
+                                                    <div class="form-group form-input require">
+                                                        <label class="form-label">Remark</label>
+                                                        <textarea class="form-control" name="remark[1]" id="remark[1]"></textarea>
+
+                                                    </div>
+                                                </div>
+
+
+
+
+
                                             </div>
+                                        </div>
+
+                                        <div class="submit-button" style="text-align: right;">
+                                            <x-button-submit class="submit"></x-button-submit>
+                                            <x-button-reset class="submit"></x-button-reset>
+                                            <x-button-cancel
+                                                href="{{ admin_url('fire/hydrant-riser-inspection/list') }}"></x-button-cancel>
                                         </div>
 
                                     </div>
@@ -226,190 +216,61 @@
             });
         });
 
-        document.addEventListener("DOMContentLoaded", function() {
-
-            function updateRowIndexes() {
-                $("#lesson_learned_block .lesson_learned_row").each(function(index) {
-                    let newIndex = index + 1;
-                    $(this).find("input, select, textarea").each(function() {
-                        let oldName = $(this).attr("name");
-                        let oldId = $(this).attr("id");
-                        if (oldName) {
-                            let newName = oldName.replace(/\[\d+\]/, "[" + newIndex + "]");
-                            $(this).attr("name", newName);
-                        }
-                        if (oldId) {
-                            let newId = oldId.replace(/\d+$/, newIndex);
-                            $(this).attr("id", newId);
-                        }
-                    });
-                });
-            }
-
-            $("#dynamic-add-more").on("click", function() {
-                let rowCount = $("#lesson_learned_block .lesson_learned_row").length;
-                if (rowCount >= 200) {
-                    Swal.fire({
-                        icon: "error",
-                        title: "Sorry!",
-                        text: "Maximum 200 records only."
-                    });
-                    return;
-                }
-
-                let newRow = $(".lesson_learned_row").first().clone();
-
-                newRow.find("input, select, textarea").each(function() {
-                    let oldName = $(this).attr("name");
-                    let oldId = $(this).attr("id");
-
-                    if (oldName) {
-                        let newName = oldName.replace(/\[\d+\]/, "[" + (rowCount + 1) + "]");
-                        $(this).attr("name", newName);
-                    }
-                    if (oldId) {
-                        let newId = oldId.replace(/\d+$/, rowCount + 1);
-                        $(this).attr("id", newId);
-                    }
-                    if ($(this).is("input[type='text'], textarea, input[type='number']")) {
-                        $(this).val("");
-                    }
-                    if ($(this).is("select")) {
-                        $(this).val("").trigger("change");
-                    }
-                });
-
-                newRow.find(".invalid-feedback").remove();
-                newRow.find(".is-invalid").removeClass("is-invalid");
-                newRow.find(".select2-container").remove();
-                newRow.find(".single-select").select2();
-                $("#lesson_learned_block").append(newRow);
-                
-
-                // Add validation rules dynamically
-                newRow.find("input[name*='[auditee_name]']").rules("add", {
-                    required: true,
-                    messages: {
-                        required: "Auditee Name is required."
-                    }
-                });
-
-                newRow.find("select[name*='[unit_id]']").rules("add", {
-                    required: true,
-                    messages: {
-                        required: "Unit is required."
-                    }
-                });
-
-                newRow.find("select[name*='[task_name]']").rules("add", {
-                    required: true,
-                    messages: {
-                        required: "Task Name is required."
-                    }
-                });
-
-                newRow.find("select[name*='[compliance_category]']").rules("add", {
-                    required: true,
-                    messages: {
-                        required: "Compliance Category is required."
-                    }
-                });
-
-                newRow.find("input[name*='[reference_doc_no]']").rules("add", {
-                    required: true,
-                    messages: {
-                        required: "Reference Doc No is required."
-                    }
-                });
-
-                newRow.find("input[name*='[points]']").rules("add", {
-                    required: true,
-                    number: true,
-                    messages: {
-                        required: "Points are required.",
-                        number: "Only numeric values are allowed."
-                    }
-                });
-
-                newRow.find("textarea[name*='[remark]']").rules("add", {
-                    required: true,
-                    messages: {
-                        required: "Remark is required."
-                    }
-                });
-
-                $('.single-select').select2();
-            });
-
-
-
-            $(document).on("click", ".removerowdata", function() {
-                let rowCount = $("#lesson_learned_block .lesson_learned_row").length;
-                if (rowCount > 1) {
-                    $(this).closest(".lesson_learned_row").remove();
-                    updateRowIndexes();
-                } else {
-                    Swal.fire({
-                        icon: "error",
-                        title: "Sorry!",
-                        text: "At least one record is required."
-                    });
-                }
-            });
-        });
-
-
         $(document).ready(function() {
             $("#monthlyAuditTask").validate({
                 rules: {
-                    "monthly_audit[1][auditee_name]": {
-                        required: true
+                    "auditee_name[1]": {
+                        required: true,
                     },
-                    "monthly_audit[1][unit_id]": {
-                        required: true
+                    "unit_id[1]": {
+                        required: true,
                     },
-                    "monthly_audit[1][task_name]": {
-                        required: true
+                    "task_name[1]": {
+                        required: true,
                     },
-                    "monthly_audit[1][compliance_category]": {
-                        required: true
+                    "compliance_category[1]": {
+                        required: true,
                     },
-                    "monthly_audit[1][reference_doc_no]": {
-                        required: true
+                    "reference_doc_no[1]": {
+                        required: true,
                     },
-                    "monthly_audit[1][frequency_id]": {
-                        required: true
+                    "frequency_id[1]": {
+                        required: true,
                     },
-                    "monthly_audit[1][direct_in_direct]": {
-                        required: true
+                    "direct_in_direct[1]": {
+                        required: true,
                     },
-                    "monthly_audit[1][status]": {
-                        required: true
+                    "status[1]": {
+                        required: true,
                     },
-                    "monthly_audit[1][points]": {
+                    "points[1]": {
                         required: true,
                         number: true,
-                        min: 0
+                        min: 1
                     },
-                    "monthly_audit[1][remark]": {
-                        required: true
+                    "remark[1]": {
+                        required: true,
+                        minlength: 3
                     }
                 },
                 messages: {
-                    "monthly_audit[1][auditee_name]": "Please enter the Auditee Name",
-                    "monthly_audit[1][unit_id]": "Please select a Unit",
-                    "monthly_audit[1][task_name]": "Please select a Task",
-                    "monthly_audit[1][compliance_category]": "Please select a Compliance Category",
-                    "monthly_audit[1][reference_doc_no]": "Please enter the Reference Doc. No",
-                    "monthly_audit[1][frequency_id]": "Please select the Frequency",
-                    "monthly_audit[1][direct_in_direct]": "Please select Direct/In-Direct",
-                    "monthly_audit[1][status]": "Please select a Status",
-                    "monthly_audit[1][points]": {
+                    "auditee_name[1]": "Please enter Auditee Name",
+                    "unit_id[1]": "Please select a Unit",
+                    "task_name[1]": "Please select a Task",
+                    "compliance_category[1]": "Please select a Compliance Category",
+                    "reference_doc_no[1]": "Please enter a Reference Doc No",
+                    "frequency_id[1]": "Please select Frequency",
+                    "direct_in_direct[1]": "Please choose Direct or In-Direct",
+                    "status[1]": "Please select Yes or No",
+                    "points[1]": {
                         required: "Please enter Points",
-                        number: "Points must be a number",
-                        min: "Points cannot be negative"
+                        number: "Please enter a valid number",
+                        min: "Points must be at least 1"
                     },
-                    "monthly_audit[1][remark]": "Please enter a Remark"
+                    "remark[1]": {
+                        required: "Please enter a Remark",
+                        minlength: "Remark must be at least 3 characters"
+                    }
                 },
                 errorElement: 'span',
                 errorPlacement: function(error, element) {
@@ -423,21 +284,311 @@
                     $(element).removeClass('is-invalid');
                 },
                 submitHandler: function(form) {
-                    console.log('test');
                     form.submit();
 
                 },
                 invalidHandler: function(event, validator) {
                     var errors = validator.numberOfInvalids();
-                    console.log(errors + " field(s) are invalid");
-                    validator.errorList.forEach(function(error) {
-                        console.log("Field: " + error.element.name + ", Error: " + error
-                            .message);
-                    });
                 }
             });
         });
+
+
+        let form_set_count = 2;
+        let formIndex = 1;
+        const minFormSets = 1;
+        const maxFormSets = 200;
+        let serial_number = 2;
+        const maxObsSets = 5;
+
+        $(document).ready(function() {
+            $(document).on('click', '#add-row', function() {
+                let currentFormSets = $('.form-wrapper .form-set').length;
+
+
+
+                if (currentFormSets >= maxFormSets) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Maximum Monthly Audit Plan Inspection  Reached',
+                        text: 'You can only add up to 200 Monthly Audit Plan.',
+                        confirmButtonColor: '#3085d6'
+                    });
+                    return;
+                }
+
+                let newSerialNumber = 'HTR-' + ('00000' + serial_number).slice(-5);
+
+                var newFormSet = `
+                        <div class="row mt-4 form-set">
+                                               <div class="card-header-inner p-2">
+                                                    <h4 class="text-white">Monthly Audit Plan</h4>
+                                                </div>
+
+                                                <div class="d-flex justify-content-end align-items-center gap-2 m-2">
+                                                    <button class="btn btn-primary add-row" type="button" id="add-row"
+                                                        style="min-width: 130px;">
+                                                        Add
+                                                    </button>
+                                        
+                                                    <button type="button"
+                                                        class="btn btn-danger remove-row d-flex align-items-center"
+                                                        style="min-width: 130px;">
+                                                        <i class="fa-solid fa-trash me-2"></i> Remove
+                                                    </button>
+                                                </div>
+
+                                                <div class="col-md-4 mb-3">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label require">Auditee Name</label>
+                                                        <input type="text" name="auditee_name[${form_set_count}]"
+                                                            id = "auditee_name[${form_set_count}]" class="form-control"
+                                                            placeholder="Enter Auditee Name">
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4 mb-3">
+                                                    <div class="form-group form-input">
+                                                        <label for="unit_id" class="form-label require">
+                                                            Unit</label>
+                                                        <select name="unit_id[${form_set_count}]" id="unit_id[${form_set_count}]"
+                                                            class=" form-control single-select" style="width: 100%">
+                                                            <option value="">Select Unit</option>
+                                                            @foreach ($unitList as $unit)
+                                                                <option value="{{ encryptId($unit->id) }}">
+                                                                    {{ $unit->unit_name }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4 mb-3">
+                                                    <div class="form-group form-input">
+                                                        <label for="unit_id" class="form-label require">
+                                                            Task Name</label>
+                                                        <select name="task_name[${form_set_count}]" id="task_name[${form_set_count}]"
+                                                            class=" form-control single-select" style="width: 100%">
+                                                            <option value="">Select Unit</option>
+                                                            @foreach ($audit_task as $task)
+                                                                <option value="{{ encryptId($task->id) }}">
+                                                                    {{ $task->task_name }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <div class="form-group form-input">
+                                                        <label for="unit_id" class="form-label require">Compliance
+                                                            Category
+                                                        </label>
+                                                        <select name="compliance_category[${form_set_count}]"
+                                                            id="compliance_category[${form_set_count}]"
+                                                            class=" form-control single-select" style="width: 100%">
+                                                            <option value="">Select Category</option>
+                                                            <option value="{{ encryptId(FIRE) }}">Fire</option>
+                                                            <option value="{{ encryptId(HEALTH) }}">Health</option>
+                                                            <option value="{{ encryptId(SAFETY) }}">Saftey</option>
+                                                            <option value="{{ encryptId(MIS) }}">MIS</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label require">Reference Doc.No
+                                                        </label>
+                                                        <input type="text" name="reference_doc_no[${form_set_count}]"
+                                                            id = "reference_doc_no[${form_set_count}]" class="form-control"
+                                                            placeholder="Enter Reference Doc.No">
+                                                    </div>
+                                                </div>
+
+                                               <div class="col-md-4 mb-3">
+                                                    <div class="form-group form-input">
+                                                        <label for="unit_id" class="form-label require">
+                                                           Frequency </label>
+                                                        <select name="frequency_id[${form_set_count}]" id="frequency_id[${form_set_count}]"
+                                                            class=" form-control single-select" style="width: 100%">
+                                                            <option value="">Select the Frequency</option>
+                                                          @foreach ($frequency as $item)
+                                                                <option value="{{ encryptId($item->id) }}">
+                                                                    {{ $item->frequency_name }}
+                                                                </option>
+                                                            @endforeach
+
+                                                        </select>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label require"> Direct / In-Direct
+                                                        </label>
+                                                        <select name="direct_in_direct[${form_set_count}]"
+                                                            id="direct_in_direct[${form_set_count}]" class=" form-control single-select"
+                                                            style="width: 100%">
+                                                            <option value="">Select Category</option>
+                                                            <option value="1">Direct</option>
+                                                            <option value="0">In-Direct</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4 mb-2">
+                                                    <label class="form-label ">Status (Yes/No)</label>
+                                                    <div class="mb-3 form-input">
+                                                        <input type="radio" name="status[${form_set_count}]"
+                                                            value="1">
+                                                        <label for="yes">YES</label>
+
+                                                        <input type="radio" name="status[${form_set_count}]"
+                                                            value="0">
+                                                        <label for="no">NO</label>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label require">Points
+                                                        </label>
+                                                        <input type="number" name="points[${form_set_count}]"
+                                                            id = "points[${form_set_count}]" class="form-control"
+                                                            placeholder="Enter Points">
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4 mt-2">
+                                                    <div class="form-group form-input require">
+                                                        <label class="form-label">Remark</label>
+                                                        <textarea class="form-control" name="remark[${form_set_count}]" id="remark[${form_set_count}]"></textarea>
+
+                                                    </div>
+                                                </div>
+
+
+                                            </div>
+                    `;
+
+                let newFormSetElement = $(newFormSet);
+
+                $('.form-wrapper').append(newFormSetElement);
+
+                $("input[name='auditee_name[" + form_set_count + "]']").rules('add', {
+                    required: true,
+                    messages: {
+                        required: 'Please add the Auditee Name',
+                    }
+                });
+
+                $("select[name='unit_id[" + form_set_count + "]']").rules('add', {
+                    required: true,
+                    messages: {
+                        required: 'Please Select the Unit',
+                    }
+                });
+
+                $("select[name='task_name[" + form_set_count + "]']").rules('add', {
+                    required: true,
+                    messages: {
+                        required: 'Please Select the Task Name',
+                    }
+                });
+
+                $("select[name='compliance_category[" + form_set_count + "]']").rules('add', {
+                    required: true,
+                    messages: {
+                        required: 'Please Select the Compliance Category',
+                    }
+                });
+
+                $("input[name='reference_doc_no[" + form_set_count + "]']").rules('add', {
+                    required: true,
+                    messages: {
+                        required: 'Please Select the Reference Doc No',
+                    }
+                });
+
+                $("select[name='frequency_id[" + form_set_count + "]']").rules('add', {
+                    required: true,
+                    messages: {
+                        required: 'Please Select the Frequency',
+                    }
+                });
+
+                $("select[name='direct_in_direct[" + form_set_count + "]']").rules('add', {
+                    required: true,
+                    messages: {
+                        required: 'Please Select this Field',
+                    }
+                });
+
+                $("input[name='status[" + form_set_count + "]']").rules('add', {
+                    required: true,
+                    messages: {
+                        required: 'Please Select the Status',
+                    }
+                });
+
+                $("textarea[name='remark[" + form_set_count + "]']").rules('add', {
+                    required: true,
+                    messages: {
+                        required: 'Please add the remarks',
+                    }
+                });
+
+                $("input[name='points[" + form_set_count + "]']").rules('add', {
+                    required: true,
+                    messages: {
+                        required: 'Please add the points',
+                    }
+                });
+
+
+                serial_number++;
+                form_set_count++;
+                updatePageIndices();
+
+            });
+
+
+        });
+
+        function updatePageIndices() {
+            $('.form-wrapper .form-set').each(function(index) {
+                let idx = index + 1;
+
+                $(this).find('input[name^="auditee_name"]').attr('name', 'auditee_name[' + idx + ']');
+                $(this).find('select[name^="unit_id"]').attr('name', 'unit_id[' + idx + ']');
+                $(this).find('select[name^="task_name"]').attr('name', 'task_name[' + idx + ']');
+                $(this).find('select[name^="compliance_category"]').attr('name', 'compliance_category[' + idx + ']');
+                $(this).find('input[name^="reference_doc_no"]').attr('name', 'reference_doc_no[' + idx + ']');
+                $(this).find('select[name^="frequency_id"]').attr('name', 'frequency_id[' + idx + ']');
+                $(this).find('select[name^="direct_in_direct"]').attr('name', 'direct_in_direct[' + idx + ']');
+                $(this).find('input[name^="status"]').attr('name', 'status[' + idx + ']');
+                $(this).find('input[name^="points"]').attr('name', 'points[' + idx + ']');
+                $(this).find('textarea[name^="remark"]').attr('name', 'remark[' + idx + ']');
+
+                $(this).find('select').select2();
+            });
+        }
+
+
+        $(document).on('click', '.remove-row', function() {
+            let currentFormSets = $('.form-wrapper .form-set').length;
+
+            if (currentFormSets <= minFormSets) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Minimum One CheckList Required',
+                    text: 'At least Monthly Audit Plan Required.',
+                    confirmButtonColor: '#3085d6'
+                });
+                return;
+            }
+            $(this).closest('.form-set').remove();
+            updatePageIndices();
+
+        });
     </script>
 @endpush
-
-

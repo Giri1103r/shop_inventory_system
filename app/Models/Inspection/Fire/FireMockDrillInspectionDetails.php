@@ -41,11 +41,12 @@ class FireMockDrillInspectionDetails extends Model
     {
         $request = request();
 
+        
 
         $observation = $request->observation;
         $date_of_observation = $request->date_of_observation;
-        $shift = $request->shift;
-        $unit = $request->unit;
+        $shift = $request->shift_id;
+        $unit = $request->unit_id;
         $corrective_action = $request->corrective_action;
         $action_taken = $request->action_taken;
         $emp_id = $request->emp_id;
@@ -54,10 +55,10 @@ class FireMockDrillInspectionDetails extends Model
         $remarks = $request->remarks;
 
 
-        foreach ($observation as $index => $sr_no_value) {
+        foreach ($observation as $index => $observation) {
             $data = array(
-                'fire_mock_id' => $id,
-                'observation' => ($observation[$index]),
+                'inspection_id' => $id,
+                'observation' => $observation,
                 'date_of_observation' => DBdateformat($date_of_observation[$index]),
                 'shift_id' => decryptId($shift[$index]),
                 'unit_id' =>  decryptId($unit[$index]),

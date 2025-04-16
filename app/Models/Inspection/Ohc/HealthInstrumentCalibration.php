@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Models\Inspection\Ohc;
+use App\Scopes\TrashScope;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
@@ -13,9 +14,9 @@ class HealthInstrumentCalibration extends Model
 
 
     protected $fillable = [
-        'doc_no',
-        'issue_date',
-        'revision_date',
+        'health_auto_id',
+        'document_reference_id',
+        'unit_id',
         'created_by',
         'updated_by',
         'updated_at',
@@ -33,7 +34,8 @@ class HealthInstrumentCalibration extends Model
         $request = request();
         $search = '';
          
-        $query = $this->select('inspection_ohc_health_instrument_calibration_track_sheet.*');
+        $query = $this->select('inspection_ohc_health_instrument_calibration_track_sheet.*','masters_unit.unit_name')
+                      ->leftjoin('masters_unit','masters_unit.id','=','inspection_ohc_health_instrument_calibration_track_sheet.unit_id');
 
         $org_total =  $query;
         $org_total_counts = $org_total->count();
@@ -42,24 +44,17 @@ class HealthInstrumentCalibration extends Model
 
             $query->where(function ($query) use ($search) {
                 $query
-                    ->orWhere('inspection_ohc_health_instrument_calibration_track_sheet.doc_no', 'LIKE', '%' . $search . '%')
-                    ->orWhere('inspection_ohc_health_instrument_calibration_track_sheet.issue_date', 'LIKE', '%' . $search . '%')
-                    ->orWhere('inspection_ohc_health_instrument_calibration_track_sheet.revision_date', 'LIKE', '%' . $search . '%');
+                    ->orWhere('inspection_ohc_health_instrument_calibration_track_sheet.health_auto_id', 'LIKE', '%' . $search . '%')
+                    ->orWhere('masters_unit.unit_name', 'LIKE', '%' . $search . '%');
             });
         }
 
-        if ($request->has('doc_no') && $request->doc_no) {
-            $query = $query->where('inspection_ohc_health_instrument_calibration_track_sheet.doc_no', 'LIKE', '%' . $request->doc_no . '%');
+        if ($request->has('health_instrument_id') && $request->health_instrument_id) {
+            $query = $query->where('inspection_ohc_health_instrument_calibration_track_sheet.health_auto_id', 'LIKE', '%' . $request->health_instrument_id . '%');
         }
-        if ($request->has('issue_date') && $request->issue_date) {
+        if ($request->has('unit_id') && $request->unit_id) {
 
-            $formattedDate = DBdateformat($request->issue_date);
-            $query = $query->whereDate('inspection_ohc_health_instrument_calibration_track_sheet.issue_date', $formattedDate);
-        }
-
-        if ($request->has('revision_date') && $request->revision_date) {
-
-            $query = $query->where('inspection_ohc_health_instrument_calibration_track_sheet.revision_date', 'LIKE', '%' . $request->revision_date . '%');
+            $query = $query->where('inspection_ohc_health_instrument_calibration_track_sheet.unit_id',  decryptId($request->unit_id));
         }
 
         if ($request->has('status') && $request->status) {
@@ -92,9 +87,8 @@ class HealthInstrumentCalibration extends Model
 
         $request = request();
         $insert_array = array(
-            'doc_no' => $request->document_no,
-            'issue_date' => DBdateformat($request->issue_date),
-            'revision_date' => $request->review_date,
+            'document_reference_id' => decryptId($request->document_reference_id),
+            'unit_id' => decryptId($request->unit_id),
             'created_by' => Auth::id()
         );
         $data =  $this->create($insert_array);
@@ -114,45 +108,47 @@ class HealthInstrumentCalibration extends Model
                   
     }
 
+     public function getDocumentId($id)
+    {
+        return $this->where('id', $id)->first();
+    }
+
     public function exportdata()
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_ohc_health_instrument_calibration_track_sheet.*');
+        $query = $this->select('inspection_ohc_health_instrument_calibration_track_sheet.*','inspection_ohc_health_instrument_calibration_track_sheet_details.*','masters_unit.unit_name','inspection_ohc_health_instrument_calibration_track_sheet.id as instrument_id','inspection_ohc_health_instrument_calibration_track_sheet_details.id as instrument_detail_id','inspection_static_docno.*')
+        ->leftjoin('inspection_ohc_health_instrument_calibration_track_sheet_details','inspection_ohc_health_instrument_calibration_track_sheet_details.health_instrument_id','=','inspection_ohc_health_instrument_calibration_track_sheet.id')
+        ->leftjoin('masters_unit','masters_unit.id','=','inspection_ohc_health_instrument_calibration_track_sheet.unit_id')
+        ->leftJoin('inspection_static_docno', 'inspection_ohc_health_instrument_calibration_track_sheet.document_reference_id', '=', 'inspection_static_docno.id');
 
         if ($request->search != null || $request->search != '') {
             $search = $request->search;
             
             $query->where(function ($query) use ($search) {
                 $query
-                ->orWhere('inspection_ohc_health_instrument_calibration_track_sheet.doc_no', 'LIKE', '%' . $search . '%')
-                ->orWhere('inspection_ohc_health_instrument_calibration_track_sheet.issue_date', 'LIKE', '%' . $search . '%')
-                ->orWhere('inspection_ohc_health_instrument_calibration_track_sheet.revision_date', 'LIKE', '%' . $search . '%')
-                ->orWhere('inspection_ohc_health_instrument_calibration_track_sheet.status', 'LIKE', '%' . $search . '%');
+                    ->orWhere('inspection_ohc_health_instrument_calibration_track_sheet.health_auto_id', 'LIKE', '%' . $search . '%')
+                    ->orWhere('masters_unit.unit_name', 'LIKE', '%' . $search . '%');
             });
         }
-        if ($request->has('document_number') && $request->document_number) {
-
-            $query = $query->where('inspection_ohc_health_instrument_calibration_track_sheet.doc_no', 'LIKE', '%' . $request->document_number . '%');
+        if ($request->has('health_instrument_id') && $request->health_instrument_id) {
+            $query = $query->where('inspection_ohc_health_instrument_calibration_track_sheet.health_auto_id', 'LIKE', '%' . $request->health_instrument_id . '%');
         }
+        if ($request->has('unit_id') && $request->unit_id) {
 
-        if ($request->has('issue_date') && $request->issue_date) {
-
-            $formattedDate = DBdateformat($request->issue_date);
-            $query = $query->whereDate('issue_date', $formattedDate);
-        }
-        if ($request->has('revision_date') && $request->revision_date) {
-
-            $query = $query->where('revision_date', 'LIKE', '%' . $request->revision_date . '%');
+            $query = $query->where('inspection_ohc_health_instrument_calibration_track_sheet.unit_id',  decryptId($request->unit_id));
         }
 
         if ($request->has('status') && $request->status) {
 
-            $query = $query->where('status',  decryptId($request->status));
+            $query = $query->where('inspection_ohc_health_instrument_calibration_track_sheet.status',  decryptId($request->status));
         }
-        $query->orderBy('id', 'DESC');
 
-        return  $query->get();
+        $query->orderBy('inspection_ohc_health_instrument_calibration_track_sheet.id', 'DESC');
+        $results = $query->get();
+        $query = $results->groupBy('unit_name');
+
+        return  $query;
     }
 
     public function statuschange($id)
@@ -171,6 +167,16 @@ class HealthInstrumentCalibration extends Model
             );
         }
         return $this->where('id', $id)->update($update_data);
+    }
+
+    protected static function booted()
+    {
+        static::addGlobalScope(new TrashScope('inspection_ohc_health_instrument_calibration_track_sheet'));
+        static::created(function ($model) {
+
+            $uniqueId = 'HEALTH-' . str_pad($model->id, 5, '0', STR_PAD_LEFT);
+            $model->update(['health_auto_id' => $uniqueId]);
+        });
     }
 }
 

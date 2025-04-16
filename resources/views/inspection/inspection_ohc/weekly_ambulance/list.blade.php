@@ -24,20 +24,43 @@
                                 <div class="col-md-12">
                                     <div class="row">
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="document_number"
-                                                class="form-label ">{{ __('inspection.doc_no') }}</label>
-                                            <input type="text" name="document_number" id="document_number"
-                                                class="form-control">
+                                            <div class="form-group form-input">
+                                                <label class="form-label require">Shift</label>
+                                                <select name="shift" id="shift" style="width: 100%"
+                                                    class="form-control single-select">
+                                                    <option value="">Select the option</option>
+                                                    @foreach ($shift as $list)
+                                                        <option value="{{ encryptId($list->id) }}">{{ $list->shift }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="issue_date"
-                                                class="form-label ">{{ __('inspection.issue_date') }}</label>
-                                            <input type="text" name="issue_date" id="issue_date" class="form-control">
+                                            <div class="form-group form-input">
+                                                <label class="form-label require">Unit</label>
+                                                <select name="unit_id" id="unit_id" style="width: 100%"
+                                                    class="form-control single-select">
+                                                    <option value="">Select the option</option>
+                                                    @foreach ($unit as $list)
+                                                        <option value="{{ encryptId($list->id) }}">
+                                                            {{ $list->unit_name }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="rev_date"
-                                                class="form-label ">{{ __('inspection.rev_date') }}</label>
-                                            <input type="text" name="rev_date" id="rev_date" class="form-control">
+                                            <label class="form-label require">Location</label>
+                                            <select name="location_id" id="location_id" style="width: 100%"
+                                                class="form-control single-select">
+                                                <option value="">Select the option</option>
+                                                @foreach ($location as $list)
+                                                    <option value="{{ encryptId($list->id) }}">
+                                                        {{ $list->location_name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
                                         </div>
 
                                         <div class="col-md-3 mb-3 form-input">
@@ -77,11 +100,11 @@
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
-                                        <th>Doc.NO</th>
-                                        <th>Issue Date</th>
-                                        <th>Rev.Date</th>
+                                        <th>Shift</th>
+                                        <th>Unit</th>
+                                        <th>Location</th>
                                         <th>{{ __('common.status') }}</th>
-                                        <th>{{ __('common.created_date') }}</th>
+                                        <th>{{ __('common.created_by') }}</th>
                                         <th>{{ __('common.action') }}</th>
                                     </tr>
                                 </thead>
@@ -103,7 +126,7 @@
                 var firstTh = $('.datatable-list thead th:first');
                 firstTh.removeClass('sorting_asc');
             });
-            flatpickr("#issue_date", {
+            flatpickr("#unit_id", {
                 dateFormat: "d-m-Y",
             });
             $(function() {
@@ -139,9 +162,9 @@
                                 .attr('content')
                         },
                         data: function(d) {
-                            d.document_number = $('#document_number').val();
-                            d.issue_date = $('#issue_date').val();
-                            d.rev_date = $('#rev_date').val();
+                            d.location_id = $('#location_id').val();
+                            d.unit_id = $('#unit_id').val();
+                            d.shift = $('#shift').val();
                             d.status = $('#status').val();
                         },
                         error: function(xhr, error, code) {
@@ -158,24 +181,25 @@
                         },
 
                         {
-                            data: 'doc_no',
-                            name: 'document_no'
+                            data: 'shift',
+                            name: 'shift'
                         },
                         {
-                            data: 'issue_date',
-                            name: 'issue_date'
+                            data: 'unit',
+                            name: 'unit'
                         },
                         {
-                            data: 'revision_date',
-                            name: 'revision_date'
+                            data: 'location',
+                            name: 'location'
                         },
+
                         {
                             data: 'approve_status',
                             name: 'approve_status'
                         },
                         {
-                            data: 'created_date',
-                            name: 'created_date'
+                            data: 'inspection_created_by',
+                            name: 'inspection_created_by'
                         },
                         {
                             data: 'action',
@@ -206,9 +230,9 @@
                                     text: '{{ __('common.pdf') }}',
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
-                                        document_number = $('#document_number').val();
-                                        issue_date = $('#issue_date').val();
-                                        rev_date = $('#rev_date').val();
+                                        location_id = $('#location_id').val();
+                                        unit_id = $('#unit_id').val();
+                                        shift = $('#shift').val();
                                         status = $('#status').val();
 
                                         $(".dt-button").removeClass('processing');
@@ -216,9 +240,9 @@
                                         window.location.href =
                                             "{{ admin_url('ohc/weekly-ambulance/inspection/checklist/export/pdf') }}" +
                                             '?search=' + searchValue +
-                                            '&document_number=' + document_number +
-                                            '&issue_date=' + issue_date +
-                                            '&rev_date=' + rev_date +
+                                            '&location_id=' + location_id +
+                                            '&unit_id=' + unit_id +
+                                            '&shift=' + shift +
                                             '&status=' + status
                                     }
                                 },
@@ -227,18 +251,18 @@
                                     text: '{{ __('common.excel') }}',
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
-                                        document_number = $('#document_number').val();
-                                        issue_date = $('#issue_date').val();
-                                        rev_date = $('#rev_date').val();
+                                        location_id = $('#location_id').val();
+                                        unit_id = $('#unit_id').val();
+                                        shift = $('#shift').val();
                                         status = $('#status').val();
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
                                             "{{ admin_url('ohc/weekly-ambulance/inspection/checklist/export/excel') }}" +
                                             '?search=' + searchValue +
-                                            '&document_number=' + document_number +
-                                            '&issue_date=' + issue_date +
-                                            '&rev_date=' + rev_date +
+                                            '&location_id=' + location_id +
+                                            '&unit_id=' + unit_id +
+                                            '&shift=' + shift +
                                             '&status=' + status
                                     }
                                 },

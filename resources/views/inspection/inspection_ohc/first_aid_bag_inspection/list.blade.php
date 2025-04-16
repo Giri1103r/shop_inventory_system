@@ -37,8 +37,64 @@
                                                     class="form-control next_due">
                                             </div>
                                         </div>
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label require">{{ __('inspection.location') }}</label>
+                                                <select name="location" id="location" class=" form-control single-select"
+                                                    style="width: 100%">
+                                                    <option value="">Select {{ __('inspection.location') }}
+                                                    </option>
+                                                    @foreach ($locations as $location)
+                                                        <option value="{{ encryptId($location->id) }}">
+                                                            {{ $location->location_name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label require">{{ __('inspection.shifts') }}</label>
+                                                <select name="shift_id" id="shift_id" class=" form-control single-select"
+                                                    style="width: 100%">
+                                                    <option value="">Select {{ __('inspection.shifts') }}
+                                                    </option>
+                                                    @foreach ($shifts as $location)
+                                                        <option value="{{ encryptId($location->id) }}"
+                                                            {{ old('shift_id') == encryptId($location->id) ? 'selected' : '' }}>
+                                                            {{ $location->shift }}</option>
+                                                    @endforeach
+                                                </select>
 
-                                        <div class="col-md-3 mb-3 form-input">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label require">{{ __('inspection.unit') }}</label>
+                                                <select name="unit" id="unit" class=" form-control single-select"
+                                                    style="width: 100%">
+                                                    <option value="">Select Unit</option>
+                                                    @foreach ($units as $unit)
+                                                        <option value="{{ encryptId($unit->id) }}">
+                                                            {{ $unit->unit_name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label require">{{ __('inspection.frequency') }}</label>
+                                                <select name="frequency" id="frequency" class=" form-control single-select"
+                                                    style="width: 100%">
+                                                    <option value="">Select Frequency</option>
+                                                    @foreach ($frequency as $frequency)
+                                                        <option value="{{ encryptId($frequency->id) }}">
+                                                            {{ $frequency->frequency_name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        {{-- <div class="col-md-3 mb-3 form-input">
                                             <label for="status" class="form-label ">{{ __('common.status') }}</label>
                                             <select name="status" id="status" style="width: 100%"
                                                 class="form-control single-select">
@@ -46,7 +102,7 @@
                                                 <option value="{{ encryptId(1) }}">Active</option>
                                                 <option value="{{ encryptId(0) }}">In-Active</option>
                                             </select>
-                                        </div>
+                                        </div> --}}
                                         <div class="col-md-3 mt-3">
                                             <x-button-search></x-button-search>
                                             <x-button-reset></x-button-reset>
@@ -69,7 +125,9 @@
                                         <th>{{ __('common.sno') }}</th>
                                         <th>{{ __('inspection.inspection_date') }}</th>
                                         <th>{{ __('inspection.next_due') }}</th>
-                                        <th>{{ __('Status') }}</th>
+                                        <th>{{ __('inspection.location') }}</th>
+                                        <th>{{ __('inspection.unit') }}</th>
+                                        <th>{{ __('inspection.frequency') }}</th>
                                         <th>{{ __('common.action') }}</th>
                                     </tr>
                                 </thead>
@@ -134,6 +192,10 @@
                         data: function(d) {
                             d.inspection_date = $('#inspection_date').val();
                             d.next_due = $('#next_due').val();
+                            d.location = $('#location').val();
+                            d.unit = $('#unit').val();
+                            d.frequency = $('#frequency').val();
+                            d.shift = $('#shift_id').val();
                         },
                         error: function(xhr, error, code) {
                             if (xhr.status === 419) {
@@ -157,9 +219,18 @@
                             name: 'next_due',
                         },
                         {
-                            data: 'status',
-                            name: 'status',
+                            data: 'location_name',
+                            name: 'location_name',
                         },
+                        {
+                            data: 'unit_name',
+                            name: 'unit_name',
+                        },
+                        {
+                            data: 'frequency_name',
+                            name: 'frequency_name',
+                        },
+
                         {
                             data: 'action',
                             name: 'action',
@@ -191,6 +262,10 @@
                                         var searchValue = $('#datatable-list_filter input').val();
                                         inspection_date = $('#inspection_date').val();
                                         next_due = $('#next_due').val();
+                                        location = $('#location').val();
+                                        unit = $('#unit').val();
+                                        frequency = $('#frequency').val();
+                                        shift = $('#shift_id').val();
 
 
                                         $(".dt-button").removeClass('processing');
@@ -199,7 +274,11 @@
                                             "{{ admin_url('ohc/emergency-floor-first-aid-bag/checklist/export/pdf') }}" +
                                             '?search=' + searchValue +
                                             '&inspection_date=' + inspection_date +
-                                            '&next_due=' + next_due
+                                            '&next_due=' + next_due +
+                                            '&frequency=' + frequency +
+                                            '&unit=' + unit +
+                                            '&location=' + location +
+                                            '&shift=' + shift
                                     }
                                 },
                                 {
@@ -209,13 +288,21 @@
                                         var searchValue = $('#datatable-list_filter input').val();
                                         inspection_date = $('#inspection_date').val();
                                         next_due = $('#next_due').val();
+                                        location = $('#location').val();
+                                        unit = $('#unit').val();
+                                        frequency = $('#frequency').val();
+                                        shift = $('#shift_id').val();
+
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
                                             "{{ admin_url('ohc/emergency-floor-first-aid-bag/checklist/export/excel') }}" +
                                             '?search=' + searchValue +
                                             '&inspection_date=' + inspection_date +
-                                            '&next_due=' + next_due
+                                            '&next_due=' + next_due +
+                                            '&frequency=' + frequency +
+                                            '&unit=' + unit +
+                                            '&shift=' + shift
                                     }
                                 },
                             ]

@@ -144,7 +144,17 @@ class MonthlyForkLiftInspection extends Model
     {
         $request = request();
         $responses = $request->checklist;
-        $respones = json_encode($responses);
+
+        foreach ($responses as $index => $respones) {
+            foreach ($respones as $question => $value) {
+                $encoded_data[$question] = [
+                    'question_id' => $question,
+                    'answer' => $value,
+                    'remarks' => $request->remarks[$index][$question],
+                ];
+            }
+        }
+        $respones = json_encode($encoded_data);
         $insert_array = [
             'document_reference_id' => decryptId($request->document_reference_id),
             'date_of_inspection' => DBdateformat($request->inspection_date),
@@ -272,12 +282,13 @@ class MonthlyForkLiftInspection extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_forklift_inpsection_monthly.*', 'inspection_shift_option.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*', 'inspection_forklift_inpsection_monthly.id as inspection_id')
+        $query = $this->select('inspection_forklift_inpsection_monthly.*', 'inspection_shift_option.*', 'masters_unit.*', 'inspection_static_docno.*', 'masters_location.*', 'inspection_frequency_option.*', 'inspection_forklift_type.*', 'inspection_forklift_inpsection_monthly.id as inspection_id', 'inspection_forklift_inpsection_monthly.created_by as checked_by')
             ->leftJoin('masters_location', 'inspection_forklift_inpsection_monthly.location', '=', 'masters_location.id')
             ->leftJoin('inspection_shift_option', 'inspection_forklift_inpsection_monthly.shift', '=', 'inspection_shift_option.id')
             ->leftJoin('masters_unit', 'inspection_forklift_inpsection_monthly.unit', '=', 'masters_unit.id')
             ->leftJoin('inspection_frequency_option', 'inspection_forklift_inpsection_monthly.frequency', '=', 'inspection_frequency_option.id')
-            ->leftJoin('inspection_static_docno', 'inspection_forklift_inpsection_monthly.document_reference_id', '=', 'inspection_static_docno.id');
+            ->leftJoin('inspection_static_docno', 'inspection_forklift_inpsection_monthly.document_reference_id', '=', 'inspection_static_docno.id')
+            ->leftJoin('inspection_forklift_type', 'inspection_forklift_inpsection_monthly.forklift_type', '=', 'inspection_forklift_type.id');
 
         if (isset($request->search) && isset($request->search['value']) && $request->search['value'] != '') {
             $search = $request->search['value'];
@@ -312,7 +323,7 @@ class MonthlyForkLiftInspection extends Model
             $query = $query->where('inspection_forklift_inpsection_monthly.inspection_status', 'LIKE', '%' . decryptId($request->inspection_status) . '%');
         }
 
-        $query->orderBy('id', 'DESC');
+        $query->orderBy('inspection_forklift_inpsection_monthly.id', 'DESC');
 
         return  $query->get();
     }

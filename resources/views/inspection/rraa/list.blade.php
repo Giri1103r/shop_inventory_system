@@ -23,15 +23,36 @@
                         <div class="card-body">
                             <div class="col-md-12">
                                 <div class="row">
-                                    <div class="col-md-3 mb-3 form-input">
-                                        <label for="document_number" class="form-label ">Document Number</label>
-                                        <input type="text" name="document_number" id="document_number"
-                                            class="form-control">
+                                    <div class="col-md-4 mb-3 form-input">
+                                        <label class="form-label require">Category</label>
+                                        <select name="category" class="form-control single-select" style="width: 100%">
+                                            <option value="">Select Category</option>
+                                            @foreach ($category as $item)
+                                                <option value="{{ encryptId($item->id) }}">
+                                                    {{ $item->category_name }}</option>
+                                            @endforeach
+                                        </select>
                                     </div>
-                                    <div class="col-md-3 mb-3 form-input">
-                                        <label for="issue_date" class="form-label ">Issue Date</label>
-                                        <input type="text" name="issue_date" id="issue_date"
-                                            class="form-control">
+                                    <div class="col-md-4 mb-3 form-input">
+                                        <label for="ohs_compliance_index" class="form-label ">OHS Compliance Index</label>
+                                        <input type="text" name="ohs_compliance_index" id="ohs_compliance_index"
+                                            class="form-control" placeholder="OHC Compliance Index">
+                                    </div>
+                                    <div class="col-md-4 mb-3 form-input">
+                                        <label class="form-label require">{{ __('inspection.frequency') }}</label>
+                                        <select name="frequency" id="frequency"
+                                            class=" form-control single-select" style="width: 100%">
+                                            <option value="">Select Frequency</option>
+                                            @foreach ($frequency as $frequency)
+                                                <option value="{{ encryptId($frequency->id) }}">
+                                                    {{ $frequency->frequency_name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4 mb-3 form-input">
+                                        <label for="scope" class="form-label ">Scope</label>
+                                        <input type="text" name="scope" id="scope"
+                                            class="form-control" placeholder="Scope">
                                     </div>
                                     <div class="col-md-3 mt-3">
                                         <x-button-search></x-button-search>
@@ -52,9 +73,10 @@
                             <thead class="thead-primary">
                                 <tr>
                                     <th>{{ __('common.sno') }}</th>
-                                    <th>Document Number</th>
-                                    <th>Issue Date</th>
-                                    <th>Revision & Data</th>
+                                    <th>Category</th>
+                                    <th>OHS Compliance Index</th>
+                                    <th>Frequency</th>
+                                    <th>Scope</th>
                                     <th>{{ __('common.created_date') }}</th>
                                     <th>{{ __('common.action') }}</th>
                                 </tr>
@@ -77,14 +99,6 @@
 
         var firstTh = $('.datatable-list thead th:first');
         firstTh.removeClass('sorting_asc');
-
-        var fromDatepicker = flatpickr("#issue_date", {
-            dateFormat: "d-m-Y",
-        });
-
-        var fromDatepicker = flatpickr("#revision_date", {
-            dateFormat: "d-m-Y",
-        });
 
     });
 
@@ -120,10 +134,10 @@
                         .attr('content')
                 },
                 data: function(d) {
-                    d.document_number = $('#document_number').val();
-                    d.issue_date = $('#issue_date').val();
-                    d.revision_date = $('#revision_date').val();
-
+                    d.category = $('#category').val();
+                    d.ohs_compliance_index = $('#ohs_compliance_index').val();
+                    d.frequency = $('#frequency').val();
+                    d.scope = $('#scope').val();
                 },
                 error: function(xhr, error, code) {
                     if (xhr.status === 419) {
@@ -137,18 +151,21 @@
                     orderable: false,
                     searchable: true,
                 },
-
                 {
-                    data: 'document_number',
-                    name: 'document_number'
+                    data: 'category_name',
+                    name: 'category_name'
                 },
                 {
-                    data: 'issue_date',
-                    name: 'issue_date'
+                    data: 'ohs_compliance_index',
+                    name: 'ohs_compliance_index'
                 },
                 {
-                    data: 'revision_date',
-                    name: 'revision_date'
+                    data: 'frequency_name',
+                    name: 'frequency_name'
+                },
+                {
+                    data: 'scope',
+                    name: 'scope'
                 },
                 {
                     data: 'created_date',
@@ -183,16 +200,20 @@
                             text: '{{ __('common.pdf') }}',
                             action: function(e, dt, button, config) {
                                 var searchValue = $('#datatable-list_filter input').val();
-                                document_number = $('#document_number').val();
-                                issue_date = $('#issue_date').val();
+                                category = $('#category').val();
+                                ohs_compliance_index = $('#ohs_compliance_index').val();
+                                frequency = $('#frequency').val();
+                                scope = $('#scope').val();
 
                                 $(".dt-button").removeClass('processing');
                                 $('body').click();
                                 window.location.href =
                                     "{{ admin_url('rraa/ohc_fire_environment_compliance/export/pdf') }}" +
                                     '?search=' + searchValue +
-                                    '&document_number=' + document_number +
-                                    '&issue_date=' + issue_date
+                                    '&category=' + category +
+                                    '&ohs_compliance_index=' + ohs_compliance_index +
+                                    '&frequency=' + frequency +
+                                    '&scope=' + scope
                             }
                         },
                         {
@@ -200,16 +221,20 @@
                             text: '{{ __('common.excel') }}',
                             action: function(e, dt, button, config) {
                                 var searchValue = $('#datatable-list_filter input').val();
-                                document_number = $('#document_number').val();
-                                issue_date = $('#issue_date').val();
+                                category = $('#category').val();
+                                ohs_compliance_index = $('#ohs_compliance_index').val();
+                                frequency = $('#frequency').val();
+                                scope = $('#scope').val();
 
                                 $(".dt-button").removeClass('processing');
                                 $('body').click();
                                 window.location.href =
                                     "{{ admin_url('rraa/ohc_fire_environment_compliance/export/excel') }}" +
                                     '?search=' + searchValue +
-                                    '&document_number=' + document_number +
-                                    '&issue_date=' + issue_date
+                                    '&category=' + category +
+                                    '&ohs_compliance_index=' + ohs_compliance_index +
+                                    '&frequency=' + frequency +
+                                    '&scope=' + scope
                             }
                         },
                     ]

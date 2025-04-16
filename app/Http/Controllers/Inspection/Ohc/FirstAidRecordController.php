@@ -2,21 +2,32 @@
 
 namespace App\Http\Controllers\Inspection\Ohc;
 
-use App\Http\Controllers\Controller;
-use App\Models\Inspection\Ohc\FirstAidRecordChecklist;
-use App\Models\Inspection\Ohc\FirstAidRecordDetails;
-use App\Models\Inspection\Ohc\FirstAidRecordSignatureUpload;
-use App\Models\Inspection\Ohc\FirstAidRecordStatusLog;
-use App\Models\Master\Unit;
-use App\Models\OhcManagement\Master\FirstAidLocation;
-use Illuminate\Http\Request;
 use Exception;
-use Spatie\SimpleExcel\SimpleExcelWriter;
+use App\Models\Master\Unit;
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Response;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
+use Spatie\SimpleExcel\SimpleExcelWriter;
+use App\Models\Inspection\InspectionStaticDocno;
+use App\Models\Inspection\Ohc\FirstAidRecordDetails;
+use App\Models\OhcManagement\Master\FirstAidLocation;
+use App\Models\Inspection\Ohc\FirstAidRecordChecklist;
+use App\Models\Inspection\Ohc\FirstAidRecordStatusLog;
+use App\Models\Inspection\Ohc\FirstAidRecordSignatureUpload;
+
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Border;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
+use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
+use PhpOffice\PhpSpreadsheet\RichText\RichText;
 
 class FirstAidRecordController extends Controller
 {
@@ -24,6 +35,7 @@ class FirstAidRecordController extends Controller
     private $first_aid_checklist;
     private $unit;
     private $firstAidLocation;
+    private $document_reference;
 
     public function __construct()
     {
@@ -31,7 +43,7 @@ class FirstAidRecordController extends Controller
         $this->first_aid_checklist = new FirstAidRecordChecklist();
         $this->unit = new Unit();
         $this->firstAidLocation = new FirstAidLocation();
-
+        $this->document_reference = new InspectionStaticDocno();
     }
 
     public function Index(Request $request)
@@ -66,8 +78,11 @@ class FirstAidRecordController extends Controller
                             $btn = '';
                             $btn = '<a href="' . admin_url('ohc/first-aid-record/view/' . encryptId($row->id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
                             $btn .= '<a href="' . admin_url('ohc/first-aid-record/generalpdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
-                                <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
-                            </a>';
+                                        <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
+                                    </a>';
+                            $btn .= '<a href="' . admin_url('ohc/first-aid-record/generalexcel/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
+                                        <i class="fas fa-file-excel" style="color: #1D6F42;" aria-hidden="true"></i>
+                                    </a>';
                             return $btn;
                         })
                         ->rawColumns(['action', 'created_date', 'issue_date', 'created_by', 'status'])
@@ -92,13 +107,35 @@ class FirstAidRecordController extends Controller
     {
         try {
             $unit = $this->unit->getunit();
-
+            $document_no = $this->document_reference->selectUsingName('FirstAidRecord');
             $data = [
                 'unit' => $unit,
+                'document_no' => $document_no,
             ];
             return view('inspection.inspection_ohc.first_aid_record.add', $data);
         } catch (Exception $ex) {
             report($ex);
+        }
+    }
+    public function Uniquecheck(Request $request)
+    {
+        if ($request->ajax()) {
+            $month = $request->month;
+            $year = $request->year;
+            $id = $request->id;
+
+            if ($id == '') {
+                $record = $this->first_aid_details->uniqueCheck($month, $year);
+            } else {
+                $id = decryptId($id);
+                $record = $this->first_aid_details->ExistuniqueCheck($month, $year, $id);
+            }
+
+            if ($record->count()) {
+                return Response::json(false);
+            }
+
+            return Response::json(true);
         }
     }
 
@@ -127,7 +164,7 @@ class FirstAidRecordController extends Controller
         try {
 
             $first_aid_details = $this->first_aid_details->store();
-            $first_aid_detail_id = $first_aid_details->id; 
+            $first_aid_detail_id = $first_aid_details->id;
             $this->first_aid_checklist->store($first_aid_detail_id);
 
             Session::flash('success', __('Your data has been created successfully'));
@@ -145,7 +182,7 @@ class FirstAidRecordController extends Controller
             $id = decryptId($request->id);
 
             $this->first_aid_details->statuschange($id);
-           
+
             $this->first_aid_checklist->statuschange($id);
 
             return response()->json(['status' => 'success', 'msg' => 'Your status  has changed Successfully'], 200);
@@ -159,13 +196,17 @@ class FirstAidRecordController extends Controller
     {
         try {
             $id = decryptId($request->id);
+
             if (Auth::check()) {
                 $first_aid_details = $this->first_aid_details->find($id);
+
                 $first_aid_checklist = $this->first_aid_checklist->selectOne($id);
+                $document_no = $this->document_reference->selectOne($first_aid_details->document_reference_id);
 
                 $data = array(
                     'first_aid_details' => $first_aid_details,
                     'first_aid_checklist' => $first_aid_checklist  ?? [],
+                    'document_no' => $document_no,
                 );
             }
             return view('inspection.inspection_ohc.first_aid_record.view', $data);
@@ -177,76 +218,176 @@ class FirstAidRecordController extends Controller
     public function ExportExcel(Request $request)
     {
         try {
-
             $allData = $this->first_aid_details->exportdata();
-            
+
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
             }
 
-            $header = [
-                __("common.sno"),
-                'Document Number',
-                'Issue Date',
-                'Revision Date',
-                __("common.status"),
-                __("common.created_by"),
-                __("common.created_date"),
+            $spreadsheet = new Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
+
+            $columnWidths = [
+                'A' => 8, 'B' => 12, 'C' => 16, 'D' => 16,
+                'E' => 25, 'F' => 25, 'G' => 25, 'H' => 18, 'I' => 18
             ];
-
-            $i = 1;
-            foreach ($allData as $data) {
-
-                $export = [];
-                $export[] =  $i;
-                $export[] =  $data->document_number;
-                $export[] =  $data->issue_date;
-                $export[] = $data->revision_date;
-                $export[] =  $data->status == 1 ? 'Active' : 'In-Active';
-                $export[] =  getusername($data->created_by);
-                $export[] =  Displaydateformat($data->created_at);
-
-                $exportData[] = $export;
-
-                $i++;
+            foreach ($columnWidths as $col => $width) {
+                $sheet->getColumnDimension($col)->setWidth($width);
             }
 
-            $writer = SimpleExcelWriter::streamDownload('First Aid Record.xlsx')
-                ->addHeader($header)
-                ->addRows(
-                    $exportData
-                );
-        } catch (Exception $ex) {
+            for ($i = 1; $i <= 1000; $i++) {
+                $sheet->getRowDimension($i)->setRowHeight(22);
+            }
 
+            $row = 1;
+
+            foreach ($allData as $groupId => $checklistGroup) {
+                $firstItem = $checklistGroup->first();
+
+                $document_no = $this->document_reference->selectUsingName('FirstAidRecord');
+
+                $sheet->mergeCells("A{$row}:B" . ($row + 2));
+                $logoPath = public_path('assets/images/logo-dark.png');
+                if (file_exists($logoPath)) {
+                    $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
+                    $drawing->setName('Logo');
+                    $drawing->setPath($logoPath);
+                    $drawing->setCoordinates("A{$row}");
+                    $drawing->setOffsetX(10);
+                    $drawing->setOffsetY(5);
+                    $drawing->setWidth(60);
+                    $drawing->setHeight(50);
+                    $drawing->setWorksheet($sheet);
+                }
+
+                $sheet->mergeCells("C{$row}:F" . ($row + 2))->setCellValue("C{$row}", "OCCUPATIONAL HEALTH CENTER FIRST AID RECORD\nPN INTERNATIONAL PVT LTD");
+                $sheet->getStyle("C{$row}")->applyFromArray([
+                    'font' => ['bold' => true, 'size' => 14],
+                    'alignment' => ['horizontal' => 'center', 'vertical' => 'center', 'wrapText' => true],
+                ]);
+
+                $sheet->mergeCells("G{$row}:H{$row}")->setCellValue("G{$row}", "Doc. No.");
+                $sheet->setCellValue("I{$row}", $document_no->doc_no ?? '-');
+
+                $sheet->mergeCells("G" . ($row + 1) . ":H" . ($row + 1))->setCellValue("G" . ($row + 1), "Issue Dt.");
+                $sheet->setCellValue("I" . ($row + 1), Displaydateformat($document_no->issue_date ?? ''));
+
+                $sheet->mergeCells("G" . ($row + 2) . ":H" . ($row + 2))->setCellValue("G" . ($row + 2), "Rev. & Dt.");
+                $sheet->setCellValue("I" . ($row + 2), $document_no->rev_dt ?? '-');
+
+                $sheet->getStyle("G{$row}:I" . ($row + 2))->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
+                    'alignment' => ['horizontal' => 'center', 'vertical' => 'center'],
+                ]);
+                $sheet->getStyle("G{$row}:G" . ($row + 2))->getFont()->setBold(true);
+
+                $sheet->getStyle("A{$row}:I" . ($row + 2))->applyFromArray([
+                    'borders' => [
+                        'outline' => [
+                            'borderStyle' => Border::BORDER_THICK,
+                            'color' => ['argb' => '000000']
+                        ]
+                    ]
+                ]);
+
+                $row += 3;
+
+                $sheet->fromArray([
+                    "Sr No.", "Month", "Department", "Unit",
+                    "First Aid Station Number", "First Aid Box Number",
+                    "Total Number of First Aid", "Remark"
+                ], null, "A{$row}");
+                $sheet->mergeCells("H{$row}:I{$row}");
+                $sheet->getStyle("A{$row}:I{$row}")->applyFromArray([
+                    'font' => ['bold' => true],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => 'center', 'vertical' => 'center'],
+                ]);
+                $sheet->getRowDimension($row)->setRowHeight(30);
+                $row++;
+
+                $srNo = 1;
+                $month = $firstItem->month ?? '-';
+                $total = 0;
+
+                foreach ($checklistGroup as $details) {
+                    $sheet->fromArray([
+                        $srNo,
+                        $month,
+                        getDepartment($details->department),
+                        getUnitname($details->unit),
+                        $details->first_aid_station_number ?? '-',
+                        $details->first_aid_box_number ?? '-',
+                        $details->total_number_of_first_aid ?? '-',
+                        $details->remark ?? '-'
+                    ], null, "A{$row}");
+
+                    $sheet->mergeCells("H{$row}:I{$row}");
+                    $sheet->getStyle("A{$row}:I{$row}")->applyFromArray([
+                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                        'alignment' => ['horizontal' => 'center', 'vertical' => 'center'],
+                    ]);
+
+                    $total += intval($details->total_number_of_first_aid ?? 0);
+
+                    $srNo++;
+                    $row++;
+                }
+
+                $sheet->mergeCells("A{$row}:F{$row}")->setCellValue("A{$row}", "Total Number of First Aid");
+                $sheet->mergeCells("G{$row}:I{$row}")->setCellValue("G{$row}", $total);
+
+                $sheet->getStyle("A{$row}:I{$row}")->applyFromArray([
+                    'font' => ['bold' => true],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => 'center', 'vertical' => 'center'],
+                ]);
+
+                $blockStart = $row - $srNo;
+                $sheet->getStyle("A{$blockStart}:I{$row}")->applyFromArray([
+                    'borders' => [
+                        'outline' => [
+                            'borderStyle' => Border::BORDER_THICK,
+                            'color' => ['argb' => '000000']
+                        ]
+                    ]
+                ]);
+
+                $row += 4;
+            }
+
+            $writer = new Xlsx($spreadsheet);
+            $fileName = 'First Aid Record.xlsx';
+            $filePath = storage_path("app/public/{$fileName}");
+            $writer->save($filePath);
+
+            return response()->download($filePath)->deleteFileAfterSend(true);
+
+        } catch (\Exception $ex) {
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            Session::flash('error', 'Something went wrong! Please try again.');
             return redirect(admin_url('ohc/first-aid-record/list'));
         }
     }
+
 
     public function ExportPdf(Request $request)
     {
         try {
 
             $allData = $this->first_aid_details->exportdata();
+            $document_no = $this->document_reference->selectUsingName('FirstAidRecord');
+
 
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
+            }elseif(count($allData) > 20){
+                return redirect()->back()->with('error',   __('inspection.excess_error'));
             }
 
-            $header = [
-                __("common.sno"),
-                'Document Number',
-                'Issue Date',
-                'Revision Date',
-                __("common.status"),
-                __("common.created_by"),
-                __("common.created_date"),
-            ];
-
             $data = array(
-                'header' => $header,
                 'content' => $allData,
+                'document_no' => $document_no,
                 'pagetitle' => "First Aid Record Details",
             );
 
@@ -270,7 +411,6 @@ class FirstAidRecordController extends Controller
             $filename = "First Aid Record.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/first-aid-record/list'));
@@ -284,10 +424,12 @@ class FirstAidRecordController extends Controller
             if (Auth::check()) {
                 $first_aid_details = $this->first_aid_details->find($id);
                 $first_aid_checklist = $this->first_aid_checklist->selectOne($id);
+                $document_no = $this->document_reference->selectUsingName('FirstAidRecord');
 
                 $data = array(
                     'first_aid_details' => $first_aid_details,
                     'first_aid_checklist' => $first_aid_checklist  ?? [],
+                    'document_no' => $document_no,
                     'pagetitle' => "OHC FIRST AID RECORD",
                 );
             }
@@ -307,7 +449,7 @@ class FirstAidRecordController extends Controller
             $html = view('inspection.inspection_ohc.first_aid_record.generalpdf', $data)->render();
             $mpdf->WriteHTML($html);
 
-            $filename = "OHC FIRST AID RECORD.pdf";
+            $filename = "First Aid Record.pdf";
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);
@@ -315,4 +457,141 @@ class FirstAidRecordController extends Controller
         }
     }
 
+
+    public function generalExcel(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+
+            $spreadsheet = new Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
+
+            $first_aid_details = $this->first_aid_details->selectOne($id);
+            $first_aid_checklist = $this->first_aid_checklist->selectOne($id);
+            $document_no = $this->document_reference->selectUsingName('FirstAidRecord');
+
+            $columnWidths = [
+                'A' => 8, 'B' => 12, 'C' => 16, 'D' => 16,
+                'E' => 25, 'F' => 25, 'G' => 25, 'H' => 18, 'I' => 18
+            ];
+            foreach ($columnWidths as $col => $width) {
+                $sheet->getColumnDimension($col)->setWidth($width);
+            }
+
+            for ($i = 1; $i <= 100; $i++) {
+                $sheet->getRowDimension($i)->setRowHeight(22);
+            }
+
+            $sheet->mergeCells("A1:B3");
+            $logoPath = public_path('assets/images/logo-dark.png');
+            if (file_exists($logoPath)) {
+                $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
+                $drawing->setName('Logo');
+                $drawing->setPath($logoPath);
+                $drawing->setCoordinates('A1');
+                $drawing->setOffsetX(10);
+                $drawing->setOffsetY(5);
+                $drawing->setWidth(60);
+                $drawing->setHeight(50);
+                $drawing->setWorksheet($sheet);
+            }
+
+            $sheet->mergeCells("C1:F3")->setCellValue("C1", "OCCUPATIONAL HEALTH CENTER FIRST AID RECORD\nPN INTERNATIONAL PVT LTD");
+            $sheet->getStyle("C1")->applyFromArray([
+                'font' => ['bold' => true, 'size' => 14],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+            ]);
+
+            $sheet->mergeCells("G1:H1")->setCellValue("G1", "Doc. No.");
+            $sheet->setCellValue("I1", $document_no->doc_no);
+
+            $sheet->mergeCells("G2:H2")->setCellValue("G2", "Issue Dt.");
+            $sheet->setCellValue("I2", Displaydateformat($document_no->issue_date));
+
+            $sheet->mergeCells("G3:H3")->setCellValue("G3", "Rev. & Dt.");
+            $sheet->setCellValue("I3", $document_no->rev_dt);
+
+            $sheet->getStyle("G1:I3")->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+            ]);
+            $sheet->getStyle("G1:G3")->getFont()->setBold(true);
+
+            $row = 4;
+            $sheet->fromArray([
+                "Sr No.", "Month", "Department", "Unit",
+                "First Aid Station Number", "First Aid Box Number",
+                "Total Number of First Aid", "Remark"
+            ], null, "A{$row}");
+            $sheet->getRowDimension($row)->setRowHeight(30);
+            $sheet->mergeCells("H{$row}:I{$row}");
+            $sheet->getStyle("A{$row}:I{$row}")->applyFromArray([
+                'font' => ['bold' => true],
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+            ]);
+
+            $row++;
+            $srNo = 1;
+            $month = $first_aid_details->month ?? '-';
+
+            foreach ($first_aid_checklist as $details) {
+                $sheet->fromArray([
+                    $srNo,
+                    $month,
+                    getDepartment($details['department']),
+                    getUnitname($details['unit']),
+                    $details['first_aid_station_number'] ?? '-',
+                    $details['first_aid_box_number'] ?? '-',
+                    $details['total_number_of_first_aid'] ?? '-',
+                    $details['remark'] ?? '-'
+                ], null, "A{$row}");
+
+                $sheet->mergeCells("H{$row}:I{$row}");
+                $sheet->getStyle("A{$row}:I{$row}")->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                ]);
+
+                $row++;
+                $srNo++;
+            }
+
+            $sheet->mergeCells("A{$row}:F{$row}")->setCellValue("A{$row}", "Total Number of First Aid");
+            $sheet->mergeCells("G{$row}:I{$row}");
+            $sheet->setCellValue("G{$row}", $first_aid_details->overall_total_number_of_first_aid ?? '0');
+
+            $sheet->getStyle("A{$row}:I{$row}")->applyFromArray([
+                'font' => ['bold' => true],
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+            ]);
+
+            $sheet->getStyle("A5:I{$row}")->applyFromArray([
+                'borders' => [
+                    'outline' => [
+                        'borderStyle' => Border::BORDER_THIN,
+                        'color' => ['argb' => '000000'],
+                    ],
+                ],
+            ]);
+
+            $writer = new Xlsx($spreadsheet);
+            $fileName = 'First Aid Record.xlsx';
+            $filePath = storage_path("app/public/{$fileName}");
+            $writer->save($filePath);
+
+            return response()->download($filePath)->deleteFileAfterSend(true);
+        } catch (\Exception $ex) {
+            report($ex);
+            Session::flash('error', 'Something went wrong!');
+            return redirect(admin_url('ohc/first-aid-record/list'));
+        }
+    }
+
+
+
+
+
 }
+

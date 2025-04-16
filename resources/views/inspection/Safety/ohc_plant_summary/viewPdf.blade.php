@@ -217,6 +217,7 @@
             </tr>
         </table>
     </div>
+    <br>
 
     @php
         $rowcount = count($units);
@@ -225,12 +226,16 @@
     <table style="width: 100%; border-collapse: collapse; text-align: center;">
         <thead>
             <tr>
-                <th rowspan="2" style="border: 2px solid black; padding: 8px; background-color: #ddd; width: 80px;">SR. NO.</th>
-                <th rowspan="2" style="border: 2px solid black; padding: 8px; background-color: #ddd; width: 150px;">Description</th>
-                <th colspan="{{ $rowcount }}" style="border: 2px solid black; padding: 8px; background-color: #ddd; text-align:center;">
+                <th rowspan="2" style="border: 1px solid black; padding: 8px; background-color: #ddd; width: 80px;">
+                    SR. NO.</th>
+                <th rowspan="2" style="border: 1px solid black; padding: 8px; background-color: #ddd; width: 150px;">
+                    Description</th>
+                <th colspan="{{ $rowcount }}"
+                    style="border: 1px solid black; padding: 8px; background-color: #ddd; text-align:center;">
                     Quantity (in Nos/m²)
                 </th>
-                <th rowspan="2" style="border: 2px solid black; padding: 8px; background-color: #ddd; width: 150px;">Total Quantity (in Nos/m²)</th>
+                <th rowspan="2" style="border: 1px solid black; padding: 8px; background-color: #ddd; width: 150px;">
+                    Total Quantity (in Nos/m²)</th>
             </tr>
             <tr>
                 @foreach ($units as $unit)
@@ -259,6 +264,7 @@
             @endforeach
         </tbody>
     </table>
+    <br>
     <div style="width:100%;">
         <table style="width:100%;">
             <tr>
@@ -269,6 +275,9 @@
             </tr>
         </table>
     </div>
+
+    <br>
+
 
     <div class="table-responsive">
         <table id="firewaterpump" class="table table-bordered text-center" style="border-collapse: collapse;">

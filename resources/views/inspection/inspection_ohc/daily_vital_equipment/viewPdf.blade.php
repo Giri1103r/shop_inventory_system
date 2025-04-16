@@ -160,33 +160,21 @@
             <td width="50%" style="padding:5px;"><b>Document Number</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
-                {{ isset($daily_vital->doc_no) ? $daily_vital->doc_no : '' }}</td>
+                {{ isset($document_no->doc_no) ? $document_no->doc_no : '' }}
+            </td>
         </tr>
         <tr>
             <td width="50%" style="padding:5px;"><b>Issue Date</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
-                {{ Displaydateformat(isset($daily_vital->issue_date) ? $daily_vital->issue_date : '') }}</td>
+                {{ Displaydateformat(isset($document_no->issue_date) ? $document_no->issue_date : '') }}
+            </td>
         </tr>
         <tr>
             <td width="50%" style="padding:5px;"><b>Revision Data</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
-                {{ isset($daily_vital->revision_data) ? $daily_vital->revision_data : '' }}
-            </td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Unit</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ getUnitname(isset($daily_vital->unit) ? $daily_vital->unit : '') }}
-            </td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Shift</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ getShift(isset($daily_vital->shift) ? $daily_vital->shift : '') }}
+                {{ isset($document_no->rev_dt) ? $document_no->rev_dt : '' }}
             </td>
         </tr>
         <tr>
@@ -210,6 +198,18 @@
 
     <table border="1" cellspacing="0" cellpadding="8" width="100%">
         <thead>
+            <tr>
+                <td colspan="1" style="border: 1px solid black; padding: 8px; font-weight: bold;"
+                    title="DATE OF INSPECTION">DATE OF INSPECTION :-
+                    {{ DisplayDateformat($daily_vital->date_of_inspection) }}</td>
+                <td colspan="2" style="border: 1px solid black; padding: 8px; font-weight: bold;" title="UNIT">
+                    UNIT :- {{ getUnitname($daily_vital->unit) }}
+                </td>
+                <td colspan="2" style="border: 1px solid black; padding: 8px; font-weight: bold;" title="SHIFT">
+                    SHIFT :- {{ getShiftName($daily_vital->shift) }}
+                </td>
+            </tr>
+
             <tr>
                 <th style="background-color: #ccc; text-align: center;">Sr. No</th>
                 <th style="background-color: #ccc; text-align: center;">Check Points</th>

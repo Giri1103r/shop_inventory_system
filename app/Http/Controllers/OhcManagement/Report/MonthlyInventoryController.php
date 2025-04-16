@@ -14,6 +14,8 @@ use App\Models\OhcManagement\MedicineReceiving;
 use App\Models\OhcManagement\MedicineStock;
 use App\Models\OhcManagement\OhcStatuslog;
 use App\Models\OhcManagement\Report\Inventory;
+use App\Models\OhcManagement\Status\CreatorLog;
+use App\Models\OhcManagement\Status\MedicineLog;
 use App\Models\OhcManagement\Status\ReceivingStatus;
 use App\Models\OhcManagement\UserMedicineIssuance;
 use App\Models\UploadLog;
@@ -42,8 +44,8 @@ class MonthlyInventoryController extends Controller
     private $unit;
     private $user;
     private $medicine_issuance;
-    private $user_medicine_issuance;
-
+    private $medicineLog;
+    private $creatorLog;
     private $inventory;
 
     private $status;
@@ -52,8 +54,8 @@ class MonthlyInventoryController extends Controller
         $this->medicine = new Medicine();
         $this->vendor = new Vendor();
         $this->medicine_receiving = new MedicineReceiving();
-        $this->medicine_issuance = new MedicineIssuance();
-        $this->user_medicine_issuance = new UserMedicineIssuance();
+        $this->creatorLog = new CreatorLog();
+        $this->medicineLog = new MedicineLog();
 
         $this->medicine_stock = new MedicineStock();
         $this->ohc_status = new OhcStatuslog();
@@ -83,11 +85,13 @@ class MonthlyInventoryController extends Controller
         $selectedMonth = $date ? $date->format('m') : null;
         $inventory =  $this->inventory->getmonthlyinventoryreport($selectedUnit, $selectedMonth, $selectedYear);
         $receiving = $this->medicine_receiving->getPurchaseddate($selectedYear, $selectedMonth);
-        $medicineIssuing = $this->user_medicine_issuance->getunitdata($selectedYear, $selectedMonth, $selectedUnit);
+        $medicineIssuing = $this->creatorLog->getunitdata($selectedYear, $selectedMonth, $selectedUnit);
+
         $allIssuances = [];
         foreach ($medicineIssuing as $id) {
 
-            $allIssuances[] = $this->medicine_issuance->getissuedDate($selectedYear, $selectedMonth, [$id]);
+            $allIssuances[] = $this->medicineLog->getissuedDate($selectedYear, $selectedMonth, [$id]);
+
         }
 
         $data = [
@@ -118,8 +122,8 @@ class MonthlyInventoryController extends Controller
             $medicine = $this->inventory->getUnitwise($selectedUnit);
             $inventory = $this->inventory->getmonthlyinventoryreport($selectedUnit, $selectedMonth, $selectedYear);
             $receiving = $this->medicine_receiving->getPurchaseddate($selectedYear, $selectedMonth);
-            $medicineIssuing = $this->user_medicine_issuance->getunitdata($selectedYear, $selectedMonth, $selectedUnit);
-            $allIssuances = $this->medicine_issuance->getissuedDate($selectedYear, $selectedMonth, $medicineIssuing);
+            $medicineIssuing = $this->creatorLog->getunitdata($selectedYear, $selectedMonth, $selectedUnit);
+            $allIssuances = $this->medicineLog->getissuedDate($selectedYear, $selectedMonth, $medicineIssuing);
             $receivingData = [];
             foreach ($receiving as $item) {
                 $date = Carbon::parse($item->approved_date ?? $item->created_at)->format('j');
@@ -153,7 +157,7 @@ class MonthlyInventoryController extends Controller
                 'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['rgb' => 'FFFFFF']]
             ]);
 
-            // Insert Logo
+           
             $logoPath = public_path('assets/images/logo-dark.png');
             if (file_exists($logoPath)) {
                 $drawing = new Drawing();
@@ -171,16 +175,20 @@ class MonthlyInventoryController extends Controller
             $titleEndColumn = 'BR';
             $sheet->mergeCells("F1:$titleEndColumn" . "3");
 
-            // Set the title text
-            $financialStartYear = $selectedYear - 1;
-            $financialEndYear = $selectedYear;
+            $today = now();
+            $currentYear = $today->year;
+            $currentMonth = $today->month;
 
+            if ($currentMonth > 3) {
+                $startYear = $currentYear;
+                $endYear = $currentYear + 1;
+            } else {
+                $startYear = $currentYear - 1;
+                $endYear = $currentYear;
+            }
 
-        $financialYear =  "April $financialStartYear - March $financialEndYear";
-
-        // Set Excel Header with Financial Year
-        $sheet->setCellValue("F1", "Occupational Health Center Inventory Record \nPN International Pvt Ltd \n Financial Year($financialYear)");
-
+            $financialYearText = "Financial Year (April {$startYear} - March {$endYear})";
+            $sheet->setCellValue("F1", "Occupational Health Center Inventory Record \nPN International Pvt Ltd \n$financialYearText");
 
             // Apply styling
             $sheet->getStyle("C1:$titleEndColumn" . "3")->applyFromArray([

@@ -4,6 +4,8 @@ namespace App\Models\Inspection\Fire;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Inspection\InspectionStaticDocno;
+use App\Scopes\TrashScope;
 
 class FireCheckListFollowUp extends Model
 {
@@ -16,28 +18,10 @@ class FireCheckListFollowUp extends Model
         'inspection_category',
         'inspection_type',
         'inspection_id',
-        'doc_no',
-        'issue_date',
-        'revision_date',
+        'observation_id',
+        'document_reference_id',
         'date_of_inspection',
-        'location',
-        'shift',
-        'next_due',
-        'observation',
-        'frequency',
-        'checked_by',
-        'verified_by',
-        'approved_by',
-        'description',
-        'remarks',
         'inspection_status',
-        'capa_recomendation',
-        'capa_remarks',
-        'level_one_manager_remarks',
-        'level_two_manager_remarks',
-        'capa_ehs_remarks',
-        'l1_manager_verified_by',
-        'l2_manager_verified_by',
         'status',
         'trash',
         'created_by',
@@ -56,7 +40,7 @@ class FireCheckListFollowUp extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_fire_checklist_follow.*');
+        $query = $this->select('inspection_fire_checklist_follow.*', 'inspection_fire_observation.*', 'inspection_fire_checklist_follow.id as inspectionid', 'inspection_fire_observation.id as observationid')->leftjoin('inspection_fire_observation', 'inspection_fire_observation.inspection_id', '=', 'inspection_fire_checklist_follow.id');
         $org_total =  $query;
         $org_total_counts = $org_total->count();
 
@@ -128,30 +112,40 @@ class FireCheckListFollowUp extends Model
         return $datas;
     }
 
-    public function store($inspection_type, $inspection_id)
+    public function store()
     {
         $request = request();
-
         $data = array(
-            'inspection_type' => $inspection_type,
-            'inspeciton_id' => $inspection_id,
-            'doc_no' => $request->doc_no,
-            'issue_date' => $request->issue_date,
-            'revision_data' => $request->rev_date,
-            'date_of_inspection' => $request->inspection_date,
-            'location' => decryptId($request->location_id),
-            'shift' => decryptId($request->shift_id),
-            'next_due' => $request->next_due,
-            'observation' => $request->observation,
-            'unit' => decryptId($request->unit_id),
-            'frequency' => decryptId($request->frequency_id),
+            'inspection_type' => decryptId($request->inspection_type),
+            'inspection_id' => decryptId($request->inspection_id),
+            'document_reference_id' => decryptId($request->document_reference_id),
+            'date_of_inspection' => DBdateformat($request->date_of_inspection),
             'inspection_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,
             'created_by' => Auth::id(),
-            'checked_by' => Auth::id(),
         );
 
         return $this->create($data);
     }
+
+
+    public function selectOne($id, $observationid)
+    {
+        $data = $this->select('inspection_fire_checklist_follow.*', 'inspection_fire_observation.*', 'inspection_static_docno.*', 'inspection_fire_checklist_follow.id as inspectionid', 'inspection_fire_observation.id as observationid', 'inspection_fire_observation_whywhy.*', 'inspection_fire_signatureupload.file_path')
+            ->leftjoin('inspection_fire_observation', 'inspection_fire_observation.inspection_id', '=', 'inspection_fire_checklist_follow.id')
+            ->leftjoin('inspection_static_docno', 'inspection_static_docno.id', '=', 'inspection_fire_checklist_follow.document_reference_id')
+            ->leftjoin('inspection_fire_observation_whywhy', 'inspection_fire_observation_whywhy.observation_id', '=', 'inspection_fire_observation.id')
+            ->leftjoin('inspection_fire_signatureupload', 'inspection_fire_signatureupload.inspection_id', '=', 'inspection_fire_observation.id')
+            ->where(function ($query) {
+                $query->where('inspection_fire_observation_whywhy.status', 1)
+                    ->orWhereNull('inspection_fire_observation_whywhy.status');
+            })
+
+            ->where('inspection_fire_checklist_follow.status', 1)
+            ->where('inspection_fire_checklist_follow.id', $id)
+            ->where('inspection_fire_observation.id', $observationid)->first();
+        return $data;
+    }
+
 
     public function exportdata()
     {
@@ -183,5 +177,16 @@ class FireCheckListFollowUp extends Model
         $query->orderBy('id', 'DESC');
 
         return  $query->get();
+    }
+
+    protected static function booted()
+    {
+        static::addGlobalScope(new TrashScope('inspection_fire_checklist_follow'));
+
+        static::created(function ($model) {
+
+            $uniqueId = 'OBSERVATION-' . str_pad($model->id, 5, '0', STR_PAD_LEFT);
+            $model->update(['observation_id' => $uniqueId]);
+        });
     }
 }

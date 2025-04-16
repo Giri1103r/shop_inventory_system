@@ -40,39 +40,44 @@
                                         <div class="row">
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Document Number</label>
+                                                    <label class="form-label require">{{ __('inspection.doc_no') }}</label>
                                                     <input type="text" name="document_no" id = "document_no"
-                                                        class="form-control">
+                                                        class="form-control" placeholder="Enter the Document Number"
+                                                        value="{{ $document_no->doc_no }}" readonly>
+                                                    @error('doc_no')
+                                                        <div class="error">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label for="rate" class="form-label require ">Issued
-                                                        Date</label>
+                                                    <label
+                                                        class="form-label require">{{ __('inspection.issue_date') }}</label>
                                                     <div class="input-group date form-input custom-height">
                                                         <input type="text" name="issue_date" id="issue_date"
-                                                            class="form-control"autocomplete="off">
+                                                            class="form-control"autocomplete="off"
+                                                            value="{{ displaydateformat($document_no->issue_date) }}"
+                                                            readonly>
                                                         <div class="input-group-addon input-group-text">
                                                             <span class="fa fa-calendar"></span>
                                                         </div>
                                                     </div>
                                                 </div>
+
+                                                @error('issue_date')
+                                                    <div class="error">{{ $message }}</div>
+                                                @enderror
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label for="rate" class="form-label require ">Review
-                                                        Date</label>
-                                                    <div class="input-group date form-input custom-height">
-                                                        <input type="text" value="{{ getDocumentReviewDate('0') }}"
-                                                            name="review_date" id="review_date" class="form-control"
-                                                            autocomplete="off" readonly>
-
-                                                        <div class="input-group-addon input-group-text">
-                                                            <span class="fa fa-calendar"></span>
-                                                        </div>
-                                                    </div>
+                                                    <label
+                                                        class="form-label require">{{ __('inspection.rev_date') }}</label>
+                                                    <input type="text" name="review_date" id = "review_date"
+                                                        class="form-control" value="{{ $document_no->rev_dt }}" readonly>
                                                 </div>
                                             </div>
+                                            <input type="hidden" name="document_reference_id"
+                                                value="{{ encryptId($document_no->id) }}">
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Unit</label>
@@ -112,16 +117,16 @@
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">First Aid Box Number</label>
-                                                    <input type="text" name="first_aid_box_no" id = "first_aid_box_no"
-                                                        class="form-control">
+                                                    <input type="number" min="1" name="first_aid_box_no"
+                                                        id = "first_aid_box_no" class="form-control">
                                                 </div>
                                             </div>
 
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">First Aider Name</label>
-                                                    <select name="first_aider" id="first_aider" class="form-control single-select"
-                                                        style="width: 100%">
+                                                    <select name="first_aider" id="first_aider"
+                                                        class="form-control single-select" style="width: 100%">
                                                         <option value="">Select the option</option>
                                                         @foreach ($First_aid as $list)
                                                             <option value="{{ encryptId($list->id) }}">
@@ -145,34 +150,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        @if ($signature_upload->signature_upload != '')
-                                        <label class="form-label view_label">Requestor Signature</label>
 
-                                        <p>
-                                            <a href="{{ asset($signature_upload->signature_upload) }}"
-                                                target="_blank">
-                                                <img src="{{ asset( $signature_upload->signature_upload) }}"
-                                                    style="width: 100px" alt="image">
-                                            </a>
-                                        </p>
-                                    @else
-                                        <div class="col-md-4 mb-3">
-                                            <label for="signature_image"
-                                                class="form-label fw-bold require">Requestor Signature</label>
-                                            <input type="file"
-                                                class="form-control validate-file-accept validate-file-required"
-                                                accept="image/png, image/jpeg, image/jpg" name="signature_image"
-                                                id="signature_image">
-                                            <div class="text-danger"></div>
-                                            <small>Allowed file types: png, jpeg, jpg</small>
-
-                                            <!-- Preview Container -->
-                                            <div id="imagePreviewContainer" class="mt-2" style="display: none;">
-                                                <img id="imagePreview" src="#" alt="Signature Preview"
-                                                    class="img-thumbnail" width="200">
-                                            </div>
-                                        </div>
-                                    @endif
                                         <div class="row mt-2">
                                             <div class="card-header-inner">
                                                 <h4 class="text-white">Medicine details</h4>
@@ -212,7 +190,7 @@
                                                                     <label for="medicine_id" class="require">Medicine
                                                                         Name</label>
                                                                     <select name="medicine_id[0]" id="medicine_id"
-                                                                        class="form-control single-select"
+                                                                        class="form-control single-select medicine_id"
                                                                         style="width: 100%">
                                                                         <option value="">Select the Medicine Name
                                                                         </option>
@@ -230,10 +208,10 @@
                                                                     <label for="available_quantity"
                                                                         class="require">Available
                                                                         Quantity</label>
-                                                                    <input type="text" name="available_quantity[0]"
+                                                                    <input type="number" min="1" name="available_quantity[0]"
                                                                         id="available_quantity" value=""
                                                                         placeholder="Available quantity"
-                                                                        class="form-control" >
+                                                                        class="form-control">
                                                                 </div>
                                                             </td>
                                                             <td>
@@ -243,7 +221,7 @@
                                                                     <input type="text" name="freeze_quantity[0]"
                                                                         id="freeze_quantity"
                                                                         placeholder="Enter the Freeze quantity"
-                                                                        class="form-control">
+                                                                        class="form-control freeze_quantity" readonly>
 
                                                                 </div>
                                                             </td>
@@ -277,6 +255,38 @@
                                                 </table>
                                             </div>
                                         </div>
+
+
+                                        @if ($signature_upload->signature_upload != '')
+                                            <label class="form-label view_label">Requestor Signature</label>
+
+                                            <p>
+                                                <a href="{{ asset($signature_upload->signature_upload) }}"
+                                                    target="_blank">
+                                                    <img src="{{ asset($signature_upload->signature_upload) }}"
+                                                        style="width: 100px" alt="image">
+                                                </a>
+                                            </p>
+                                        @else
+                                            <div class="col-md-4 mb-3">
+                                                <div class="form-group form-input">
+                                                <label for="signature_image" class="form-label fw-bold require">Requestor
+                                                    Signature</label>
+                                                <input type="file"
+                                                    class="form-control validate-file-accept validate-file-required"
+                                                    accept="image/png, image/jpeg, image/jpg" name="signature_image"
+                                                    id="signature_image">
+                                                <div class="text-danger"></div>
+                                                <small>Allowed file types: png, jpeg, jpg</small>
+
+                                                <!-- Preview Container -->
+                                                <div id="imagePreviewContainer" class="mt-2" style="display: none;">
+                                                    <img id="imagePreview" src="#" alt="Signature Preview"
+                                                        class="img-thumbnail" width="200">
+                                                </div>
+                                            </div>
+                                            </div>
+                                        @endif
                                 </div>
                                 <hr>
                                 <div class="submit-button" style="text-align: right;">
@@ -358,6 +368,35 @@
                 $('#department_id').trigger('change.');
             }
         });
+        $(document).on('change', '.medicine_id', function() {
+            var $row = $(this).closest('tr'); // Get current row
+            var medicineId = $(this).val();
+
+            if (medicineId) {
+                $.ajax({
+                    url: "{{ admin_url('ohc/medical-requisition-slip/freeze-medicine-quantity') }}",
+                    type: 'GET',
+                    dataType: 'json',
+                    data: {
+                        medicineId: medicineId
+                    },
+                    success: function(data) {
+                        if (data && data.freeze_quantity !== undefined) {
+                            $row.find('.freeze_quantity').val(data
+                                .freeze_quantity);
+                        } else {
+                            $row.find('.freeze_quantity').val('');
+                        }
+                    },
+                    error: function(xhr) {
+                        alert(
+                            'Error fetching freeze quantity. Please try again.');
+                    }
+                });
+            } else {
+                $row.find('.freeze_quantity').val('');
+            }
+        });
         $(document).ready(function() {
 
             let medicine_requisition_row_count = 1;
@@ -373,7 +412,7 @@
                 <td>
                     <div class="form-group form-input">
                         <label for="medicine_id" class="require">Medicine Name</label>
-                        <select name="medicine_id[${medicine_requisition_row_count}]" class="form-control single-select" style="width: 100%">
+                        <select name="medicine_id[${medicine_requisition_row_count}]" class="form-control medicine_id single-select" style="width: 100%">
                             <option value="">Select the Medicine Name</option>
                             @foreach ($medicine as $list)
                                                                             <option value="{{ encryptId($list->medicine_id) }}">
@@ -386,7 +425,7 @@
                 <td>
                     <div class="form-group form-input">
                         <label for="quantity" class="require">Available Quantity</label>
-                        <input type="text" name="available_quantity[${medicine_requisition_row_count}]"   placeholder="Enter the quantity" class="form-control">
+                        <input type="number" min="1" name="available_quantity[${medicine_requisition_row_count}]"   placeholder="Enter the quantity" class="form-control">
                          <span id="quantity-error" style=" display:none;"  class="text-danger quantity-error">Quantity must be less than available quantity.</span>
 
 
@@ -395,7 +434,7 @@
   <td>
                     <div class="form-group form-input">
                         <label for="quantity" class="require">Freeze Quantity</label>
-                        <input type="text" name="freeze_quantity[${medicine_requisition_row_count}]"   placeholder="Enter the quantity" class="form-control">
+                        <input type="text" name="freeze_quantity[${medicine_requisition_row_count}]"   placeholder="Enter the quantity" class="form-control freeze_quantity" readonly>
                          <span id="quantity-error" style=" display:none;"  class="text-danger quantity-error">Quantity must be less than available quantity.</span>
 
 
@@ -474,6 +513,36 @@
                     }
                 });
                 filterMedicineOptions();
+                $(document).on('change', '.medicine_id', function() {
+                    var $row = $(this).closest('tr'); // Get current row
+                    var medicineId = $(this).val();
+
+                    if (medicineId) {
+                        $.ajax({
+                            url: "{{ admin_url('ohc/medical-requisition-slip/freeze-medicine-quantity') }}",
+                            type: 'GET',
+                            dataType: 'json',
+                            data: {
+                                medicineId: medicineId
+                            },
+                            success: function(data) {
+                                if (data && data.freeze_quantity !== undefined) {
+                                    $row.find('.freeze_quantity').val(data
+                                        .freeze_quantity);
+                                } else {
+                                    $row.find('.freeze_quantity').val('');
+                                }
+                            },
+                            error: function(xhr) {
+                                alert(
+                                    'Error fetching freeze quantity. Please try again.'
+                                );
+                            }
+                        });
+                    } else {
+                        $row.find('.freeze_quantity').val('');
+                    }
+                });
                 medicine_requisition_row_count++;
                 var materialExpiryDatepicker = flatpickr("#material_expiry", {
                     dateFormat: "d-m-Y",

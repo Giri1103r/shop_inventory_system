@@ -152,7 +152,7 @@
                                                             Sr. No
                                                         </th>
 
-                                                        <th colspan="3"
+                                                        <th colspan="2"
                                                             style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
                                                             Check Points
                                                         </th>
@@ -163,6 +163,8 @@
                                                                 {{ $option }}
                                                             </th>
                                                         @endforeach
+                                                        <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;"
+                                                            class="require">Remarks</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -180,12 +182,7 @@
                                                                     style="border: 1px solid black; padding: 8px; background-color: #f5f5f5; font-weight: bold;">
                                                                     {{ $i }}
                                                                 </td>
-                                                                @if ($index == 0)
-                                                                    <td rowspan="{{ $rowCount }}"
-                                                                        style="border: 1px solid black; padding: 8px; background-color: #f5f5f5; font-weight: bold;">
-                                                                        {{ $checklist->subcategory_name }}
-                                                                    </td>
-                                                                @endif
+
                                                                 <td colspan="2"
                                                                     style="border: 1px solid black; padding: 8px;">
                                                                     {{ $checklist->checklist_name }}
@@ -199,6 +196,11 @@
                                                                             class="validate-radio-required">
                                                                     </td>
                                                                 @endforeach
+                                                                <td style="border: 1px solid black; text-align: center; padding:5px;"
+                                                                    class="form-input">
+                                                                    <input type="text" class="form-control"
+                                                                        name="remarks[{{ $checklist->sub_type_id }}][{{ $checklist->checklist_id }}]">
+                                                                </td>
                                                                 @php
                                                                     $i++;
                                                                 @endphp
@@ -240,10 +242,7 @@
                     location.reload();
                 });
 
-                // Initialize Flatpickr for date fields
-                flatpickr("#issue_date", {
-                    dateFormat: "d-m-Y",
-                });
+
                 flatpickr("#inspection_date", {
                     dateFormat: "d-m-Y",
                 });
@@ -279,21 +278,7 @@
                         },
                         resource_code: {
                             required: true,
-                            remote: {
-                                url: '{{ admin_url('safety/safety-gallery-inspection/unique') }}',
-                                type: 'post',
-                                data: {
-                                    resource_code: function() {
-                                        return $('#resource_code').val();
-                                    }
-                                },
-                                // Ensure proper error handling for remote validation
-                                dataFilter: function(response) {
-                                    // Assuming the server returns JSON with { valid: true/false }
-                                    var json = JSON.parse(response);
-                                    return json.valid ? "true" : '"Resource Code already exists"';
-                                }
-                            }
+                          
                         }
                     },
                     messages: {
@@ -344,7 +329,18 @@
                             console.log("Field: " + error.element.name + ", Error: " + error
                                 .message);
                         });
-                    }
+                    },
+
+
+
+                });
+                $('input[name^="remarks"]').each(function() {
+                    $(this).rules('add', {
+                        required: true, // 'required' must be a boolean value
+                        messages: {
+                            required: "Remarks is required" // Make sure 'required' is the correct rule
+                        }
+                    });
                 });
             });
         </script>

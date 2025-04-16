@@ -264,12 +264,11 @@
                                                         <select name="type[1]" id="type"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Valve Type</option>
-                                                            <option value="{{ encryptId(GATE) }}">
-                                                                {{ __('inspection.GATE') }}</option>
-                                                            <option value="{{ encryptId(BALL) }}">
-                                                                {{ __('inspection.BALL') }}</option>
-                                                            <option value="{{ encryptId(BUTTERFLY) }}">
-                                                                {{ __('inspection.BUTTERFLY') }}</option>
+                                                            @foreach ($types as $type)
+                                                                <option value="{{ encryptId($type->id) }}"
+                                                                    {{ old('type.1') == encryptId($department->id) ? 'selected' : '' }}>
+                                                                    {{ $type->name }}</option>
+                                                            @endforeach
                                                         </select>
                                                     </div>
                                                 </div>
@@ -317,29 +316,17 @@
                                                     <h4 class="text-white">Isolation Valve Inspection Observation</h4>
                                                 </div>
 
-                                                {{-- <div class="d-flex justify-content-end align-items-center gap-2 m-2">
-                                                    <button class="btn btn-primary add-row" type="button" id="add-row"
-                                                        style="width: 120px;">
-                                                        Add
-                                                    </button>
-                                                    <button class="btn btn-primary add-obs" type="button" id="add-obs"
-                                                        style="width: 150px;">
-                                                        Add Observation
-                                                    </button>
-                                                    <button type="button"
-                                                        class="btn btn-danger remove-row d-flex align-items-center"
-                                                        style="width: 120px;">
-                                                        <i class="fa-solid fa-trash me-2"></i> Remove
-                                                    </button>
-                                                </div> --}}
-
-                                                <div class="col-md-12 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.obs') }}</label>
-                                                        <textarea name="observation" id="remarks" class="form-control" style="resize: none;"></textarea>
-
-                                                    </div>
+                                                <div class="mb-2">
+                                                    <label class="me-3">
+                                                        <input type="radio" name="observation_needed"
+                                                            value="{{ encryptId(1) }}" class="validate-radio-required">
+                                                        Yes
+                                                    </label>
+                                                    <label>
+                                                        <input type="radio" name="observation_needed"
+                                                            value="{{ encryptId(2) }}" class="validate-radio-required">
+                                                        No
+                                                    </label>
                                                 </div>
                                             </div>
                                         </div>
@@ -711,12 +698,11 @@
                                                         <select name="type[${form_set_count}]" id="type-${form_set_count}"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Valve Type</option>
-                                                            <option value="{{ encryptId(GATE) }}">
-                                                                {{ __('inspection.GATE') }}</option>
-                                                            <option value="{{ encryptId(BALL) }}">
-                                                                {{ __('inspection.BALL') }}</option>
-                                                            <option value="{{ encryptId(BUTTERFLY) }}">
-                                                                {{ __('inspection.BUTTERFLY') }}</option>
+                                                           @foreach ($types as $type)
+                                                                <option value="{{ encryptId($type->id) }}"
+                                                                    {{ old('type.1') == encryptId($department->id) ? 'selected' : '' }}>
+                                                                    {{ $type->name }}</option>
+                                                            @endforeach
                                                         </select>
                                                     </div>
                                                 </div>

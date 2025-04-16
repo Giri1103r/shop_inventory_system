@@ -140,7 +140,6 @@ class OHSPlantSummaryReportController extends Controller
             $unit = $this->unit->getUnit();
             $document_no = $this->document_reference->selectUsingName('OhsPlantSummaryReport');
 
-
             $data = array(
                 'units' => $unit,
                 'document_no' => $document_no,
@@ -302,21 +301,14 @@ class OHSPlantSummaryReportController extends Controller
         try {
 
             $allData = $this->ohsreport->exportdata();
+            $unit = $this->unit->getUnit();
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
             }
-            $header = [
-                __("common.sno"),
-                'Document Number',
-                'Issue Date',
-                'Revision Date',
-                __('Status'),
-                __("common.created_by"),
-                __("common.created_date"),
-            ];
+
 
             $data = array(
-                'header' => $header,
+                'units' => $unit,
                 'content' => $allData,
                 'pagetitle' => "OHS Plant Summary Report",
             );

@@ -1,9 +1,14 @@
 @extends('admin.layouts.admin')
 @section('title', 'Monthly First Aid Box Audit Checklist')
 @section('pageurl', admin_url('ohc/first-aid-box/monthly-audit/list'))
-
-
 @section('content')
+    @push('style')
+        <style>
+            .is-invalid {
+                border: 1px solid red !important;
+            }
+        </style>
+    @endpush
     <div class="clearfix"></div>
     <div class="page-titles">
         <div class="d-flex align-items-center">
@@ -38,41 +43,44 @@
                                         <div class="row">
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Document Number</label>
-
+                                                    <label class="form-label require">{{ __('inspection.doc_no') }}</label>
                                                     <input type="text" name="document_no" id = "document_no"
-                                                        class="form-control">
+                                                        class="form-control" placeholder="Enter the Document Number"
+                                                        value="{{ $document_no->doc_no }}" readonly>
+                                                    @error('doc_no')
+                                                        <div class="error">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label for="rate" class="form-label require ">Issued
-                                                        Date</label>
+                                                    <label
+                                                        class="form-label require">{{ __('inspection.issue_date') }}</label>
                                                     <div class="input-group date form-input custom-height">
                                                         <input type="text" name="issue_date" id="issue_date"
-                                                            class="form-control"autocomplete="off">
+                                                            class="form-control"autocomplete="off"
+                                                            value="{{ displaydateformat($document_no->issue_date) }}"
+                                                            readonly>
                                                         <div class="input-group-addon input-group-text">
                                                             <span class="fa fa-calendar"></span>
                                                         </div>
                                                     </div>
                                                 </div>
+
+                                                @error('issue_date')
+                                                    <div class="error">{{ $message }}</div>
+                                                @enderror
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label for="rate" class="form-label require ">Review
-                                                        Date</label>
-                                                    <div class="input-group date form-input custom-height">
-                                                        <input type="text" value="{{ getDocumentReviewDate('0') }}"
-                                                            name="review_date" id="review_date" class="form-control"
-                                                            autocomplete="off" readonly>
-
-                                                        <div class="input-group-addon input-group-text">
-                                                            <span class="fa fa-calendar"></span>
-                                                        </div>
-                                                    </div>
+                                                    <label
+                                                        class="form-label require">{{ __('inspection.rev_date') }}</label>
+                                                    <input type="text" name="review_date" id = "review_date"
+                                                        class="form-control" value="{{ $document_no->rev_dt }}" readonly>
                                                 </div>
                                             </div>
-
+                                            <input type="hidden" name="document_reference_id"
+                                                value="{{ encryptId($document_no->id) }}">
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Shift</label>
@@ -81,6 +89,19 @@
                                                         <option value="">Select the option</option>
                                                         @foreach ($shift as $list)
                                                             <option value="{{ encryptId($list->id) }}">{{ $list->shift }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">Unit</label>
+                                                    <select name="unit" id="unit" style="width: 100%"
+                                                        class="form-control single-select">
+                                                        <option value="">Select the option</option>
+                                                        @foreach ($unit as $list)
+                                                            <option value="{{ encryptId($list->id) }}">{{ $list->unit_name }}
                                                             </option>
                                                         @endforeach
                                                     </select>
@@ -127,19 +148,21 @@
                                                 </p>
                                             @else
                                                 <div class="col-md-4 mb-3">
-                                                    <label for="signature_image"
-                                                        class="form-label fw-bold require">Requestor Signature</label>
-                                                    <input type="file"
-                                                        class="form-control validate-file-accept validate-file-required"
-                                                        accept="image/png, image/jpeg, image/jpg" name="signature_image"
-                                                        id="signature_image">
-                                                    <div class="text-danger"></div>
-                                                    <small>Allowed file types: png, jpeg, jpg</small>
+                                                    <div class="form-group">
+                                                        <label for="signature_image"
+                                                            class="form-label fw-bold require">Requestor Signature</label>
+                                                        <input type="file" class="form-control "
+                                                            accept="image/png, image/jpeg, image/jpg" name="signature_image"
+                                                            id="signature_image">
+                                                        <div class="text-danger"></div>
+                                                        <small>Allowed file types: png, jpeg, jpg</small>
 
-                                                    <!-- Preview Container -->
-                                                    <div id="imagePreviewContainer" class="mt-2" style="display:None">
-                                                        <img id="imagePreview" src="#" alt="Signature Preview"
-                                                            class="img-thumbnail" width="200">
+                                                        <!-- Preview Container -->
+                                                        <div id="imagePreviewContainer" class="mt-2"
+                                                            style="display:None">
+                                                            <img id="imagePreview" src="#" alt="Signature Preview"
+                                                                class="img-thumbnail" width="200">
+                                                        </div>
                                                     </div>
                                                 </div>
                                             @endif
@@ -211,8 +234,10 @@
                                                                 </div>
                                                             </td>
                                                             <td>
-                                                                <input type="text" name="first_aid_box[]"
-                                                                    class="form-control first_aid_box" readonly>
+                                                                <div class="form-group">
+                                                                    <input type="text" name="first_aid_box[]"
+                                                                        class="form-control first_aid_box" readonly>
+                                                                </div>
                                                             </td>
                                                             <td>
                                                                 <div class="form-group">
@@ -485,28 +510,34 @@
 
             $(".add-row").click(function() {
                 var newRow = `
-        <tr class="medicine-row">
-            <td>
-                <div class="form-group">
-                    <select name="unit_id[${rowCount}]" class="form-control single-select unit_id" style="width: 100%">
-                        <option value="">Select the Unit Name</option>
-                        @foreach ($unit as $list)
-                            <option value="{{ encryptId($list->id) }}">{{ $list->unit_name }}</option>
-                        @endforeach
-                    </select>
-                </div>
-            </td>
-            <td>
-                <div class="form-group">
-                    <select name="department_id[${rowCount}]" class="form-control single-select department_id" style="width: 100%">
-                        <option value="">Select the Department Name</option>
-                    </select>
-                </div>
-            </td>
-            <td>
-                <input type="text" name="first_aid_box[${rowCount}]" class="form-control first_aid_box" readonly>
-            </td>
-            </td>
+                                                                            <tr class="medicine-row">
+                                                                            <td>
+                                                                        <div class="form-group">
+                                                                            <select name="unit_id[${rowCount}]" class="form-control single-select unit_id" style="width: 100%">
+                                                                                <option value="">Select the Unit Name</option>
+                                                                                @foreach ($unit as $list)
+                                                                                    <option value="{{ encryptId($list->id) }}">{{ $list->unit_name }}</option>
+                                                                                @endforeach
+                                                                            </select>
+                                                                            <span class="error-message text-danger"></span>
+                                                                        </div>
+                                                                    </td>
+
+                                                                    <td>
+                                                                        <div class="form-group">
+                                                                            <select name="department_id[${rowCount}]" class="form-control single-select department_id" style="width: 100%">
+                                                                                <option value="">Select the Department Name</option>
+                                                                            </select>
+                                                                            <span class="error-message text-danger"></span>
+                                                                        </div>
+                                                                    </td>
+
+                                                                    <td>
+                                                                        <input type="text" name="first_aid_box[${rowCount}]" class="form-control first_aid_box" readonly>
+                                                                        <span class="error-message text-danger"></span>
+                                                                    </td>
+
+
                                                             <td>
                                                                 <div class="form-group">
                                                                     <input type="radio"
@@ -683,81 +714,82 @@
 
 
 
-                $(`select[name="unit_id[\${rowCount}]"]`).rules('add', {
-                    required: true,
-                    messages: {
-                        required: 'Unit Name is required'
+                $("#monthlyfirstaidchecklist").submit(function(e) {
+                    let isValid = true;
+
+                    $(".medicine-row").each(function() {
+                        const row = $(this);
+
+                        // Validate Unit Name
+                        const unit = row.find(".unit_id");
+                        const unitError = unit.closest(".form-group").find(
+                            ".error-message");
+                        if (unit.val() === "") {
+                            unit.addClass("is-invalid");
+                            unitError.text("Unit name is required.");
+                            isValid = false;
+                        } else {
+                            unit.removeClass("is-invalid");
+                            unitError.text("");
+                        }
+
+                        // Validate Department
+                        const dept = row.find(".department_id");
+                        const deptError = dept.closest(".form-group").find(
+                            ".error-message");
+                        if (dept.val() === "") {
+                            dept.addClass("is-invalid");
+                            deptError.text("Department name is required.");
+                            isValid = false;
+                        } else {
+                            dept.removeClass("is-invalid");
+                            deptError.text("");
+                        }
+
+                        // Validate First Aid Box (if needed)
+                        const box = row.find(".first_aid_box");
+                        const boxError = box.next(".error-message");
+                        if (box.val() === "") {
+                            box.addClass("is-invalid");
+                            boxError.text("First aid box is required.");
+                            isValid = false;
+                        } else {
+                            box.removeClass("is-invalid");
+                            boxError.text("");
+                        }
+
+                        // Validate Radio Groups
+                        const radioGroups = [
+                            "first_aid_register_maintained",
+                            "first_aid_inspect_periodicity",
+                            "first_aid_checklist_periodicity",
+                            "first_aid_freeze_quantity",
+                            "medicine_requisition_slip_record",
+                            "first_aid_clean",
+                            "first_aid_sticker",
+                            "first_aid_material_index"
+                        ];
+
+                        radioGroups.forEach((group) => {
+                            const name = `${group}[${row.index()}]`;
+                            const radios = row.find(`input[name='${name}']`);
+                            const errorContainer = radios.closest(".form-group")
+                                .find(".error-message");
+
+                            if (radios.filter(":checked").length === 0) {
+                                isValid = false;
+                                errorContainer.text("This field is required.");
+                            } else {
+                                errorContainer.text("");
+                            }
+                        });
+                    });
+
+                    if (!isValid) {
+                        e.preventDefault();
                     }
                 });
 
-                $(`select[name="department_id[\${rowCount}]"]`).rules('add', {
-                    required: true,
-                    messages: {
-                        required: 'Department Name is required'
-                    }
-                });
-
-                $(`input[name="first_aid_box[\${rowCount}]"]`).rules('add', {
-                    required: true,
-                    messages: {
-                        required: 'First Aid Box Number is required'
-                    }
-                });
-
-                $("#monthlyfirstaidchecklist").validate({
-                    rules: {
-                        [`first_aid_register_maintained[\${rowCount}]`]: {
-                            required: true
-                        },
-                        [`first_aid_inspect_periodicity[\${rowCount}]`]: {
-                            required: true
-                        },
-                        [`first_aid_checklist_periodicity[\${rowCount}]`]: {
-                            required: true
-                        },
-                        [`first_aid_freeze_quantity[\${rowCount}]`]: {
-                            required: true
-                        },
-                        [`medicine_requisition_slip_record[\${rowCount}]`]: {
-                            required: true
-                        },
-                        [`first_aid_clean[\${rowCount}]`]: {
-                            required: true
-                        },
-                        [`first_aid_sticker[\${rowCount}]`]: {
-                            required: true
-                        },
-                        [`first_aid_material_index[\${rowCount}]`]: {
-                            required: true
-                        },
-                    },
-                    messages: {
-                        [`first_aid_register_maintained[\${rowCount}]`]: {
-                            required: "Please select an option"
-                        },
-                        [`first_aid_inspect_periodicity[\${rowCount}]`]: {
-                            required: "Please select an option"
-                        },
-                        [`first_aid_checklist_periodicity[\${rowCount}]`]: {
-                            required: "Please select an option"
-                        },
-                        [`first_aid_freeze_quantity[\${rowCount}]`]: {
-                            required: "Please select an option"
-                        },
-                        [`medicine_requisition_slip_record[\${rowCount}]`]: {
-                            required: "Please select an option"
-                        },
-                        [`first_aid_clean[\${rowCount}]`]: {
-                            required: "Please select an option"
-                        },
-                        [`first_aid_sticker[\${rowCount}]`]: {
-                            required: "Please select an option"
-                        },
-                        [`first_aid_material_index[\${rowCount}]`]: {
-                            required: "Please select an option"
-                        },
-                    }
-                });
 
             });
 
@@ -780,6 +812,14 @@
                 rules: {
                     shift: {
                         required: true
+                    },
+                    unit: {
+                        required: true
+                    },
+                    signature_image: {
+                        required: true,
+                        extension: "png|jpeg|jpg",
+                        filesize: 5242880
                     },
                     frequency: {
                         required: true
@@ -841,6 +881,14 @@
                 messages: {
                     shift: {
                         required: "Please select the Shift name."
+                    },
+                    unit: {
+                        required: "Please select the Unit name."
+                    },
+                    signature_image: {
+                        required: "Please upload your signature image.",
+                        extension: "Allowed file types: PNG, JPEG, JPG.",
+                        filesize: "File must be less than 5 MB."
                     },
                     frequency: {
                         required: "Please select the Frequency Name."

@@ -46,19 +46,31 @@
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('inspection.doc_no') }}</label>
                                         <div class="view_data">
-                                            {{ isset($first_aid_details->document_number) ? $first_aid_details->document_number : '' }}
+                                            {{ $document_no->doc_no }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('inspection.issue_date') }}</label>
                                         <div class="view_data">
-                                            {{ isset($first_aid_details->issue_date) ? $first_aid_details->issue_date : '' }}
+                                            {{ Displaydateformat($document_no->issue_date) }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('inspection.rev_date') }}</label>
                                         <div class="view_data">
-                                            {{ isset($first_aid_details->revision_date) ? $first_aid_details->revision_date : '' }}
+                                            {{ $document_no->rev_dt }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">Month</label>
+                                        <div class="view_data">
+                                            {{ $first_aid_details->month }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">Year</label>
+                                        <div class="view_data">
+                                            {{ $first_aid_details->year }}
                                         </div>
                                     </div>
 
@@ -96,12 +108,6 @@
                                         <label class="form-label view_label">{{ __('inspection.ser_no') }}</label>
                                         <div class="view_data">
                                             {{ isset($detail->serial_number) ? $detail->serial_number : '' }}
-                                        </div>
-                                    </div>
-                                    <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">Month</label>
-                                        <div class="view_data">
-                                            {{ isset($detail->month) ? $detail->month : '' }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
@@ -143,7 +149,7 @@
                                         </div>
                                     </div>
 
-                        
+
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('common.created_by') }}</label>
                                         <div class="view_data">

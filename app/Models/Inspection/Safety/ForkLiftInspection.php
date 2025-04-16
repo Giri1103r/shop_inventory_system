@@ -3,6 +3,7 @@
 namespace App\Models\Inspection\Safety;
 
 use Carbon\Carbon;
+use App\Scopes\TrashScope;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 
@@ -118,8 +119,10 @@ class ForkLiftInspection extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_safety_forklift_inspection.*', 'inspection_static_docno.*', 'inspection_safety_forklift_inspection.id as inspection_id')
-            ->leftJoin('inspection_static_docno', 'inspection_safety_forklift_inspection.document_reference_id', '=', 'inspection_static_docno.id');
+        $query = $this->select('inspection_safety_forklift_inspection.*', 'inspection_static_docno.*', 'inspection_safety_forklift_inspection.id as safety_id', 'inspection_safety_forklift_inspection_details.*', 'inspection_safety_forklift_inspection.created_by as checked_by', 'inspection_safety_forklift_inspection.updated_by as verified_by')
+            ->leftJoin('inspection_static_docno', 'inspection_safety_forklift_inspection.document_reference_id', '=', 'inspection_static_docno.id')
+            ->leftJoin('inspection_safety_forklift_inspection_details', 'inspection_safety_forklift_inspection.id', '=', 'inspection_safety_forklift_inspection_details.inspection_id');
+
 
         if (isset($request->search) && isset($request->search['value']) && $request->search['value'] != '') {
             $search = $request->search['value'];
@@ -138,9 +141,15 @@ class ForkLiftInspection extends Model
             $query = $query->where('inspection_safety_forklift_inspection.observation_status', decryptId($request->obsrevation_status));
         }
 
-        $query->orderBy('id', 'DESC');
+        $query->orderBy('inspection_safety_forklift_inspection.id', 'DESC');
 
-        return  $query->get();
+        $data =   $query->get();
+
+        if ($data) {
+            return $data = $data->groupBy('inspection_id');
+        } else {
+            return $data;
+        }
     }
 
 
@@ -188,5 +197,10 @@ class ForkLiftInspection extends Model
             ];
         }
         $this->where('id', $id)->update($update_array);
+    }
+
+    protected static function booted()
+    {
+        static::addGlobalScope(new TrashScope('inspection_safety_forklift_inspection'));
     }
 }

@@ -144,16 +144,21 @@ class PrescribetoPatientController extends Controller
                         ->editColumn('action', function ($row) {
                             $btn = '';
                             if (CheckUserPermission('view')) {
-                            $btn .= '<a href="' . admin_url('ohc/prescribe-to-patient/view/' . encryptId($row->id)) . '" class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
+                                $btn .= '<a href="' . admin_url('ohc/prescribe-to-patient/view/' . encryptId($row->id)) . '" class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
                             }
                             if (CheckUserPermission('edit') && $row->patient_status != 3 && $row->patient_status != 2) {
-                            $btn .= '<a href="' . admin_url('ohc/prescribe-to-patient/edit/' . encryptId($row->id)) . '" class="" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a> ';
+                                $btn .= '<a href="' . admin_url('ohc/prescribe-to-patient/edit/' . encryptId($row->id)) . '" class="" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a> ';
                             }
                             if ($row->patient_status !== 3) {
                                 $btn .= '<a href="' . admin_url('ohc/prescribe-to-patient/generalpdf/' . encryptId($row->id)) . '" class="" title="PDF"> <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i></a> ';
                             }
                             if ($row->patient_status != 3 && $row->patient_status != 2) {
                                 $btn .= '<a href="javascript:void(0);" data-id="' . encryptId($row->id) . '" class="cancel" title="Cancel" style="color: #e21e23;margin-right: 5px;"><i class="fa fa-times-circle"></i></a> ';
+                            }
+                            if ($row->fitness_certificate == 1) {
+                                $btn .= ' <a href="' . asset('public/' . $row->file_upload) . '" target="_blank" title="medical_certificate">
+                                            <i class="fas fa-file-alt r"></i>
+                                          </a> ';
                             }
 
                             return $btn;
@@ -233,7 +238,7 @@ class PrescribetoPatientController extends Controller
 
 
 
-          $opd_patient = $this->opd_patient->store();
+            $opd_patient = $this->opd_patient->store();
 
             $firstaid = $this->opd_firstaid->store($opd_patient);
 
@@ -306,7 +311,6 @@ class PrescribetoPatientController extends Controller
                 if ($inventory) {
                     $inventory->increment('total_prescribe', $issuedQuantity);
                     $inventory->decrement('balance', $issuedQuantity);
-
                 }
             }
 
@@ -413,6 +417,34 @@ class PrescribetoPatientController extends Controller
 
             $user_opd_patient = $this->opd_patient->selectOne($id);
             $user_opd_firstaid = $this->opd_firstaid->selectOne($id);
+
+            $deletedPages = json_decode($request->deletedPage, true);
+
+            if (!empty($deletedPages)) {
+                foreach ($deletedPages as $encryptedId) {
+                    $medicineIds = decryptId($encryptedId);
+
+                    $medicine_first_aid_medicine = $this->opd_firstaid->firstdata($medicineIds);
+
+
+
+                    $totalPrescribe =  $this->inventory->where('unit_id', Auth::user()->unit_id)
+                    ->where('medicine_id', $medicine_first_aid_medicine->medicine_id)
+                    ->decrement('total_prescribe', $medicine_first_aid_medicine->quantity);
+
+
+                    $this->inventory->where('unit_id', Auth::user()->unit_id)
+                        ->where('medicine_id', $medicine_first_aid_medicine->medicine_id)
+                        ->increment('balance', $medicine_first_aid_medicine->quantity);
+
+                    $update_data = $this->opd_firstaid
+                        ->where('id', $medicineIds)->where('opd_id', $id)
+                        ->update([
+                            'status' => 0,
+                            'trash'  => 'Yes'
+                        ]);
+                }
+            }
             if ($user_opd_patient->first_aid_treatment === 1) {
                 foreach ($request->medicine_id as $index => $medicine_id) {
                     $medicineRecord = $user_opd_firstaid->where('medicine_id', $medicine_id)->where('opd_id', $id)->first();
@@ -452,6 +484,8 @@ class PrescribetoPatientController extends Controller
                     }
                 }
             }
+
+
 
             $opd_patient = $this->opd_patient->updates($id);
             if ($user_opd_patient->first_aid_treatment === 1) {
@@ -784,11 +818,13 @@ class PrescribetoPatientController extends Controller
             $opdpatient = $this->opd_patient->selectOne($id);
             $opd_firstaid = $this->opd_firstaid->Selectone($opdpatient->id);
             $isreffered = $this->isreffered->selectOne($opdpatient->id);
+            $hospital = $this->hospital->selectOne($isreffered->hospital_name);
         }
         $data = [
             'opdpatient' => $opdpatient,
             'opd_firstaid' => $opd_firstaid,
             'isreffered' => $isreffered,
+            'hospital' => $hospital,
             'pagetitle' => "Medicine Slip",
         ];
 

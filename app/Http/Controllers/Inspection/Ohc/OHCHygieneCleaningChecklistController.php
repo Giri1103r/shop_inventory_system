@@ -8,12 +8,20 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Inspection\Master\Shift;
 use Illuminate\Support\Facades\Session;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Spatie\SimpleExcel\SimpleExcelWriter;
+use PhpOffice\PhpSpreadsheet\Style\Border;
 use App\Models\Inspection\Ohc\OhcSignature;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\RichText\RichText;
+use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 use App\Models\Inspection\InspectionStaticDocno;
 use App\Models\Inspection\ohc\OHCHygieneCleaningChecklist;
+use Mpdf\Tag\Dd;
 
 class OHCHygieneCleaningChecklistController extends Controller
 {
@@ -29,7 +37,6 @@ class OHCHygieneCleaningChecklistController extends Controller
         $this->shift = new Shift();
         $this->signature = new OhcSignature();
         $this->document_reference = new InspectionStaticDocno();
-
     }
 
     public function Index(Request $request)
@@ -79,13 +86,17 @@ class OHCHygieneCleaningChecklistController extends Controller
                         })
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            $btn = '<a href="' . admin_url('ohc/ohc-hygiene-cleaning-checklist/view/' . encryptId($row->id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
+                            $btn = '<a href="' . admin_url('ohc/ohc-hygiene-cleaning-checklist/view/' . encryptId($row->inspection_id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
                             if ($row->checklist_status == CLEANER_SUBMITTED_THE_CHECKLIST) {
-                                $btn .= '<a href="' . admin_url('ohc/ohc-hygiene-cleaning-checklist/approval/' . encryptId($row->id)) . '" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('ohc/ohc-hygiene-cleaning-checklist/approval/' . encryptId($row->inspection_id)) . '" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
-                            $btn .= '<a href="' . admin_url('ohc/ohc-hygiene-cleaning-checklist/generalpdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
+                            $btn .= '<a href="' . admin_url('ohc/ohc-hygiene-cleaning-checklist/generalpdf/' . encryptId($row->inspection_id)) . '" style="margin-right: 5px;" title="PDF">
                             <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
                         </a>';
+
+                            $btn .= '<a href="' . admin_url('ohc/ohc-hygiene-cleaning-checklist/generalexcel/' . encryptId($row->inspection_id)) . '" style="margin-right: 5px;" title="EXCEL">
+                        <i class="fas fa-file-excel" style="color: #1D6F42;" aria-hidden="true"></i>
+                     </a>';
                             return $btn;
                         })
                         ->rawColumns(['action', 'created_date', 'created_by', 'checklist_status', 'issue_date'])
@@ -137,14 +148,7 @@ class OHCHygieneCleaningChecklistController extends Controller
                 'shift_id' => 'required',
                 'inspection' => 'required',
                 'remarks' => 'required',
-                'signature_image' => [
-                    function ($attribute, $value, $fail) {
-                        $user = Auth::user();
-                        if (is_null($user->signature_upload)) {
-                            $fail('Signature is required.');
-                        }
-                    }
-                ],
+
             ];
 
             $messages = [
@@ -152,7 +156,7 @@ class OHCHygieneCleaningChecklistController extends Controller
                 'shift_id.required' => 'Shift ID is required.',
                 'inspection.required' => 'Inspection is required.',
                 'remarks.required' => 'Remarks is required.',
-                'signature_image' => 'Signature is required.',
+
             ];
 
             $validator = Validator::make($request->all(), $rules, $messages);
@@ -214,7 +218,6 @@ class OHCHygieneCleaningChecklistController extends Controller
             ];
             return view('inspection.inspection_ohc.ohc_hygiene_checklist.approval', $data);
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong!');
             return redirect(admin_url('ohc/ohc-hygiene-cleaning-checklist/list'));
@@ -235,47 +238,306 @@ class OHCHygieneCleaningChecklistController extends Controller
         }
     }
 
-    public function ExportExcel(Request $request)
+
+    public function generalExcel(Request $request)
     {
-
         try {
-            $allData = $this->ohc_hygiene->exportdata();
-            if ($allData->isEmpty()) {
-                return redirect()->back()->with('error', 'No data found');
+            $id = decryptId($request->id);
+
+            $spreadsheet = new Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
+
+            $inspection_detail = $this->ohc_hygiene->selectOne($id);
+            $inspection_type = DAILY_OHC_HYGIENE_CLEANING_CHECKLIST;
+            $nursing_signature = GetOHCSignature($inspection_detail->updated_by, $inspection_detail->id, $inspection_type);
+            $cleaner_signature = GetOHCSignature($inspection_detail->created_by, $inspection_detail->id, $inspection_type);
+
+            for ($i = 1; $i <= 50; $i++) {
+                $sheet->getRowDimension($i)->setRowHeight(25);
             }
 
-            $header = [
-                __("common.sno"),
-                'Issue Date',
-                'Shift',
-                'Checklist Status',
-                __("common.created_by"),
-                __("common.created_date"),
-            ];
+            $sheet->mergeCells("A1:F3");
+            $sheet->mergeCells("G1:N3");
+            $sheet->mergeCells("O1:T3");
 
-            $i = 1;
-            foreach ($allData as $data) {
-                $export = [];
-                $export[] =  $i;
-                $export[] =  $data->issue_date;
-                $export[] =  getShiftname($data->shift_id);
-                $export[] = $data->checklist_status == '1' ? 'Waiting For Nursing Officer Action' : 'Inspection Completed';
-                $export[] =  getusername($data->created_by);
-                $export[] =  Displaydateformat($data->created_at);
-                $exportData[] = $export;
+            $sheet->getStyle("A1:T3")->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+            ]);
 
-                $i++;
+            if (file_exists(public_path('assets/images/logo-dark.png'))) {
+                $drawing = new Drawing();
+                $drawing->setName('Left Logo');
+                $drawing->setPath(public_path('assets/images/logo-dark.png'));
+                $drawing->setCoordinates('B1');
+                $drawing->setOffsetX(100);
+                $drawing->setOffsetY(15);
+                $drawing->setWidth(70);
+                $drawing->setHeight(70);
+                $drawing->setWorksheet($sheet);
             }
 
-            $writer = SimpleExcelWriter::streamDownload('OHC HYGIENE CLEANING CHECKLIST.xlsx')
-                ->addHeader($header)
-                ->addRows(
-                    $exportData
-                );
-        } catch (Exception $ex) {
-            report($ex);
+            $sheet->setCellValue("G1", "DAILY OHC HYGIENE CLEANING CHECKLIST - PN INTERNATIONAL PNT. LTD.");
+            $sheet->getStyle("G1")->applyFromArray([
+                'font' => ['bold' => true, 'size' => 14],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+            ]);
+
+            if (file_exists(public_path('assets/images/plus-image.webp'))) {
+                $drawing = new Drawing();
+                $drawing->setName('Right Logo');
+                $drawing->setPath(public_path('assets/images/plus-image.webp'));
+                $drawing->setCoordinates('P1');
+                $drawing->setOffsetX(100);
+                $drawing->setOffsetY(15);
+                $drawing->setWidth(70);
+                $drawing->setHeight(70);
+                $drawing->setWorksheet($sheet);
+            }
+
+            $sheet->mergeCells("A4:B5")->setCellValue("A4", "DATE");
+            $sheet->mergeCells("C4:D5")->setCellValue("C4", "SHIFT");
+            $sheet->mergeCells("E4:J5")->setCellValue("E4", "DESCRIPTION");
+            $sheet->mergeCells("K4:L4")->setCellValue("K4", "CLEANING AND SANITIZATION");
+            $sheet->setCellValue("K5", "YES");
+            $sheet->setCellValue("L5", "NO");
+            $sheet->mergeCells("M4:N5")->setCellValue("M4", "SIGNATURE OF CLEANER");
+            $sheet->mergeCells("O4:P5")->setCellValue("O4", "SIGNATURE OF NURSING OFFICER");
+            $sheet->mergeCells("Q4:R5")->setCellValue("Q4", "REMARKS");
+            $sheet->mergeCells("S4:T5")->setCellValue("S4", "NURSING OFFICER REMARKS");
+
+            $sheet->getStyle("A4:T5")->applyFromArray([
+                'font' => ['bold' => true],
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_CENTER,
+                    'vertical' => Alignment::VERTICAL_CENTER,
+                    'wrapText' => true
+                ],
+            ]);
+
+            $row = 6;
+            $sheet->mergeCells("A{$row}:B{$row}")->setCellValue("A{$row}", Displaydateformat($inspection_detail->issue_date ?? ''));
+            $sheet->mergeCells("C{$row}:D{$row}")->setCellValue("C{$row}", getShiftname($inspection_detail->shift_id ?? null));
+            $sheet->mergeCells("E{$row}:J{$row}")->setCellValue("E{$row}", $inspection_detail->inspection_question ?? 'INSPECTION HAS NOT BEEN VERIFIED YET');
+
+            if ($inspection_detail->inspection_value == 1) {
+                $sheet->setCellValue("K{$row}", '✔');
+                $sheet->getStyle("K{$row}")->applyFromArray(['font' => ['color' => ['rgb' => '000000']]]);
+            } else {
+                $sheet->setCellValue("L{$row}", 'X');
+                $sheet->getStyle("L{$row}")->applyFromArray(['font' => ['color' => ['rgb' => 'FF0000']]]);
+            }
+
+            $sheet->mergeCells("M{$row}:N{$row}");
+            $sheet->mergeCells("O{$row}:P{$row}");
+
+            if (!empty($cleaner_signature)) {
+                $drawing = new Drawing();
+                $drawing->setName('Cleaner Signature');
+                $drawing->setPath($cleaner_signature);
+                $drawing->setCoordinates("M{$row}");
+                $drawing->setOffsetX(10);
+                $drawing->setOffsetY(10);
+                $drawing->setWidth(100);
+                $drawing->setHeight(80);
+                $drawing->setWorksheet($sheet);
+                $sheet->getRowDimension($row)->setRowHeight($drawing->getHeight() + 20);
+            }
+
+            if (!empty($nursing_signature)) {
+                $drawing = new Drawing();
+                $drawing->setName('Nursing Officer Signature');
+                $drawing->setPath($nursing_signature);
+                $drawing->setCoordinates("O{$row}");
+                $drawing->setOffsetX(10);
+                $drawing->setOffsetY(10);
+                $drawing->setWidth(100);
+                $drawing->setHeight(80);
+                $drawing->setWorksheet($sheet);
+                $sheet->getRowDimension($row)->setRowHeight($drawing->getHeight() + 20);
+            } else {
+                $sheet->setCellValue("O{$row}", 'INSPECTION HAS NOT BEEN VERIFIED YET');
+            }
+
+            $sheet->mergeCells("Q{$row}:R{$row}")->setCellValue("Q{$row}", $inspection_detail->cleaner_remarks ?? '');
+            $sheet->mergeCells("S{$row}:T{$row}")->setCellValue("S{$row}", $inspection_detail->nursing_officer_remarks ?? 'INSPECTION HAS NOT BEEN VERIFIED YET');
+
+            $sheet->getStyle("A{$row}:T{$row}")->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_CENTER,
+                    'vertical' => Alignment::VERTICAL_CENTER,
+                    'wrapText' => true,
+                ],
+            ]);
+
+            $writer = new Xlsx($spreadsheet);
+            $fileName = 'Daily_OHC_Hygiene_Checklist.xlsx';
+            $filePath = storage_path("app/public/$fileName");
+            $writer->save($filePath);
+
+            return response()->download($filePath)->deleteFileAfterSend(true);
+        } catch (\Exception $e) {
+            dd($e);
+            return back()->with('error', $e->getMessage());
         }
     }
+
+
+    public function ExportExcel()
+    {
+        try {
+            $allData = $this->ohc_hygiene->exportdata();
+            $spreadsheet = new Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
+
+            for ($i = 1; $i <= 50; $i++) {
+                $sheet->getRowDimension($i)->setRowHeight(25);
+            }
+
+            $sheet->mergeCells("A1:F3");
+            $sheet->mergeCells("G1:N3");
+            $sheet->mergeCells("O1:T3");
+
+            $sheet->getStyle("A1:T3")->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+            ]);
+
+            if (file_exists(public_path('assets/images/logo-dark.png'))) {
+                $drawing = new Drawing();
+                $drawing->setName('Left Logo');
+                $drawing->setPath(public_path('assets/images/logo-dark.png'));
+                $drawing->setCoordinates("B1");
+                $drawing->setOffsetX(100);
+                $drawing->setOffsetY(15);
+                $drawing->setWidth(70);
+                $drawing->setHeight(70);
+                $drawing->setWorksheet($sheet);
+            }
+
+            $sheet->setCellValue("G1", "DAILY OHC HYGIENE CLEANING CHECKLIST - PN INTERNATIONAL PNT. LTD.");
+            $sheet->getStyle("G1")->applyFromArray([
+                'font' => ['bold' => true, 'size' => 14],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+            ]);
+
+            if (file_exists(public_path('assets/images/plus-image.webp'))) {
+                $drawing = new Drawing();
+                $drawing->setName('Right Logo');
+                $drawing->setPath(public_path('assets/images/plus-image.webp'));
+                $drawing->setCoordinates("O1");
+                $drawing->setOffsetX(100);
+                $drawing->setOffsetY(15);
+                $drawing->setWidth(70);
+                $drawing->setHeight(70);
+                $drawing->setWorksheet($sheet);
+            }
+
+            $sheet->mergeCells("A4:B5")->setCellValue("A4", "DATE");
+            $sheet->mergeCells("C4:D5")->setCellValue("C4", "SHIFT");
+            $sheet->mergeCells("E4:J5")->setCellValue("E4", "DESCRIPTION");
+            $sheet->mergeCells("K4:L4")->setCellValue("K4", "CLEANING AND SANITIZATION");
+            $sheet->setCellValue("K5", "YES");
+            $sheet->setCellValue("L5", "NO");
+            $sheet->mergeCells("M4:N5")->setCellValue("M4", "SIGNATURE OF CLEANER");
+            $sheet->mergeCells("O4:P5")->setCellValue("O4", "SIGNATURE OF NURSING OFFICER");
+            $sheet->mergeCells("Q4:R5")->setCellValue("Q4", "REMARKS");
+            $sheet->mergeCells("S4:T5")->setCellValue("S4", "NURSING OFFICER REMARKS");
+
+            $sheet->getStyle("A4:T5")->applyFromArray([
+                'font' => ['bold' => true],
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_CENTER,
+                    'vertical' => Alignment::VERTICAL_CENTER,
+                    'wrapText' => true
+                ],
+            ]);
+
+            $inspectionRow = 6;
+
+            $sheet->getColumnDimension('M')->setWidth(14);
+            $sheet->getColumnDimension('N')->setWidth(14);
+
+
+            foreach ($allData as $inspection_detail) {
+                $inspection_detail = $this->ohc_hygiene->selectOne($inspection_detail->inspection_id);
+                $inspection_type = DAILY_OHC_HYGIENE_CLEANING_CHECKLIST;
+                $nursing_signature = GetOHCSignature($inspection_detail->updated_by, $inspection_detail->id, $inspection_type);
+                $cleaner_signature = GetOHCSignature($inspection_detail->created_by, $inspection_detail->id, $inspection_type);
+
+                $sheet->mergeCells("A$inspectionRow:B$inspectionRow")->setCellValue("A$inspectionRow", $inspection_detail->issue_date);
+                $sheet->mergeCells("C$inspectionRow:D$inspectionRow")->setCellValue("C$inspectionRow", getShiftname($inspection_detail->shift_id));
+                $sheet->mergeCells("E$inspectionRow:J$inspectionRow")->setCellValue("E$inspectionRow", $inspection_detail->inspection_question);
+
+                if ($inspection_detail->inspection_value == 1) {
+                    $sheet->setCellValue("K{$inspectionRow}", '✔');
+                    $sheet->getStyle("K{$inspectionRow}")->applyFromArray(['font' => ['color' => ['rgb' => '000000']]]);
+                } else {
+                    $sheet->setCellValue("L{$inspectionRow}", 'X');
+                    $sheet->getStyle("L{$inspectionRow}")->applyFromArray(['font' => ['color' => ['rgb' => 'FF0000']]]);
+                }
+
+                $sheet->mergeCells("Q$inspectionRow:R$inspectionRow")->setCellValue("Q$inspectionRow", $inspection_detail->cleaner_remarks);
+                $sheet->mergeCells("S$inspectionRow:T$inspectionRow")->setCellValue("S$inspectionRow", $inspection_detail->nursing_officer_remarks);
+
+                $sheet->mergeCells("M{$inspectionRow}:N{$inspectionRow}");
+                $sheet->mergeCells("O{$inspectionRow}:P{$inspectionRow}");
+
+                if (file_exists($cleaner_signature)) {
+                    $drawing = new Drawing();
+                    $drawing->setPath($cleaner_signature);
+                    $drawing->setCoordinates("M{$inspectionRow}");
+                    $drawing->setOffsetX(5);
+                    $drawing->setOffsetY(5);
+                    $drawing->setWidth(100);
+                    $drawing->setHeight(80);
+                    $drawing->setWorksheet($sheet);
+                    $sheet->getRowDimension($inspectionRow)->setRowHeight($drawing->getHeight() + 20);
+                }
+
+                if (file_exists($nursing_signature)) {
+                    $drawing = new Drawing();
+                    $drawing->setName('Nursing Officer Signature');
+                    $drawing->setPath($nursing_signature);
+                    $drawing->setCoordinates("O$inspectionRow");
+                    $drawing->setOffsetX(10);
+                    $drawing->setOffsetY(10);
+                    $drawing->setWidth(100);
+                    $drawing->setHeight(80);
+                    $drawing->setWorksheet($sheet);
+                    $sheet->getRowDimension($inspectionRow)->setRowHeight($drawing->getHeight() + 20);
+                }
+
+
+                $sheet->getStyle("A$inspectionRow:T$inspectionRow")->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => [
+                        'horizontal' => Alignment::HORIZONTAL_CENTER,
+                        'vertical' => Alignment::VERTICAL_CENTER,
+                        'wrapText' => true,
+                    ],
+                ]);
+
+                $inspectionRow++;
+            }
+
+            $writer = new Xlsx($spreadsheet);
+            $fileName = 'OHC Hygiene Cleaning Checklist.xlsx';
+            $filePath = storage_path("app/public/$fileName");
+            $writer->save($filePath);
+
+            return response()->download($filePath)->deleteFileAfterSend(true);
+        } catch (\Exception $e) {
+            dd($e);
+            return back()->with('error', 'Something went wrong');
+        }
+    }
+
+
+
 
     public function ExportPdf(Request $request)
     {
@@ -288,20 +550,13 @@ class OHCHygieneCleaningChecklistController extends Controller
 
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
+            } else if (count($allData) > 20) {
+                return redirect()->back()->with('error', __('inspection.excess_error'));
             }
 
 
-            $header = [
-                __("common.sno"),
-                'Issue Date',
-                'Shift',
-                'Checklist Status',
-                __("common.created_by"),
-                __("common.created_date"),
-            ];
 
             $data = array(
-                'header' => $header,
                 'content' => $allData,
                 'pagetitle' => "OHC HYGIENE CLEANING CHECKLIST",
             );
@@ -328,7 +583,7 @@ class OHCHygieneCleaningChecklistController extends Controller
             $filename = "OHC HYGIENE CLEANING CHECKLIST.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             report($ex);
         }
     }

@@ -113,7 +113,7 @@
                                             </div>
                                         </div>
                                         @php
-                                            $signature = GetSignature(
+                                            $signature = GetFireSignature(
                                                 $inspection->created_by,
                                                 $inspection->id,
                                                 DETECTOR_INSPECTION,
@@ -131,25 +131,6 @@
                                         @endif
                                     </div>
                                     <hr>
-                                    <div class="form-observation">
-                                        <div class="row mt-4 form-obs">
-                                            <div class="card-header-inner p-2">
-                                                <h4 class="text-white">Detector Inspection Observation</h4>
-                                            </div>
-                                            <div class="col-md-12 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label require">{{ __('inspection.obs') }}</label>
-                                                    <div class="view_data">
-                                                        {{ $inspection->observation }}
-                                                    </div>
-
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <hr>
-
-
                                     @foreach ($inspection_details as $details)
                                         <div class="form-wrapper">
                                             <div class="row mt-4 form-set">
@@ -277,7 +258,7 @@
                                     <hr>
                                 </div>
 
-                                <div class="row mt-3">
+                                <div class="row mt-3 container">
                                     @if ($inspection->inspection_status != WAITING_FOR_EHS_OFFICER_VERIFICATION)
                                         <div class="card-header-inner">
                                             <h4 class="text-white">{{ __('inspection.ehs_officer_verify') }}</h4>
@@ -294,10 +275,16 @@
                                                     </div>
                                                 </div>
                                                 @php
-                                                    $signature = GetSignature(
+                                                    $signature = GetFireSignature(
                                                         $inspection->verified_by,
                                                         $inspection->id,
                                                         DETECTOR_INSPECTION,
+                                                    );
+                                                    $updated_time = GetFireUpdatedTime(
+                                                        $inspection->verified_by,
+                                                        $inspection->id,
+                                                        DETECTOR_INSPECTION,
+                                                        WAITING_FOR_EHS_OFFICER_VERIFICATION,
                                                     );
                                                 @endphp
                                             @endif
@@ -306,7 +293,7 @@
                                                     <div class="form-group form-input">
                                                         <label class="form-label ">{{ __('inspection.date') }}</label>
                                                         <div class="view_data">
-                                                            {{ Displaydateformat($inspection->created_at) }}
+                                                            {{ Displaydateformat($updated_time->created_at) }}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -317,7 +304,7 @@
                                                         <label class="form-label"
                                                             style="display: block;">{{ __('inspection.signature') }}</label>
                                                         <img src="{{ admin_url($signature) }}" alt="Signature Upload"
-                                                            style="width: 150px; margin-top: -10px;" />
+                                                            style="width:80px; margin-top: -10px;" />
                                                     </div>
                                                 </div>
                                             @endif
@@ -333,7 +320,7 @@
                                                         </div>
                                                     </div>
                                                     @php
-                                                        $signature = GetSignature(
+                                                        $signature = GetFireSignature(
                                                             $inspection->approved_by,
                                                             $inspection->id,
                                                             DETECTOR_INSPECTION,
@@ -347,7 +334,7 @@
                                                         <label class="form-label"
                                                             style="display: block;">{{ __('inspection.signature') }}</label>
                                                         <img src="{{ admin_url($signature) }}" alt="Signature Upload"
-                                                            style="width: 150px; margin-top: -10px;" />
+                                                            style="width:80px; margin-top: -10px;" />
                                                     </div>
                                                 </div>
                                             @endif
@@ -377,7 +364,6 @@
                                         <div class="card-header-inner">
                                             <h4 class="text-white">{{ __('inspection.fire_associate_action') }}</h4>
                                         </div>
-
                                         <div class="row">
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
@@ -387,28 +373,35 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label ">{{ __('inspection.date') }}</label>
-                                                    <div class="view_data">
-                                                        {{ Displaydateformat($inspection->created_at) }}
-                                                    </div>
-                                                </div>
-                                            </div>
                                             @php
-                                                $signature = GetSignature(
+                                                $signature = GetFireSignature(
                                                     $inspection->created_by,
                                                     $inspection->id,
                                                     DETECTOR_INSPECTION,
                                                 );
+
+                                                $updated_time = GetFireUpdatedTime(
+                                                    $inspection->created_by,
+                                                    $inspection->id,
+                                                    DETECTOR_INSPECTION,
+                                                    WAITING_FOR_CAPA_ACTION,
+                                                );
                                             @endphp
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label ">{{ __('inspection.date') }}</label>
+                                                    <div class="view_data">
+                                                        {{ Displaydateformat($updated_time->created_at) }}
+                                                    </div>
+                                                </div>
+                                            </div>
                                             @if (isset($signature))
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label class="form-label"
                                                             style="display: block;">{{ __('inspection.signature') }}</label>
                                                         <img src="{{ admin_url($signature) }}" alt="Signature Upload"
-                                                            style="width: 150px; margin-top: -10px;" />
+                                                            style="width:80px; margin-top: -10px;" />
                                                     </div>
                                                 </div>
                                             @endif
@@ -426,51 +419,60 @@
                                 </div>
 
                                 @if ($inspection->capa_ehs_remarks)
-                                    <div class="card-header-inner">
-                                        <h4 class="text-white">{{ __('inspection.ehs_officer_reverification') }}
-                                        </h4>
-                                    </div>
+                                    <div class="row container">
+                                        <div class="card-header-inner">
+                                            <h4 class="text-white">{{ __('inspection.ehs_officer_reverification') }}
+                                            </h4>
+                                        </div>
 
-                                    <div class="row">
-                                        <div class="col-md-4 mb-2">
-                                            <div class="form-group form-input">
-                                                <label class="form-label ">{{ __('inspection.verified_by') }}</label>
-                                                <div class="view_data">
-                                                    {{ getUserName($inspection->verified_by) }}
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4 mb-2">
-                                            <div class="form-group form-input">
-                                                <label class="form-label ">{{ __('inspection.date') }}</label>
-                                                <div class="view_data">
-                                                    {{ Displaydateformat($inspection->created_at) }}
-                                                </div>
-                                            </div>
-                                        </div>
-                                        @php
-                                            $signature = GetSignature(
-                                                $inspection->verified_by,
-                                                $inspection->id,
-                                                DETECTOR_INSPECTION,
-                                            );
-                                        @endphp
-                                        @if (isset($signature))
+                                        <div class="row">
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label"
-                                                        style="display: block;">{{ __('inspection.signature') }}</label>
-                                                    <img src="{{ admin_url($signature) }}" alt="Signature Upload"
-                                                        style="width: 150px; margin-top: -10px;" />
+                                                    <label class="form-label ">{{ __('inspection.verified_by') }}</label>
+                                                    <div class="view_data">
+                                                        {{ getUserName($inspection->verified_by) }}
+                                                    </div>
                                                 </div>
                                             </div>
-                                        @endif
-                                        <div class="col-md-12 mb-2">
-                                            <div class="form-group form-input">
-                                                <label
-                                                    class="form-label ">{{ __('inspection.capa_reverifcation_remarks') }}</label>
-                                                <div class="view_data">
-                                                    {{ $inspection->capa_ehs_remarks }}
+                                            @php
+                                                $signature = GetFireSignature(
+                                                    $inspection->verified_by,
+                                                    $inspection->id,
+                                                    DETECTOR_INSPECTION,
+                                                );
+
+                                                $updated_time = GetFireUpdatedTime(
+                                                    $inspection->verified_by,
+                                                    $inspection->id,
+                                                    DETECTOR_INSPECTION,
+                                                    WAITING_FOR_CAPA_VERIFICATION,
+                                                );
+                                            @endphp
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label ">{{ __('inspection.date') }}</label>
+                                                    <div class="view_data">
+                                                        {{ Displaydateformat($updated_time->created_at) }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            @if (isset($signature))
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label"
+                                                            style="display: block;">{{ __('inspection.signature') }}</label>
+                                                        <img src="{{ admin_url($signature) }}" alt="Signature Upload"
+                                                            style="width:80px; margin-top: -10px;" />
+                                                    </div>
+                                                </div>
+                                            @endif
+                                            <div class="col-md-12 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label
+                                                        class="form-label ">{{ __('inspection.capa_reverifcation_remarks') }}</label>
+                                                    <div class="view_data">
+                                                        {{ $inspection->capa_ehs_remarks }}
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -478,7 +480,7 @@
                                 @endif
 
                                 @if (isset($inspection->level_one_manager_remarks))
-                                    <div class="row">
+                                    <div class="row container">
                                         <div class="card-header-inner">
                                             <h4 class="text-white">{{ __('inspection.level_one_manager_action') }}
                                             </h4>
@@ -492,28 +494,35 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-md-4 mb-2">
-                                            <div class="form-group form-input">
-                                                <label class="form-label ">{{ __('inspection.date') }}</label>
-                                                <div class="view_data">
-                                                    {{ Displaydateformat($inspection->created_at) }}
-                                                </div>
-                                            </div>
-                                        </div>
                                         @php
-                                            $signature = GetSignature(
+                                            $signature = GetFireSignature(
                                                 $inspection->l1_manager_verified_by,
                                                 $inspection->id,
                                                 DETECTOR_INSPECTION,
                                             );
+
+                                            $updated_time = GetFireUpdatedTime(
+                                                $inspection->l1_manager_verified_by,
+                                                $inspection->id,
+                                                DETECTOR_INSPECTION,
+                                                WAITING_FOR_L1_VERIFICATION,
+                                            );
                                         @endphp
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label ">{{ __('inspection.date') }}</label>
+                                                <div class="view_data">
+                                                    {{ Displaydateformat($updated_time->created_at) }}
+                                                </div>
+                                            </div>
+                                        </div>
                                         @if (isset($signature))
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label"
                                                         style="display: block;">{{ __('inspection.signature') }}</label>
                                                     <img src="{{ admin_url($signature) }}" alt="Signature Upload"
-                                                        style="width: 150px; margin-top: -10px;" />
+                                                        style="width:80px; margin-top: -10px;" />
                                                 </div>
                                             </div>
                                         @endif
@@ -529,7 +538,7 @@
                                     </div>
                                 @endif
                                 @if (isset($inspection->level_two_manager_remarks))
-                                    <div class="row">
+                                    <div class="row container">
                                         <div class="card-header-inner">
                                             <h4 class="text-white">{{ __('inspection.level_two_manager_action') }}
                                             </h4>
@@ -543,28 +552,35 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-md-4 mb-2">
-                                            <div class="form-group form-input">
-                                                <label class="form-label ">{{ __('inspection.date') }}</label>
-                                                <div class="view_data">
-                                                    {{ Displaydateformat($inspection->created_at) }}
-                                                </div>
-                                            </div>
-                                        </div>
                                         @php
-                                            $signature = GetSignature(
+                                            $signature = GetFireSignature(
                                                 $inspection->l2_manager_verified_by,
                                                 $inspection->id,
                                                 DETECTOR_INSPECTION,
                                             );
+
+                                            $updated_time = GetFireUpdatedTime(
+                                                $inspection->l2_manager_verified_by,
+                                                $inspection->id,
+                                                DETECTOR_INSPECTION,
+                                                WAITING_FOR_L2_VERIFICATION,
+                                            );
                                         @endphp
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label ">{{ __('inspection.date') }}</label>
+                                                <div class="view_data">
+                                                    {{ Displaydateformat($updated_time->created_at) }}
+                                                </div>
+                                            </div>
+                                        </div>
                                         @if (isset($signature))
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label"
                                                         style="display: block;">{{ __('inspection.signature') }}</label>
                                                     <img src="{{ admin_url($signature) }}" alt="Signature Upload"
-                                                        style="width: 150px; margin-top: -10px;" />
+                                                        style="width:80px; margin-top: -10px;" />
                                                 </div>
                                             </div>
                                         @endif
@@ -579,7 +595,7 @@
                                             </div>
                                         @endif
                                         @php
-                                            $signature = GetSignature(
+                                            $signature = GetFireSignature(
                                                 $inspection->approved_by,
                                                 $inspection->id,
                                                 DETECTOR_INSPECTION,
@@ -591,7 +607,7 @@
                                                     <label class="form-label"
                                                         style="display: block;">{{ __('inspection.signature') }}</label>
                                                     <img src="{{ admin_url($signature) }}" alt="Signature Upload"
-                                                        style="width: 150px; margin-top: -10px;" />
+                                                        style="width:80px; margin-top: -10px;" />
                                                 </div>
                                             </div>
                                         @endif
@@ -606,7 +622,7 @@
                                         </div>
                                     </div>
                                 @endif
-                                <div class="row">
+                                <div class="row container">
                                     <div class="card-header-inner">
                                         <h4 class="text-white">{{ __('inspection.status_log') }}</h4>
 
@@ -649,7 +665,6 @@
                                             </div>
                                         @endif
                                     </div>
-
                                 </div>
                             </div>
                         </div>

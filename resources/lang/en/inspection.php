@@ -95,6 +95,17 @@ return [
     'checked_obs' => 'Required Inspections',
     'condition_of_hooter' => 'Condition Of The Hooter',
 
+    // Emergency Light Inspection
+
+    'emergency_light_number' => 'Emergency Of Light',
+    'condition_of_light' => 'Condition Of Light',
+    'power_supply' => 'Power Supply',
+    'type_of_light' => 'Type Of light',
+    'light_condition' => 'Light Condition',
+    'switch_condition' => 'Switch Condition',
+    'status' => 'Status',
+
+
     //Safety Equipment List
     'standard_norms' => 'Standard/Norms',
     'equipment_category' => 'Equipment Category',
@@ -113,6 +124,7 @@ return [
     'previous_month_observation' => 'Previous Month Obervation',
     'current_month_observation' => 'Current Month Obervation',
     'date_of_observation' => 'Observation Date',
+
     //ohc safety petty logbook
     'safety_petty_logbook' => 'Safety Petty Logbook',
     'approval' => 'Approval',
@@ -212,4 +224,35 @@ return [
     'qualtiy_quantity_sand' => 'Select Quality and Quantity of Sand',
     'paint_condition' => 'Select the Paint Condition',
     'fire_bucket_condition' => 'Select the Fire Bucket Condition',
+
+    // Hose Box Inspection
+    'hose_box_inspection' => 'Hose Box Inspection',
+    'branch_quantity' => 'Branch Quantity',
+    'hose_box_key' => 'Hose Box Key',
+    'hose_types' => 'Hose Box Types',
+
+    // Hose Reel Inspection
+    'length' => 'Hose Reel Length',
+    'nozzle' => 'Nozzle Condition',
+    'hose' => 'Hose Condition',
+    'flow' => 'Flow Test',
+    'fail' => 'Fail',
+    'pass' => 'Pass',
+
+    //Fire Modular Inspection
+    'types_of_equipment' => 'Types Of Equipment',
+    'capacity_of_equipment' => 'Capacity Of Equipment',
+    'working_temperature' => 'Working Temperature',
+    'sprinkler_head' => 'Sprinkler Head',
+    'neck_ring' => 'Neck Rink',
+    'date_of_closure' => 'Date of Closure',
+
+
+    //Excess Error
+    'excess_error' => 'You cannot download more than 20 items!',
+
+    'approved_by' => 'Approved By',
+    'verified_by' => 'Verified By',
+
+
 ];

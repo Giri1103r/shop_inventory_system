@@ -39,20 +39,23 @@
 
                                         <div class="row">
 
-                                                <div class="col-md-4">
-                                                    <div class="form-group form-input">
-                                                        <label class="form-label require">Unit </label>
-                                                        <select name="unit_id" id="unit_id"
-                                                            class=" form-control single-select" style="width: 100%">
-                                                            <option value="">Select Unit</option>
-                                                            @foreach ($unit as $unit)
-                                                                <option @if ($certifiedfirstaider->unit_id == $unit->id) selected @endif
-                                                                    value="{{ encryptId($unit->id) }}">
-                                                                    {{ $unit->unit_name }}</option>
-                                                            @endforeach
-                                                        </select>
-                                                    </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">Unit </label>
+                                                    <select name="unit_id" id="unit_id"
+                                                        class=" form-control single-select" style="width: 100%">
+                                                        <option value="">Select Unit</option>
+                                                        @foreach ($unit as $unit)
+                                                            <option @if ($certifiedfirstaider->unit_id == $unit->id) selected @endif
+                                                                value="{{ encryptId($unit->id) }}">
+                                                                {{ $unit->unit_name }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                    @error('unit_id')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
+                                            </div>
 
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
@@ -67,6 +70,9 @@
                                                                 {{ $department->department_name }}</option>
                                                         @endforeach
                                                     </select>
+                                                    @error('department_id')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -76,10 +82,13 @@
                                                         style="width: 100%">
                                                         <option value="">Select the Employee ID</option>
                                                         @if (isset($certifiedfirstaider->emp_id) && isset($certifiedfirstaider->emp_id))
-                                                                <option value="{{ $certifiedfirstaider->emp_id }}" selected>
-                                                                    {{ $certifiedfirstaider->emp_id }}</option>
-                                                            @endif
+                                                            <option value="{{ $certifiedfirstaider->emp_id }}" selected>
+                                                                {{ $certifiedfirstaider->emp_id }}</option>
+                                                        @endif
                                                     </select>
+                                                    @error('emp_id')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -89,6 +98,9 @@
                                                         class="form-control"
                                                         value="{{ $certifiedfirstaider->certifier_name }}"
                                                         placeholder="Enter the Certified First Aider Name" readonly>
+                                                    @error('certifier_name')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
@@ -97,6 +109,9 @@
                                                     <input type="text" name="mobile_no" id="mobile_no"
                                                         value="{{ $certifiedfirstaider->mobile_no }}" class="form-control"
                                                         placeholder="Mobile Number">
+                                                    @error('mobile_no')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                             </div>
 
@@ -104,6 +119,9 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Address</label>
                                                     <textarea name="address" class="form-control" placeholder="Company Address">{{ $certifiedfirstaider->address }}</textarea>
+                                                    @error('address')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                             </div>
                                         </div>
@@ -245,114 +263,114 @@
 
         $(function() {
 
-           $('#CertifiedFirstAiderEdit').validate({
-               rules: {
-                   unit_id: {
-                       required: true,
-                   },
-                   department_id: {
-                       required: true,
-                   },
-                   emp_id: {
-                       required: true,
-                       remote: {
-                           url: '{{ admin_url('ohc/certified-first-aider/unique') }}',
-                           type: 'post',
-                           data: {
-                               _token: "{{ csrf_token() }}",
-                               employee_id: function() {
-                                   return $('#emp_id').val();
-                               },
-                               id: function() {
+            $('#CertifiedFirstAiderEdit').validate({
+                rules: {
+                    unit_id: {
+                        required: true,
+                    },
+                    department_id: {
+                        required: true,
+                    },
+                    emp_id: {
+                        required: true,
+                        remote: {
+                            url: '{{ admin_url('ohc/certified-first-aider/unique') }}',
+                            type: 'post',
+                            data: {
+                                _token: "{{ csrf_token() }}",
+                                employee_id: function() {
+                                    return $('#emp_id').val();
+                                },
+                                id: function() {
                                     return $('#id').val();
                                 },
-                           },
-                       },
-                   },
-                   certifier_name: {
-                       required: true,
-                   },
-                   mobile_no: {
-                       required: true,
-                       minlength: 10,
-                       maxlength: 10,
-                       digits: true,
-                       remote: {
-                           url: '{{ admin_url('ohc/certified-first-aider/unique') }}',
-                           type: 'post',
-                           data: {
-                               _token: "{{ csrf_token() }}",
-                               mobile_no: function() {
-                                   return $('#mobile_no').val();
-                               },
-                               id: function() {
+                            },
+                        },
+                    },
+                    certifier_name: {
+                        required: true,
+                    },
+                    mobile_no: {
+                        required: true,
+                        minlength: 10,
+                        maxlength: 10,
+                        digits: true,
+                        remote: {
+                            url: '{{ admin_url('ohc/certified-first-aider/unique') }}',
+                            type: 'post',
+                            data: {
+                                _token: "{{ csrf_token() }}",
+                                mobile_no: function() {
+                                    return $('#mobile_no').val();
+                                },
+                                id: function() {
                                     return $('#id').val();
                                 },
-                           },
-                       },
-                   },
-                   address: {
-                       required: true,
-                       maxlength: 300,
-                   },
-               },
-               messages: {
-                   unit_id: {
-                       required: "Unit ID is required.",
-                   },
-                   department_id: {
-                       required: "Department ID is required.",
-                   },
-                   emp_id: {
-                       required: "Employee ID is required.",
-                       remote: "Employee Code already exists.",
-                   },
-                   certifier_name: {
-                       required: "Certifier name is required.",
-                   },
-                   mobile_no: {
-                       required: "Mobile number is required.",
-                       minlength: "Mobile number must be exactly 10 digits.",
-                       maxlength: "Mobile number must be exactly 10 digits.",
-                       digits: "Please enter only digits for the mobile number.",
-                       remote: "Mobile number must be unique.",
-                   },
-                   address: {
-                       required: "Address is required.",
-                       maxlength: "Address cannot exceed 300 characters.",
-                   },
-               },
-               errorElement: 'span',
-               errorPlacement: function(error, element) {
-                   // Add the 'invalid-feedback' class to the error element
-                   error.addClass('invalid-feedback');
-                   // Append the error message to the closest '.form-input' container
-                   element.closest('.form-input').append(error);
-               },
-               highlight: function(element) {
-                   // Add the 'is-invalid' class to the invalid input
-                   $(element).addClass('is-invalid');
-               },
-               unhighlight: function(element) {
-                   // Remove the 'is-invalid' class when the input becomes valid
-                   $(element).removeClass('is-invalid');
-               },
-               submitHandler: function(form) {
-                   // Submit the form when all validations pass
-                   form.submit();
-               },
-               invalidHandler: function(event, validator) {
-                   // Handle invalid form submissions
-                   var errors = validator.numberOfInvalids();
-                   if (errors) {
-                       console.log(`There are ${errors} validation errors.`);
-                       validator.errorList.forEach(function(error) {
-                           console.log(
-                           `Field: ${error.element.name}, Error: ${error.message}`);
-                       });
-                   }
-               },
-           });
-       });
+                            },
+                        },
+                    },
+                    address: {
+                        required: true,
+                        maxlength: 300,
+                    },
+                },
+                messages: {
+                    unit_id: {
+                        required: "Unit ID is required.",
+                    },
+                    department_id: {
+                        required: "Department ID is required.",
+                    },
+                    emp_id: {
+                        required: "Employee ID is required.",
+                        remote: "Employee Code already exists.",
+                    },
+                    certifier_name: {
+                        required: "Certifier name is required.",
+                    },
+                    mobile_no: {
+                        required: "Mobile number is required.",
+                        minlength: "Mobile number must be exactly 10 digits.",
+                        maxlength: "Mobile number must be exactly 10 digits.",
+                        digits: "Please enter only digits for the mobile number.",
+                        remote: "Mobile number must be unique.",
+                    },
+                    address: {
+                        required: "Address is required.",
+                        maxlength: "Address cannot exceed 300 characters.",
+                    },
+                },
+                errorElement: 'span',
+                errorPlacement: function(error, element) {
+                    // Add the 'invalid-feedback' class to the error element
+                    error.addClass('invalid-feedback');
+                    // Append the error message to the closest '.form-input' container
+                    element.closest('.form-input').append(error);
+                },
+                highlight: function(element) {
+                    // Add the 'is-invalid' class to the invalid input
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function(element) {
+                    // Remove the 'is-invalid' class when the input becomes valid
+                    $(element).removeClass('is-invalid');
+                },
+                submitHandler: function(form) {
+                    // Submit the form when all validations pass
+                    form.submit();
+                },
+                invalidHandler: function(event, validator) {
+                    // Handle invalid form submissions
+                    var errors = validator.numberOfInvalids();
+                    if (errors) {
+                        console.log(`There are ${errors} validation errors.`);
+                        validator.errorList.forEach(function(error) {
+                            console.log(
+                                `Field: ${error.element.name}, Error: ${error.message}`);
+                        });
+                    }
+                },
+            });
+        });
     </script>
 @endpush

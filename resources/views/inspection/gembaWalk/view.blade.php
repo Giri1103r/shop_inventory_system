@@ -115,7 +115,7 @@
                                             <div class="form-group form-input">
                                                 <label class="form-label">Gemba Walk Serial No</label>
                                                 <div class="view_data">
-                                                    {{ isset($gembaWalk->gemba_walk_checklist_no) ? $gembaWalk->gemba_walk_checklist_no : '' }}
+                                                    {{ $loop->iteration }}
                                                 </div>
                                             </div>
                                         </div>
@@ -218,7 +218,17 @@
                                             </div>
                                         </div>
 
-                                        <div class="col-md-12 mb-2">
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label
+                                                    class="form-label require">Observation</label>
+                                                <div class="view_data">
+                                                    {{ $gembaWalk->observation_needed == '1' ? 'YES' : 'NO' }}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {{-- <div class="col-md-12 mb-2">
                                             <div class="form-group form-input">
                                                 <label class="form-label">Observations</label>
                                                 <div class="view_data">
@@ -237,7 +247,7 @@
                                                     @endif
                                                 </div>
                                             </div>
-                                        </div>
+                                        </div> --}}
 
 
 

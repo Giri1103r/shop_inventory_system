@@ -51,7 +51,6 @@ class PpeRequest extends Model
             ->join('ppe_stock_inventory as inventory2', 'ppe_pperequest.item_code', '=', 'inventory2.id')
 
             ->where('inventory2.trash', 'NO')
-            ->where('masters_department.trash', 'NO')
             ->where('ppe_pperequest.trash', 'NO');
 
 
@@ -107,19 +106,21 @@ class PpeRequest extends Model
             $query->whereBetween('ppe_pperequest.created_at', [$startDate, $endDate]);
         }
 
-        $org_total_counts = $query->count();
-
+        $totalFilteredRecords = $query->count();
         if ($request->length != -1) {
             $query->offset($request->start)->limit($request->length);
         }
+
         $query->orderBy('ppe_pperequest.id', 'DESC');
         $data = $query->get();
-        $total_records = $data->count();
+
+
+        $org_total_counts = $this->count();
 
         return [
             'data' => $data,
             'total_records' => $org_total_counts,
-            'filter_records' => $total_records,
+            'filter_records' => $totalFilteredRecords,
         ];
     }
 
@@ -145,17 +146,20 @@ class PpeRequest extends Model
             $ppe_file_name = time() . '_' . $ppe_file->getClientOriginalName();
             $ppe_file->move(public_path($destinationPath), $ppe_file_name);
 
-            $ppe_file_path = $destinationPath . '/' . $ppe_file_name;
+            $ppe_file_path = 'public/'.$destinationPath . '/' . $ppe_file_name;
         }
 
         if ($request->request_for == 1) {
 
-            $employee = Employee::where('emp_id', $request->emp_id)
-                ->select('unit', 'department', 'company')
+            $employee = User::where('employee_id', $request->emp_id)
+                ->select('unit_id', 'department_id', 'company_id')
                 ->first();
 
-            $unit = $employee->unit;
-            $department = $employee->department;
+            $unit = $employee->unit_id;
+            $department = $employee->department_id;
+
+
+
         } elseif ($request->request_for == 2) {
             $work = Work::where('emp_id', $request->emp_id)
                 ->select('unit', 'department', 'company')

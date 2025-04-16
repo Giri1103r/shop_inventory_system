@@ -41,7 +41,7 @@ class ExpireMedicine extends Model
             'ohc_management_expire_medicine.medicine_id as medicine'
         )
             ->leftjoin('ohc_report_inventory', 'ohc_management_expire_medicine.medicine_id', '=', 'ohc_report_inventory.medicine_id')
-            ->where('ohc_report_inventory.unit_id', '=', 1);
+            ->where('ohc_report_inventory.unit_id', '=',   $user->unit_id);
 
         if ($request->search['value'] != null) {
             $search = $request->search['value'];
@@ -82,7 +82,7 @@ class ExpireMedicine extends Model
         $insert_array = [
 
             'medicine_id' => $data->medicine_id,
-            'expire_date' => ($data->expire_date),
+            'expire_date' => DBdateformat($data->expire_date),
             'batch_no' => $data->batch_number,
             'created_by' => Auth::id(),
         ];
@@ -127,7 +127,7 @@ class ExpireMedicine extends Model
     public function medicinediscard($id,  $quantity,  $remarks)
     {
         $request = request();
-        $unit = decryptId($request->unit_id);
+        $unit = Auth::user()->unit_id;
         $data  = $this->select('ohc_management_expire_medicine.*')->where('id', $id)
             ->update(['approve_status' => OHC_DISCARD_EHS_APPROVAL_PENDING, 'quantity' => $quantity, 'remarks' => $remarks, 'unit_id' => $unit]);
         return $data;

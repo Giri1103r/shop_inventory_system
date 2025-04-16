@@ -48,26 +48,26 @@
 
                                 <div class="row">
                                     <div class="card-header-inner">
-                                        <h4 class="text-white">Daily Departmental First Aid Box</h4>
+                                        <h4 class="text-white">First Aider List</h4>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">Document Number</label>
                                         <div class="view_data">
-                                            {{ isset($first_aider->doc_no) ? $first_aider->doc_no : '' }}
+                                            {{ isset($document_no->doc_no) ? $document_no->doc_no : '' }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">Issue Date</label>
                                         <div class="view_data">
-                                            {{ displayDateformat(isset($first_aider->issue_date) ? $first_aider->issue_date : '') }}
+                                            {{ displayDateformat(isset($document_no->issue_date) ? $document_no->issue_date : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">Review Date</label>
                                         <div class="view_data">
-                                            {{ isset($first_aider->revision_date) ? $first_aider->revision_date : '' }}
+                                            {{ isset($document_no->rev_dt) ? $document_no->rev_dt : '' }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
@@ -120,7 +120,7 @@
                                                     <th>Employee Name</th>
                                                     <th>Designation</th>
                                                     <th>Mobile Number</th>
-                                                   
+
 
                                                 </tr>
                                             </thead>

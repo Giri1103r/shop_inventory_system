@@ -4,7 +4,8 @@ namespace App\Http\Controllers\Inspection\Ohc;
 
 use App\Http\Controllers\Controller;
 use App\Mail\Inspection\Ohc\DailyDepartmentFirstAidbox as OhcDailyDepartmentFirstAidbox;
-use App\Mail\Inspection\Ohc\DailyDepartmentFirstAidboxEmail;
+use App\Mail\Inspection\Ohc\OccupationalHealthEmail;
+use App\Models\Inspection\InspectionStaticDocno;
 use Illuminate\Http\Request;
 use App\Models\Master\Department;
 use App\Models\Master\Location;
@@ -28,6 +29,17 @@ use Yajra\DataTables\Facades\DataTables;
 use App\Models\Inspection\Ohc\OhcSignature;
 use Spatie\SimpleExcel\SimpleExcelWriter;
 
+
+
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Border;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
+use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
+use PhpOffice\PhpSpreadsheet\RichText\RichText;
+
 class DailyDepartmentFirstAidBoxController extends Controller
 {
     private $upload_log;
@@ -41,7 +53,7 @@ class DailyDepartmentFirstAidBoxController extends Controller
     private $certified_First_aid;
     private $inspection_ohc_status_log;
     private $signature;
-
+    private $document_reference;
     private $inventory;
 
 
@@ -58,7 +70,7 @@ class DailyDepartmentFirstAidBoxController extends Controller
         $this->First_aid = new FirstAidLocation();
         $this->certified_First_aid = new CertifiedFirstAider();
         $this->signature = new OhcSignature();
-
+        $this->document_reference = new InspectionStaticDocno();
         $this->daily_department_first_aid_box = new DailyDepartmentFirstAidBox();
         $this->inventory = new Inventory();
         $this->user = new User();
@@ -78,14 +90,23 @@ class DailyDepartmentFirstAidBoxController extends Controller
                         ->addColumn('status', function ($row) {
                             $text = "<span style='color:red'>In-Active</span>";
                             if ($row->status == 1) {
-                                $text = "<span style='color:green;cursor:pointer' class='statusChange' data-id='" . encryptId($row->id) . "' data-type='1'>Active</span>";
+                                $text = "<span style='color:green;cursor:pointer' class='statusChange' data-id='" . encryptId($row->inspection_id) . "' data-type='1'>Active</span>";
                             } else if ($row->status == 0) {
-                                $text = "<span style='color:red;cursor:pointer' class='statusChange' data-id='" . encryptId($row->id) . "' data-type='0'>In-Active</span>";
+                                $text = "<span style='color:red;cursor:pointer' class='statusChange' data-id='" . encryptId($row->inspection_id) . "' data-type='0'>In-Active</span>";
                             }
                             return $text;
                         })
                         ->addColumn('created_date', function ($row) {
                             return Displaydateformat($row->created_at);
+                        })
+                        ->addColumn('unit', function ($row) {
+                            return getUnitname($row->unit);
+                        })
+                        ->addColumn('department', function ($row) {
+                            return getDepartment($row->department);
+                        })
+                        ->addColumn('shift', function ($row) {
+                            return getshift($row->shift);
                         })
                         ->addColumn('issue_date', function ($row) {
                             return Displaydateformat($row->issue_date);
@@ -113,16 +134,18 @@ class DailyDepartmentFirstAidBoxController extends Controller
                         })
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            $btn .= '<a href="' . admin_url('ohc/first-aid-box/daily-departmental/view/' . encryptId($row->id)) . '" class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a>';
+                            $btn .= '<a href="' . admin_url('ohc/first-aid-box/daily-departmental/view/' . encryptId($row->inspection_id)) . '" class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a>';
 
                             if ((checkUserRole(ROLE_SUPERADMIN) && $row->approve_status == MEDICAL_ASSISTANT_APPROVAL_PENDING) || (checkUserRole(ROLE_MEDICAL_ASSISTANT) && $row->approve_status == MEDICAL_ASSISTANT_APPROVAL_PENDING) || (checkUserRole(ROLE_FLOOR_MANAGER) && $row->approve_status == MEDICAL_ASSISTANT_APPROVAL_PENDING)) {
-                                $btn .= '<a href="' . admin_url('ohc/first-aid-box/daily-departmental/approval/view/' . encryptId($row->id)) . '" class="" title="Action"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('ohc/first-aid-box/daily-departmental/approval/view/' . encryptId($row->inspection_id)) . '" class="" title="Action"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
 
-                            $btn .= '<a href="' . admin_url('ohc/first-aid-box/daily-departmental/generalpdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
+                            $btn .= '<a href="' . admin_url('ohc/first-aid-box/daily-departmental/generalpdf/' . encryptId($row->inspection_id)) . '" style="margin-right: 5px;" title="PDF">
                             <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
                         </a>';
-
+                            $btn .= '<a href="' . admin_url('ohc/first-aid-box/daily-departmental/generalExcel/' . encryptId($row->inspection_id)) . '" style="margin-right: 5px;" title="Excel">
+                        <i class="fas fa-file-excel" style="color: #1D6F42;" aria-hidden="true"></i>
+                     </a>';
                             return   $btn;
                         })
                         ->rawColumns(['action', 'issue_date', 'created_by', 'approve_status', 'issue_date'])
@@ -133,13 +156,21 @@ class DailyDepartmentFirstAidBoxController extends Controller
 
                     return $datatables;
                 } catch (Exception $ex) {
-                    dd($ex);
+                    report($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }
         }
+        $unit = $this->unit->getunit();
+        $shift = $this->shift->getShiftname();
+        $data = array(
+            'unit' => $unit,
+            'shift' => $shift,
 
-        return view('inspection.inspection_ohc.daily_department_first_aid_box.list');
+
+
+        );
+        return view('inspection.inspection_ohc.daily_department_first_aid_box.list', $data);
     }
 
 
@@ -152,12 +183,13 @@ class DailyDepartmentFirstAidBoxController extends Controller
             $medicine = $this->inventory->getstockdata();
             $signature_upload = $this->user->getSignature();
             $First_aid = $this->certified_First_aid->getFirsaid();
-
+            $document_no = $this->document_reference->selectUsingName('DailyDepartmentalFirstAidBox');
             $location = $this->location->getLocationname();
             $data = array(
                 'unit' => $unit,
                 'shift' => $shift,
                 'medicine' => $medicine,
+                'document_no' => $document_no,
                 'signature_upload' => $signature_upload,
                 'First_aid' => $First_aid,
 
@@ -165,7 +197,7 @@ class DailyDepartmentFirstAidBoxController extends Controller
             );
             return view('inspection.inspection_ohc.daily_department_first_aid_box.add', $data);
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
         }
     }
 
@@ -235,11 +267,11 @@ class DailyDepartmentFirstAidBoxController extends Controller
 
                 $recipients = array_merge($getfloormanagerEmail, $getmedicalassistantEmail);
                 if (!empty($recipients)) {
-                    Mail::to($recipients)->queue(new DailyDepartmentFirstAidboxEmail($details));
+                    Mail::to($recipients)->queue(new OccupationalHealthEmail($details));
                 }
 
                 $notificationData = array(
-                    'notification_type' => 1,
+                    'notification_type' => OHC_INSPECTION,
                     'module_type' => 1,
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(
@@ -258,14 +290,14 @@ class DailyDepartmentFirstAidBoxController extends Controller
 
                 Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
-                dd($ex);
+                report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
             return redirect(admin_url('ohc/first-aid-box/daily-departmental/list'));
         } catch (Exception $ex) {
 
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/first-aid-box/daily-departmental/list'));
         }
@@ -301,6 +333,8 @@ class DailyDepartmentFirstAidBoxController extends Controller
                 if (!empty($floormanger) && !empty($floormanger->approved_by)) {
                     $floorapproversignatureview = $this->user->where('id', $floormanger->approved_by)->first();
                 }
+
+                $document_no = $this->document_reference->selectUsingName('DailyDepartmentalFirstAidBox');
                 $data = array(
                     'medicinerequisition' => $medicinerequisition,
                     'daily_department_first_aid_box' => $daily_department_first_aid_box,
@@ -309,11 +343,12 @@ class DailyDepartmentFirstAidBoxController extends Controller
                     'floorapproversignatureview' => $floorapproversignatureview,
                     'signatureview' => $signatureview,
                     'floormanagersignature' => $floormanagersignature,
+                    'document_no' => $document_no,
                 );
             }
             return view('inspection.inspection_ohc.daily_department_first_aid_box.view', $data);
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
         }
     }
 
@@ -347,6 +382,7 @@ class DailyDepartmentFirstAidBoxController extends Controller
                 if (!empty($floormanger) && !empty($floormanger->approved_by)) {
                     $floorapproversignatureview = $this->user->where('id', $floormanger->approved_by)->first();
                 }
+                $document_no = $this->document_reference->selectUsingName('DailyDepartmentalFirstAidBox');
                 $data = array(
                     'medicinerequisition' => $medicinerequisition,
                     'daily_department_first_aid_box' => $daily_department_first_aid_box,
@@ -355,11 +391,12 @@ class DailyDepartmentFirstAidBoxController extends Controller
                     'floorapproversignatureview' => $floorapproversignatureview,
                     'signatureview' => $signatureview,
                     'floormanagersignature' => $floormanagersignature,
+                    'document_no' => $document_no,
                 );
             }
             return view('inspection.inspection_ohc.daily_department_first_aid_box.approval', $data);
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
         }
     }
 
@@ -393,7 +430,7 @@ class DailyDepartmentFirstAidBoxController extends Controller
                 if (!empty($floormanger) && !empty($floormanger->approved_by)) {
                     $floorapproversignatureview = $this->user->where('id', $floormanger->approved_by)->first();
                 }
-
+                $document_no = $this->document_reference->selectUsingName('DailyDepartmentalFirstAidBox');
             }
             $data = [
                 'medicinerequisition' => $medicinerequisition,
@@ -403,6 +440,7 @@ class DailyDepartmentFirstAidBoxController extends Controller
                 'floorapproversignatureview' => $floorapproversignatureview,
                 'signatureview' => $signatureview,
                 'floormanagersignature' => $floormanagersignature,
+                'document_no' => $document_no,
                 'pagetitle' => "Daily Department First Aid Box",
             ];
 
@@ -424,7 +462,7 @@ class DailyDepartmentFirstAidBoxController extends Controller
             $filename = "Daily Department First Aid Box.pdf";
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
         }
     }
@@ -459,13 +497,13 @@ class DailyDepartmentFirstAidBoxController extends Controller
                 $this->inspection_ohc_status_log->store($data);
 
                 $this->daily_department_first_aid_box_details->floormanagerapprovalupdate($id, $nextStatus);
-                if($request->action == "approve"){
+                if ($request->action == "approve") {
                     $userIds = [
                         'users' => $details->created_by,
                     ];
                     $mailsubject = 'Daily Department First Aid Box Approved';
                     $notificationData = array(
-                        'notification_type' => 1,
+                        'notification_type' => OHC_INSPECTION,
                         'module_type' => 1,
                         'notification_message' => $mailsubject,
                         'mobile_notification' => json_encode(array(
@@ -491,14 +529,14 @@ class DailyDepartmentFirstAidBoxController extends Controller
                         'title' => $title,
                         'data' => $details
                     );
-                    Mail::to($email_id)->queue(new DailyDepartmentFirstAidboxEmail($details));
-                } elseif($request->action == "reject"){
+                    Mail::to($email_id)->queue(new OccupationalHealthEmail($details));
+                } elseif ($request->action == "reject") {
                     $userIds = [
                         'users' => $details->created_by,
                     ];
                     $mailsubject = 'Daily Departmental First Aid Box was Rejected';
                     $notificationData = array(
-                        'notification_type' => 1,
+                        'notification_type' => OHC_INSPECTION,
                         'module_type' => 1,
                         'notification_message' => $mailsubject,
                         'mobile_notification' => json_encode(array(
@@ -524,21 +562,21 @@ class DailyDepartmentFirstAidBoxController extends Controller
                         'title' => $title,
                         'data' => $details
                     );
-                    Mail::to($email_id)->queue(new DailyDepartmentFirstAidboxEmail($details));
+                    Mail::to($email_id)->queue(new OccupationalHealthEmail($details));
                 }
 
 
 
                 Session::flash('success', 'Your data has been Responded successfully!');
             } catch (Exception $ex) {
-                dd($ex);
+                report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
             return redirect(admin_url('ohc/first-aid-box/daily-departmental/list'));
         } catch (Exception $ex) {
 
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/first-aid-box/daily-departmental/list'));
         }
@@ -550,58 +588,227 @@ class DailyDepartmentFirstAidBoxController extends Controller
         try {
 
             $allData = $this->daily_department_first_aid_box_details->exportdata();
-
-            if ($allData->isEmpty()) {
-                return redirect()->back()->with('error', 'No data found');
+            $spreadsheet = new Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
+            for ($i = 1; $i <= 200; $i++) {
+                $sheet->getRowDimension($i)->setRowHeight(25);
             }
 
-            $header = [
-                __("common.sno"),
-                'Document Number',
-                'Review date',
-                'Issued Date',
-                'Unit',
-                'Department',
-                'Date',
-                'Shift',
-                'First Aid Box Number',
-                'First Aider',
-                'Approve Status',
-                __("common.created_by"),
-                __("common.created_date"),
-            ];
+            $row = 1;
+            $currentRow = $row;
+            foreach ($allData as $details) {
+                $currentRow = $row;
+                $document_no = $this->document_reference->selectOne($details->document_reference_id);
 
-            $i = 1;
-            foreach ($allData as $data) {
+                $medicinerequisition = $this->daily_department_first_aid_box_details->Selectone($details->id);
+                $daily_department_first_aid_box = $this->daily_department_first_aid_box->Selectone($details->id);
+                $CreatorSignature = GetOHCSignature($medicinerequisition->created_by, $details->id, OHC_TYPE_DAILY_DEPARTMENT_FIRST_AID_BOX);
 
-                $export = [];
-                $export[] =  $i;
-                $export[] =  $data->doc_no;
-                $export[] =  $data->revision_date;
-                $export[] =  Displaydateformat($data->issue_date);
-                $export[] =  getUnitname($data->unit);
-                $export[] =  getUnitname($data->department);
-                $export[] = Displaydateformat($data->date);
-                $export[] = getShift($data->shift);
-                $export[] = ($data->first_aid_box_no);
-                $export[] = getFirstAider($data->first_aider);
-                $export[] = getohcrequisitionfloorstatus($data->approve_status);
-                $export[] =  getusername($data->created_by);
-                $export[] =  Displaydateformat($data->created_at);
+                $floorManagerSignature = GetOHCSignature($medicinerequisition->verified_by, $details->id, OHC_TYPE_DAILY_DEPARTMENT_FIRST_AID_BOX);
 
-                $exportData[] = $export;
 
-                $i++;
+
+
+                $logoLeftPath = public_path('assets/images/logo-dark.png');
+                if (file_exists($logoLeftPath)) {
+                    $sheet->mergeCells("A$currentRow:F" . ($currentRow + 2));
+
+                    $drawing = new Drawing();
+                    $drawing->setName('Left Logo');
+                    $drawing->setPath($logoLeftPath);
+                    $drawing->setCoordinates("B$currentRow");
+                    $drawing->setOffsetX(100);
+                    $drawing->setOffsetY(15);
+                    $drawing->setWidth(70);
+                    $drawing->setHeight(70);
+                    $drawing->setWorksheet($sheet);
+
+                    $range = "A$currentRow:F" . ($currentRow + 2);
+                    $sheet->getStyle($range)->applyFromArray([
+                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                    ]);
+                }
+
+                // Title Section
+                $sheet->mergeCells("G{$currentRow}:M" . ($currentRow + 2));
+                $sheet->setCellValue("G{$currentRow}", "OCCUPATIONAL HEALTH CENTER PN INTERNATIONAL PVT LTD");
+                $sheet->getStyle("G{$currentRow}")->applyFromArray([
+                    'font' => ['bold' => true, 'size' => 14],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                ]);
+
+
+                // document number
+
+
+                $sheet->mergeCells("N$currentRow:P$currentRow")->setCellValue("N$currentRow", 'Doc. No.');
+                $sheet->mergeCells("N" . ($currentRow + 1) . ":P" . ($currentRow + 1))->setCellValue("N" . ($currentRow + 1), 'Issue Dt.');
+                $sheet->mergeCells("N" . ($currentRow + 2) . ":P" . ($currentRow + 2))->setCellValue("N" . ($currentRow + 2), 'Rev. & Dt.');
+
+                $sheet->mergeCells("Q$currentRow:S$currentRow")->setCellValue("Q$currentRow", $document_no->doc_no);
+                $sheet->mergeCells("Q" . ($currentRow + 1) . ":S" . ($currentRow + 1))->setCellValue("Q" . ($currentRow + 1), Displaydateformat($document_no->issue_date));
+                $sheet->mergeCells("Q" . ($currentRow + 2) . ":S" . ($currentRow + 2))->setCellValue("Q" . ($currentRow + 2), $document_no->rev_dt);
+
+                $sheet->getStyle("N$currentRow:S" . ($currentRow + 2))->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                    'font' => ['bold' => true],
+                ]);
+
+                // Review Dates
+                $sheet->mergeCells("A" . ($currentRow + 3) . ":G" . ($currentRow + 3));
+                $richText1 = new RichText();
+                $richText1->createTextRun(' DATE OF INSPECTION:- ')->getFont()->setBold(true);
+                $richText1->createText(Displaydateformat($medicinerequisition->date));
+                $sheet->getCell("A" . ($currentRow + 3))->setValue($richText1);
+
+                $sheet->mergeCells("H" . ($currentRow + 3) . ":N" . ($currentRow + 3));
+                $richText2 = new RichText();
+                $richText2->createTextRun('FIRST AID BOX NO :-  ')->getFont()->setBold(true);
+                $richText2->createText(($medicinerequisition->first_aid_box_no));
+                $sheet->getCell("H" . ($currentRow + 3))->setValue($richText2);
+
+                $sheet->mergeCells("O" . ($currentRow + 3) . ":S" . ($currentRow + 3));
+                $richText2 = new RichText();
+                $richText2->createTextRun('SHIFT :-  ')->getFont()->setBold(true);
+                $richText2->createText(getShift($medicinerequisition->shift));
+                $sheet->getCell("O" . ($currentRow + 3))->setValue($richText2);
+
+                $sheet->getStyle("A" . ($currentRow + 3) . ":S" . ($currentRow + 3))->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                ]);
+
+                $sheet->mergeCells("A" . ($currentRow + 4) . ":G" . ($currentRow + 4));
+                $richText1 = new RichText();
+                $richText1->createTextRun(' DATE OF INSPECTION:- ')->getFont()->setBold(true);
+                $richText1->createText(getDepartment($medicinerequisition->department));
+                $sheet->getCell("A" . ($currentRow + 4))->setValue($richText1);
+
+                $sheet->mergeCells("H" . ($currentRow + 4) . ":N" . ($currentRow + 4));
+                $richText2 = new RichText();
+                $richText2->createTextRun('UNIT :-  ')->getFont()->setBold(true);
+                $richText2->createText(getUnitname($medicinerequisition->unit));
+                $sheet->getCell("H" . ($currentRow + 4))->setValue($richText2);
+
+                $sheet->mergeCells("O" . ($currentRow + 4) . ":S" . ($currentRow + 4));
+                $richText2 = new RichText();
+                $richText2->createTextRun('NAME OF THE FIRST AIDER:-  ')->getFont()->setBold(true);
+                $richText2->createText(getFirstAider($medicinerequisition->first_aider));
+                $sheet->getCell("O" . ($currentRow + 4))->setValue($richText2);
+
+                $sheet->getStyle("A" . ($currentRow + 4) . ":S" . ($currentRow + 4))->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                ]);
+                $headerRow = $currentRow + 5;
+
+                $sheet->mergeCells("A$headerRow:C$headerRow")->setCellValue("A$headerRow", "SERIAL NO");
+                $sheet->mergeCells("D$headerRow:G$headerRow")->setCellValue("D$headerRow", "NAME OF THE MEDICINE");
+                $sheet->mergeCells("H$headerRow:J$headerRow")->setCellValue("H$headerRow", "FREEZE QUANTITY");
+                $sheet->mergeCells("K$headerRow:M$headerRow")->setCellValue("K$headerRow", "AVAILABLE QUANTITY");
+                $sheet->mergeCells("N$headerRow:P$headerRow")->setCellValue("N$headerRow", "MATERIAL EXPIRY");
+                $sheet->mergeCells("Q$headerRow:S$headerRow")->setCellValue("Q$headerRow", "REMARKS");
+
+                $sheet->getStyle("A$headerRow:S$headerRow")->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                    'font' => ['bold' => true],
+                ]);
+
+                $inspectionRow = $headerRow + 1;
+
+                foreach ($daily_department_first_aid_box as $index => $detail) {
+                    $sheet->mergeCells("A$inspectionRow:C$inspectionRow")->setCellValue("A$inspectionRow", $index + 1);
+                    $medicineName = getMedicinename($detail->medicine_id) ?? '';
+                    $material_expiry = Displaydateformat($detail->material_expiry) ?? '';
+                    $sheet->mergeCells("D$inspectionRow:G$inspectionRow")->setCellValue("D$inspectionRow", $medicineName);
+                    $sheet->mergeCells("H$inspectionRow:J$inspectionRow")->setCellValue("H$inspectionRow", $detail->freeze_quantity ?? '');
+                    $sheet->mergeCells("K$inspectionRow:M$inspectionRow")->setCellValue("K$inspectionRow", $detail->available_quantity ?? '');
+                    $sheet->mergeCells("N$inspectionRow:P$inspectionRow")->setCellValue("N$inspectionRow", $material_expiry);
+                    $sheet->mergeCells("Q$inspectionRow:S$inspectionRow")->setCellValue("Q$inspectionRow", $detail->remarks ?? '');
+
+                    $sheet->getStyle("A$inspectionRow:S$inspectionRow")->applyFromArray([
+                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_LEFT, 'vertical' => Alignment::VERTICAL_CENTER],
+                    ]);
+
+                    $inspectionRow++;
+                }
+
+                $signatureStartRow = $inspectionRow;
+                $signatureEndRow = $signatureStartRow + 3;
+
+                if (file_exists($CreatorSignature)) {
+                    $sheet->mergeCells("A$signatureStartRow:I" . ($signatureStartRow + 2));
+
+                    $drawing = new Drawing();
+                    $drawing->setName('Creator Signature');
+                    $drawing->setPath($CreatorSignature);
+                    $drawing->setCoordinates("A$signatureStartRow");
+                    $drawing->setOffsetX(100);
+                    $drawing->setOffsetY(5);
+                    $drawing->setWidth(70);
+                    $drawing->setHeight(70);
+                    $drawing->setWorksheet($sheet);
+                    $sheet->getRowDimension($signatureStartRow + 2)->setRowHeight(40);
+
+                    // Label + Name
+                    $sheet->setCellValue("A" . ($signatureStartRow + 3), "First Aider Signature: " . getUserName($medicinerequisition->created_by));
+                    $sheet->mergeCells("A" . ($signatureStartRow + 3) . ":I" . ($signatureStartRow + 3));
+
+                    $sheet->getStyle("A$signatureStartRow:I" . ($signatureStartRow + 3))->applyFromArray([
+                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                    ]);
+                }
+
+                if (file_exists($floorManagerSignature)) {
+                    $sheet->mergeCells("J$signatureStartRow:S" . ($signatureStartRow + 2));
+
+                    $drawing = new Drawing();
+                    $drawing->setName('Floor Manager Signature');
+                    $drawing->setPath($floorManagerSignature);
+                    $drawing->setCoordinates("J$signatureStartRow");
+                    $drawing->setOffsetX(100);
+                    $drawing->setOffsetY(5);
+                    $drawing->setWidth(70);
+                    $drawing->setHeight(70);
+                    $drawing->setWorksheet($sheet);
+                    $sheet->getRowDimension($signatureStartRow + 2)->setRowHeight(40);
+
+                    // Label + Name
+                    $sheet->setCellValue("J" . ($signatureStartRow + 3), "Floor Manager/Medical Assistant Signature: " . getUserName($medicinerequisition->created_by));
+                    $sheet->mergeCells("J" . ($signatureStartRow + 3) . ":S" . ($signatureStartRow + 3));
+
+                    $sheet->getStyle("J$signatureStartRow:S" . ($signatureStartRow + 3))->applyFromArray([
+                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                    ]);
+                }
+
+
+$row =   $signatureStartRow +8;
+
             }
 
-            $writer = SimpleExcelWriter::streamDownload('Daily Department First Aid Box.xlsx')
-                ->addHeader($header)
-                ->addRows(
-                    $exportData
-                );
+
+            // Requestor Signature
+
+
+            $fileName = 'daily department first aid box.xlsx';
+            $writer = new Xlsx($spreadsheet);
+
+            return response()->streamDownload(function () use ($writer) {
+                $writer->save('php://output');
+            }, $fileName, [
+                'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            ]);
         } catch (Exception $ex) {
 
-            report($ex);
+            dd($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/first-aid-box/daily-departmental/list'));
         }
@@ -613,30 +820,21 @@ class DailyDepartmentFirstAidBoxController extends Controller
         try {
 
             $allData = $this->daily_department_first_aid_box_details->exportdata();
+            foreach ($allData as $details) {
+                $document_no = $this->document_reference->SelectOne($details->document_reference_id);
+            }
+
 
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
             }
 
-            $header = [
-                __("common.sno"),
-                'Document Number',
-                'Review date',
-                'Issued Date',
-                'Unit',
-                'Department',
-                'Date',
-                'Shift',
-                'First Aid Box Number',
-                'First Aider',
-                'Approve Status',
-                __("common.created_by"),
-                __("common.created_date"),
-            ];
+
 
             $data = array(
-                'header' => $header,
+
                 'content' => $allData,
+                'document_no' => $document_no,
                 'pagetitle' => "Daily Department First Aid Box",
             );
 
@@ -663,10 +861,231 @@ class DailyDepartmentFirstAidBoxController extends Controller
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/first-aid-box/daily-departmental/list'));
         }
     }
 
+    public function generalExcel(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+            $spreadsheet = new Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
+            $document_no = $this->document_reference->selectUsingName('DailyDepartmentalFirstAidBox');
+
+            $medicinerequisition = $this->daily_department_first_aid_box_details->Selectone($id);
+            $daily_department_first_aid_box = $this->daily_department_first_aid_box->Selectone($id);
+            $CreatorSignature = GetOHCSignature($medicinerequisition->created_by, $id, OHC_TYPE_DAILY_DEPARTMENT_FIRST_AID_BOX);
+
+            $floorManagerSignature = GetOHCSignature($medicinerequisition->verified_by, $id, OHC_TYPE_DAILY_DEPARTMENT_FIRST_AID_BOX);
+
+            for ($i = 1; $i <= 200; $i++) {
+                $sheet->getRowDimension($i)->setRowHeight(25);
+            }
+
+            $row = 1;
+            $currentRow = $row;
+            $logoPath = public_path('assets/images/logo-dark.png');
+            $logoLeftPath = public_path('assets/images/logo-dark.png');
+            if (file_exists($logoLeftPath)) {
+                $sheet->mergeCells("A$currentRow:F" . ($currentRow + 2));
+
+                $drawing = new Drawing();
+                $drawing->setName('Left Logo');
+                $drawing->setPath($logoLeftPath);
+                $drawing->setCoordinates("B$currentRow");
+                $drawing->setOffsetX(100);
+                $drawing->setOffsetY(15);
+                $drawing->setWidth(70);
+                $drawing->setHeight(70);
+                $drawing->setWorksheet($sheet);
+
+                $range = "A$currentRow:F" . ($currentRow + 2);
+                $sheet->getStyle($range)->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                ]);
+            }
+
+            // Title Section
+            $sheet->mergeCells("G{$currentRow}:M" . ($currentRow + 2));
+            $sheet->setCellValue("G{$currentRow}", "OCCUPATIONAL HEALTH CENTER PN INTERNATIONAL PVT LTD");
+            $sheet->getStyle("G{$currentRow}")->applyFromArray([
+                'font' => ['bold' => true, 'size' => 14],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+            ]);
+
+
+            // document number
+
+
+            $sheet->mergeCells("N$currentRow:P$currentRow")->setCellValue("N$currentRow", 'Doc. No.');
+            $sheet->mergeCells("N" . ($currentRow + 1) . ":P" . ($currentRow + 1))->setCellValue("N" . ($currentRow + 1), 'Issue Dt.');
+            $sheet->mergeCells("N" . ($currentRow + 2) . ":P" . ($currentRow + 2))->setCellValue("N" . ($currentRow + 2), 'Rev. & Dt.');
+
+            $sheet->mergeCells("Q$currentRow:S$currentRow")->setCellValue("Q$currentRow", $document_no->doc_no);
+            $sheet->mergeCells("Q" . ($currentRow + 1) . ":S" . ($currentRow + 1))->setCellValue("Q" . ($currentRow + 1), Displaydateformat($document_no->issue_date));
+            $sheet->mergeCells("Q" . ($currentRow + 2) . ":S" . ($currentRow + 2))->setCellValue("Q" . ($currentRow + 2), $document_no->rev_dt);
+
+            $sheet->getStyle("N$currentRow:S" . ($currentRow + 2))->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                'font' => ['bold' => true],
+            ]);
+
+            // Review Dates
+            $sheet->mergeCells("A" . ($currentRow + 3) . ":G" . ($currentRow + 3));
+            $richText1 = new RichText();
+            $richText1->createTextRun(' DATE OF INSPECTION:- ')->getFont()->setBold(true);
+            $richText1->createText(Displaydateformat($medicinerequisition->date));
+            $sheet->getCell("A" . ($currentRow + 3))->setValue($richText1);
+
+            $sheet->mergeCells("H" . ($currentRow + 3) . ":N" . ($currentRow + 3));
+            $richText2 = new RichText();
+            $richText2->createTextRun('FIRST AID BOX NO :-  ')->getFont()->setBold(true);
+            $richText2->createText(($medicinerequisition->first_aid_box_no));
+            $sheet->getCell("H" . ($currentRow + 3))->setValue($richText2);
+
+            $sheet->mergeCells("O" . ($currentRow + 3) . ":S" . ($currentRow + 3));
+            $richText2 = new RichText();
+            $richText2->createTextRun('SHIFT :-  ')->getFont()->setBold(true);
+            $richText2->createText(getShift($medicinerequisition->shift));
+            $sheet->getCell("O" . ($currentRow + 3))->setValue($richText2);
+
+            $sheet->getStyle("A" . ($currentRow + 3) . ":S" . ($currentRow + 3))->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+            ]);
+
+            $sheet->mergeCells("A" . ($currentRow + 4) . ":G" . ($currentRow + 4));
+            $richText1 = new RichText();
+            $richText1->createTextRun(' DATE OF INSPECTION:- ')->getFont()->setBold(true);
+            $richText1->createText(getDepartment($medicinerequisition->department));
+            $sheet->getCell("A" . ($currentRow + 4))->setValue($richText1);
+
+            $sheet->mergeCells("H" . ($currentRow + 4) . ":N" . ($currentRow + 4));
+            $richText2 = new RichText();
+            $richText2->createTextRun('UNIT :-  ')->getFont()->setBold(true);
+            $richText2->createText(getUnitname($medicinerequisition->unit));
+            $sheet->getCell("H" . ($currentRow + 4))->setValue($richText2);
+
+            $sheet->mergeCells("O" . ($currentRow + 4) . ":S" . ($currentRow + 4));
+            $richText2 = new RichText();
+            $richText2->createTextRun('NAME OF THE FIRST AIDER:-  ')->getFont()->setBold(true);
+            $richText2->createText(getFirstAider($medicinerequisition->first_aider));
+            $sheet->getCell("O" . ($currentRow + 4))->setValue($richText2);
+
+            $sheet->getStyle("A" . ($currentRow + 4) . ":S" . ($currentRow + 4))->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+            ]);
+            $headerRow = $currentRow + 5;
+
+            $sheet->mergeCells("A$headerRow:C$headerRow")->setCellValue("A$headerRow", "SERIAL NO");
+            $sheet->mergeCells("D$headerRow:G$headerRow")->setCellValue("D$headerRow", "NAME OF THE MEDICINE");
+            $sheet->mergeCells("H$headerRow:J$headerRow")->setCellValue("H$headerRow", "FREEZE QUANTITY");
+            $sheet->mergeCells("K$headerRow:M$headerRow")->setCellValue("K$headerRow", "AVAILABLE QUANTITY");
+            $sheet->mergeCells("N$headerRow:P$headerRow")->setCellValue("N$headerRow", "MATERIAL EXPIRY");
+            $sheet->mergeCells("Q$headerRow:S$headerRow")->setCellValue("Q$headerRow", "REMARKS");
+
+            $sheet->getStyle("A$headerRow:S$headerRow")->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                'font' => ['bold' => true],
+            ]);
+
+            $inspectionRow = $headerRow + 1;
+
+            foreach ($daily_department_first_aid_box as $index => $detail) {
+                $sheet->mergeCells("A$inspectionRow:C$inspectionRow")->setCellValue("A$inspectionRow", $index + 1);
+                $medicineName = getMedicinename($detail->medicine_id) ?? '';
+                $material_expiry = Displaydateformat($detail->material_expiry) ?? '';
+                $sheet->mergeCells("D$inspectionRow:G$inspectionRow")->setCellValue("D$inspectionRow", $medicineName);
+                $sheet->mergeCells("H$inspectionRow:J$inspectionRow")->setCellValue("H$inspectionRow", $detail->freeze_quantity ?? '');
+                $sheet->mergeCells("K$inspectionRow:M$inspectionRow")->setCellValue("K$inspectionRow", $detail->available_quantity ?? '');
+                $sheet->mergeCells("N$inspectionRow:P$inspectionRow")->setCellValue("N$inspectionRow", $material_expiry);
+                $sheet->mergeCells("Q$inspectionRow:S$inspectionRow")->setCellValue("N$inspectionRow", $detail->remarks ?? '');
+
+                $sheet->getStyle("A$inspectionRow:S$inspectionRow")->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_LEFT, 'vertical' => Alignment::VERTICAL_CENTER],
+                ]);
+
+                $inspectionRow++;
+            }
+
+            $signatureStartRow = $inspectionRow;
+            $signatureEndRow = $signatureStartRow + 3;
+
+            if (file_exists($CreatorSignature)) {
+                $sheet->mergeCells("A$signatureStartRow:I" . ($signatureStartRow + 2));
+
+                $drawing = new Drawing();
+                $drawing->setName('Creator Signature');
+                $drawing->setPath($CreatorSignature);
+                $drawing->setCoordinates("A$signatureStartRow");
+                $drawing->setOffsetX(100);
+                $drawing->setOffsetY(5);
+                $drawing->setWidth(70);
+                $drawing->setHeight(70);
+                $drawing->setWorksheet($sheet);
+                $sheet->getRowDimension($signatureStartRow + 2)->setRowHeight(40);
+
+                // Label + Name
+                $sheet->setCellValue("A" . ($signatureStartRow + 3), "First Aider Signature: " . getUserName($medicinerequisition->created_by));
+                $sheet->mergeCells("A" . ($signatureStartRow + 3) . ":I" . ($signatureStartRow + 3));
+
+                $sheet->getStyle("A$signatureStartRow:I" . ($signatureStartRow + 3))->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                ]);
+            }
+
+            if (file_exists($floorManagerSignature)) {
+                $sheet->mergeCells("J$signatureStartRow:S" . ($signatureStartRow + 2));
+
+                $drawing = new Drawing();
+                $drawing->setName('Floor Manager Signature');
+                $drawing->setPath($floorManagerSignature);
+                $drawing->setCoordinates("J$signatureStartRow");
+                $drawing->setOffsetX(100);
+                $drawing->setOffsetY(5);
+                $drawing->setWidth(70);
+                $drawing->setHeight(70);
+                $drawing->setWorksheet($sheet);
+                $sheet->getRowDimension($signatureStartRow + 2)->setRowHeight(40);
+
+                // Label + Name
+                $sheet->setCellValue("J" . ($signatureStartRow + 3), "Floor Manager/Medical Assistant Signature: " . getUserName($medicinerequisition->created_by));
+                $sheet->mergeCells("J" . ($signatureStartRow + 3) . ":S" . ($signatureStartRow + 3));
+
+                $sheet->getStyle("J$signatureStartRow:S" . ($signatureStartRow + 3))->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                ]);
+            }
+
+
+
+
+
+
+
+            $fileName = 'daily department first aid box.xlsx';
+            $writer = new Xlsx($spreadsheet);
+
+            return response()->streamDownload(function () use ($writer) {
+                $writer->save('php://output');
+            }, $fileName, [
+                'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            ]);
+        } catch (Exception $ex) {
+            dd($ex);
+            Session::flash('error', 'Something went wrong!');
+            return redirect(admin_url('ohc/first-aid-box/daily-departmental/list'));
+        }
+    }
 }

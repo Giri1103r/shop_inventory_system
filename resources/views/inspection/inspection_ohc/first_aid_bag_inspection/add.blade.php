@@ -58,6 +58,79 @@
                                                     <div class="error">{{ $message }}</div>
                                                 @enderror
                                             </div>
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label
+                                                        class="form-label require">{{ __('inspection.location') }}</label>
+                                                    <select name="location_id" id="location_id"
+                                                        class=" form-control single-select" style="width: 100%">
+                                                        <option value="">Select {{ __('inspection.location') }}
+                                                        </option>
+                                                        @foreach ($locations as $location)
+                                                            <option value="{{ encryptId($location->id) }}"
+                                                                {{ old('location_id') == encryptId($location->id) ? 'selected' : '' }}>
+                                                                {{ $location->location_name }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                    @error('location_id')
+                                                        <div class="error">{{ $message }}</div>
+                                                    @enderror
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label
+                                                        class="form-label require">{{ __('inspection.shifts') }}</label>
+                                                    <select name="shift_id" id="shift_id"
+                                                        class=" form-control single-select" style="width: 100%">
+                                                        <option value="">Select {{ __('inspection.shifts') }}
+                                                        </option>
+                                                        @foreach ($shifts as $location)
+                                                            <option value="{{ encryptId($location->id) }}"
+                                                                {{ old('shift_id') == encryptId($location->id) ? 'selected' : '' }}>
+                                                                {{ $location->shift }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                    @error('shift_id')
+                                                        <div class="error">{{ $message }}</div>
+                                                    @enderror
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">{{ __('inspection.unit') }}</label>
+                                                    <select name="unit_id" id="unit_id"
+                                                        class=" form-control single-select" style="width: 100%">
+                                                        <option value="">Select Unit</option>
+                                                        @foreach ($units as $unit)
+                                                            <option value="{{ encryptId($unit->id) }}"
+                                                                {{ old('unit_id') == encryptId($unit->id) ? 'selected' : '' }}>
+                                                                {{ $unit->unit_name }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                                @error('unit_id')
+                                                    <div class="error">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label
+                                                        class="form-label require">{{ __('inspection.frequency') }}</label>
+                                                    <select name="frequency_id" id="frequency_id"
+                                                        class=" form-control single-select" style="width: 100%">
+                                                        <option value="">Select Frequency</option>
+                                                        @foreach ($frequency as $frequency)
+                                                            <option value="{{ encryptId($frequency->id) }}"
+                                                                {{ old('frequency_id') == encryptId($frequency->id) ? 'selected' : '' }}>
+                                                                {{ $frequency->frequency_name }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                                @error('frequency_id')
+                                                    <div class="error">{{ $message }}</div>
+                                                @enderror
+                                            </div>
                                             <div class="">
                                                 <table class="table table-bordered table-striped">
                                                     <thead class="table-secondary">
@@ -238,7 +311,19 @@
                         },
                         signature_image: {
                             required: true,
-                        }
+                        },
+                        frequency_id:{
+                            required: true,
+                        },
+                        location_id:{
+                            required: true,
+                        },
+                        unit_id:{
+                            required: true,
+                        },
+                        shift_id:{
+                            required: true,
+                        },
                     },
                     messages: {
                         inspection_date: {
@@ -249,7 +334,20 @@
                         },
                         signature_image: {
                             required: "Signature is required",
-                        }
+                        },
+                        frequency_id: {
+                            required: "Frequency is required",
+                        },
+                        location_id: {
+                            required: "Location is required",
+                        },
+                        unit_id: {
+                            required: "Unit is required",
+                        },
+                        shift_id: {
+                            required: "Shift is required",
+                        },
+
                     },
                     errorElement: 'span',
                     errorPlacement: function(error, element) {

@@ -36,27 +36,43 @@
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">{{ __('inspection.doc_no') }}</label>
-                                                    <input type="text" name="doc_no" id = "doc_no" class="form-control"
-                                                        placeholder="Enter the Document Number">
+                                                    <input type="text" name="document_no" id = "document_no"
+                                                        class="form-control" placeholder="Enter the Document Number"
+                                                        value="{{ $document_no->doc_no }}" readonly>
+                                                    @error('doc_no')
+                                                        <div class="error">{{ $message }}</div>
+                                                    @enderror
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label
                                                         class="form-label require">{{ __('inspection.issue_date') }}</label>
-                                                    <input type="text" name="issue_date" id = "issue_date"
-                                                        class="form-control" placeholder="Issued Date">
+                                                    <div class="input-group date form-input custom-height">
+                                                        <input type="text" name="issue_date" id="issue_date"
+                                                            class="form-control"autocomplete="off"
+                                                            value="{{ displaydateformat($document_no->issue_date) }}"
+                                                            readonly>
+                                                        <div class="input-group-addon input-group-text">
+                                                            <span class="fa fa-calendar"></span>
+                                                        </div>
+                                                    </div>
                                                 </div>
+
+                                                @error('issue_date')
+                                                    <div class="error">{{ $message }}</div>
+                                                @enderror
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label
                                                         class="form-label require">{{ __('inspection.rev_date') }}</label>
-                                                    <input type="text" name="rev_date" id = "rev_date"
-                                                        class="form-control" value="{{ getDocumentReviewDate('HTR-0') }}"
-                                                        readonly>
+                                                    <input type="text" name="review_date" id = "review_date"
+                                                        class="form-control" value="{{ $document_no->rev_dt }}" readonly>
                                                 </div>
                                             </div>
+                                            <input type="hidden" name="document_reference_id"
+                                                value="{{ encryptId($document_no->id) }}">
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label
@@ -136,23 +152,7 @@
                                                         accept="image/*">
                                                 </div>
                                             </div>
-                                            <div class="col-md-4 form-group form-input mb-2">
-                                                @if (isset(Auth::user()->signature_upload))
-                                                    <label class="form-label"
-                                                        style="display: block; ">{{ __('inspection.signature') }}</label>
-                                                    <img src="{{ admin_url(Auth::user()->signature_upload) }}"
-                                                        alt="Signature Upload" style="width: 150px; margin-top:-10px">
-                                                @else
-                                                    <div class="form-input col-md-12 mb-2">
-                                                        <label class="form-label require">Signature</label>
-                                                        <input type="file" name="signature_image"
-                                                            id="signature_upload" class="form-control form-control-sm"
-                                                            accept="image/*" placeholder="Enter the image">
-                                                        <small>Allowed file types: jpg, jpeg, png</small>
-                                                        <div id="signature_upload" class="text-danger"></div>
-                                                    </div>
-                                                @endif
-                                            </div>
+
                                         </div>
                                         <hr>
                                         <div class="form-wrapper">
@@ -192,7 +192,10 @@
                                                         <select name="department[1]" id="department"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Department</option>
-
+                                                            @foreach ($department as $list)
+                                                                <option value="{{ encryptId($list->id) }}">
+                                                                    {{ $list->department_name }}</option>
+                                                            @endforeach
                                                         </select>
                                                     </div>
                                                 </div>
@@ -200,7 +203,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.location') }}</label>
-                                                        <input type="number" name="location[1]" id = "location"
+                                                        <input type="text" name="location[1]" id = "location"
                                                             class="form-control">
                                                     </div>
                                                 </div>
@@ -288,8 +291,8 @@
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.swith_condition') }}</label>
-                                                        <select name="swith_condition[1]" id="swith_condition"
+                                                            class="form-label require">{{ __('inspection.switch_condition') }}</label>
+                                                        <select name="switch_condition[1]" id="switch_condition"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select the option</option>
                                                             <option value="{{ encryptId(1) }}">Good</option>
@@ -338,7 +341,23 @@
                                                 </div>
                                             </div>
                                         </div>
-
+                                        <div class="col-md-4 form-group form-input mb-2">
+                                            @if (isset(Auth::user()->signature_upload))
+                                                <label class="form-label"
+                                                    style="display: block; ">{{ __('inspection.signature') }}</label>
+                                                <img src="{{ admin_url(Auth::user()->signature_upload) }}"
+                                                    alt="Signature Upload" style="width: 150px; margin-top:-10px">
+                                            @else
+                                                <div class="form-input col-md-12 mb-2">
+                                                    <label class="form-label require">Signature</label>
+                                                    <input type="file" name="signature_image" id="signature_upload"
+                                                        class="form-control form-control-sm" accept="image/*"
+                                                        placeholder="Enter the image">
+                                                    <small>Allowed file types: jpg, jpeg, png</small>
+                                                    <div id="signature_upload" class="text-danger"></div>
+                                                </div>
+                                            @endif
+                                        </div>
                                         <div class="submit-button" style="text-align: right;">
                                             <x-button-submit class="submit"></x-button-submit>
                                             <x-button-reset class="submit"></x-button-reset>
@@ -423,6 +442,9 @@
                         "check_items[1]": {
                             required: true,
                         },
+                        "location[1]": {
+                            required: true,
+                        },
                         "quantity[1]": {
                             required: true,
                         },
@@ -444,6 +466,30 @@
                             required: true,
                         },
                         signature_image: {
+                            required: true,
+                        },
+                        "capacity[1]": {
+                            required: true,
+                        },
+                        "emergency_light_number[1]": {
+                            required: true,
+                        },
+                        "condition_of_light[1]": {
+                            required: true,
+                        },
+                        "type_of_light[1]": {
+                            required: true,
+                        },
+                        "power_supply[1]": {
+                            required: true,
+                        },
+                        "switch_condition[1]": {
+                            required: true,
+                        },
+                        "light_condition[1]": {
+                            required: true,
+                        },
+                        "status[1]": {
                             required: true,
                         },
 
@@ -487,8 +533,11 @@
                         "department[1]": {
                             required: "Please Select The Department",
                         },
+                        "location[1]": {
+                            required: "Please Enter the Location",
+                        },
                         "capacity[1]": {
-                            required: "Please add the capacit",
+                            required: "Please add the capacity",
                         },
                         "emergency_light_number[1]": {
                             required: "Please add the emergency of the light",
@@ -502,7 +551,7 @@
                         "power_supply[1]": {
                             required: "Please select the condition of light",
                         },
-                        "swith_condition[1]": {
+                        "switch_condition[1]": {
                             required: "Please select the  swith condition of light",
                         },
                         "light_condition[1]": {
@@ -591,7 +640,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.sr_no') }}</label>
-                                                        <input type="text" name="sr_no[${form_set_count}]" id = "sr_no"
+                                                        <input type="text" name="sr_no[${form_set_count}]" id = "sr_no_${form_set_count}"
                                                             class="form-control"
                                                             value="{{ FireSequence(EMERGENCY_LIGHT_INSPECTION) }}"
                                                             readonly>
@@ -603,7 +652,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.department') }}</label>
-                                                        <select name="department[${form_set_count}]" id="department"
+                                                        <select name="department[${form_set_count}]" id="department_${form_set_count}"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Department</option>
 
@@ -614,7 +663,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.location') }}</label>
-                                                        <input type="number" name="location[${form_set_count}]" id = "location"
+                                                        <input type="text" name="location[${form_set_count}]" id = "location"
                                                             class="form-control">
                                                     </div>
                                                 </div>
@@ -623,14 +672,14 @@
                                                         <label
                                                             class="form-label require">{{ __('inspection.emergency_light_number') }}</label>
                                                         <input type="text" name="emergency_light_number[${form_set_count}]"
-                                                            id = "emergency_light_number" class="form-control">
+                                                            id = "emergency_light_number_${form_set_count}" class="form-control">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.condition_of_light') }}</label>
-                                                        <select name="condition_of_light[${form_set_count}]" id="condition_of_light"
+                                                        <select name="condition_of_light[${form_set_count}]" id="condition_of_light_${form_set_count}"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select the option</option>
 
@@ -645,7 +694,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.type_of_light') }}</label>
-                                                        <select name="type_of_light[${form_set_count}]" id="type_of_light"
+                                                        <select name="type_of_light[${form_set_count}]" id="type_of_light_${form_set_count}"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select the option</option>
                                                             @foreach ($lightType as $list)
@@ -659,7 +708,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.capacity') }}</label>
-                                                        <input type="number" name="capacity[${form_set_count}]" id = "capacity"
+                                                        <input type="number" name="capacity[${form_set_count}]" id = "capacity_${form_set_count}"
                                                             class="form-control">
                                                     </div>
                                                 </div>
@@ -667,7 +716,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.quantity') }}</label>
-                                                        <input type="number" name="quantity[${form_set_count}]" id = "quantity"
+                                                        <input type="number" name="quantity[${form_set_count}]" id = "quantity_${form_set_count}"
                                                             class="form-control">
                                                     </div>
                                                 </div>
@@ -675,7 +724,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.power_supply') }}</label>
-                                                        <select name="power_supply[${form_set_count}]" id="power_supply"
+                                                        <select name="power_supply[${form_set_count}]" id="power_supply_${form_set_count}"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select power supply</option>
                                                             @foreach ($powerSupply as $list)
@@ -689,7 +738,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.light_condition') }}</label>
-                                                        <select name="light_condition[${form_set_count}]" id="light_condition"
+                                                        <select name="light_condition[${form_set_count}]" id="light_condition_${form_set_count}"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select the option</option>
                                                             <option value="{{ encryptId(1) }}">Good</option>
@@ -702,8 +751,8 @@
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.swith_condition') }}</label>
-                                                        <select name="swith_condition[${form_set_count}]" id="swith_condition"
+                                                            class="form-label require">{{ __('inspection.switch_condition') }}</label>
+                                                        <select name="switch_condition[${form_set_count}]" id="switch_condition_${form_set_count}"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select the option</option>
                                                             <option value="{{ encryptId(1) }}">Good</option>
@@ -717,7 +766,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.status') }}</label>
-                                                        <select name="status[${form_set_count}]" id="status"
+                                                        <select name="status[${form_set_count}]" id="status_${form_set_count}"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Status</option>
                                                             @foreach ($fireStatus as $list)
@@ -731,7 +780,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.remarks') }}</label>
-                                                        <textarea name="remarks[${form_set_count}]" id="remarks" class="form-control" style="resize: none;" rows="4"></textarea>
+                                                        <textarea name="remarks[${form_set_count}]" id="remarks_${form_set_count}" class="form-control" style="resize: none;" rows="4"></textarea>
                                                     </div>
                                                 </div>
 
@@ -744,7 +793,9 @@
                     GetDepartment(locationSelect);
 
                     $('.form-wrapper').append(newFormSetElement);
-
+                    newFormSetElement.find('select.single-select').select2({
+                        width: '100%'
+                    });
                     $("select[name='department[" + form_set_count + "]']").rules('add', {
                         required: true,
                         messages: {
@@ -757,7 +808,7 @@
                             required: 'Please select the status',
                         }
                     });
-                    $("select[name='swith_condition[" + form_set_count + "]']").rules('add', {
+                    $("select[name='switch_condition[" + form_set_count + "]']").rules('add', {
                         required: true,
                         messages: {
                             required: 'Please select the Switch Condition',
@@ -806,7 +857,7 @@
                         }
                     });
 
-                    $("input[name='quantity[" + form_set_count + "]']").rules('add', {
+                    $("input[name='capacity[" + form_set_count + "]']").rules('add', {
                         required: true,
                         messages: {
                             required: 'Please add the capacity',
@@ -858,7 +909,7 @@
                     $(this).find('select[name^="condition_of_light"]').attr('name', 'condition_of_light[' + idx + ']');
                     $(this).find('select[name^="type_of_light"]').attr('name', 'type_of_light[' + idx + ']');
                     $(this).find('select[name^="power_supply"]').attr('name', 'power_supply[' + idx + ']');
-                    $(this).find('select[name^="swith_condition"]').attr('name', 'swith_condition[' + idx + ']');
+                    $(this).find('select[name^="switch_condition"]').attr('name', 'switch_condition[' + idx + ']');
                     $(this).find('select[name^="light_condition"]').attr('name', 'light_condition[' + idx + ']');
                     $(this).find('select[name^="status"]').attr('name', 'status[' + idx + ']');
                     $(this).find('input[name^="resource_code"]').attr('name', 'resource_code[' + idx + ']');

@@ -24,23 +24,43 @@
                             <div class="card-body">
                                 <div class="col-md-12">
                                     <div class="row">
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="document_number"
-                                                class="form-label ">{{ __('inspection.doc_no') }}</label>
-                                            <input type="text" name="document_number" id="document_number"
-                                                class="form-control">
-                                        </div>
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="issue_date"
-                                                class="form-label ">{{ __('inspection.issue_date') }}</label>
-                                            <input type="text" name="issue_date" id="issue_date" class="form-control">
-                                        </div>
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="rev_date"
-                                                class="form-label ">{{ __('inspection.rev_date') }}</label>
-                                            <input type="text" name="rev_date" id="rev_date" class="form-control">
-                                        </div>
 
+                                        <div class="col-md-3 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label require">Unit</label>
+                                                <select name="unit_id" id="unit_id" class="form-control single-select"
+                                                    style="width: 100%">
+                                                    <option value="">Select the unit</option>
+                                                    @foreach ($unit as $list)
+                                                        <option value="{{ encryptId($list->id) }}">
+                                                            {{ $list->unit_name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label require">Department</label>
+                                                <select name="department_id" id="department_id"
+                                                    class=" form-control single-select" style="width: 100%">
+                                                    <option value="">Select Department </option>
+
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label require">Shift</label>
+                                                <select name="shift" id="shift" style="width: 100%"
+                                                    class="form-control single-select">
+                                                    <option value="">Select the option</option>
+                                                    @foreach ($shift as $list)
+                                                        <option value="{{ encryptId($list->id) }}">{{ $list->shift }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="status" class="form-label ">{{ __('common.status') }}</label>
                                             <select name="status" id="status" style="width: 100%"
@@ -70,9 +90,9 @@
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
-                                        <th>Doc.NO</th>
-                                        <th>Issue Date</th>
-                                        <th>Rev.Date</th>
+                                        <th>Unit</th>
+                                        <th>Department</th>
+                                        <th>Shift</th>
                                         <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.created_date') }}</th>
                                         <th>{{ __('common.action') }}</th>
@@ -97,7 +117,7 @@
                 var firstTh = $('.datatable-list thead th:first');
                 firstTh.removeClass('sorting_asc');
             });
-            var IssueDatepicker = flatpickr("#issue_date", {
+            var IssueDatepicker = flatpickr("#department_id", {
                 dateFormat: "d-m-Y",
 
 
@@ -135,9 +155,9 @@
                                 .attr('content')
                         },
                         data: function(d) {
-                            d.document_number = $('#document_number').val();
-                            d.issue_date = $('#issue_date').val();
-                            d.rev_date = $('#rev_date').val();
+                            d.unit_id = $('#unit_id').val();
+                            d.department_id = $('#department_id').val();
+                            d.shift = $('#shift').val();
                             d.status = $('#status').val();
                         },
                         error: function(xhr, error, code) {
@@ -154,16 +174,16 @@
                         },
 
                         {
-                            data: 'doc_no',
-                            name: 'doc_no'
+                            data: 'unit',
+                            name: 'unit'
                         },
                         {
-                            data: 'issue_date',
-                            name: 'issue_date'
+                            data: 'department',
+                            name: 'department'
                         },
                         {
-                            data: 'revision_date',
-                            name: 'revision_date'
+                            data: 'shift',
+                            name: 'shift'
                         },
 
 
@@ -205,9 +225,9 @@
                                     action: function(e, dt, button, config) {
 
                                         var searchValue = $('#datatable-list_filter input').val();
-                                        document_number = $('#document_number').val();
-                                        issue_date = $('#issue_date').val();
-                                        rev_date = $('#rev_date').val();
+                                        unit_id = $('#unit_id').val();
+                                        department_id = $('#department_id').val();
+                                        shift = $('#shift').val();
                                         status = $('#status').val();
 
                                         $(".dt-button").removeClass('processing');
@@ -215,9 +235,9 @@
                                         window.location.href =
                                             "{{ admin_url('ohc/first-aid-box/daily-departmental/export/pdf') }}" +
                                             '?search=' + searchValue +
-                                            '&document_number=' + document_number +
-                                            '&issue_date=' + issue_date +
-                                            '&rev_date=' + rev_date +
+                                            '&unit_id=' + unit_id +
+                                            '&department_id=' + department_id +
+                                            '&shift=' + shift +
                                             '&status=' + status
                                     }
                                 },
@@ -226,18 +246,18 @@
                                     text: '{{ __('common.excel') }}',
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
-                                        document_number = $('#document_number').val();
-                                        issue_date = $('#issue_date').val();
-                                        rev_date = $('#rev_date').val();
+                                        unit_id = $('#unit_id').val();
+                                        department_id = $('#department_id').val();
+                                        shift = $('#shift').val();
                                         status = $('#status').val();
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
                                             "{{ admin_url('ohc/first-aid-box/daily-departmental/export/excel') }}"+
                                             '?search=' + searchValue +
-                                            '&document_number=' + document_number +
-                                            '&issue_date=' + issue_date +
-                                            '&rev_date=' + rev_date +
+                                            '&unit_id=' + unit_id +
+                                            '&department_id=' + department_id +
+                                            '&shift=' + shift +
                                             '&status=' + status
                                     }
                                 },

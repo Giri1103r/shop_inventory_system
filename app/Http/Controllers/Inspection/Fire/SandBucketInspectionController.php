@@ -244,7 +244,6 @@ class SandBucketInspectionController extends Controller
                 'paint_condition.*' => 'required',
                 'qualtiy_quantity_sand.*' => 'required',
                 'approach.*' => 'required',
-                'observation' => 'required',
             ];
 
             $messages = [
@@ -264,34 +263,24 @@ class SandBucketInspectionController extends Controller
                 'paint_condition.*.required' => 'Paint Condition is required.',
                 'qualtiy_quantity_sand.*.required' => 'Quality/Quantity of Sand is required.',
                 'approach.*.required' => 'Approach is required.',
-                'observation.*.required' => 'Observation is required.',
             ];
 
-
-
             $validator = Validator::make($request->all(), $rules, $messages);
-
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator)->withInput();
             }
-
-
-
             $inspection = $this->detector->store();
             $inspection_type = SAND_BUCKET_INSPECTION;
             $id = $inspection->id;
-
             $inspection_details = $this->sandbucket_details->store($id);
             $inspection_file = $this->files->file_upload($inspection_type, $id);
-            $checklist_store = $this->checklist_follow->store($inspection_type, $id);
             $signature_update = $this->signature->CheckedBySignature($id, $inspection_type);
-
             $ehsOfficer = GetEHSOfficer();
             $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
             $mailsubject = 'SAND BUCKET INSPECTION';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
-                'module_type' => 1,
+                'module_type' => 3,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
@@ -305,7 +294,6 @@ class SandBucketInspectionController extends Controller
                 'created_by' => Auth::id(),
             );
             notificationSave($notificationData);
-
             $title = 'Fire Associate create the Sand Bucket Inspection';
             foreach ($ehsOfficers as $user) {
                 $email_id = getUseremail($user);
@@ -330,7 +318,11 @@ class SandBucketInspectionController extends Controller
             ];
             $this->statusLog->create($insert_array);
             Session::flash('success', 'Your data added successfully');
-            return redirect(admin_url('fire/fire-sand-bucket-inspection/list'));
+            if (decryptId($request->observation_needed) == 1) {
+                return redirect(admin_url('fire/checklist-observation/add/' . encryptId($inspection_type) . '/' . encryptId($id)));
+            } else {
+                return redirect(admin_url('fire/fire-sand-bucket-inspection/list'));
+            }
         } catch (Exception $ex) {
             dd($ex);
             report($ex);
@@ -419,7 +411,7 @@ class SandBucketInspectionController extends Controller
             $mailsubject = 'SAND BUCKET INSPECTION';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
-                'module_type' => 2,
+                'module_type' => 3,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
@@ -481,7 +473,7 @@ class SandBucketInspectionController extends Controller
             $mailsubject = 'SAND BUCKET INSPECTION';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
-                'module_type' => 1,
+                'module_type' => 3,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
@@ -553,7 +545,7 @@ class SandBucketInspectionController extends Controller
             $mailsubject = 'SAND BUCKET INSPECTION';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
-                'module_type' => 1,
+                'module_type' => 3,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
@@ -627,7 +619,7 @@ class SandBucketInspectionController extends Controller
             $mailsubject = 'SAND BUCKET INSPECTION';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
-                'module_type' => 1,
+                'module_type' => 3,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
@@ -698,7 +690,7 @@ class SandBucketInspectionController extends Controller
             $mailsubject = 'SAND BUCKET INSPECTION';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
-                'module_type' => 1,
+                'module_type' => 3,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
@@ -795,23 +787,19 @@ class SandBucketInspectionController extends Controller
         try {
 
             $allData = $this->detector->exportdata();
+            $inspection_type = SAND_BUCKET_INSPECTION;
+
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
+            } else if (count($allData) > 20) {
+                return redirect()->back()->with('error', __('inspection.excess_error'));
             }
-            $header = [
-                __("common.sno"),
-                'Document Number',
-                'Issue Date',
-                'Revision Date',
-                __("inspection.inspection_status"),
-                __("common.created_by"),
-                __("common.created_date"),
-            ];
+
 
             $data = array(
-                'header' => $header,
                 'content' => $allData,
                 'pagetitle' => "Sand Bucket Inspection",
+                'inspection_type' => $inspection_type,
             );
 
             $property = [
@@ -826,7 +814,7 @@ class SandBucketInspectionController extends Controller
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $view = view('inspection.fire.pdf.pdf', $data);
+            $view = view('inspection.fire.sand_bucket_inspection.pdf', $data);
             $html = $view->render();
 
             $mpdf->WriteHTML($html);
@@ -834,6 +822,7 @@ class SandBucketInspectionController extends Controller
             $filename = "Sand Bucket Inspection.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
+            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('fire/fire-sand-bucket-inspection/list'));
@@ -850,6 +839,9 @@ class SandBucketInspectionController extends Controller
                 $forklift_details = $this->detector->selectOne($id);
                 $inspection = $this->sandbucket_details->GetDetails($forklift_details->id);
                 $document_no = $this->document_reference->selectOne($forklift_details->document_reference_id);
+                $approved_by = GetFireSignature($forklift_details->approved_by, $forklift_details->id, SAND_BUCKET_INSPECTION);
+                $verified_by = GetFireSignature($forklift_details->verified_by, $forklift_details->id, SAND_BUCKET_INSPECTION);
+                $checked_by = GetFireSignature($forklift_details->checked_by, $forklift_details->id, SAND_BUCKET_INSPECTION);
 
                 $data = [
                     'status_log' => $status_log,
@@ -857,6 +849,9 @@ class SandBucketInspectionController extends Controller
                     'document_no' => $document_no,
                     'pagetitle' => "Sand Bucket Inspection",
                     'inspection' => $inspection,
+                    'approved_by' => $approved_by,
+                    'verified_by' => $verified_by,
+                    'checked_by' => $checked_by,
                 ];
             }
 

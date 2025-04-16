@@ -87,9 +87,9 @@
                                         <label class="form-label view_label">Image</label>
                                         @if (isset($pperequest) && $pperequest && $pperequest->ppe_image)
                                             <p>
-                                                <a href="{{ asset('public/' . $pperequest->ppe_image) }}"
+                                                <a href="{{ asset( $pperequest->ppe_image) }}"
                                                     target="_blank">
-                                                    <img src="{{ asset('public/' . $pperequest->ppe_image) }}"
+                                                    <img src="{{ asset( $pperequest->ppe_image) }}"
                                                         style="width: 100px" alt="image">
                                                 </a>
                                             </p>

@@ -127,13 +127,35 @@ class MedicineIssuance extends Model
         return $data;
     }
 
+    // public function firstdata($medicineIds)
+    // {
+
+    //     $data = $this->select(
+    //         'ohc_management_medicine_issuance.*'
+    //     )->where('id', $medicineIds)->where('trash', 'NO')
+    //         ->get();
+
+    //     return $data;
+    // }
+
+    // public function deletedmedicineid($id)
+    // {
+
+    //     $data = $this->select(
+    //         'ohc_management_medicine_issuance.*'
+    //     )->where('id', $id)->where('trash', 'NO')
+    //         ->first();
+
+    //     return $data;
+    // }
+
 
 
     public function getissuedDate($selectedYear, $selectedMonth, $ids)
     {
   $data=    $this
             ->join('ohc_master_medicine', 'ohc_management_medicine_issuance.medicine_id', '=', 'ohc_master_medicine.id')
-            ->whereIn('medicine_id', $ids)
+            ->whereIn('reference_id', $ids)
             ->whereYear('ohc_management_medicine_issuance.created_at', $selectedYear)
             ->whereMonth('ohc_management_medicine_issuance.created_at', $selectedMonth)
             ->select('ohc_master_medicine.medicine as medicine_name', 'ohc_management_medicine_issuance.created_at', 'quantity')

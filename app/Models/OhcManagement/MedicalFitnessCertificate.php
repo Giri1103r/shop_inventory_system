@@ -2,6 +2,8 @@
 
 namespace App\Models\OhcManagement;
 
+use App\Models\Master\Employee;
+use App\Models\Master\Work;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
@@ -16,6 +18,7 @@ class MedicalFitnessCertificate extends Model
         'emp_id',
         'emp_name',
         'date',
+        'company_id',
         'file',
         'remarks',
         'approve_status',
@@ -34,21 +37,17 @@ class MedicalFitnessCertificate extends Model
         $request = request();
         $user = Auth::user();
         $userRole = string_to_array($user->role);
+        $companyId = $user->company_id;
         $empId = $user->employee_id;
         $query = $this->select('ohc_management_medical_fitness_certificate.*');
 
         if (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole)) {
-
-        }elseif(in_array(ROLE_PARAMEDICS, $userRole)){
-
-        }
-        elseif(in_array(ROLE_DOCTOR, $userRole)){
-
-        } elseif(in_array(ROLE_EHS_HEAD, $userRole)){
-
-        }
-         else {
-            $query->where('ohc_management_medical_fitness_certificate.created_by',Auth::id());
+        } elseif (in_array(ROLE_PARAMEDICS, $userRole)) {
+        } elseif (in_array(ROLE_DOCTOR, $userRole)) {
+            $query->where('ohc_management_medical_fitness_certificate.company_id', $companyId);
+        } elseif (in_array(ROLE_EHS_HEAD, $userRole)) {
+        } else {
+            $query->where('ohc_management_medical_fitness_certificate.created_by', Auth::id());
         }
 
         if ($request->search['value'] != null) {
@@ -82,19 +81,21 @@ class MedicalFitnessCertificate extends Model
         }
 
 
-        $org_total_counts = $query->count();
-
+        $totalFilteredRecords = $query->count();
         if ($request->length != -1) {
             $query->offset($request->start)->limit($request->length);
         }
+
         $query->orderBy('id', 'DESC');
         $data = $query->get();
-        $total_records = $data->count();
+
+
+        $org_total_counts = $this->count();
 
         return [
             'data' => $data,
             'total_records' => $org_total_counts,
-            'filter_records' => $total_records,
+            'filter_records' => $totalFilteredRecords,
         ];
     }
     public function store()
@@ -117,14 +118,30 @@ class MedicalFitnessCertificate extends Model
 
             $ohc_file_path = $destinationPath . '/' . $ohc_file_name;
         }
+        $employee = Employee::where('emp_id', $request->emp_id)
+            ->select('company')
+            ->first();
 
+
+        if (!$employee) {
+            $employee = Work::where('emp_id', $request->emp_id)
+                ->select('company')
+                ->first();
+        }
+
+
+        if ($employee) {
+            $company = $employee->company;
+        }
         $insert_array = [
-            'emp_id' =>$request->emp_id,
-            'emp_name' =>$request->emp_name,
+            'emp_id' => $request->emp_id,
+            'emp_name' => $request->emp_name,
+            'emp_name' => $request->emp_name,
+            'company_id' => $company,
             'remarks' => $request->remarks,
             'date' => DBdateformat($request->date),
-            'file'=> $ohc_file_path,
-            'approve_status'=>STATUS_OHC_MEDICAL_DOCTOR_APPROVAL_PENDING,
+            'file' => $ohc_file_path,
+            'approve_status' => STATUS_OHC_MEDICAL_DOCTOR_APPROVAL_PENDING,
             'created_by' => Auth::id(),
         ];
 
@@ -137,7 +154,7 @@ class MedicalFitnessCertificate extends Model
         $request = request();
 
         $destinationPath = 'uploads/ohc_file';
-        $ppe_file_path = $request->input('existing_pre_image');
+        $ohc_file_path = $request->input('existing_pre_image');
 
         if ($request->hasFile('file')) {
             $ohc_file = $request->file('file');
@@ -155,11 +172,26 @@ class MedicalFitnessCertificate extends Model
             }
         }
 
+        $employee = Employee::where('emp_id', $request->emp_id)
+            ->select('company')
+            ->first();
 
+
+        if (!$employee) {
+            $employee = Work::where('emp_id', $request->emp_id)
+                ->select('company')
+                ->first();
+        }
+
+
+        if ($employee) {
+            $company = $employee->company;
+        }
         $update_array = array(
             'emp_id' => $request->emp_id,
             'emp_name' => $request->emp_name,
             'remarks' => $request->remarks,
+            'company_id' => $company,
             'date' => DBdateformat($request->date),
             'file' =>  $ohc_file_path,
             'created_by' => Auth::id(),
@@ -172,7 +204,8 @@ class MedicalFitnessCertificate extends Model
     {
 
         $data = $this->select(
-            'ohc_management_medical_fitness_certificate.*')->where('id',$id)->where('trash','NO')
+            'ohc_management_medical_fitness_certificate.*'
+        )->where('id', $id)->where('trash', 'NO')
             ->first();
 
         return $data;
@@ -189,12 +222,14 @@ class MedicalFitnessCertificate extends Model
         return $this->where('id', $ids)->update($update_data);
     }
 
-    public function doctorapproval($id, $doctorverifydata){
-        return $this->where('id',$id)->update(['approve_status'=>$doctorverifydata['approve_status'],'approved_by' => Auth::id(),]);
+    public function doctorapproval($id, $doctorverifydata)
+    {
+        return $this->where('id', $id)->update(['approve_status' => $doctorverifydata['approve_status'], 'approved_by' => Auth::id(),]);
     }
 
-    public function ehsheadapproval($id, $ehsheadverifydata){
-        return $this->where('id',$id)->update(['approve_status'=>$ehsheadverifydata['approve_status'],'approved_by' => Auth::id(),]);
+    public function ehsheadapproval($id, $ehsheadverifydata)
+    {
+        return $this->where('id', $id)->update(['approve_status' => $ehsheadverifydata['approve_status'], 'approved_by' => Auth::id(),]);
     }
 
     public function exportdata()
@@ -237,6 +272,4 @@ class MedicalFitnessCertificate extends Model
 
         return $query->orderByDesc('id')->get();
     }
-
-
 }

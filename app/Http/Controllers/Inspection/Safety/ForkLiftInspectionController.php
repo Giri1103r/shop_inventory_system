@@ -99,7 +99,6 @@ class ForkLiftInspectionController extends Controller
                 }
             }
         }
-
         $data = array();
         return view('inspection.Safety.forklift_inspection.list', $data);
     }
@@ -185,7 +184,7 @@ class ForkLiftInspectionController extends Controller
             $mailsubject = 'SAFETY INSPECTION';
             $notificationData = array(
                 'notification_type' => SAFETY_INSPECTION,
-                'module_type' => 1,
+                'module_type' => 3,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
@@ -235,7 +234,6 @@ class ForkLiftInspectionController extends Controller
                 'inspection' => $inspection,
                 'inspection_details' => $inspection_details,
                 'document_no' => $document_no,
-
             );
 
             return view('inspection.Safety.forklift_inspection.view', $data);
@@ -324,19 +322,11 @@ class ForkLiftInspectionController extends Controller
             $allData = $this->forklift->exportdata();
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
+            }else if(count($allData) > 20){
+                return redirect()->back()->with('error', __('inspection.excess_error'));
             }
-            $header = [
-                __("common.sno"),
-                'Document Number',
-                'Issue Date',
-                'Revision Date',
-                "Status",
-                __("common.created_by"),
-                __("common.created_date"),
-            ];
 
             $data = array(
-                'header' => $header,
                 'content' => $allData,
                 'pagetitle' => "Forklift Inspection",
             );
@@ -360,6 +350,7 @@ class ForkLiftInspectionController extends Controller
             $filename = "Forklift Inspection.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
+            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('safety/forklift-inspection/list'));
@@ -401,7 +392,6 @@ class ForkLiftInspectionController extends Controller
             $filename = "Forklift Inspection.pdf";
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong!');
             return redirect(admin_url('safety/forklift-inspection/list'));
@@ -429,7 +419,7 @@ class ForkLiftInspectionController extends Controller
             $mailsubject = 'SAFETY INSPECTION';
             $notificationData = array(
                 'notification_type' => SAFETY_INSPECTION,
-                'module_type' => 1,
+                'module_type' => 3,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,

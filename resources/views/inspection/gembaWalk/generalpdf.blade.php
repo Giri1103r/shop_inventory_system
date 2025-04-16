@@ -232,16 +232,16 @@
                     <thead>
                         <tr>
                             <th>S.No</th>
-                            <th>Checklist ID</th>
                             <th>Location</th>
                             <th>Unit</th>
                             <th>Date of Observation</th>
                             <th> Observation Type</th>
                             <th>Description</th>
                             <th>Hazard</th>
+                            <th>Image</th>
                             <th>capa</th>
-                            <th>date_of_compliance</th>
-                            <th>responsibility_id</th>
+                            <th>Date of Compliance</th>
+                            <th>Responsible Person</th>
                             <th>Status</th>
                             <th>remark</th>
                             <th>observation</th>
@@ -252,20 +252,28 @@
                     <tbody>
                         @foreach ($gembaWalk_details as $index => $gembaWalk)
                             <tr>
-                                <td>{{ $index + 1 }}</td>
-                                <td>{{ $gembaWalk->gemba_walk_checklist_no ?? 'N/A' }}</td>
+                                <td>{{ $loop->iteration }}</td>
                                 <td>{{ getLocationname($gembaWalk->location_id ?? 'N/A') }}</td>
                                 <td>{{ getUnitname($gembaWalk->unit_id ?? 'N/A') }}</td>
                                 <td>{{ displaydateformat($gembaWalk->date_of_observation ?? 'N/A') }}</td>
                                 <td>{{ getObservationType($gembaWalk->observation_type_id ?? 'N/A') }}</td>
                                 <td>{{ $gembaWalk->description ?? 'N/A' }}</td>
                                 <td>{{ $gembaWalk->hazard ?? 'N/A' }}</td>
+                                <td>
+                                    @if (!empty($gembaWalk->file_path))
+                                        <img src="{{ public_path($gembaWalk->file_path) }}" style="width: 100px; height: auto;">
+                                    @else
+                                        N/A
+                                    @endif
+                                </td>
                                 <td>{{ $gembaWalk->capa ?? 'N/A' }}</td>
                                 <td>{{ displaydateformat($gembaWalk->date_of_compliance ?? 'N/A') }}</td>
                                 <td>{{ getEmployeename($gembaWalk->responsibility_id ?? 'N/A') }}</td>
                                 <td>{{ getGembaWalkStatus($gembaWalk->gemba_walk_checklist_status ?? 'N/A') }}</td>
                                 <td>{{ $gembaWalk->remark ?? 'N/A' }}</td>
-                                <td>
+                                <td>{{ $gembaWalk->observation_needed == '1' ? 'YES' : 'NO' }}</td>
+
+                                {{-- <td>
                                     @if (!empty($gembaWalk->observation))
                                         @php $observations = json_decode($gembaWalk->observation, true); @endphp
                                         @if (is_array($observations))
@@ -278,7 +286,7 @@
                                     @else
                                         N/A
                                     @endif
-                                </td>
+                                </td> --}}
                             </tr>
                         @endforeach
                     </tbody>

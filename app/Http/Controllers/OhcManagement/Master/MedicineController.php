@@ -150,17 +150,15 @@ class MedicineController extends Controller
             $rules = [
                 'medicine' => 'required',
                 'pack' => 'required',
-
-                'threshold_limit' => 'required',
+                'threshold_limit' => 'required|numeric',
 
 
             ];
             $messages = [
                 'medicine.required' => 'Please enter the medicine name.',
                 'pack.required' => 'Please enter the pack details.',
-
                 'threshold_limit.required' => 'Please enter the threshold limit.',
-
+                'threshold_limit.numeric' => 'Threshold limit contains only numeric.',
 
             ];
             $validator = Validator::make($request->all(), $rules, $messages);
@@ -179,7 +177,7 @@ class MedicineController extends Controller
                 $this->ohc_status->medicinelog($id);
 
                 if ($medicine->approve_status == STATUS_OHC_EHS_HEAD_APPROVED) {
-                        $count = $this->unit->getUnitcount();
+                    $count = $this->unit->getUnitcount();
                     $this->inventory->store($details, $count);
                 }
                 if ($medicine->approve_status == STATUS_OHC_EHS_HEAD_APPROVAL_PENDING) {
@@ -409,17 +407,15 @@ class MedicineController extends Controller
             $rules = [
                 'medicine' => 'required',
                 'pack' => 'required',
-                // 'hsn' => 'required',
-                // 'unit_id' => 'required',
-                'threshold_limit' => 'required',
-                // 'expire_date' => 'required',
+                'threshold_limit' => 'required|numeric',
+
 
             ];
             $messages = [
                 'medicine.required' => 'Please enter the medicine name.',
                 'pack.required' => 'Please enter the pack details.',
                 'threshold_limit.required' => 'Please enter the threshold limit.',
-
+                'threshold_limit.numeric' => 'Threshold limit contains only numeric.',
 
             ];
             $validator = Validator::make($request->all(), $rules, $messages);
@@ -536,9 +532,7 @@ class MedicineController extends Controller
                 __("common.sno"),
                 'Medicine Name',
                 'Pack',
-                'HSN Number',
                 'Threshold Limt',
-                'Expiry date',
                 'Reamrks',
                 'From Status',
                 'To Status',
@@ -554,9 +548,7 @@ class MedicineController extends Controller
                 $export[] =  $i;
                 $export[] =  $data->medicine;
                 $export[] =  $data->pack;
-                $export[] =  $data->hsn;
                 $export[] =  $data->threshold_limit;
-                $export[] =  Displaydateformat($data->expiry_date);
                 $export[] =  $data->remarks;
                 if ($data->approve_status == STATUS_OHC_EHS_HEAD_APPROVAL_PENDING) {
                     $export[] = 'Stock Requested ';
@@ -609,9 +601,7 @@ class MedicineController extends Controller
                 __("common.sno"),
                 'Medicine Name',
                 'Pack',
-                'HSN Number',
                 'Threshold Limt',
-                'Expiry date',
                 'Reamrks',
                 'From Status',
                 'To Status',

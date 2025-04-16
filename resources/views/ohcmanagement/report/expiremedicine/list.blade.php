@@ -250,6 +250,8 @@
             var id = $(this).data('id');
             var login_id = $(this).data('login_id');
             var medicine = $(this).data('medicine');
+            var balance = $(this).data('balance'); // Ensure this is a number
+            var unit_id = "{{ getUnitname(Auth::user()->unit_id) }}";
             var title = '{{ __('Do You want to Discard the Medicine Details') }}';
             var text = '{{ __('Submit') }}';
             var btncolor = '#28a745';
@@ -258,96 +260,51 @@
                 title: title,
                 icon: 'warning',
                 html: `
-                        <div style="text-align: left;">
-                            <label style="display: block; font-weight: bold; margin-bottom: 5px;">{{ __('Select the Unit:') }}</label>
-                            <select name="unit_id" id="unit_id" class="form-control select2" style="width: 100%">
-                                <option value="">Select Unit</option>
-                                @foreach ($unit as $unit)
-                                    <option value="{{ encryptId($unit->id) }}">{{ $unit->unit_name }}</option>
-                                @endforeach
-                            </select>
+            <div style="text-align: left;">
+                <label style="display: block; font-weight: bold; margin-bottom: 5px;">{{ __('Select the Unit:') }}</label>
+                <input type="text" id="unit" class="swal2-input" value="${unit_id}" readonly placeholder="Enter the unit" style="width: 80%; display: block;">
 
-                            <label style="display: block; font-weight: bold; margin-bottom: 5px;">{{ __('Available Balance:') }}</label>
-                            <input type="text" id="available_balance" class="swal2-input" readonly placeholder="Balance" style="width: 80%;">
+                <label style="display: block; font-weight: bold; margin-top: 10px;">{{ __('Available Balance:') }}</label>
+                <input type="text" id="available_balance" class="swal2-input" value="${balance}" readonly placeholder="Balance" style="width: 80%; display: block;">
 
-                            <label style="display: block; font-weight: bold; margin-bottom: 5px;">{{ __('Enter Quantity:') }}</label>
-                            <input type="number" id="quantity" class="swal2-input" placeholder="{{ __('Enter quantity') }}" min="1" style="width: 80%;" required>
+                <label style="display: block; font-weight: bold; margin-top: 10px;">{{ __('Enter Quantity:') }}</label>
+                <input type="number" id="quantity" class="swal2-input" placeholder="{{ __('Enter quantity') }}" min="1" style="width: 80%; display: block;" required>
 
-                            <label style="display: block; font-weight: bold; margin-top: 10px; margin-bottom: 5px;">{{ __('Enter your remarks:') }}</label>
-                            <textarea id="remarks" class="swal2-textarea" placeholder="{{ __('Enter your remarks here...') }}" style="width: 80%; height: 80px;"></textarea>
-                        </div>
-                        `,
+                <label style="display: block; font-weight: bold; margin-top: 10px; margin-bottom: 5px;">{{ __('Enter your remarks:') }}</label>
+                <textarea id="remarks" class="swal2-textarea" placeholder="{{ __('Enter your remarks here...') }}" style="width: 80%; height: 80px; display: block;"></textarea>
+            </div>
+        `,
                 showCloseButton: true,
                 confirmButtonText: text,
                 confirmButtonColor: btncolor,
                 customClass: {
                     confirmButton: 'btn-skew'
                 },
-                didOpen: () => {
-                    $('#unit_id').select2({
-                        dropdownParent: $('.swal2-popup'),
-                        width: '100%'
-                    });
-
-
-                    $('#unit_id').on('change', function() {
-                        let unitId = $(this).val();
-
-                        if (unitId) {
-                            $.ajax({
-                                url: "{{ admin_url('ohc/medicine-expire-report/balance') }}",
-                                type: "POST",
-                                headers: {
-                                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr(
-                                        'content')
-                                },
-                                data: {
-                                    medicine_id: medicine,
-                                    unit_id: unitId
-                                },
-                                success: function(response) {
-                                    if (response.balance !== undefined) {
-                                        $('#available_balance').val(response
-                                            .balance);
-                                        $('#quantity').attr('max', response
-                                        .balance);
-                                    } else {
-                                        $('#available_balance').val(0);
-                                        $('#quantity').attr('max', 0);
-                                    }
-                                },
-                                error: function(xhr) {
-                                    console.log("Error fetching balance", xhr);
-                                }
-                            });
-                        } else {
-                            $('#available_balance').val('');
-                            $('#quantity').attr('max', '');
-                        }
-                    });
-                },
                 preConfirm: () => {
-                    var quantity = document.getElementById('quantity').value;
-                    var remarks = document.getElementById('remarks').value;
-                    var unit_id = document.getElementById('unit_id')
-                    .value;
-                    var available_balance = document.getElementById('available_balance').value;
+                    let quantity = parseFloat($('#quantity').val().trim()); // Convert to number
+                    let remarks = $('#remarks').val().trim();
+                    let availableBalance = parseFloat(balance); // Ensure balance is a number
 
-                    if (!unit_id) {
-                        Swal.showValidationMessage('{{ __('Unit selection is required!') }}');
-                    } else if (!remarks) {
-                        Swal.showValidationMessage('{{ __('Remarks are required!') }}');
-                    } else if (!quantity || quantity <= 0) {
-                        Swal.showValidationMessage('{{ __('Quantity must be greater than 0!') }}');
-                    } else if (parseInt(quantity) > parseInt(available_balance)) {
+                    if (!remarks) {
+                        Swal.showValidationMessage('{{ __('Remarks field is required.') }}');
+                        return false;
+                    }
+
+                    if (isNaN(quantity) || quantity <= 0) {
+                        Swal.showValidationMessage('{{ __('Please enter a valid quantity.') }}');
+                        return false;
+                    }
+
+                    if (quantity > availableBalance) {
                         Swal.showValidationMessage(
-                            '{{ __('Quantity cannot exceed available balance!') }}');
+                            '{{ __('Quantity cannot exceed available balance.') }}');
+                        return false;
                     }
 
                     return {
-                        remarks,
-                        quantity,
-                        unit_id
+                        remarks: remarks,
+                        quantity: quantity,
+                        unit_id: $('#unit').val(),
                     };
                 }
             }).then((result) => {
@@ -365,7 +322,7 @@
                         data: {
                             id: id,
                             login_id: login_id,
-                            unit_id: unit_id, // ✅ Ensure unit_id is sent in request
+                            unit_id: unit_id,
                             remarks: remarks,
                             quantity: quantity
                         },
@@ -389,6 +346,8 @@
                 }
             });
         });
+
+
 
 
 
@@ -421,8 +380,6 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     var remarks = result.value;
-
-                    // Proceed with AJAX request
                     $.ajax({
                         url: "{{ url('ohc/medicine-expire-report/close') }}",
                         type: "POST",

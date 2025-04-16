@@ -97,8 +97,8 @@ class Statuslog extends Model
         $insert_data = [
             'type' => TYPE_PPE_EXEMPTION,
             'reference_id' => $ppeexemption->id,
-            'from_status' => STATUS_EHS_APPROVAL_PENDING,
-            'to_status' => STATUS_USER_APPLIED,
+            'from_status' =>  STATUS_USER_APPLIED ,
+            'to_status' =>  STATUS_EHS_APPROVAL_PENDING,
             'remarks' => $ppeexemption->reason,
             'created_by' => Auth::id(),
 

@@ -80,8 +80,8 @@
                                         <div class="col-md-4 form-group form-input mb-2">
                                             <label class="form-label"
                                                 style="display: block; ">{{ __('inspection.signature') }}</label>
-                                            <img src="{{ admin_url($inspection_file) }}"
-                                                alt="Signature Upload" style="width: 100px; margin-top:-10px">
+                                            <img src="{{ admin_url($inspection_file) }}" alt="Signature Upload"
+                                                style="width: 100px; margin-top:-10px">
                                         </div>
                                     </div>
                                     <div class="row">
@@ -92,8 +92,7 @@
                                             <div class="row">
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label ">{{ __('inspection.name') }}</label>
+                                                        <label class="form-label ">{{ __('inspection.name') }}</label>
                                                         <div class="view_data">
                                                             {{ getUserName($inspection_details->updated_by) }}
                                                         </div>
@@ -103,18 +102,18 @@
                                                     <div class="form-group form-input">
                                                         <label class="form-label ">{{ __('inspection.date') }}</label>
                                                         <div class="view_data">
-                                                            {{ Displaydateformat($inspection_details->created_at) }}
+                                                            {{ displaydateformat($inspection_details->updated_at) }}
                                                         </div>
                                                     </div>
                                                 </div>
-                                                    <div class="col-md-4 mb-2">
-                                                        <div class="form-group form-input">
-                                                            <label class="form-label"
-                                                                style="display: block;">{{ __('inspection.signature') }}</label>
-                                                            <img src="{{ admin_url($verified_by) }}" alt="Signature Upload"
-                                                                style="width: 100px; margin-top: -10px;" />
-                                                        </div>
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label"
+                                                            style="display: block;">{{ __('inspection.signature') }}</label>
+                                                        <img src="{{ admin_url($verified_by) }}" alt="Signature Upload"
+                                                            style="width: 100px; margin-top: -10px;" />
                                                     </div>
+                                                </div>
 
                                                 <div class="form-group form-input">
                                                     <label class="form-label ">{{ __('inspection.remarks') }}</label>

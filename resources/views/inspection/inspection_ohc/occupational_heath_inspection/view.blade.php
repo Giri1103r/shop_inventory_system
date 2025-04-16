@@ -55,19 +55,19 @@
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">Document Number</label>
                                         <div class="view_data">
-                                            {{ isset($occupational_health_center->doc_no) ? $occupational_health_center->doc_no : '' }}
+                                            {{ isset($document_no->doc_no) ? $document_no->doc_no : '' }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">Review date</label>
+                                        <label class="form-label view_label">Issue Date</label>
                                         <div class="view_data">
-                                            {{ isset($occupational_health_center->revision_date) ? $occupational_health_center->revision_date : '' }}
+                                            {{ displayDateformat(isset($document_no->issue_date) ? $document_no->issue_date : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">Issued Date</label>
+                                        <label class="form-label view_label">Review Date</label>
                                         <div class="view_data">
-                                            {{ DisplaydateFormat(isset($occupational_health_center->issue_date) ? $occupational_health_center->issue_date : '') }}
+                                            {{ isset($document_no->rev_dt) ? $document_no->rev_dt : '' }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
@@ -248,10 +248,10 @@
                                                     </div>
                                                 </div>
                                                 @php
-                                                    $signature = GetSignature(
+                                                    $signature = GetOHCSignature(
                                                         $occupational_health_center->verified_by,
                                                         $occupational_health_center->id,
-                                                        OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST,
+                                                        OHC_TYPE_OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST,
                                                     );
                                                 @endphp
                                             @endif
@@ -336,10 +336,10 @@
                                                     </div>
                                                 </div>
                                                 @php
-                                                    $signature = GetSignature(
+                                                    $signature = GetOHCSignature(
                                                         $occupational_health_center->created_by,
                                                         $occupational_health_center->id,
-                                                        OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST,
+                                                        OHC_TYPE_OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST,
                                                     );
                                                 @endphp
                                                 @if (isset($signature))
@@ -388,10 +388,10 @@
                                                     </div>
                                                 </div>
                                                 @php
-                                                    $signature = GetSignature(
+                                                    $signature = GetOHCSignature(
                                                         $occupational_health_center->verified_by,
                                                         $occupational_health_center->id,
-                                                        OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST,
+                                                        OHC_TYPE_OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST,
                                                     );
                                                 @endphp
                                                 @if (isset($signature))
@@ -492,10 +492,10 @@
                                             </div>
                                         </div>
                                         @php
-                                            $signature = GetSignature(
+                                            $signature = GetOHCSignature(
                                                 $occupational_health_center->l2_manager_verified_by,
                                                 $occupational_health_center->id,
-                                                OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST,
+                                                OHC_TYPE_OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST,
                                             );
                                         @endphp
                                         @if (isset(Auth::user()->signature_upload))

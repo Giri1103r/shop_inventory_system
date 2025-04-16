@@ -104,12 +104,12 @@ class MSDSDetails extends Model
 
         }
 
-        return $this->create($insert_array);
+        return $insertedData;
     }
 
     public function selectOne($id)
     {
-        return $this->where('id', $id)->first();
+        return $this->where('id', $id)->where('status', 1)->where('trash', 'NO')->first();
     }
 
     public function exportdata()

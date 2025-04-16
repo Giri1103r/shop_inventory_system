@@ -25,6 +25,17 @@ use Illuminate\Http\Request;
 use Exception;
 
 
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Border;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
+use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
+use PhpOffice\PhpSpreadsheet\RichText\RichText;
+use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+
+
 class PASystemInspectionController extends Controller
 {
     private $pa_system;
@@ -68,9 +79,9 @@ class PASystemInspectionController extends Controller
                             $text = "<span style='color:red'>In-Active</span>";
                             // if (CheckUserRole(ROLE_SUPERADMIN)) {
                             if ($row->status == 1) {
-                                $text = "<span style='color:green;cursor:pointer' class='statusChange' data-id='" . encryptId($row->fire_pa_system_id) . "' data-type = '1'>Active</span>";
+                                $text = "<span style='color:green;cursor:pointer' class='statusChange' data-id='" . encryptId($row->fire_pa_inspection_id) . "' data-type = '1'>Active</span>";
                             } else if ($row->status == 0) {
-                                $text = "<span style='color:red;cursor:pointer' class='statusChange' data-id='" . encryptId($row->fire_pa_system_id) . "' data-type = '0'>In-Active</span>";
+                                $text = "<span style='color:red;cursor:pointer' class='statusChange' data-id='" . encryptId($row->fire_pa_inspection_id) . "' data-type = '0'>In-Active</span>";
                             }
                             // }
                             return $text;
@@ -78,8 +89,11 @@ class PASystemInspectionController extends Controller
                         ->addColumn('created_date', function ($row) {
                             return Displaydateformat($row->created_at);
                         })
-                        ->addColumn('issue_date', function ($row) {
-                            return Displaydateformat($row->issue_date);
+                        ->addColumn('date_of_inspection', function ($row) {
+                            return Displaydateformat($row->date_of_inspection);
+                        })
+                        ->addColumn('next_due', function ($row) {
+                            return Displaydateformat($row->next_due);
                         })
                         ->addColumn('created_by', function ($row) {
                             return getUsername($row->created_by);
@@ -121,28 +135,31 @@ class PASystemInspectionController extends Controller
                         })
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            $btn = '<a href="' . admin_url('fire/pa-system-inspection/view/' . encryptId($row->fire_pa_system_id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
+                            $btn = '<a href="' . admin_url('fire/pa-system-inspection/view/' . encryptId($row->fire_pa_inspection_id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
                             if ($row->inspection_status == WAITING_FOR_EHS_OFFICER_VERIFICATION && (CheckUserRole(ROLE_EHS_OFFICER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('fire/pa-system-inspection/verification/' . encryptId($row->fire_pa_system_id)) . '/ehs" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('fire/pa-system-inspection/verification/' . encryptId($row->fire_pa_inspection_id)) . '/ehs" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if (($row->inspection_status == WAITING_FOR_CAPA_ACTION || $row->inspection_status == L2_MANAGER_REJECTED || $row->inspection_status == EHS_OFFICER_REJECTED || $row->inspection_status == L1_MANAGER_REJECTED) && (CheckUserRole(ROLE_FIRE_ASSOCIATES) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('fire/pa-system-inspection/verification/' . encryptId($row->fire_pa_system_id)) . '/capa" class="" title="' . __('inspection.capa_action') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('fire/pa-system-inspection/verification/' . encryptId($row->fire_pa_inspection_id)) . '/capa" class="" title="' . __('inspection.capa_action') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if ($row->inspection_status == WAITING_FOR_CAPA_VERIFICATION && (CheckUserRole(ROLE_EHS_OFFICER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('fire/pa-system-inspection/verification/' . encryptId($row->fire_pa_system_id)) . '/ehsVerify" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('fire/pa-system-inspection/verification/' . encryptId($row->fire_pa_inspection_id)) . '/ehsVerify" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if ($row->inspection_status == WAITING_FOR_L1_VERIFICATION && (CheckUserRole(ROLE_L1_MANAGER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('fire/pa-system-inspection/verification/' . encryptId($row->fire_pa_system_id)) . '/level-one-manager" class="" title="' . __('inspection.l1_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('fire/pa-system-inspection/verification/' . encryptId($row->fire_pa_inspection_id)) . '/level-one-manager" class="" title="' . __('inspection.l1_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if ($row->inspection_status == WAITING_FOR_L2_VERIFICATION && (CheckUserRole(ROLE_L2_MANAGER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('fire/pa-system-inspection/verification/' . encryptId($row->fire_pa_system_id)) . '/level-two-manager" class="" title="' . __('inspection.l2_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('fire/pa-system-inspection/verification/' . encryptId($row->fire_pa_inspection_id)) . '/level-two-manager" class="" title="' . __('inspection.l2_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
-                            $btn .= '<a href="' . admin_url('fire/pa-system-inspection/exportViewPdf/' . encryptId($row->fire_pa_system_id)) . '" style="margin-right: 5px;" title="PDF">
+                            $btn .= '<a href="' . admin_url('fire/pa-system-inspection/exportViewPdf/' . encryptId($row->fire_pa_inspection_id)) . '" style="margin-right: 5px;" title="PDF">
                                 <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
                             </a>';
+
+                            $btn .= '<a href="' . admin_url('fire/pa-system-inspection/generalExcel/' . encryptId($row->fire_pa_inspection_id)) . '" style="margin-right: 5px;" title="Excel"> <i class="fas fa-file-excel" style="color: #1D6F42;" aria-hidden="true"></i></a>';
+
                             return $btn;
                         })
-                        ->rawColumns(['action', 'created_date', 'created_by', 'status', 'inspection_status', 'issue_date'])
+                        ->rawColumns(['action', 'created_date', 'created_by', 'status', 'inspection_status', 'date_of_inspection', 'next_due'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -227,16 +244,16 @@ class PASystemInspectionController extends Controller
 
             $inspection_file = $this->files->file_upload($inspection_type, $id);
 
-            $checklist_store = $this->checklist_follow->store($inspection_type, $id);
+            // $checklist_store = $this->checklist_follow->store($inspection_type, $id);
 
-            $signature_update = $this->signature->CheckedBySignature($id,$inspection_type);
+            $signature_update = $this->signature->CheckedBySignature($id, $inspection_type);
 
             $ehsOfficer = GetEHSOfficer();
             $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
             $mailsubject = 'FIRE PA SYSTEM INSPECTION';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
-                'module_type' => 1,
+                'module_type' => 3,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
@@ -275,7 +292,12 @@ class PASystemInspectionController extends Controller
             ];
             $this->statusLog->create($insert_array);
             Session::flash('success', 'Your data added successfully');
-            return redirect(admin_url('fire/pa-system-inspection/list'));
+
+            if ($inspection->observation_needed == 1) {
+                return redirect(admin_url('fire/checklist-observation/add/' . encryptId($inspection_type) . '/' . encryptId($id)));
+            } else {
+                return redirect(admin_url('fire/pa-system-inspection/list'));
+            }
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong !');
@@ -364,7 +386,7 @@ class PASystemInspectionController extends Controller
             $mailsubject = 'FIRE PA SYSTEM INSPECTION';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
-                'module_type' => 2,
+                'module_type' => 3,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
@@ -425,7 +447,7 @@ class PASystemInspectionController extends Controller
             $mailsubject = 'Fire PA System Inspection';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
-                'module_type' => 1,
+                'module_type' => 3,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
@@ -497,7 +519,7 @@ class PASystemInspectionController extends Controller
             $mailsubject = 'FIRE PA SYSTEM INSPECTION';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
-                'module_type' => 1,
+                'module_type' => 3,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
@@ -571,7 +593,7 @@ class PASystemInspectionController extends Controller
             $mailsubject = 'FIRE PA SYSTEM INSPECTION';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
-                'module_type' => 1,
+                'module_type' => 3,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
@@ -642,7 +664,7 @@ class PASystemInspectionController extends Controller
             $mailsubject = 'FIRE PA SYSTEM INSPECTION';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
-                'module_type' => 1,
+                'module_type' => 3,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
@@ -689,56 +711,272 @@ class PASystemInspectionController extends Controller
         }
     }
 
+
+    
+
     public function ExportExcel(Request $request)
     {
         try {
             $allData = $this->pa_system->exportdata();
-
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
             }
 
-            $header = [
-                __("common.sno"),
-                __('inspection.inspection_date') ,
-                __('inspection.next_due') ,
-                __('inspection.location'),
-                __('inspection.shifts'),
-                __('inspection.unit'),
-                __('inspection.frequency'),
-                __("inspection.inspection_status"),
-                __("common.created_by"),
-                __("common.created_date"),
-            ];
+            $spreadsheet = new Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
 
-            $i = 1;
-            foreach ($allData as $data) {
+            $row = 1;
 
-                $export = [];
-                $export[] =  $i;
-                $export[] =  displaydateformat($data->date_of_inspection);
-                $export[] =  displaydateformat($data->next_due);
-                $export[] =  $data->location_name;
-                $export[] =  $data->shift;
-                $export[] =  $data->unit_name;
-                $export[] =  $data->frequency_name;
-                $export[] =  getInspectionStatus($data->inspection_status);;
-                $export[] =  getusername($data->created_by);
-                $export[] =  Displaydateformat($data->created_at);
-                $exportData[] = $export;
-                $i++;
+            foreach ($allData as $groupedDetails) {
+
+                $inspection_detail = $groupedDetails->first();
+                $document_no = $this->document_reference->selectOne($inspection_detail->document_reference_id);
+
+                $prepared_by_signature = GetFireSignature($inspection_detail->checked_by, $inspection_detail->fire_pa_inspection_id, FIRE_PA_SYSTEM_INSPECTION);
+                $verified_by_signature = GetFireSignature($inspection_detail->hydrant_updated_by, $inspection_detail->fire_pa_inspection_id, FIRE_PA_SYSTEM_INSPECTION);
+                $approved_by_signature = GetFireSignature($inspection_detail->approved_by, $inspection_detail->fire_pa_inspection_id, FIRE_PA_SYSTEM_INSPECTION);
+
+                $titleRow = $row;
+
+                // Logo
+                $logoPath = public_path('assets/images/logo-dark.png');
+                if (file_exists($logoPath)) {
+                    $drawing = new Drawing();
+                    $drawing->setName('Logo');
+                    $drawing->setDescription('Company Logo');
+                    $drawing->setPath($logoPath);
+                    $drawing->setCoordinates('A' . $titleRow);
+                    $drawing->setOffsetX(5);
+                    $drawing->setOffsetY(5);
+                    $drawing->setHeight(60);
+                    $drawing->setWorksheet($sheet);
+                }
+
+                $sheet->mergeCells("A{$titleRow}:B" . ($titleRow + 2));
+                $sheet->getStyle("A{$titleRow}:B" . ($titleRow + 2))->applyFromArray([
+                    'font' => ['bold' => true, 'size' => 14],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                ]);
+
+                $sheet->mergeCells("C{$titleRow}:I" . ($titleRow + 2));
+                $sheet->setCellValue("C{$titleRow}", "PA SYSTEM INSPECTION CHECKLIST PN INTERNATIONAL PVT. LTD.");
+
+                $sheet->getStyle("C{$titleRow}:I" . ($titleRow + 2))->applyFromArray([
+                    'font' => ['bold' => true, 'size' => 14],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                ]);
+
+                $sheet->setCellValue("J{$titleRow}", "Doc. No.");
+                $sheet->setCellValue("K{$titleRow}", $document_no->doc_no ?? '');
+
+                $sheet->setCellValue("J" . ($titleRow + 1), "Issue Dt.");
+                $sheet->setCellValue("K" . ($titleRow + 1), Displaydateformat($document_no->issue_date ?? ''));
+
+                $sheet->setCellValue("J" . ($titleRow + 2), "Rev. & Dt.");
+                $sheet->setCellValue("K" . ($titleRow + 2), $document_no->rev_dt ?? '');
+
+                $sheet->getStyle("J{$titleRow}:K" . ($titleRow + 2))->applyFromArray([
+                    'font' => ['bold' => true],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                ]);
+
+                $headerInfoRow = $titleRow + 3;
+
+                $sheet->mergeCells("A{$headerInfoRow}:D{$headerInfoRow}")->setCellValue("A{$headerInfoRow}", "Date of Inspection:- " . Displaydateformat($inspection_detail->date_of_inspection));
+                $sheet->mergeCells("E{$headerInfoRow}:H{$headerInfoRow}")->setCellValue("E{$headerInfoRow}", "Location:- " . getLocationname($inspection_detail->location));
+                $sheet->mergeCells("I{$headerInfoRow}:K{$headerInfoRow}")->setCellValue("I{$headerInfoRow}", "Shift:- " . $inspection_detail->shift);
+                $sheet->getStyle("A{$headerInfoRow}:K{$headerInfoRow}")->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                ]);
+                $headerInfoRow++;
+
+                $sheet->mergeCells("A{$headerInfoRow}:D{$headerInfoRow}")->setCellValue("A{$headerInfoRow}", "Next Due Date:- " . Displaydateformat($inspection_detail->next_due));
+                $sheet->mergeCells("E{$headerInfoRow}:H{$headerInfoRow}")->setCellValue("E{$headerInfoRow}", "Unit:- " . getUnitname($inspection_detail->unit));
+                $sheet->mergeCells("I{$headerInfoRow}:K{$headerInfoRow}")->setCellValue("I{$headerInfoRow}", "Frequency:- " . getFrequencyname($inspection_detail->frequency));
+                $sheet->getStyle("A{$headerInfoRow}:K{$headerInfoRow}")->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                ]);
+                $headerInfoRow++;
+
+                $columnWidths = [
+                    'A' => 5,
+                    'B' => 15,
+                    'C' => 10,
+                    'D' => 10,
+                    'E' => 10,
+                    'F' => 10,
+                    'G' => 15,
+                    'H' => 10,
+                    'I' => 15,
+                    'J' => 15,
+                    'K' => 15,
+                ];
+
+                foreach ($columnWidths as $col => $width) {
+                    $sheet->getColumnDimension($col)->setWidth($width);
+                }
+
+                $headerStart = $headerInfoRow;
+
+                $sheet->mergeCells("A{$headerStart}:A" . ($headerStart + 1))->setCellValue("A{$headerStart}", "SL");
+                $sheet->mergeCells("B{$headerStart}:B" . ($headerStart + 1))->setCellValue("B{$headerStart}", "LOCATION");
+                $sheet->mergeCells("C{$headerStart}:I{$headerStart}")->setCellValue("C{$headerStart}", "CHECK ITEMS");
+
+                // Sub-headers for CHECK ITEMS
+                $sheet->setCellValue("C" . ($headerStart + 1), "UNIT");
+                $sheet->setCellValue("D" . ($headerStart + 1), "AUDIO QUALITY");
+                $sheet->setCellValue("E" . ($headerStart + 1), "MIC CONDITION");
+                $sheet->setCellValue("F" . ($headerStart + 1), "MIC QUANTITY");
+                $sheet->setCellValue("G" . ($headerStart + 1), "PHYSICAL CONDITION");
+                $sheet->setCellValue("H" . ($headerStart + 1), "CABLE CONDITION");
+                $sheet->setCellValue("I" . ($headerStart + 1), "OPERATION");
+
+                $sheet->mergeCells("J{$headerStart}:k" . ($headerStart + 1))->setCellValue("J{$headerStart}", "REMARKS");
+
+                $sheet->getStyle("A{$headerStart}:k" . ($headerStart + 1))->applyFromArray([
+                    'font' => ['bold' => true],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                ]);
+
+                $dataRow = $headerStart + 2;
+                $sr = 1;
+
+                foreach ($groupedDetails as $detail) {
+                    $sheet->setCellValue("A{$dataRow}", $sr);
+                    $sheet->setCellValue("B{$dataRow}", getLocationname($detail['location'] ?? ''));
+                    $sheet->setCellValue("C{$dataRow}", getUnitname($detail['unit'] ?? ''));
+
+                    $audioQuality = $detail['audio_quality'] ?? '';
+                    $micCondition = $detail['mic_condition'] ?? '';
+                    $micQuantity = $detail['mic_quantity'] ?? '';
+                    $physicalCondition = $detail['physical_condition'] ?? '';
+                    $cableCondition = $detail['cable_condition'] ?? '';
+                    $operation = $detail['operation'] ?? '';
+                    $remark = $detail['remark'] ?? '';
+
+                    $statusMap = [
+                        GOOD => 'GOOD',
+                        FAIR => 'FAIR',
+                        POOR => 'POOR',
+                    ];
+
+                    $sheet->setCellValue("D{$dataRow}", $statusMap[$audioQuality] ?? $audioQuality);
+                    $sheet->setCellValue("E{$dataRow}", $statusMap[$micCondition] ?? $micCondition);
+                    $sheet->setCellValue("F{$dataRow}", $micQuantity . ' ' . ($statusMap[$micQuantity] ?? ''));
+                    $sheet->setCellValue("G{$dataRow}", $statusMap[$physicalCondition] ?? $physicalCondition);
+                    $sheet->setCellValue("H{$dataRow}", $statusMap[$cableCondition] ?? $cableCondition);
+                    $sheet->setCellValue("I{$dataRow}", ($operation ?? '') == 1 ? 'Functional' : 'Non-Functional');
+                    $sheet->mergeCells("J{$dataRow}:K{$dataRow}")->setCellValue("J{$dataRow}", $remark);
+
+                    $sheet->getStyle("A{$dataRow}:k{$dataRow}")->applyFromArray([
+                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                    ]);
+                    $sr++;
+                    $dataRow++;
+                }
+                $signatureRowStart = $dataRow;
+                $sheet->getRowDimension($signatureRowStart)->setRowHeight(80);
+
+                // === Prepared By ===
+                $sheet->mergeCells("A{$signatureRowStart}:D{$signatureRowStart}");
+                $sheet->getStyle("A{$signatureRowStart}:D{$signatureRowStart}")->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => [
+                        'horizontal' => Alignment::HORIZONTAL_CENTER,
+                        'vertical' => Alignment::VERTICAL_CENTER,
+                        'wrapText' => true,
+                    ],
+                ]);
+
+                if (file_exists($prepared_by_signature)) {
+                    $drawing = new Drawing();
+                    $drawing->setName('Signature');
+                    $drawing->setDescription('Prepared By');
+                    $drawing->setPath($prepared_by_signature);
+                    $drawing->setCoordinates("B{$signatureRowStart}");
+                    $drawing->setOffsetX(60);
+                    $drawing->setOffsetY(5);
+                    $drawing->setHeight(40);
+                    $drawing->setWorksheet($sheet);
+
+                    $sheet->setCellValue("A{$signatureRowStart}", "\n\n\nPrepared By:\n" . getUsername($inspection_detail->created_by));
+                } else {
+                    $sheet->setCellValue("A{$signatureRowStart}", "Prepared By:\nInspection not yet started");
+                }
+
+                // === Verified By ===
+                $sheet->mergeCells("E{$signatureRowStart}:G{$signatureRowStart}");
+                $sheet->getStyle("E{$signatureRowStart}:G{$signatureRowStart}")->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => [
+                        'horizontal' => Alignment::HORIZONTAL_CENTER,
+                        'vertical' => Alignment::VERTICAL_CENTER,
+                        'wrapText' => true,
+                    ],
+                ]);
+
+                if (file_exists($verified_by_signature)) {
+                    $drawing = new Drawing();
+                    $drawing->setName('Signature');
+                    $drawing->setDescription('Verified By');
+                    $drawing->setPath($verified_by_signature);
+                    $drawing->setCoordinates("F{$signatureRowStart}");
+                    $drawing->setOffsetX(5);
+                    $drawing->setOffsetY(5);
+                    $drawing->setHeight(40);
+                    $drawing->setWorksheet($sheet);
+
+                    $sheet->setCellValue("E{$signatureRowStart}", "\n\n\nVerified By:\n" . getUsername($inspection_detail->updated_by));
+                } else {
+                    $sheet->setCellValue("E{$signatureRowStart}", "Verified By:\nInspection not yet completed");
+                }
+
+                // === Approved By ===
+                $sheet->mergeCells("H{$signatureRowStart}:K{$signatureRowStart}");
+                $sheet->getStyle("H{$signatureRowStart}:K{$signatureRowStart}")->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => [
+                        'horizontal' => Alignment::HORIZONTAL_CENTER,
+                        'vertical' => Alignment::VERTICAL_CENTER,
+                        'wrapText' => true,
+                    ],
+                ]);
+
+                if (file_exists($approved_by_signature)) {
+                    $drawing = new Drawing();
+                    $drawing->setName('Signature');
+                    $drawing->setDescription('Approved By');
+                    $drawing->setPath($approved_by_signature);
+                    $drawing->setCoordinates("J{$signatureRowStart}");
+                    $drawing->setOffsetX(5);
+                    $drawing->setOffsetY(5);
+                    $drawing->setHeight(40);
+                    $drawing->setWorksheet($sheet);
+
+                    $sheet->setCellValue("H{$signatureRowStart}", "\n\n\nApproved By:\n" . getUsername($inspection_detail->approved_by));
+                } else {
+                    $sheet->setCellValue("H{$signatureRowStart}", "Approved By:\nApproval pending");
+                }
+
+
+                $row = $signatureRowStart + 6;
             }
 
-            $writer = SimpleExcelWriter::streamDownload('Fire PA System Inspection.xlsx')
-                ->addHeader($header)
-                ->addRows(
-                    $exportData
-                );
-        } catch (Exception $ex) {
-            dd($ex);
-            report($ex);
-            Session::flash('error', 'Something went wrong !');
-            return redirect(admin_url('fire/pa-system-inspection/list'));
+            // Output the file as usual
+            $writer = new Xlsx($spreadsheet);
+            $filename = 'PA System Inspection.xlsx';
+            header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            header("Content-Disposition: attachment; filename=\"$filename\"");
+            header('Cache-Control: max-age=0');
+            $writer->save('php://output');
+        } catch (\Exception $e) {
+            dd($e);
+            return redirect()->back()->with('error', 'Export error: ' . $e->getMessage());
         }
     }
 
@@ -747,25 +985,18 @@ class PASystemInspectionController extends Controller
         try {
 
             $allData = $this->pa_system->exportdata();
+
+            $document_no = $this->document_reference->selectUsingName('PASystemInspection');
+
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
+            } elseif (count($allData) > 20) {
+                return redirect()->back()->with('error',   __('inspection.excess_error'));
             }
-            $header = [
-                __("common.sno"),
-                __('inspection.inspection_date') ,
-                __('inspection.next_due') ,
-                __('inspection.location'),
-                __('inspection.shifts'),
-                __('inspection.unit'),
-                __('inspection.frequency'),
-                __("inspection.inspection_status"),
-                __("common.created_by"),
-                __("common.created_date"),
-            ];
 
             $data = array(
-                'header' => $header,
                 'content' => $allData,
+                'document_no' => $document_no,
                 'pagetitle' => "Fire PA System Inspection",
             );
 
@@ -801,7 +1032,7 @@ class PASystemInspectionController extends Controller
             $id = decryptId($request->id);
 
             if (Auth::check()) {
-                $status_log = $this->statusLog->selectOne($id,FIRE_PA_SYSTEM_INSPECTION);
+                $status_log = $this->statusLog->selectOne($id, FIRE_PA_SYSTEM_INSPECTION);
                 $forklift_details = $this->pa_system->selectOne($id);
                 $inspection = $this->pa_system_checklist->GetDetails($forklift_details->id);
                 $document_no = $this->document_reference->selectUsingName('PASystemInspection');
@@ -826,7 +1057,7 @@ class PASystemInspectionController extends Controller
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $html = view('inspection.fire.pa_system_inspection.viewPdf',$data);
+            $html = view('inspection.fire.pa_system_inspection.viewPdf', $data);
             $view = $html->render();
             $mpdf->WriteHTML($view);
 
@@ -839,4 +1070,253 @@ class PASystemInspectionController extends Controller
         }
     }
 
+
+
+    public function generalExcel(Request $request)
+    {
+        try {
+
+            $id = decryptId($request->id);
+            $spreadsheet = new Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
+
+            $pa_system = $this->pa_system->selectOne($id);
+            $inspection_data = $this->pa_system_checklist->GetDetails($pa_system->id);
+            $document_no = $this->document_reference->selectOne($pa_system->document_reference_id);
+
+            $prepared_by_signature = GetFireSignature($pa_system->created_by, $pa_system->id, FIRE_PA_SYSTEM_INSPECTION);
+            $verified_by_signature = GetFireSignature($pa_system->updated_by, $pa_system->id, FIRE_PA_SYSTEM_INSPECTION);
+            $approved_by_signature = GetFireSignature($pa_system->approved_by, $pa_system->id, FIRE_PA_SYSTEM_INSPECTION);
+
+
+            foreach (range('A', 'L') as $col) {
+                $sheet->getColumnDimension($col)->setAutoSize(true);
+            }
+
+            for ($i = 1; $i <= 200; $i++) {
+                $sheet->getRowDimension($i)->setRowHeight(25);
+            }
+
+            // Add logo
+            $logoPath = public_path('assets/images/logo-dark.png');
+            if (file_exists($logoPath)) {
+                $drawing = new Drawing();
+                $drawing->setName('Logo');
+                $drawing->setDescription('Company Logo');
+                $drawing->setPath($logoPath);
+                $drawing->setCoordinates('A1');
+                $drawing->setOffsetX(5);
+                $drawing->setOffsetY(5);
+                $drawing->setHeight(60);
+                $drawing->setWorksheet($sheet);
+            }
+
+            // Header and Document Info
+            $sheet->mergeCells('A1:B3');
+            $sheet->mergeCells("C1:I3");
+            $sheet->setCellValue("C1", "PA SYSTEM INSPECTION CHECKLIST PN INTERNATIONAL PVT. LTD.");
+            $sheet->getStyle("C1:I3")->applyFromArray([
+                'font' => ['bold' => true, 'size' => 14],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+            ]);
+            $sheet->getStyle('A1:B3')->applyFromArray([
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                'borders' => ['outline' => ['borderStyle' => Border::BORDER_THIN]],
+            ]);
+
+
+
+            // Document label info without merging
+            $labelMap = [
+
+                'J1' => ['value' => 'Doc. No.', 'valueCell' => 'K1', 'data' => $document_no->doc_no],
+                'J2' => ['value' => 'Issue Dt.', 'valueCell' => 'K2', 'data' => Displaydateformat($document_no->issue_date)],
+                'J3' => ['value' => 'Rev. & Dt.', 'valueCell' => 'K3', 'data' => $document_no->rev_dt],
+
+            ];
+
+            foreach ($labelMap as $labelCell => $info) {
+                $sheet->setCellValue($labelCell, $info['value']);
+                $sheet->setCellValue($info['valueCell'], $info['data']);
+
+                $sheet->getStyle($labelCell)->applyFromArray([
+                    'font' => ['bold' => true],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                ]);
+
+                $sheet->getStyle($info['valueCell'])->applyFromArray([
+                    'font' => ['bold' => true],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                ]);
+            }
+
+            // Info section
+            $sheet->mergeCells("A4:D4")->setCellValue("A4", "Date of Inspection:- " . Displaydateformat($pa_system->date_of_inspection));
+            $sheet->mergeCells("E4:H4")->setCellValue("E4", "Location :- " . getLocationname($pa_system->location));
+            $sheet->mergeCells("I4:K4")->setCellValue("I4", "Shift:- " . getShift($pa_system->shift));
+            $sheet->mergeCells("A5:D5")->setCellValue("A5", "Next Due date:- " . Displaydateformat($pa_system->next_due));
+            $sheet->mergeCells("E5:H5")->setCellValue("E5", "Unit:- " . getUnitname($pa_system->unit));
+            $sheet->mergeCells("I5:K5")->setCellValue("I5", "Frequency:- " . getFrequencyname($pa_system->frequency));
+            $sheet->getStyle("A4:K5")->applyFromArray([
+                'font' => ['bold' => true],
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+            ]);
+
+            // Table headers
+            $sheet->mergeCells("A6:A7")->setCellValue("A6", "SR.NO");
+            $sheet->mergeCells("B6:B7")->setCellValue("B6", "LOCATION");
+            $sheet->mergeCells("C6:I6")->setCellValue("C6", "CHECK ITEMS"); // Fixed here
+            $sheet->setCellValue("C7", "UNIT");
+            $sheet->setCellValue("D7", "AUDIO QUALITY");
+            $sheet->setCellValue("E7", "MIC CONDITION");
+            $sheet->setCellValue("F7", "MIC QUANTITY");
+            $sheet->setCellValue("G7", "PHYSICAL CONDITION");
+            $sheet->setCellValue("H7", "CABLE CONDITION");
+            $sheet->setCellValue("I7", "OPERATION");
+            $sheet->mergeCells("J6:K7")->setCellValue("J6", "REMARKS");
+
+            $sheet->getStyle("A6:K7")->applyFromArray([
+                'font' => ['bold' => true],
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+            ]);
+
+            // Data rows
+            $row = 8;
+            $sr = 1;
+            foreach ($inspection_data as $detail) {
+                $sheet->setCellValue("A$row", $sr);
+                $sheet->setCellValue("B$row", getLocationname($detail['location'] ?? ''));
+                $sheet->setCellValue("C$row", getUnitname($detail['unit'] ?? ''));
+
+                $audioQuality = $detail['audio_quality'] ?? '';
+                $micCondition = $detail['mic_condition'] ?? '';
+                $micQuantity = $detail['mic_quantity'] ?? '';
+                $physicalCondition = $detail['physical_condition'] ?? '';
+                $cableCondition = $detail['cable_condition'] ?? '';
+                $operation = $detail['operation'] ?? '';
+                $remark = $detail['remark'] ?? '';
+
+                $statusMap = [
+                    GOOD => 'GOOD',
+                    FAIR => 'FAIR',
+                    POOR => 'POOR',
+                ];
+
+                $sheet->setCellValue("D$row", $statusMap[$audioQuality] ?? $audioQuality);
+                $sheet->setCellValue("E$row", $statusMap[$micCondition] ?? $micCondition);
+                $sheet->setCellValue("F$row", $micQuantity);
+                $sheet->setCellValue("G$row", $statusMap[$physicalCondition] ?? $physicalCondition);
+                $sheet->setCellValue("H$row", $statusMap[$cableCondition] ?? $cableCondition);
+                $sheet->setCellValue("I{$row}", ($operation ?? '') == 1 ? 'Functional' : 'Non-Functional');
+
+                $sheet->mergeCells("J$row:K$row")->setCellValue("J$row", $remark);
+
+                $sheet->getStyle("A$row:K$row")->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                ]);
+
+                $sr++;
+                $row++;
+            }
+            $signatureRowStart = $row;
+            $sheet->getRowDimension($signatureRowStart)->setRowHeight(80);
+
+            // === Prepared By ===
+            $sheet->mergeCells("A{$signatureRowStart}:D{$signatureRowStart}");
+            $sheet->getStyle("A{$signatureRowStart}:D{$signatureRowStart}")->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_CENTER,
+                    'vertical' => Alignment::VERTICAL_CENTER,
+                    'wrapText' => true,
+                ],
+            ]);
+
+            if (file_exists($prepared_by_signature)) {
+                $drawing = new Drawing();
+                $drawing->setName('Signature');
+                $drawing->setDescription('Prepared By');
+                $drawing->setPath($prepared_by_signature);
+                $drawing->setCoordinates("C{$signatureRowStart}");
+                $drawing->setOffsetX(5);
+                $drawing->setOffsetY(5);
+                $drawing->setHeight(40);
+                $drawing->setWorksheet($sheet);
+                $sheet->setCellValue("A{$signatureRowStart}", "\n\n\nPrepared By:\n" . getUsername($pa_system->created_by));
+            } else {
+                $sheet->setCellValue("A{$signatureRowStart}", "Prepared By:\nInspection not yet started");
+            }
+
+            // === Verified By ===
+            $sheet->mergeCells("E{$signatureRowStart}:H{$signatureRowStart}");
+            $sheet->getStyle("E{$signatureRowStart}:H{$signatureRowStart}")->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_CENTER,
+                    'vertical' => Alignment::VERTICAL_CENTER,
+                    'wrapText' => true,
+                ],
+            ]);
+
+            if (file_exists($verified_by_signature)) {
+                $drawing = new Drawing();
+                $drawing->setName('Signature');
+                $drawing->setDescription('Verified By');
+                $drawing->setPath($verified_by_signature);
+                $drawing->setCoordinates("G{$signatureRowStart}");
+                $drawing->setOffsetX(5);
+                $drawing->setOffsetY(5);
+                $drawing->setHeight(40);
+                $drawing->setWorksheet($sheet);
+                $sheet->setCellValue("E{$signatureRowStart}", "\n\n\nVerified By:\n" . getUsername($pa_system->updated_by));
+            } else {
+                $sheet->setCellValue("E{$signatureRowStart}", "Verified By:\nInspection not yet completed");
+            }
+
+            // === Approved By ===
+            $sheet->mergeCells("I{$signatureRowStart}:K{$signatureRowStart}");
+            $sheet->getStyle("I{$signatureRowStart}:K{$signatureRowStart}")->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_CENTER,
+                    'vertical' => Alignment::VERTICAL_CENTER,
+                    'wrapText' => true,
+                ],
+            ]);
+
+            if (file_exists($approved_by_signature)) {
+                $drawing = new Drawing();
+                $drawing->setName('Signature');
+                $drawing->setDescription('Approved By');
+                $drawing->setPath($approved_by_signature);
+                $drawing->setCoordinates("J{$signatureRowStart}");
+                $drawing->setOffsetX(5);
+                $drawing->setOffsetY(5);
+                $drawing->setHeight(40);
+                $drawing->setWorksheet($sheet);
+                $sheet->setCellValue("I{$signatureRowStart}", "\n\n\nApproved By:\n" . getUsername($pa_system->approved_by));
+            } else {
+                $sheet->setCellValue("I{$signatureRowStart}", "Approved By:\nApproval pending");
+            }
+
+
+
+            // Download Excel
+            $writer = new Xlsx($spreadsheet);
+            $fileName = 'PA System Inspection.xlsx';
+            $filePath = storage_path("app/public/$fileName");
+            $writer->save($filePath);
+
+            return response()->download($filePath)->deleteFileAfterSend(true);
+        } catch (\Exception $e) {
+            dd($e);
+            return back()->with('error', $e->getMessage());
+        }
+    }
 }

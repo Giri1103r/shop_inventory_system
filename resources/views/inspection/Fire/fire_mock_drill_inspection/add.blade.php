@@ -125,7 +125,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.shifts') }}</label>
-                                                        <select name="shift[1]" id="shift[1]"
+                                                        <select name="shift_id[1]" id="shift[1]"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Shift</option>
                                                             @foreach ($shifts as $shift)
@@ -139,7 +139,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.unit') }}</label>
-                                                        <select name="unit[1]" id="unit[1]"
+                                                        <select name="unit_id[1]" id="unit[1]"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Unit</option>
                                                             @foreach ($units as $unit)
@@ -289,10 +289,10 @@
                             "observation[1]": {
                                 required: true,
                             },
-                            "shift[1]": {
+                            "shift_id[1]": {
                                 required: true,
                             },
-                            "unit[1]": {
+                            "unit_id[1]": {
                                 required: true,
                             },
                             "action_taken[1]": {
@@ -341,10 +341,10 @@
                             "inspection_date": {
                                 required: "Inspection Date is required",
                             },
-                            "shift[1]": {
+                            "shift_id[1]": {
                                 required: "Shift is required",
                             },
-                            "unit[1]": {
+                            "unit_id[1]": {
                                 required: "Unit is required",
                             },
                             "action_taken[1]": {
@@ -486,7 +486,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.shifts') }}</label>
-                                                        <select name="shift[${form_set_current_count}]" id="shift[${form_set_current_count}]"
+                                                        <select name="shift_id[${form_set_current_count}]" id="shift[${form_set_current_count}]"
                                                             class=" form-control single-select shift" style="width: 100%">
                                                             <option value="">Select Shift</option>
                                                             @foreach ($shifts as $shift)
@@ -500,7 +500,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.unit') }}</label>
-                                                        <select name="unit[${form_set_current_count}]" id="unit[${form_set_current_count}]"
+                                                        <select name="unit_id[${form_set_current_count}]" id="unit[${form_set_current_count}]"
                                                             class=" form-control single-select unit" style="width: 100%">
                                                             <option value="">Select Unit</option>
                                                             @foreach ($units as $unit)

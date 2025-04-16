@@ -38,7 +38,7 @@
                                         <div class="row">
                                             <div class="col-md-4  mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label"> Is OutSide Worker/Employee</label><br>
+                                                    <label class="form-label" for="is_outside_worker"> Is OutSide Worker/Employee</label><br>
                                                     <input type="checkbox" id="is_outside_worker" name="is_outside_worker"
                                                         value="1">
                                                 </div>
@@ -111,13 +111,7 @@
                                                         class="form-control">
                                                 </div>
                                             </div>
-                                            {{-- <div class="col-md-4 mb-2 company_name"style="display: none;">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label require">Company Name</label>
-                                                    <input type="text" name="company_name" id="company_name"
-                                                        class="form-control" placeholder="Company Name">
-                                                </div>
-                                            </div> --}}
+
                                             <div class="col-md-4 mb-3 form-input">
                                                 <label for="dob" class="form-label require">Date Of Birth</label>
                                                 <div class="input-group date form-input  custom-height">
@@ -179,7 +173,7 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Vital Checkup</label><br>
+                                                    <label class="form-label require" for="vital_checkup">Vital Checkup</label><br>
                                                     <input type="checkbox" id="vital_checkup" name="vital_checkup"
                                                         value="1">
                                                 </div>
@@ -209,7 +203,7 @@
 
                                             <div class="col-md-12 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label">First Aid Treatment</label><br>
+                                                    <label class="form-label" for="first_aid_treatment">First Aid Treatment</label><br>
                                                     <input type="checkbox" id="first_aid_treatment"
                                                         name="first_aid_treatment" value="1">
                                                 </div>
@@ -275,7 +269,7 @@
                                                                         <div class="form-group form-input">
                                                                             <label for="quantity"
                                                                                 class="require">Quantity</label>
-                                                                            <input type="text" name="quantity[0]"
+                                                                            <input type="number" min = "1" name="quantity[0]"
                                                                                 id="quantity"
                                                                                 placeholder="Enter the quantity"
                                                                                 class="form-control">
@@ -312,7 +306,7 @@
                                             </div>
                                             <div class="col-md-12 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label">Is Reffered</label><br>
+                                                    <label class="form-label" for="is_reffered">Is Reffered</label><br>
                                                     <input type="checkbox" id="is_reffered" name="is_reffered"
                                                         value="1">
                                                 </div>
@@ -404,7 +398,7 @@
                                                             <label for="Fitness" class="require">File Upload</label>
                                                             <input type="file" name="file" id="file"
                                                                 class="form-control">
-                                                            <small>Allowed file types: PDF, DOCX, DOC</small>
+                                                                <small>Allowed file types: PDF, DOCX, DOC ,PNG,JPG,JPEG</small>
                                                         </div>
                                                     </div>
                                                     <div class="col-md-8 mb-2">
@@ -785,7 +779,7 @@
                 <td>
                     <div class="form-group form-input">
                         <label for="quantity" class="require">Quantity</label>
-                        <input type="text" name="quantity[${rowcount}]"   placeholder="Enter the quantity" class="form-control">
+                        <input type="number" min = "1" name="quantity[${rowcount}]"   placeholder="Enter the quantity" class="form-control">
                          <span id="quantity-error" style=" display:none;"  class="text-danger quantity-error">Quantity must be less than available quantity.</span>
 
 
@@ -1072,7 +1066,7 @@
                             return $('#fitness_certificate').val() ==
                                 '1';
                         },
-                        extension: "pdf|doc|docx"
+                        extension: "pdf|doc|docx|png|jpg|jpeg"
                     },
                     close_description: {
                         required: function() {

@@ -49,6 +49,8 @@ class UserPermissionController extends Controller
             $i++;
         }
 
+        // dd($menuList);
+
         $data = array(
             'menuList' =>  getRoleMenu($menuList),
             'roleList' =>  $roleList,

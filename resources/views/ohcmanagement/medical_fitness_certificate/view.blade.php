@@ -49,6 +49,12 @@
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('Company Name') }}</label>
+                                        <div class="view_data">
+                                            {{ getCompanyname(isset($medicalfitness->company_id) ? $medicalfitness->company_id : '') }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('date') }}</label>
                                         <div class="view_data">
                                             {{ displaydateformat(isset($medicalfitness->date) ? $medicalfitness->date : '') }}
@@ -103,88 +109,89 @@
                                     </div>
                                 </div>
 
-                                   {{-- view of doctor approval --}}
+                                {{-- view of doctor approval --}}
 
-                                   @if (
-                                $medicalfitness->approve_status == STATUS_OHC_MEDICAL_EHS_HEAD_APPROVAL_PENDING ||
-                                $medicalfitness->approve_status == STATUS_OHC_MEDICAL_DOCTOR_REJECTED ||  $medicalfitness->approve_status == STATUS_OHC_MEDICAL_EHS_HEAD_APPROVED)
-                                   <div class="row">
-                                       <div class="card-header-inner">
-                                           <h4 class="text-white">Doctor Approval </h4>
-                                       </div>
-                                   </div>
-                                   <div class="row">
-                                       <div class="row">
-                                           <div class="mb-3 col-md-4 form-input">
-                                               <label class="form-label view_label">{{ __('Approver Name') }}</label>
-                                               <div class="view_data">
-                                                   {{ getUsername(isset($doctorapprovallog->created_by) ? $doctorapprovallog->created_by : '') }}
-                                               </div>
-                                           </div>
-                                           <div class="mb-3 col-md-4 form-input">
-                                               <label class="form-label view_label">{{ __('Approved Date') }}</label>
-                                               <div class="view_data">
-                                                   {{ displaydateformat(isset($doctorapprovallog->created_at) ? $doctorapprovallog->created_at : '') }}
-                                               </div>
-                                           </div>
+                                @if (
+                                    $medicalfitness->approve_status == STATUS_OHC_MEDICAL_EHS_HEAD_APPROVAL_PENDING ||
+                                        $medicalfitness->approve_status == STATUS_OHC_MEDICAL_DOCTOR_REJECTED ||
+                                        $medicalfitness->approve_status == STATUS_OHC_MEDICAL_EHS_HEAD_APPROVED)
+                                    <div class="row">
+                                        <div class="card-header-inner">
+                                            <h4 class="text-white">Doctor Approval </h4>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="row">
+                                            <div class="mb-3 col-md-4 form-input">
+                                                <label class="form-label view_label">{{ __('Approver Name') }}</label>
+                                                <div class="view_data">
+                                                    {{ getUsername(isset($doctorapprovallog->created_by) ? $doctorapprovallog->created_by : '') }}
+                                                </div>
+                                            </div>
+                                            <div class="mb-3 col-md-4 form-input">
+                                                <label class="form-label view_label">{{ __('Approved Date') }}</label>
+                                                <div class="view_data">
+                                                    {{ displaydateformat(isset($doctorapprovallog->created_at) ? $doctorapprovallog->created_at : '') }}
+                                                </div>
+                                            </div>
 
-                                           <div class="mb-3 col-md-4 form-input">
-                                               <label class="form-label view_label">{{ __('Approved Time') }}</label>
-                                               <div class="view_data">
-                                                   {{ displaytimeformat(isset($doctorapprovallog->created_at) ? $doctorapprovallog->created_at : '') }}
-                                               </div>
-                                           </div>
-                                           <div class="mb-3 col-md-12 form-input">
-                                               <label class="form-label view_label">{{ __('Remarks') }}</label>
-                                               <div class="view_data">
-                                                   {{ isset($doctorapprovallog->remarks) ? $doctorapprovallog->remarks : '' }}
-                                               </div>
-                                           </div>
+                                            <div class="mb-3 col-md-4 form-input">
+                                                <label class="form-label view_label">{{ __('Approved Time') }}</label>
+                                                <div class="view_data">
+                                                    {{ displaytimeformat(isset($doctorapprovallog->created_at) ? $doctorapprovallog->created_at : '') }}
+                                                </div>
+                                            </div>
+                                            <div class="mb-3 col-md-12 form-input">
+                                                <label class="form-label view_label">{{ __('Remarks') }}</label>
+                                                <div class="view_data">
+                                                    {{ isset($doctorapprovallog->remarks) ? $doctorapprovallog->remarks : '' }}
+                                                </div>
+                                            </div>
 
-                                       </div>
-                                   </div>
-                               @endif
+                                        </div>
+                                    </div>
+                                @endif
 
 
-                               @if (
-                                $medicalfitness->approve_status == STATUS_OHC_MEDICAL_DOCTOR_APPROVED ||
-                                $medicalfitness->approve_status == STATUS_OHC_MEDICAL_EHS_HEAD_APPROVED)
-                                   <div class="row">
-                                       <div class="card-header-inner">
-                                           <h4 class="text-white">EHS Head Approval </h4>
-                                       </div>
-                                   </div>
-                                   <div class="row">
-                                       <div class="row">
-                                           <div class="mb-3 col-md-4 form-input">
-                                               <label class="form-label view_label">{{ __('Approver Name') }}</label>
-                                               <div class="view_data">
-                                                   {{ getUsername(isset($ehsheadlog->created_by) ? $ehsheadlog->created_by : '') }}
-                                               </div>
-                                           </div>
-                                           <div class="mb-3 col-md-4 form-input">
-                                               <label class="form-label view_label">{{ __('Approved Date') }}</label>
-                                               <div class="view_data">
-                                                   {{ displaydateformat(isset($ehsheadlog->created_at) ? $ehsheadlog->created_at : '') }}
-                                               </div>
-                                           </div>
+                                @if (
+                                    $medicalfitness->approve_status == STATUS_OHC_MEDICAL_DOCTOR_APPROVED ||
+                                        $medicalfitness->approve_status == STATUS_OHC_MEDICAL_EHS_HEAD_APPROVED)
+                                    <div class="row">
+                                        <div class="card-header-inner">
+                                            <h4 class="text-white">EHS Head Approval </h4>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="row">
+                                            <div class="mb-3 col-md-4 form-input">
+                                                <label class="form-label view_label">{{ __('Approver Name') }}</label>
+                                                <div class="view_data">
+                                                    {{ getUsername(isset($ehsheadlog->created_by) ? $ehsheadlog->created_by : '') }}
+                                                </div>
+                                            </div>
+                                            <div class="mb-3 col-md-4 form-input">
+                                                <label class="form-label view_label">{{ __('Approved Date') }}</label>
+                                                <div class="view_data">
+                                                    {{ displaydateformat(isset($ehsheadlog->created_at) ? $ehsheadlog->created_at : '') }}
+                                                </div>
+                                            </div>
 
-                                           <div class="mb-3 col-md-4 form-input">
-                                               <label class="form-label view_label">{{ __('Approved Time') }}</label>
-                                               <div class="view_data">
-                                                   {{ displaytimeformat(isset($ehsheadlog->created_at) ? $ehsheadlog->created_at : '') }}
-                                               </div>
-                                           </div>
-                                           <div class="mb-3 col-md-12 form-input">
-                                               <label class="form-label view_label">{{ __('Remarks') }}</label>
-                                               <div class="view_data">
-                                                   {{ isset($ehsheadlog->remarks) ? $ehsheadlog->remarks : '' }}
-                                               </div>
-                                           </div>
+                                            <div class="mb-3 col-md-4 form-input">
+                                                <label class="form-label view_label">{{ __('Approved Time') }}</label>
+                                                <div class="view_data">
+                                                    {{ displaytimeformat(isset($ehsheadlog->created_at) ? $ehsheadlog->created_at : '') }}
+                                                </div>
+                                            </div>
+                                            <div class="mb-3 col-md-12 form-input">
+                                                <label class="form-label view_label">{{ __('Remarks') }}</label>
+                                                <div class="view_data">
+                                                    {{ isset($ehsheadlog->remarks) ? $ehsheadlog->remarks : '' }}
+                                                </div>
+                                            </div>
 
-                                       </div>
-                                   </div>
-                               @endif
+                                        </div>
+                                    </div>
+                                @endif
                                 <div class="row">
                                     <div class="card-header-inner">
                                         <h4 class="text-white">Status Log</h4>
@@ -232,17 +239,20 @@
                                                                 <p class='badge bg-info' style='font-size: 1.0em;'>Doctor
                                                                     Approval Pending</p>
                                                             @elseif($status_log['to_status'] == STATUS_OHC_MEDICAL_DOCTOR_APPROVED)
-                                                                <p class='badge bg-success' style='font-size: 1.0em;'>Doctor
+                                                                <p class='badge bg-success' style='font-size: 1.0em;'>
+                                                                    Doctor
                                                                     Approved</p>
                                                             @elseif($status_log['to_status'] == STATUS_OHC_MEDICAL_EHS_HEAD_APPROVAL_PENDING)
-                                                                <p class='badge bg-info' style='font-size: 1.0em;'> EHS Head
+                                                                <p class='badge bg-info' style='font-size: 1.0em;'> EHS
+                                                                    Head
                                                                     Approval Pending</p>
                                                             @elseif($status_log['to_status'] == STATUS_OHC_MEDICAL_EHS_HEAD_APPROVED)
                                                                 <p class='badge bg-success' style='font-size: 1.0em;'>EHS
                                                                     Head Approved</p>
-                                                                    @elseif($status_log['to_status'] == STATUS_OHC_MEDICAL_DOCTOR_REJECTED)
-                                                                    <p class='badge bg-danger' style='font-size: 1.0em;'>Doctor Rejected
-                                                                         </p>
+                                                            @elseif($status_log['to_status'] == STATUS_OHC_MEDICAL_DOCTOR_REJECTED)
+                                                                <p class='badge bg-danger' style='font-size: 1.0em;'>
+                                                                    Doctor Rejected
+                                                                </p>
                                                             @endif
                                                         </td>
 

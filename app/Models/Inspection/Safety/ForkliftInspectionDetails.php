@@ -2,6 +2,7 @@
 
 namespace App\Models\Inspection\Safety;
 
+use App\Scopes\TrashScope;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 
@@ -75,5 +76,10 @@ class ForkliftInspectionDetails extends Model
     public function GetDetails($id)
     {
         return $this->where('inspection_id', $id)->get();
+    }
+
+    protected static function booted()
+    {
+        static::addGlobalScope(new TrashScope('inspection_safety_forklift_inspection_details'));
     }
 }

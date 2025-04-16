@@ -160,31 +160,32 @@
             <td width="50%" style="padding:5px;"><b>Document Number</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
-                {{ isset($forklift_details->doc_no) ? $forklift_details->doc_no : '' }}</td>
+                {{ isset($document_no->doc_no) ? $document_no->doc_no : '' }}</td>
         </tr>
         <tr>
             <td width="50%" style="padding:5px;"><b>Issue Date</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
-                {{ Displaydateformat(isset($forklift_details->issue_date) ? $forklift_details->issue_date : '') }}</td>
+                {{ Displaydateformat(isset($document_no->issue_date) ? $document_no->issue_date : '') }}
+            </td>
         </tr>
         <tr>
             <td width="50%" style="padding:5px;"><b>Revision Date</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
-                {{ isset($forklift_details->revision_data) ? $forklift_details->revision_data : '' }}
+                {{ isset($document_no->rev_dt) ? $document_no->rev_dt : '' }}
             </td>
         </tr>
         <tr>
             <td width="50%" style="padding:5px;"><b>Created By</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
-                {{ getUsername(isset($forklift_details->created_by) ? $forklift_details->created_by : '') }}</td>
+                {{ getUsername(isset($emergency_light->created_by) ? $emergency_light->created_by : '') }}</td>
         </tr>
         <tr>
             <td width="50%" style="padding:5px;"><b>Created Date</b></td>
             <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;"> {{ displayDateformat($forklift_details->created_at) }}</td>
+            <td width="48%" style="padding:5px;"> {{ displayDateformat($emergency_light->created_at) }}</td>
         </tr>
     </table>
 
@@ -195,66 +196,104 @@
             <tr>
                 <td
                     style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                    Monthly EyeWash Inspection Details
+                    Emergency Light Inspection
                 </td>
             </tr>
         </table>
     </div>
-    <table style="width: 100%; border-collapse: collapse; font-family: Arial, sans-serif; text-align: center;">
-        <!-- Column Headers -->
+    <table
+        style="width: 100%; border-collapse: collapse; font-family: Arial, sans-serif; text-align: center; border: 1px solid black;">
         <tr>
-            <th style="border: 1px solid black; padding: 8px; background-color: #ddd;">SR. NO</th>
-            <th style="border: 1px solid black; padding: 8px; background-color: #ddd;">DEPARTMENT</th>
-            <th style="border: 1px solid black; padding: 8px; background-color: #ddd;">RESOURCE CODE</th>
-            <th style="border: 1px solid black; padding: 8px; background-color: #ddd;">QUANTITY</th>
-            <th colspan="4" style="border: 1px solid black; padding: 8px; background-color: #ddd;">CHECK ITEMS</th>
-            <th style="border: 1px solid black; padding: 8px; background-color: #ddd;">REMARK</th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;"
+                colspan="4">
+                DATE OF INSPECTION: {{ Displaydateformat($emergency_light->date_of_inspection) ?? 'N/A' }}
+            </th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;"
+                colspan="4">
+                LOCATION: {{ getLocationname($emergency_light->location) ?? 'N/A' }}
+            </th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;"
+                colspan="4">
+                SHIFT: {{ getShift($emergency_light->shift) ?? 'N/A' }}
+            </th>
         </tr>
         <tr>
-            <th colspan="4" style="border: 1px solid black;"></th>
-            <th style="border: 1px solid black; padding: 8px; background-color: #ddd;">BLINKING LIGHT</th>
-            <th style="border: 1px solid black; padding: 8px; background-color: #ddd;">CONNECTION</th>
-            <th style="border: 1px solid black; padding: 8px; background-color: #ddd;">AUDIBILITY</th>
-            <th style="border: 1px solid black; padding: 8px; background-color: #ddd;">CONDITION OF HOOTER</th>
-            <th style="border: 1px solid black;"></th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;"
+                colspan="4">
+                NEXT DUE: {{ Displaydateformat($emergency_light->next_due) ?? 'N/A' }}
+            </th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;"
+                colspan="4">
+                UNIT: {{ getUnitname($emergency_light->unit) ?? 'N/A' }}
+            </th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;"
+                colspan="4">
+                FREQUENCY: {{ getFrequencyname($emergency_light->frequency) ?? 'N/A' }}
+            </th>
+        </tr>
+
+        <tr>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="3">SR. NO</th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="3">DEPARTMENT</th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="3">LOCATION</th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="3">EMERGENCY LIGHT
+                NUMBER</th>
+            <th colspan="7" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">CHECK ITEMS
+            </th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="3">REMARK</th>
+        </tr>
+        <tr>
+
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="3">DESCRIPTION
+            </th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">CONDITION OF
+                LIGHT</th>
+
+        </tr>
+        <tr>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">TYPE OF LIGHT</th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">CAPACITY</th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">QUANTITY</th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">LIGHT CONDITION</th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">SWITCH CONDITION</th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">POWER SUPPLY</th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">STATUS</th>
         </tr>
 
         @foreach ($inspection as $details)
             <tr>
-                <td style="border: 1px solid black; padding: 8px;">{{ $details->sr_no }}</td>
-                <td style="border: 1px solid black; padding: 8px;">{{ GetDeptName($details->department) }}</td>
-                <td style="border: 1px solid black; padding: 8px;">{{ $details->resource_code }}</td>
-                <td style="border: 1px solid black; padding: 8px;">{{ $details->quantity }}</td>
+                <td style="border: 1px solid black; padding: 8px;">{{ $loop->iteration }}</td>
+                <td style="border: 1px solid black; padding: 8px;">{{ getDepartment($details->department) }}</td>
+                <td style="border: 1px solid black; padding: 8px;">{{ $details->location }}</td>
+                <td style="border: 1px solid black; padding: 8px;">{{ $details->emergency_of_light }}</td>
+                <td style="border: 1px solid black; padding: 8px;">{{ GetTypeofLight($details->type_of_light) }}</td>
+
+                <td style="border: 1px solid black; padding: 8px;">
+                    {{ $details->capacity }}
+                </td>
+                <td style="border: 1px solid black; padding: 8px;">
+                    {{ $details->quantity }}
+                </td>
+                <td style="border: 1px solid black; padding: 8px;">
+                    {{ getLightCondition($details->light_condition) }}
+                </td>
+                <td style="border: 1px solid black; padding: 8px;">
+                    {{ getLightCondition($details->switc_condition) }}
+
+                </td>
+                <td style="border: 1px solid black; padding: 8px;">{{ GetPowerSuply($details->power_supply) }}</td>
+                <td style="border: 1px solid black; padding: 8px;">
+                    {{ getFireLightInspectionStatus($details->fire_status) }}</td>
                 <td style="border: 1px solid black; padding: 8px;">{{ $details->remarks }}</td>
-                <td style="border: 1px solid black; padding: 8px;">
-                    @if ($details->blinking_light == 1)
-                        <span style="color: green;">&#10004;</span>
-                    @else
-                        <span style="color: red;">&#10060;</span>
-                    @endif
-                </td>
-                <td style="border: 1px solid black; padding: 8px;">
-                    @if ($details->connection == 1)
-                        <span style="color: green;">&#10004;</span>
-                    @else
-                        <span style="color: red;">&#10060;</span>
-                    @endif
-                </td>
-                <td style="border: 1px solid black; padding: 8px;">
-                    @if ($details->audiobility == 1)
-                        <span style="color: green;">&#10004;</span>
-                    @else
-                        <span style="color: red;">&#10060;</span>
-                    @endif
-                </td>
-                <td style="border: 1px solid black; padding: 8px;">{{ $details->condition_of_hooter }}</td>
+
+
             </tr>
         @endforeach
     </table>
 
 
 
-    @if ($forklift_details->inspection_status != WAITING_FOR_EHS_OFFICER_VERIFICATION)
+    @if ($emergency_light->inspection_status != WAITING_FOR_EHS_OFFICER_VERIFICATION)
         <div style="width:100%;">
             <table style="width:100%;">
                 <tr>
@@ -266,38 +305,75 @@
             </table>
         </div>
         <table width="100%" style="width:100%;">
-            @if (isset($forklift_details->verified_by))
+            @if (isset($emergency_light->verified_by))
                 <tr>
                     <td width="50%" style="padding:5px;"><b>{{ __('inspection.verified_by') }}</b></td>
                     <td width="2%" style="padding:5px;">:</td>
-                    <td width="48%" style="padding:5px;"> {{ getUserName($forklift_details->verified_by) }}</td>
+                    <td width="48%" style="padding:5px;"> {{ getUserName($emergency_light->verified_by) }}</td>
                 </tr>
+                @php
+                    $signature = GetSignature(
+                        $emergency_light->verified_by,
+                        $emergency_light->id,
+                        EMERGENCY_LIGHT_INSPECTION,
+                    );
+                @endphp
             @endif
-            @if (isset($forklift_details->created_at))
+            @if (isset($emergency_light->created_at))
                 <tr>
                     <td width="50%" style="padding:5px;"><b>{{ __('inspection.date') }}</b></td>
                     <td width="2%" style="padding:5px;">:</td>
-                    <td width="48%" style="padding:5px;"> {{ Displaydateformat($forklift_details->created_at) }}
+                    <td width="48%" style="padding:5px;"> {{ Displaydateformat($emergency_light->created_at) }}
                     </td>
                 </tr>
             @endif
-            @if (isset($forklift_details->approved_by))
-                @if ($forklift_details->verified_by == $forklift_details->approved_by)
+            @if (isset($signature))
+                <tr>
+                    <td width="50%" style="padding:5px;"><b>{{ __('inspection.signature') }}</b></td>
+                    <td width="2%" style="padding:5px;">:</td>
+
+
+                    <td> <img src="{{ admin_url($signature) }}" alt="Signature Upload"
+                            style="width: 150px; margin-top: -10px;" /></td>
+
+                </tr>
+            @endif
+            @if (isset($emergency_light->approved_by))
+                @if ($emergency_light->verified_by == $emergency_light->approved_by)
                     <tr>
                         <td width="50%" style="padding:5px;"><b>{{ __('inspection.approved_by') }}</b></td>
                         <td width="2%" style="padding:5px;">:</td>
                         <td width="48%" style="padding:5px;">
-                            {{ getUsername($forklift_details->approved_by) }}
+                            {{ getUsername($emergency_light->approved_by) }}
                         </td>
                     </tr>
                 @endif
+
+                @php
+                    $signature = GetSignature(
+                        $emergency_light->approved_by,
+                        $emergency_light->id,
+                        EMERGENCY_LIGHT_INSPECTION,
+                    );
+                @endphp
             @endif
-            @if (isset($forklift_details->capa_recomendation))
+            @if (isset($signature))
+                <tr>
+                    <td width="50%" style="padding:5px;"><b>{{ __('inspection.signature') }}</b></td>
+                    <td width="2%" style="padding:5px;">:</td>
+
+
+                    <td> <img src="{{ admin_url($signature) }}" alt="Signature Upload"
+                            style="width: 150px; margin-top: -10px;" /></td>
+
+                </tr>
+            @endif
+            @if (isset($emergency_light->capa_recomendation))
                 <tr>
                     <td width="50%" style="padding:5px;"><b>{{ __('inspection.capa_recomendation') }}</b></td>
                     <td width="2%" style="padding:5px;">:</td>
                     <td width="48%" style="padding:5px;">
-                        {{ $forklift_details->capa_recomendation }}
+                        {{ $emergency_light->capa_recomendation }}
                     </td>
                 </tr>
             @else
@@ -305,14 +381,14 @@
                     <td width="50%" style="padding:5px;"><b>{{ __('inspection.remarks') }}</b></td>
                     <td width="2%" style="padding:5px;">:</td>
                     <td width="48%" style="padding:5px;">
-                        {{ $forklift_details->remarks }}
+                        {{ $emergency_light->remarks }}
                 </tr>
             @endif
         </table>
         <br>
     @endif
 
-    @if (isset($forklift_details->capa_remarks))
+    @if (isset($emergency_light->capa_remarks))
         <div style="width:100%;">
             <table style="width:100%;">
                 <tr>
@@ -327,19 +403,33 @@
             <tr>
                 <td width="50%" style="padding:5px;"><b>{{ __('inspection.name') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;"> {{ getUserName($forklift_details->created_by) }}</td>
+                <td width="48%" style="padding:5px;"> {{ getUserName($emergency_light->created_by) }}</td>
             </tr>
             <tr>
                 <td width="50%" style="padding:5px;"><b>{{ __('inspection.date') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;"> {{ Displaydateformat($forklift_details->created_at) }}
+                <td width="48%" style="padding:5px;"> {{ Displaydateformat($emergency_light->created_at) }}
                 </td>
             </tr>
+            @php
+                $signature = GetFireSignature($emergency_light->created_by, $emergency_light->id, EMERGENCY_LIGHT_INSPECTION);
+            @endphp
+            @if (isset($signature))
+                <tr>
+                    <td width="50%" style="padding:5px;"><b>{{ __('inspection.signature') }}</b></td>
+                    <td width="2%" style="padding:5px;">:</td>
+
+
+                    <td> <img src="{{ admin_url($signature) }}" alt="Signature Upload"
+                            style="width: 150px; margin-top: -10px;" /></td>
+
+                </tr>
+            @endif
             <tr>
                 <td width="50%" style="padding:5px;"><b>{{ __('inspection.capa_action_remarks') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
-                    {{ $forklift_details->capa_remarks }}
+                    {{ $emergency_light->capa_remarks }}
                 </td>
             </tr>
         </table>
@@ -347,7 +437,7 @@
     @endif
 
 
-    @if ($forklift_details->capa_ehs_remarks)
+    @if ($emergency_light->capa_ehs_remarks)
         <div style="width:100%;">
             <table style="width:100%;">
                 <tr>
@@ -362,19 +452,33 @@
             <tr>
                 <td width="50%" style="padding:5px;"><b>{{ __('inspection.verified_by') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;"> {{ getUserName($forklift_details->verified_by) }}</td>
+                <td width="48%" style="padding:5px;"> {{ getUserName($emergency_light->verified_by) }}</td>
             </tr>
             <tr>
                 <td width="50%" style="padding:5px;"><b>{{ __('inspection.date') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;"> {{ Displaydateformat($forklift_details->created_at) }}
+                <td width="48%" style="padding:5px;"> {{ Displaydateformat($emergency_light->created_at) }}
                 </td>
             </tr>
+            @php
+            $signature = GetFireSignature($emergency_light->verified_by, $emergency_light->id, EMERGENCY_LIGHT_INSPECTION);
+        @endphp
+        @if (isset($signature))
+            <tr>
+                <td width="50%" style="padding:5px;"><b>{{ __('inspection.signature') }}</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+
+
+                <td> <img src="{{ admin_url($signature) }}" alt="Signature Upload"
+                        style="width: 150px; margin-top: -10px;" /></td>
+
+            </tr>
+        @endif
             <tr>
                 <td width="50%" style="padding:5px;"><b>{{ __('inspection.capa_reverifcation_remarks') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
-                    {{ $forklift_details->capa_ehs_remarks }}
+                    {{ $emergency_light->capa_ehs_remarks }}
                 </td>
             </tr>
         </table>
@@ -382,7 +486,7 @@
     @endif
 
 
-    @if (isset($forklift_details->level_one_manager_remarks))
+    @if (isset($emergency_light->level_one_manager_remarks))
         <div style="width:100%;">
             <table style="width:100%;">
                 <tr>
@@ -398,26 +502,40 @@
                 <td width="50%" style="padding:5px;"><b>{{ __('inspection.level_one_manager') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
-                    {{ getUserName($forklift_details->l1_manager_verified_by) }}</td>
+                    {{ getUserName($emergency_light->l1_manager_verification) }}</td>
             </tr>
             <tr>
                 <td width="50%" style="padding:5px;"><b>{{ __('inspection.date') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;"> {{ Displaydateformat($forklift_details->created_at) }}
+                <td width="48%" style="padding:5px;"> {{ Displaydateformat($emergency_light->created_at) }}
                 </td>
             </tr>
+            @php
+            $signature = GetFireSignature($emergency_light->l1_manager_verification, $emergency_light->id, EMERGENCY_LIGHT_INSPECTION);
+        @endphp
+        @if (isset($signature))
+            <tr>
+                <td width="50%" style="padding:5px;"><b>{{ __('inspection.signature') }}</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+
+
+                <td> <img src="{{ admin_url($signature) }}" alt="Signature Upload"
+                        style="width: 150px; margin-top: -10px;" /></td>
+
+            </tr>
+        @endif
             <tr>
                 <td width="50%" style="padding:5px;"><b>{{ __('inspection.level_one_manager_remarks') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
-                    {{ $forklift_details->level_one_manager_remarks }}
+                    {{ $emergency_light->level_one_manager_remarks }}
                 </td>
             </tr>
         </table>
         <br>
     @endif
 
-    @if (isset($forklift_details->level_two_manager_remarks))
+    @if (isset($emergency_light->level_two_manager_remarks))
         <div style="width:100%;">
             <table style="width:100%;">
                 <tr>
@@ -430,29 +548,36 @@
         </div>
         <table width="100%" style="width:100%;">
             <tr>
-                <td width="50%" style="padding:5px;"><b>{{ __('inspection.level_one_manager') }}</b></td>
+                <td width="50%" style="padding:5px;"><b>{{ __('inspection.level_two_manager') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
-                    {{ getUserName($forklift_details->l2_manager_verified_by) }}</td>
+                    {{ getUserName($emergency_light->l2_manager_verification) }}</td>
             </tr>
             <tr>
                 <td width="50%" style="padding:5px;"><b>{{ __('inspection.date') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;"> {{ Displaydateformat($forklift_details->created_at) }}
+                <td width="48%" style="padding:5px;"> {{ Displaydateformat($emergency_light->created_at) }}
                 </td>
             </tr>
+            @php
+            $signature = GetFireSignature($emergency_light->l2_manager_verification, $emergency_light->id, EMERGENCY_LIGHT_INSPECTION);
+        @endphp
+        @if (isset($signature))
             <tr>
-                <td width="50%" style="padding:5px;"><b>{{ __('inspection.approved_by') }}</b></td>
+                <td width="50%" style="padding:5px;"><b>{{ __('inspection.signature') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;">
-                    {{ getUsername($forklift_details->approved_by) }}
-                </td>
+
+
+                <td> <img src="{{ admin_url($signature) }}" alt="Signature Upload"
+                        style="width: 150px; margin-top: -10px;" /></td>
+
             </tr>
+        @endif
             <tr>
                 <td width="50%" style="padding:5px;"><b>{{ __('inspection.level_two_manager_remarks') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
-                    {{ $forklift_details->level_two_manager_remarks }}
+                    {{ $emergency_light->level_two_manager_remarks }}
                 </td>
             </tr>
         </table>

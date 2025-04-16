@@ -98,33 +98,38 @@ class MonthlyAuditPlan extends Model
     public function store()
     {
         $request = request();
-        $monthly_audit = $request->input('monthly_audit');
-        
-        if (!empty($monthly_audit) && is_array($monthly_audit)) {
-            foreach ($monthly_audit as $index => $audit_plan) {
-                $data = [
-                    'auditee_name' => $audit_plan['auditee_name'],
-                    'unit_id' => decryptId($audit_plan['unit_id']),
-                    'task_id' => decryptId($audit_plan['task_name']),
-                    'compliance_category_id' => decryptId($audit_plan['compliance_category']),
-                    'reference_doc_no' => $audit_plan['reference_doc_no'],
-                    'frequency_id' => decryptId($audit_plan['frequency_id']),
-                    'direct_in_direct' => $audit_plan['direct_in_direct'],
-                    'audit_plan_status' => $audit_plan['status'],
-                    'points' => $audit_plan['points'],
-                    'remarks' => $audit_plan['remark'],
-                    'created_by' => Auth::id()
-                ];
 
-                $data = $this->create($data);
+        $auditee_name = $request->auditee_name;
+        $unit_id = $request->unit_id;
+        $task_name = $request->task_name;
+        $compliance_category = $request->compliance_category;
+        $reference_doc_no = $request->reference_doc_no;
+        $frequency_id = $request->frequency_id;
+        $direct_in_direct = $request->direct_in_direct;
+        $status = $request->status;
+        $points = $request->points;
+        $remark = $request->remark;
 
-               
-            }
+        foreach ($auditee_name as $index => $auditee_name) {
+            $data = [
+                'auditee_name' => $auditee_name,
+                'unit_id' => decryptId($unit_id[$index]),
+                'task_id' => decryptId($task_name[$index]),
+                'compliance_category_id' => decryptId($compliance_category[$index]),
+                'reference_doc_no' => $reference_doc_no[$index],
+                'frequency_id' => decryptId($frequency_id[$index]),
+                'direct_in_direct' => $direct_in_direct[$index],
+                'audit_plan_status' => $status[$index],
+                'points' => $points[$index],
+                'remarks' => $remark[$index],
+                'created_by' => Auth::id(),
+            ];
 
-            return response()->json(['message' => 'Data stored successfully'], 201);
+
+            $this->create($data);
         }
 
-        return response()->json(['error' => 'Invalid data'], 400);
+        return back()->with('success', 'Data saved successfully');
     }
 
     public function selectOne($id)
@@ -171,7 +176,12 @@ class MonthlyAuditPlan extends Model
         }
         
         $query->orderBy('id', 'DESC');
-        return  $query->get();
+
+        $data =  $query->get();
+
+        $query = $data->groupBy('unit_name');
+
+        return $query;
     }
     
 }

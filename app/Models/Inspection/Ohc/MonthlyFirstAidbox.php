@@ -13,9 +13,7 @@ class MonthlyFirstAidbox extends Model
 
     protected $fillable = [
         'checklist',
-        'doc_no',
-        'issue_date',
-        'revision_date',
+        'document_reference_id',
         'date_of_inspection',
         'location',
         'shift',
@@ -56,18 +54,31 @@ class MonthlyFirstAidbox extends Model
         $request = request();
         $search = '';
         $query = $this->select('inspection_ohc_monthly_first_aid_audit.*');
-
+        $query = $this->select(
+            'inspection_ohc_monthly_first_aid_audit.*',
+            'inspection_static_docno.*',
+            'inspection_ohc_monthly_first_aid_audit.id as inspection_id',
+            'inspection_ohc_monthly_first_aid_audit.created_by as inspection_created_by',
+            'inspection_ohc_monthly_first_aid_audit.created_at as inspection_created_at',
+        )
+            ->leftJoin('inspection_frequency_option', 'inspection_ohc_monthly_first_aid_audit.frequency', '=', 'inspection_frequency_option.id')
+            ->leftJoin('inspection_shift_option', 'inspection_ohc_monthly_first_aid_audit.shift', '=', 'inspection_shift_option.id')
+            ->leftJoin(
+                'inspection_static_docno',
+                'inspection_ohc_monthly_first_aid_audit.document_reference_id',
+                '=',
+                'inspection_static_docno.id'
+            );
         // dd($query);
         $org_total =  $query;
         $org_total_counts = $org_total->count();
 
-        if ($request->search['value'] != null || $request->search['value'] != '') {
+        if (isset($request->search['value']) && $request->search['value'] != '') {
             $search = $request->search['value'];
-
-            $query->where(function ($query) use ($search) {
+            $query = $query->where(function ($query) use ($search) {
                 $query
-                    ->orWhere('doc_no', 'LIKE', '%' . $search . '%')
-                    ->orWhere('revision_date', 'LIKE', '%' . $search . '%');
+                    ->orWhere('inspection_frequency_option.frequency_name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('inspection_shift_option.shift', 'LIKE', '%' . $search . '%');
             });
         }
         if (isset($request->document_number) && $request->document_number) {
@@ -80,10 +91,10 @@ class MonthlyFirstAidbox extends Model
             $query = $query->where('inspection_ohc_monthly_first_aid_audit.revision_date', 'LIKE', '%' . $request->rev_date . '%');
         }
         if (isset($request->shift) && $request->shift) {
-            $query = $query->where('inspection_ohc_monthly_first_aid_audit.shift',decryptId( $request->shift));
+            $query = $query->where('inspection_ohc_monthly_first_aid_audit.shift', decryptId($request->shift));
         }
         if (isset($request->frequency) && $request->frequency) {
-            $query = $query->where('inspection_ohc_monthly_first_aid_audit.frequency',decryptId( $request->frequency));
+            $query = $query->where('inspection_ohc_monthly_first_aid_audit.frequency', decryptId($request->frequency));
         }
 
         if (isset($request->order) && count($request->order) > 0) {
@@ -138,54 +149,42 @@ class MonthlyFirstAidbox extends Model
     {
 
         $request = request();
-        // dd($request->all());
-        $insert_array = [
 
-            'doc_no' => $request->document_no,
-            'issue_date' => DBdateformat($request->issue_date),
+        $insert_array = [
+            'document_reference_id' => decryptId($request->document_reference_id),
             'shift' => decryptId($request->shift),
+            'unit' => decryptId($request->unit),
             'frequency' => decryptId($request->frequency),
-            'revision_date' => $request->review_date,
             'date_of_inspection' => DBdateformat($request->date),
-            'approve_status'=>WAITING_FOR_EHS_OFFICER_VERIFICATION,
+            'approve_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,
             'created_by' => Auth::id(),
         ];
 
         return self::create($insert_array);
     }
 
-    public function selectOne($id){
-        return $this->where('id',$id)->where('status',1)->first();
+    public function selectOne($id)
+    {
+        return $this->where('id', $id)->where('status', 1)->first();
     }
 
     public function exportdata()
     {
         $search = '';
         $request = Request();
-        $query = $this->select('inspection_ohc_monthly_first_aid_audit.*');
+
+        $query = $this->select(
+            'inspection_ohc_monthly_first_aid_audit.*',
+          );
 
 
-
-        if (isset($request->document_number) && $request->document_number) {
-            $query = $query->where('inspection_ohc_monthly_first_aid_audit.doc_no', 'LIKE', '%' . $request->document_number . '%');
-        }
-        if (isset($request->issue_date) && $request->issue_date) {
-            $query = $query->where('inspection_ohc_monthly_first_aid_audit.issue_date', DBdateformat($request->issue_date));
-        }
-        if (isset($request->rev_date) && $request->rev_date) {
-            $query = $query->where('inspection_ohc_monthly_first_aid_audit.revision_date', 'LIKE', '%' . $request->rev_date . '%');
-        }
         if (isset($request->shift) && $request->shift) {
-            $query = $query->where('inspection_ohc_monthly_first_aid_audit.shift',decryptId( $request->shift));
+            $query = $query->where('inspection_ohc_monthly_first_aid_audit.shift', decryptId($request->shift));
         }
         if (isset($request->frequency) && $request->frequency) {
-            $query = $query->where('inspection_ohc_monthly_first_aid_audit.frequency',decryptId( $request->frequency));
+            $query = $query->where('inspection_ohc_monthly_first_aid_audit.frequency', decryptId($request->frequency));
         }
-
-
-
 
         return $query->orderBy('id', 'DESC')->get(); // Add `get()` here
     }
-
 }

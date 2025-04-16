@@ -50,46 +50,52 @@ class MonthlyEyeWashInspection extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_monthly_eyewash.*');
+        $query = $this->select('inspection_monthly_eyewash.*', 'inspection_shift_option.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*', 'inspection_monthly_eyewash.id as inspection_id')
+            ->leftJoin('masters_location', 'inspection_monthly_eyewash.location', '=', 'masters_location.id')
+            ->leftJoin('inspection_shift_option', 'inspection_monthly_eyewash.shift', '=', 'inspection_shift_option.id')
+            ->leftJoin('masters_unit', 'inspection_monthly_eyewash.unit', '=', 'masters_unit.id')
+            ->leftJoin('inspection_frequency_option', 'inspection_monthly_eyewash.frequency', '=', 'inspection_frequency_option.id')
+            ->leftJoin('inspection_static_docno', 'inspection_monthly_eyewash.document_reference_id', '=', 'inspection_static_docno.id');
         $org_total =  $query;
         $org_total_counts = $org_total->count();
 
         if (isset($request->search) && isset($request->search['value']) && $request->search['value'] != '') {
             $search = $request->search['value'];
             $query = $query->where(function ($query) use ($search) {
-                $query->orWhereRaw('document_number LIKE "%' . $search . '%"');
-                $query->orWhereRaw('issue_date LIKE "%' . $search . '%"');
-                $query->orWhereRaw('revision_data LIKE "%' . $search . '%"');
+                $query->orWhereRaw('masters_location.location_name LIKE "%' . $search . '%"');
+                $query->orWhereRaw('masters_unit.unit_name LIKE "%' . $search . '%"');
+                $query->orWhereRaw('inspection_shift_option.shift LIKE "%' . $search . '%"');
+                $query->orWhereRaw('inspection_frequency_option.frequency_name LIKE "%' . $search . '%"');
             });
         }
 
-        if (isset($request->document_number) && $request->document_number) {
-            $query = $query->where('inspection_monthly_eyewash.document_number', 'LIKE', '%' . $request->document_number . '%');
+        if (isset($request->location) && $request->location) {
+            $query = $query->where('inspection_monthly_eyewash.location', 'LIKE', '%' . decryptId($request->location) . '%');
         }
-        if (isset($request->issue_date) && $request->issue_date) {
-            $query = $query->whereDate('inspection_forklift_inpsection_monthly.issue_date', '=', DBdateformat($request->issue_date));
+        if (isset($request->frequency) && $request->frequency) {
+            $query = $query->where('inspection_monthly_eyewash.frequency', 'LIKE', '%' . decryptId($request->frequency) . '%');
         }
-        if (isset($request->rev_date) && $request->rev_date) {
-            $query = $query->where('inspection_monthly_eyewash.revision_data', 'LIKE', '%' . $request->rev_date . '%');
+        if (isset($request->unit) && $request->unit) {
+            $query = $query->where('inspection_monthly_eyewash.unit', 'LIKE', '%' . decryptId($request->unit) . '%');
+        }
+        if (isset($request->shift) && $request->shift) {
+            $query = $query->where('inspection_monthly_eyewash.shift', 'LIKE', '%' . decryptId($request->shift) . '%');
+        }
+        if (isset($request->date_of_inspection) && $request->date_of_inspection) {
+            $query = $query->where('inspection_monthly_eyewash.date_of_inspection', 'LIKE', '%' . DBdateformat($request->date_of_inspection) . '%');
+        }
+        if (isset($request->next_due) && $request->next_due) {
+            $query = $query->where('inspection_monthly_eyewash.next_due', 'LIKE', '%' . DBdateformat($request->next_due) . '%');
+        }
+        if (isset($request->inspection_status) && $request->inspection_status) {
+            $query = $query->where('inspection_monthly_eyewash.inspection_status', 'LIKE', '%' . decryptId($request->inspection_status) . '%');
         }
 
-        if (isset($request->inspection_status) && $request->inspection_status) {
-            $query = $query->where('inspection_monthly_eyewash.inspection_status', decryptId($request->inspection_status));
-        }
 
         if (isset($request->order) && count($request->order) > 0) {
             $columnName = $request->order[0]['column'];
             $columnorder = $request->order[0]['dir'];
             switch ($columnName) {
-                case "revision_data":
-                    $query->orderBy('inspection_monthly_eyewash.revision_data', $columnorder);
-                    break;
-                case "issue_date":
-                    $query = $query->orderBy('inspection_monthly_eyewash.issue_date', $columnorder);
-                    break;
-                case "document_number":
-                    $query = $query->orderBy('inspection_monthly_eyewash.document_number', $columnorder);
-                    break;
                 case "inspection_status":
                     $query = $query->orderBy('inspection_monthly_eyewash.inspection_status', $columnorder);
                     break;
@@ -253,30 +259,48 @@ class MonthlyEyeWashInspection extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_monthly_eyewash.*');
+        $query = $this->select('inspection_monthly_eyewash.*', 'inspection_shift_option.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*', 'inspection_monthly_eyewash.id as inspection_id','inspection_monthly_eyewash_details.*')
+            ->leftJoin('masters_location', 'inspection_monthly_eyewash.location', '=', 'masters_location.id')
+            ->leftJoin('inspection_shift_option', 'inspection_monthly_eyewash.shift', '=', 'inspection_shift_option.id')
+            ->leftJoin('masters_unit', 'inspection_monthly_eyewash.unit', '=', 'masters_unit.id')
+            ->leftJoin('inspection_frequency_option', 'inspection_monthly_eyewash.frequency', '=', 'inspection_frequency_option.id')
+            ->leftJoin('inspection_static_docno', 'inspection_monthly_eyewash.document_reference_id', '=', 'inspection_static_docno.id')
+            ->leftJoin('inspection_monthly_eyewash_details', 'inspection_monthly_eyewash.id', '=', 'inspection_monthly_eyewash_details.inspection_id');
+
         if (isset($request->search) && isset($request->search['value']) && $request->search['value'] != '') {
             $search = $request->search['value'];
             $query = $query->where(function ($query) use ($search) {
-                $query->orWhereRaw('document_number LIKE "%' . $search . '%"');
-                $query->orWhereRaw('issue_date LIKE "%' . $search . '%"');
-                $query->orWhereRaw('revision_data LIKE "%' . $search . '%"');
+                $query->orWhereRaw('masters_location.location_name LIKE "%' . $search . '%"');
+                $query->orWhereRaw('masters_unit.unit_name LIKE "%' . $search . '%"');
+                $query->orWhereRaw('inspection_shift_option.shift LIKE "%' . $search . '%"');
+                $query->orWhereRaw('inspection_frequency_option.frequency_name LIKE "%' . $search . '%"');
             });
         }
 
-        if (isset($request->document_number) && $request->document_number) {
-            $query = $query->where('inspection_monthly_eyewash.document_number', 'LIKE', '%' . $request->document_number . '%');
+
+        if (isset($request->location) && $request->location) {
+            $query = $query->where('inspection_monthly_eyewash.location', 'LIKE', '%' . decryptId($request->location) . '%');
         }
-        if (isset($request->issue_date) && $request->issue_date) {
-            $query = $query->where('inspection_monthly_eyewash.issue_date', 'LIKE', '%' . $request->issue_date . '%');
+        if (isset($request->frequency) && $request->frequency) {
+            $query = $query->where('inspection_monthly_eyewash.frequency', 'LIKE', '%' . decryptId($request->frequency) . '%');
         }
-        if (isset($request->issue_date) && $request->issue_date) {
-            $query = $query->whereDate('inspection_forklift_inpsection_monthly.issue_date', '=', DBdateformat($request->issue_date));
+        if (isset($request->unit) && $request->unit) {
+            $query = $query->where('inspection_monthly_eyewash.unit', 'LIKE', '%' . decryptId($request->unit) . '%');
+        }
+        if (isset($request->shift) && $request->shift) {
+            $query = $query->where('inspection_monthly_eyewash.shift', 'LIKE', '%' . decryptId($request->shift) . '%');
+        }
+        if (isset($request->date_of_inspection) && $request->date_of_inspection) {
+            $query = $query->where('inspection_monthly_eyewash.date_of_inspection', 'LIKE', '%' . DBdateformat($request->date_of_inspection) . '%');
+        }
+        if (isset($request->next_due) && $request->next_due) {
+            $query = $query->where('inspection_monthly_eyewash.next_due', 'LIKE', '%' . DBdateformat($request->next_due) . '%');
+        };
+        if (isset($request->inspection_status) && $request->inspection_status) {
+            $query = $query->where('inspection_monthly_eyewash.inspection_status', 'LIKE', '%' . decryptId($request->inspection_status) . '%');
         }
 
-        if (isset($request->inspection_status) && $request->inspection_status) {
-            $query = $query->where('inspection_monthly_eyewash.inspection_status', decryptId($request->inspection_status));
-        }
-        $query->orderBy('id', 'DESC');
+        $query->orderBy('inspection_monthly_eyewash.id', 'DESC');
 
         return  $query->get();
     }

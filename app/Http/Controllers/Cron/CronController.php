@@ -287,14 +287,12 @@ class CronController extends Controller
     {
 
         try {
-            $worktemp = Worktemp::select('*')->where('upload_status', 0)->where('status', 1)->get();
+            $worktemp = Worktemp::select('*')->where('upload_status', 0)->where('error_status', '0')->where('status', 1)->get();
 
             if (!empty($worktemp)) {
 
                 $work = $this->work->store($worktemp);
-                if (empty($work)) {
-                    $this->worktemp->updateAllErrorStatus();
-                } else {
+                if (!empty($work))  {
                     foreach ($work as $item) {
                         $emp_id = $item['emp_id'];
 
@@ -375,7 +373,7 @@ class CronController extends Controller
             return response()->json($responses);
 
 
-    
+
         } catch (Exception $ex) {
             report($ex);
             return response()->json(['message' => 'An error occurred.', 'error' => $ex->getMessage()]);
@@ -445,7 +443,7 @@ class CronController extends Controller
     {
 
         try {
-            $emp_temp = EmployeeTemp::select('*')->where('upload_status', '0')->where('status', 1)->get();
+            $emp_temp = EmployeeTemp::select('*')->where('upload_status', '0')->where('error_status', '0')->where('status', 1)->get();
             if (!empty($emp_temp)) {
 
                 $employee = $this->employee->store($emp_temp);
@@ -478,9 +476,7 @@ class CronController extends Controller
                 }
 
 
-                if (empty($employee)) {
-                    $this->emp_temp->updateAllErrorStatus();
-                } else {
+                if (!empty($employee)) {
                     foreach ($employee as $item) {
                         $emp_id = $item['emp_id'];
 

@@ -12,10 +12,16 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use App\Models\Inspection\Master\Shift;
 use Illuminate\Support\Facades\Session;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
 use Yajra\DataTables\Facades\DataTables;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Spatie\SimpleExcel\SimpleExcelWriter;
+use PhpOffice\PhpSpreadsheet\Style\Border;
 use App\Models\Inspection\Master\Frequency;
 use App\Models\Inspection\Ohc\FloorStretcher;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 use App\Models\Inspection\Ohc\FloorStretcherFiles;
 use App\Mail\Inspection\Ohc\FloorStretcher as OhcFloorStretcher;
 
@@ -77,6 +83,9 @@ class FloorStretcherController extends Controller
                             $btn .= '<a href="' . admin_url('ohc/floor_stretcher/checklist/exportViewPdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
                             <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
                         </a>';
+                            $btn .= '<a href="' . admin_url('ohc/floor_stretcher/checklist/export/excel/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
+                        <i class="fas fa-file-excel" style="color: #1D6F42;" aria-hidden="true"></i>
+                     </a>';
                             return $btn;
                         })
                         ->rawColumns(['action', 'created_date', 'created_by', 'issue_date'])
@@ -256,20 +265,15 @@ class FloorStretcherController extends Controller
                 return redirect()->back()->with('error', 'No data found');
             }
 
-            $header = [
-                __("common.sno"),
-                'Date of Inspection',
-                'Unit',
-                'Frequency',
-                'Shift',
-                __("common.created_by"),
-                __("common.created_date"),
-            ];
+            if (count($allData) > 20) {
+                return redirect()->back()->with('error', "__('inspection.excess_error')");
+            }
+
+
 
             $data = array(
-                'header' => $header,
                 'content' => $allData,
-                'pagetitle' => "Floor Stretcher Inspection",
+                'pagetitle' => "__('title.floor_stretcher)",
             );
 
             $property = [
@@ -292,6 +296,7 @@ class FloorStretcherController extends Controller
             $filename = "Floor-Stretcher Inspection.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
+            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('ohc/floor_stretcher/checklist/list'));
@@ -330,11 +335,114 @@ class FloorStretcherController extends Controller
             $mpdf->WriteHTML($view);
 
             $filename = "Floor Stretcher Inspection.pdf";
-            return $mpdf->Output($filename, 'D');
+            return $mpdf->Output($filename, 'I');
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong !');
+            return redirect(admin_url('ohc/floor_stretcher/checklist/list'));
+        }
+    }
+
+    public function GeneralExcel(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+            $inspection_detail = $this->floor_strecther->selectOne($id);
+            $inspection_type = OHC_TYPE_FLOOR_STRETCHER;
+            $inspection_file = $this->floor_files->getFiles($id, $inspection_type);
+
+            $spreadsheet = new Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
+
+            for ($i = 1; $i <= 200; $i++) {
+                $sheet->getRowDimension($i)->setRowHeight(25);
+            }
+
+
+            $widths = [5, 15, 40, 30, 25, 35, 35, 40, 35, 30, 25];
+            foreach (range('A', 'K') as $index => $col) {
+                $sheet->getColumnDimension($col)->setWidth($widths[$index]);
+                
+            }
+
+            $logoPath = public_path('assets/images/logo-dark.png');
+            if (file_exists($logoPath)) {
+                $drawing = new Drawing();
+                $drawing->setName('Logo');
+                $drawing->setPath($logoPath);
+                $drawing->setCoordinates('B1');
+                $drawing->setOffsetX(20);
+                $drawing->setOffsetY(10);
+                $drawing->setWidth(80);
+                $drawing->setHeight(60);
+                $drawing->setWorksheet($sheet);
+            }
+
+            $sheet->mergeCells("D1:J3");
+            $sheet->setCellValue("D1", "Monthly Floor Patient Stretcher Checklist\nPN International Pvt. Ltd.");
+            $sheet->getStyle("D1")->applyFromArray([
+                'font' => ['bold' => true, 'size' => 13],
+                'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_CENTER,
+                    'vertical' => Alignment::VERTICAL_CENTER,
+                    'wrapText' => true
+                ],
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]]
+            ]);
+
+            $sheet->mergeCells("A4:F4")->setCellValue("A4", "Date: " . Displaydateformat($inspection_detail->date_of_inspection));
+            $sheet->mergeCells("G4:K4")->setCellValue("D4", "Shift :-");
+            $sheet->mergeCells("A5:F4")->setCellValue("G4", "Unit :-1");
+
+
+            $sheet->mergeCells("G5:K5")->setCellValue("A5", "Frequency :: Monthly");
+            $sheet->getStyle("A5")->applyFromArray([
+                'font' => ['bold' => true],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_LEFT]
+            ]);
+
+
+            $headers = [
+                'A' => 'Sr. No.',
+                'B' => 'Resource code',
+                'C' => 'Department/Location',
+                'D' => 'Are the Stretcher Cover and patient stretcher clean?',
+                'E' => 'Is the Stretcher Hanging Hooks are Ok',
+                'F' => 'Is the floor patient stretcher resource code correct and available?',
+                'G' => 'Is the patient stretcher placed on the floor Condition is OK',
+                'H' => 'Is the patient’s stretcher placed on the floor and hung properly on a hook in Its Designated Area',
+                'I' => 'Is the Patient Handling Stretcher Guide Line Displayed',
+                'J' => 'Remark'
+            ];
+
+            foreach ($headers as $col => $text) {
+                $sheet->mergeCells("{$col}6:{$col}7");
+                $sheet->setCellValue("{$col}6", $text);
+            }
+
+            $sheet->getStyle("A6:K7")->applyFromArray([
+                'font' => ['bold' => true],
+                'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_CENTER,
+                    'vertical' => Alignment::VERTICAL_CENTER,
+                    'wrapText' => true
+                ],
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'fill' => [
+                    'fillType' => Fill::FILL_SOLID,
+                    'startColor' => ['argb' => 'FFFFFFFF']
+                ]
+            ]);
+
+            $writer = new Xlsx($spreadsheet);
+            $fileName = 'floor_stretcher_checklist.xlsx';
+            $filePath = storage_path("app/public/$fileName");
+            $writer->save($filePath);
+
+            return response()->download($filePath)->deleteFileAfterSend(true);
+        } catch (Exception $ex) {
+            report($ex);
+            Session::flash('error', 'Something went wrong!');
             return redirect(admin_url('ohc/floor_stretcher/checklist/list'));
         }
     }

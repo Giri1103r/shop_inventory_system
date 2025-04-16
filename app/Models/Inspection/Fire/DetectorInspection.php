@@ -19,6 +19,7 @@ class DetectorInspection extends Model
         'shift',
         'next_due',
         'observation',
+        'observation_needed',
         'unit',
         'frequency',
         'checked_by',
@@ -142,7 +143,8 @@ class DetectorInspection extends Model
             'location' => decryptId($request->location_id),
             'shift' => decryptId($request->shift_id),
             'next_due' => $request->next_due,
-            'observation' => $request->observation,
+            // 'observation' => $request->observation,
+            'observation_needed' => decryptId($request->observation_needed),
             'unit' => decryptId($request->unit_id),
             'frequency' => decryptId($request->frequency_id),
             'inspection_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,
@@ -157,10 +159,12 @@ class DetectorInspection extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_fire_detector.*', 'inspection_shift_option.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*')
+        $query = $this->select('inspection_fire_detector.*', 'inspection_shift_option.*', 'inspection_fire_detector_details.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*', 'inspection_static_docno.*', 'inspection_fire_detector.id as fire_id', 'inspection_fire_detector.created_by as checked_by', 'inspection_fire_detector.updated_by as verified_by')
             ->leftJoin('masters_location', 'inspection_fire_detector.location', '=', 'masters_location.id')
             ->leftJoin('inspection_shift_option', 'inspection_fire_detector.shift', '=', 'inspection_shift_option.id')
             ->leftJoin('masters_unit', 'inspection_fire_detector.unit', '=', 'masters_unit.id')
+            ->leftJoin('inspection_fire_detector_details', 'inspection_fire_detector.id', '=', 'inspection_fire_detector_details.inspection_id')
+            ->leftJoin('inspection_static_docno', 'inspection_fire_detector.document_reference_id', '=', 'inspection_static_docno.id')
             ->leftJoin('inspection_frequency_option', 'inspection_fire_detector.frequency', '=', 'inspection_frequency_option.id');
 
         if (isset($request->search) && isset($request->search['value']) && $request->search['value'] != '') {
@@ -196,9 +200,14 @@ class DetectorInspection extends Model
         if (isset($request->inspection_status) && $request->inspection_status) {
             $query = $query->where('inspection_fire_detector.inspection_status', 'LIKE', '%' . decryptId($request->inspection_status) . '%');
         }
-        $query->orderBy('id', 'DESC');
+        $query->orderBy('inspection_fire_detector.id', 'DESC');
 
-        return  $query->get();
+        $data = $query->get();
+        if ($data) {
+            return $data->groupBy('fire_id');
+        } else {
+            return $data;
+        }
     }
 
 

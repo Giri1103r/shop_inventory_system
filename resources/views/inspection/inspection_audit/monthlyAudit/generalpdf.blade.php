@@ -156,106 +156,38 @@
         </table>
     </div>
 
-    <table width="100%" style="width:100%;">
-       
 
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Auditee Name</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ isset($monthly_audit_plan->auditee_name) ? $monthly_audit_plan->auditee_name : '' }}
-            </td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Unit</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ getUnitname(isset($monthly_audit_plan->unit_id) ? $monthly_audit_plan->unit_id : '') }}
-            </td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Task</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ getTaskName(isset($monthly_audit_plan->task_id) ? $monthly_audit_plan->task_id : '') }}
-            </td>
-        </tr>
-
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Category</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ getCategoryType(isset($monthly_audit_plan->compliance_category_id) ? $monthly_audit_plan->compliance_category_id : '') }}
-            </td>
-        </tr>
-       
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Reference Doc No</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ isset($monthly_audit_plan->reference_doc_no) ? $monthly_audit_plan->reference_doc_no : '' }}
-            </td>
-        </tr>
-
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Frequency</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ getFrequencyname(isset($monthly_audit_plan->frequency_id) ? $monthly_audit_plan->frequency_id : '') }}
-            </td>
-        </tr>
-
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Audit Plan Status</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ $monthly_audit_plan->audit_plan_status == 1 ? 'Yes' : 'No' }}
-            </td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Direct / In-Direct</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ $monthly_audit_plan->direct_in_direct == 1 ? 'Direct' : 'In-Direct' }}
-            </td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Points</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ isset($monthly_audit_plan->points) ? $monthly_audit_plan->points : '' }}
-
-            </td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Remarks</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ isset($monthly_audit_plan->remarks) ? $monthly_audit_plan->remarks : '' }}
-            </td>
-        </tr>
-
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Created By</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ getUsername(isset($monthly_audit_plan->created_by) ? $monthly_audit_plan->created_by : '') }}</td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Created Date</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;"> {{ displayDateformat($monthly_audit_plan->created_at) }}</td>
-        </tr>
+    <table class="table table-bordered" style="width:100%; border-collapse: collapse;" border="1">
+        <thead>
+            <tr>
+                <th>Sr.</th>
+                <th>Auditee Name</th>
+                <th>Task Name</th>
+                <th>Reference Doc No</th>
+                <th>Category</th>
+                <th>Frequency</th>
+                <th>Direct/Indirect</th>
+                <th>Points</th>
+                <th>Remarks</th>
+                <th>Created At</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>1</td>
+                <td>{{ $monthly_audit_plan->auditee_name ?? '' }}</td>
+                <td>{{ getTaskName($monthly_audit_plan->task_id ?? '') }}</td>
+                <td>{{ $monthly_audit_plan->reference_doc_no ?? '' }}</td>
+                <td>{{ getCategoryType($monthly_audit_plan->compliance_category_id ?? '') }}</td>
+                <td>{{ getFrequencyname($monthly_audit_plan->frequency_id ?? '') }}</td>
+                <td>{{ $monthly_audit_plan->direct_in_direct == 1 ? 'Direct' : 'Indirect' }}</td>
+                <td>{{ $monthly_audit_plan->points ?? '' }}</td>
+                <td>{{ $monthly_audit_plan->remarks ?? '' }}</td>
+                <td>{{ displayDateformat($monthly_audit_plan->created_at ?? '') }}</td>
+            </tr>
+        </tbody>
     </table>
 
-   
-
- 
-
-
-    
-
-   
 
 
 </body>

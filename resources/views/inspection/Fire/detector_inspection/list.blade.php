@@ -13,10 +13,10 @@
                     <div class="d-flex justify-content-end p-2">
 
                         <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
-                        {{-- @if (CheckUserPermission('add')) --}}
-                        <x-button-add dataId="" class="add btn btn-primary ms-1"
-                            href="{{ admin_url('fire/detector-inspection/add') }}">Add</x-button-add>
-                        {{-- @endif --}}
+                        @if (CheckUserPermission('add'))
+                            <x-button-add dataId="" class="add btn btn-primary ms-1"
+                                href="{{ admin_url('fire/detector-inspection/add') }}">Add</x-button-add>
+                        @endif
                     </div>
                     <div id="search" class="collapse">
                         <form action="" id="formsearch">
@@ -81,8 +81,8 @@
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
                                                 <label class="form-label require">{{ __('inspection.frequency') }}</label>
-                                                <select name="frequency" id="frequency"
-                                                    class=" form-control single-select" style="width: 100%">
+                                                <select name="frequency" id="frequency" class=" form-control single-select"
+                                                    style="width: 100%">
                                                     <option value="">Select Frequency</option>
                                                     @foreach ($frequency as $frequency)
                                                         <option value="{{ encryptId($frequency->id) }}">
@@ -137,7 +137,7 @@
                                         <th>{{ __('inspection.unit') }}</th>
                                         <th>{{ __('inspection.frequency') }}</th>
                                         <th>{{ __('common.status') }}</th>
-                                        <th>{{ __('common.action') }}</th>
+                                        <th style="text-align: center !important;">{{ __('common.action') }}</th>
                                     </tr>
                                 </thead>
                                 <tbody></tbody>

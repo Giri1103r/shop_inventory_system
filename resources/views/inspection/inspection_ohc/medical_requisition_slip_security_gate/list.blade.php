@@ -25,21 +25,25 @@
                                 <div class="col-md-12">
                                     <div class="row">
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="document_number"
-                                                class="form-label ">{{ __('inspection.doc_no') }}</label>
-                                            <input type="text" name="document_number" id="document_number"
-                                                class="form-control">
+                                            <label class="form-label require">Unit</label>
+                                            <select name="unit_id" id="unit_id" class="form-control single-select"
+                                                style="width: 100%">
+                                                <option value="">Select the unit</option>
+                                                @foreach ($unit as $list)
+                                                    <option value="{{ encryptId($list->id) }}">
+                                                        {{ $list->unit_name }}</option>
+                                                @endforeach
+                                            </select>
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="issue_date"
-                                                class="form-label ">{{ __('inspection.issue_date') }}</label>
-                                            <input type="text" name="issue_date" id="issue_date" class="form-control">
+                                            <label class="form-label require">Department</label>
+                                            <select name="department_id" id="department_id"
+                                                class=" form-control single-select" style="width: 100%">
+                                                <option value="">Select Department </option>
+
+                                            </select>
                                         </div>
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="rev_date"
-                                                class="form-label ">{{ __('inspection.rev_date') }}</label>
-                                            <input type="text" name="rev_date" id="rev_date" class="form-control">
-                                        </div>
+
 
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="status" class="form-label ">{{ __('common.status') }}</label>
@@ -71,9 +75,8 @@
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
-                                        <th>Doc.NO</th>
-                                        <th>Issue Date</th>
-                                        <th>Rev.Date</th>
+                                        <th>Unit</th>
+                                        <th>Department</th>
                                         <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.created_date') }}</th>
                                         <th>{{ __('common.action') }}</th>
@@ -97,10 +100,36 @@
                 var firstTh = $('.datatable-list thead th:first');
                 firstTh.removeClass('sorting_asc');
             });
-            var IssueDatepicker = flatpickr("#issue_date", {
+            var IssueDatepicker = flatpickr("#department_id", {
                 dateFormat: "d-m-Y",
 
 
+            });
+
+            $(document).on('change', '#unit_id', function() {
+                var unitId = $(this).val();
+                if (unitId) {
+                    $.ajax({
+                        url: "{{ admin_url('department/ajax-list') }}/" + unitId + "/0",
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(data) {
+                            $('#department_id').empty().append(
+                                '<option value="">Select Department</option>');
+                            $.each(data, function(key, value) {
+                                $('#department_id').append('<option value="' + value
+                                    .id + '">' + value.name + '</option>');
+                            });
+                            $('#department_id').trigger('change.');
+                        },
+                        error: function(xhr) {
+                            alert('Error fetching department. Please try again.');
+                        }
+                    });
+                } else {
+                    $('#department_id').empty().append('<option value="">Select Department</option>');
+                    $('#department_id').trigger('change.');
+                }
             });
             $(function() {
                 /* Datatable */
@@ -135,8 +164,8 @@
                                 .attr('content')
                         },
                         data: function(d) {
-                            d.document_number = $('#document_number').val();
-                            d.issue_date = $('#issue_date').val();
+                            d.unit_id = $('#unit_id').val();
+                            d.department_id = $('#department_id').val();
                             d.rev_date = $('#rev_date').val();
                             d.status = $('#status').val();
                         },
@@ -154,19 +183,13 @@
                         },
 
                         {
-                            data: 'doc_no',
-                            name: 'doc_no'
+                            data: 'unit',
+                            name: 'unit'
                         },
                         {
-                            data: 'issue_date',
-                            name: 'issue_date'
+                            data: 'department',
+                            name: 'department'
                         },
-                        {
-                            data: 'revision_date',
-                            name: 'revision_date'
-                        },
-
-
                         {
                             data: 'approve_status',
                             name: 'approve_status'
@@ -205,18 +228,18 @@
                                     action: function(e, dt, button, config) {
 
                                         var searchValue = $('#datatable-list_filter input').val();
-                                        document_number = $('#document_number').val();
-                                        issue_date = $('#issue_date').val();
+                                        unit_id = $('#unit_id').val();
+                                        department_id = $('#department_id').val();
                                         rev_date = $('#rev_date').val();
                                         status = $('#status').val();
 
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('ohc/medical-requisition-slip/fdo-security-gate/export/pdf') }}"+
+                                            "{{ admin_url('ohc/medical-requisition-slip/fdo-security-gate/export/pdf') }}" +
                                             '?search=' + searchValue +
-                                            '&document_number=' + document_number +
-                                            '&issue_date=' + issue_date +
+                                            '&unit_id=' + unit_id +
+                                            '&department_id=' + department_id +
                                             '&rev_date=' + rev_date +
                                             '&status=' + status
                                     }
@@ -226,8 +249,8 @@
                                     text: '{{ __('common.excel') }}',
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
-                                        document_number = $('#document_number').val();
-                                        issue_date = $('#issue_date').val();
+                                        unit_id = $('#unit_id').val();
+                                        department_id = $('#department_id').val();
                                         rev_date = $('#rev_date').val();
                                         status = $('#status').val();
                                         $(".dt-button").removeClass('processing');
@@ -235,8 +258,8 @@
                                         window.location.href =
                                             "{{ admin_url('ohc/medical-requisition-slip/fdo-security-gate/export/excel') }}" +
                                             '?search=' + searchValue +
-                                            '&document_number=' + document_number +
-                                            '&issue_date=' + issue_date +
+                                            '&unit_id=' + unit_id +
+                                            '&department_id=' + department_id +
                                             '&rev_date=' + rev_date +
                                             '&status=' + status
                                     }

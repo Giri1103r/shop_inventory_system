@@ -14,9 +14,7 @@ class WeeklyFirstAidBox extends Model
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'doc_no',
-        'issue_date',
-        'revision_date',
+        'document_reference_id',
         'date_of_inspection',
         'location',
         'first_aid_box_no',
@@ -40,9 +38,12 @@ class WeeklyFirstAidBox extends Model
         $request = request();
         $search = '';
 
-        $query = $this->select('inspection_ohc_weekly_first_aid_box_inspection_checklist_details.*', 'masters_location.location_name', 'masters_unit.unit_name')
+        $query = $this->select('inspection_ohc_weekly_first_aid_box_inspection_checklist_details.*', 'masters_location.location_name', 'masters_unit.unit_name','inspection_shift_option.shift','ohc_master_certified_first_aider.certifier_name','inspection_ohc_weekly_first_aid_box_inspection_checklist_details.shift as shift_id')
             ->leftJoin('masters_location', 'masters_location.id', '=', 'inspection_ohc_weekly_first_aid_box_inspection_checklist_details.location')
-            ->leftJoin('masters_unit', 'masters_unit.id', '=', 'inspection_ohc_weekly_first_aid_box_inspection_checklist_details.unit');
+            ->leftJoin('masters_unit', 'masters_unit.id', '=', 'inspection_ohc_weekly_first_aid_box_inspection_checklist_details.unit')
+            ->leftJoin('ohc_master_certified_first_aider', 'ohc_master_certified_first_aider.id', '=', 'inspection_ohc_weekly_first_aid_box_inspection_checklist_details.first_aider')
+            ->leftJoin('inspection_shift_option', 'inspection_shift_option.id', '=', 'inspection_ohc_weekly_first_aid_box_inspection_checklist_details.shift');
+
 
         $org_total =  $query;
         $org_total_counts = $org_total->count();
@@ -52,26 +53,32 @@ class WeeklyFirstAidBox extends Model
 
             $query->where(function ($query) use ($search) {
                 $query
-                    ->orWhere('inspection_ohc_weekly_first_aid_box_inspection_checklist_details.doc_no', 'LIKE', '%' . $search . '%')
-                    ->orWhere('inspection_ohc_weekly_first_aid_box_inspection_checklist_details.issue_date', 'LIKE', '%' . DBdateformat($search) . '%')
+                    ->orWhere('inspection_ohc_weekly_first_aid_box_inspection_checklist_details.first_aid_box_no', 'LIKE', '%' . $search . '%')
+                    ->orWhere('inspection_shift_option.shift', 'LIKE', '%' . $search . '%')
                     ->orWhere('masters_location.location_name', 'LIKE', '%' . $search . '%')
-                    ->orWhere('masters_unit.unit_name', 'LIKE', '%' . $search . '%');
+                    ->orWhere('masters_unit.unit_name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('ohc_master_certified_first_aider.certifier_name', 'LIKE', '%' . $search . '%');
+
             });
         }
-        if ($request->has('doc_no') && $request->doc_no) {
-            $query = $query->where('inspection_ohc_weekly_first_aid_box_inspection_checklist_details.doc_no', 'LIKE', '%' . $request->doc_no . '%');
+        if ($request->has('first_aid_box_no') && $request->first_aid_box_no) {
+            $query = $query->where('inspection_ohc_weekly_first_aid_box_inspection_checklist_details.first_aid_box_no', 'LIKE', '%' . $request->first_aid_box_no . '%');
         }
 
-        if ($request->has('issue_date') && $request->issue_date) {
-            $formattedDate = DBdateformat($request->issue_date);
-            $query = $query->whereDate('inspection_ohc_weekly_first_aid_box_inspection_checklist_details.issue_date', $formattedDate);
+        if ($request->has('shift') && $request->shift) {
+            $query = $query->where('inspection_ohc_weekly_first_aid_box_inspection_checklist_details.shift', 'LIKE', '%' . decryptId($request->shift) . '%');
         }
+
         if ($request->has('location') && $request->location) {
             $query = $query->where('location', 'LIKE', '%' . decryptId($request->location) . '%');
         }
 
         if ($request->has('unit') && $request->unit) {
             $query = $query->where('unit', 'LIKE', '%' . decryptId($request->unit) . '%');
+        }
+
+        if ($request->has('first_aider') && $request->first_aider) {
+            $query = $query->where('first_aider', 'LIKE', '%' . decryptId($request->first_aider) . '%');
         }
 
 
@@ -106,14 +113,13 @@ class WeeklyFirstAidBox extends Model
                 'available_quantity' => $request->available_quantity[$index],
                 'expired_date' => dbdateformat($request->expired_date[$index]),
                 'remarks' => $request->remarks[$index],
-
+                
             ];
         }
         $updated_medicine_checklist = json_encode($updated_medicine_checklist);
         $data = [
-            'doc_no' => $request->document_no,
-            'issue_date' => DBdateformat($request->issue_date),
-            'revision_date' => $request->review_date,
+            
+            'document_reference_id'=>$request->document_reference_id,
             'date_of_inspection' =>  DBdateformat($request->date_of_inspection),
             'location' => decryptId($request->location_id),
             'first_aid_box_no' => $request->first_aid_box_no,
@@ -136,41 +142,51 @@ class WeeklyFirstAidBox extends Model
     public function exportdata()
     {
         $request = request();
+        // dd($request);
         $search = '';
-        $query = $this->select('inspection_ohc_weekly_first_aid_box_inspection_checklist_details.*', 'masters_location.location_name', 'masters_unit.unit_name')
+        $query = $this->select('inspection_ohc_weekly_first_aid_box_inspection_checklist_details.*', 'masters_location.location_name', 'masters_unit.unit_name','inspection_shift_option.shift','ohc_master_certified_first_aider.certifier_name','inspection_ohc_weekly_first_aid_box_inspection_checklist_details.shift as shift_id','inspection_static_docno.*')
             ->leftJoin('masters_location', 'masters_location.id', '=', 'inspection_ohc_weekly_first_aid_box_inspection_checklist_details.location')
-            ->leftJoin('masters_unit', 'masters_unit.id', '=', 'inspection_ohc_weekly_first_aid_box_inspection_checklist_details.unit');
+            ->leftJoin('masters_unit', 'masters_unit.id', '=', 'inspection_ohc_weekly_first_aid_box_inspection_checklist_details.unit')
+            ->leftJoin('ohc_master_certified_first_aider', 'ohc_master_certified_first_aider.id', '=', 'inspection_ohc_weekly_first_aid_box_inspection_checklist_details.first_aider')
+            ->leftJoin('inspection_shift_option', 'inspection_shift_option.id', '=', 'inspection_ohc_weekly_first_aid_box_inspection_checklist_details.shift')
+            ->leftJoin('inspection_static_docno', 'inspection_ohc_weekly_first_aid_box_inspection_checklist_details.document_reference_id', '=', 'inspection_static_docno.id');
 
-        if ($request->search != null || $request->search != '') {
+            if ($request->search != null || $request->search != '') {
             $search = $request->search;
 
             $query->where(function ($query) use ($search) {
                 $query
-                    ->orWhere('inspection_ohc_weekly_first_aid_box_inspection_checklist_details.doc_no', 'LIKE', '%' . $search . '%')
-                    ->orWhere('inspection_ohc_weekly_first_aid_box_inspection_checklist_details.issue_date', 'LIKE', '%' . DBdateformat($search) . '%')
+                    ->orWhere('inspection_ohc_weekly_first_aid_box_inspection_checklist_details.first_aid_box_no', 'LIKE', '%' . $search . '%')
+                    ->orWhere('inspection_shift_option.shift', 'LIKE', '%' . $search . '%')
                     ->orWhere('masters_location.location_name', 'LIKE', '%' . $search . '%')
-                    ->orWhere('masters_unit.unit_name', 'LIKE', '%' . $search . '%');
+                    ->orWhere('masters_unit.unit_name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('ohc_master_certified_first_aider.certifier_name', 'LIKE', '%' . $search . '%');
+
             });
         }
-        if ($request->has('document_number') && $request->document_number) {
-            $query = $query->where('inspection_ohc_weekly_first_aid_box_inspection_checklist_details.doc_no', 'LIKE', '%' . $request->document_number . '%');
+
+        if ($request->has('first_aid_box_no') && $request->first_aid_box_no) {
+            $query = $query->where('inspection_ohc_weekly_first_aid_box_inspection_checklist_details.first_aid_box_no', 'LIKE', '%' . $request->first_aid_box_no . '%');
         }
 
-        if ($request->has('issue_date') && $request->issue_date) {
-            $formattedDate = DBdateformat($request->issue_date);
-            $query = $query->whereDate('inspection_ohc_weekly_first_aid_box_inspection_checklist_details.issue_date', $formattedDate);
+        if ($request->has('shift') && $request->shift) {
+            $query = $query->where('inspection_ohc_weekly_first_aid_box_inspection_checklist_details.shift', 'LIKE', '%' . decryptId($request->shift) . '%');
         }
+
         if ($request->has('location_id') && $request->location_id) {
-            $query = $query->where('inspection_ohc_weekly_first_aid_box_inspection_checklist_details.location', 'LIKE', '%' . decryptId($request->location_id) . '%');
+            $query = $query->where('location', 'LIKE', '%' . decryptId($request->location_id) . '%');
         }
 
         if ($request->has('unit_id') && $request->unit_id) {
-            $query = $query->where('inspection_ohc_weekly_first_aid_box_inspection_checklist_details.unit', 'LIKE', '%' . decryptId($request->unit_id) . '%');
+            $query = $query->where('unit', 'LIKE', '%' . decryptId($request->unit_id) . '%');
+        }
+
+        if ($request->has('first_aider') && $request->first_aider) {
+            $query = $query->where('first_aider', 'LIKE', '%' . decryptId($request->first_aider) . '%');
         }
 
 
-
-        $query->orderBy('id', 'DESC');
+        $query->orderBy('inspection_ohc_weekly_first_aid_box_inspection_checklist_details.id', 'DESC');
 
         return  $query->get();
     }

@@ -51,28 +51,40 @@ class MonthlyFirePumpHouseInspection extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_fire_monthly_fire_pumphouse.*');
+        $query = $this->select('inspection_fire_monthly_fire_pumphouse.*', 'inspection_shift_option.*', 'masters_unit.*', 'inspection_fire_monthly_fire_pumphouse.id as inspection_id')
+            ->leftJoin('inspection_shift_option', 'inspection_fire_monthly_fire_pumphouse.shift', '=', 'inspection_shift_option.id')
+            ->leftJoin('masters_unit', 'inspection_fire_monthly_fire_pumphouse.unit', '=', 'masters_unit.id');
+            
+
         $org_total =  $query;
         $org_total_counts = $org_total->count();
 
+
+
         if (isset($request->search) && isset($request->search['value']) && $request->search['value'] != '') {
             $search = $request->search['value'];
+
             $query = $query->where(function ($query) use ($search) {
-                $query->orWhereRaw('doc_no LIKE "%' . $search . '%"');
-                $query->orWhereRaw('issue_date LIKE "%' . $search . '%"');
-                $query->orWhereRaw('revision_data LIKE "%' . $search . '%"');
+                $query->orWhereRaw('masters_unit.unit_name LIKE "%' . $search . '%"');
+                $query->orWhereRaw('inspection_shift_option.shift LIKE "%' . $search . '%"');
             });
         }
 
-        if (isset($request->document_number) && $request->document_number) {
-            $query = $query->where('inspection_fire_monthly_fire_pumphouse.doc_no', 'LIKE', '%' . $request->document_number . '%');
+    
+        if (isset($request->unit) && $request->unit) {
+            $query = $query->where('inspection_fire_monthly_fire_pumphouse.unit', 'LIKE', '%' . decryptId($request->unit) . '%');
         }
-        if (isset($request->issue_date) && $request->issue_date) {
-            $query = $query->where('inspection_fire_monthly_fire_pumphouse.issue_date', 'LIKE', '%' . $request->issue_date . '%');
+        if (isset($request->shift) && $request->shift) {
+            $query = $query->where('inspection_fire_monthly_fire_pumphouse.shift', 'LIKE', '%' . decryptId($request->shift) . '%');
         }
-        if (isset($request->rev_date) && $request->rev_date) {
-            $query = $query->where('inspection_fire_monthly_fire_pumphouse.revision_data', 'LIKE', '%' . $request->rev_date . '%');
+        if (isset($request->date_of_inspection) && $request->date_of_inspection) {
+            $query = $query->where('inspection_fire_monthly_fire_pumphouse.date_of_inspection', 'LIKE', '%' . DBdateformat($request->date_of_inspection) . '%');
         }
+        if (isset($request->next_due) && $request->next_due) {
+            $query = $query->where('inspection_fire_monthly_fire_pumphouse.next_due', 'LIKE', '%' . DBdateformat($request->next_due) . '%');
+        }
+
+
         if (isset($request->inspection_status) && $request->inspection_status) {
             $query = $query->where('inspection_fire_monthly_fire_pumphouse.inspection_status', decryptId($request->inspection_status));
         }
@@ -81,17 +93,8 @@ class MonthlyFirePumpHouseInspection extends Model
             $columnName = $request->order[0]['column'];
             $columnorder = $request->order[0]['dir'];
             switch ($columnName) {
-                case "rev_date":
-                    $query->orderBy('inspection_fire_monthly_fire_pumphouse.rev_date', $columnorder);
-                    break;
-                case "issue_date":
-                    $query = $query->orderBy('inspection_fire_monthly_fire_pumphouse.issue_date', $columnorder);
-                    break;
-                case "document_number":
-                    $query = $query->orderBy('inspection_fire_monthly_fire_pumphouse.doc_no', $columnorder);
-                    break;
-                case "status":
-                    $query = $query->orderBy('inspection_fire_monthly_fire_pumphouse.status', $columnorder);
+                case "inspection_status":
+                    $query = $query->orderBy('inspection_fire_monthly_fire_pumphouse.inspection_status', $columnorder);
                     break;
                 case "created_by":
                     $query = $query->orderBy('inspection_fire_monthly_fire_pumphouse.created_by', $columnorder);
@@ -285,7 +288,11 @@ class MonthlyFirePumpHouseInspection extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_fire_monthly_fire_pumphouse.*');
+        $query = $this->select('inspection_fire_monthly_fire_pumphouse.*', 'inspection_shift_option.*', 'masters_unit.*', 'inspection_fire_monthly_fire_pumphouse.id as fire_id','inspection_static_docno.*','inspection_fire_monthly_fire_pumphouse.created_by as checked_by')
+            ->leftJoin('inspection_shift_option', 'inspection_fire_monthly_fire_pumphouse.shift', '=', 'inspection_shift_option.id')
+            ->leftJoin('inspection_static_docno', 'inspection_fire_monthly_fire_pumphouse.document_reference_id', '=', 'inspection_static_docno.id')
+            ->leftJoin('masters_unit', 'inspection_fire_monthly_fire_pumphouse.unit', '=', 'masters_unit.id');
+            
         if (isset($request->search) && isset($request->search['value']) && $request->search['value'] != '') {
             $search = $request->search['value'];
             $query = $query->where(function ($query) use ($search) {
@@ -295,19 +302,20 @@ class MonthlyFirePumpHouseInspection extends Model
             });
         }
 
-        if (isset($request->document_number) && $request->document_number) {
-            $query = $query->where('inspection_fire_monthly_fire_pumphouse.doc_no', 'LIKE', '%' . $request->document_number . '%');
+        if (isset($request->unit) && $request->unit) {
+            $query = $query->where('inspection_fire_monthly_fire_pumphouse.unit', 'LIKE', '%' . decryptId($request->unit) . '%');
         }
-        if (isset($request->issue_date) && $request->issue_date) {
-            $query = $query->where('inspection_fire_monthly_fire_pumphouse.issue_date', 'LIKE', '%' . $request->issue_date . '%');
+        if (isset($request->shift) && $request->shift) {
+            $query = $query->where('inspection_fire_monthly_fire_pumphouse.shift', 'LIKE', '%' . decryptId($request->shift) . '%');
         }
-        if (isset($request->rev_date) && $request->rev_date) {
-            $query = $query->where('inspection_fire_monthly_fire_pumphouse.revision_data', 'LIKE', '%' . $request->rev_date . '%');
+        if (isset($request->date_of_inspection) && $request->date_of_inspection) {
+            $query = $query->where('inspection_fire_monthly_fire_pumphouse.date_of_inspection', 'LIKE', '%' . DBdateformat($request->date_of_inspection) . '%');
         }
-        if (isset($request->inspection_status) && $request->inspection_status) {
-            $query = $query->where('inspection_fire_monthly_fire_pumphouse.inspection_status', decryptId($request->inspection_status));
+        if (isset($request->next_due) && $request->next_due) {
+            $query = $query->where('inspection_fire_monthly_fire_pumphouse.next_due', 'LIKE', '%' . DBdateformat($request->next_due) . '%');
         }
-        $query->orderBy('id', 'DESC');
+
+        $query->orderBy('inspection_fire_monthly_fire_pumphouse.id', 'DESC');
 
         return  $query->get();
     }

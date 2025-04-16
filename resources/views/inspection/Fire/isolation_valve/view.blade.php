@@ -114,7 +114,7 @@
                                             </div>
                                         </div>
                                         @php
-                                            $signature = GetSignature(
+                                            $signature = GetFireSignature(
                                                 $inspection->created_by,
                                                 $inspection->id,
                                                 ISOLATION_VALVE_INSPECTION,
@@ -238,13 +238,7 @@
                                                         <label
                                                             class="form-label require">{{ __('inspection.valve_type') }}</label>
                                                         <div class="view_data">
-                                                            @if ($details->type == GATE)
-                                                                {{ __('inspection.GATE') }}
-                                                            @elseif($details->type == BALL)
-                                                                {{ __('inspection.BALL') }}
-                                                            @elseif($details->type == BUTTERFLY)
-                                                                {{ __('inspection.BUTTERFLY') }}
-                                                            @endif
+                                                            {{ getValveTypeName($details->type) }}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -307,7 +301,7 @@
                                                     </div>
                                                 </div>
                                                 @php
-                                                    $signature = GetSignature(
+                                                    $signature = GetFireSignature(
                                                         $inspection->verified_by,
                                                         $inspection->id,
                                                         ISOLATION_VALVE_INSPECTION,
@@ -346,7 +340,7 @@
                                                         </div>
                                                     </div>
                                                     @php
-                                                        $signature = GetSignature(
+                                                        $signature = GetFireSignature(
                                                             $inspection->approved_by,
                                                             $inspection->id,
                                                             ISOLATION_VALVE_INSPECTION,
@@ -409,7 +403,7 @@
                                                 </div>
                                             </div>
                                             @php
-                                                $signature = GetSignature(
+                                                $signature = GetFireSignature(
                                                     $inspection->created_by,
                                                     $inspection->id,
                                                     ISOLATION_VALVE_INSPECTION,
@@ -462,7 +456,7 @@
                                             </div>
                                         </div>
                                         @php
-                                            $signature = GetSignature(
+                                            $signature = GetFireSignature(
                                                 $inspection->verified_by,
                                                 $inspection->id,
                                                 ISOLATION_VALVE_INSPECTION,
@@ -514,7 +508,7 @@
                                             </div>
                                         </div>
                                         @php
-                                            $signature = GetSignature(
+                                            $signature = GetFireSignature(
                                                 $inspection->l1_manager_verified_by,
                                                 $inspection->id,
                                                 ISOLATION_VALVE_INSPECTION,
@@ -565,7 +559,7 @@
                                             </div>
                                         </div>
                                         @php
-                                            $signature = GetSignature(
+                                            $signature = GetFireSignature(
                                                 $inspection->l2_manager_verified_by,
                                                 $inspection->id,
                                                 ISOLATION_VALVE_INSPECTION,
@@ -592,7 +586,7 @@
                                             </div>
                                         @endif
                                         @php
-                                            $signature = GetSignature(
+                                            $signature = GetFireSignature(
                                                 $inspection->approved_by,
                                                 $inspection->id,
                                                 ISOLATION_VALVE_INSPECTION,

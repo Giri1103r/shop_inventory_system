@@ -31,7 +31,8 @@
                                         action="{{ admin_url('fire/fire_extinguisher-inspection/add/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
                                         @csrf
-                                        <input type="hidden" name="document_reference_id" value="{{ encryptId($document_no->id) }}">
+                                        <input type="hidden" name="document_reference_id"
+                                            value="{{ encryptId($document_no->id) }}">
                                         <div class="row">
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
@@ -379,33 +380,17 @@
                                                 <div class="card-header-inner p-2">
                                                     <h4 class="text-white">Fire Extinguisher Inspection Observation</h4>
                                                 </div>
-
-                                                {{-- <div class="d-flex justify-content-end align-items-center gap-2 m-2">
-                                                    <button class="btn btn-primary add-row" type="button" id="add-row"
-                                                        style="width: 120px;">
-                                                        Add
-                                                    </button>
-                                                    <button class="btn btn-primary add-obs" type="button" id="add-obs"
-                                                        style="width: 150px;">
-                                                        Add Observation
-                                                    </button>
-                                                    <button type="button"
-                                                        class="btn btn-danger remove-row d-flex align-items-center"
-                                                        style="width: 120px;">
-                                                        <i class="fa-solid fa-trash me-2"></i> Remove
-                                                    </button>
-                                                </div> --}}
-
-                                                <div class="col-md-12 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.obs') }}</label>
-                                                        <textarea name="observation" id="remarks" class="form-control" style="resize: none;">{{ old('observation') }}</textarea>
-
-                                                    </div>
-                                                    @error('observation')
-                                                        <div class="error">{{ $message }}</div>
-                                                    @enderror
+                                                <div class="mb-2">
+                                                    <label class="me-3">
+                                                        <input type="radio" name="observation_needed"
+                                                            value="{{ encryptId(1) }}" class="validate-radio-required">
+                                                        Yes
+                                                    </label>
+                                                    <label>
+                                                        <input type="radio" name="observation_needed"
+                                                            value="{{ encryptId(2) }}" class="validate-radio-required">
+                                                        No
+                                                    </label>
                                                 </div>
                                             </div>
                                         </div>
@@ -739,10 +724,11 @@
                                                         <select name="type[${form_set_count}]" id="type-${form_set_count}"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Type</option>
-                                                            <option value="{{ encryptId(ABC) }}">{{ __('inspection.ABC') }}</option>
-                                                            <option value="{{ encryptId(CO2) }}">{{ __('inspection.CO2') }}</option>
-                                                            <option value="{{ encryptId(WATER) }}">{{ __('inspection.WATER') }}</option>
-                                                            <option value="{{ encryptId(FOAM) }}">{{ __('inspection.FOAM') }}</option>
+                                                            @foreach ($types as $type)
+                                                                <option value="{{ encryptId($type->id) }}"
+                                                                    {{ old('type.1') == encryptId($department->id) ? 'selected' : '' }}>
+                                                                    {{ $type->name }}</option>
+                                                            @endforeach
                                                         </select>
                                                     </div>
                                                 </div>

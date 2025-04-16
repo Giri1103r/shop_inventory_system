@@ -223,28 +223,13 @@
                 $(`input[name="checklist[${checklistIndex}][name]"]`).rules("add", {
                     required: true,
                     minlength: 3,
-                    maxlength: 100,
-                    pattern: /^[a-zA-Z0-9\s\-_'"()]*$/,
-                    remote: {
-                        url: '{{ admin_url('checklist-sub-type-data/unique') }}',
-                        type: 'post',
-                        data: {
-                            checklist_type_id: function() {
-                                return $('#checklist_type_id').val();
-                            },
-                            checklist_sub_type_id: function() {
-                                return $('#checklist_sub_type_id').val();
-                            },
-                            subcategory_name: function() {
-                                return $('#sub_type_data_name_0').val();
-                            },
-                        }
-                    },
+                    maxlength: 200,
+                    pattern: /^[a-zA-Z0-9\s\-_'"()?\/&%]+$/,
                     messages: {
                         required: "Checklist Sub-Type Data Name is Required",
                         minlength: "{{ __('common.validate_min_length') }}",
                         maxlength: "Maximum Characters should not exceed 100",
-                        pattern: "Only alphanumeric characters and -, _, ', \", () are allowed",
+                        pattern: "Only alphanumeric characters and -, _, ', \", (), ? are allowed",
                     }
                 });
 
@@ -270,23 +255,23 @@
                         'checklist[0][name]': {
                             required: true,
                             minlength: 3,
-                            maxlength: 100,
-                            pattern: /^[a-zA-Z0-9\s\-_'"()]*$/,
-                            remote: {
-                                url: '{{ admin_url('checklist-sub-type-data/unique') }}',
-                                type: 'post',
-                                data: {
-                                    checklist_type_id: function() {
-                                        return $('#checklist_type_id').val();
-                                    },
-                                    checklist_sub_type_id: function() {
-                                        return $('#checklist_sub_type_id').val();
-                                    },
-                                    subcategory_name: function() {
-                                        return $('#sub_type_data_name_0').val();
-                                    },
-                                }
-                            }
+                            maxlength: 200,
+                            pattern: /^[a-zA-Z0-9\s\-_'"()?\/&%]+$/,
+                            // remote: {
+                            //     url: '{{ admin_url('checklist-sub-type-data/unique') }}',
+                            //     type: 'post',
+                            //     data: {
+                            //         checklist_type_id: function() {
+                            //             return $('#checklist_type_id').val();
+                            //         },
+                            //         checklist_sub_type_id: function() {
+                            //             return $('#checklist_sub_type_id').val();
+                            //         },
+                            //         subcategory_name: function() {
+                            //             return $('#sub_type_data_name_0').val();
+                            //         },
+                            //     }
+                            // }
                         },
 
                     },

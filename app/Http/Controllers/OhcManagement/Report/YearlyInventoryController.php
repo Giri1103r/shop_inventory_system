@@ -39,7 +39,8 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
-
+use App\Models\OhcManagement\Status\CreatorLog;
+use App\Models\OhcManagement\Status\MedicineLog;
 class YearlyInventoryController extends Controller
 {
     private $medicine;
@@ -50,8 +51,8 @@ class YearlyInventoryController extends Controller
     private $unit;
     private $user;
     private $medicine_issuance;
-    private $user_medicine_issuance;
-
+    private $medicineLog;
+    private $creatorLog;
     private $inventory;
 
     private $status;
@@ -60,8 +61,8 @@ class YearlyInventoryController extends Controller
         $this->medicine = new Medicine();
         $this->vendor = new Vendor();
         $this->medicine_receiving = new MedicineReceiving();
-        $this->medicine_issuance = new MedicineIssuance();
-        $this->user_medicine_issuance = new UserMedicineIssuance();
+        $this->creatorLog = new CreatorLog();
+        $this->medicineLog = new MedicineLog();
 
         $this->medicine_stock = new MedicineStock();
         $this->ohc_status = new OhcStatuslog();
@@ -87,12 +88,12 @@ class YearlyInventoryController extends Controller
         $selectedYear = $request->input('year');
 
         $inventory = $this->inventory->getyearlyinventoryreport($selectedUnit, $selectedYear);
-        $receiving = $this->medicine_receiving->getYearlyPurchaseddate($selectedYear); // Ensure this method exists
-        $medicineIssuing = $this->user_medicine_issuance->getYealyunitdata($selectedYear, $selectedUnit);
+        $receiving = $this->medicine_receiving->getYearlyPurchaseddate($selectedYear);
+        $medicineIssuing = $this->creatorLog->getYealyunitdata($selectedYear, $selectedUnit);
 
 
-        $allIssuances = $this->medicine_issuance->getYearlyissuedDate($selectedYear, $medicineIssuing);
-      
+        $allIssuances = $this->medicineLog->getYearlyissuedDate($selectedYear, $medicineIssuing);
+
         $data = [
             'medicine' => $medicine,
             'inventory' => $inventory,
@@ -117,8 +118,10 @@ class YearlyInventoryController extends Controller
             $medicine = $this->inventory->getUnitwise($selectedUnit);
             $inventory = $this->inventory->getyearlyinventoryreport($selectedUnit, $selectedYear);
             $receiving = $this->medicine_receiving->getYearlyPurchaseddate($selectedYear);
-            $medicineIssuing = $this->user_medicine_issuance->getYealyunitdata($selectedYear, $selectedUnit);
-            $allIssuances = $this->medicine_issuance->getYearlyissuedDate($selectedYear, $medicineIssuing);
+          $medicineIssuing = $this->creatorLog->getYealyunitdata($selectedYear, $selectedUnit);
+
+
+        $allIssuances = $this->medicineLog->getYearlyissuedDate($selectedYear, $medicineIssuing);
 
             // Organizing data by medicine ID for easy lookup
             $inventoryData = [];
@@ -168,17 +171,41 @@ class YearlyInventoryController extends Controller
                 $drawing->setWorksheet($sheet);
             }
 
-            // Title Styling for C1:AC3 (Red)
+
             $sheet->mergeCells('C1:AC3');
-            $sheet->setCellValue('F1', "Medical Treatment Slip\nPN International Pvt Ltd.");
+
+            $today = now();
+            $currentYear = $today->year;
+            $currentMonth = $today->month;
+
+            if ($currentMonth > 3) {
+                $startYear = $currentYear;
+                $endYear = $currentYear + 1;
+            } else {
+                $startYear = $currentYear - 1;
+                $endYear = $currentYear;
+            }
+
+            $financialYearText = "Financial Year (April {$startYear} - March {$endYear})";
+
+            // Set the value to the top-left cell of merged region
+            $sheet->setCellValue('C1', "Medical Treatment Slip PN International Pvt Ltd.\n$financialYearText");
+
+            // Apply style
             $sheet->getStyle('C1:AC3')->applyFromArray([
                 'font' => ['bold' => true, 'color' => ['rgb' => '000000'], 'size' => 14],
-                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_CENTER,
+                    'vertical' => Alignment::VERTICAL_CENTER,
+                    'wrapText' => true, // This is important for multiline
+                ],
                 'fill' => [
                     'fillType' => Fill::FILL_SOLID,
                     'startColor' => ['rgb' => 'FF0000']
                 ]
             ]);
+
+
 
             // Year Selection
             $sheet->setCellValue('A4', 'Year:');

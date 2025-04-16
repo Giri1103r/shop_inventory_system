@@ -73,7 +73,7 @@
                                         <center>
                                             <b>Occupational Health Center Inventory Record <br>
                                                 PN International Pvt Ltd. <br>
-                                                <span class="selectedMonthYear"></span>
+                                                <span class="year"></span>
                                             </b>
                                         </center>
 
@@ -90,17 +90,26 @@
     @stop
     @push('script')
         <script>
-            // $(document).ready(function() {
-            //     var fromDatepicker = datepicker("#month", {
-            //         dateFormat: "mm",
+            $(document).ready(function() {
+                let today = new Date();
+                let currentYear = today.getFullYear();
+                let currentMonth = today.getMonth() + 1;
 
-            //     });
+                let startYear, endYear;
 
-            //     var toDatepicker = flatpickr("#year", {
-            //         dateFormat: "Y",
-            //         minDate: "today"
-            //     });
-            // });
+                if (currentMonth > 3) {
+
+                    startYear = currentYear;
+                    endYear = currentYear + 1;
+                } else {
+
+                    startYear = currentYear - 1;
+                    endYear = currentYear;
+                }
+
+                let financialYearText = `Financial Year (April ${startYear} - March ${endYear})`;
+                $(".year").text(financialYearText);
+            });
             $('#month').datepicker({
                 format: 'MM',
                 minViewMode: 1,
@@ -289,7 +298,7 @@
 
                                 if (monthIndex === parseInt(month) && issuedDate.getUTCFullYear() === parseInt(
                                         year)) {
-                                    issueQuantities[dayIndex] = issued.quantity || ""; // Set empty if no data
+                                    issueQuantities[dayIndex] = issued.quantity || ""; 
                                 }
                             }
                         }

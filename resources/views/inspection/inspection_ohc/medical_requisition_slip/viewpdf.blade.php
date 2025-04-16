@@ -156,26 +156,7 @@
     </div>
 
     <table width="100%" style="width:100%;">
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Document Number</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ isset($medicinerequisition->doc_no) ? $medicinerequisition->doc_no : '' }}</td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Issue Date</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ Displaydateformat(isset($medicinerequisition->issue_date) ? $medicinerequisition->issue_date : '') }}
-            </td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Revision Date</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ isset($medicinerequisition->revision_date) ? $medicinerequisition->revision_date : '' }}
-            </td>
-        </tr>
+      
         <tr>
             <td width="50%" style="padding:5px;"><b>Unit</b></td>
             <td width="2%" style="padding:5px;">:</td>
@@ -232,7 +213,122 @@
                 </tr>
             </table>
         </div>
-        <div class="table-responsive">
+
+        <table
+            style="width: 100%; border-collapse: collapse; font-family: Arial, sans-serif; text-align: center; border: 1px solid black;">
+
+            <tr>
+                <th  colspan="6" style="border:1px solid black;height:50;width:40">
+                    <img src="{{ url('public/assets/images/logo-dark.png') }}" style="width:125px;height:50px;">
+                </th>
+                <th colspan="6" style="border:1px solid black;">
+                    <h3>
+                        <span><b> Medicine Requisition Slip Floor</b></span>
+                        <br>
+                        <span><b>PN International Pvt Ltd. </b></span>
+                    </h3>
+                </th>
+
+                <th colspan="6" style="border:1px solid black;">
+                    <table class="table table-bordered scrolldown">
+                        <thead>
+                            <tr>
+                                <td style="border: 1px solid black;width:70;">Doc.No</td>
+                                <td style="border: 1px solid black;">{{$document_no->doc_no}}</td>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid black;width:70;">Issue Dt.</td>
+                                <td style="border: 1px solid black;">{{$document_no->issue_date}}</td>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid black;width:70;">Rev.& Dt.</td>
+                                <td style="border: 1px solid black;">{{$document_no->rev_dt}}</td>
+                            </tr>
+                        </thead>
+                    </table>
+
+                </th>
+            </tr>
+            <tr>
+                <th colspan="6"
+                    style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
+                    DEPARTMENT: {{ getDepartment($medicinerequisition->department) ?? 'N/A' }}
+                </th>
+                <th colspan="6"
+                    style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
+                    UNIT: {{ getUnitname($medicinerequisition->unit) ?? 'N/A' }}
+                </th>
+                <th colspan="6"
+                    style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
+                    DATE: {{ Displaydateformat($medicinerequisition->date) ?? 'N/A' }}
+                </th>
+            </tr>
+
+            <tr>
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="2">SR. NO</th>
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">NAME OF THE
+                    MEDICINE</th>
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">FREEZE
+                    QUANTITY</th>
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">QUANTITY
+                </th>
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="6">REMARK
+                </th>
+
+            </tr>
+            @php
+                $medicineRequisitionDetails = GetOHCMedicineFloor($medicinerequisition->id);
+            @endphp
+            @foreach ($medicineRequisitionDetails as $details)
+                <tr>
+                    <td style="border: 1px solid black; padding: 8px;" colspan="2">{{ $loop->iteration }}</td>
+                    <td style="border: 1px solid black; padding: 8px;" colspan="4">{{ getMedicinename($details->medicine_id) }}
+                    </td>
+                    <td style="border: 1px solid black; padding: 8px;" colspan="4">{{ $details->freeze_quantity }}</td>
+                    <td style="border: 1px solid black; padding: 8px;"colspan="4">{{ $details->quantity }}</td>
+                    <td style="border: 1px solid black; padding: 8px;"colspan="6">{{ $details->remarks }}</td>
+
+                </tr>
+            @endforeach
+
+            @php
+                $createdSignature = GetOHCSignature(
+                    $medicinerequisition->created_by,
+                    $medicinerequisition->id,
+                    OHC_TYPE_MEDICINE_REQUISTION_FLOOR,
+                );
+                $FloorManagerSignature = GetOHCSignature(
+                    $medicinerequisition->verified_by,
+                    $medicinerequisition->id,
+                    OHC_TYPE_MEDICINE_REQUISTION_FLOOR,
+                );
+                $SafetyOfficerManagerSignature = GetOHCSignature(
+                    $medicinerequisition->approved_by,
+                    $medicinerequisition->id,
+                    OHC_TYPE_MEDICINE_REQUISTION_FLOOR,
+                );
+            @endphp
+
+            <tr>
+                <th colspan="6" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">
+                    <img src="{{ admin_url($createdSignature) }}" alt="Signature Upload"
+                        style="width: 150px; margin-top: -10px;" />
+                    <div style="margin-top: 5px;">Requestor Signature</div>
+                </th>
+                <th colspan="6" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">
+                    <img src="{{ admin_url($FloorManagerSignature) }}" alt="Signature Upload"
+                        style="width: 150px; margin-top: -10px;" />
+                    <div style="margin-top: 5px;">Floor Manager Signature</div>
+                </th>
+                <th colspan="6" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">
+                    <img src="{{ admin_url($SafetyOfficerManagerSignature) }}" alt="Signature Upload"
+                        style="width: 150px; margin-top: -10px;" />
+                    <div style="margin-top: 5px;">Medical Assistant / Safety Officer Signature</div>
+                </th>
+            </tr>
+        </table>
+
+        {{-- <div class="table-responsive">
             <div class="col-md-12">
                 @if (isset($medicine_requisition_floor_checklist) && $medicine_requisition_floor_checklist->isNotEmpty())
                     <table class="table table-bordered table-hover tblborder">
@@ -270,7 +366,7 @@
                     </div>
                 @endif
             </div>
-        </div>
+        </div> --}}
         <br>
     </div>
     @if (
@@ -316,8 +412,8 @@
                         <img src="{{ admin_url($floormanagersignature->file_path) }}" alt="Approver Signature"
                             style="width: 150px; height: auto;" />
                     @elseif(!empty($floorapproversignatureview) && !empty($floorapproversignatureview->signature_upload))
-                        <img src="{{ admin_url($floorapproversignatureview->signature_upload) }}" alt="Approver Signature"
-                            style="width: 150px; height: auto;" />
+                        <img src="{{ admin_url($floorapproversignatureview->signature_upload) }}"
+                            alt="Approver Signature" style="width: 150px; height: auto;" />
                     @else
                         No Signature Available
                     @endif
@@ -334,7 +430,71 @@
 
         </table>
     @endif
+    @if (
+        $medicinerequisition->approve_status == SAFETY_OFFICER_APPROVED ||
+            $medicinerequisition->approve_status == SAFETY_OFFICER_REJECTED)
+        <div style="width:100%;">
+            <table style="width:100%;">
+                <tr>
+                    <td
+                        style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
+                        Safety Officer Approval
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <table width="100%" style="width:100%;">
+            <tr>
+                <td width="50%" style="padding:5px;"><b>Approver Name</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;">
+                    {{ getUsername(isset($safetyofficer->approved_by) ? $safetyofficer->approved_by : '') }}</td>
+            </tr>
+            <tr>
+                <td width="50%" style="padding:5px;"><b>Approved Date</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;">
+                    {{ Displaydateformat(isset($safetyofficer->created_at) ? $safetyofficer->created_at : '') }}
+                </td>
+            </tr>
+            <tr>
+                <td width="50%" style="padding:5px;"><b>Approved Time</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;">
+                    {{ Displaytimeformat(isset($safetyofficer->created_at) ? $safetyofficer->created_at : '') }}
+                </td>
+            </tr>
+            @php
+                $approvedSignature = GetOHCSignature(
+                    $safetyofficer->approved_by,
+                    $medicinerequisition->id,
+                    OHC_TYPE_MEDICINE_REQUISTION_FLOOR,
+                );
+            @endphp
 
+            <tr>
+                <td width="50%" style="padding:5px;"><b>Signature</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;">
+
+
+
+                    <img src="{{ admin_url($approvedSignature) }}" alt="Approver Signature"
+                        style="width: 150px; height: auto;" />
+
+
+                </td>
+            </tr>
+            <tr>
+                <td width="50%" style="padding:5px;"><b>Remarks</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;">
+                    {{ isset($safetyofficer->remarks) ? $safetyofficer->remarks : '' }}
+                </td>
+            </tr>
+
+        </table>
+    @endif
     <div>
         <div style="width:100%;">
             <table style="width:100%;">

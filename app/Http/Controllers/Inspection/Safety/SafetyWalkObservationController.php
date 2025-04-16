@@ -41,7 +41,6 @@ class SafetyWalkObservationController extends Controller
         $this->location = new Location();
         $this->signature = new SignatureUpload();
         $this->document_reference = new InspectionStaticDocno();
-
     }
 
     public function Index(Request $request)
@@ -133,8 +132,8 @@ class SafetyWalkObservationController extends Controller
                 'unit' => $unit,
                 'locations' => $locations,
                 'document_no' => $document_no,
-
             );
+
             return view('inspection.Safety.safety_walk_observation.add', $data);
         } catch (Exception $ex) {
             report($ex);
@@ -147,9 +146,6 @@ class SafetyWalkObservationController extends Controller
     public function Store(Request $request)
     {
         try {
-
-
-
             $rules = [
                 'doc_no' => 'required',
                 'issue_date' => 'required',
@@ -227,7 +223,7 @@ class SafetyWalkObservationController extends Controller
             $mailsubject = 'SAFETY INSPECTION';
             $notificationData = array(
                 'notification_type' => SAFETY_INSPECTION,
-                'module_type' => 1,
+                'module_type' => 3,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
@@ -279,9 +275,8 @@ class SafetyWalkObservationController extends Controller
                 'inspection' => $inspection,
                 'inspection_details' => $inspection_details,
                 'document_no' => $document_no,
-
-
             );
+
 
             return view('inspection.Safety.safety_walk_observation.view', $data);
         } catch (Exception $ex) {
@@ -407,6 +402,7 @@ class SafetyWalkObservationController extends Controller
             $filename = "Safety Walk Observation.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
+            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('safety/safety-walk-observation/list'));
@@ -480,7 +476,7 @@ class SafetyWalkObservationController extends Controller
             $mailsubject = 'SAFETY INSPECTION';
             $notificationData = array(
                 'notification_type' => SAFETY_INSPECTION,
-                'module_type' => 1,
+                'module_type' => 3,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,

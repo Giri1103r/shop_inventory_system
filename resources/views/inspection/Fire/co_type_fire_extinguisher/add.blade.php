@@ -36,7 +36,7 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">{{ __('inspection.doc_no') }}</label>
                                                     <input type="text" name="doc_no" id = "doc_no" class="form-control"
-                                                        placeholder="Enter the Document Number"
+                                                        placeholder="Document Number"
                                                         value="{{ $document_no->doc_no }}" readonly>
                                                 </div>
                                             </div>
@@ -53,7 +53,7 @@
                                                 <div class="form-group form-input">
                                                     <label
                                                         class="form-label require">{{ __('inspection.rev_date') }}</label>
-                                                    <input type="text" name="rev_date" id = "rev_date"
+                                                    <input type="text" name="rev_date" id = "rev_date"  placeholder="Revision & Data"
                                                         class="form-control" value="{{ $document_no->rev_dt }}" readonly>
                                                 </div>
                                             </div>
@@ -61,7 +61,7 @@
                                                 <div class="form-group form-input">
                                                     <label
                                                         class="form-label require">{{ __('inspection.inspection_date') }}</label>
-                                                    <input type="text" name="inspection_date" id = "inspection_date"
+                                                    <input type="text" name="inspection_date" id = "inspection_date"  placeholder="Date Of Inspection"
                                                         class="form-control" value="{{old('inspection_date')}}">
                                                 </div>
                                             </div>
@@ -70,7 +70,7 @@
                                                     <label
                                                         class="form-label require">{{ __('inspection.location') }}</label>
                                                     <select name="location_id" id="location_id"
-                                                        class=" form-control single-select" style="width: 100%">
+                                                        class="form-control single-select" style="width: 100%">
                                                         <option value="">Select {{ __('inspection.location') }}
                                                         </option>
                                                         @foreach ($locations as $location)
@@ -100,7 +100,7 @@
                                                     <label
                                                         class="form-label require">{{ __('inspection.next_due') }}</label>
                                                     <input type="text" name="next_due" id = "next_due"
-                                                        class="form-control" value="{{ old('next_due') }}">
+                                                        class="form-control" value="{{ old('next_due') }}"  placeholder="Next Due On">
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -158,7 +158,7 @@
                                                 @endif
                                             </div>
                                             <input type="hidden" name="document_reference_id"
-                                                value="{{ $document_no->id }}">
+                                                value="{{ encryptId($document_no->id) }}">
                                         </div>
                                         <hr>
                                         <div class="form-wrapper">
@@ -192,7 +192,8 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">FIRE POINT NO</label>
-                                                       <input type="text" name="fire_point_no[1]" id="fire_point_no" class="form-control">
+                                                       <input type="text" name="fire_point_no[1]" id="fire_point_no" class="form-control"
+                                                       placeholder="Fire Point No">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 mb-2">
@@ -244,14 +245,16 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">Capacity</label>
-                                                       <input type="text" name="capacity[1]" id="capacity" class="form-control">
+                                                       <input type="text" name="capacity[1]" id="capacity" class="form-control"
+                                                       placeholder="Capacity">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">Quantity</label>
-                                                       <input type="text" name="quantity[1]" id="quantity" class="form-control">
+                                                       <input type="text" name="quantity[1]" id="quantity" class="form-control"
+                                                       placeholder="Quantity">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 mb-2">
@@ -290,7 +293,8 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">Weight of CO2 in FE</label>
-                                                       <input type="text" name="weight_of_co2_in_fe[1]" id="weight_of_co2_in_fe" class="form-control">
+                                                       <input type="text" name="weight_of_co2_in_fe[1]" id="weight_of_co2_in_fe"
+                                                       placeholder="Weight of CO2 in FE" class="form-control">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 mb-2">
@@ -316,14 +320,16 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">Approach</label>
-                                                        <input type="text" name="approach[1]" id="approach" class="form-control">
+                                                        <input type="text" name="approach[1]" id="approach"
+                                                        placeholder="Approach" class="form-control">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-12 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.remarks') }}</label>
-                                                        <textarea name="remarks[1]" id="remarks" class="form-control" style="resize: none;">{{ old('remarks.1') }}</textarea>
+                                                        <textarea name="remarks[1]" id="remarks" class="form-control"
+                                                        placeholder="Remarks" style="resize: none;">{{ old('remarks.1') }}</textarea>
 
                                                     </div>
                                                 </div>
@@ -340,8 +346,18 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.obs') }}</label>
-                                                        <textarea name="observation" id="observation" class="form-control" style="resize: none;"></textarea>
-
+                                                        {{-- <textarea name="observation" id="observation" class="form-control"
+                                                        placeholder="Observation" style="resize: none;"></textarea> --}}
+                                                        <div class="mb-2">
+                                                            <label class="me-3">
+                                                                <input type="radio" name="observation_needed"
+                                                                    value="{{encryptId(1)}}" class="validate-radio-required"> Yes
+                                                            </label>
+                                                            <label>
+                                                                <input type="radio" name="observation_needed"
+                                                                    value="{{encryptId(2)}}" class="validate-radio-required"> No
+                                                            </label>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -601,13 +617,15 @@
                                 <h4 class="text-white">Co2 Type Fire Extinguisher Inspection Checklist</h4>
                             </div>
 
-                            <div class="d-flex justify-content-end gap-0 m-2">
-                                <button class="btn btn-primary add-row me-3" type="button"
-                                    id="add-row" style="width: 84px;">
+                            <div class="d-flex justify-content-end align-items-center gap-2 m-2">
+                                <button class="btn btn-primary add-row" type="button" id="add-row"
+                                    style="min-width: 130px;">
                                     Add
                                 </button>
-                                <button type="button" class="btn btn-danger remove-row">
-                                    <i class="fa-solid fa-trash"></i> Remove
+                                <button type="button"
+                                    class="btn btn-danger remove-row d-flex align-items-center"
+                                    style="min-width: 130px;">
+                                    <i class="fa-solid fa-trash me-2"></i> Remove
                                 </button>
                             </div>
 
@@ -624,7 +642,8 @@
                                 <div class="form-group form-input">
                                     <label
                                         class="form-label require">FIRE POINT NO</label>
-                                    <input type="text" name="fire_point_no[${form_set_count}]" id="fire_point_no-${form_set_count}" class="form-control">
+                                    <input type="text" name="fire_point_no[${form_set_count}]" id="fire_point_no-${form_set_count}"
+                                    placeholder="Fire Point No" class="form-control">
                                 </div>
                             </div>
 
@@ -672,14 +691,16 @@
                                 <div class="form-group form-input">
                                     <label
                                         class="form-label require">Capacity</label>
-                                    <input type="text" name="capacity[${form_set_count}]" id="capacity-${form_set_count}" class="form-control">
+                                    <input type="text" name="capacity[${form_set_count}]" id="capacity-${form_set_count}"
+                                    placeholder="Capacity" class="form-control">
                                 </div>
                             </div>
                             <div class="col-md-4 mb-2">
                                 <div class="form-group form-input">
                                     <label
                                         class="form-label require">Quantity</label>
-                                    <input type="text" name="quantity[${form_set_count}]" id="quantity-${form_set_count}" class="form-control">
+                                    <input type="text" name="quantity[${form_set_count}]" id="quantity-${form_set_count}"
+                                    placeholder="Quantity" class="form-control">
                                 </div>
                             </div>
                             <div class="col-md-4 mb-2">
@@ -718,7 +739,8 @@
                                 <div class="form-group form-input">
                                     <label
                                         class="form-label require">Weight of CO2 in FE</label>
-                                    <input type="text" name="weight_of_co2_in_fe[${form_set_count}]" id="weight_of_co2_in_fe-${form_set_count}" class="form-control">
+                                    <input type="text" name="weight_of_co2_in_fe[${form_set_count}]" id="weight_of_co2_in_fe-${form_set_count}"
+                                    placeholder="Weight of CO2 in FE" class="form-control">
                                 </div>
                             </div>
                             <div class="col-md-4 mb-2">
@@ -744,7 +766,8 @@
                                 <div class="form-group form-input">
                                     <label
                                         class="form-label require">Approach</label>
-                                    <input type="text" name="approach[${form_set_count}]" id="approach-${form_set_count}" class="form-control">
+                                    <input type="text" name="approach[${form_set_count}]" id="approach-${form_set_count}"
+                                    placeholder="Approach" class="form-control">
                                 </div>
                             </div>
 
@@ -752,7 +775,8 @@
                                 <div class="form-group form-input">
                                     <label
                                         class="form-label require">{{ __('inspection.remarks') }}</label>
-                                    <textarea name="remarks[${form_set_count}]" id="remarks" class="form-control" style="resize: none;"></textarea>
+                                    <textarea name="remarks[${form_set_count}]" id="remarks" class="form-control"
+                                    placeholder="Remarks" style="resize: none;"></textarea>
 
                                 </div>
                             </div>

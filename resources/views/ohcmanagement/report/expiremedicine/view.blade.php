@@ -49,24 +49,14 @@
                                         </div>
                                     </div>
 
-                                    <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Quantity') }}</label>
-                                        <div class="view_data">
-                                            {{ isset($medicine->quantity) ? $medicine->quantity : '' }}
-                                        </div>
-                                    </div>
+
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('Expire Date') }}</label>
                                         <div class="view_data">
-                                            {{ displaydateformat(isset($medicine->expiry_date) ? $medicine->expiry_date : '') }}
+                                            {{ displaydateformat(isset($medicine->expire_date	) ? $medicine->expire_date	 : '') }}
                                         </div>
                                     </div>
-                                    <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Remarks') }}</label>
-                                        <div class="view_data">
-                                            {{ isset($medicine->remarks) ? $medicine->remarks : '' }}
-                                        </div>
-                                    </div>
+                                  
 
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('Created By') }}</label>
@@ -83,7 +73,7 @@
 
                                 </div>
 
-                             
+
 
                             </div>
                         </div>
