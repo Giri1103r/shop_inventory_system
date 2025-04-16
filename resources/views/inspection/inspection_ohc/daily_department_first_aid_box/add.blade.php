@@ -117,7 +117,7 @@
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">First Aid Box Number</label>
-                                                    <input type="text" name="first_aid_box_no" id = "first_aid_box_no"
+                                                    <input type="number" min="1" name="first_aid_box_no" id = "first_aid_box_no"
                                                         class="form-control">
                                                 </div>
                                             </div>

@@ -170,8 +170,26 @@ class SafetyPermitController extends BaseController
                 foreach ($items as $item) {
                     $key = strtolower(str_replace('/', '_', $item));
 
+                    // Determine the correct image path
+                    switch ($item) {
+                        case 'Air':
+                            $imagePath = 'public/assets/images/safetypermit/person.png';
+                            break;
+                        case 'Gas':
+                            $imagePath = 'public/assets/images/safetypermit/natural-gas.png';
+                            break;
+                        case 'Electrical':
+                            $imagePath = 'public/assets/images/safetypermit/electrician.png';
+                            break;
+                        case 'Water/Liquid':
+                            $imagePath = 'public/assets/images/safetypermit/leak.png';
+                            break;
+                        default:
+                            $imagePath = 'public/assets/images/safetypermit/default.png'; // fallback
+                    }
+
                     $state_of_isolation[$key] = [
-                        'image' => asset('assets/images/safetypermit/person.png'),
+                        'image' => $imagePath,
                         'name' => $item,
                         'checked' => in_array($item, $stateIsolationLoto) ? 'Yes' : 'No'
                     ];
@@ -179,7 +197,7 @@ class SafetyPermitController extends BaseController
 
                 // These should be outside the loop, defined once
                 $isolationpanel = [
-                    'image' => asset('assets/images/safetypermit/person.png'),
+                    'image' => ('public/assets/images/safetypermit/person.png'),
                     'name' => "Isolation fire panel",
                     'checked' => $safetypermit->isolationpanel_checkbox ? 'Yes' : 'No'
                 ];
@@ -303,25 +321,25 @@ class SafetyPermitController extends BaseController
                         'job_description' => $safetypermit->job_description,
 
                         'shut_down' => [
-                            'images' => asset('assets/images/safetypermit/power-off.png'),
+                            'images' => ('public/assets/images/safetypermit/power-off.png'),
                             'name' => "Shut Down Required",
                             'shutdown_req_checked' => $safetypermit->shutdown_req == 1 ? 'Yes' : 'No',
                         ],
 
                         'shut_down_takenby' => [
-                            'images' => asset('assets/images/safetypermit/profile.png'),
+                            'images' => ('public/assets/images/safetypermit/profile.png'),
                             'name' => "Taken By (Name & Department)",
                             'shut_down_takenby' => $safetypermit->shut_down_takenby,
                         ],
 
                         'loto_req' => [
-                            'images' => asset('assets/images/safetypermit/process.png'),
+                            'images' => ('public/assets/images/safetypermit/process.png'),
                             'name' => "Isolation/LOTO Required",
                             'loto_req_checked' => $safetypermit->loto_req == 1 ? 'Yes' : 'No',
                         ],
 
                         'loto_req_takenby' => [
-                            'images' => asset('assets/images/safetypermit/profile.png'),
+                            'images' => ('public/assets/images/safetypermit/profile.png'),
                             'name' => "Taken By (Name & Department)",
                             'loto_takenby' => $safetypermit->loto_takenby,
                         ],
@@ -376,13 +394,13 @@ class SafetyPermitController extends BaseController
 
                     'protective_equipments_worn' => [
                         'images' => [
-                            url('public/assets/images/safetypermit/gloves.png'),
-                            url('public/assets/images/safetypermit/helmet.png'),
-                            url('public/assets/images/safetypermit/shoes.png'),
-                            url('public/assets/images/safetypermit/gloves (1).png'),
-                            url('public/assets/images/safetypermit/boots (1).png'),
-                            url('public/assets/images/safetypermit/boots.png'),
-                            url('public/assets/images/safetypermit/safety-goggles.png'),
+                            ('public/assets/images/safetypermit/gloves.png'),
+                            ('public/assets/images/safetypermit/helmet.png'),
+                            ('public/assets/images/safetypermit/shoes.png'),
+                            ('public/assets/images/safetypermit/gloves (1).png'),
+                            ('public/assets/images/safetypermit/boots (1).png'),
+                            ('public/assets/images/safetypermit/boots.png'),
+                            ('public/assets/images/safetypermit/safety-goggles.png'),
                         ],
                         'protective_equipments_worn' => $protective_equip,
                     ],
@@ -394,10 +412,10 @@ class SafetyPermitController extends BaseController
                     ],
                     'equipment_involved_job' => [
                         'images' => [
-                            url('public/assets/images/safetypermit/flash.png'),
-                            url('public/assets/images/safetypermit/shoes.png'),
-                            url('public/assets/images/safetypermit/gloves (1).png'),
-                            url('public/assets/images/safetypermit/gloves.png'),
+                            ('public/assets/images/safetypermit/flash.png'),
+                            ('public/assets/images/safetypermit/shoes.png'),
+                            ('public/assets/images/safetypermit/gloves (1).png'),
+                            ('public/assets/images/safetypermit/gloves.png'),
 
                         ],
                         'equipment_involved_job' => $equipment_involve,
@@ -825,7 +843,7 @@ class SafetyPermitController extends BaseController
                 'exact_location_job' => $safetypermit->exact_location_job ?? '-',
                 'job_location_area' => $safetypermit->job_location_area ?? '-',
                 'created_by' => isset($safetypermit->created_by) ? getUsername($safetypermit->created_by) : '-',
-                'qr_code' => $qrBase64,
+
             ];
 
             return $this->sendResponse($success, 'Safety Permit Qr Code');

@@ -287,7 +287,7 @@ class OccupationHealthInspectionController extends Controller
                     $email_id = getUseremail($user);
                     $url = admin_url('ohc/inspection/verification/' . encryptId($id) . '/ehs');
                     $details = array(
-                        'safety_type' => 'Occupational Health Center Inspection Checklist',
+                        'ohc_type' => 'Occupational Health Center Inspection Checklist',
                         'email' => $email_id,
                         'mail_subject' => $mailsubject,
                         'title' => $title,
@@ -428,7 +428,7 @@ class OccupationHealthInspectionController extends Controller
             $email_id = getUseremail($user);
             $url = admin_url('ohc/inspection/verification/' . encryptId($id) . '/ehs');
             $details = array(
-                'safety_type' => 'Occupational Health Center Inspection Checklist',
+                'ohc_type' => 'Occupational Health Center Inspection Checklist',
                 'email' => $email_id,
                 'mail_subject' => $mailsubject,
                 'title' => $title,
@@ -490,7 +490,7 @@ class OccupationHealthInspectionController extends Controller
             $email_id = getUseremail($user);
             $url = admin_url('ohc/inspection/verification/' . encryptId($id) . '/ehsVerify');
             $details = array(
-                'safety_type' => 'Occupational Health Center Inspection Checklist',
+                'ohc_type' => 'Occupational Health Center Inspection Checklist',
                 'email' => $email_id,
                 'mail_subject' => $mailsubject,
                 'title' => 'CAPA Action Completed by the Fire Associates',
@@ -564,7 +564,7 @@ class OccupationHealthInspectionController extends Controller
                 $email_id = getUseremail($user);
                 $url = $web_link;
                 $details = array(
-                    'safety_type' => 'Occupational Health Center Inspection Checklist',
+                    'ohc_type' => 'Occupational Health Center Inspection Checklist',
                     'email' => $email_id,
                     'mail_subject' => $mailsubject,
                     'title' => $title,
@@ -643,7 +643,7 @@ class OccupationHealthInspectionController extends Controller
                 $email_id = getUseremail($user);
                 $url = $web_link;
                 $details = array(
-                    'safety_type' => 'Occupational Health Center Inspection Checklist',
+                    'ohc_type' => 'Occupational Health Center Inspection Checklist',
                     'email' => $email_id,
                     'mail_subject' => $mailsubject,
                     'title' => $title,
@@ -718,7 +718,7 @@ class OccupationHealthInspectionController extends Controller
                 $email_id = getUseremail($user);
                 $url = $web_link;
                 $details = array(
-                    'safety_type' => 'Occupational Health Center Inspection Checklist',
+                    'ohc_type' => 'Occupational Health Center Inspection Checklist',
                     'email' => $email_id,
                     'mail_subject' => $mailsubject,
                     'title' => $title,

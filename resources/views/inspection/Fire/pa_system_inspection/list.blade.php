@@ -198,7 +198,7 @@
                         data: function(d) {
                             d.date_of_inspection = $('#date_of_inspection').val();
                             d.next_due = $('#next_due').val();
-                            d.location = $('#location').val();
+                            d.location_id = $('#location').val();
                             d.shift = $('#shift').val();
                             d.unit = $('#unit').val();
                             d.frequency = $('#frequency').val();
@@ -276,7 +276,7 @@
                                         var searchValue = $('#datatable-list_filter input').val();
                                         inspection_date = $('#inspection_date').val();
                                         next_due = $('#next_due').val();
-                                        location = $('#location').val();
+                                        location_id = $('#location').val();
                                         shift = $('#shift').val();
                                         unit = $('#unit').val();
                                         frequency = $('#frequency').val();
@@ -289,7 +289,7 @@
                                             '?search=' + searchValue +
                                             '&inspection_date=' + inspection_date +
                                             '&next_due=' + next_due +
-                                            '&location=' + location +
+                                            '&location=' + location_id +
                                             '&shift=' + shift +
                                             '&unit=' + unit +
                                             '&frequency=' + frequency +
@@ -303,7 +303,7 @@
                                         var searchValue = $('#datatable-list_filter input').val();
                                         inspection_date = $('#inspection_date').val();
                                         next_due = $('#next_due').val();
-                                        location = $('#location').val();
+                                        location_id = $('#location').val();
                                         shift = $('#shift').val();
                                         unit = $('#unit').val();
                                         frequency = $('#frequency').val();
@@ -315,7 +315,7 @@
                                             '?search=' + searchValue +
                                             '&inspection_date=' + inspection_date +
                                             '&next_due=' + next_due +
-                                            '&location=' + location +
+                                            '&location=' + location_id +
                                             '&shift=' + shift +
                                             '&unit=' + unit +
                                             '&frequency=' + frequency +

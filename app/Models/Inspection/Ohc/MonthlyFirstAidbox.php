@@ -176,14 +176,7 @@ class MonthlyFirstAidbox extends Model
         $query = $this->select(
             'inspection_ohc_monthly_first_aid_audit.*',
           );
-        if (isset($request->search['value']) && $request->search['value'] != '') {
-            $search = $request->search['value'];
-            $query = $query->where(function ($query) use ($search) {
-                $query
-                    ->orWhere('inspection_frequency_option.frequency_name', 'LIKE', '%' . $search . '%')
-                    ->orWhere('inspection_shift_option.shift', 'LIKE', '%' . $search . '%');
-            });
-        }
+
 
         if (isset($request->shift) && $request->shift) {
             $query = $query->where('inspection_ohc_monthly_first_aid_audit.shift', decryptId($request->shift));
@@ -192,9 +185,6 @@ class MonthlyFirstAidbox extends Model
             $query = $query->where('inspection_ohc_monthly_first_aid_audit.frequency', decryptId($request->frequency));
         }
 
-
-
-
-        return $query->orderBy('inspection_ohc_monthly_first_aid_audit.id', 'DESC')->get(); // Add `get()` here
+        return $query->orderBy('id', 'DESC')->get(); // Add `get()` here
     }
 }

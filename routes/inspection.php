@@ -742,6 +742,7 @@ Route::group(['prefix' => 'fire/'], function () {
         Route::POST('level-one/verify/submit', [PASystemInspectionController::class, 'levelOneManagerSubmit']);
         Route::POST('level-two/verify/submit', [PASystemInspectionController::class, 'levelTwoManagerSubmit']);
         Route::GET('exportViewPdf/{id}', [PASystemInspectionController::class, 'ExportViewPDF']);
+        Route::GET('generalExcel/{id}', [PASystemInspectionController::class, 'generalExcel']);
         Route::GET('export/excel', [PASystemInspectionController::class, 'ExportExcel']);
         Route::GET('export/pdf', [PASystemInspectionController::class, 'ExportPDF']);
         Route::GET('get/locations', [PASystemInspectionController::class, 'GetLocations']);
