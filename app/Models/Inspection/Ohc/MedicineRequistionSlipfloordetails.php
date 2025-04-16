@@ -160,8 +160,7 @@ class MedicineRequistionSlipfloordetails extends Model
 
         $insert_array = [
 
-            'shift' => decryptId($request->shift),
-            'location' => decryptId($request->location_id),
+           
             'department' => decryptId($request->department_id),
             'unit' => decryptId($request->unit_id),
             'date' => !empty($request->date) ? DBdateformat($request->date) : null,

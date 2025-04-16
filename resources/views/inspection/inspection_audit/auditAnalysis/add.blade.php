@@ -13,7 +13,7 @@
     <div class="clearfix"></div>
     <div class="page-titles">
         <div class="d-flex align-items-center">
-            {{-- <h4 class="text-black">{{ __('MSDS Add') }}</h4> --}}
+            {{-- <h4 class="text-black">{{ __('6S Audit Analysis Add') }}</h4> --}}
         </div>
 
     </div>
@@ -40,11 +40,11 @@
 
                                         <div class="row">
                                             <div class="card-header-inner">
-                                                <h4 class="text-white">Audit Analysis</h4>
+                                                <h4 class="text-white">6S Audit Analysis</h4>
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Audit Analysis ID </label>
+                                                    <label class="form-label require">6S Audit Analysis ID </label>
                                                     <input type="text" name="audit_analysis_id" class="form-control"
                                                         value="{{ getsequence('audit_analysis') }}" readonly>
                                                 </div>
@@ -82,80 +82,76 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="card-header-inner d-flex justify-content-between">
+                                                    <h4 class="text-white">6S Audit Analysis CheckList</h4>
+                                                    <button class="btn btn-primary addmorebutton"
+                                                        data-block='lesson_learned_block' data-row='lesson_learned_row'
+                                                        type="button" id="dynamic-add-more"
+                                                        style="margin-left: 10px; width: 84px;">
+                                                        Add
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div id="lesson_learned_block">
+                                                <div class="row lesson_learned_row" style="margin-top: 20px;">
 
-                                        <div class="row mt-4">
-                                            <div id="form-wrapper">
-                                                <div class="form-set mb-3">
-                                                    <div class="card-header-inner">
-                                                        <h4 class="text-white">Audit Analysis CheckList</h4>
+                                                    <div class="col-md-4">
+                                                        <div class="form-group form-input">
+                                                            <label class="form-label require">SR NO</label>
+                                                            <input type="text" name="audit[1][serial_number]"
+                                                                id="serial_number_1" class="form-control sr-no"
+                                                                value="SN-0001" readonly>
+                                                        </div>
                                                     </div>
-                                                    <div class="d-flex justify-content-end">
-                                                        <button class="btn btn-primary add-row me-3" type="button"
-                                                            id="add-row" style="width: 84px;">Add</button>
-                                                        <button type="button" class="btn btn-danger remove-row">
-                                                            <i class="fa-solid fa-trash"></i> Remove
-                                                        </button>
+                                                    <div class="col-md-4 mt-2">
+                                                        <div class="form-group form-input">
+                                                            <label class="form-label require">Department Name</label>
+                                                            <select name="audit[1][department_id]" id="department_id_1"
+                                                                class="form-control single-select" style="width: 100%">
+                                                                <option value="">Select Department</option>
+                                                                @foreach ($departmentList as $department)
+                                                                    <option value="{{ encryptId($department->id) }}">
+                                                                        {{ $department->department_name }}</option>
+                                                                @endforeach
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4 mt-2">
+                                                        <div class="form-group form-input">
+                                                            <label class="form-label require">Unit Name</label>
+                                                            <select name="audit[1][unit_id]" id="unit_id_1"
+                                                                class="form-control single-select" style="width: 100%">
+                                                                <option value="">Select Unit</option>
+                                                                @foreach ($unitList as $unit)
+                                                                    <option value="{{ encryptId($unit->id) }}">
+                                                                        {{ $unit->unit_name }}</option>
+                                                                @endforeach
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4 mt-2">
+                                                        <div class="form-group form-input">
+                                                            <label class="form-label require">Year</label>
+                                                            <input type="text" id="year_1" name="audit[1][year]"
+                                                                class="form-control" placeholder="Year" value="">
+                                                        </div>
                                                     </div>
 
-                                                    <div class="row">
-                                                        <div class="col-md-4">
-                                                            <div class="form-group form-input">
-                                                                <label class="form-label require">Serial Number</label>
-                                                                <input type="text" name="audit[1][serial_number]" id="serial_number_1"
-                                                                    class="form-control" value="AUDIT-0001" readonly>
-                                                            </div>
+                                                    <div class="col-md-4 mt-2">
+                                                        <div class="form-group form-input">
+                                                            <label class="form-label require">Month</label>
+                                                            <input type="text" id="month_1" name="audit[1][month]"
+                                                                class="form-control" placeholder="month" value="">
                                                         </div>
-                                                        <div class="col-md-4">
-                                                            <div class="form-group form-input">
-                                                                <label class="form-label require">Department Name</label>
-                                                                <select name="audit[1][department_id]" id="department_id_1"
-                                                                    class="form-control single-select" style="width: 100%">
-                                                                    <option value="">Select Department</option>
-                                                                    @foreach ($departmentList as $department)
-                                                                        <option value="{{ $department->id }}">
-                                                                            {{ $department->department_name }}</option>
-                                                                    @endforeach
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-4">
-                                                            <div class="form-group form-input">
-                                                                <label class="form-label require">Unit Name</label>
-                                                                <select name="audit[1][unit_id]"  id="unit_id_1" class="form-control single-select"
-                                                                    style="width: 100%">
-                                                                    <option value="">Select Unit</option>
-                                                                    @foreach ($unitList as $unit)
-                                                                        <option value="{{ $unit->id }}">
-                                                                            {{ $unit->unit_name }}</option>
-                                                                    @endforeach
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-4">
-                                                            <div class="form-group form-input">
-                                                                <label class="form-label require">Year</label>
-                                                                <input type="text" id="year_1" name="audit[1][year]"
-                                                                    class="form-control" placeholder="Year"
-                                                                    value="">
-                                                            </div>
-                                                        </div>
+                                                    </div>
 
-                                                        <div class="col-md-4">
-                                                            <div class="form-group form-input">
-                                                                <label class="form-label require">Month</label>
-                                                                <input type="text" id="month_1" name="audit[1][month]"
-                                                                    class="form-control" placeholder="month"
-                                                                    value="">
-                                                            </div>
-                                                        </div>
-
-                                                        <div class="col-md-4">
-                                                            <div class="form-group form-input">
-                                                                <label class="form-label require">Mark</label>
-                                                                <input type="text" name="audit[1][mark]" id="mark_1"
-                                                                    class="form-control" placeholder="mark"
-                                                                    value="">
-                                                            </div>
+                                                    <div class="col-md-4 mt-2">
+                                                        <div class="form-group form-input">
+                                                            <label class="form-label require">Mark</label>
+                                                            <input type="text" name="audit[1][mark]" id="mark_1"
+                                                                class="form-control" placeholder="mark" value="">
                                                         </div>
                                                     </div>
 
@@ -164,44 +160,50 @@
                                                             <div class="form-group form-input">
                                                                 <label class="form-label require">Total No's of
                                                                     Audit</label>
-                                                                <input type="text" name="audit[1][no_of_audit]" id="no_of_audit_1"
-                                                                    class="form-control">
+                                                                <input type="text" name="audit[1][no_of_audit]"
+                                                                    id="no_of_audit_1" class="form-control">
                                                             </div>
                                                         </div>
                                                         <div class="col-md-3">
                                                             <div class="form-group form-input">
                                                                 <label class="form-label require">Total Marks</label>
-                                                                <input type="text" name="audit[1][total_marks]" id="total_marks_1"
-                                                                    class="form-control">
+                                                                <input type="text" name="audit[1][total_marks]"
+                                                                    id="total_marks_1" class="form-control">
                                                             </div>
                                                         </div>
                                                         <div class="col-md-3">
                                                             <div class="form-group form-input">
                                                                 <label class="form-label require">Total Marks
                                                                     Obtained</label>
-                                                                <input type="text" name="audit[1][marks_obtained]" id="marks_obtained_1"
-                                                                    class="form-control">
+                                                                <input type="text" name="audit[1][marks_obtained]"
+                                                                    id="marks_obtained_1" class="form-control">
                                                             </div>
                                                         </div>
                                                         <div class="col-md-3">
                                                             <div class="form-group form-input">
                                                                 <label class="form-label require">%</label>
-                                                                <input type="text" name="audit[1][percentage]" id="percentage_1"
-                                                                    class="form-control">
+                                                                <input type="text" name="audit[1][percentage]"
+                                                                    id="percentage_1" class="form-control">
                                                             </div>
                                                         </div>
                                                     </div>
+                                                    <div class="col-md-2 text-right mt-2">
+                                                        <button class="btn btn-danger removerowdata" type="button"
+                                                            style="margin:10px;"><i class="fa fa-trash"></i></button>
+
+                                                    </div>
+
+                                                    <hr>
                                                 </div>
                                             </div>
+
                                         </div>
 
-
-                                        <hr>
                                         <div class="submit-button" style="text-align: right;">
 
                                             <x-button-submit class="submit"></x-button-submit>
                                             <x-button-reset class="submit"></x-button-reset>
-                                            <x-button-cancel href="{{ admin_url('msds/list') }}"></x-button-cancel>
+                                            <x-button-cancel href="{{ admin_url('audit/6s-analysis/list') }}"></x-button-cancel>
                                         </div>
 
                                     </form>
@@ -213,365 +215,174 @@
                 </div>
             </div>
         </div>
-        </form>
     </div>
 @stop
 
 
 @push('script')
     <script type="text/javascript" nonce="projectcab">
-        $(document).ready(function() {
-            function checkSelections() {
-                var departmentId = $("input[id^='department_id_']").val();
-                var unitId = $("input[id^='unit_id_']").val();
-                var year = $("input[id^='year_']").val();
-                var month = $("input[id^='month_']").val();
+        function checkSelections(row) {
+            const departmentId = row.find("input[id^='department_id_']").val();
+            const unitId = row.find("input[id^='unit_id_']").val();
+            const year = row.find("input[id^='year_']").val();
+            const month = row.find("input[id^='month_']").val();
 
-                if (month && year && unitId && departmentId) {
-                    $.ajax({
-                        url: "{{ url('audit/6s-analysis/ajax-list') }}",
-                        type: 'GET',
-                        dataType: 'json',
-                        data: {
-                            departmentId: departmentId,
-                            unitId: unitId,
-                            year: year,
-                            month: month,
-                        },
-                        success: function(response) {
-                            $('.text-danger').remove();
-                            var conflicts = response.conflicts;
-
-                            if (Object.keys(conflicts).length > 0) {
-                                for (var key in conflicts) {
-                                    if (conflicts.hasOwnProperty(key)) {
-                                        $('#' + key).closest('.form-group').append(
-                                            '<div><span class="text-danger">' + conflicts[key] +
-                                            '</span></div>'
-                                        );
-                                    }
-                                }
-                                $('#auditAnalysisAdd').data('conflict', true);
-                            } else {
-                                $('#auditAnalysisAdd').data('conflict', false);
-                            }
-                        },
-                        error: function(xhr) {
-                            alert('Error fetching data. Please try again.');
+            if (departmentId && unitId && year && month) {
+                $.ajax({
+                    url: "{{ url('audit/6s-analysis/ajax-list') }}",
+                    type: 'GET',
+                    dataType: 'json',
+                    data: {
+                        departmentId: departmentId,
+                        unitId: unitId,
+                        year: year,
+                        month: month
+                    },
+                    success: function(response) {
+                        row.find('.text-danger').remove();
+                        if (response.conflicts && Object.keys(response.conflicts).length > 0) {
+                            row.find("input[id^='month_']").closest(".form-group").append(
+                                `<div><span class="text-danger">${response.conflicts.exists}</span></div>`
+                            );
                         }
-                    });
-                } else {
-                    $('.text-danger').remove();
-                    $('#auditAnalysisAdd').data('conflict', false);
-                }
-            }
-
-            $("input[id^='department_id_']").on('change', checkSelections);
-            $("input[id^='unit_id_']").on('change', checkSelections);
-            $("input[id^='year_']").on('change', checkSelections);
-            $("input[id^='month_']").on('change', checkSelections);
-
-            $('#resetform').on('click', function(e) {
-                e.preventDefault();
-                location.reload();
-            });
-
-            var fromDatepicker = flatpickr("#issue_date", {
-                dateFormat: "d-m-Y",
-                minDate: new Date(),
-            });
-            $('#year').datepicker({
-                format: 'yyyy',
-                minViewMode: 'years',
-                viewMode: 'years',
-                autoclose: true
-            });
-
-            $('#month').datepicker({
-                format: 'M',
-                minViewMode: 'months',
-                viewMode: 'months',
-                autoclose: true
-            });
-
-
-            $.validator.addMethod("noSpaces", function(value, element) {
-                return this.optional(element) || value.trim().length > 0;
-            }, "This field cannot contain only spaces");
-
-            $('#auditAnalysisAdd').validate({
-                rules: {
-                    audit_analysis: {
-                        required: true,
                     },
-                    document_number: {
-                        required: true,
-                        noSpaces: true,
-                    },
-                    issue_date: {
-                        required: true,
-                    },
-                    revision_date: {
-                        required: true,
-                    },
-                    year: {
-                        required: true,
-                    },
-                    month: {
-                        required: true,
-                    },
-                    mark: {
-                        required: true,
-                    },
-                    'department_id[1]': {
-                        required: true,
-                    },
-                    'unit_id[1]': {
-                        required: true,
-                    },
-                    'no_of_audit[1]': {
-                        required: true,
-                    },
-                    'total_marks[1]': {
-                        required: true,
-                    },
-                    'marks_obtained[1]': {
-                        required: true,
-                    },
-                    'percentage[1]': {
-                        required: true,
-                    },
-                },
-                messages: {
-                    audit_analysis: {
-                        required: "6S Audit Analysis Report is Required",
-                    },
-                    document_number: {
-                        required: "Document Number is Required",
-                    },
-                    issue_date: {
-                        required: "Issue Date is Required",
-                    },
-                    revision_date: {
-                        required: "Revision Date is Required",
-                    },
-                    year: {
-                        required: "Year is Required",
-                    },
-                    month: {
-                        required: "Month is Required",
-                    },
-                    mark: {
-                        required: "Mark is Required",
-                    },
-                    'department_id[1]': {
-                        required: "Department Name is Required",
-                    },
-                    'unit_id[1]': {
-                        required: "Unit Name is Required",
-                    },
-                    'no_of_audit[1]': {
-                        required: "Total No's of Audit is Required",
-                    },
-                    'total_marks[1]': {
-                        required: "Total Marks is Required",
-                    },
-                    'marks_obtained[1]': {
-                        required: "Total Marks Obtained is Required",
-                    },
-                    'percentage[1]': {
-                        required: "Percentage is Required",
-                    },
-                },
-                errorElement: 'span',
-                errorPlacement: function(error, element) {
-                    error.addClass('invalid-feedback');
-                    element.closest('.form-input').append(error);
-                },
-                highlight: function(element, errorClass, validClass) {
-                    $(element).addClass('is-invalid');
-                },
-                unhighlight: function(element, errorClass, validClass) {
-                    $(element).removeClass('is-invalid');
-                },
-                submitHandler: function(form) {
-                    form.submit();
-                },
-                invalidHandler: function(event, validator) {
-                    var errors = validator.numberOfInvalids();
-                    validator.errorList.forEach(function(error) {});
-                }
-            });
-
-
-
-            let form_set_count = 2;
-            const maxFormSets = 200;
-            const minFormSets = 1;
-            $(document).on('click', ".add-row", function() {
-                let currentFormSets = $('#form-wrapper .form-set').length;
-                let maxFormSets = 200;
-
-                if (currentFormSets >= maxFormSets) {
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Maximum Checklist Reached',
-                        text: 'You can only add up to 200 Audit CheckLists.',
-                        confirmButtonColor: '#3085d6'
-                    });
-                    return;
-                }
-
-                let form_set_count = currentFormSets + 1;
-                let newSerialNumber = ('00000' + form_set_count).slice(-5);
-
-                let newFormSet = `
-                    <div class="form-set mb-3">
-                        <div class="card-header-inner">
-                            <h4 class="text-white">Audit Analysis CheckList</h4>
-                        </div>
-                        <div class="d-flex justify-content-end">
-                            <button class="btn btn-primary add-row me-3" type="button" style="width: 84px;">Add</button>
-                            <button type="button" class="btn btn-danger remove-row">
-                                <i class="fa-solid fa-trash"></i> Remove
-                            </button>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="form-group form-input">
-                                    <label class="form-label require">Serial Number</label>
-                                    <input type="text" name="audit[${form_set_count}][serial_number]" id="serial_number_${form_set_count}" class="form-control" value="${newSerialNumber}" readonly>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-group form-input">
-                                    <label class="form-label require">Department Name</label>
-                                    <select name="audit[${form_set_count}][department_id]" id="department_id_${form_set_count}" class="form-control single-select" style="width: 100%">
-                                        <option value="">Select Department</option>
-                                        @foreach ($departmentList as $department)
-                                            <option value="{{ $department->id }}">{{ $department->department_name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-group form-input">
-                                    <label class="form-label require">Unit Name</label>
-                                    <select name="audit[${form_set_count}][unit_id]" id="unit_id_${form_set_count}" class="form-control single-select">
-                                        <option value="">Select Unit</option>
-                                        @foreach ($unitList as $unit)
-                                            <option value="{{ $unit->id }}">{{ $unit->unit_name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-group form-input">
-                                    <label class="form-label require">Year</label>
-                                    <input type="text" name="audit[${form_set_count}][year]" class="form-control year-picker" id="year_${form_set_count}" placeholder="Year">
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-group form-input">
-                                    <label class="form-label require">Month</label>
-                                    <input type="text" name="audit[${form_set_count}][month]" class="form-control month-picker" id="month_${form_set_count}" placeholder="Month">
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-group form-input">
-                                    <label class="form-label require">Mark</label>
-                                    <input type="text" name="audit[${form_set_count}][mark]" id="mark_${form_set_count}" class="form-control" placeholder="Mark">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row mt-3">
-                            <div class="col-md-3">
-                                <div class="form-group form-input">
-                                    <label class="form-label require">Total No's of Audit</label>
-                                    <input type="text" name="audit[${form_set_count}][no_of_audit]" id="no_of_audit_${form_set_count}" class="form-control">
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="form-group form-input">
-                                    <label class="form-label require">Total Marks</label>
-                                    <input type="text" name="audit[${form_set_count}][total_marks]" id="total_marks_${form_set_count}" class="form-control">
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="form-group form-input">
-                                    <label class="form-label require">Total Marks Obtained</label>
-                                    <input type="text" name="audit[${form_set_count}][marks_obtained]" id="marks_obtained_${form_set_count}"  class="form-control">
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="form-group form-input">
-                                    <label class="form-label require">%</label>
-                                    <input type="text" name="audit[${form_set_count}][percentage]"  id="percentage_${form_set_count}" class="form-control">
-                                </div>
-                            </div>
-                        </div>
-                    </div>`;
-
-
-                $('#form-wrapper').append(newFormSet);
-
-                $('#form-wrapper .form-set:last .single-select').select2({
-                    width: '100%'
+                    error: function() {
+                        alert('Uniqueness check failed.');
+                    }
                 });
+            }
+        }
 
-                $('.year-picker').datepicker({
+        $('#resetform').on('click', function(e) {
+            e.preventDefault();
+            location.reload();
+        });
+
+
+
+        $.validator.addMethod("noSpaces", function(value, element) {
+            return this.optional(element) || value.trim().length > 0;
+        }, "This field cannot contain only spaces");
+
+
+        document.addEventListener("DOMContentLoaded", function() {
+            function initializeFlatpickr() {
+                $("input[id^='year_']").datepicker({
                     format: 'yyyy',
                     minViewMode: 'years',
                     viewMode: 'years',
                     autoclose: true
                 });
 
-                $('.month-picker').datepicker({
+                $("input[id^='month_']").datepicker({
                     format: 'M',
                     minViewMode: 'months',
                     viewMode: 'months',
                     autoclose: true
                 });
 
-            });
 
-            $(document).on('click', '.remove-row', function() {
-                if ($('#form-wrapper .form-set').length > 1) {
-                    $(this).closest('.form-set').remove();
-                    updatePageIndices();
-                } else {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Action Not Allowed',
-                        text: 'At least one Audit Checklist must remain.',
-                        confirmButtonColor: '#d33'
-                    });
-                }
-            });
 
-            // Function to Update Input Indices
-            function updatePageIndices() {
-                $('#form-wrapper .form-set').each(function(index) {
-                    $(this).find(':input').each(function() {
-                        let name = $(this).attr('name');
+            }
+
+            function updateRowIndexes() {
+                $("#lesson_learned_block .lesson_learned_row").each(function(index) {
+                    let newIndex = index + 1;
+                    let srNoValue = "SN-" + String(newIndex).padStart(4, '0');
+
+                    $(this).find("input, select, textarea").each(function() {
+                        const name = $(this).attr("name");
+                        const id = $(this).attr("id");
+
                         if (name) {
-                            name = name.replace(/\[\d+\]/, `[${index + 1}]`);
-                            $(this).attr('name', name);
+                            $(this).attr("name", name.replace(/\[\d+\]/, "[" + newIndex + "]"));
+                        }
+                        if (id) {
+                            $(this).attr("id", id.replace(/\d+$/, newIndex));
                         }
                     });
+
+                    $(this).find(".sr-no").val(srNoValue);
                 });
+
+                initializeFlatpickr();
+                $('.single-select').select2(); // reinitialize select2
             }
 
 
-            $(".submit").on('click', function() {
-                if ($("#auditAnalysisAdd").valid()) {
-                    $("#auditAnalysisAdd").submit();
+            $("#dynamic-add-more").on("click", function() {
+                let rowCount = $("#lesson_learned_block .lesson_learned_row").length;
+                if (rowCount >= 200) {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Sorry!",
+                        text: "Maximum 200 records only."
+                    });
+                    return;
+                }
+
+                let newRow = $(".lesson_learned_row").first().clone();
+                newRow.find("input, select, textarea").each(function() {
+                    let oldName = $(this).attr("name");
+                    let oldId = $(this).attr("id");
+
+                    if (oldName) {
+                        let newName = oldName.replace(/\[\d+\]/, "[" + (rowCount + 1) +
+                            "]");
+                        $(this).attr("name", newName);
+                    }
+                    if (oldId) {
+                        let newId = oldId.replace(/\d+$/, rowCount + 1);
+                        $(this).attr("id", newId);
+                    }
+                    if ($(this).is("input[type='text'], textarea")) {
+                        $(this).val("");
+                    }
+                    if ($(this).is("select")) {
+                        $(this).val("").trigger("change");
+                    }
+                });
+                newRow.find("input[name*='[serial_number]']").val("SN-" + String(rowCount + 1)
+                    .padStart(4,
+                        '0'));
+
+                newRow.find(".invalid-feedback").remove();
+                newRow.find(".is-invalid").removeClass("is-invalid");
+                newRow.find(".select2-container").remove();
+                newRow.find(".single-select").select2();
+
+                $("#lesson_learned_block").append(newRow);
+                newRow.find("input[name*='[spm]']").rules("add", {
+                    number: true,
+                    range: [0, 1000],
+                    messages: {
+                        number: "Only numeric values are allowed.",
+                        range: "Value must be between 0 and 1000 µg/m³."
+                    }
+                });
+
+
+
+
+                initializeFlatpickr();
+                $('.single-select').select2();
+            });
+
+            $(document).on("click", ".removerowdata", function() {
+                let rowCount = $("#lesson_learned_block .lesson_learned_row").length;
+                if (rowCount > 1) {
+                    $(this).closest(".lesson_learned_row").remove();
+                    updateRowIndexes();
                 } else {
-                    return false;
+                    Swal.fire({
+                        icon: "error",
+                        title: "Sorry!",
+                        text: "At least one record is required."
+                    });
                 }
             });
+
+            initializeFlatpickr();
         });
     </script>
 @endpush
