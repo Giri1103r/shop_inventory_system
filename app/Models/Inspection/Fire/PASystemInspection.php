@@ -77,8 +77,8 @@ class PASystemInspection extends Model
             });
         }
 
-        if (isset($request->location) && $request->location) {
-            $query = $query->where('inspection_fire_pa_system.location', 'LIKE', '%' . decryptId($request->location) . '%');
+        if (isset($request->location_id) && $request->location_id) {
+            $query = $query->where('inspection_fire_pa_system.location', 'LIKE', '%' . decryptId($request->location_id) . '%');
         }
         if (isset($request->frequency) && $request->frequency) {
             $query = $query->where('inspection_fire_pa_system.frequency', 'LIKE', '%' . decryptId($request->frequency) . '%');
@@ -169,7 +169,7 @@ class PASystemInspection extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_fire_pa_system.*', 'inspection_fire_pa_system_checklist.*', 'inspection_shift_option.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*')
+        $query = $this->select('inspection_fire_pa_system.*', 'inspection_fire_pa_system_checklist.*', 'inspection_shift_option.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*','inspection_fire_pa_system.id as fire_pa_inspection_id','inspection_fire_pa_system.created_by as checked_by')
             ->leftJoin('masters_location', 'inspection_fire_pa_system.location', '=', 'masters_location.id')
             ->leftJoin('inspection_shift_option', 'inspection_fire_pa_system.shift', '=', 'inspection_shift_option.id')
             ->leftJoin('masters_unit', 'inspection_fire_pa_system.unit', '=', 'masters_unit.id')
@@ -185,9 +185,8 @@ class PASystemInspection extends Model
                 $query->orWhereRaw('inspection_frequency_option.frequency_name LIKE "%' . $search . '%"');
             });
         }
-
-        if (isset($request->location) && $request->location) {
-            $query = $query->where('inspection_fire_pa_system.location', 'LIKE', '%' . decryptId($request->location) . '%');
+        if (isset($request->location_id) && $request->location_id) {
+            $query = $query->where('inspection_fire_pa_system.location', 'LIKE', '%' . decryptId($request->location_id) . '%');
         }
         if (isset($request->frequency) && $request->frequency) {
             $query = $query->where('inspection_fire_pa_system.frequency', 'LIKE', '%' . decryptId($request->frequency) . '%');
