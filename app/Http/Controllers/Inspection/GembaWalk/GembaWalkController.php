@@ -933,301 +933,6 @@ class GembaWalkController extends Controller
         }
     }
 
-    // public function generalExcel(Request $request)
-    // {
-    //     try {
-    //         $id = decryptId($request->id);
-    //         $gembaWalk_details = $this->gembaWalk->selectOne($id);
-    //         $getUserId = $this->gembaWalk->getUserId($id);
-    //         $type = GEMBA_WALK;
-
-    //         $gembaWalk_approved_singnature = GetSignature($getUserId->created_by, $id, $type);
-    //         $gembaWalk_verified_singnature = GetSignature($getUserId->updated_by, $id, $type);
-    //         $document_no = $this->document_reference->selectOne($getUserId->document_reference_id);
-
-    //         $spreadsheet = new Spreadsheet();
-    //         $sheet = $spreadsheet->getActiveSheet();
-
-    //         $logoPath = public_path('assets/images/logo-dark.png');
-    //         if (file_exists($logoPath)) {
-    //             $drawing = new Drawing();
-    //             $drawing->setName('Logo');
-    //             $drawing->setDescription('Company Logo');
-    //             $drawing->setPath($logoPath);
-    //             $drawing->setCoordinates('A1');
-    //             $drawing->setOffsetX(5);
-    //             $drawing->setOffsetY(5);
-    //             $drawing->setHeight(60);
-    //             $drawing->setWorksheet($sheet);
-    //         }
-
-    //         $sheet->mergeCells('A1:B3'); // Merge first
-
-    //         $sheet->getStyle('A1:B3')->applyFromArray([
-    //             'alignment' => [
-    //                 'horizontal' => Alignment::HORIZONTAL_CENTER,
-    //                 'vertical' => Alignment::VERTICAL_CENTER,
-    //             ],
-    //             'borders' => [
-    //                 'outline' => [
-    //                     'borderStyle' => Border::BORDER_THIN,
-    //                     'color' => ['argb' => 'FF000000'],
-    //                 ],
-    //             ],
-    //         ]);
-
-
-
-
-    //         $sheet->mergeCells("C1:K3");
-    //         $sheet->setCellValue("C1", "Gemba Walk Report");
-    //         $sheet->getStyle("C1")->applyFromArray([
-    //             'font' => ['bold' => true, 'size' => 16],
-    //             'alignment' => [
-    //                 'horizontal' => Alignment::HORIZONTAL_CENTER,
-    //                 'vertical' => Alignment::VERTICAL_CENTER,
-    //                 'wrapText' => true,
-    //             ],
-    //             'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['argb' => '000000']]],
-
-    //         ]);
-
-    //         $gemba = $gembaWalk_details->first();
-
-    //         $sheet->getRowDimension(4)->setRowHeight(30);
-
-    //         $sheet->mergeCells("A4:G4");
-    //         $sheet->setCellValue("A4", "Date: " . Displaydateformat($gemba->date));
-
-    //         $sheet->mergeCells("H4:N4");
-    //         $sheet->setCellValue("H4", "Shift: " . getShift($gemba->shift_id));
-
-    //         $sheet->getStyle('A4:N4')->applyFromArray([
-    //             'font' => [
-    //                 'bold' => true,
-    //                 'size' => 12,
-    //             ],
-    //             'alignment' => [
-    //                 'horizontal' => Alignment::HORIZONTAL_LEFT,
-    //                 'vertical' => Alignment::VERTICAL_CENTER,
-    //             ],
-    //             'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['argb' => '000000']]],
-
-    //         ]);
-
-
-    //         $headerLabels = [
-    //             'L1:M1' => 'Doc. No.',
-    //             'L2:M2' => 'Issue Dt.',
-    //             'L3:M3' => 'Rev. & Dt.',
-    //         ];
-
-    //         foreach ($headerLabels as $cellRange => $label) {
-    //             $cell = explode(':', $cellRange)[0];
-    //             $sheet->mergeCells($cellRange)->setCellValue($cell, $label);
-    //             $sheet->getStyle($cell)->applyFromArray([
-    //                 'font' => ['bold' => true],
-    //                 'alignment' => [
-    //                     'horizontal' => Alignment::HORIZONTAL_CENTER,
-    //                     'vertical' => Alignment::VERTICAL_CENTER,
-    //                 ],
-    //                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['argb' => '000000']]],
-
-    //             ]);
-    //         }
-
-    //         $sheet->setCellValue("N1", $document_no->doc_no);
-    //         $sheet->setCellValue("N2", Displaydateformat($document_no->issue_date));
-    //         $sheet->setCellValue("N3", $document_no->rev_dt);
-
-    //         $sheet->getStyle("L1:N3")->applyFromArray([
-    //             'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['argb' => '000000']]],
-    //             'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
-    //         ]);
-
-    //         $headers = [
-    //             'Sr.',
-    //             'Location',
-    //             'Unit',
-    //             'Date of Observation',
-    //             'Observation Type',
-    //             'Description',
-    //             'Hazard',
-    //             'Image',
-    //             'CAPA',
-    //             'Date of Compliance',
-    //             'Responsible Person',
-    //             'Status',
-    //             'Remark',
-    //             'Observation'
-    //         ];
-
-    //         $col = 'A';
-    //         foreach ($headers as $header) {
-    //             $sheet->setCellValue("{$col}5", $header);
-    //             $sheet->getStyle("{$col}5")->applyFromArray([
-    //                 'font' => ['bold' => true],
-    //                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
-    //                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-    //             ]);
-    //             $col++;
-    //         }
-
-    //         $row = 6;
-    //         $sr = 1;
-    //         foreach ($gembaWalk_details as $data) {
-    //             $sheet->setCellValue("A{$row}", $sr);
-    //             $sheet->setCellValue("B{$row}", getLocationname($data->location_id ?? ''));
-    //             $sheet->setCellValue("C{$row}", getUnitname($data->unit_id ?? ''));
-    //             $sheet->setCellValue("D{$row}", displayDateFormat($data->date_of_observation ?? ''));
-    //             $sheet->setCellValue("E{$row}", getObservationType($data->observation_type_id ?? ''));
-    //             $sheet->setCellValue("F{$row}", $data->description ?? '');
-    //             $sheet->setCellValue("G{$row}", $data->hazard ?? '');
-
-    //             // Insert Image if exists
-    //             if (!empty($data->file_path)) {
-    //                 $imagePath = public_path($data->file_path);
-    //                 if (file_exists($imagePath)) {
-    //                     $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
-    //                     $drawing->setPath($imagePath);
-    //                     $drawing->setCoordinates("H{$row}");
-    //                     $drawing->setOffsetX(5);
-    //                     $drawing->setOffsetY(5);
-    //                     $drawing->setWidth(80);
-    //                     $drawing->setWorksheet($sheet);
-    //                     $sheet->getRowDimension($row)->setRowHeight(90);
-    //                     $sheet->getColumnDimension('H')->setWidth(20);
-    //                 } else {
-    //                     $sheet->setCellValue("H{$row}", 'Image not found');
-    //                 }
-    //             } else {
-    //                 $sheet->setCellValue("H{$row}", 'No image');
-    //             }
-
-    //             $sheet->setCellValue("I{$row}", $data->capa ?? '');
-    //             $sheet->setCellValue("J{$row}", displayDateFormat($data->date_of_compliance ?? ''));
-    //             $sheet->setCellValue("K{$row}", getEmployeename($data->responsibility_id ?? ''));
-    //             $sheet->setCellValue("L{$row}", getGembaWalkStatus($data->status ?? ''));
-    //             $sheet->setCellValue("M{$row}", $data->remark ?? '');
-    //             $sheet->setCellValue("N{$row}", $data->observation_needed == '1' ? 'YES' : 'NO');
-
-    //             $sheet->getStyle("A{$row}:N{$row}")->applyFromArray([
-    //                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-    //                 'alignment' => ['vertical' => Alignment::VERTICAL_CENTER],
-    //             ]);
-
-    //             $row++;
-    //             $sr++;
-    //         }
-
-    //         foreach (range('A', 'N') as $col) {
-    //             if ($col !== 'H') {
-    //                 $sheet->getColumnDimension($col)->setAutoSize(true);
-    //             }
-    //         }
-    //         $signatureStartRow = $row;
-    //         $signatureEndRow = $signatureStartRow + 3;
-    //         $labelRow = $signatureEndRow + 1;
-    //         $imageHeight = 60;
-            
-    //         // Prepared By Signature
-    //         $sheet->mergeCells("A{$signatureStartRow}:G{$signatureEndRow}");
-            
-    //         if (file_exists($gembaWalk_approved_singnature)) {
-    //             $drawing = new Drawing();
-    //             $drawing->setName('GembaWalk Prepared Signature');
-    //             $drawing->setDescription('GembaWalk Prepared Signature');
-    //             $drawing->setPath($gembaWalk_approved_singnature);
-    //             $drawing->setCoordinates("D{$signatureStartRow}");
-    //             $drawing->setOffsetX(130);
-    //             $drawing->setOffsetY(10);
-    //             $drawing->setWidth($imageHeight);
-    //             $drawing->setHeight($imageHeight);
-    //             $drawing->setWorksheet($sheet);
-    //         } else {
-    //             $sheet->setCellValue("A{$signatureStartRow}", "Inspection not yet started");
-    //             $sheet->getStyle("A{$signatureStartRow}:G{$signatureEndRow}")->applyFromArray([
-    //                 'alignment' => [
-    //                     'horizontal' => Alignment::HORIZONTAL_CENTER,
-    //                     'vertical' => Alignment::VERTICAL_CENTER,
-    //                     'wrapText' => true,
-    //                 ],
-    //             ]);
-    //         }
-            
-    //         $preparedByName = getUsername($gemba->created_by);
-    //         $sheet->mergeCells("A{$labelRow}:G{$labelRow}");
-    //         $sheet->setCellValue("A{$labelRow}", "Prepared By:\n{$preparedByName}");
-    //         $sheet->getStyle("A{$labelRow}:G{$labelRow}")->applyFromArray([
-    //             'alignment' => [
-    //                 'horizontal' => Alignment::HORIZONTAL_CENTER,
-    //                 'vertical' => Alignment::VERTICAL_CENTER,
-    //                 'wrapText' => true,
-    //             ],
-    //             'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-    //         ]);
-    //         $sheet->getRowDimension($labelRow)->setRowHeight(35);
-            
-    //         // Verified By Signature
-    //         $sheet->mergeCells("H{$signatureStartRow}:N{$signatureEndRow}");
-            
-    //         if (file_exists($gembaWalk_verified_singnature)) {
-    //             $drawing = new Drawing();
-    //             $drawing->setName('GembaWalk Verified Signature');
-    //             $drawing->setDescription('GembaWalk Verified Signature');
-    //             $drawing->setPath($gembaWalk_verified_singnature);
-    //             $drawing->setCoordinates("J{$signatureStartRow}");
-    //             $drawing->setOffsetX(130);
-    //             $drawing->setOffsetY(10);
-    //             $drawing->setWidth($imageHeight);
-    //             $drawing->setHeight($imageHeight);
-    //             $drawing->setWorksheet($sheet);
-    //         } else {
-    //             $sheet->setCellValue("H{$signatureStartRow}", "Inspection not yet started");
-    //             $sheet->getStyle("H{$signatureStartRow}:N{$signatureEndRow}")->applyFromArray([
-    //                 'alignment' => [
-    //                     'horizontal' => Alignment::HORIZONTAL_CENTER,
-    //                     'vertical' => Alignment::VERTICAL_CENTER,
-    //                     'wrapText' => true,
-    //                 ],
-    //             ]);
-    //         }
-            
-    //         $verifiedByName = getUsername($gemba->verified_by); 
-    //         $sheet->mergeCells("H{$labelRow}:N{$labelRow}");
-    //         $sheet->setCellValue("H{$labelRow}", "Verified By:\n{$verifiedByName}");
-    //         $sheet->getStyle("H{$labelRow}:N{$labelRow}")->applyFromArray([
-    //             'alignment' => [
-    //                 'horizontal' => Alignment::HORIZONTAL_CENTER,
-    //                 'vertical' => Alignment::VERTICAL_CENTER,
-    //                 'wrapText' => true,
-    //             ],
-    //             'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-    //         ]);
-    //         $sheet->getRowDimension($labelRow)->setRowHeight(35);
-            
-    //         // Outer border for the entire signature block
-    //         $sheet->getStyle("A{$signatureStartRow}:N{$labelRow}")->applyFromArray([
-    //             'borders' => [
-    //                 'outline' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['argb' => '000000']],
-    //             ],
-    //         ]);
-            
-    //         $fileName = 'GembaWalk_Report.xlsx';
-    //         $writer = new Xlsx($spreadsheet);
-
-    //         return response()->streamDownload(function () use ($writer) {
-    //             $writer->save('php://output');
-    //         }, $fileName, [
-    //             'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    //         ]);
-    //     } catch (\Exception $e) {
-    //         dd($e);
-    //         report($e);
-    //         return back()->with('error', 'Failed to export Gemba Walk data.');
-    //     }
-    // }
-
     public function generalExcel(Request $request)
     {
         try {
@@ -1288,7 +993,6 @@ class GembaWalkController extends Controller
             ]);
 
             $gemba = $gembaWalk_details->first();
-
             $sheet->getRowDimension(4)->setRowHeight(30);
 
             $sheet->mergeCells("A4:G4");
@@ -1420,94 +1124,71 @@ class GembaWalkController extends Controller
                     $sheet->getColumnDimension($col)->setAutoSize(true);
                 }
             }
-            $signatureStartRow = $row;
-            $signatureEndRow = $signatureStartRow + 3;
-            $imageHeight = 60;
-            
-            // Prepared By Block
-            $sheet->mergeCells("A{$signatureStartRow}:G{$signatureEndRow}");
-            $preparedByCellRange = "A{$signatureStartRow}:G{$signatureEndRow}";
-            $preparedByName = getUsername($gemba->created_by);
-            
+            $signatureRowStart = $row;
+            $sheet->getRowDimension($signatureRowStart)->setRowHeight(80);
+
+            // === Prepared By ===
+            $sheet->mergeCells("A{$signatureRowStart}:G{$signatureRowStart}");
+            $sheet->getStyle("A{$signatureRowStart}:G{$signatureRowStart}")->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_CENTER,
+                    'vertical' => Alignment::VERTICAL_BOTTOM, // Align text to the bottom of the cell
+                    'wrapText' => false,
+                ],
+            ]);
+
+
             if (file_exists($gembaWalk_approved_singnature)) {
                 $drawing = new Drawing();
-                $drawing->setName('GembaWalk Prepared Signature');
-                $drawing->setDescription('GembaWalk Prepared Signature');
+                $drawing->setName('Signature');
+                $drawing->setDescription('Prepared By');
                 $drawing->setPath($gembaWalk_approved_singnature);
-                $drawing->setCoordinates("D{$signatureStartRow}");
-                $drawing->setOffsetX(130);
-                $drawing->setOffsetY(10);
-                $drawing->setWidth($imageHeight);
-                $drawing->setHeight($imageHeight);
+                $drawing->setCoordinates("D{$signatureRowStart}");
+                $drawing->setOffsetX(100);
+                $drawing->setOffsetY(5);
+                $drawing->setHeight(60);
                 $drawing->setWorksheet($sheet);
-            
-                // ✅ Add name AFTER image is added
-                $sheet->setCellValue("A{$signatureStartRow}", $preparedByName);
+                $sheet->setCellValue("A{$signatureRowStart}", "\n\n\nPrepared By:\n" . getUsername($gemba->created_by));
             } else {
-                $sheet->setCellValue("A{$signatureStartRow}", "Inspection not yet started");
+
+                $sheet->setCellValue("A{$signatureRowStart}", "Prepared By:\n" . getUsername($gemba->created_by));
             }
-            
-            $sheet->getStyle($preparedByCellRange)->applyFromArray([
+
+            // === Verified By ===
+            $sheet->mergeCells("H{$signatureRowStart}:N{$signatureRowStart}");
+            $sheet->getStyle("H{$signatureRowStart}:N{$signatureRowStart}")->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                 'alignment' => [
                     'horizontal' => Alignment::HORIZONTAL_CENTER,
                     'vertical' => Alignment::VERTICAL_BOTTOM,
-                    'wrapText' => true,
+                    'wrapText' => false,
                 ],
-                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
             ]);
-            
-            
-            // ✅ Verified By Block
-            $sheet->mergeCells("H{$signatureStartRow}:N{$signatureEndRow}");
-            $verifiedByCellRange = "H{$signatureStartRow}:N{$signatureEndRow}";
-            $verifiedByName = getUsername($gemba->verified_by);
-            
+
             if (file_exists($gembaWalk_verified_singnature)) {
                 $drawing = new Drawing();
-                $drawing->setName('GembaWalk Verified Signature');
-                $drawing->setDescription('GembaWalk Verified Signature');
+                $drawing->setName('Signature');
+                $drawing->setDescription('Verified By');
                 $drawing->setPath($gembaWalk_verified_singnature);
-                $drawing->setCoordinates("J{$signatureStartRow}");
-                $drawing->setOffsetX(130);
-                $drawing->setOffsetY(10);
-                $drawing->setWidth($imageHeight);
-                $drawing->setHeight($imageHeight);
+                $drawing->setCoordinates("K{$signatureRowStart}");
+                $drawing->setOffsetX(5);
+                $drawing->setOffsetY(5);
+                $drawing->setHeight(60);
                 $drawing->setWorksheet($sheet);
-            
-                // ✅ Add name AFTER image is added
-                $sheet->setCellValue("H{$signatureStartRow}", $verifiedByName);
+                $sheet->setCellValue("H{$signatureRowStart}", "\n\n\nVerified By:\n" . getUsername($gemba->verified_by));
             } else {
-                $sheet->setCellValue("H{$signatureStartRow}", "Inspection not yet started");
+                $sheet->setCellValue("H{$signatureRowStart}", "Not Verified Yet");
             }
-            
-            $sheet->getStyle($verifiedByCellRange)->applyFromArray([
-                'alignment' => [
-                    'horizontal' => Alignment::HORIZONTAL_CENTER,
-                    'vertical' => Alignment::VERTICAL_BOTTOM,
-                    'wrapText' => true,
-                ],
-                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-            ]);
-            
-            // Set row height for signature rows
-            for ($r = $signatureStartRow; $r <= $signatureEndRow; $r++) {
-                if ($r === $signatureStartRow) {
-                    $sheet->getRowDimension($r)->setRowHeight(75);
-                } else {
-                    $sheet->getRowDimension($r)->setRowHeight(25);
-                }
-            }
-            
-            // Optional: border for neatness
-            $sheet->getStyle("A{$signatureStartRow}:N{$signatureEndRow}")->applyFromArray([
+
+            $sheet->getStyle("A{$signatureRowStart}:N{$signatureRowStart}")->applyFromArray([
                 'borders' => [
                     'outline' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['argb' => '000000']],
                 ],
             ]);
-            
-            
-            
-            
+
+
+
             $fileName = 'GembaWalk_Report.xlsx';
             $writer = new Xlsx($spreadsheet);
 
@@ -1522,6 +1203,7 @@ class GembaWalkController extends Controller
             return back()->with('error', 'Failed to export Gemba Walk data.');
         }
     }
+
 
 
     public function ExportPdf(Request $request)
@@ -1619,7 +1301,7 @@ class GembaWalkController extends Controller
 
                 $sheet->mergeCells("C{$currentRow}:K" . ($currentRow + 2));
                 $sheet->setCellValue("C{$currentRow}", "Gemba Walk Report");
-                
+
                 $sheet->getStyle("C{$currentRow}:K" . ($currentRow + 2))->applyFromArray([
                     'font' => ['bold' => true, 'size' => 16],
                     'alignment' => [
@@ -1633,7 +1315,7 @@ class GembaWalkController extends Controller
                         'left' => ['borderStyle' => Border::BORDER_THIN],
                     ],
                 ]);
-                
+
 
                 $gemba = $gembaWalk_details->first();
 
@@ -1731,97 +1413,71 @@ class GembaWalkController extends Controller
                     $detIL_row++;
                     $sr++;
                 }
-                $signatureStartRow = $detIL_row;
-                $signatureEndRow = $signatureStartRow + 3;
-                $labelRow = $signatureEndRow + 1;
-                $imageHeight = 60;
-                
-                // Prepared By Signature
-                $sheet->mergeCells("A{$signatureStartRow}:G{$signatureEndRow}");
-                
+
+                $signatureRowStart = $detIL_row;
+                $sheet->getRowDimension($signatureRowStart)->setRowHeight(80);
+
+                // === Prepared By ===
+                $sheet->mergeCells("A{$signatureRowStart}:G{$signatureRowStart}");
+                $sheet->getStyle("A{$signatureRowStart}:G{$signatureRowStart}")->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => [
+                        'horizontal' => Alignment::HORIZONTAL_CENTER,
+                        'vertical' => Alignment::VERTICAL_BOTTOM, // Align text to the bottom of the cell
+                        'wrapText' => false,
+                    ],
+                ]);
+
+
                 if (file_exists($preparedBySignature)) {
                     $drawing = new Drawing();
-                    $drawing->setName('GembaWalk Prepared Signature');
-                    $drawing->setDescription('GembaWalk Prepared Signature');
+                    $drawing->setName('Signature');
+                    $drawing->setDescription('Prepared By');
                     $drawing->setPath($preparedBySignature);
-                    $drawing->setCoordinates("D{$signatureStartRow}");
-                    $drawing->setOffsetX(130);
-                    $drawing->setOffsetY(10);
-                    $drawing->setWidth($imageHeight);
-                    $drawing->setHeight($imageHeight);
+                    $drawing->setCoordinates("D{$signatureRowStart}");
+                    $drawing->setOffsetX(100);
+                    $drawing->setOffsetY(5);
+                    $drawing->setHeight(60);
                     $drawing->setWorksheet($sheet);
+                    $sheet->setCellValue("A{$signatureRowStart}", "\n\n\nPrepared By:\n" . getUsername($gemba->created_by));
                 } else {
-                    $sheet->setCellValue("A{$signatureStartRow}", "Inspection not yet started");
-                    $sheet->getStyle("A{$signatureStartRow}:G{$signatureEndRow}")->applyFromArray([
-                        'alignment' => [
-                            'horizontal' => Alignment::HORIZONTAL_CENTER,
-                            'vertical' => Alignment::VERTICAL_CENTER,
-                            'wrapText' => true,
-                        ],
-                    ]);
+
+                    $sheet->setCellValue("A{$signatureRowStart}", "Prepared By:\n" . getUsername($gemba->created_by));
                 }
-                
-                $preparedByName = getUsername($inspection_detail->created_by);
-                $sheet->mergeCells("A{$labelRow}:G{$labelRow}");
-                $sheet->setCellValue("A{$labelRow}", "Prepared By:\n{$preparedByName}");
-                $sheet->getStyle("A{$labelRow}:G{$labelRow}")->applyFromArray([
+
+                // === Verified By ===
+                $sheet->mergeCells("H{$signatureRowStart}:N{$signatureRowStart}");
+                $sheet->getStyle("H{$signatureRowStart}:N{$signatureRowStart}")->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                     'alignment' => [
                         'horizontal' => Alignment::HORIZONTAL_CENTER,
-                        'vertical' => Alignment::VERTICAL_CENTER,
-                        'wrapText' => true,
+                        'vertical' => Alignment::VERTICAL_BOTTOM,
+                        'wrapText' => false,
                     ],
-                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                 ]);
-                $sheet->getRowDimension($labelRow)->setRowHeight(35);
-                
-                // Verified By Signature
-                $sheet->mergeCells("H{$signatureStartRow}:N{$signatureEndRow}");
-                
+
                 if (file_exists($verifiedSignature)) {
                     $drawing = new Drawing();
-                    $drawing->setName('GembaWalk Verified Signature');
-                    $drawing->setDescription('GembaWalk Verified Signature');
+                    $drawing->setName('Signature');
+                    $drawing->setDescription('Verified By');
                     $drawing->setPath($verifiedSignature);
-                    $drawing->setCoordinates("J{$signatureStartRow}");
-                    $drawing->setOffsetX(130);
-                    $drawing->setOffsetY(10);
-                    $drawing->setWidth($imageHeight);
-                    $drawing->setHeight($imageHeight);
+                    $drawing->setCoordinates("K{$signatureRowStart}");
+                    $drawing->setOffsetX(5);
+                    $drawing->setOffsetY(5);
+                    $drawing->setHeight(60);
                     $drawing->setWorksheet($sheet);
+                    $sheet->setCellValue("H{$signatureRowStart}", "\n\n\nVerified By:\n" . getUsername($gemba->verified_by));
                 } else {
-                    $sheet->setCellValue("H{$signatureStartRow}", "Inspection not yet started");
-                    $sheet->getStyle("H{$signatureStartRow}:N{$signatureEndRow}")->applyFromArray([
-                        'alignment' => [
-                            'horizontal' => Alignment::HORIZONTAL_CENTER,
-                            'vertical' => Alignment::VERTICAL_CENTER,
-                            'wrapText' => true,
-                        ],
-                    ]);
+                    $sheet->setCellValue("H{$signatureRowStart}", "Not Verified Yet");
                 }
-                
-                $verifiedByName = getUsername($inspection_detail->verified_by); 
-                $sheet->mergeCells("H{$labelRow}:N{$labelRow}");
-                $sheet->setCellValue("H{$labelRow}", "Verified By:\n{$verifiedByName}");
-                $sheet->getStyle("H{$labelRow}:N{$labelRow}")->applyFromArray([
-                    'alignment' => [
-                        'horizontal' => Alignment::HORIZONTAL_CENTER,
-                        'vertical' => Alignment::VERTICAL_CENTER,
-                        'wrapText' => true,
-                    ],
-                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                ]);
-                $sheet->getRowDimension($labelRow)->setRowHeight(35);
-                
-                // Outer border for the entire signature block
-                $sheet->getStyle("A{$signatureStartRow}:N{$labelRow}")->applyFromArray([
+
+                $sheet->getStyle("A{$signatureRowStart}:N{$signatureRowStart}")->applyFromArray([
                     'borders' => [
                         'outline' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['argb' => '000000']],
                     ],
                 ]);
-                
 
-                $sheet->setBreak("A" . ($labelRow + 1), Worksheet::BREAK_ROW);
-                $row = $labelRow + 7;
+                $row = $signatureRowStart + 7;
             }
 
             $writer = new Xlsx($spreadsheet);
