@@ -39,7 +39,8 @@
                         <div class="card">
                             <div class="card-header">
                                 <div class="align-back-btc">
-                                    <x-button-back href="{{ admin_url('ohc/first-aid-box/monthly-audit/list') }}"></x-button-back>
+                                    <x-button-back
+                                        href="{{ admin_url('ohc/first-aid-box/monthly-audit/list') }}"></x-button-back>
                                 </div>
                             </div>
 
@@ -88,28 +89,24 @@
                                             {{ getFrequencyname(isset($monthly_first_aid->frequency) ? $monthly_first_aid->frequency : '') }}
                                         </div>
                                     </div>
-
-                                    @if (!empty($requestorsignature) && !empty($requestorsignature->requestor_file_path))
-                                    <div class="col-md-4 mb-2">
-                                        <div class="form-group form-input">
-                                            <label class="form-label" style="display: block;">
-                                                {{ __('inspection.signature') }}
-                                            </label>
-                                            <img src="{{ admin_url($requestorsignature->requestor_file_path) }}"
-                                                alt="Signature Upload" style="width: 150px; margin-top: -10px;" />
+                                    @php
+                                        $signature = GetOHCSignature(
+                                            $monthly_first_aid->created_by,
+                                            $monthly_first_aid->id,
+                                            OHC_TYPE_MONTHLY_FIRST_AID_BOX_AUDIT_INSPECTION_CHECKLIST,
+                                        );
+                                    @endphp
+                                    @if (!empty($signature) && !empty($signature))
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label" style="display: block;">
+                                                    {{ __('inspection.signature') }}
+                                                </label>
+                                                <img src="{{ admin_url($signature) }}" alt="Signature Upload"
+                                                    style="width: 150px; margin-top: -10px;" />
+                                            </div>
                                         </div>
-                                    </div>
-                                @else
-                                <div class="col-md-4 mb-2">
-                                    <div class="form-group form-input">
-                                        <label class="form-label" style="display: block;">
-                                            {{ __('inspection.signature') }}
-                                        </label>
-                                        <img src="{{ admin_url($signatureview->signature_upload) }}"
-                                            alt="Signature Upload" style="width: 150px; margin-top: -10px;" />
-                                    </div>
-                                </div>
-                                @endif
+                                    @endif
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('common.created_by') }}</label>
                                         <div class="view_data">
@@ -148,19 +145,20 @@
                                                 <tr>
                                                     <th>S.NO</th>
                                                     <th>Unit</th>
-                                                            <th>Department</th>
-                                                            <th>First Aid Box Number</th>
-                                                            <th>Does the first-aid register is being properly maintened as &
-                                                                when require.</th>
-                                                            <th>Does the first-aid box is bieng inspect as per periodicity.</th>
-                                                            <th>Does the First- aid box inspection Checklist is being filled as per periodicity.</th>
-                                                            <th>Does the First-aid box is being maintained as per the freeze
-                                                                quantity.</th>
-                                                            <th>Does the medical requisition slip record is being
-                                                                maintained.</th>
-                                                            <th>Does the first-aid box is clean.</th>
-                                                            <th>Does the first-aid box sticker available.</th>
-                                                            <th>Does the First aid material index is available.</th>
+                                                    <th>Department</th>
+                                                    <th>First Aid Box Number</th>
+                                                    <th>Does the first-aid register is being properly maintened as &
+                                                        when require.</th>
+                                                    <th>Does the first-aid box is bieng inspect as per periodicity.</th>
+                                                    <th>Does the First- aid box inspection Checklist is being filled as per
+                                                        periodicity.</th>
+                                                    <th>Does the First-aid box is being maintained as per the freeze
+                                                        quantity.</th>
+                                                    <th>Does the medical requisition slip record is being
+                                                        maintained.</th>
+                                                    <th>Does the first-aid box is clean.</th>
+                                                    <th>Does the first-aid box sticker available.</th>
+                                                    <th>Does the First aid material index is available.</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -173,62 +171,78 @@
                                                         <tr>
                                                             <td>{{ $index + 1 }}</td>
                                                             <td>{{ getUnitname($log->unit_id) }}</td>
-                                                            <td>{{getDepartment( $log->department_id) }}</td>
+                                                            <td>{{ getDepartment($log->department_id) }}</td>
                                                             <td>{{ $log->first_aid_box_no }}</td>
                                                             <td>
                                                                 @if ($log->first_aid_register_maintained == 1)
-                                                                    <i class="fa-solid fa-check" style="color: #267709; width: 15px;"></i>
+                                                                    <i class="fa-solid fa-check"
+                                                                        style="color: #267709; width: 15px;"></i>
                                                                 @else
-                                                                    <i class="fa-solid fa-times" style="color: #d40a0a; width: 15px;"></i>
+                                                                    <i class="fa-solid fa-times"
+                                                                        style="color: #d40a0a; width: 15px;"></i>
                                                                 @endif
                                                             </td>
                                                             <td>
                                                                 @if ($log->first_aid_box_inspect_periodicity == 1)
-                                                                    <i class="fa-solid fa-check" style="color: #267709; width: 15px;"></i>
+                                                                    <i class="fa-solid fa-check"
+                                                                        style="color: #267709; width: 15px;"></i>
                                                                 @else
-                                                                    <i class="fa-solid fa-times" style="color: #d40a0a; width: 15px;"></i>
+                                                                    <i class="fa-solid fa-times"
+                                                                        style="color: #d40a0a; width: 15px;"></i>
                                                                 @endif
                                                             </td>
                                                             <td>
                                                                 @if ($log->first_aid_box_checklist_periodicity == 1)
-                                                                    <i class="fa-solid fa-check" style="color: #267709; width: 15px;"></i>
+                                                                    <i class="fa-solid fa-check"
+                                                                        style="color: #267709; width: 15px;"></i>
                                                                 @else
-                                                                    <i class="fa-solid fa-times" style="color: #d40a0a; width: 15px;"></i>
+                                                                    <i class="fa-solid fa-times"
+                                                                        style="color: #d40a0a; width: 15px;"></i>
                                                                 @endif
                                                             </td>
                                                             <td>
                                                                 @if ($log->first_aid_box_freeze_quantity == 1)
-                                                                    <i class="fa-solid fa-check" style="color: #267709; width: 15px;"></i>
+                                                                    <i class="fa-solid fa-check"
+                                                                        style="color: #267709; width: 15px;"></i>
                                                                 @else
-                                                                    <i class="fa-solid fa-times" style="color: #d40a0a; width: 15px;"></i>
+                                                                    <i class="fa-solid fa-times"
+                                                                        style="color: #d40a0a; width: 15px;"></i>
                                                                 @endif
                                                             </td>
                                                             <td>
                                                                 @if ($log->medicine_requisition_slip_record == 1)
-                                                                    <i class="fa-solid fa-check" style="color: #267709; width: 15px;"></i>
+                                                                    <i class="fa-solid fa-check"
+                                                                        style="color: #267709; width: 15px;"></i>
                                                                 @else
-                                                                    <i class="fa-solid fa-times" style="color: #d40a0a; width: 15px;"></i>
+                                                                    <i class="fa-solid fa-times"
+                                                                        style="color: #d40a0a; width: 15px;"></i>
                                                                 @endif
                                                             </td>
                                                             <td>
                                                                 @if ($log->first_aid_box_clean == 1)
-                                                                    <i class="fa-solid fa-check" style="color: #267709; width: 15px;"></i>
+                                                                    <i class="fa-solid fa-check"
+                                                                        style="color: #267709; width: 15px;"></i>
                                                                 @else
-                                                                    <i class="fa-solid fa-times" style="color: #d40a0a; width: 15px;"></i>
+                                                                    <i class="fa-solid fa-times"
+                                                                        style="color: #d40a0a; width: 15px;"></i>
                                                                 @endif
                                                             </td>
                                                             <td>
                                                                 @if ($log->first_aid_box_sticker == 1)
-                                                                    <i class="fa-solid fa-check" style="color: #267709; width: 15px;"></i>
+                                                                    <i class="fa-solid fa-check"
+                                                                        style="color: #267709; width: 15px;"></i>
                                                                 @else
-                                                                    <i class="fa-solid fa-times" style="color: #d40a0a; width: 15px;"></i>
+                                                                    <i class="fa-solid fa-times"
+                                                                        style="color: #d40a0a; width: 15px;"></i>
                                                                 @endif
                                                             </td>
                                                             <td>
                                                                 @if ($log->first_aid_material_index == 1)
-                                                                    <i class="fa-solid fa-check" style="color: #267709; width: 15px;"></i>
+                                                                    <i class="fa-solid fa-check"
+                                                                        style="color: #267709; width: 15px;"></i>
                                                                 @else
-                                                                    <i class="fa-solid fa-times" style="color: #d40a0a; width: 15px;"></i>
+                                                                    <i class="fa-solid fa-times"
+                                                                        style="color: #d40a0a; width: 15px;"></i>
                                                                 @endif
                                                             </td>
                                                         </tr>
