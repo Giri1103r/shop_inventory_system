@@ -712,6 +712,283 @@ class PASystemInspectionController extends Controller
     }
 
 
+    // public function ExportExcel(Request $request)
+    // {
+    //     try {
+    //         $allData = $this->pa_system->exportdata();
+    //         if ($allData->isEmpty()) {
+    //             return redirect()->back()->with('error', 'No data found');
+    //         }
+
+    //         $spreadsheet = new Spreadsheet();
+    //         $sheet = $spreadsheet->getActiveSheet();
+
+    //         $row = 1;
+
+    //         foreach ($allData as $groupedDetails) {
+
+    //             $inspection_detail = $groupedDetails->first();
+    //             $document_no = $this->document_reference->selectOne($inspection_detail->document_reference_id);
+
+    //             $prepared_by_signature = GetFireSignature($inspection_detail->checked_by, $inspection_detail->fire_pa_inspection_id, FIRE_PA_SYSTEM_INSPECTION);
+    //             $verified_by_signature = GetFireSignature($inspection_detail->hydrant_updated_by, $inspection_detail->fire_pa_inspection_id, FIRE_PA_SYSTEM_INSPECTION);
+    //             $approved_by_signature = GetFireSignature($inspection_detail->approved_by, $inspection_detail->fire_pa_inspection_id, FIRE_PA_SYSTEM_INSPECTION);
+
+    //             $titleRow = $row;
+
+    //             // Logo
+    //             $logoPath = public_path('assets/images/logo-dark.png');
+    //             if (file_exists($logoPath)) {
+    //                 $drawing = new Drawing();
+    //                 $drawing->setName('Logo');
+    //                 $drawing->setDescription('Company Logo');
+    //                 $drawing->setPath($logoPath);
+    //                 $drawing->setCoordinates('A' . $titleRow);
+    //                 $drawing->setOffsetX(5);
+    //                 $drawing->setOffsetY(5);
+    //                 $drawing->setHeight(60);
+    //                 $drawing->setWorksheet($sheet);
+    //             }
+
+    //             $sheet->mergeCells("A{$titleRow}:B" . ($titleRow + 2));
+    //             $sheet->getStyle("A{$titleRow}:B" . ($titleRow + 2))->applyFromArray([
+    //                 'font' => ['bold' => true, 'size' => 14],
+    //                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+    //                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+    //             ]);
+
+    //             $sheet->mergeCells("C{$titleRow}:I" . ($titleRow + 2));
+    //             $sheet->setCellValue("C{$titleRow}", "HYDRANT & RISER INSPECTION CHECKLIST PN INTERNATIONAL PVT. LTD.");
+
+    //             $sheet->getStyle("C{$titleRow}:I" . ($titleRow + 2))->applyFromArray([
+    //                 'font' => ['bold' => true, 'size' => 14],
+    //                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+    //                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+    //             ]);
+
+    //             $sheet->setCellValue("J{$titleRow}", "Doc. No.");
+    //             $sheet->setCellValue("K{$titleRow}", $document_no->doc_no ?? '');
+
+    //             $sheet->setCellValue("J" . ($titleRow + 1), "Issue Dt.");
+    //             $sheet->setCellValue("K" . ($titleRow + 1), Displaydateformat($document_no->issue_date ?? ''));
+
+    //             $sheet->setCellValue("J" . ($titleRow + 2), "Rev. & Dt.");
+    //             $sheet->setCellValue("K" . ($titleRow + 2), $document_no->rev_dt ?? '');
+
+    //             $sheet->getStyle("J{$titleRow}:K" . ($titleRow + 2))->applyFromArray([
+    //                 'font' => ['bold' => true],
+    //                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+    //                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+    //             ]);
+
+    //             $headerInfoRow = $titleRow + 3;
+
+    //             $sheet->mergeCells("A{$headerInfoRow}:D{$headerInfoRow}")->setCellValue("A{$headerInfoRow}", "Date of Inspection:- " . Displaydateformat($inspection_detail->date_of_inspection));
+    //             $sheet->mergeCells("E{$headerInfoRow}:H{$headerInfoRow}")->setCellValue("E{$headerInfoRow}", "Location:- " . getLocationname($inspection_detail->location));
+    //             $sheet->mergeCells("I{$headerInfoRow}:K{$headerInfoRow}")->setCellValue("I{$headerInfoRow}", "Shift:- " . $inspection_detail->shift);
+    //             $sheet->getStyle("A{$headerInfoRow}:K{$headerInfoRow}")->applyFromArray([
+    //                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+    //             ]);
+    //             $headerInfoRow++;
+
+    //             $sheet->mergeCells("A{$headerInfoRow}:D{$headerInfoRow}")->setCellValue("A{$headerInfoRow}", "Next Due Date:- " . Displaydateformat($inspection_detail->next_due));
+    //             $sheet->mergeCells("E{$headerInfoRow}:H{$headerInfoRow}")->setCellValue("E{$headerInfoRow}", "Unit:- " . getUnitname($inspection_detail->unit));
+    //             $sheet->mergeCells("I{$headerInfoRow}:K{$headerInfoRow}")->setCellValue("I{$headerInfoRow}", "Frequency:- " . getFrequencyname($inspection_detail->frequency));
+    //             $sheet->getStyle("A{$headerInfoRow}:K{$headerInfoRow}")->applyFromArray([
+    //                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+    //             ]);
+    //             $headerInfoRow++;
+
+    //             $columnWidths = [
+    //                 'A' => 5,
+    //                 'B' => 15,
+    //                 'C' => 10,
+    //                 'D' => 10,
+    //                 'E' => 10,
+    //                 'F' => 10,
+    //                 'G' => 15,
+    //                 'H' => 10,
+    //                 'I' => 15,
+    //                 'J' => 15,
+    //                 'K' => 15,
+    //             ];
+
+    //             foreach ($columnWidths as $col => $width) {
+    //                 $sheet->getColumnDimension($col)->setWidth($width);
+    //             }
+
+    //             $headerStart = $headerInfoRow;
+
+    //             $sheet->mergeCells("A{$headerStart}:A" . ($headerStart + 1))->setCellValue("A{$headerStart}", "SL");
+    //             $sheet->mergeCells("B{$headerStart}:B" . ($headerStart + 1))->setCellValue("B{$headerStart}", "LOCATION");
+    //             $sheet->mergeCells("C{$headerStart}:I{$headerStart}")->setCellValue("C{$headerStart}", "CHECK ITEMS");
+
+    //             // Sub-headers for CHECK ITEMS
+    //             $sheet->setCellValue("C" . ($headerStart + 1), "UNIT");
+    //             $sheet->setCellValue("D" . ($headerStart + 1), "AUDIO QUALITY");
+    //             $sheet->setCellValue("E" . ($headerStart + 1), "MIC CONDITION");
+    //             $sheet->setCellValue("F" . ($headerStart + 1), "MIC QUANTITY");
+    //             $sheet->setCellValue("G" . ($headerStart + 1), "PHYSICAL CONDITION");
+    //             $sheet->setCellValue("H" . ($headerStart + 1), "CABLE CONDITION");
+    //             $sheet->setCellValue("I" . ($headerStart + 1), "OPERATION");
+
+    //             $sheet->mergeCells("J{$headerStart}:k" . ($headerStart + 1))->setCellValue("J{$headerStart}", "REMARKS");
+
+    //             $sheet->getStyle("A{$headerStart}:k" . ($headerStart + 1))->applyFromArray([
+    //                 'font' => ['bold' => true],
+    //                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+    //                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+    //             ]);
+
+    //             $dataRow = $headerStart + 2;
+    //             $sr = 1;
+
+    //             foreach ($groupedDetails as $detail) {
+    //                 $sheet->setCellValue("A{$dataRow}", $sr);
+    //                 $sheet->setCellValue("B{$dataRow}", getLocationname($detail['location'] ?? ''));
+    //                 $sheet->setCellValue("C{$dataRow}", getUnitname($detail['unit'] ?? ''));
+
+    //                 $audioQuality = $detail['audio_quality'] ?? '';
+    //                 $micCondition = $detail['mic_condition'] ?? '';
+    //                 $micQuantity = $detail['mic_quantity'] ?? '';
+    //                 $physicalCondition = $detail['physical_condition'] ?? '';
+    //                 $cableCondition = $detail['cable_condition'] ?? '';
+    //                 $operation = $detail['operation'] ?? '';
+    //                 $remark = $detail['remark'] ?? '';
+
+    //                 $statusMap = [
+    //                     GOOD => 'GOOD',
+    //                     FAIR => 'FAIR',
+    //                     POOR => 'POOR',
+    //                 ];
+
+    //                 $sheet->setCellValue("D{$dataRow}", $statusMap[$audioQuality] ?? $audioQuality);
+    //                 $sheet->setCellValue("E{$dataRow}", $statusMap[$micCondition] ?? $micCondition);
+    //                 $sheet->setCellValue("F{$dataRow}", $micQuantity . ' ' . ($statusMap[$micQuantity] ?? ''));
+    //                 $sheet->setCellValue("G{$dataRow}", $statusMap[$physicalCondition] ?? $physicalCondition);
+    //                 $sheet->setCellValue("H{$dataRow}", $statusMap[$cableCondition] ?? $cableCondition);
+    //                 $sheet->setCellValue("I{$dataRow}", ($operation ?? '') == 1 ? 'Functional' : 'Non-Functional');
+    //                 $sheet->mergeCells("J{$dataRow}:K{$dataRow}")->setCellValue("J{$dataRow}", $remark);
+
+    //                 $sheet->getStyle("A{$dataRow}:k{$dataRow}")->applyFromArray([
+    //                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+    //                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+    //                 ]);
+    //                 $sr++;
+    //                 $dataRow++;
+    //             }
+
+    //             $signatureRowStart = $dataRow;
+    //             $sheet->getRowDimension($signatureRowStart)->setRowHeight(80);
+
+    //             // Prepared By
+    //             $sheet->mergeCells("A{$signatureRowStart}:D{$signatureRowStart}");
+    //             $sheet->getStyle("A{$signatureRowStart}:D{$signatureRowStart}")->applyFromArray([
+    //                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+    //                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
+    //             ]);
+
+    //             if (file_exists($prepared_by_signature)) {
+    //                 $drawing = new Drawing();
+    //                 $drawing->setName('Signature');
+    //                 $drawing->setDescription('Prepared By');
+    //                 $drawing->setPath($prepared_by_signature);
+    //                 $drawing->setCoordinates("B{$signatureRowStart}");
+    //                 $drawing->setOffsetX(5);
+    //                 $drawing->setOffsetY(5);
+    //                 $drawing->setHeight(60);
+    //                 $drawing->setWorksheet($sheet);
+    //             }
+
+    //             $sheet->mergeCells("A" . ($signatureRowStart + 1) . ":D" . ($signatureRowStart + 1));
+    //             $sheet->setCellValue("A" . ($signatureRowStart + 1), "Inspected and Checked By:\n" . getUsername($inspection_detail->created_by));
+    //             $sheet->getStyle("A" . ($signatureRowStart + 1) . ":D" . ($signatureRowStart + 1))->applyFromArray([
+    //                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+    //                 'alignment' => [
+    //                     'horizontal' => Alignment::HORIZONTAL_CENTER,
+    //                     'vertical' => Alignment::VERTICAL_CENTER,
+    //                     'wrapText' => true,
+    //                 ],
+    //             ]);
+
+    //             // Verified By
+    //             $sheet->mergeCells("E{$signatureRowStart}:G{$signatureRowStart}");
+    //             $sheet->getStyle("E{$signatureRowStart}:G{$signatureRowStart}")->applyFromArray([
+    //                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+    //                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
+    //             ]);
+
+    //             if (file_exists($verified_by_signature)) {
+    //                 $drawing = new Drawing();
+    //                 $drawing->setName('Signature');
+    //                 $drawing->setDescription('Verified By');
+    //                 $drawing->setPath($verified_by_signature);
+    //                 $drawing->setCoordinates("F{$signatureRowStart}");
+    //                 $drawing->setOffsetX(5);
+    //                 $drawing->setOffsetY(5);
+    //                 $drawing->setHeight(60);
+    //                 $drawing->setWorksheet($sheet);
+    //             }
+
+    //             $sheet->mergeCells("E" . ($signatureRowStart + 1) . ":G" . ($signatureRowStart + 1));
+    //             $sheet->setCellValue("E" . ($signatureRowStart + 1), "Verified By:\n" . getUsername($inspection_detail->updated_by));
+    //             $sheet->getStyle("E" . ($signatureRowStart + 1) . ":G" . ($signatureRowStart + 1))->applyFromArray([
+    //                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+    //                 'alignment' => [
+    //                     'horizontal' => Alignment::HORIZONTAL_CENTER,
+    //                     'vertical' => Alignment::VERTICAL_CENTER,
+    //                     'wrapText' => true,
+    //                 ],
+    //             ]);
+
+    //             // Approved By
+    //             $sheet->mergeCells("H{$signatureRowStart}:k{$signatureRowStart}");
+    //             $sheet->getStyle("H{$signatureRowStart}:k{$signatureRowStart}")->applyFromArray([
+    //                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+    //                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
+    //             ]);
+
+    //             if (file_exists($approved_by_signature)) {
+    //                 $drawing = new Drawing();
+    //                 $drawing->setName('Signature');
+    //                 $drawing->setDescription('Approved By');
+    //                 $drawing->setPath($approved_by_signature);
+    //                 $drawing->setCoordinates("I{$signatureRowStart}");
+    //                 $drawing->setOffsetX(5);
+    //                 $drawing->setOffsetY(5);
+    //                 $drawing->setHeight(60);
+    //                 $drawing->setWorksheet($sheet);
+    //             }
+
+    //             $sheet->mergeCells("H" . ($signatureRowStart + 1) . ":k" . ($signatureRowStart + 1));
+    //             $sheet->setCellValue("H" . ($signatureRowStart + 1), "Approved By:\n" . getUsername($inspection_detail->approved_by));
+    //             $sheet->getStyle("H" . ($signatureRowStart + 1) . ":k" . ($signatureRowStart + 1))->applyFromArray([
+    //                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+    //                 'alignment' => [
+    //                     'horizontal' => Alignment::HORIZONTAL_CENTER,
+    //                     'vertical' => Alignment::VERTICAL_CENTER,
+    //                     'wrapText' => true,
+    //                 ],
+    //             ]);
+
+    //             $sheet->getRowDimension($signatureRowStart + 1)->setRowHeight(30);
+
+    //             $row = $signatureRowStart + 6;
+    //         }
+
+    //         // Output the file as usual
+    //         $writer = new Xlsx($spreadsheet);
+    //         $filename = 'PA System Inspection.xlsx';
+    //         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    //         header("Content-Disposition: attachment; filename=\"$filename\"");
+    //         header('Cache-Control: max-age=0');
+    //         $writer->save('php://output');
+    //     } catch (\Exception $e) {
+    //         dd($e);
+    //         return redirect()->back()->with('error', 'Export error: ' . $e->getMessage());
+    //     }
+    // }
+
     public function ExportExcel(Request $request)
     {
         try {
@@ -758,7 +1035,7 @@ class PASystemInspectionController extends Controller
                 ]);
 
                 $sheet->mergeCells("C{$titleRow}:I" . ($titleRow + 2));
-                $sheet->setCellValue("C{$titleRow}", "HYDRANT & RISER INSPECTION CHECKLIST PN INTERNATIONAL PVT. LTD.");
+                $sheet->setCellValue("C{$titleRow}", "PA SYSTEM INSPECTION CHECKLIST PN INTERNATIONAL PVT. LTD.");
 
                 $sheet->getStyle("C{$titleRow}:I" . ($titleRow + 2))->applyFromArray([
                     'font' => ['bold' => true, 'size' => 14],
@@ -877,32 +1154,12 @@ class PASystemInspectionController extends Controller
                     $sr++;
                     $dataRow++;
                 }
-
                 $signatureRowStart = $dataRow;
                 $sheet->getRowDimension($signatureRowStart)->setRowHeight(80);
 
-                // Prepared By
+                // === Prepared By ===
                 $sheet->mergeCells("A{$signatureRowStart}:D{$signatureRowStart}");
                 $sheet->getStyle("A{$signatureRowStart}:D{$signatureRowStart}")->applyFromArray([
-                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
-                ]);
-
-                if (file_exists($prepared_by_signature)) {
-                    $drawing = new Drawing();
-                    $drawing->setName('Signature');
-                    $drawing->setDescription('Prepared By');
-                    $drawing->setPath($prepared_by_signature);
-                    $drawing->setCoordinates("B{$signatureRowStart}");
-                    $drawing->setOffsetX(5);
-                    $drawing->setOffsetY(5);
-                    $drawing->setHeight(60);
-                    $drawing->setWorksheet($sheet);
-                }
-
-                $sheet->mergeCells("A" . ($signatureRowStart + 1) . ":D" . ($signatureRowStart + 1));
-                $sheet->setCellValue("A" . ($signatureRowStart + 1), "Inspected and Checked By:\n" . getUsername($inspection_detail->created_by));
-                $sheet->getStyle("A" . ($signatureRowStart + 1) . ":D" . ($signatureRowStart + 1))->applyFromArray([
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                     'alignment' => [
                         'horizontal' => Alignment::HORIZONTAL_CENTER,
@@ -911,11 +1168,31 @@ class PASystemInspectionController extends Controller
                     ],
                 ]);
 
-                // Verified By
+                if (file_exists($prepared_by_signature)) {
+                    $drawing = new Drawing();
+                    $drawing->setName('Signature');
+                    $drawing->setDescription('Prepared By');
+                    $drawing->setPath($prepared_by_signature);
+                    $drawing->setCoordinates("B{$signatureRowStart}");
+                    $drawing->setOffsetX(60);
+                    $drawing->setOffsetY(5);
+                    $drawing->setHeight(40);
+                    $drawing->setWorksheet($sheet);
+
+                    $sheet->setCellValue("A{$signatureRowStart}", "\n\n\nPrepared By:\n" . getUsername($inspection_detail->created_by));
+                } else {
+                    $sheet->setCellValue("A{$signatureRowStart}", "Prepared By:\nInspection not yet started");
+                }
+
+                // === Verified By ===
                 $sheet->mergeCells("E{$signatureRowStart}:G{$signatureRowStart}");
                 $sheet->getStyle("E{$signatureRowStart}:G{$signatureRowStart}")->applyFromArray([
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
+                    'alignment' => [
+                        'horizontal' => Alignment::HORIZONTAL_CENTER,
+                        'vertical' => Alignment::VERTICAL_CENTER,
+                        'wrapText' => true,
+                    ],
                 ]);
 
                 if (file_exists($verified_by_signature)) {
@@ -926,26 +1203,23 @@ class PASystemInspectionController extends Controller
                     $drawing->setCoordinates("F{$signatureRowStart}");
                     $drawing->setOffsetX(5);
                     $drawing->setOffsetY(5);
-                    $drawing->setHeight(60);
+                    $drawing->setHeight(40);
                     $drawing->setWorksheet($sheet);
+
+                    $sheet->setCellValue("E{$signatureRowStart}", "\n\n\nVerified By:\n" . getUsername($inspection_detail->updated_by));
+                } else {
+                    $sheet->setCellValue("E{$signatureRowStart}", "Verified By:\nInspection not yet completed");
                 }
 
-                $sheet->mergeCells("E" . ($signatureRowStart + 1) . ":G" . ($signatureRowStart + 1));
-                $sheet->setCellValue("E" . ($signatureRowStart + 1), "Verified By:\n" . getUsername($inspection_detail->updated_by));
-                $sheet->getStyle("E" . ($signatureRowStart + 1) . ":G" . ($signatureRowStart + 1))->applyFromArray([
+                // === Approved By ===
+                $sheet->mergeCells("H{$signatureRowStart}:K{$signatureRowStart}");
+                $sheet->getStyle("H{$signatureRowStart}:K{$signatureRowStart}")->applyFromArray([
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                     'alignment' => [
                         'horizontal' => Alignment::HORIZONTAL_CENTER,
                         'vertical' => Alignment::VERTICAL_CENTER,
                         'wrapText' => true,
                     ],
-                ]);
-
-                // Approved By
-                $sheet->mergeCells("H{$signatureRowStart}:k{$signatureRowStart}");
-                $sheet->getStyle("H{$signatureRowStart}:k{$signatureRowStart}")->applyFromArray([
-                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
                 ]);
 
                 if (file_exists($approved_by_signature)) {
@@ -953,25 +1227,17 @@ class PASystemInspectionController extends Controller
                     $drawing->setName('Signature');
                     $drawing->setDescription('Approved By');
                     $drawing->setPath($approved_by_signature);
-                    $drawing->setCoordinates("I{$signatureRowStart}");
+                    $drawing->setCoordinates("J{$signatureRowStart}");
                     $drawing->setOffsetX(5);
                     $drawing->setOffsetY(5);
-                    $drawing->setHeight(60);
+                    $drawing->setHeight(40);
                     $drawing->setWorksheet($sheet);
+
+                    $sheet->setCellValue("H{$signatureRowStart}", "\n\n\nApproved By:\n" . getUsername($inspection_detail->approved_by));
+                } else {
+                    $sheet->setCellValue("H{$signatureRowStart}", "Approved By:\nApproval pending");
                 }
 
-                $sheet->mergeCells("H" . ($signatureRowStart + 1) . ":k" . ($signatureRowStart + 1));
-                $sheet->setCellValue("H" . ($signatureRowStart + 1), "Approved By:\n" . getUsername($inspection_detail->approved_by));
-                $sheet->getStyle("H" . ($signatureRowStart + 1) . ":k" . ($signatureRowStart + 1))->applyFromArray([
-                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                    'alignment' => [
-                        'horizontal' => Alignment::HORIZONTAL_CENTER,
-                        'vertical' => Alignment::VERTICAL_CENTER,
-                        'wrapText' => true,
-                    ],
-                ]);
-
-                $sheet->getRowDimension($signatureRowStart + 1)->setRowHeight(30);
 
                 $row = $signatureRowStart + 6;
             }
@@ -1078,6 +1344,8 @@ class PASystemInspectionController extends Controller
             return redirect(admin_url('fire/pa-system-inspection/list'));
         }
     }
+
+
 
     public function generalExcel(Request $request)
     {
@@ -1231,31 +1499,12 @@ class PASystemInspectionController extends Controller
                 $sr++;
                 $row++;
             }
-
-
             $signatureRowStart = $row;
-
             $sheet->getRowDimension($signatureRowStart)->setRowHeight(80);
 
+            // === Prepared By ===
             $sheet->mergeCells("A{$signatureRowStart}:D{$signatureRowStart}");
             $sheet->getStyle("A{$signatureRowStart}:D{$signatureRowStart}")->applyFromArray([
-                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
-            ]);
-            if (file_exists($prepared_by_signature)) {
-                $drawing = new Drawing();
-                $drawing->setName('Signature');
-                $drawing->setDescription('Prepared By');
-                $drawing->setPath($prepared_by_signature);
-                $drawing->setCoordinates("B{$signatureRowStart}");
-                $drawing->setOffsetX(5);
-                $drawing->setOffsetY(5);
-                $drawing->setHeight(60);
-                $drawing->setWorksheet($sheet);
-            }
-            $sheet->mergeCells("A" . ($signatureRowStart + 1) . ":D" . ($signatureRowStart + 1));
-            $sheet->setCellValue("A" . ($signatureRowStart + 1), "Inspected and Checked By:\n" . getUsername($pa_system->created_by));
-            $sheet->getStyle("A" . ($signatureRowStart + 1) . ":D" . ($signatureRowStart + 1))->applyFromArray([
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                 'alignment' => [
                     'horizontal' => Alignment::HORIZONTAL_CENTER,
@@ -1264,10 +1513,30 @@ class PASystemInspectionController extends Controller
                 ],
             ]);
 
+            if (file_exists($prepared_by_signature)) {
+                $drawing = new Drawing();
+                $drawing->setName('Signature');
+                $drawing->setDescription('Prepared By');
+                $drawing->setPath($prepared_by_signature);
+                $drawing->setCoordinates("C{$signatureRowStart}");
+                $drawing->setOffsetX(5);
+                $drawing->setOffsetY(5);
+                $drawing->setHeight(40);
+                $drawing->setWorksheet($sheet);
+                $sheet->setCellValue("A{$signatureRowStart}", "\n\n\nPrepared By:\n" . getUsername($pa_system->created_by));
+            } else {
+                $sheet->setCellValue("A{$signatureRowStart}", "Prepared By:\nInspection not yet started");
+            }
+
+            // === Verified By ===
             $sheet->mergeCells("E{$signatureRowStart}:H{$signatureRowStart}");
             $sheet->getStyle("E{$signatureRowStart}:H{$signatureRowStart}")->applyFromArray([
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
+                'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_CENTER,
+                    'vertical' => Alignment::VERTICAL_CENTER,
+                    'wrapText' => true,
+                ],
             ]);
 
             if (file_exists($verified_by_signature)) {
@@ -1278,12 +1547,16 @@ class PASystemInspectionController extends Controller
                 $drawing->setCoordinates("G{$signatureRowStart}");
                 $drawing->setOffsetX(5);
                 $drawing->setOffsetY(5);
-                $drawing->setHeight(60);
+                $drawing->setHeight(40);
                 $drawing->setWorksheet($sheet);
+                $sheet->setCellValue("E{$signatureRowStart}", "\n\n\nVerified By:\n" . getUsername($pa_system->updated_by));
+            } else {
+                $sheet->setCellValue("E{$signatureRowStart}", "Verified By:\nInspection not yet completed");
             }
-            $sheet->mergeCells("E" . ($signatureRowStart + 1) . ":H" . ($signatureRowStart + 1));
-            $sheet->setCellValue("E" . ($signatureRowStart + 1), "Verified By:\n" . getUsername($pa_system->updated_by));
-            $sheet->getStyle("E" . ($signatureRowStart + 1) . ":H" . ($signatureRowStart + 1))->applyFromArray([
+
+            // === Approved By ===
+            $sheet->mergeCells("I{$signatureRowStart}:K{$signatureRowStart}");
+            $sheet->getStyle("I{$signatureRowStart}:K{$signatureRowStart}")->applyFromArray([
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                 'alignment' => [
                     'horizontal' => Alignment::HORIZONTAL_CENTER,
@@ -1292,11 +1565,6 @@ class PASystemInspectionController extends Controller
                 ],
             ]);
 
-            $sheet->mergeCells("I{$signatureRowStart}:K{$signatureRowStart}");
-            $sheet->getStyle("I{$signatureRowStart}:K{$signatureRowStart}")->applyFromArray([
-                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
-            ]);
             if (file_exists($approved_by_signature)) {
                 $drawing = new Drawing();
                 $drawing->setName('Signature');
@@ -1305,22 +1573,13 @@ class PASystemInspectionController extends Controller
                 $drawing->setCoordinates("J{$signatureRowStart}");
                 $drawing->setOffsetX(5);
                 $drawing->setOffsetY(5);
-                $drawing->setHeight(60);
+                $drawing->setHeight(40);
                 $drawing->setWorksheet($sheet);
+                $sheet->setCellValue("I{$signatureRowStart}", "\n\n\nApproved By:\n" . getUsername($pa_system->approved_by));
+            } else {
+                $sheet->setCellValue("I{$signatureRowStart}", "Approved By:\nApproval pending");
             }
-            $sheet->mergeCells("I" . ($signatureRowStart + 1) . ":K" . ($signatureRowStart + 1));
-            $sheet->setCellValue("I" . ($signatureRowStart + 1), "Approved By:\n" . getUsername($pa_system->approved_by));
-            $sheet->getStyle("I" . ($signatureRowStart + 1) . ":K" . ($signatureRowStart + 1))->applyFromArray([
-                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                'alignment' => [
-                    'horizontal' => Alignment::HORIZONTAL_CENTER,
-                    'vertical' => Alignment::VERTICAL_CENTER,
-                    'wrapText' => true,
-                ],
-            ]);
 
-            // Set row height for name row
-            $sheet->getRowDimension($signatureRowStart + 1)->setRowHeight(30);
 
 
             // Download Excel
