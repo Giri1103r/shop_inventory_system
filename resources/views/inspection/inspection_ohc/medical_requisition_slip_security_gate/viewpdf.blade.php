@@ -155,125 +155,135 @@
         </table>
     </div>
 
-    <table width="100%" style="width:100%;">
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Document Number</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ isset($document_no->doc_no) ? $document_no->doc_no : '' }}</td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Issue Date</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ Displaydateformat(isset($document_no->issue_date) ? $document_no->issue_date : '') }}
-            </td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Revision Date</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ isset($document_no->rev_dt) ? $document_no->rev_dt : '' }}
-            </td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Unit</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ getUnitname(isset($medicinerequisition->unit) ? $medicinerequisition->unit : '') }}
-            </td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Department</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ getDepartment(isset($medicinerequisition->department) ? $medicinerequisition->department : '') }}
-            </td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Signature</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                @if (!empty($requestorsignature) && !empty($requestorsignature->file_path))
-                    <img src="{{ admin_url($requestorsignature->file_path) }}" alt="Requestor Signature"
-                        style="width: 150px; height: auto;" />
-                @elseif (!empty($signatureview) && !empty($signatureview->signature_upload))
-                    {{-- Fixed typo --}}
-                    <img src="{{ admin_url($signatureview->signature_upload) }}" alt="Approver Signature"
-                        style="width: 150px; height: auto;" />
-                @else
-                    <span>No signature available</span>
-                @endif
-            </td>
-        </tr>
 
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Created By</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ getUsername(isset($medicinerequisition->created_by) ? $medicinerequisition->created_by : '') }}</td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Created Date</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;"> {{ displayDateformat($medicinerequisition->created_at) }}</td>
-        </tr>
-    </table>
 
     <br>
 
     <div>
-        <div style="width:100%;">
-            <table style="width:100%;">
-                <tr>
-                    <td
-                        style="width:100%; background-color: #ce0f1f; color:#ffffff; padding: 10px 10px 10px; font-weight:bold;">
-                        Medicine Details
-                    </td>
-                </tr>
-            </table>
-        </div>
-        <div class="table-responsive">
-            <div class="col-md-12">
-                @if (isset($medicine_requisition_fdo_checklist) && $medicine_requisition_fdo_checklist->isNotEmpty())
-                    <table class="table table-bordered table-hover tblborder">
+
+        <table
+            style="width: 100%; border-collapse: collapse; font-family: Arial, sans-serif; text-align: center; border: 1px solid black;">
+            <tr>
+                <th colspan="4" style="border:1px solid black;height:50;width:40">
+                    <img src="{{ url('public/assets/images/logo-dark.png') }}" style="width:125px;height:50px;">
+                </th>
+                <th colspan="6" style="border:1px solid black;">
+                    <h3>
+                        <span><b>MEDICAL REQUISITION ISSUE SLIP
+                            </b></span>
+                        <br>
+                        <span><b>PN INTERNATIONAL PVT. LTD.</b></span>
+                    </h3>
+                </th>
+
+                <th colspan="6" style="border:1px solid black;">
+                    <table class="table table-bordered scrolldown">
                         <thead>
                             <tr>
-                                <th>S.No</th>
-                                <th>Medicine Name</th>
-                                <th>Quantity</th>
-                                <th>Remarks</th>
+                                <td style="border: 1px solid black;width:70;">Doc.No</td>
+                                <td style="border: 1px solid black;">{{ $document_no->doc_no }}</td>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid black;width:70;">Issue Dt.</td>
+                                <td style="border: 1px solid black;">{{ Displaydateformat($document_no->issue_date) }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid black;width:70;">Rev.& Dt.</td>
+                                <td style="border: 1px solid black;">{{ $document_no->rev_dt }}</td>
                             </tr>
                         </thead>
-                        <tbody>
-                            @if ($medicine_requisition_fdo_checklist->isEmpty())
-                                <tr>
-                                    <td colspan="4" class="text-center">No data is available</td>
-                                </tr>
-                            @else
-                                @foreach ($medicine_requisition_fdo_checklist as $data)
-                                    <tr>
-                                        <td>{{ $loop->iteration }}</td>
-                                        <td>{{ getMedicinename($data->medicine_id) }}</td>
-                                        <td>{{ $data->quantity }}</td>
-                                        <td>{{ $data->remarks }}</td>
-
-                                    </tr>
-                                @endforeach
-                            @endif
-                        </tbody>
                     </table>
-                @else
-                    <div class="card-body">
-                        <p class="text-dark">{{ __('No status logs available.') }}</p>
-                    </div>
-                @endif
-            </div>
-        </div>
+
+                </th>
+            </tr>
+            <tr>
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;"
+                    colspan="4">
+                    DEPARTMENT: {{ getDepartment($medicine_requisition_fdo_details->department) ?? 'N/A' }}
+                </th>
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;"
+                    colspan="6">
+                    UNIT: {{ getUnitname($medicine_requisition_fdo_details->unit) ?? 'N/A' }}
+                </th>
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;"
+                    colspan="6">
+                    DATE: {{ Displaydateformat($medicine_requisition_fdo_details->date ?? 'N/A') }}
+                </th>
+            </tr>
+
+
+            <tr>
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="2">SR. NO</th>
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="6">NAME OF
+                    MEDICINE
+                </th>
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">QUANTITY
+                </th>
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">REMARKS
+                </th>
+
+            </tr>
+            @php
+                $medicineRequisitionDetails = GetOHCMedicineFDO($medicine_requisition_fdo_details->id);
+            @endphp
+            @foreach ($medicineRequisitionDetails as $medicineRequisitionDetails)
+                <tr>
+
+                    <td colspan="2"
+                        style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
+                        {{ $loop->iteration }}</td>
+                    <td colspan="6"
+                        style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
+                        {{ getMedicinename($medicineRequisitionDetails->medicine_id) }}</td>
+                    <td colspan="4"
+                        style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
+                        {{ $medicineRequisitionDetails->quantity }}</td>
+                    <td colspan="4"
+                        style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
+                        {{ $medicineRequisitionDetails->remarks }}</td>
+
+                </tr>
+            @endforeach
+
+
+
+            <tr>
+                @php
+                    $createdSignature = GetOHCSignature(
+                        $medicine_requisition_fdo_details->created_by,
+                        $medicine_requisition_fdo_details->id,
+                        OHC_TYPE_MEDICINE_REQUISTION_FDO,
+                    );
+                    $approvedSignature = GetOHCSignature(
+                        $medicine_requisition_fdo_details->approved_by,
+                        $medicine_requisition_fdo_details->id,
+                        OHC_TYPE_MEDICINE_REQUISTION_FDO,
+                    );
+                @endphp
+
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="8">
+                    <img src="{{ admin_url($createdSignature) }}" alt="Signature Upload"
+                        style="width: 150px; margin-top: -10px;" />
+                    <div style="margin-top: 5px;">Requestor Signature </div>
+                </th>
+
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="8">
+                    <img src="{{ admin_url($approvedSignature) }}" alt="Signature Upload"
+                        style="width: 150px; margin-top: -10px;" />
+                    <div style="margin-top: 5px;">Medical Assitant / Safety Officer Signature</div>
+                </th>
+
+            </tr>
+
+
+        </table>
         <br>
     </div>
 
-    @if ($medicinerequisition->approve_status == SAFETY_OFFICER_APPROVED || $medicinerequisition->approve_status == SAFETY_OFFICER_REJECTED)
+    @if (
+        $medicine_requisition_fdo_details->approve_status == SAFETY_OFFICER_APPROVED ||
+            $medicine_requisition_fdo_details->approve_status == SAFETY_OFFICER_REJECTED)
         <div style="width:100%;">
             <table style="width:100%;">
                 <tr>

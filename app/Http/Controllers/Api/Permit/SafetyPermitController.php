@@ -371,39 +371,39 @@ $knownItems = ['Air', 'Gas', 'Electrical', 'Water/Liquid'];
                     'confined_space_entry' => [
                         'o2' => [
                             'name' => "O2%",
-                            "O2" => $confined_space_entry->o2_percentage ?? 'N/A',
+                            "value" => $confined_space_entry->o2_percentage ?? 'N/A',
                         ],
                         'system_isolated' => [
                             'name' => "System Isolated",
-                            "system_isolated_checked" => $confined_space_entry && $confined_space_entry->system_isolated == 1 ? 'Yes' : 'No',
+                            "value" => $confined_space_entry && $confined_space_entry->system_isolated == 1 ? 'Yes' : 'No',
                         ],
                         'rescue_system' => [
                             'name' => "Rescue System Available",
-                            "rescue_system_checked" => $confined_space_entry && $confined_space_entry->rescue_system  == 1 ? 'Yes' : 'No',
+                            "value" => $confined_space_entry && $confined_space_entry->rescue_system  == 1 ? 'Yes' : 'No',
                         ],
                         'confined_attendant' => [
                             'name' => "Confined Space Attendant",
-                            "confined_attendant_checked" => $confined_space_entry && $confined_space_entry->confined_attendant  == 1 ? 'Yes' : 'No',
+                            "value" => $confined_space_entry && $confined_space_entry->confined_attendant  == 1 ? 'Yes' : 'No',
                         ],
                         'attendant_name' => [
                             'name' => "Attendant Name",
-                            "attendant_name" => $confined_space_entry->attendant_name ?? 'N/A',
+                            "value" => $confined_space_entry->attendant_name ?? 'N/A',
                         ],
                         'register_entry_exits' => [
                             'name' => "Register for entry & exits ",
-                            'register_entry_exits_checked' => isset($confined_space_entry->register_entry_exits) && $confined_space_entry->register_entry_exits == 1 ? 'Yes' : 'No',
+                            'value' => isset($confined_space_entry->register_entry_exits) && $confined_space_entry->register_entry_exits == 1 ? 'Yes' : 'No',
                         ],
                         'other_gas' => [
                             'name' => "Any Other Gas / PPM",
-                            "other_gas_checked" => $confined_space_entry && $confined_space_entry->other_gas  == 1 ? 'Yes' : 'No',
+                            "value" => $confined_space_entry && $confined_space_entry->other_gas  == 1 ? 'Yes' : 'No',
                         ],
                         'ppm_safe_to_enter' => [
                             'name' => "PPM and is therefore safe to enter from",
-                            "ppm_safe_to_enter" => isset($confined_space_entry->ppm_safe_to_enter) ? $confined_space_entry->ppm_safe_to_enter : 'N/A',
+                            "value" => isset($confined_space_entry->ppm_safe_to_enter) ? $confined_space_entry->ppm_safe_to_enter : 'N/A',
                         ],
                         'to' => [
                             'name' => "PPM and is therefore safe to enter To",
-                            "to" =>  isset($confined_space_entry->to) ? $confined_space_entry->to : 'N/A',
+                            "value" =>  isset($confined_space_entry->to) ? $confined_space_entry->to : 'N/A',
                         ],
                     ],
 
