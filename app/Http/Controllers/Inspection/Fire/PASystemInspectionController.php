@@ -711,9 +711,6 @@ class PASystemInspectionController extends Controller
         }
     }
 
-
-    
-
     public function ExportExcel(Request $request)
     {
         try {
@@ -738,7 +735,6 @@ class PASystemInspectionController extends Controller
 
                 $titleRow = $row;
 
-                // Logo
                 $logoPath = public_path('assets/images/logo-dark.png');
                 if (file_exists($logoPath)) {
                     $drawing = new Drawing();
@@ -779,7 +775,7 @@ class PASystemInspectionController extends Controller
 
                 $sheet->getStyle("J{$titleRow}:K" . ($titleRow + 2))->applyFromArray([
                     'font' => ['bold' => true],
-                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                 ]);
 
@@ -825,7 +821,6 @@ class PASystemInspectionController extends Controller
                 $sheet->mergeCells("B{$headerStart}:B" . ($headerStart + 1))->setCellValue("B{$headerStart}", "LOCATION");
                 $sheet->mergeCells("C{$headerStart}:I{$headerStart}")->setCellValue("C{$headerStart}", "CHECK ITEMS");
 
-                // Sub-headers for CHECK ITEMS
                 $sheet->setCellValue("C" . ($headerStart + 1), "UNIT");
                 $sheet->setCellValue("D" . ($headerStart + 1), "AUDIO QUALITY");
                 $sheet->setCellValue("E" . ($headerStart + 1), "MIC CONDITION");
@@ -882,7 +877,6 @@ class PASystemInspectionController extends Controller
                 $signatureRowStart = $dataRow;
                 $sheet->getRowDimension($signatureRowStart)->setRowHeight(80);
 
-                // === Prepared By ===
                 $sheet->mergeCells("A{$signatureRowStart}:D{$signatureRowStart}");
                 $sheet->getStyle("A{$signatureRowStart}:D{$signatureRowStart}")->applyFromArray([
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
@@ -904,12 +898,11 @@ class PASystemInspectionController extends Controller
                     $drawing->setHeight(40);
                     $drawing->setWorksheet($sheet);
 
-                    $sheet->setCellValue("A{$signatureRowStart}", "\n\n\nPrepared By:\n" . getUsername($inspection_detail->created_by));
+                    $sheet->setCellValue("A{$signatureRowStart}", "\n\n\nPrepared By:\n" . getUsername($inspection_detail->checked_by));
                 } else {
                     $sheet->setCellValue("A{$signatureRowStart}", "Prepared By:\nInspection not yet started");
                 }
 
-                // === Verified By ===
                 $sheet->mergeCells("E{$signatureRowStart}:G{$signatureRowStart}");
                 $sheet->getStyle("E{$signatureRowStart}:G{$signatureRowStart}")->applyFromArray([
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
@@ -936,7 +929,6 @@ class PASystemInspectionController extends Controller
                     $sheet->setCellValue("E{$signatureRowStart}", "Verified By:\nInspection not yet completed");
                 }
 
-                // === Approved By ===
                 $sheet->mergeCells("H{$signatureRowStart}:K{$signatureRowStart}");
                 $sheet->getStyle("H{$signatureRowStart}:K{$signatureRowStart}")->applyFromArray([
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
@@ -967,16 +959,17 @@ class PASystemInspectionController extends Controller
                 $row = $signatureRowStart + 6;
             }
 
-            // Output the file as usual
             $writer = new Xlsx($spreadsheet);
             $filename = 'PA System Inspection.xlsx';
             header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
             header("Content-Disposition: attachment; filename=\"$filename\"");
             header('Cache-Control: max-age=0');
             $writer->save('php://output');
+
         } catch (\Exception $e) {
-            dd($e);
-            return redirect()->back()->with('error', 'Export error: ' . $e->getMessage());
+            report($e);
+            Session::flash('error', 'Something went wrong!');
+            return redirect(admin_url('fire/pa-system-inspection/list'));
         }
     }
 
@@ -1070,8 +1063,6 @@ class PASystemInspectionController extends Controller
         }
     }
 
-
-
     public function generalExcel(Request $request)
     {
         try {
@@ -1097,7 +1088,6 @@ class PASystemInspectionController extends Controller
                 $sheet->getRowDimension($i)->setRowHeight(25);
             }
 
-            // Add logo
             $logoPath = public_path('assets/images/logo-dark.png');
             if (file_exists($logoPath)) {
                 $drawing = new Drawing();
@@ -1111,7 +1101,6 @@ class PASystemInspectionController extends Controller
                 $drawing->setWorksheet($sheet);
             }
 
-            // Header and Document Info
             $sheet->mergeCells('A1:B3');
             $sheet->mergeCells("C1:I3");
             $sheet->setCellValue("C1", "PA SYSTEM INSPECTION CHECKLIST PN INTERNATIONAL PVT. LTD.");
@@ -1125,9 +1114,6 @@ class PASystemInspectionController extends Controller
                 'borders' => ['outline' => ['borderStyle' => Border::BORDER_THIN]],
             ]);
 
-
-
-            // Document label info without merging
             $labelMap = [
 
                 'J1' => ['value' => 'Doc. No.', 'valueCell' => 'K1', 'data' => $document_no->doc_no],
@@ -1143,17 +1129,16 @@ class PASystemInspectionController extends Controller
                 $sheet->getStyle($labelCell)->applyFromArray([
                     'font' => ['bold' => true],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
-                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
                 ]);
 
                 $sheet->getStyle($info['valueCell'])->applyFromArray([
                     'font' => ['bold' => true],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
-                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
                 ]);
             }
 
-            // Info section
             $sheet->mergeCells("A4:D4")->setCellValue("A4", "Date of Inspection:- " . Displaydateformat($pa_system->date_of_inspection));
             $sheet->mergeCells("E4:H4")->setCellValue("E4", "Location :- " . getLocationname($pa_system->location));
             $sheet->mergeCells("I4:K4")->setCellValue("I4", "Shift:- " . getShift($pa_system->shift));
@@ -1166,10 +1151,9 @@ class PASystemInspectionController extends Controller
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
             ]);
 
-            // Table headers
             $sheet->mergeCells("A6:A7")->setCellValue("A6", "SR.NO");
             $sheet->mergeCells("B6:B7")->setCellValue("B6", "LOCATION");
-            $sheet->mergeCells("C6:I6")->setCellValue("C6", "CHECK ITEMS"); // Fixed here
+            $sheet->mergeCells("C6:I6")->setCellValue("C6", "CHECK ITEMS");
             $sheet->setCellValue("C7", "UNIT");
             $sheet->setCellValue("D7", "AUDIO QUALITY");
             $sheet->setCellValue("E7", "MIC CONDITION");
@@ -1185,7 +1169,6 @@ class PASystemInspectionController extends Controller
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
             ]);
 
-            // Data rows
             $row = 8;
             $sr = 1;
             foreach ($inspection_data as $detail) {
@@ -1227,7 +1210,6 @@ class PASystemInspectionController extends Controller
             $signatureRowStart = $row;
             $sheet->getRowDimension($signatureRowStart)->setRowHeight(80);
 
-            // === Prepared By ===
             $sheet->mergeCells("A{$signatureRowStart}:D{$signatureRowStart}");
             $sheet->getStyle("A{$signatureRowStart}:D{$signatureRowStart}")->applyFromArray([
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
@@ -1253,7 +1235,6 @@ class PASystemInspectionController extends Controller
                 $sheet->setCellValue("A{$signatureRowStart}", "Prepared By:\nInspection not yet started");
             }
 
-            // === Verified By ===
             $sheet->mergeCells("E{$signatureRowStart}:H{$signatureRowStart}");
             $sheet->getStyle("E{$signatureRowStart}:H{$signatureRowStart}")->applyFromArray([
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
@@ -1279,7 +1260,6 @@ class PASystemInspectionController extends Controller
                 $sheet->setCellValue("E{$signatureRowStart}", "Verified By:\nInspection not yet completed");
             }
 
-            // === Approved By ===
             $sheet->mergeCells("I{$signatureRowStart}:K{$signatureRowStart}");
             $sheet->getStyle("I{$signatureRowStart}:K{$signatureRowStart}")->applyFromArray([
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
@@ -1305,9 +1285,6 @@ class PASystemInspectionController extends Controller
                 $sheet->setCellValue("I{$signatureRowStart}", "Approved By:\nApproval pending");
             }
 
-
-
-            // Download Excel
             $writer = new Xlsx($spreadsheet);
             $fileName = 'PA System Inspection.xlsx';
             $filePath = storage_path("app/public/$fileName");
@@ -1315,8 +1292,9 @@ class PASystemInspectionController extends Controller
 
             return response()->download($filePath)->deleteFileAfterSend(true);
         } catch (\Exception $e) {
-            dd($e);
-            return back()->with('error', $e->getMessage());
+            report($e);
+            Session::flash('error', 'Something went wrong!');
+            return redirect(admin_url('fire/pa-system-inspection/list'));
         }
     }
 }

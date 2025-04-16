@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Inspection\Ohc;
 
 use App\Http\Controllers\Controller;
-use App\Mail\Inspection\Safety\SafetyInspection;
+use App\Mail\Inspection\Ohc\OccupationalHealthEmail;
 use App\Models\Inspection\InspectionStaticDocno;
 use App\Models\Inspection\Master\ChecklistOptionType;
 use App\Models\Inspection\Master\ChecklistSubTypeData;
@@ -257,7 +257,7 @@ class WeeklyAmbulanceController extends Controller
                 $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
                 $mailsubject = 'INSPECTION - OHC';
                 $notificationData = array(
-                    'notification_type' => 1,
+                   'notification_type' => OHC_INSPECTION,
                     'module_type' => 1,
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(
@@ -278,14 +278,14 @@ class WeeklyAmbulanceController extends Controller
                     $email_id = getUseremail($user);
                     $url = admin_url('ohc/weekly-ambulance/inspection/checklist/verification/' . encryptId($id) . '/ehs');
                     $details = array(
-                        'safety_type' => 'Weekly Ambulance Inspection Checklist',
+                         'ohc_type' => 'Weekly Ambulance Inspection Checklist',
                         'email' => $email_id,
                         'mail_subject' => $mailsubject,
                         'title' => $title,
                         'url' => $url,
                         'data' => $weekly_ambulance_details
                     );
-                    Mail::to($email_id)->queue(new SafetyInspection($details));
+                    Mail::to($email_id)->queue(new OccupationalHealthEmail($details));
                 }
 
 
@@ -337,6 +337,8 @@ class WeeklyAmbulanceController extends Controller
             return view('inspection.inspection_ohc.weekly_ambulance.view', $data);
         } catch (Exception $ex) {
             dd($ex);
+            Session::flash('error',  __('common.message_error'));
+            return redirect(admin_url('ohc/weekly-ambulance/inspection/checklist/list'));
         }
     }
 
@@ -374,6 +376,8 @@ class WeeklyAmbulanceController extends Controller
             return view('inspection.inspection_ohc.weekly_ambulance.approval', $data);
         } catch (Exception $ex) {
             dd($ex);
+            Session::flash('error',  __('common.message_error'));
+            return redirect(admin_url('ohc/weekly-ambulance/inspection/checklist/list'));
         }
     }
 
@@ -401,7 +405,7 @@ class WeeklyAmbulanceController extends Controller
             ];
             $mailsubject = 'Weekly Ambulance Inspection Checklist';
             $notificationData = array(
-                'notification_type' => 1,
+               'notification_type' => OHC_INSPECTION,
                 'module_type' => 1,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
@@ -422,14 +426,14 @@ class WeeklyAmbulanceController extends Controller
             $email_id = getUseremail($user);
             $url = admin_url('ohc/weekly-ambulance/inspection/checklist/verification/' . encryptId($id) . '/ehs');
             $details = array(
-                'safety_type' => 'Weekly Ambulance Inspection Checklist',
+                 'ohc_type' => 'Weekly Ambulance Inspection Checklist',
                 'email' => $email_id,
                 'mail_subject' => $mailsubject,
                 'title' => $title,
                 'url' => $url,
                 'data' => $weekAmbualance
             );
-            Mail::to($email_id)->queue(new SafetyInspection($details));
+            Mail::to($email_id)->queue(new OccupationalHealthEmail($details));
 
             $data = [
                 'type' => OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST,
@@ -484,14 +488,14 @@ class WeeklyAmbulanceController extends Controller
             $email_id = getUseremail($user);
             $url = admin_url('ohc/weekly-ambulance/inspection/checklist/verification/' . encryptId($id) . '/ehsVerify');
             $details = array(
-                'safety_type' => 'Weekly Ambulance Inspection Checklist',
+                 'ohc_type' => 'Weekly Ambulance Inspection Checklist',
                 'email' => $email_id,
                 'mail_subject' => $mailsubject,
                 'title' => 'CAPA Action Completed by the Fire Associates',
                 'url' => $url,
                 'data' => $weeklyAmbulance
             );
-            Mail::to($email_id)->queue(new SafetyInspection($details));
+            Mail::to($email_id)->queue(new OccupationalHealthEmail($details));
 
 
             $data = [
@@ -558,14 +562,14 @@ class WeeklyAmbulanceController extends Controller
                 $email_id = getUseremail($user);
                 $url = $web_link;
                 $details = array(
-                    'safety_type' => 'Weekly Ambulance Inspection Checklist',
+                     'ohc_type' => 'Weekly Ambulance Inspection Checklist',
                     'email' => $email_id,
                     'mail_subject' => $mailsubject,
                     'title' => $title,
                     'url' => $url,
                     'data' => $inspection_details
                 );
-                Mail::to($email_id)->queue(new SafetyInspection($details));
+                Mail::to($email_id)->queue(new OccupationalHealthEmail($details));
             }
 
 
@@ -637,14 +641,14 @@ class WeeklyAmbulanceController extends Controller
                 $email_id = getUseremail($user);
                 $url = $web_link;
                 $details = array(
-                    'safety_type' => 'Weekly Ambulance Inspection Checklist',
+                     'ohc_type' => 'Weekly Ambulance Inspection Checklist',
                     'email' => $email_id,
                     'mail_subject' => $mailsubject,
                     'title' => $title,
                     'url' => $url,
                     'data' => $weekAmbulance
                 );
-                Mail::to($email_id)->queue(new SafetyInspection($details));
+                Mail::to($email_id)->queue(new OccupationalHealthEmail($details));
             }
 
 
@@ -692,7 +696,7 @@ class WeeklyAmbulanceController extends Controller
 
             $mailsubject = 'Weekly Ambulance Inspection Checklist';
             $notificationData = array(
-                'notification_type' => 1,
+               'notification_type' => OHC_INSPECTION,
                 'module_type' => 1,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
@@ -713,14 +717,14 @@ class WeeklyAmbulanceController extends Controller
                 $email_id = getUseremail($user);
                 $url = $web_link;
                 $details = array(
-                    'safety_type' => 'Weekly Ambulance Inspection Checklist',
+                     'ohc_type' => 'Weekly Ambulance Inspection Checklist',
                     'email' => $email_id,
                     'mail_subject' => $mailsubject,
                     'title' => $title,
                     'url' => $url,
                     'data' => $weeklyAmbulance
                 );
-                Mail::to($email_id)->queue(new SafetyInspection($details));
+                Mail::to($email_id)->queue(new OccupationalHealthEmail($details));
             }
 
 

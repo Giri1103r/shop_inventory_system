@@ -61,9 +61,9 @@ class AuditAnalysisController extends Controller
                         })
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            $btn = '<a href="' . admin_url('msds/view/' . encryptId($row->id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
+                            $btn = '<a href="' . admin_url('audit/6s-analysis/view/' . encryptId($row->id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
                             // if (CheckUserRole(ROLE_SUPERADMIN)) {
-                            // $btn .= '<a href="' . admin_url('msds/edit/' . encryptId($row->id)) . '" class="edit-icon " title="' . __('common.edit') . '"><i class="fa-solid fa-pen-to-square"></i> ';
+                            // $btn .= '<a href="' . admin_url('audit/6s-analysis/edit/' . encryptId($row->id)) . '" class="edit-icon " title="' . __('common.edit') . '"><i class="fa-solid fa-pen-to-square"></i> ';
                             // $btn .= '<a href="javascript:void(0);"  data-id="' . encryptId($row->id) . '"  class="recordDelete" title="' . __('common.delete') . '"><i class="fa-solid fa-trash text-danger" ></i></i></a> ';
                             // }
                             return $btn;
@@ -83,8 +83,11 @@ class AuditAnalysisController extends Controller
             }
         }
 
-        $data = [];
+        $auditAnalysisList  = $this->auditAnalysis->select('id', 'audit_analysis_id')->where('status', '1')->get();
 
+        $data = array(
+            'auditAnalysisList' => $auditAnalysisList,
+        );
         return view('inspection.inspection_audit.auditAnalysis.list', $data);
     }
 
@@ -97,25 +100,11 @@ class AuditAnalysisController extends Controller
                 ['type', "6SAuditAnalysis"],
                 ['status', '1']
             ])->first();
-            $months = [
-                'April',
-                'May',
-                'June',
-                'July',
-                'August',
-                'September',
-                'October',
-                'November',
-                'December',
-                'January',
-                'February',
-                'March',
-            ];
+
             $data = array(
                 'departmentList' => $departmentList,
                 'unitList' => $unitList,
                 'staticDocno' => $staticDocno,
-                'months' => $months,
             );
             return view('inspection.inspection_audit.auditAnalysis.add', $data);
         } catch (Exception $ex) {
@@ -129,7 +118,6 @@ class AuditAnalysisController extends Controller
         try {
 
             try {
-
                 $auditAnalysis = $this->auditAnalysis->store();
                 $auditanalysis_id = $auditAnalysis->id;
                 $this->auditAnalysisCheckList->store($auditanalysis_id);
@@ -151,30 +139,29 @@ class AuditAnalysisController extends Controller
     public function Uniquecheck(Request $request)
     {
         $ids = decryptId($request->input('id'));
-        $fromDate = $request->input('from_date');
-        $toDate = $request->input('to_date');
-        $topicId = decryptId($request->input('topicId'));
-        $trainerId = decryptId($request->input('trainerId'));
-        $unitId = decryptId($request->input('unitId'));
         $departmentId = decryptId($request->input('departmentId'));
-        $venueId = decryptId($request->input('venueId'));
+        $unitId = decryptId($request->input('unitId'));
+        $year = (new \DateTime($request->year))->format('Y');
+        $month = (new \DateTime($request->month))->format('m');
 
         if (empty($ids)) {
-            $conflicts = $this->training_schedule->getUniqueSchedule($fromDate, $toDate, $topicId, $trainerId, $unitId, $departmentId, $venueId);
+            $conflicts = $this->auditAnalysisCheckList->getUniqueSchedule($departmentId, $unitId, $year, $month);
         } else {
-            $conflicts = $this->training_schedule->getExistUniqueSchedule($fromDate, $toDate, $topicId, $trainerId, $unitId, $departmentId, $venueId, $ids);
+            $conflicts = $this->auditAnalysisCheckList->getExistUniqueSchedule($departmentId, $unitId, $year, $month, $ids);
         }
 
         return response()->json(['conflicts' => $conflicts]);
     }
+
+
     public function StatusChange(Request $request)
     {
         try {
             $id = decryptId($request->id);
 
-            $this->msdsDetails->statuschange($id);
+            $this->auditAnalysis->statuschange($id);
 
-            $this->msdsCheckList->statuschange($id);
+            $this->auditAnalysisCheckList->statuschange($id);
 
             return response()->json(['status' => 'success', 'msg' => 'Your status  has changed Successfully'], 200);
         } catch (Exception $ex) {
@@ -183,32 +170,38 @@ class AuditAnalysisController extends Controller
         }
     }
 
-    public function view(Request $request)
+    public function View($id)
     {
         try {
-            $id = decryptId($request->id);
+            $id = decryptId($id);
             if (Auth::check()) {
-                $msdsDetails = $this->msdsDetails->find($id);
-
-                $msdsCheckList = $this->msdsCheckList->selectOne($id);
-
+                $auditData =   $this->auditAnalysis->selectOne($id);
+                $auditAnalysisData =   $this->auditAnalysisCheckList->selectOne($id);
+                $staticDocno  = $this->static_docno->select('id', 'doc_no', 'issue_date', 'rev_dt')->where([
+                    ['type', "6SAuditAnalysis"],
+                    ['status', '1']
+                ])->first();
                 $data = array(
-                    'msdsDetails' => $msdsDetails,
-                    'msdsCheckList' => $msdsCheckList  ?? [],
+                    'auditData' => $auditData,
+                    'auditAnalysisData' => $auditAnalysisData,
+                    'staticDocno' => $staticDocno,
                 );
             }
             return view('inspection.inspection_audit.auditAnalysis.view', $data);
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error', 'Something went wrong!');
+            return redirect(admin_url('audit/6s-analysis/list'));
         }
     }
+
 
     public function ExportExcel(Request $request)
     {
 
         try {
 
-            $allData = $this->msdsDetails->exportdata();
+            $allData = $this->auditAnalysis->exportdata();
 
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
@@ -259,7 +252,7 @@ class AuditAnalysisController extends Controller
 
         try {
 
-            $allData = $this->msdsDetails->exportdata();
+            $allData = $this->auditAnalysis->exportdata();
 
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
@@ -313,7 +306,7 @@ class AuditAnalysisController extends Controller
         try {
             $id = decryptId($id);
 
-            $msdsDetails = $this->msdsDetails->find($id);
+            $msdsDetails = $this->auditAnalysis->find($id);
 
             $msdsCheckList = $this->msdsCheckList->selectOne($id);
 
@@ -360,8 +353,8 @@ class AuditAnalysisController extends Controller
 
             try {
 
-                $msds = $this->msdsDetails->updates($id);
-                $msds_details = $this->msdsDetails->selectOne($id);
+                $msds = $this->auditAnalysis->updates($id);
+                $msds_details = $this->auditAnalysis->selectOne($id);
                 $msdsId = $msds_details->id;
 
                 $this->msdsCheckList->updates($msdsId);

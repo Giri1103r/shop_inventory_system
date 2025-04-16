@@ -163,7 +163,6 @@ Route::group(['prefix' => 'audit/'], function () {
         Route::get('import', [AuditAnalysisController::class, 'import']);
         Route::post('import/Submit', [AuditAnalysisController::class, 'importSubmit']);
         Route::post('status', [AuditAnalysisController::class, 'statusChange']);
-        Route::post('unique', [AuditAnalysisController::class, 'Uniquecheck']);
         Route::get('employeeName', [AuditAnalysisController::class, 'employeename']);
         Route::get('ajax-list', [AuditAnalysisController::class, 'Uniquecheck']);
     });
