@@ -281,16 +281,19 @@ class MonthlyAuditPlanController extends Controller
                 $sheet->getStyle("A{$row}:G{$row}")->applyFromArray([
                     'font' => [
                         'bold' => true,
-                        'color' => ['rgb' => 'FFFFFF']
+                        'color' => ['rgb' => '000000']
                     ],
                     'fill' => [
                         'fillType' => Fill::FILL_SOLID,
                         'startColor' => ['rgb' => 'ffb9bf']
                     ],
-                    'alignment' => [
-                        'horizontal' => Alignment::HORIZONTAL_CENTER
-                    ]
+                        'alignment' => [
+                        'horizontal' => Alignment::HORIZONTAL_CENTER,
+                        'vertical' => Alignment::VERTICAL_CENTER,
+                        'wrapText' => true,
+                    ],
                 ]);
+                $sheet->getRowDimension($row)->setRowHeight(25);
                 $row++;
     
                 $sheet->fromArray([
@@ -302,7 +305,7 @@ class MonthlyAuditPlanController extends Controller
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                 ]);
-    
+                $sheet->getRowDimension($row)->setRowHeight(20);
                 $row++;
     
                 $sr = 1;
@@ -335,7 +338,7 @@ class MonthlyAuditPlanController extends Controller
                 ]
             ]);
     
-            $fileName = 'Monthly_Audit_Plan_' . now()->format('d-m-Y') . '.xlsx';
+            $fileName = 'Monthly_Audit_Plan.xlsx';
             header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
             header("Content-Disposition: attachment;filename=\"$fileName\"");
             header('Cache-Control: max-age=0');
@@ -451,6 +454,7 @@ class MonthlyAuditPlanController extends Controller
                 $drawing->setWorksheet($sheet);
             }
 
+                    // Merge and style A1:B3
             $sheet->mergeCells('A1:B3');
             $sheet->getStyle('A1:B3')->applyFromArray([
                 'fill' => [
@@ -460,16 +464,31 @@ class MonthlyAuditPlanController extends Controller
                     'horizontal' => Alignment::HORIZONTAL_CENTER,
                     'vertical' => Alignment::VERTICAL_CENTER,
                 ],
+                'borders' => [
+                    'allBorders' => [
+                        'borderStyle' => Border::BORDER_THIN,
+                    ],
+                ],
             ]);
 
-    
+            // Merge and style C1:K3
             $sheet->mergeCells('C1:K3');
             $sheet->setCellValue('C1', "MONTHLY AUDIT PLAN\nKARAM SAFETY PRIVATE LIMITED");
-            $sheet->getStyle('C1')->applyFromArray([
-                'font' => ['bold' => true, 'size' => 14],
-                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
-                
-
+            $sheet->getStyle('C1:K3')->applyFromArray([
+                'font' => [
+                    'bold' => true,
+                    'size' => 14,
+                ],
+                'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_CENTER,
+                    'vertical' => Alignment::VERTICAL_CENTER,
+                    'wrapText' => true,
+                ],
+                'borders' => [
+                    'allBorders' => [
+                        'borderStyle' => Border::BORDER_THIN,
+                    ],
+                ],
             ]);
     
             $headers = [
