@@ -357,7 +357,7 @@ class FirstAidRecordController extends Controller
             }
 
             $writer = new Xlsx($spreadsheet);
-            $fileName = 'FirstAid_Record_Bulk.xlsx';
+            $fileName = 'First Aid Record.xlsx';
             $filePath = storage_path("app/public/{$fileName}");
             $writer->save($filePath);
 
@@ -470,7 +470,6 @@ class FirstAidRecordController extends Controller
             $first_aid_checklist = $this->first_aid_checklist->selectOne($id);
             $document_no = $this->document_reference->selectUsingName('FirstAidRecord');
 
-            // Set column widths (reduced layout)
             $columnWidths = [
                 'A' => 8, 'B' => 12, 'C' => 16, 'D' => 16,
                 'E' => 25, 'F' => 25, 'G' => 25, 'H' => 18, 'I' => 18
@@ -479,12 +478,10 @@ class FirstAidRecordController extends Controller
                 $sheet->getColumnDimension($col)->setWidth($width);
             }
 
-            // Set row heights
             for ($i = 1; $i <= 100; $i++) {
                 $sheet->getRowDimension($i)->setRowHeight(22);
             }
 
-            // Logo
             $sheet->mergeCells("A1:B3");
             $logoPath = public_path('assets/images/logo-dark.png');
             if (file_exists($logoPath)) {
@@ -499,14 +496,12 @@ class FirstAidRecordController extends Controller
                 $drawing->setWorksheet($sheet);
             }
 
-            // Title
             $sheet->mergeCells("C1:F3")->setCellValue("C1", "OCCUPATIONAL HEALTH CENTER FIRST AID RECORD\nPN INTERNATIONAL PVT LTD");
             $sheet->getStyle("C1")->applyFromArray([
                 'font' => ['bold' => true, 'size' => 14],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
             ]);
 
-            // Document Info
             $sheet->mergeCells("G1:H1")->setCellValue("G1", "Doc. No.");
             $sheet->setCellValue("I1", $document_no->doc_no);
 
@@ -522,7 +517,6 @@ class FirstAidRecordController extends Controller
             ]);
             $sheet->getStyle("G1:G3")->getFont()->setBold(true);
 
-            // Header
             $row = 4;
             $sheet->fromArray([
                 "Sr No.", "Month", "Department", "Unit",
@@ -537,7 +531,6 @@ class FirstAidRecordController extends Controller
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
             ]);
 
-            // Data rows
             $row++;
             $srNo = 1;
             $month = $first_aid_details->month ?? '-';
@@ -564,7 +557,6 @@ class FirstAidRecordController extends Controller
                 $srNo++;
             }
 
-            // Total row
             $sheet->mergeCells("A{$row}:F{$row}")->setCellValue("A{$row}", "Total Number of First Aid");
             $sheet->mergeCells("G{$row}:I{$row}");
             $sheet->setCellValue("G{$row}", $first_aid_details->overall_total_number_of_first_aid ?? '0');
@@ -575,7 +567,6 @@ class FirstAidRecordController extends Controller
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
             ]);
 
-            // Outline border
             $sheet->getStyle("A5:I{$row}")->applyFromArray([
                 'borders' => [
                     'outline' => [
@@ -585,9 +576,8 @@ class FirstAidRecordController extends Controller
                 ],
             ]);
 
-            // Export
             $writer = new Xlsx($spreadsheet);
-            $fileName = 'FirstAid_Record.xlsx';
+            $fileName = 'First Aid Record.xlsx';
             $filePath = storage_path("app/public/{$fileName}");
             $writer->save($filePath);
 
