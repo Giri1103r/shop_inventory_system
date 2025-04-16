@@ -579,6 +579,7 @@
                                                     $inspection->id,
                                                     CO_TYPE_FIRE_EXTINGUISHER_INSPECTION,
                                                 );
+                                                
                                             @endphp
                                             @if (isset($signature))
                                                 <div class="col-md-4 mb-2">
