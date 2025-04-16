@@ -813,43 +813,95 @@ class DailyDepartmentFirstAidBoxController extends Controller
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
             ]);
+            $headerRow = $currentRow + 5;
 
-            $sheet->mergeCells("A6:C6")->setCellValue("A6", "SERIAL NO");
-            $sheet->mergeCells("D6:G6")->setCellValue("D6", "NAME OF THE MEDICINE");
-            $sheet->mergeCells("H6:I6")->setCellValue("H6", "FREEZE QUANTITY");
-            $sheet->mergeCells("J6:K6")->setCellValue("J6", "QUANTITY");
-            $sheet->mergeCells("L6:O6")->setCellValue("L6", "REMARKS");
+            $sheet->mergeCells("A$headerRow:C$headerRow")->setCellValue("A$headerRow", "SERIAL NO");
+            $sheet->mergeCells("D$headerRow:G$headerRow")->setCellValue("D$headerRow", "NAME OF THE MEDICINE");
+            $sheet->mergeCells("H$headerRow:J$headerRow")->setCellValue("H$headerRow", "FREEZE QUANTITY");
+            $sheet->mergeCells("K$headerRow:M$headerRow")->setCellValue("K$headerRow", "AVAILABLE QUANTITY");
+            $sheet->mergeCells("N$headerRow:P$headerRow")->setCellValue("N$headerRow", "MATERIAL EXPIRY");
+            $sheet->mergeCells("Q$headerRow:S$headerRow")->setCellValue("Q$headerRow", "REMARKS");
 
-            $sheet->getStyle("A6:O6")->applyFromArray([
-                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THICK]],
+            $sheet->getStyle("A$headerRow:S$headerRow")->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                 'font' => ['bold' => true],
             ]);
 
-            $row = 7    ;
-            foreach ($daily_department_first_aid_box as $index => $detail) {
-                $sheet->mergeCells("A$row:C$row")->setCellValue("A$row", $index + 1);
-                $medicineName = getMedicinename($detail->medicine_id) ?? '';
-                $sheet->mergeCells("D$row:G$row")->setCellValue("D$row", $medicineName);
-                $sheet->mergeCells("H$row:I$row")->setCellValue("H$row", $detail->freeze_quantity ?? '');
-                $sheet->mergeCells("J$row:K$row")->setCellValue("J$row", $detail->quantity ?? '');
-                $sheet->mergeCells("L$row:O$row")->setCellValue("L$row", $detail->remarks ?? '');
+            $inspectionRow = $headerRow + 1;
 
-                $sheet->getStyle("A$row:O$row")->applyFromArray([
-                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THICK]],
+            foreach ($daily_department_first_aid_box as $index => $detail) {
+                $sheet->mergeCells("A$inspectionRow:C$inspectionRow")->setCellValue("A$inspectionRow", $index + 1);
+                $medicineName = getMedicinename($detail->medicine_id) ?? '';
+                $material_expiry = Displaydateformat($detail->material_expiry) ?? '';
+                $sheet->mergeCells("D$inspectionRow:G$inspectionRow")->setCellValue("D$inspectionRow", $medicineName);
+                $sheet->mergeCells("H$inspectionRow:J$inspectionRow")->setCellValue("H$inspectionRow", $detail->freeze_quantity ?? '');
+                $sheet->mergeCells("K$inspectionRow:M$inspectionRow")->setCellValue("K$inspectionRow", $detail->available_quantity ?? '');
+                $sheet->mergeCells("N$inspectionRow:P$inspectionRow")->setCellValue("N$inspectionRow", $material_expiry );
+                $sheet->mergeCells("Q$inspectionRow:S$inspectionRow")->setCellValue("N$inspectionRow", $detail->remarks ?? '');
+
+                $sheet->getStyle("A$inspectionRow:S$inspectionRow")->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_LEFT, 'vertical' => Alignment::VERTICAL_CENTER],
                 ]);
 
-                $row++;
+                $inspectionRow++;
             }
 
-            $signatureStartRow = $row;
+            $signatureStartRow = $inspectionRow;
             $signatureEndRow = $signatureStartRow + 3;
             $labelRow = $signatureEndRow + 1;
             $imageHeight = 60;
 
+
+            if (file_exists($CreatorSignature)) {
+                $sheet->mergeCells("A$signatureStartRow:I" . ($signatureStartRow + 2));
+
+                $drawing = new Drawing();
+                $drawing->setName('Creator Signature');
+                $drawing->setPath($CreatorSignature);
+                $drawing->setCoordinates("A$signatureStartRow");
+                $drawing->setOffsetX(100);
+           $drawing->setOffsetY(5);
+                $drawing->setWidth(70);
+                $drawing->setHeight(70);
+                $drawing->setWorksheet($sheet);
+               $sheet->getRowDimension($signatureStartRow + 2)->setRowHeight(40);
+                // Label + Name
+                $sheet->setCellValue("A" . ($signatureStartRow + 3), "First Aider Signature: " . getUserName($medicinerequisition->created_by));
+                $sheet->mergeCells("A" . ($signatureStartRow + 3) . ":I" . ($row + 3));
+
+                $sheet->getStyle("A$signatureStartRow:I" . ($signatureStartRow + 3))->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                ]);
+            }
+
+            if (file_exists($floorManagerSignature)) {
+                $sheet->mergeCells("J$signatureStartRow:S" . ($signatureStartRow + 2));
+
+                $drawing = new Drawing();
+                $drawing->setName('Floor Manager Signature');
+                $drawing->setPath($floorManagerSignature);
+                $drawing->setCoordinates("J$signatureStartRow");
+                $drawing->setOffsetX(100);
+           $drawing->setOffsetY(5);
+                $drawing->setWidth(70);
+                $drawing->setHeight(70);
+                $drawing->setWorksheet($sheet);
+               $sheet->getRowDimension($signatureStartRow + 2)->setRowHeight(40);
+                // Label + Name
+                $sheet->setCellValue("J" . ($signatureStartRow + 3), "Floor Manager/Medical Assitant Signature: " . getUserName($medicinerequisition->created_by));
+                $sheet->mergeCells("J" . ($signatureStartRow + 3) . ":S" . ($row + 3));
+
+                $sheet->getStyle("A$signatureStartRow:" . ($signatureStartRow + 3))->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                ]);
+            }
+
             // Requestor Signature
-            $sheet->mergeCells("A{$signatureStartRow}:G{$signatureEndRow}");
+            $sheet->mergeCells("A{$signatureStartRow}:I{$signatureEndRow}");
             if (file_exists($CreatorSignature)) {
                 $drawing = new Drawing();
                 $drawing->setName('First Aider Signature');
@@ -863,16 +915,16 @@ class DailyDepartmentFirstAidBoxController extends Controller
                 $drawing->setWorksheet($sheet);
             }
 
-            $sheet->mergeCells("A{$labelRow}:G{$labelRow}")->setCellValue("A{$labelRow}", "First Aider Signature");
+            $sheet->mergeCells("A{$labelRow}:I{$labelRow}")->setCellValue("A{$labelRow}", "First Aider Signature");
 
             // Medical Officer Signature
-            $sheet->mergeCells("H{$signatureStartRow}:O{$signatureEndRow}");
+            $sheet->mergeCells("J{$signatureStartRow}:S{$signatureEndRow}");
             if (file_exists($floorManagerSignature)) {
                 $drawing = new Drawing();
                 $drawing->setName('Floor Manager');
                 $drawing->setDescription('Floor Manager');
                 $drawing->setPath($floorManagerSignature);
-                $drawing->setCoordinates("H{$signatureStartRow}");
+                $drawing->setCoordinates("J{$signatureStartRow}");
                 $drawing->setOffsetX(130);
                 $drawing->setOffsetY(10);
                 $drawing->setWidth($imageHeight);
@@ -880,31 +932,31 @@ class DailyDepartmentFirstAidBoxController extends Controller
                 $drawing->setWorksheet($sheet);
             }
 
-            $sheet->mergeCells("H{$labelRow}:O{$labelRow}")->setCellValue("H{$labelRow}", "Floor Manager Signature");
+            $sheet->mergeCells("J{$labelRow}:S{$labelRow}")->setCellValue("J{$labelRow}", "Floor Manager Signature");
             //
 
 
 
 
 
-            $sheet->getStyle("A{$labelRow}:G{$labelRow}")->applyFromArray([
+            $sheet->getStyle("A{$labelRow}:I{$labelRow}")->applyFromArray([
                 'font' => ['bold' => true],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
             ]);
 
-            $sheet->getStyle("H{$labelRow}:O{$labelRow}")->applyFromArray([
+            $sheet->getStyle("J{$labelRow}:S{$labelRow}")->applyFromArray([
                 'font' => ['bold' => true],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
             ]);
 
 
-            $sheet->getStyle("A{$signatureStartRow}:G{$signatureEndRow}")->applyFromArray([
-                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THICK]],
+            $sheet->getStyle("A{$signatureStartRow}:I{$signatureEndRow}")->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
             ]);
 
-            $sheet->getStyle("H{$signatureStartRow}:O{$signatureEndRow}")->applyFromArray([
-                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THICK]],
+            $sheet->getStyle("J{$signatureStartRow}:S{$signatureEndRow}")->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
             ]);
 

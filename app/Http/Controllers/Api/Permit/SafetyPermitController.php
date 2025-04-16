@@ -825,7 +825,7 @@ class SafetyPermitController extends BaseController
                 'exact_location_job' => $safetypermit->exact_location_job ?? '-',
                 'job_location_area' => $safetypermit->job_location_area ?? '-',
                 'created_by' => isset($safetypermit->created_by) ? getUsername($safetypermit->created_by) : '-',
-                'qr_code' => $qrBase64,
+               
             ];
 
             return $this->sendResponse($success, 'Safety Permit Qr Code');

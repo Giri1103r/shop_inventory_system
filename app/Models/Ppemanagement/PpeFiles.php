@@ -89,6 +89,9 @@ class PpeFiles extends Model
          return $this->where('reference_id',$id)->where('file_type',1)->where('trash','NO')->get();
     }
 
+   
+
+
     public function store_api($ppeexemption)
     {
         $request = request();
@@ -96,45 +99,64 @@ class PpeFiles extends Model
 
         if ($documentFiles != null) {
             foreach ($documentFiles as $file) {
-                $base64File = $file;
-                $data = preg_replace('#^data:[\w/]+;base64,#i', '', $base64File);
-                $decodedFile = base64_decode($data);
 
-                // Determine file MIME type
-                $finfo = finfo_open();
-                $mimeType = finfo_buffer($finfo, $decodedFile, FILEINFO_MIME_TYPE);
-                finfo_close($finfo);
+                if (!empty($file)) {
+                    // Handle Images
+                    if (preg_match('/^data:image\/(\w+);base64,/', $file, $matches)) {
+                        $fileType = 'image';
+                        $extension = $matches[1]; // png, jpg, jpeg
+                    }
+                    // Handle PDFs
+                    elseif (preg_match('/^data:@file\/pdf;base64,/', $file)) {
+                        $fileType = 'pdf';
+                        $extension = 'pdf';
+                    }
+                    // Handle Word Documents (DOC)
+                    elseif (preg_match('/^data:@file\/msword;base64,/', $file)) {
+                        $fileType = 'doc';
+                        $extension = 'doc';
+                    }
+                    // Handle Word Documents (DOCX)
+                    elseif (preg_match('/^data:@file\/vnd.openxmlformats-officedocument.wordprocessingml.document;base64,/', $file)) {
+                        $fileType = 'docx';
+                        $extension = 'docx';
+                    }
+                    // Handle Excel Files (XLS)
+                    elseif (preg_match('/^data:@file\/msexcel;base64,/', $file)) {
+                        $fileType = 'xls';
+                        $extension = 'xls';
+                    }
+                    // Handle Excel Files (XLSX)
+                    elseif (preg_match('/^data:@file\/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,/', $file)) {
+                        $fileType = 'xlsx';
+                        $extension = 'xlsx';
+                    } else {
+                        Log::error("Unsupported Base64 file format.");
+                        continue;
+                    }
 
-                // Define valid MIME types and corresponding extensions
-                $validFormats = [
-                    'image/jpeg' => 'jpeg',
-                    'image/jpg' => 'jpg',
-                    'image/png' => 'png',
-                    'application/pdf' => 'pdf',
-                    'application/msword' => 'doc',
-                    'application/vnd.openxmlformats-officedocument.wordprocessingml.document' => 'docx'
-                ];
+                    // Remove metadata from Base64 string
+                    $file = preg_replace('#^data:(.*);base64,#i', '', $file);
+                    $fileData = base64_decode($file);
 
-                // Check if the MIME type is valid
-                if (!array_key_exists($mimeType, $validFormats)) {
-                    continue;
-                }
+                    // Validate if base64 decoding was successful
+                    if ($fileData === false) {
+                        Log::error("Base64 decoding failed.");
+                        continue;
+                    }
 
-                $extension = $validFormats[$mimeType];
-
-                // Define upload folder
-                $folderPath = public_path('uploads/ppe_ExemptionFiles/' . $ppeexemption->id);
+                    $folderPath = public_path('uploads/ppe_ExemptionFiles/' . $ppeexemption->id);
 
                 if (!File::exists($folderPath)) {
                     File::makeDirectory($folderPath, 0755, true);
                 }
 
-                // Generate a unique file name
+
                 $filenewname = time() . Str::random(10) . '.' . $extension;
                 $uploadpath = $folderPath . "/" . $filenewname;
 
                 // Save the file to the server
-                file_put_contents($uploadpath, $decodedFile);
+                file_put_contents($uploadpath, $fileData);
 
                 // Get file size
                 $fileSize = filesize($uploadpath);
@@ -153,7 +175,8 @@ class PpeFiles extends Model
                     'trash' => 'NO'
                 ];
 
-                $this->create($insert_data)->id;
+                    $this->create($insert_data);
+                }
             }
         }
     }
