@@ -89,7 +89,7 @@ class PpeFiles extends Model
          return $this->where('reference_id',$id)->where('file_type',1)->where('trash','NO')->get();
     }
 
-   
+
 
 
     public function store_api($ppeexemption)
@@ -97,89 +97,78 @@ class PpeFiles extends Model
         $request = request();
         $documentFiles = $request->input('ppe_file');
 
-        if ($documentFiles != null) {
-            foreach ($documentFiles as $file) {
+        if (!is_array($documentFiles)) {
+            $documentFiles = [$documentFiles]; // Normalize to array if only one file
+        }
 
-                if (!empty($file)) {
-                    // Handle Images
-                    if (preg_match('/^data:image\/(\w+);base64,/', $file, $matches)) {
-                        $fileType = 'image';
-                        $extension = $matches[1]; // png, jpg, jpeg
-                    }
-                    // Handle PDFs
-                    elseif (preg_match('/^data:@file\/pdf;base64,/', $file)) {
-                        $fileType = 'pdf';
-                        $extension = 'pdf';
-                    }
-                    // Handle Word Documents (DOC)
-                    elseif (preg_match('/^data:@file\/msword;base64,/', $file)) {
-                        $fileType = 'doc';
-                        $extension = 'doc';
-                    }
-                    // Handle Word Documents (DOCX)
-                    elseif (preg_match('/^data:@file\/vnd.openxmlformats-officedocument.wordprocessingml.document;base64,/', $file)) {
-                        $fileType = 'docx';
-                        $extension = 'docx';
-                    }
-                    // Handle Excel Files (XLS)
-                    elseif (preg_match('/^data:@file\/msexcel;base64,/', $file)) {
-                        $fileType = 'xls';
-                        $extension = 'xls';
-                    }
-                    // Handle Excel Files (XLSX)
-                    elseif (preg_match('/^data:@file\/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,/', $file)) {
-                        $fileType = 'xlsx';
-                        $extension = 'xlsx';
-                    } else {
-                        Log::error("Unsupported Base64 file format.");
-                        continue;
-                    }
+        foreach ($documentFiles as $file) {
+            if (empty($file)) continue;
 
-                    // Remove metadata from Base64 string
-                    $file = preg_replace('#^data:(.*);base64,#i', '', $file);
-                    $fileData = base64_decode($file);
+            $fileType = $extension = null;
 
-                    // Validate if base64 decoding was successful
-                    if ($fileData === false) {
-                        Log::error("Base64 decoding failed.");
-                        continue;
-                    }
-
-                    $folderPath = public_path('uploads/ppe_ExemptionFiles/' . $ppeexemption->id);
-
-                if (!File::exists($folderPath)) {
-                    File::makeDirectory($folderPath, 0755, true);
-                }
-
-
-                $filenewname = time() . Str::random(10) . '.' . $extension;
-                $uploadpath = $folderPath . "/" . $filenewname;
-
-                // Save the file to the server
-                file_put_contents($uploadpath, $fileData);
-
-                // Get file size
-                $fileSize = filesize($uploadpath);
-
-                // Save file metadata in the database
-                $insert_data = [
-                    'reference_id' => $ppeexemption->id,
-                    'uauc_ca_id' => NULL,
-                    'file_type' => 1,
-                    'file_name' => $filenewname,
-                    'file_orgname' => $filenewname,
-                    'file_path' => 'public/uploads/ppe_ExemptionFiles/' . $ppeexemption->id . "/" . $filenewname,
-                    'file_size' => $fileSize,
-                    'file_extension' => $extension,
-                    'created_by' => Auth::id(),
-                    'trash' => 'NO'
-                ];
-
-                    $this->create($insert_data);
-                }
+            // Match correct MIME types
+            if (preg_match('/^data:image\/(\w+);base64,/', $file, $matches)) {
+                $fileType = 'image';
+                $extension = $matches[1];
+            } elseif (preg_match('/^data:application\/pdf;base64,/', $file)) {
+                $fileType = 'pdf';
+                $extension = 'pdf';
+            } elseif (preg_match('/^data:application\/msword;base64,/', $file)) {
+                $fileType = 'doc';
+                $extension = 'doc';
+            } elseif (preg_match('/^data:application\/vnd.openxmlformats-officedocument.wordprocessingml.document;base64,/', $file)) {
+                $fileType = 'docx';
+                $extension = 'docx';
+            } elseif (preg_match('/^data:application\/vnd.ms-excel;base64,/', $file)) {
+                $fileType = 'xls';
+                $extension = 'xls';
+            } elseif (preg_match('/^data:application\/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,/', $file)) {
+                $fileType = 'xlsx';
+                $extension = 'xlsx';
+            } else {
+                Log::error("Unsupported Base64 file format.", ['file' => substr($file, 0, 50)]);
+                continue;
             }
+
+            // Clean base64 header
+            $file = preg_replace('#^data:(.*);base64,#i', '', $file);
+            $fileData = base64_decode($file);
+
+            if ($fileData === false) {
+                Log::error("Base64 decoding failed.");
+                continue;
+            }
+
+            $folderPath = public_path('uploads/ppe_ExemptionFiles/' . $ppeexemption->id);
+
+            if (!File::exists($folderPath)) {
+                File::makeDirectory($folderPath, 0755, true);
+            }
+
+            $filenewname = time() . Str::random(10) . '.' . $extension;
+            $uploadpath = $folderPath . "/" . $filenewname;
+
+            file_put_contents($uploadpath, $fileData);
+            $fileSize = filesize($uploadpath);
+
+            $insert_data = [
+                'reference_id' => $ppeexemption->id,
+                'uauc_ca_id' => NULL,
+                'file_type' => 1,
+                'file_name' => $filenewname,
+                'file_orgname' => $filenewname,
+                'file_path' => 'public/uploads/ppe_ExemptionFiles/' . $ppeexemption->id . "/" . $filenewname,
+                'file_size' => $fileSize,
+                'file_extension' => $extension,
+                'created_by' => Auth::id(),
+                'trash' => 'NO'
+            ];
+
+            // Save to DB
+            $this->create($insert_data);
         }
     }
+
 
 
 
