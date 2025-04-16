@@ -66,7 +66,7 @@ class SafetyPermitController extends BaseController
 
                 $safety_permit_array->where(function ($query) use ($searchDate, $search) {
                     $query->whereDate('ptw_safety.date', $searchDate)
-                          ->orWhere('ptw_safety.permit_id', $search);
+                        ->orWhere('ptw_safety.permit_id', $search);
                 });
             }
 
@@ -164,10 +164,10 @@ class SafetyPermitController extends BaseController
                 $stateIsolationLoto = json_decode($safetypermit->state_isolation_loto, true) ?? [];
                 $state_of_isolation = [];
                 $other_if_any = [];
+// dd($stateIsolationLoto);
+$knownItems = ['Air', 'Gas', 'Electrical', 'Water/Liquid'];
 
-                $items = ['Air', 'Gas', 'Electrical', 'Water/Liquid'];
-
-                foreach ($items as $item) {
+                foreach ($knownItems as $item) {
                     $key = strtolower(str_replace('/', '_', $item));
 
                     // Determine the correct image path
@@ -193,19 +193,29 @@ class SafetyPermitController extends BaseController
                         'name' => $item,
                         'checked' => in_array($item, $stateIsolationLoto) ? 'Yes' : 'No'
                     ];
-                }
 
-                // These should be outside the loop, defined once
+
+
+                }
+                foreach ($stateIsolationLoto as $item) {
+                    if (!in_array($item, $knownItems)) {
+                        $other_if_any[] = [
+                            'other_if_any' => $item,
+
+                        ];
+                    }
+                }
                 $isolationpanel = [
-                    'image' => ('public/assets/images/safetypermit/person.png'),
+                    'image' => ('public/assets/images/safetypermit/fire.png'),
                     'name' => "Isolation fire panel",
                     'checked' => $safetypermit->isolationpanel_checkbox ? 'Yes' : 'No'
                 ];
 
                 $isolationpaneldescription = [
                     'name' => "Isolation fire panel Description",
-                    'checked' => $safetypermit->isolationpanel_description
+                    'isolationpanel_description' => $safetypermit->isolationpanel_description
                 ];
+
 
 
                 $protective_equip = [];
@@ -352,7 +362,12 @@ class SafetyPermitController extends BaseController
                         ],
                     ],
 
-                    'state_of_isolation' => $state_of_isolation,
+                    'state_of_isolation' =>
+                    $state_of_isolation,
+                    'other_if_any' => $other_if_any,
+                    'isolationpanel' => $isolationpanel,
+                    'isolationpaneldescription' => $isolationpaneldescription,
+
                     'confined_space_entry' => [
                         'o2' => [
                             'name' => "O2%",

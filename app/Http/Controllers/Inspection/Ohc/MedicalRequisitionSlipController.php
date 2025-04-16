@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Inspection\Ohc;
 
 use App\Http\Controllers\Controller;
-use App\Mail\Inspection\Ohc\MedicineRequistionFloorEmail;
+use App\Mail\Inspection\Ohc\OccupationalHealthEmail;
 use Illuminate\Http\Request;
 use App\Models\Master\Department;
 use App\Models\Master\Location;
@@ -266,7 +266,7 @@ class MedicalRequisitionSlipController extends Controller
                         'data' => $details,
 
                     );
-                    Mail::to($email_id)->queue(new MedicineRequistionFloorEmail($details));
+                    Mail::to($email_id)->queue(new OccupationalHealthEmail($details));
                 }
 
                 Session::flash('success', 'Your data has been created successfully!');
@@ -561,7 +561,7 @@ class MedicalRequisitionSlipController extends Controller
                     );
                     $recipients = array_merge($getsafetyofficerEmail, $getmedicalassistantEmail);
                     if (!empty($recipients)) {
-                        Mail::to($recipients)->queue(new MedicineRequistionFloorEmail($details));
+                        Mail::to($recipients)->queue(new OccupationalHealthEmail($details));
                     }
                 } else if ($request->action == "reject") {
                     $details = $this->medicine_requisition_floor_details->Selectone($id);
@@ -596,7 +596,7 @@ class MedicalRequisitionSlipController extends Controller
                         'title' => $title,
                         'data' => $details
                     );
-                    Mail::to($email_id)->queue(new MedicineRequistionFloorEmail($details));
+                    Mail::to($email_id)->queue(new OccupationalHealthEmail($details));
                 }
 
 
@@ -678,7 +678,7 @@ class MedicalRequisitionSlipController extends Controller
                         'title' => $title,
                         'data' => $details
                     );
-                    Mail::to($email_id)->queue(new MedicineRequistionFloorEmail($details));
+                    Mail::to($email_id)->queue(new OccupationalHealthEmail($details));
                 } elseif ($request->action == "reject") {
                     $userIds = [
                         'users' => $details->created_by,
@@ -711,7 +711,7 @@ class MedicalRequisitionSlipController extends Controller
                         'title' => $title,
                         'data' => $details
                     );
-                    Mail::to($email_id)->queue(new MedicineRequistionFloorEmail($details));
+                    Mail::to($email_id)->queue(new OccupationalHealthEmail($details));
                 }
 
 
