@@ -226,6 +226,11 @@ class SafetyPettyDetails extends Model
         return $query->get();
     }
 
+    public function selectOne($id)
+    {
+        return $this->where('id', $id)->where('status', 1)->where('trash', 'NO')->first();
+    }
+
     protected static function booted()
     {
         static::addGlobalScope(new TrashScope('ohc_safety_petty_logbook'));

@@ -317,7 +317,7 @@ class DailyVitalEquipmentController extends Controller
 
 
             $writer = new Xlsx($spreadsheet);
-            $fileName = 'Daily_Vital_Equipment_Report_All.xlsx';
+            $fileName = 'Daily Vital Equipment.xlsx';
             $filePath = storage_path("app/public/{$fileName}");
             $writer->save($filePath);
 

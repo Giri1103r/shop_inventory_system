@@ -494,6 +494,7 @@ Route::group(['prefix' => 'ohc/safety-petty-logbook/'], function () {
     Route::get('generalpdf/{id}', [SafetyPettyController::class, 'generalpdf']);
     Route::post('unique', [SafetyPettyController::class, 'uniqueCheck']);
     Route::get('get-signature', [SafetyPettyController::class, 'getSignature']);
+    Route::get('generalexcel/{id}', [SafetyPettyController::class, 'generalExcel']);
 });
 
 Route::group(['prefix' => 'fire/'], function () {
@@ -763,6 +764,8 @@ Route::group(['prefix' => 'fire/'], function () {
         Route::GET('export/excel', [CoTypeFireExtinguisherController::class, 'ExportExcel']);
         Route::GET('export/pdf', [CoTypeFireExtinguisherController::class, 'ExportPDF']);
         Route::GET('get/department', [CoTypeFireExtinguisherController::class, 'GetDepartment']);
+        Route::GET('generalExcel/{id}', [CoTypeFireExtinguisherController::class, 'generalExcel']);
+
     });
 
     Route::group(['prefix' => 'fire-sand-bucket-inspection/'], function () {
