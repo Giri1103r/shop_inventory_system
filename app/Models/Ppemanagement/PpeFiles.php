@@ -91,6 +91,95 @@ class PpeFiles extends Model
 
 
 
+    // public function store_api($ppeexemption)
+    // {
+    //     $request = request();
+    //     $upload_path = 'public/uploads/ppe_ExemptionFiles/' . $ppeexemption->id;
+
+    //     if ($request->has('ppe_file') && is_array($request->ppe_file)) {
+    //         foreach ($request->ppe_file as $base64File) {
+    //             if (!empty($base64File)) {
+    //                 $extension = null;
+    //                 $fileType = null;
+
+    //                 // Match images
+    //                 if (preg_match('/^data:image\/(\w+);base64,/', $base64File, $matches)) {
+    //                     $fileType = 'image';
+    //                     $extension = $matches[1];
+    //                 }
+    //                 // Match PDFs
+    //                 elseif (preg_match('/^data:(application\/pdf|@file\/pdf);base64,/', $base64File)) {
+    //                     $fileType = 'pdf';
+    //                     $extension = 'pdf';
+    //                 }
+    //                 // Match Word DOC
+    //                 elseif (preg_match('/^data:(application\/msword|@file\/msword);base64,/', $base64File)) {
+    //                     $fileType = 'doc';
+    //                     $extension = 'doc';
+    //                 }
+    //                 // Match Word DOCX
+    //                 elseif (preg_match('/^data:(application\/vnd\.openxmlformats-officedocument\.wordprocessingml\.document|@file\/vnd\.openxmlformats-officedocument\.wordprocessingml\.document);base64,/', $base64File)) {
+    //                     $fileType = 'docx';
+    //                     $extension = 'docx';
+    //                 }
+    //                 // Match Excel XLS
+    //                 elseif (preg_match('/^data:(application\/vnd\.ms-excel|@file\/msexcel);base64,/', $base64File)) {
+    //                     $fileType = 'xls';
+    //                     $extension = 'xls';
+    //                 }
+    //                 // Match Excel XLSX
+    //                 elseif (preg_match('/^data:(application\/vnd\.openxmlformats-officedocument\.spreadsheetml\.sheet|@file\/vnd\.openxmlformats-officedocument\.spreadsheetml\.sheet);base64,/', $base64File)) {
+    //                     $fileType = 'xlsx';
+    //                     $extension = 'xlsx';
+    //                 }
+    //                 // Fallback for generic octet-stream (e.g. unknown file types)
+    //                 elseif (preg_match('/^data:application\/octet-stream;base64,/', $base64File)) {
+    //                     $fileType = 'binary';
+    //                     $extension = 'bin'; // or 'dat', depending on context
+    //                 } else {
+    //                     Log::error("Unsupported Base64 file format.");
+    //                     continue;
+    //                 }
+
+    //                 // Remove base64 header
+    //                 $base64File = preg_replace('#^data:(.*);base64,#i', '', $base64File);
+    //                 $fileData = base64_decode($base64File);
+
+    //                 if ($fileData === false) {
+    //                     Log::error("Base64 decoding failed.");
+    //                     continue;
+    //                 }
+
+    //                 // Ensure directory exists
+    //                 if (!File::exists($upload_path)) {
+    //                     File::makeDirectory($upload_path, 0777, true, true);
+    //                 }
+
+    //                 // Unique filename
+    //                 $file_name = time() . Str::random(10) . '.' . $extension;
+    //                 $file_path = $upload_path . '/' . $file_name;
+
+    //                 // Save file
+    //                 file_put_contents($file_path, $fileData);
+
+    //                 // Save to DB
+    //                 $insert_array = [
+    //                     'reference_id' => $ppeexemption->id,
+    //                     'file_type' => 1,
+    //                     'file_name' => $file_name,
+    //                     'file_orgname' => $file_name,
+    //                     'file_path' => 'public/uploads/ppe_ExemptionFiles/' . $ppeexemption->id . '/' . $file_name,
+    //                     'file_extension' => $extension,
+    //                     'created_by' => Auth::id(),
+    //                     'trash' => 'NO',
+    //                 ];
+
+    //                 $this->create($insert_array);
+    //             }
+    //         }
+    //     }
+    // }
+
     public function store_api($ppeexemption)
     {
         $request = request();
@@ -102,46 +191,34 @@ class PpeFiles extends Model
                     $extension = null;
                     $fileType = null;
 
-                    // Match images
+                    // Match known file types by base64 header
                     if (preg_match('/^data:image\/(\w+);base64,/', $base64File, $matches)) {
                         $fileType = 'image';
                         $extension = $matches[1];
-                    }
-                    // Match PDFs
-                    elseif (preg_match('/^data:(application\/pdf|@file\/pdf);base64,/', $base64File)) {
+                    } elseif (preg_match('/^data:(application\/pdf|@file\/pdf);base64,/', $base64File)) {
                         $fileType = 'pdf';
                         $extension = 'pdf';
-                    }
-                    // Match Word DOC
-                    elseif (preg_match('/^data:(application\/msword|@file\/msword);base64,/', $base64File)) {
+                    } elseif (preg_match('/^data:(application\/msword|@file\/msword);base64,/', $base64File)) {
                         $fileType = 'doc';
                         $extension = 'doc';
-                    }
-                    // Match Word DOCX
-                    elseif (preg_match('/^data:(application\/vnd\.openxmlformats-officedocument\.wordprocessingml\.document|@file\/vnd\.openxmlformats-officedocument\.wordprocessingml\.document);base64,/', $base64File)) {
+                    } elseif (preg_match('/^data:(application\/vnd\.openxmlformats-officedocument\.wordprocessingml\.document|@file\/vnd\.openxmlformats-officedocument\.wordprocessingml\.document);base64,/', $base64File)) {
                         $fileType = 'docx';
                         $extension = 'docx';
-                    }
-                    // Match Excel XLS
-                    elseif (preg_match('/^data:(application\/vnd\.ms-excel|@file\/msexcel);base64,/', $base64File)) {
+                    } elseif (preg_match('/^data:(application\/vnd\.ms-excel|@file\/msexcel);base64,/', $base64File)) {
                         $fileType = 'xls';
                         $extension = 'xls';
-                    }
-                    // Match Excel XLSX
-                    elseif (preg_match('/^data:(application\/vnd\.openxmlformats-officedocument\.spreadsheetml\.sheet|@file\/vnd\.openxmlformats-officedocument\.spreadsheetml\.sheet);base64,/', $base64File)) {
+                    } elseif (preg_match('/^data:(application\/vnd\.openxmlformats-officedocument\.spreadsheetml\.sheet|@file\/vnd\.openxmlformats-officedocument\.spreadsheetml\.sheet);base64,/', $base64File)) {
                         $fileType = 'xlsx';
                         $extension = 'xlsx';
-                    }
-                    // Fallback for generic octet-stream (e.g. unknown file types)
-                    elseif (preg_match('/^data:application\/octet-stream;base64,/', $base64File)) {
+                    } elseif (preg_match('/^data:application\/octet-stream;base64,/', $base64File)) {
                         $fileType = 'binary';
-                        $extension = 'bin'; // or 'dat', depending on context
+                        $extension = 'bin'; // default, will try to detect below
                     } else {
                         Log::error("Unsupported Base64 file format.");
                         continue;
                     }
 
-                    // Remove base64 header
+                    // Remove base64 header and decode
                     $base64File = preg_replace('#^data:(.*);base64,#i', '', $base64File);
                     $fileData = base64_decode($base64File);
 
@@ -150,19 +227,51 @@ class PpeFiles extends Model
                         continue;
                     }
 
-                    // Ensure directory exists
+                    // If unknown, detect MIME type using finfo
+                    if ($extension === 'bin') {
+                        $finfo = new \finfo(FILEINFO_MIME_TYPE);
+                        $mimeType = $finfo->buffer($fileData);
+
+                        switch ($mimeType) {
+                            case 'application/pdf':
+                                $extension = 'pdf';
+                                break;
+                            case 'application/msword':
+                                $extension = 'doc';
+                                break;
+                            case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
+                                $extension = 'docx';
+                                break;
+                            case 'application/vnd.ms-excel':
+                                $extension = 'xls';
+                                break;
+                            case 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
+                                $extension = 'xlsx';
+                                break;
+                            case 'image/png':
+                                $extension = 'png';
+                                break;
+                            case 'image/jpeg':
+                                $extension = 'jpg';
+                                break;
+                            default:
+                                $extension = 'bin';
+                        }
+                    }
+
+                    // Ensure upload directory exists
                     if (!File::exists($upload_path)) {
                         File::makeDirectory($upload_path, 0777, true, true);
                     }
 
-                    // Unique filename
+                    // Generate unique filename
                     $file_name = time() . Str::random(10) . '.' . $extension;
                     $file_path = $upload_path . '/' . $file_name;
 
-                    // Save file
+                    // Save file to disk
                     file_put_contents($file_path, $fileData);
 
-                    // Save to DB
+                    // Save metadata to DB
                     $insert_array = [
                         'reference_id' => $ppeexemption->id,
                         'file_type' => 1,
@@ -179,7 +288,6 @@ class PpeFiles extends Model
             }
         }
     }
-
 
 
 
