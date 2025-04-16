@@ -170,8 +170,26 @@ class SafetyPermitController extends BaseController
                 foreach ($items as $item) {
                     $key = strtolower(str_replace('/', '_', $item));
 
+                    // Determine the correct image path
+                    switch ($item) {
+                        case 'Air':
+                            $imagePath = 'public/assets/images/safetypermit/person.png';
+                            break;
+                        case 'Gas':
+                            $imagePath = 'public/assets/images/safetypermit/natural-gas.png';
+                            break;
+                        case 'Electrical':
+                            $imagePath = 'public/assets/images/safetypermit/electrician.png';
+                            break;
+                        case 'Water/Liquid':
+                            $imagePath = 'public/assets/images/safetypermit/leak.png';
+                            break;
+                        default:
+                            $imagePath = 'public/assets/images/safetypermit/default.png'; // fallback
+                    }
+
                     $state_of_isolation[$key] = [
-                        'image' => ('public/assets/images/safetypermit/person.png'),
+                        'image' => $imagePath,
                         'name' => $item,
                         'checked' => in_array($item, $stateIsolationLoto) ? 'Yes' : 'No'
                     ];
