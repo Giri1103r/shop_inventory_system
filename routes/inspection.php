@@ -764,6 +764,8 @@ Route::group(['prefix' => 'fire/'], function () {
         Route::GET('export/excel', [CoTypeFireExtinguisherController::class, 'ExportExcel']);
         Route::GET('export/pdf', [CoTypeFireExtinguisherController::class, 'ExportPDF']);
         Route::GET('get/department', [CoTypeFireExtinguisherController::class, 'GetDepartment']);
+        Route::GET('generalExcel/{id}', [CoTypeFireExtinguisherController::class, 'generalExcel']);
+
     });
 
     Route::group(['prefix' => 'fire-sand-bucket-inspection/'], function () {
