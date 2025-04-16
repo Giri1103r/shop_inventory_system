@@ -171,7 +171,7 @@ class SafetyPermitController extends BaseController
                     $key = strtolower(str_replace('/', '_', $item));
 
                     $state_of_isolation[$key] = [
-                        'image' => asset('assets/images/safetypermit/person.png'),
+                        'image' => ('public/assets/images/safetypermit/person.png'),
                         'name' => $item,
                         'checked' => in_array($item, $stateIsolationLoto) ? 'Yes' : 'No'
                     ];
@@ -179,7 +179,7 @@ class SafetyPermitController extends BaseController
 
                 // These should be outside the loop, defined once
                 $isolationpanel = [
-                    'image' => asset('assets/images/safetypermit/person.png'),
+                    'image' => ('public/assets/images/safetypermit/person.png'),
                     'name' => "Isolation fire panel",
                     'checked' => $safetypermit->isolationpanel_checkbox ? 'Yes' : 'No'
                 ];
