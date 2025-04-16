@@ -280,7 +280,7 @@ $knownItems = ['Air', 'Gas', 'Electrical', 'Water/Liquid'];
                 if (!empty($getEhSverification->file_paths)) {
                     foreach (explode(',', $getEhSverification->file_paths) as $file) {
                         $file_paths[] = [
-                            'filepath' => trim($file)
+                            'file_path' => trim($file)
                         ];
                     }
                 }
