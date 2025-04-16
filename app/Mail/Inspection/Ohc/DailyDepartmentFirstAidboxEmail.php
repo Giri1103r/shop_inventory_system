@@ -13,12 +13,11 @@ class DailyDepartmentFirstAidboxEmail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    /**
-     * Create a new message instance.
-     */
-    public function __construct()
+    protected $details;
+
+    public function __construct($details)
     {
-        //
+        $this->details = $details;
     }
 
     /**
@@ -27,7 +26,7 @@ class DailyDepartmentFirstAidboxEmail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Daily Department First Aidbox Email',
+            subject:'KARAM' . ' - ' . $this->details['ohc_type'],
         );
     }
 
@@ -37,7 +36,8 @@ class DailyDepartmentFirstAidboxEmail extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'view.name',
+            view: 'emails.inspection.safety.safety_email',
+            with: ['details' => $this->details]
         );
     }
 
@@ -51,3 +51,4 @@ class DailyDepartmentFirstAidboxEmail extends Mailable
         return [];
     }
 }
+

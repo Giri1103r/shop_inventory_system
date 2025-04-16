@@ -503,7 +503,7 @@ class MonthlyFirstAidboxController extends Controller
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                 ]);
 
-                $row =  $signatureStartRow+ 3;
+                $row =  $signatureStartRow+ 5;
             }
 
 
@@ -522,6 +522,8 @@ class MonthlyFirstAidboxController extends Controller
             return redirect(admin_url('ohc/medical-requisition-slip/fdo-security-gate/list'));
         }
     }
+
+
     // pdf
     public function ExportPdf(Request $request)
     {
@@ -529,22 +531,16 @@ class MonthlyFirstAidboxController extends Controller
         try {
 
             $allData = $this->monthly_first_aid->exportdata();
-            $document_no = $this->document_reference->selectUsingName('MonthlyFirstAidBoxAuditChecklist');
 
-            $header = [
-                __("common.sno"),
-                'Document Number',
-                'Review date',
-                'Issued Date',
-                'Date of Inspection',
-                'Shift',
-                'frequency',
-                __("common.created_by"),
-                __("common.created_date"),
-            ];
+            foreach( $allData as $details){
+                $document_no = $this->document_reference->selectOne($details->document_reference_id);
+
+            }
+
+
 
             $data = array(
-                'header' => $header,
+
                 'content' => $allData,
                 'document_no' => $document_no,
                 'pagetitle' => "Monthly First Aid Audit Checklist Inspection",

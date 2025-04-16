@@ -154,106 +154,7 @@
             </tr>
         </table>
     </div>
-
-    <table width="100%" style="width:100%;">
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Document Number</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ isset($document_no->doc_no) ? $document_no->doc_no : '' }}</td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Issue Date</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ Displaydateformat(isset($document_no->issue_date) ? $document_no->issue_date : '') }}
-            </td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Revision Date</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ isset($document_no->rev_dt) ? $document_no->rev_dt : '' }}
-            </td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Unit</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ getUnitname(isset($medicinerequisition->unit) ? $medicinerequisition->unit : '') }}
-            </td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Department</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ getDepartment(isset($medicinerequisition->department) ? $medicinerequisition->department : '') }}
-            </td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Shift</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ getShift(isset($medicinerequisition->shift) ? $medicinerequisition->shift : '') }}
-            </td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>First Aid Box Number</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ isset($medicinerequisition->first_aid_box_no) ? $medicinerequisition->first_aid_box_no : '' }}
-            </td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>First Aider Name</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ getFirstAider(isset($medicinerequisition->first_aider) ? $medicinerequisition->first_aider : '') }}
-            </td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Signature</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                @if (!empty($requestorsignature) && !empty($requestorsignature->file_path))
-                    <img src="{{ admin_url($requestorsignature->file_path) }}" alt="Requestor Signature"
-                        style="width: 150px; height: auto;" />
-                @elseif (!empty($signatureview) && !empty($signatureview->signature_upload))
-                    {{-- Fixed typo --}}
-                    <img src="{{ admin_url($signatureview->signature_upload) }}" alt="Approver Signature"
-                        style="width: 150px; height: auto;" />
-                @else
-                    <span>No signature available</span>
-                @endif
-            </td>
-        </tr>
-
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Created By</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ getUsername(isset($medicinerequisition->created_by) ? $medicinerequisition->created_by : '') }}</td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Created Date</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;"> {{ displayDateformat($medicinerequisition->created_at) }}</td>
-        </tr>
-    </table>
-
-    <br>
-
     <div>
-        <div style="width:100%;">
-            <table style="width:100%;">
-                <tr>
-                    <td
-                        style="width:100%; background-color: #ce0f1f; color:#ffffff; padding: 10px 10px 10px; font-weight:bold;">
-                        Medicine Details
-                    </td>
-                </tr>
-            </table>
-        </div>
 
         <table
             style="width: 100%; border-collapse: collapse; font-family: Arial, sans-serif; text-align: center; border: 1px solid black;">
@@ -324,11 +225,13 @@
                 <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">NAME OF
                     THE
                     MEDICINE</th>
-                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">FREEZE
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="3">FREEZE
                     QUANTITY</th>
-                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">QUANTITY
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="3">AVAILABLE QUANTITY
                 </th>
-                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="6">REMARK
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">MATERIAL EXPIRY
+                </th>
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">REMARK
                 </th>
 
             </tr>
@@ -341,10 +244,11 @@
                     <td style="border: 1px solid black; padding: 8px;" colspan="4">
                         {{ getMedicinename($details->medicine_id) }}
                     </td>
-                    <td style="border: 1px solid black; padding: 8px;" colspan="4">{{ $details->freeze_quantity }}
+                    <td style="border: 1px solid black; padding: 8px;" colspan="3">{{ $details->freeze_quantity }}
                     </td>
-                    <td style="border: 1px solid black; padding: 8px;"colspan="4">{{ $details->quantity }}</td>
-                    <td style="border: 1px solid black; padding: 8px;"colspan="6">{{ $details->remarks }}</td>
+                    <td style="border: 1px solid black; padding: 8px;"colspan="3">{{ $details->available_quantity }}</td>
+                    <td style="border: 1px solid black; padding: 8px;"colspan="4">{{ DisplaydateFormat($details->material_expiry) }}</td>
+                    <td style="border: 1px solid black; padding: 8px;"colspan="4">{{ $details->remarks }}</td>
 
                 </tr>
             @endforeach

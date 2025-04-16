@@ -650,7 +650,7 @@ class SafetyPermitController extends Controller
                 );
             }
 
-            
+
 
 
             return view('permit.safetypermit.approvereject', $data);
@@ -1769,11 +1769,14 @@ class SafetyPermitController extends Controller
     {
         $url = admin_url('safetypermit/join/' . $id);
 
+        $decryptedId = decryptId($id);
+        $qrText = 'Permit-' . $decryptedId;
+
         $safetypermit = $this->safetypermit->selectOne(decryptId($id));
         $qrSvg = QrCode::size(150)
             ->backgroundColor(255, 255, 255)
             ->color(1, 1, 1)
-            ->generate($url);
+            ->generate($qrText);
         $permit_no = get_permit_no(decryptId($id));
         $qrBase64 = 'data:image/svg+xml;base64,' . base64_encode($qrSvg);
 

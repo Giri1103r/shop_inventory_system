@@ -225,15 +225,17 @@
 
             <tr>
                 <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="2">SR. NO</th>
-                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="6">NAME OF
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">NAME OF
                     MEDICINE
                 </th>
                 <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="2">FREEZE
                     QUANTITY
                 </th>
-                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="2">QUANTITY
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="2">AVAILABLE QUANTITY
                 </th>
-                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="6">REMARKS
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">MATERIAL EXPIRY
+                </th>
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">REMARKS
                 </th>
 
             </tr>
@@ -246,7 +248,7 @@
                     <td colspan="2"
                         style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
                         {{ $loop->iteration }}</td>
-                    <td colspan="6"
+                    <td colspan="4"
                         style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
                         {{ getMedicinename($medicineRequisitionDetails->medicine_id) }}</td>
                     <td colspan="2"
@@ -254,8 +256,11 @@
                         {{ $medicineRequisitionDetails->freeze_quantity }}</td>
                     <td colspan="2"
                         style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
-                        {{ $medicineRequisitionDetails->quantity }}</td>
-                    <td colspan="6"
+                        {{ $medicineRequisitionDetails->available_quantity }}</td>
+                        <td colspan="4"
+                        style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
+                        {{ DisplayDateformat($medicineRequisitionDetails->material_expiry) }}</td>
+                    <td colspan="4"
                         style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
                         {{ $medicineRequisitionDetails->remarks }}</td>
 

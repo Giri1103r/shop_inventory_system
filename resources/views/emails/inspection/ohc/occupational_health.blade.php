@@ -30,8 +30,33 @@
                                     valign="top"> {{ getShift($details['data']->shift) }}</td>
                             @endif
                         </tr>
-
-
+                        <tr>
+                            @if (isset($details['data']->department))
+                                <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
+                                    <b>Department</b>
+                                </td>
+                                <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
+                                    valign="top"> {{ getDepartment($details['data']->department) }}</td>
+                            @endif
+                        </tr>
+                        <tr>
+                            @if (isset($details['data']->first_aider))
+                                <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
+                                    <b>First Aider</b>
+                                </td>
+                                <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
+                                    valign="top"> {{ getFirstAider($details['data']->first_aider) }}</td>
+                            @endif
+                        </tr>
+                        <tr>
+                            @if (isset($details['data']->first_aid_box_no))
+                                <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
+                                    <b>First Aid Box Number</b>
+                                </td>
+                                <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
+                                    valign="top"> {{ ($details['data']->first_aid_box_no) }}</td>
+                            @endif
+                        </tr>
                         <tr>
                             @if (isset($details['data']->frequency))
                                 <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
