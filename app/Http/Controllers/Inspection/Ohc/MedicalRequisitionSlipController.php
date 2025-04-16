@@ -128,10 +128,10 @@ class MedicalRequisitionSlipController extends Controller
                         })
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            $btn .= '<a href="' . admin_url('ohc/medical-requisition-slip/view/' . encryptId($row->inspection_id)) . '" class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a>';
+                            $btn .= '<a href="' . admin_url('ohc/medical-requisition-slip/view/' . encryptId($row->inspection_id)) . '" class="view-icon me-1" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a>';
 
                             if ((checkUserRole(ROLE_SUPERADMIN) && $row->approve_status == FLOOR_MANAGER_APPROVAL_PENDING) || (checkUserRole(ROLE_FLOOR_MANAGER) && $row->approve_status == FLOOR_MANAGER_APPROVAL_PENDING)  || ((checkUserRole(ROLE_SAFETY_OFFICER) && $row->approve_status == SAFETY_OFFICER_APPROVAL_PENDING) || (checkUserRole(ROLE_SUPERADMIN) && $row->approve_status == SAFETY_OFFICER_APPROVAL_PENDING))) {
-                                $btn .= '<a href="' . admin_url('ohc/medical-requisition-slip/approval/view/' . encryptId($row->inspection_id)) . '" class="" title="Action"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('ohc/medical-requisition-slip/approval/view/' . encryptId($row->inspection_id)) . '" class="me-1" title="Action"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
 
                             $btn .= '<a href="' . admin_url('ohc/medical-requisition-slip/generalpdf/' . encryptId($row->inspection_id)) . '" style="margin-right: 5px;" title="PDF">
@@ -150,7 +150,7 @@ class MedicalRequisitionSlipController extends Controller
 
                     return $datatables;
                 } catch (Exception $ex) {
-                    dd($ex);
+                     report($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }
@@ -183,7 +183,7 @@ class MedicalRequisitionSlipController extends Controller
             );
             return view('inspection.inspection_ohc.medical_requisition_slip.add', $data);
         } catch (Exception $ex) {
-            dd($ex);
+             report($ex);
         }
     }
 
@@ -271,14 +271,14 @@ class MedicalRequisitionSlipController extends Controller
 
                 Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
-                dd($ex);
+                 report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
             return redirect(admin_url('ohc/medical-requisition-slip/list'));
         } catch (Exception $ex) {
 
-            dd($ex);
+             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/medical-requisition-slip/list'));
         }
@@ -343,7 +343,7 @@ class MedicalRequisitionSlipController extends Controller
             }
             return view('inspection.inspection_ohc.medical_requisition_slip.view', $data);
         } catch (Exception $ex) {
-            dd($ex);
+             report($ex);
         }
     }
 
@@ -406,7 +406,7 @@ class MedicalRequisitionSlipController extends Controller
             }
             return view('inspection.inspection_ohc.medical_requisition_slip.approval', $data);
         } catch (Exception $ex) {
-            dd($ex);
+             report($ex);
         }
     }
 
@@ -487,7 +487,7 @@ class MedicalRequisitionSlipController extends Controller
             $filename = "Medicine Requisition Slip Floor.pdf";
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            dd($ex);
+             report($ex);
             return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
         }
     }
@@ -602,14 +602,14 @@ class MedicalRequisitionSlipController extends Controller
 
                 Session::flash('success', 'Your data has been Responded successfully!');
             } catch (Exception $ex) {
-                dd($ex);
+                 report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
             return redirect(admin_url('ohc/medical-requisition-slip/list'));
         } catch (Exception $ex) {
 
-            dd($ex);
+             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/medical-requisition-slip/list'));
         }
@@ -717,14 +717,14 @@ class MedicalRequisitionSlipController extends Controller
 
                 Session::flash('success', 'Your data has been Responded successfully!');
             } catch (Exception $ex) {
-                dd($ex);
+                 report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
             return redirect(admin_url('ohc/medical-requisition-slip/list'));
         } catch (Exception $ex) {
 
-            dd($ex);
+             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/medical-requisition-slip/list'));
         }
@@ -735,6 +735,12 @@ class MedicalRequisitionSlipController extends Controller
         try {
 
             $allData = $this->medicine_requisition_floor_details->exportdata();
+
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            } elseif (count($allData) > 20) {
+                return redirect()->back()->with('error',   __('inspection.excess_error'));
+            }
 
             $spreadsheet = new Spreadsheet();
             $sheet = $spreadsheet->getActiveSheet();
@@ -938,7 +944,7 @@ PN INTERNATIONAL PVT. LTD.");
             ]);
         } catch (Exception $ex) {
 
-            dd($ex);
+             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/medical-requisition-slip/list'));
         }
@@ -953,8 +959,14 @@ PN INTERNATIONAL PVT. LTD.");
 
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
+            } elseif (count($allData) > 20) {
+                return redirect()->back()->with('error',   __('inspection.excess_error'));
             }
-            $document_no = $this->document_reference->selectUsingName('MedicalRequisitionSlipFloor');
+
+            foreach( $allData as $details){
+                $document_no = $this->document_reference->selectOne($details->document_reference_id);
+
+            }
 
 
             $data = array(
@@ -986,7 +998,7 @@ PN INTERNATIONAL PVT. LTD.");
             $mpdf->Output($filename, 'i');
         } catch (Exception $ex) {
 
-            dd($ex);
+             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/medical-requisition-slip/list'));
         }

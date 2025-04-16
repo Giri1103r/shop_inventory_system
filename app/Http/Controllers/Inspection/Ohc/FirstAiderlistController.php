@@ -267,6 +267,11 @@ class FirstAiderlistController extends Controller
     {
         try {
             $allData = $this->first_aider->exportdata();
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            } elseif (count($allData) > 20) {
+                return redirect()->back()->with('error',   __('inspection.excess_error'));
+            }
             $spreadsheet = new Spreadsheet();
             $sheet = $spreadsheet->getActiveSheet();
 
@@ -399,7 +404,6 @@ class FirstAiderlistController extends Controller
             $writer = new Xlsx($spreadsheet);
             $writer->save('php://output');
             exit;
-
         } catch (\Exception $e) {
             return back()->with('error', 'Excel Export Failed: ' . $e->getMessage());
         }
@@ -414,12 +418,15 @@ class FirstAiderlistController extends Controller
         try {
 
             $allData = $this->first_aider->exportdata();
-            $document_no = $this->document_reference->selectUsingName('FirstAiderList');
-
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
             } elseif (count($allData) > 20) {
                 return redirect()->back()->with('error',   __('inspection.excess_error'));
+            }
+
+            foreach( $allData as $details){
+                $document_no = $this->document_reference->selectOne($details->document_reference_id);
+
             }
 
 

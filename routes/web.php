@@ -1369,6 +1369,7 @@ Route::middleware(['securityheader'])->group(function () {
                     Route::POST('/unique', [WeeklyAmbulanceController::class, 'UniqueCheck']);
                     Route::GET('/view/{id}', [WeeklyAmbulanceController::class, 'View']);
                     Route::GET('/generalpdf/{id}', [WeeklyAmbulanceController::class, 'generalpdf']);
+                    Route::GET('/generalExcel/{id}', [WeeklyAmbulanceController::class, 'generalExcel']);
                     Route::get('verification/{id}/{employee_type}', [WeeklyAmbulanceController::class, 'approvals']);
                     Route::post('ehsofficer/verify/submit', [WeeklyAmbulanceController::class, 'EHSOfficerSubmit']);
                     Route::post('capa/submit', [WeeklyAmbulanceController::class, 'CAPASubmit']);

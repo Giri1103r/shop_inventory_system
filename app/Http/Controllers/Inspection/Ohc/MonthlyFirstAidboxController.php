@@ -170,7 +170,7 @@ class MonthlyFirstAidboxController extends Controller
             );
             return view('inspection.inspection_ohc.monthly_first_aid_audit_checklist.add', $data);
         } catch (Exception $ex) {
-            dd($ex);
+             report($ex);
         }
     }
     // store
@@ -188,7 +188,7 @@ class MonthlyFirstAidboxController extends Controller
             return redirect(admin_url('ohc/first-aid-box/monthly-audit/list'));
         } catch (Exception $ex) {
 
-            dd($ex);
+             report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('ohc/first-aid-box/monthly-audit/list'));
         }
@@ -220,7 +220,7 @@ class MonthlyFirstAidboxController extends Controller
             ];
             return view('inspection.inspection_ohc.monthly_first_aid_audit_checklist.view', $data);
         } catch (Exception $ex) {
-            dd($ex);
+             report($ex);
         }
     }
     // general pdf
@@ -268,7 +268,7 @@ class MonthlyFirstAidboxController extends Controller
 
             return $mpdf->Output($filename, 'i');
         } catch (\Exception $ex) {
-            dd($ex);
+             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/first-aid-box/monthly-audit/list'));
         }
@@ -279,10 +279,17 @@ class MonthlyFirstAidboxController extends Controller
     {
 
         try {
-            $id = decryptId($request->id);
+
             $spreadsheet = new Spreadsheet();
             $sheet = $spreadsheet->getActiveSheet();
             $allData = $this->monthly_first_aid->exportdata();
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            } elseif (count($allData) > 20) {
+                return redirect()->back()->with('error',   __('inspection.excess_error'));
+            }
+
+
             for ($i = 1; $i <= 200; $i++) {
                 $sheet->getRowDimension($i)->setRowHeight(25);
             }
@@ -532,6 +539,12 @@ class MonthlyFirstAidboxController extends Controller
 
             $allData = $this->monthly_first_aid->exportdata();
 
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            } elseif (count($allData) > 20) {
+                return redirect()->back()->with('error',   __('inspection.excess_error'));
+            }
+
             foreach( $allData as $details){
                 $document_no = $this->document_reference->selectOne($details->document_reference_id);
 
@@ -568,7 +581,7 @@ class MonthlyFirstAidboxController extends Controller
             $filename = "Monthly First Aid Audit Checklist Inspection.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            dd($ex);
+             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/first-aid-box/monthly-audit/list'));
         }

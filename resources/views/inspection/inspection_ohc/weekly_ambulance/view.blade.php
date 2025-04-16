@@ -245,7 +245,7 @@
                                                 </div>
                                             </div>
                                             @php
-                                                $signature = GetSignature(
+                                                $signature = GetOHCSignature(
                                                     $weekAmbualance->verified_by,
                                                     $weekAmbualance->id,
                                                     OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST,
@@ -332,7 +332,7 @@
                                                 </div>
                                             </div>
                                             @php
-                                                $signature = GetSignature(
+                                                $signature = GetOHCSignature(
                                                     $weekAmbualance->created_by,
                                                     $weekAmbualance->id,
                                                     OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST,
@@ -383,7 +383,7 @@
                                                 </div>
                                             </div>
                                             @php
-                                                $signature = GetSignature(
+                                                $signature = GetOHCSignature(
                                                     $weekAmbualance->verified_by,
                                                     $weekAmbualance->id,
                                                     OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST,
@@ -487,7 +487,7 @@
                                             </div>
                                         </div>
                                         @php
-                                            $signature = GetSignature(
+                                            $signature = GetOHCSignature(
                                                 $weekAmbualance->l2_manager_verified_by,
                                                 $weekAmbualance->id,
                                                 OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST,

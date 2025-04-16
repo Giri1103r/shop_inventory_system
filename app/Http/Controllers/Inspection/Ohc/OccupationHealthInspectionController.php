@@ -266,7 +266,7 @@ class OccupationHealthInspectionController extends Controller
                 $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
                 $mailsubject = 'INSPECTION - OHC';
                 $notificationData = array(
-                     'notification_type' =>OHC_INSPECTION,
+                    'notification_type' => OHC_INSPECTION,
                     'module_type' => 7,
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(
@@ -407,7 +407,7 @@ class OccupationHealthInspectionController extends Controller
             ];
             $mailsubject = 'Occupational Health Center Inspection Checklist';
             $notificationData = array(
-                 'notification_type' =>OHC_INSPECTION,
+                'notification_type' => OHC_INSPECTION,
                 'module_type' => 7,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
@@ -470,7 +470,7 @@ class OccupationHealthInspectionController extends Controller
             ];
             $mailsubject = 'Occupational Health Center Inspection Checklist';
             $notificationData = array(
-               'notification_type' =>OHC_INSPECTION,
+                'notification_type' => OHC_INSPECTION,
                 'module_type' => 7,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
@@ -544,7 +544,7 @@ class OccupationHealthInspectionController extends Controller
             }
             $mailsubject = 'Occupational Health Center Inspection Checklist';
             $notificationData = array(
-               'notification_type' =>OHC_INSPECTION,
+                'notification_type' => OHC_INSPECTION,
                 'module_type' => 7,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
@@ -622,7 +622,7 @@ class OccupationHealthInspectionController extends Controller
             }
             $mailsubject = 'Occupational Health Center Inspection Checklist';
             $notificationData = array(
-               'notification_type' =>OHC_INSPECTION,
+                'notification_type' => OHC_INSPECTION,
                 'module_type' => 7,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
@@ -697,7 +697,7 @@ class OccupationHealthInspectionController extends Controller
 
             $mailsubject = 'Occupational Health Center Inspection Checklist';
             $notificationData = array(
-                'notification_type' =>OHC_INSPECTION,
+                'notification_type' => OHC_INSPECTION,
                 'module_type' => 7,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
@@ -771,6 +771,12 @@ class OccupationHealthInspectionController extends Controller
         try {
 
             $allData = $this->occupation_inspection->exportdata();
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            } elseif (count($allData) > 20) {
+                return redirect()->back()->with('error',   __('inspection.excess_error'));
+            }
+
 
             $spreadsheet = new Spreadsheet();
             $sheet = $spreadsheet->getActiveSheet();
@@ -1069,8 +1075,9 @@ class OccupationHealthInspectionController extends Controller
 
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
+            } elseif (count($allData) > 20) {
+                return redirect()->back()->with('error',   __('inspection.excess_error'));
             }
-
 
             foreach ($allData as $details) {
                 $document_no = $this->document_reference->selectOne($details->document_reference_id);
@@ -1372,11 +1379,11 @@ class OccupationHealthInspectionController extends Controller
                 $drawing->setPath($CreatorSignature);
                 $drawing->setCoordinates("A$row");
                 $drawing->setOffsetX(100);
-           $drawing->setOffsetY(5);
+                $drawing->setOffsetY(5);
                 $drawing->setWidth(70);
                 $drawing->setHeight(70);
                 $drawing->setWorksheet($sheet);
-               $sheet->getRowDimension($row + 2)->setRowHeight(40);
+                $sheet->getRowDimension($row + 2)->setRowHeight(40);
                 // Label + Name
                 $sheet->setCellValue("A" . ($row + 3), "Checked By: " . getUserName($occupational_health_center->created_by));
                 $sheet->mergeCells("A" . ($row + 3) . ":F" . ($row + 3));
@@ -1395,7 +1402,7 @@ class OccupationHealthInspectionController extends Controller
                 $drawing->setPath($VerifiedSignature);
                 $drawing->setCoordinates("G$row");
                 $drawing->setOffsetX(100);
-           $drawing->setOffsetY(5);
+                $drawing->setOffsetY(5);
                 $drawing->setWidth(70);
                 $drawing->setHeight(70);
                 $drawing->setWorksheet($sheet);
@@ -1418,7 +1425,7 @@ class OccupationHealthInspectionController extends Controller
                 $drawing->setPath($ApprovedSignature);
                 $drawing->setCoordinates("M$row");
                 $drawing->setOffsetX(100);
-           $drawing->setOffsetY(5);
+                $drawing->setOffsetY(5);
                 $drawing->setWidth(70);
                 $drawing->setHeight(70);
                 $drawing->setWorksheet($sheet);
