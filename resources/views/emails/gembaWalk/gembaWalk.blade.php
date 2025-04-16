@@ -29,27 +29,27 @@
                                 valign="top"> {{ $details['gemba_walk_auto_id'] }}</td>
                         </tr>
 
-                        <tr>
+                       {{-- <tr>
                             <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
                                 <b>Document No</b>
                             </td>
                             <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
                                 valign="top"> {{ $details['document_no'] }}</td>
                         </tr>
-                        <tr>
+                         <tr>
                             <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
                                 <b>Issue Date</b>
                             </td>
                             <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
                                 valign="top"> {{Displaydateformat($details['issue_date']) }}</td>
-                        </tr>
+                        </tr> --}}
 
                         <tr>
                             <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
-                                <b>Issue Date</b>
+                                <b>Shift</b>
                             </td>
                             <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
-                                valign="top"> {{Displaydateformat($details['issue_date']) }}</td>
+                                valign="top"> {{ getShift($details['shift_id']) }}</td>
                         </tr>
 
                         <tr>
