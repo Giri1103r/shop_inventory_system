@@ -1292,16 +1292,22 @@ class HydrantRiserInspectionContoller extends Controller
 
             $signatureRowStart = $row;
 
-            $sheet->getRowDimension($signatureRowStart)->setRowHeight(80);
+            $sheet->getRowDimension($signatureRowStart)->setRowHeight(100);
 
+                    // Prepared By (with name inside the signature block)
             $sheet->mergeCells("A{$signatureRowStart}:D{$signatureRowStart}");
+            $sheet->setCellValue("A{$signatureRowStart}", "Inspected and Checked By:\n" . getUsername($hydrant_details->created_by));
             $sheet->getStyle("A{$signatureRowStart}:D{$signatureRowStart}")->applyFromArray([
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
+                'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_CENTER,
+                    'vertical' => Alignment::VERTICAL_BOTTOM,
+                    'wrapText' => true,
+                ],
             ]);
             if (file_exists($prepared_by_signature)) {
                 $drawing = new Drawing();
-                $drawing->setName('Signature');
+                $drawing->setName('Prepared Signature');
                 $drawing->setDescription('Prepared By');
                 $drawing->setPath($prepared_by_signature);
                 $drawing->setCoordinates("B{$signatureRowStart}");
@@ -1310,26 +1316,21 @@ class HydrantRiserInspectionContoller extends Controller
                 $drawing->setHeight(60);
                 $drawing->setWorksheet($sheet);
             }
-            $sheet->mergeCells("A" . ($signatureRowStart + 1) . ":D" . ($signatureRowStart + 1));
-            $sheet->setCellValue("A" . ($signatureRowStart + 1), "Inspected and Checked By:\n" . getUsername($hydrant_details->created_by));
-            $sheet->getStyle("A" . ($signatureRowStart + 1) . ":D" . ($signatureRowStart + 1))->applyFromArray([
+
+            // Verified By
+            $sheet->mergeCells("E{$signatureRowStart}:J{$signatureRowStart}");
+            $sheet->setCellValue("E{$signatureRowStart}", "Verified By:\n" . getUsername($hydrant_details->updated_by));
+            $sheet->getStyle("E{$signatureRowStart}:J{$signatureRowStart}")->applyFromArray([
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                 'alignment' => [
                     'horizontal' => Alignment::HORIZONTAL_CENTER,
-                    'vertical' => Alignment::VERTICAL_CENTER,
+                    'vertical' => Alignment::VERTICAL_BOTTOM,
                     'wrapText' => true,
                 ],
             ]);
-
-            $sheet->mergeCells("E{$signatureRowStart}:J{$signatureRowStart}");
-            $sheet->getStyle("E{$signatureRowStart}:J{$signatureRowStart}")->applyFromArray([
-                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
-            ]);
-
             if (file_exists($verified_by_signature)) {
                 $drawing = new Drawing();
-                $drawing->setName('Signature');
+                $drawing->setName('Verified Signature');
                 $drawing->setDescription('Verified By');
                 $drawing->setPath($verified_by_signature);
                 $drawing->setCoordinates("G{$signatureRowStart}");
@@ -1338,25 +1339,21 @@ class HydrantRiserInspectionContoller extends Controller
                 $drawing->setHeight(60);
                 $drawing->setWorksheet($sheet);
             }
-            $sheet->mergeCells("E" . ($signatureRowStart + 1) . ":J" . ($signatureRowStart + 1));
-            $sheet->setCellValue("E" . ($signatureRowStart + 1), "Verified By:\n" . getUsername($hydrant_details->updated_by));
-            $sheet->getStyle("E" . ($signatureRowStart + 1) . ":J" . ($signatureRowStart + 1))->applyFromArray([
+
+            // Approved By
+            $sheet->mergeCells("K{$signatureRowStart}:O{$signatureRowStart}");
+            $sheet->setCellValue("K{$signatureRowStart}", "Approved By:\n" . getUsername($hydrant_details->approved_by));
+            $sheet->getStyle("K{$signatureRowStart}:O{$signatureRowStart}")->applyFromArray([
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                 'alignment' => [
                     'horizontal' => Alignment::HORIZONTAL_CENTER,
-                    'vertical' => Alignment::VERTICAL_CENTER,
+                    'vertical' => Alignment::VERTICAL_BOTTOM,
                     'wrapText' => true,
                 ],
             ]);
-
-            $sheet->mergeCells("K{$signatureRowStart}:O{$signatureRowStart}");
-            $sheet->getStyle("K{$signatureRowStart}:O{$signatureRowStart}")->applyFromArray([
-                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
-            ]);
             if (file_exists($approved_by_signature)) {
                 $drawing = new Drawing();
-                $drawing->setName('Signature');
+                $drawing->setName('Approved Signature');
                 $drawing->setDescription('Approved By');
                 $drawing->setPath($approved_by_signature);
                 $drawing->setCoordinates("M{$signatureRowStart}");
@@ -1365,16 +1362,7 @@ class HydrantRiserInspectionContoller extends Controller
                 $drawing->setHeight(60);
                 $drawing->setWorksheet($sheet);
             }
-            $sheet->mergeCells("K" . ($signatureRowStart + 1) . ":O" . ($signatureRowStart + 1));
-            $sheet->setCellValue("K" . ($signatureRowStart + 1), "Approved By:\n" . getUsername($hydrant_details->approved_by));
-            $sheet->getStyle("K" . ($signatureRowStart + 1) . ":O" . ($signatureRowStart + 1))->applyFromArray([
-                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                'alignment' => [
-                    'horizontal' => Alignment::HORIZONTAL_CENTER,
-                    'vertical' => Alignment::VERTICAL_CENTER,
-                    'wrapText' => true,
-                ],
-            ]);
+
 
             // Set row height for name row
             $sheet->getRowDimension($signatureRowStart + 1)->setRowHeight(30);
