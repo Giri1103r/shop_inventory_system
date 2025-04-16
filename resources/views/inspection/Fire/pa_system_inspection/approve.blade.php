@@ -136,13 +136,23 @@
                                             <div class="card-header-inner p-2">
                                                 <h4 class="text-white">Fire PA System Observation</h4>
                                             </div>
-                                            <div class="col-md-12 mb-2">
+                                            {{-- <div class="col-md-12 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">{{ __('inspection.obs') }}</label>
                                                     <div class="view_data">
                                                         {{ $inspection->observation }}
                                                     </div>
 
+                                                </div>
+                                            </div> --}}
+
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label
+                                                        class="form-label require">Observation</label>
+                                                    <div class="view_data">
+                                                        {{ $inspection->observation_needed == '1' ? 'YES' : 'NO' }}
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
