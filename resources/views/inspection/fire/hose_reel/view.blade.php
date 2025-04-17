@@ -241,10 +241,10 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.hose_box_key') }}</label>
-                                                        @if ($details->hose_box_key == PRESENT)
-                                                            <p>Present</p>
+                                                        @if ($details->status_of_hose == OPERATIONAL)
+                                                            <p>Operational</p>
                                                         @else
-                                                            <p>Missing</p>
+                                                            <p>Non Operational</p>
                                                         @endif
                                                     </div>
                                                 </div>

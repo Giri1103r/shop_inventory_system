@@ -14,17 +14,22 @@ use App\Models\Inspection\Master\Shift;
 use Illuminate\Support\Facades\Session;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Spatie\SimpleExcel\SimpleExcelWriter;
+use PhpOffice\PhpSpreadsheet\Style\Border;
 use App\Models\Inspection\Master\Frequency;
 use App\Mail\Inspection\Fire\FireInspection;
 use App\Models\Inspection\Fire\FireStatusLog;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use App\Models\Inspection\Fire\FireFileUpload;
 use App\Models\Inspection\Fire\IsolationValve;
+use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
+use App\Models\Inspection\InspectionStaticDocno;
+use App\Models\Inspection\Fire\IsolatingValveType;
 use App\Models\Inspection\Fire\FireSignatureUpload;
 use App\Models\Inspection\Fire\FireCheckListFollowUp;
-use App\Models\Inspection\Fire\IsolatingValveType;
 use App\Models\Inspection\Fire\IsolationValveDetails;
-use App\Models\Inspection\InspectionStaticDocno;
 
 class IsolationValveController extends Controller
 {
@@ -138,11 +143,12 @@ class IsolationValveController extends Controller
                                 $btn .= '<a href="' . admin_url('fire/isolating-valve-inspection/verification/' . encryptId($row->inspection_id)) . '/level-one-manager" class="" title="' . __('inspection.l1_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if ($row->inspection_status == WAITING_FOR_L2_VERIFICATION && (CheckUserRole(ROLE_L2_MANAGER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('fire/isolating-valve-inspectiony/verification/' . encryptId($row->inspection_id)) . '/level-two-manager" class="" title="' . __('inspection.l2_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('fire/isolating-valve-inspection/verification/' . encryptId($row->inspection_id)) . '/level-two-manager" class="" title="' . __('inspection.l2_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             $btn .= '<a href="' . admin_url('fire/isolating-valve-inspection/exportViewPdf/' . encryptId($row->inspection_id)) . '" style="margin-right: 5px;" title="PDF">
                         <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
                     </a>';
+                            $btn .= '<a href="' . admin_url('fire/isolating-valve-inspection/export/excel/' . encryptId($row->inspection_id)) . '" style="margin-right: 5px;" title="Excel"> <i class="fas fa-file-excel" style="color: #1D6F42;" aria-hidden="true"></i></a>';
                             return $btn;
                         })
                         ->rawColumns(['action', 'created_date', 'created_by', 'status', 'inspection_status', 'issue_date'])
@@ -282,7 +288,7 @@ class IsolationValveController extends Controller
 
             $checklist_store = $this->checklist_follow->store($inspection_type, $id);
 
-            $signature_update = $this->signature->CheckedBySignature($id,$inspection_type);
+            $signature_update = $this->signature->CheckedBySignature($id, $inspection_type);
 
             $ehsOfficer = GetEHSOfficer();
             $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
@@ -754,39 +760,243 @@ class IsolationValveController extends Controller
                 return redirect()->back()->with('error', 'No data found');
             }
 
-            $header = [
-                __("common.sno"),
-                'Document Number',
-                'Issue Date',
-                'Revision Date',
-                __("inspection.inspection_status"),
-                __("common.created_by"),
-                __("common.created_date"),
-            ];
+            $spreadsheet = new Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
+            $row = 1;
 
-            $i = 1;
-            foreach ($allData as $data) {
+            foreach ($allData as $groupedDetails) {
+                $inspection_detail = $groupedDetails->first();
+                $document_no = $this->document_reference->selectOne($inspection_detail->document_reference_id);
+                $prepared_by_signature = GetFireSignature($inspection_detail->checked_by, $inspection_detail->fire_id, ISOLATION_VALVE_INSPECTION);
+                $verified_by_signature = GetFireSignature($inspection_detail->verified_by, $inspection_detail->fire_id, ISOLATION_VALVE_INSPECTION);
+                $approved_by_signature = GetFireSignature($inspection_detail->approved_by, $inspection_detail->fire_id, ISOLATION_VALVE_INSPECTION);
 
-                $export = [];
-                $export[] =  $i;
-                $export[] =  $data->doc_no;
-                $export[] =  $data->issue_date;
-                $export[] = $data->revision_data;
-                $export[] =  getInspectionStatus($data->inspection_status);;
-                $export[] =  getusername($data->created_by);
-                $export[] =  Displaydateformat($data->created_at);
-                $exportData[] = $export;
-                $i++;
+                $titleRow = $row;
+
+                $logoPath = public_path('assets/images/logo-dark.png');
+                if (file_exists($logoPath)) {
+                    $drawing = new Drawing();
+                    $drawing->setName('Logo');
+                    $drawing->setDescription('Company Logo');
+                    $drawing->setPath($logoPath);
+                    $drawing->setCoordinates('A' . $titleRow);
+                    $drawing->setOffsetX(5);
+                    $drawing->setOffsetY(5);
+                    $drawing->setHeight(60);
+                    $drawing->setWorksheet($sheet);
+                }
+
+                $sheet->mergeCells("A{$titleRow}:C" . ($titleRow + 2));
+                $sheet->getStyle("A{$titleRow}:C" . ($titleRow + 2))->applyFromArray([
+                    'font' => ['bold' => true, 'size' => 14],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                ]);
+
+                $sheet->mergeCells("D{$titleRow}:K" . ($titleRow + 2));
+                $sheet->setCellValue("D{$titleRow}", "ISOLATION VALVE INSPECTION CHECKLIST PN INTERNATIONAL PVT. LTD.");
+
+                $sheet->getStyle("D{$titleRow}:K" . ($titleRow + 2))->applyFromArray([
+                    'font' => ['bold' => true, 'size' => 14],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                ]);
+
+                $sheet->setCellValue("L{$titleRow}", "Doc. No.");
+                $sheet->setCellValue("M{$titleRow}", $document_no->doc_no ?? '');
+
+                $sheet->setCellValue("L" . ($titleRow + 1), "Issue Dt.");
+                $sheet->setCellValue("M" . ($titleRow + 1), Displaydateformat($document_no->issue_date ?? ''));
+
+                $sheet->setCellValue("L" . ($titleRow + 2), "Rev. & Dt.");
+                $sheet->setCellValue("M" . ($titleRow + 2), $document_no->rev_dt ?? '');
+
+                $sheet->getStyle("L{$titleRow}:M" . ($titleRow + 2))->applyFromArray([
+                    'font' => ['bold' => true],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                ]);
+
+                $headerInfoRow = $titleRow + 3;
+
+                $sheet->mergeCells("A{$headerInfoRow}:D{$headerInfoRow}")->setCellValue("A{$headerInfoRow}", "Date of Inspection:- " . Displaydateformat($inspection_detail->date_of_inspection));
+                $sheet->mergeCells("E{$headerInfoRow}:I{$headerInfoRow}")->setCellValue("E{$headerInfoRow}", "Location:- " . getLocationname($inspection_detail->location));
+                $sheet->mergeCells("J{$headerInfoRow}:M{$headerInfoRow}")->setCellValue("I{$headerInfoRow}", "Shift:- " . $inspection_detail->shift);
+                $sheet->getStyle("A{$headerInfoRow}:M{$headerInfoRow}")->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                ]);
+                $headerInfoRow++;
+
+                $sheet->mergeCells("A{$headerInfoRow}:D{$headerInfoRow}")->setCellValue("A{$headerInfoRow}", "Next Due Date:- " . Displaydateformat($inspection_detail->next_due));
+                $sheet->mergeCells("E{$headerInfoRow}:I{$headerInfoRow}")->setCellValue("E{$headerInfoRow}", "Unit:- " . getUnitname($inspection_detail->unit));
+                $sheet->mergeCells("J{$headerInfoRow}:M{$headerInfoRow}")->setCellValue("I{$headerInfoRow}", "Frequency:- " . getFrequencyname($inspection_detail->frequency));
+                $sheet->getStyle("A{$headerInfoRow}:M{$headerInfoRow}")->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                ]);
+                $headerInfoRow++;
+
+                $columnWidths = [
+                    'A' => 5,
+                    'B' => 15,
+                    'C' => 10,
+                    'D' => 10,
+                    'E' => 10,
+                    'F' => 10,
+                    'G' => 15,
+                    'H' => 15,
+                    'I' => 15,
+                    'J' => 15,
+                    'K' => 15,
+                ];
+
+                foreach ($columnWidths as $col => $width) {
+                    $sheet->getColumnDimension($col)->setWidth($width);
+                }
+
+                $headerStart = $headerInfoRow;
+
+                $sheet->mergeCells("A{$headerStart}:A" . ($headerStart + 1))->setCellValue("A{$headerStart}", "SR.NO");
+                $sheet->mergeCells("B{$headerStart}:B" . ($headerStart + 1))->setCellValue("B{$headerStart}", "LOCATION OF ISV");
+                $sheet->mergeCells("C{$headerStart}:C" . ($headerStart + 1))->setCellValue("C{$headerStart}", "RESOURCE CODE");
+                $sheet->mergeCells("D{$headerStart}:J{$headerStart}")->setCellValue("D{$headerStart}", "CHECK ITEMS");
+
+                $sheet->setCellValue("D" . ($headerStart + 1), "SIZE OF ISV (MM)");
+                $sheet->setCellValue("E" . ($headerStart + 1), "STATUS OPEN");
+                $sheet->setCellValue("F" . ($headerStart + 1), "STATUS CLOSE");
+                $sheet->setCellValue("G" . ($headerStart + 1), "WHEEL OPERATION");
+                $sheet->setCellValue("H" . ($headerStart + 1), "STATUS OF ISV");
+                $sheet->setCellValue("I" . ($headerStart + 1), "LEAKAGE");
+                $sheet->setCellValue("J" . ($headerStart + 1), "VALVE TYPE");
+
+                $sheet->mergeCells("K{$headerStart}:M" . ($headerStart + 1))->setCellValue("K{$headerStart}", "REMARKS");
+
+                $sheet->getStyle("A{$headerStart}:M" . ($headerStart + 1))->applyFromArray([
+                    'font' => ['bold' => true],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                ]);
+
+                $dataRow = $headerStart + 2;
+                $sr = 1;
+                $statusMap = [YES => 'YES', 0 => 'NO'];
+
+                foreach ($groupedDetails as $detail) {
+                    $sheet->setCellValue("A$dataRow", $sr);
+                    $sheet->setCellValue("B$dataRow", $detail['location_isv'] ?? '');
+                    $sheet->setCellValue("C$dataRow", $detail['resource_code'] ?? '');
+                    $sheet->setCellValue("D$dataRow", $detail['size_isv'] ?? '');
+                    $sheet->setCellValue("E$dataRow", ($detail['open'] ?? '') == OPEN ? 'Opened' : 'Closed');
+                    $sheet->setCellValue("F$dataRow", ($detail['close'] ?? '') == OPEN ? 'Opened' : 'Closed');
+                    $sheet->setCellValue("G$dataRow", ($detail['wheel_operation'] ?? '') == FUNCTIONAL ? 'Functional' : 'Non-Functional');
+                    $sheet->setCellValue("H$dataRow", ($detail['isv_status'] ?? '') == FUNCTIONAL ? 'Functional' : 'Non-Functional');
+                    $sheet->setCellValue("I$dataRow", ($detail['leakage'] ?? '') == YES ? 'YES' : 'NO');
+                    $sheet->setCellValue("J$dataRow", getValveTypeName($detail['type']) ?? '');
+                    $sheet->mergeCells("K{$dataRow}:M{$dataRow}");
+                    $sheet->setCellValue("K{$dataRow}", $detail['remarks'] ?? '');
+
+                    $sheet->getStyle("A$dataRow:M$dataRow")->applyFromArray([
+                        'borders'   => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                    ]);
+
+                    $sr++;
+                    $dataRow++;
+                }
+                $signatureRowStart = $dataRow;
+                $sheet->getRowDimension($signatureRowStart)->setRowHeight(80);
+
+                $sheet->mergeCells("A{$signatureRowStart}:E{$signatureRowStart}");
+                $sheet->getStyle("A{$signatureRowStart}:E{$signatureRowStart}")->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => [
+                        'horizontal' => Alignment::HORIZONTAL_CENTER,
+                        'vertical' => Alignment::VERTICAL_CENTER,
+                        'wrapText' => true,
+                    ],
+                ]);
+
+                if (file_exists($prepared_by_signature)) {
+                    $drawing = new Drawing();
+                    $drawing->setName('Signature');
+                    $drawing->setDescription('Prepared By');
+                    $drawing->setPath($prepared_by_signature);
+                    $drawing->setCoordinates("B{$signatureRowStart}");
+                    $drawing->setOffsetX(60);
+                    $drawing->setOffsetY(5);
+                    $drawing->setHeight(40);
+                    $drawing->setWorksheet($sheet);
+
+                    $sheet->setCellValue("A{$signatureRowStart}", "\n\n\nPrepared By:\n" . getUsername($inspection_detail->checked_by));
+                } else {
+                    $sheet->setCellValue("A{$signatureRowStart}", "Prepared By:\nInspection not yet started");
+                }
+
+                $sheet->mergeCells("F{$signatureRowStart}:I{$signatureRowStart}");
+                $sheet->getStyle("F{$signatureRowStart}:I{$signatureRowStart}")->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => [
+                        'horizontal' => Alignment::HORIZONTAL_CENTER,
+                        'vertical' => Alignment::VERTICAL_CENTER,
+                        'wrapText' => true,
+                    ],
+                ]);
+
+                if (file_exists($verified_by_signature)) {
+                    $drawing = new Drawing();
+                    $drawing->setName('Signature');
+                    $drawing->setDescription('Verified By');
+                    $drawing->setPath($verified_by_signature);
+                    $drawing->setCoordinates("H{$signatureRowStart}");
+                    $drawing->setOffsetX(5);
+                    $drawing->setOffsetY(5);
+                    $drawing->setHeight(40);
+                    $drawing->setWorksheet($sheet);
+
+                    $sheet->setCellValue("F{$signatureRowStart}", "\n\n\nVerified By:\n" . getUsername($inspection_detail->verified_by));
+                } else {
+                    $sheet->setCellValue("F{$signatureRowStart}", "Verified By:\nInspection not yet completed");
+                }
+
+                $sheet->mergeCells("J{$signatureRowStart}:M{$signatureRowStart}");
+                $sheet->getStyle("J{$signatureRowStart}:M{$signatureRowStart}")->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => [
+                        'horizontal' => Alignment::HORIZONTAL_CENTER,
+                        'vertical' => Alignment::VERTICAL_CENTER,
+                        'wrapText' => true,
+                    ],
+                ]);
+
+                if (file_exists($approved_by_signature)) {
+                    $drawing = new Drawing();
+                    $drawing->setName('Signature');
+                    $drawing->setDescription('Approved By');
+                    $drawing->setPath($approved_by_signature);
+                    $drawing->setCoordinates("K{$signatureRowStart}");
+                    $drawing->setOffsetX(5);
+                    $drawing->setOffsetY(5);
+                    $drawing->setHeight(40);
+                    $drawing->setWorksheet($sheet);
+
+                    $sheet->setCellValue("J{$signatureRowStart}", "\n\n\nApproved By:\n" . getUsername($inspection_detail->approved_by));
+                } else {
+                    $sheet->setCellValue("J{$signatureRowStart}", "Approved By:\nApproval pending");
+                }
+
+
+                $row = $signatureRowStart + 6;
             }
 
-            $writer = SimpleExcelWriter::streamDownload('Isolation Valve Inspection.xlsx')
-                ->addHeader($header)
-                ->addRows(
-                    $exportData
-                );
-        } catch (Exception $ex) {
-            report($ex);
-            Session::flash('error', 'Something went wrong !');
+            $fileName = 'Isolating Valve Inspection.xlsx';
+            $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+            $tempFile = storage_path("app/public/{$fileName}");
+            $writer->save($tempFile);
+
+            return response()->download($tempFile)->deleteFileAfterSend(true);
+        } catch (\Exception $e) {
+            dd($e);
+            report($e);
+            Session::flash('error', 'Something went wrong!');
             return redirect(admin_url('fire/isolating-valve-inspection/list'));
         }
     }
@@ -851,14 +1061,14 @@ class IsolationValveController extends Controller
 
             if (Auth::check()) {
                 $inspection_type = ISOLATION_VALVE_INSPECTION;
-                $status_log = $this->statusLog->selectOne($id,ISOLATION_VALVE_INSPECTION);
+                $status_log = $this->statusLog->selectOne($id, ISOLATION_VALVE_INSPECTION);
                 $forklift_details = $this->isolation_valve->selectOne($id);
                 $inspection = $this->isolation_valve_details->GetDetails($forklift_details->id);
                 $document_no = $this->document_reference->selectOne($forklift_details->document_reference_id);
 
-                $approved_by = GetFireSignature($forklift_details->approved_by,$forklift_details->id,$inspection_type);
-                $verified_by = GetFireSignature($forklift_details->verified_by,$forklift_details->id,$inspection_type);
-                $checked_by = GetFireSignature($forklift_details->checked_by,$forklift_details->id,$inspection_type);
+                $approved_by = GetFireSignature($forklift_details->approved_by, $forklift_details->id, $inspection_type);
+                $verified_by = GetFireSignature($forklift_details->verified_by, $forklift_details->id, $inspection_type);
+                $checked_by = GetFireSignature($forklift_details->checked_by, $forklift_details->id, $inspection_type);
 
                 $data = [
                     'status_log' => $status_log,
@@ -870,7 +1080,7 @@ class IsolationValveController extends Controller
                     'approved_by' => $approved_by,
                     'verified_by' => $verified_by,
                     'checked_by' => $checked_by,
-                    
+
                 ];
             }
 
@@ -886,12 +1096,220 @@ class IsolationValveController extends Controller
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $html = view('inspection.fire.isolation_valve.viewPdf',$data);
+            $html = view('inspection.fire.isolation_valve.viewPdf', $data);
             $view = $html->render();
             $mpdf->WriteHTML($view);
 
             $filename = "Isolation Valve Inspection.pdf";
             return $mpdf->Output($filename, 'I');
+        } catch (Exception $ex) {
+            report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('fire/isolating-valve-inspection/list'));
+        }
+    }
+
+    public function GeneralExcel(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+            $spreadsheet = new Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
+
+            $inspection      = $this->isolation_valve->selectOne($id);
+            $inspection_data = $this->isolation_valve_details->GetDetails($inspection->id);
+            $document_no     = $this->document_reference->selectOne($inspection->document_reference_id);
+
+            $prepared_by_signature = GetFireSignature($inspection->created_by, $inspection->id, ISOLATION_VALVE_INSPECTION);
+            $verified_by_signature = GetFireSignature($inspection->updated_by, $inspection->id, ISOLATION_VALVE_INSPECTION);
+            $approved_by_signature = GetFireSignature($inspection->approved_by, $inspection->id, ISOLATION_VALVE_INSPECTION);
+
+            foreach (range('A', 'M') as $col) {
+                $sheet->getColumnDimension($col)->setAutoSize(true);
+            }
+
+            for ($i = 1; $i <= 200; $i++) {
+                $sheet->getRowDimension($i)->setRowHeight(25);
+            }
+
+            $logoPath = public_path('assets/images/logo-dark.png');
+            if (file_exists($logoPath)) {
+                $drawing = new Drawing();
+                $drawing->setName('Logo');
+                $drawing->setDescription('Company Logo');
+                $drawing->setPath($logoPath);
+                $drawing->setCoordinates('B1');
+                $drawing->setOffsetX(5);
+                $drawing->setOffsetY(5);
+                $drawing->setHeight(60);
+                $drawing->setWorksheet($sheet);
+            }
+
+            $sheet->mergeCells('A1:C3');
+            $sheet->mergeCells('D1:K3');
+            $sheet->setCellValue('D1', 'ISOLATION VALVE INSPECTION CHECKLIST PN INTERNATIONAL PVT. LTD.');
+            $sheet->getStyle('D1:K3')->applyFromArray([
+                'font'      => ['bold' => true, 'size' => 14],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+                'borders'   => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+            ]);
+            $sheet->getStyle('A1:B3')->applyFromArray([
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                'borders'   => ['outline' => ['borderStyle' => Border::BORDER_THIN]],
+            ]);
+
+            $labelMap = [
+                'L1' => ['value' => 'Doc. No.',   'valueCell' => 'M1', 'data' => $document_no->doc_no],
+                'L2' => ['value' => 'Issue Dt.',  'valueCell' => 'M2', 'data' => Displaydateformat($document_no->issue_date)],
+                'L3' => ['value' => 'Rev. & Dt.', 'valueCell' => 'M3', 'data' => $document_no->rev_dt],
+            ];
+
+            foreach ($labelMap as $labelCell => $info) {
+                $sheet->setCellValue($labelCell, $info['value']);
+                $sheet->setCellValue($info['valueCell'], $info['data']);
+
+                $sheet->getStyle($labelCell)->applyFromArray([
+                    'font'      => ['bold' => true],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                    'borders'   => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
+                ]);
+                $sheet->getStyle($info['valueCell'])->applyFromArray([
+                    'font'      => ['bold' => true],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                    'borders'   => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
+                ]);
+            }
+
+            $sheet->mergeCells('A4:D4')->setCellValue('A4', 'Date of Inspection:- ' . Displaydateformat($inspection->date_of_inspection));
+            $sheet->mergeCells('E4:I4')->setCellValue('E4', 'Location :- ' . getLocationname($inspection->location));
+            $sheet->mergeCells('J4:M4')->setCellValue('J4', 'Shift:- ' . getShift($inspection->shift));
+            $sheet->mergeCells('A5:D5')->setCellValue('A5', 'Next Due date:- ' . Displaydateformat($inspection->next_due));
+            $sheet->mergeCells('E5:I5')->setCellValue('E5', 'Unit:- ' . getUnitname($inspection->unit));
+            $sheet->mergeCells('J5:M5')->setCellValue('J5', 'Frequency:- ' . getFrequencyname($inspection->frequency));
+
+            $sheet->getStyle('A4:M5')->applyFromArray([
+                'font'      => ['bold' => true],
+                'borders'   => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+            ]);
+
+            $sheet->mergeCells('A6:A7')->setCellValue('A6', 'SR.NO');
+            $sheet->mergeCells('B6:B7')->setCellValue('B6', 'LOCATION OF ISV');
+            $sheet->mergeCells('C6:C7')->setCellValue('C6', 'RESOURCE CODE');
+            $sheet->mergeCells('D6:J6')->setCellValue('D6', 'CHECK ITEMS');
+            $sheet->setCellValue('D7', 'SIZE OF ISV(MM)');
+            $sheet->setCellValue('E7', 'STATUS OPEN');
+            $sheet->setCellValue('F7', 'STATUS CLOSE');
+            $sheet->setCellValue('G7', 'WHEEL OPERATION');
+            $sheet->setCellValue('H7', 'STATUS OF ISV');
+            $sheet->setCellValue('I7', 'LEAKAGE');
+            $sheet->setCellValue('J7', 'VALVE TYPE');
+            $sheet->mergeCells('K6:M7')->setCellValue('K6', 'REMARKS');
+
+            $sheet->getStyle('A6:M7')->applyFromArray([
+                'font'      => ['bold' => true],
+                'borders'   => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+            ]);
+
+            $row = 8;
+            $sr  = 1;
+
+            foreach ($inspection_data as $detail) {
+                $sheet->setCellValue("A$row", $sr);
+                $sheet->setCellValue("B$row", $detail['location_isv'] ?? '');
+                $sheet->setCellValue("C$row", $detail['resource_code'] ?? '');
+                $sheet->setCellValue("D$row", $detail['size_isv'] ?? '');
+                $sheet->setCellValue("E$row", ($detail['open'] ?? '') == OPEN ? 'Opened' : 'Closed');
+                $sheet->setCellValue("F$row", ($detail['close'] ?? '') == OPEN ? 'Opened' : 'Closed');
+                $sheet->setCellValue("G$row", ($detail['wheel_operation'] ?? '') == FUNCTIONAL ? 'Functional' : 'Non-Functional');
+                $sheet->setCellValue("H$row", ($detail['isv_status'] ?? '') == FUNCTIONAL ? 'Functional' : 'Non-Functional');
+                $sheet->setCellValue("I$row", ($detail['leakage'] ?? '') == YES ? 'YES' : 'NO');
+                $sheet->setCellValue("J$row", getValveTypeName($detail['type']) ?? '');
+                $sheet->mergeCells("K{$row}:M{$row}");
+                $sheet->setCellValue("K{$row}", $detail['remarks'] ?? '');
+
+                $sheet->getStyle("A$row:M$row")->applyFromArray([
+                    'borders'   => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                ]);
+
+                $sr++;
+                $row++;
+            }
+
+            $signatureRowStart = $row;
+            $sheet->getRowDimension($signatureRowStart)->setRowHeight(80);
+
+            // Prepared By
+            $sheet->mergeCells("A{$signatureRowStart}:E{$signatureRowStart}");
+            $sheet->getStyle("A{$signatureRowStart}:E{$signatureRowStart}")->applyFromArray([
+                'borders'   => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+            ]);
+            if (file_exists($prepared_by_signature)) {
+                $drawing = new Drawing();
+                $drawing->setName('Signature');
+                $drawing->setDescription('Prepared By');
+                $drawing->setPath($prepared_by_signature);
+                $drawing->setCoordinates("C{$signatureRowStart}");
+                $drawing->setOffsetX(5);
+                $drawing->setOffsetY(5);
+                $drawing->setHeight(40);
+                $drawing->setWorksheet($sheet);
+                $sheet->setCellValue("A{$signatureRowStart}", "\n\n\nPrepared By:\n" . getUsername($inspection->created_by));
+            } else {
+                $sheet->setCellValue("A{$signatureRowStart}", "Prepared By:\nInspection not yet started");
+            }
+
+            // Verified By
+            $sheet->mergeCells("F{$signatureRowStart}:I{$signatureRowStart}");
+            $sheet->getStyle("F{$signatureRowStart}:I{$signatureRowStart}")->applyFromArray([
+                'borders'   => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+            ]);
+            if (file_exists($verified_by_signature)) {
+                $drawing = new Drawing();
+                $drawing->setName('Signature');
+                $drawing->setDescription('Verified By');
+                $drawing->setPath($verified_by_signature);
+                $drawing->setCoordinates("H{$signatureRowStart}");
+                $drawing->setOffsetX(5);
+                $drawing->setOffsetY(5);
+                $drawing->setHeight(40);
+                $drawing->setWorksheet($sheet);
+                $sheet->setCellValue("F{$signatureRowStart}", "\n\n\nVerified By:\n" . getUsername($inspection->updated_by));
+            } else {
+                $sheet->setCellValue("F{$signatureRowStart}", "Verified By:\nInspection not yet completed");
+            }
+
+            // Approved By
+            $sheet->mergeCells("J{$signatureRowStart}:M{$signatureRowStart}");
+            $sheet->getStyle("J{$signatureRowStart}:M{$signatureRowStart}")->applyFromArray([
+                'borders'   => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+            ]);
+            if (file_exists($approved_by_signature)) {
+                $drawing = new Drawing();
+                $drawing->setName('Signature');
+                $drawing->setDescription('Approved By');
+                $drawing->setPath($approved_by_signature);
+                $drawing->setCoordinates("L{$signatureRowStart}");
+                $drawing->setOffsetX(5);
+                $drawing->setOffsetY(5);
+                $drawing->setHeight(40);
+                $drawing->setWorksheet($sheet);
+                $sheet->setCellValue("J{$signatureRowStart}", "\n\n\nApproved By:\n" . getUsername($inspection->approved_by));
+            } else {
+                $sheet->setCellValue("J{$signatureRowStart}", "Approved By:\nApproval pending");
+            }
+
+            $writer   = new Xlsx($spreadsheet);
+            $fileName = 'Isolating Valve Inspection.xlsx';
+            $filePath = storage_path("app/public/$fileName");
+            $writer->save($filePath);
+
+            return response()->download($filePath)->deleteFileAfterSend(true);
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');

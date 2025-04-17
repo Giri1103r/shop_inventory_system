@@ -170,7 +170,6 @@ class IsolationValve extends Model
             ->leftJoin('masters_unit', 'inspection_fire_isolation_valve.unit', '=', 'masters_unit.id')
             ->leftJoin('inspection_fire_isolation_valve_details', 'inspection_fire_isolation_valve.id', '=', 'inspection_fire_isolation_valve_details.inspection_id')
             ->leftJoin('inspection_static_docno', 'inspection_fire_isolation_valve.document_reference_id', '=', 'inspection_static_docno.id')
-            ->leftJoin('inspection_fire_isolation_valve_details', 'inspection_fire_isolation_valve.id', '=', 'inspection_fire_isolation_valve_details.inspection_id')
             ->leftJoin('inspection_frequency_option', 'inspection_fire_isolation_valve.frequency', '=', 'inspection_frequency_option.id');
 
         if (isset($request->search) && isset($request->search['value']) && $request->search['value'] != '') {
