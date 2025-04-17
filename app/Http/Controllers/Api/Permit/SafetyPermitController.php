@@ -507,7 +507,7 @@ class SafetyPermitController extends BaseController
                 return $this->sendResponse($success, 'Safety Permit Details');
             }
         } catch (Exception $ex) {
-            report($ex);
+            dd($ex);
             return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
         }
     }
