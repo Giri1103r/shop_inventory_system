@@ -334,25 +334,31 @@ class WeeklyFirstAidBoxController extends Controller
                 'G2' => 'Issue Dt.',
                 'G3' => 'Rev. & Dt.',
             ];
-
+            
             foreach ($headerLabels as $cell => $label) {
                 $sheet->setCellValue($cell, $label);
-
+            
                 $valueCell = 'H' . substr($cell, 1);
-
+            
                 $sheet->getStyle("$cell:$valueCell")->applyFromArray([
                     'font' => ['bold' => true],
                     'alignment' => [
                         'horizontal' => Alignment::HORIZONTAL_CENTER,
                         'vertical' => Alignment::VERTICAL_CENTER,
                     ],
-                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]], 
                 ]);
             }
-
+            
             $sheet->setCellValue("H1", $document_no->doc_no);
             $sheet->setCellValue("H2", Displaydateformat($document_no->issue_date));
             $sheet->setCellValue("H3", $document_no->rev_dt);
+            
+            $sheet->getStyle("G1:H3")->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+            ]);
+            
 
 
             $sheet->mergeCells("A4:C4")->setCellValue("A4", "Date of Inspection:- " . Displaydateformat($inspection_detail->date_of_inspection));
@@ -500,16 +506,18 @@ class WeeklyFirstAidBoxController extends Controller
 
                                 ]);
 
-                $sheet->setCellValue("G{$headerRowStart}", 'Doc. No.');
-                $sheet->setCellValue("G" . ($headerRowStart + 1), 'Issue Dt.');
-                $sheet->setCellValue("G" . ($headerRowStart + 2), 'Rev. & Dt.');
-                $sheet->setCellValue("H{$headerRowStart}", $document_no->doc_no ?? '');
-                $sheet->setCellValue("H" . ($headerRowStart + 1), Displaydateformat($document_no->issue_date ?? ''));
-                $sheet->setCellValue("H" . ($headerRowStart + 2), $document_no->rev_dt ?? '');
-                $sheet->getStyle("G{$headerRowStart}:H" . ($headerRowStart + 2))->applyFromArray([
-                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['argb' => '000000']]],
-                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
-                ]);
+                                $sheet->setCellValue("G{$headerRowStart}", 'Doc. No.');
+                                $sheet->setCellValue("G" . ($headerRowStart + 1), 'Issue Dt.');
+                                $sheet->setCellValue("G" . ($headerRowStart + 2), 'Rev. & Dt.');
+                                $sheet->setCellValue("H{$headerRowStart}", $document_no->doc_no ?? '');
+                                $sheet->setCellValue("H" . ($headerRowStart + 1), Displaydateformat($document_no->issue_date ?? ''));
+                                $sheet->setCellValue("H" . ($headerRowStart + 2), $document_no->rev_dt ?? '');
+                                
+                                $sheet->getStyle("G{$headerRowStart}:H" . ($headerRowStart + 2))->applyFromArray([
+                                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE, 'color' => ['argb' => '000000']]], 
+                                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                                ]);
+                                
 
                 // Details
                 $detailsRowStart = $headerRowStart + 3;

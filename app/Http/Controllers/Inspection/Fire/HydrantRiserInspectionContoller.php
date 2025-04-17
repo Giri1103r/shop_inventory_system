@@ -838,12 +838,17 @@ class HydrantRiserInspectionContoller extends Controller
                 $sheet->mergeCells("L{$titleRow}:M{$titleRow}")->setCellValue("L{$titleRow}", "Doc. No.");
                 $sheet->mergeCells("L" . ($titleRow + 1) . ":M" . ($titleRow + 1))->setCellValue("L" . ($titleRow + 1), "Issue Dt.");
                 $sheet->mergeCells("L" . ($titleRow + 2) . ":M" . ($titleRow + 2))->setCellValue("L" . ($titleRow + 2), "Rev. & Dt.");
+
                 $sheet->mergeCells("N{$titleRow}:O{$titleRow}")->setCellValue("N{$titleRow}", $document_no->doc_no ?? '');
                 $sheet->mergeCells("N" . ($titleRow + 1) . ":O" . ($titleRow + 1))->setCellValue("N" . ($titleRow + 1), Displaydateformat($document_no->issue_date ?? ''));
                 $sheet->mergeCells("N" . ($titleRow + 2) . ":O" . ($titleRow + 2))->setCellValue("N" . ($titleRow + 2), $document_no->rev_dt ?? '');
+
                 $sheet->getStyle("L{$titleRow}:O" . ($titleRow + 2))->applyFromArray([
-                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'font' => ['bold' => true],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
                 ]);
+
     
                 $headerInfoRow = $titleRow + 3;
     
@@ -1202,32 +1207,31 @@ class HydrantRiserInspectionContoller extends Controller
                 'borders' => ['outline' => ['borderStyle' => Border::BORDER_THIN]],
             ]);
 
-
-
-            // Document label info
             $labelMap = [
-                'L1' => ['merge' => 'L1:M1', 'text' => 'Doc. No.'],
-                'L2' => ['merge' => 'L2:M2', 'text' => 'Issue Dt.'],
-                'L3' => ['merge' => 'L3:M3', 'text' => 'Rev. & Dt.'],
+                'L1' => ['merge' => 'L1:M1', 'text' => 'Doc. No.', 'valueCell' => 'N1:O1', 'data' => $document_no->doc_no],
+                'L2' => ['merge' => 'L2:M2', 'text' => 'Issue Dt.', 'valueCell' => 'N2:O2', 'data' => Displaydateformat($document_no->issue_date)],
+                'L3' => ['merge' => 'L3:M3', 'text' => 'Rev. & Dt.', 'valueCell' => 'N3:O3', 'data' => $document_no->rev_dt],
             ];
-            foreach ($labelMap as $cell => $info) {
+
+            foreach ($labelMap as $labelCell => $info) {
                 $sheet->mergeCells($info['merge']);
-                $sheet->setCellValue($cell, $info['text']);
+                $sheet->mergeCells($info['valueCell']);
+                $sheet->setCellValue($labelCell, $info['text']);
+                $sheet->setCellValue(explode(':', $info['valueCell'])[0], $info['data']);
+
                 $sheet->getStyle($info['merge'])->applyFromArray([
                     'font' => ['bold' => true],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
-                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
+                ]);
+
+                $sheet->getStyle($info['valueCell'])->applyFromArray([
+                    'font' => ['bold' => true],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
                 ]);
             }
 
-            $sheet->mergeCells('N1:O1')->setCellValue("N1", $document_no->doc_no);
-            $sheet->mergeCells('N2:O2')->setCellValue("N2", Displaydateformat($document_no->issue_date));
-            $sheet->mergeCells('N3:O3')->setCellValue("N3", $document_no->rev_dt);
-            $sheet->getStyle("N1:O3")->applyFromArray([
-                'font' => ['bold' => true],
-                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
-            ]);
 
             // Info section
             $sheet->mergeCells("A4:E4")->setCellValue("A4", "Date of Inspection:- " . Displaydateformat($hydrant_details->date_of_inspection));
