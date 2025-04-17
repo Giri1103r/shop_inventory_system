@@ -135,10 +135,10 @@ class MonthlyEyeWashInspection extends Model
 
         $data = array(
             'document_reference_id' => decryptId($request->document_reference_id),
-            'date_of_inspection' => Displaydateformat($request->inspection_date),
+            'date_of_inspection' => DBdateformat($request->inspection_date),
             'location' => decryptId($request->location_id),
             'shift' => decryptId($request->shift_id),
-            'next_due' => Displaydateformat($request->next_due),
+            'next_due' => DBdateformat($request->next_due),
             'unit' => decryptId($request->unit_id),
             'frequency' => decryptId($request->frequency_id),
             'created_by' => Auth::id(),

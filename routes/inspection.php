@@ -349,6 +349,8 @@ Route::group(['prefix' => 'safety/'], function () {
         Route::GET('export/excel', [MonthlyEyeWashInspectionController::class, 'exportExcel']);
         Route::GET('export/pdf', [MonthlyEyeWashInspectionController::class, 'exportPdf']);
         Route::GET('exportViewPdf/{id}', [MonthlyEyeWashInspectionController::class, 'exportViewPdf']);
+        Route::get('generalexcel/{id}', [MonthlyEyeWashInspectionController::class, 'generalExcel']);
+
     });
 
     Route::group(['prefix' => 'forklift-inspection/monthly/'], function () {
