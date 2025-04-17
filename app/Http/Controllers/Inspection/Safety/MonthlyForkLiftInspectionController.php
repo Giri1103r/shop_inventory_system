@@ -723,6 +723,7 @@ class MonthlyForkLiftInspectionController extends Controller
             }
 
             foreach ($allData as $inspection) {
+                $startRow = $currentRow;
                 $user_responses = json_decode($inspection->responses, true);
                 $inspection_type = MONTHLY_FORKLIFT_INSPECTION;
 
@@ -879,11 +880,18 @@ class MonthlyForkLiftInspectionController extends Controller
                     'alignment' => [
                         'horizontal' => Alignment::HORIZONTAL_CENTER,
 
-                        'wrapText' => true, // Wrap text to ensure padding works when text overflows
-                        'indent' => 1, // Simulates padding (higher value = more space)
+                        'wrapText' => true,
+                        'indent' => 1, 
                     ],
                 ]);
-
+                $sheet->getStyle("A{$startRow}:P{$currentRow}")->applyFromArray([
+                    'borders' => [
+                        'top'    => ['borderStyle' => Border::BORDER_THICK],
+                        'bottom' => ['borderStyle' => Border::BORDER_THICK],
+                        'left'   => ['borderStyle' => Border::BORDER_THICK],
+                        'right'  => ['borderStyle' => Border::BORDER_THICK],
+                    ],
+                ]);
 
                 $currentRow = $signatureRow + 4;
             }

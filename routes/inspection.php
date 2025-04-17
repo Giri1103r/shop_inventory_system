@@ -382,6 +382,7 @@ Route::group(['prefix' => 'safety/'], function () {
         Route::get('get/unit', [ForkLiftInspectionController::class, 'GetUnit']);
         Route::get('approval/{id}', [ForkLiftInspectionController::class, 'approval']);
         Route::post('verify/submit', [ForkLiftInspectionController::class, 'approvalSubmit']);
+        Route::get('generalexcel/{id}', [ForkLiftInspectionController::class, 'generalExcel']);
     });
 
 
@@ -401,6 +402,7 @@ Route::group(['prefix' => 'safety/'], function () {
         Route::get('export/excel', [SafetyGalleryInsepctionController::class, 'exportExcel']);
         Route::get('export/pdf', [SafetyGalleryInsepctionController::class, 'exportPdf']);
         Route::get('exportViewPdf/{id}', [SafetyGalleryInsepctionController::class, 'exportViewPdf']);
+        Route::get('generalexcel/{id}', [SafetyGalleryInsepctionController::class, 'generalExcel']);
     });
 
     Route::group(['prefix' => 'fire-safety-equipment/'], function () {
