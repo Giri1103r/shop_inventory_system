@@ -128,6 +128,7 @@ return [
     //ohc safety petty logbook
     'safety_petty_logbook' => 'Safety Petty Logbook',
     'approval' => 'Approval',
+    
 
 
     // Floor Stretcher
@@ -238,6 +239,7 @@ return [
     'flow' => 'Flow Test',
     'fail' => 'Fail',
     'pass' => 'Pass',
+    'status_hose' => 'Status Of Hose',
 
     //Fire Modular Inspection
     'types_of_equipment' => 'Types Of Equipment',

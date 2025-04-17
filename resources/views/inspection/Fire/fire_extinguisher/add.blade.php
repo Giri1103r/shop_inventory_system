@@ -204,11 +204,9 @@
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.sr_no') }}</label>
+                                                            class="form-label require">{{ __('inspection.fire_point_no') }}</label>
                                                         <input type="text" name="sr_no[1]" id = "sr_no"
-                                                            class="form-control"
-                                                            value="{{ FireSequence(FIRE_EXTINGUISHER_INSPECTION) }}"
-                                                            readonly>
+                                                            class="form-control">
                                                     </div>
                                                 </div>
 
@@ -438,6 +436,19 @@
                     return this.optional(element) || value.trim().length > 0;
                 }, "This field cannot contain only spaces");
 
+                $.validator.addMethod("uniqueItemCode", function(value, element) {
+                    var itemCodes = [];
+
+                    $("input[name^='sr_no']").each(function() {
+                        var itemCodeValue = $(this).val();
+                        if (itemCodeValue) {
+                            itemCodes.push(itemCodeValue);
+                        }
+                    });
+
+                    return itemCodes.indexOf(value) === itemCodes.lastIndexOf(value);
+                }, "Resource code must be unique");
+
                 $('#eyewashAdd').validate({
                     rules: {
                         doc_no: {
@@ -475,6 +486,10 @@
                         },
                         forklift_type: {
                             required: true,
+                        },
+                        "sr_no[1]" :{
+                            required: true,
+                            uniqueItemCode: true,
                         },
                         "check_items[1]": {
                             required: true,
@@ -600,6 +615,10 @@
                         "safety_pin[1]": {
                             required: "Please select the status of safety pin",
                         },
+                        "sr_no[1]" :{
+                            required: 'Fire Point is required',
+                            uniqueItemCode: "Fire Point Should Be Unique",
+                        },
                         device_image: {
                             required: "Please upload an image.",
                             // extension: "Only JPG files are allowed.",
@@ -682,9 +701,9 @@
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.sr_no') }}</label>
+                                                            class="form-label require">{{ __('inspection.fire_point_no') }}</label>
                                                         <input type="text" name="sr_no[${form_set_count}]" id = "sr_no"
-                                                            class="form-control" value="{{ FireSequence(FIRE_EXTINGUISHER_INSPECTION) }}" readonly>
+                                                            class="form-control">
                                                     </div>
                                                 </div>
 
@@ -828,8 +847,10 @@
 
                     $("input[name='sr_no[" + form_set_count + "]']").rules('add', {
                         required: true,
+                        uniqueItemCode: true,
                         messages: {
-                            required: 'Serial number is required',
+                            required: 'Fire Point is required',
+                            uniqueItemCode: "Fire Point Should Be Unique",
                         }
                     });
 
@@ -1000,7 +1021,6 @@
                 $('.form-wrapper .form-set').each(function(index) {
                     let idx = index + 1;
                     let newSerialNumber = 'FEX-' + ('000000' + idx).slice(-6);
-                    $(this).find("input[name^='sr_no']").val(newSerialNumber);
                     $(this).find('input[name^="sr_no"]').attr('name', 'sr_no[' + idx + ']');
                     $(this).find('select[name^="location"]').attr('name', 'location[' + idx + ']');
                     $(this).find('select[name^="department"]').attr('name', 'department[' + idx + ']');
