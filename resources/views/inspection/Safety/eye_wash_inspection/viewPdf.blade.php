@@ -265,15 +265,7 @@
                 <td style="border: 2px solid black; padding: 6px;">{{ $details->eyewash_heads_value }}</td>
                 <td style="border: 2px solid black; padding: 6px;">{{ $details->receptacle }}</td>
                 <td style="border: 2px solid black; padding: 6px;">
-                    @if ($details->quality == 'GOOD')
-                        Good
-                    @elseif($details->quality == 'FAIR')
-                        Fair
-                    @elseif($details->quality == 'POOR')
-                        Poor
-                    @else
-                        Unknown
-                    @endif
+                    {{ $details->quality }}
                 </td>
                 <td style="border: 2px solid black; padding: 6px;">{{ $details->pressure }}</td>
                 <td style="border: 2px solid black; padding: 6px;">{{ $details->temperature }}</td>
@@ -318,7 +310,7 @@
             </td>
         </tr>
     </table>
-    
+
 
     <br>
 
