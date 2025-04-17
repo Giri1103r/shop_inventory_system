@@ -227,7 +227,7 @@
                         @if (strtoupper($item['answer']) == 'YES')
                             ✔
                         @else
-                            ❌
+                            'X'
                         @endif
                     </td>
                     <td colspan="5" style="border: 1px solid black; padding: 8px; text-align: center;">
