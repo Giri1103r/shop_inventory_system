@@ -601,6 +601,7 @@ Route::group(['prefix' => 'fire/'], function () {
         Route::POST('level-one/verify/submit', [FireMockDrillInspectionController::class, 'levelOneManagerSubmit']);
         Route::POST('level-two/verify/submit', [FireMockDrillInspectionController::class, 'levelTwoManagerSubmit']);
         Route::GET('exportViewPdf/{id}', [FireMockDrillInspectionController::class, 'ExportViewPDF']);
+        Route::GET('generalExcel/{id}', [FireMockDrillInspectionController::class, 'generalExcel']);
         Route::GET('export/excel', [FireMockDrillInspectionController::class, 'ExportExcel']);
         Route::GET('export/pdf', [FireMockDrillInspectionController::class, 'ExportPDF']);
     });
@@ -687,6 +688,7 @@ Route::group(['prefix' => 'fire/'], function () {
         Route::POST('level-one/verify/submit', [DetectorInspectionController::class, 'levelOneManagerSubmit']);
         Route::POST('level-two/verify/submit', [DetectorInspectionController::class, 'levelTwoManagerSubmit']);
         Route::GET('exportViewPdf/{id}', [DetectorInspectionController::class, 'ExportViewPDF']);
+        Route::GET('generalExcel/{id}', [DetectorInspectionController::class, 'generalExcel']);
         Route::GET('export/excel', [DetectorInspectionController::class, 'ExportExcel']);
         Route::GET('export/pdf', [DetectorInspectionController::class, 'ExportPDF']);
         Route::GET('get/department', [DetectorInspectionController::class, 'GetDepartment']);

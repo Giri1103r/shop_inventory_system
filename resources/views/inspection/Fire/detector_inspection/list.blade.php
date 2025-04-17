@@ -13,10 +13,10 @@
                     <div class="d-flex justify-content-end p-2">
 
                         <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
-                        @if (CheckUserPermission('add'))
+                        {{-- @if (CheckUserPermission('add')) --}}
                             <x-button-add dataId="" class="add btn btn-primary ms-1"
                                 href="{{ admin_url('fire/detector-inspection/add') }}">Add</x-button-add>
-                        @endif
+                        {{-- @endif --}}
                     </div>
                     <div id="search" class="collapse">
                         <form action="" id="formsearch">
@@ -280,7 +280,7 @@
                                         var searchValue = $('#datatable-list_filter input').val();
                                         inspection_date = $('#inspection_date').val();
                                         next_due = $('#next_due').val();
-                                        location = $('#location').val();
+                                        location_id = $('#location').val();
                                         shift = $('#shift').val();
                                         unit = $('#unit').val();
                                         frequency = $('#frequency').val();
@@ -293,7 +293,7 @@
                                             '?search=' + searchValue +
                                             '&inspection_date=' + inspection_date +
                                             '&next_due=' + next_due +
-                                            '&location=' + location +
+                                            '&location=' + location_id +
                                             '&shift=' + shift +
                                             '&unit=' + unit +
                                             '&frequency=' + frequency +
@@ -308,7 +308,7 @@
                                         var searchValue = $('#datatable-list_filter input').val();
                                         inspection_date = $('#inspection_date').val();
                                         next_due = $('#next_due').val();
-                                        location = $('#location').val();
+                                        location_id = $('#location').val();
                                         shift = $('#shift').val();
                                         unit = $('#unit').val();
                                         frequency = $('#frequency').val();
@@ -320,7 +320,7 @@
                                             '?search=' + searchValue +
                                             '&inspection_date=' + inspection_date +
                                             '&next_due=' + next_due +
-                                            '&location=' + location +
+                                            '&location=' + location_id +
                                             '&shift=' + shift +
                                             '&unit=' + unit +
                                             '&frequency=' + frequency +
