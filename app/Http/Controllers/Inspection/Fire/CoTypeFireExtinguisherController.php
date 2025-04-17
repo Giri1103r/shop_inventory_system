@@ -1000,7 +1000,6 @@ class CoTypeFireExtinguisherController extends Controller
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
             ]);
 
-            // Table Header
             $sheet->mergeCells("A6:A8")->setCellValue("A6", "SR. NO");
             $sheet->mergeCells("B6:B8")->setCellValue("B6", "FIRE POINT NO.");
             $sheet->mergeCells("C6:D8")->setCellValue("C6", "DEPARTMENT");
@@ -1033,17 +1032,6 @@ class CoTypeFireExtinguisherController extends Controller
             $sr = 1;
             foreach ($inspection_data as $detail) {
 
-                $greenStyle = [
-                    'font' => [
-                        'color' => ['rgb' => '008000']
-                    ]
-                ];
-                $redStyle = [
-                    'font' => [
-                        'color' => ['rgb' => 'FF0000']
-                    ]
-                ];
-
                 $sheet->setCellValue("A{$row}", $sr);
                 $sheet->setCellValue("B{$row}", $detail['fire_point_no'] ?? '');
                 $sheet->mergeCells("C$row:D$row")->setCellValue("C$row", getDepartment($detail['department']) ?? '');
@@ -1052,37 +1040,38 @@ class CoTypeFireExtinguisherController extends Controller
                 $sheet->setCellValue("H{$row}", $detail['capacity'] ?? '');
                 $sheet->setCellValue("I{$row}", $detail['quantity'] ?? '');
 
-                $dischargeTubeStatus = $details->discharge_tube ?? '';
+                $dischargeTubeStatus = $detail->discharge_tube ?? '';
+
                 if ($dischargeTubeStatus == FUNCTIONAL) {
                     $sheet->setCellValue("J{$row}", __('inspection.functional'));
-                    $sheet->getStyle("J{$row}")->applyFromArray($greenStyle);
+                    $sheet->getStyle("J{$row}");
                 } elseif ($dischargeTubeStatus == NON_FUNCTIONAL) {
                     $sheet->setCellValue("J{$row}", __('inspection.non_functional'));
-                    $sheet->getStyle("J{$row}")->applyFromArray($redStyle);
+                    $sheet->getStyle("J{$row}");
                 } else {
                     $sheet->setCellValue("J{$row}", '');
                 }
 
-                $dischargeHornStatus = $details->discharge_horn ?? '';
+                $dischargeHornStatus = $detail->discharge_horn ?? '';
                 if ($dischargeHornStatus == FUNCTIONAL) {
                     $sheet->setCellValue("K{$row}", __('inspection.functional'));
-                    $sheet->getStyle("K{$row}")->applyFromArray($greenStyle);
+                    $sheet->getStyle("K{$row}");
                 } elseif ($dischargeHornStatus == NON_FUNCTIONAL) {
                     $sheet->setCellValue("K{$row}", __('inspection.non_functional'));
-                    $sheet->getStyle("K{$row}")->applyFromArray($redStyle);
+                    $sheet->getStyle("K{$row}");
                 } else {
                     $sheet->setCellValue("K{$row}", '');
                 }
 
                 $sheet->setCellValue("L{$row}", $detail['weight_of_co2_in_fe'] ?? '');
 
-                $safetyPinStatus = $details->safety_pin ?? '';
+                $safetyPinStatus = $detail->safety_pin ?? '';
                 if ($safetyPinStatus == PRESENT) {
                     $sheet->setCellValue("M{$row}", __('inspection.present'));
-                    $sheet->getStyle("M{$row}")->applyFromArray($greenStyle);
+                    $sheet->getStyle("M{$row}");
                 } elseif ($safetyPinStatus == MISSING) {
                     $sheet->setCellValue("M{$row}", __('inspection.missing'));
-                    $sheet->getStyle("M{$row}")->applyFromArray($redStyle);
+                    $sheet->getStyle("M{$row}");
                 } else {
                     $sheet->setCellValue("M{$row}", '');
                 }
