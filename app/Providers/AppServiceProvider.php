@@ -229,7 +229,7 @@ class AppServiceProvider extends ServiceProvider
         defined('STATUS_INVESTIGATION_PENDING') or define('STATUS_INVESTIGATION_PENDING', 2);
         defined('STATUS_UAUC_PENDING') or define('STATUS_UAUC_PENDING', 3);
         defined('STATUS_RISKANALYSIS_PENDING') or define('STATUS_RISKANALYSIS_PENDING', 4);
-        defined('STATUS_EHSVERIFY_PENDING') or define('STATUS_EHSVERIFY_PENDING', 5);
+        defined('STATUS_INVESTIGATION_CLOSED') or define('STATUS_INVESTIGATION_CLOSED', 5);
         defined('STATUS_ACTION_PENDING') or define('STATUS_ACTION_PENDING', 6);
         defined('STATUS_EHSAPPROVAL_PENDING') or define('STATUS_EHSAPPROVAL_PENDING', 7);
         defined('STATUS_EHSAPPROVAL_REJECTED') or define('STATUS_EHSAPPROVAL_REJECTED', 8);

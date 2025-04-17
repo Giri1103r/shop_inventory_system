@@ -64,6 +64,7 @@ use App\Models\Inspection\Ohc\MedicineRequisitionSlipFloor;
 use App\Models\Inspection\Ohc\MedicineRequistionFdoChecklist;
 use App\Models\Inspection\Safety\MonthlyPhysicalEquipmentList;
 use App\Models\Inspection\Fire\MonthlyPhysicalInspectionFileUpload;
+use App\Models\IMS\Incident\Rcpa;
 
 if (!function_exists('get_encryptVal')) {
 
@@ -1473,7 +1474,14 @@ if (!function_exists('getMonth')) {
         }
     }
 
+    if (!function_exists('getRCPACount')) {
 
+        function getRCPACount()
+        {
+            $data = Rcpa::get()->count();
+            return $data;
+        }
+    }
     if (!function_exists('getCategoryname')) {
 
         function getCategoryname($id)
@@ -1978,7 +1986,6 @@ if (!function_exists('getMonth')) {
         {
 
             $shift = DB::table('inspection_shift_option')->select('shift')->where('id', $userid)->where('trash', 'NO')->first();
-
             if ($shift == null) {
                 return '';
             } else {

@@ -140,7 +140,7 @@ class HydrantRiserInspection extends Model
             'date_of_inspection' => $request->inspection_date,
             'location' => decryptId($request->location_id),
             'shift_id' => decryptId($request->shift_id),
-            'next_due' => $request->next_due,
+            'next_due' => DBdateformat($request->next_due),
             // 'observation' => $request->observation,
             'observation_needed'=>decryptId($request->observation_needed),
             'unit' => decryptId($request->unit_id),
@@ -157,7 +157,7 @@ class HydrantRiserInspection extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_fire_hydrant_riser.*', 'inspection_shift_option.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*','inspection_fire_hydrant_riser_details.*','inspection_static_docno.*','inspection_fire_hydrant_riser.id as hydrant_parent_id')
+        $query = $this->select('inspection_fire_hydrant_riser.*', 'inspection_shift_option.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*','inspection_fire_hydrant_riser_details.*','inspection_static_docno.*','inspection_fire_hydrant_riser.id as hydrant_parent_id','inspection_fire_hydrant_riser.updated_by as hydrant_updated_by')
             ->leftJoin('inspection_fire_hydrant_riser_details', 'inspection_fire_hydrant_riser_details.inspection_id', '=', 'inspection_fire_hydrant_riser.id')
             ->leftJoin('masters_location', 'inspection_fire_hydrant_riser.location', '=', 'masters_location.id')
             ->leftJoin('inspection_shift_option', 'inspection_fire_hydrant_riser.shift_id', '=', 'inspection_shift_option.id')

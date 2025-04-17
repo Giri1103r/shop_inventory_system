@@ -66,7 +66,7 @@ class FishboneAnalysis extends Model
     // }
 
 
-    public function storeFishbone($accident_id, $incident_id, $fire_id, $investigation_id)
+    public function storeFishbone( $incident_id, $investigation_id)
     {
         $request = request();
 
@@ -75,8 +75,6 @@ class FishboneAnalysis extends Model
 
         $dataToSave = [
             'incident_id' => $incident_id,
-            'accident_id' => $accident_id,
-            'fire_id' => $fire_id,
             'investigation_id' => $investigation_id,
             'created_by' => Auth::id(),
             'created_at' => now(),

@@ -9,7 +9,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class DailyDepartmentFirstAidboxEmail extends Mailable
+class OccupationalHealthEmail extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -26,7 +26,7 @@ class DailyDepartmentFirstAidboxEmail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject:'KARAM' . ' - ' . $this->details['ohc_type'],
+            subject: 'KARAM' . ' - ' . $this->details['ohc_type'],
         );
     }
 
@@ -36,7 +36,7 @@ class DailyDepartmentFirstAidboxEmail extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'emails.inspection.safety.safety_email',
+            view: 'emails.inspection.ohc.occupational_health',
             with: ['details' => $this->details]
         );
     }
@@ -51,4 +51,3 @@ class DailyDepartmentFirstAidboxEmail extends Mailable
         return [];
     }
 }
-

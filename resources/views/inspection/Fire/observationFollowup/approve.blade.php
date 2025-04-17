@@ -868,7 +868,7 @@
                 });
                 flatpickr("#closed_date", {
                     dateFormat: "d-m-Y",
-                    minDate: "today"
+                    maxDate: "today"
                 });
 
                 $('#responsible_person_id').select2({

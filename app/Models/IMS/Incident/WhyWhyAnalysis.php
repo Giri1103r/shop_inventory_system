@@ -44,7 +44,7 @@ class WhyWhyAnalysis extends Model
         'trash' => 'NO',
     ];
 
-    public function store($accident_id, $incident_id, $fire_id, $investigation_id)
+    public function store($incident_id,$investigation_id)
     {
         $request = request();
         $inserted = false;
@@ -60,8 +60,6 @@ class WhyWhyAnalysis extends Model
                 ]));
                 if (!empty($filteredAnalysis)) {
                     $filteredAnalysis['incident_id'] = $incident_id;
-                    $filteredAnalysis['accident_id'] = $accident_id;
-                    $filteredAnalysis['fire_id'] = $fire_id;
                     $filteredAnalysis['investigation_id'] = $investigation_id;
                     $filteredAnalysis['created_at'] = now();
                     $filteredAnalysis['updated_at'] = now();

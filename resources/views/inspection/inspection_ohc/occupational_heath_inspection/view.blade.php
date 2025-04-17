@@ -248,10 +248,10 @@
                                                     </div>
                                                 </div>
                                                 @php
-                                                    $signature = GetSignature(
+                                                    $signature = GetOHCSignature(
                                                         $occupational_health_center->verified_by,
                                                         $occupational_health_center->id,
-                                                        OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST,
+                                                        OHC_TYPE_OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST,
                                                     );
                                                 @endphp
                                             @endif
@@ -336,10 +336,10 @@
                                                     </div>
                                                 </div>
                                                 @php
-                                                    $signature = GetSignature(
+                                                    $signature = GetOHCSignature(
                                                         $occupational_health_center->created_by,
                                                         $occupational_health_center->id,
-                                                        OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST,
+                                                        OHC_TYPE_OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST,
                                                     );
                                                 @endphp
                                                 @if (isset($signature))
@@ -388,10 +388,10 @@
                                                     </div>
                                                 </div>
                                                 @php
-                                                    $signature = GetSignature(
+                                                    $signature = GetOHCSignature(
                                                         $occupational_health_center->verified_by,
                                                         $occupational_health_center->id,
-                                                        OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST,
+                                                        OHC_TYPE_OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST,
                                                     );
                                                 @endphp
                                                 @if (isset($signature))
@@ -492,10 +492,10 @@
                                             </div>
                                         </div>
                                         @php
-                                            $signature = GetSignature(
+                                            $signature = GetOHCSignature(
                                                 $occupational_health_center->l2_manager_verified_by,
                                                 $occupational_health_center->id,
-                                                OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST,
+                                                OHC_TYPE_OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST,
                                             );
                                         @endphp
                                         @if (isset(Auth::user()->signature_upload))

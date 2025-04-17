@@ -229,7 +229,11 @@
                                         </table>
                                     </div>
                                 </div>
-                                @if ($weekAmbualance->approve_status == WAITING_FOR_EHS_OFFICER_VERIFICATION)
+                                @if (
+                                    ($weekAmbualance->approve_status == WAITING_FOR_EHS_OFFICER_VERIFICATION &&
+                                        CheckUserRole(ROLE_EHS_OFFICER)) ||
+                                        ($weekAmbualance->approve_status == WAITING_FOR_EHS_OFFICER_VERIFICATION &&
+                                            CheckUserRole(ROLE_SUPERADMIN)))
                                     <div class="row mt-3">
                                         <div class="card-header-inner">
                                             <h4 class="text-white">{{ __('inspection.ehs_officer_verify') }}</h4>
@@ -311,7 +315,7 @@
                                                     </div>
                                                 </div>
                                                 @php
-                                                    $signature = GetSignature(
+                                                    $signature = GetOHCSignature(
                                                         $weekAmbualance->verified_by,
                                                         $weekAmbualance->id,
                                                         OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST,
@@ -395,7 +399,7 @@
                                                     </div>
                                                 </div>
                                                 @php
-                                                    $signature = GetSignature(
+                                                    $signature = GetOHCSignature(
                                                         $weekAmbualance->created_by,
                                                         $weekAmbualance->id,
                                                         OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST,
@@ -447,7 +451,7 @@
                                                     </div>
                                                 </div>
                                                 @php
-                                                    $signature = GetSignature(
+                                                    $signature = GetOHCSignature(
                                                         $weekAmbualance->verified_by,
                                                         $weekAmbualance->id,
                                                         OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST,
@@ -502,7 +506,7 @@
                                                 </div>
                                             </div>
                                             @php
-                                                $signature = GetSignature(
+                                                $signature = GetOHCSignature(
                                                     $weekAmbualance->l1_manager_verified_by,
                                                     $weekAmbualance->id,
                                                     OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST,
@@ -553,7 +557,7 @@
                                                 </div>
                                             </div>
                                             @php
-                                            $signature = GetSignature(
+                                            $signature = GetOHCSignature(
                                                 $weekAmbualance->l2_manager_verified_by,
                                                 $weekAmbualance->id,
                                                 OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST,
@@ -589,10 +593,14 @@
                                 @endif
 
                                 @if (
-                                    $weekAmbualance->approve_status == WAITING_FOR_CAPA_ACTION ||
+                                    ($weekAmbualance->approve_status == WAITING_FOR_CAPA_ACTION ||
                                         $weekAmbualance->approve_status == L2_MANAGER_REJECTED ||
                                         $weekAmbualance->approve_status == EHS_OFFICER_REJECTED ||
-                                        $weekAmbualance->approve_status == L1_MANAGER_REJECTED)
+                                        ($weekAmbualance->approve_status == L1_MANAGER_REJECTED && CheckUserRole(ROLE_FIRE_ASSOCIATES)))||(
+                                        $weekAmbualance->approve_status == WAITING_FOR_CAPA_ACTION ||
+                                            $weekAmbualance->approve_status == L2_MANAGER_REJECTED ||
+                                            $weekAmbualance->approve_status == EHS_OFFICER_REJECTED ||
+                                            ($weekAmbualance->approve_status == L1_MANAGER_REJECTED && CheckUserRole(ROLE_SUPERADMIN))))
                                     <div class="row mt-3">
                                         <div class="card-header-inner">
                                             <h4 class="text-white">{{ __('inspection.capa_action') }}</h4>
@@ -646,7 +654,10 @@
                                     </form>
                                 @endif
 
-                                @if ($weekAmbualance->approve_status == WAITING_FOR_CAPA_VERIFICATION)
+                                @if (
+                                    ($weekAmbualance->approve_status == WAITING_FOR_CAPA_VERIFICATION && CheckUserRole(ROLE_EHS_OFFICER)) ||
+                                        ($weekAmbualance->approve_status == WAITING_FOR_CAPA_VERIFICATION &&
+                                            CheckUserRole(ROLE_SUPERADMIN)))
                                     <form method="POST" id="forklistassessmentAdd"
                                         action="{{ admin_url('ohc/weekly-ambulance/inspection/checklist/capa/reverify/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
@@ -697,7 +708,7 @@
                                     </form>
                                 @endif
 
-                                @if ($weekAmbualance->approve_status == WAITING_FOR_L1_VERIFICATION)
+                                @if (($weekAmbualance->approve_status == WAITING_FOR_L1_VERIFICATION && CheckUserRole(ROLE_L1_MANAGER)) || ($weekAmbualance->approve_status == WAITING_FOR_L1_VERIFICATION && CheckUserRole(ROLE_SUPERADMIN)))
                                     <form method="POST" id="levelOneManager"
                                         action="{{ admin_url('ohc/weekly-ambulance/inspection/checklist/level-one/verify/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
@@ -749,7 +760,7 @@
                                     </form>
                                 @endif
 
-                                @if ($weekAmbualance->approve_status == WAITING_FOR_L2_VERIFICATION)
+                                @if (($weekAmbualance->approve_status == WAITING_FOR_L2_VERIFICATION&& CheckUserRole(ROLE_L2_MANAGER)) || ($weekAmbualance->approve_status == WAITING_FOR_L2_VERIFICATION && CheckUserRole(ROLE_SUPERADMIN)))
                                     <form method="POST" id="levelTwoManager"
                                         action="{{ admin_url('ohc/weekly-ambulance/inspection/checklist/level-two/verify/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">

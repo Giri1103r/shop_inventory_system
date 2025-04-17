@@ -385,8 +385,7 @@
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label for="team_id" class="form-label">Assign Team
-                                            members</label>
+                                        <label for="team_id" class="form-label">I.M Team members</label>
                                         <div class="view_data">
                                             {{ $getEHSReview->team_member_names }}
                                         </div>
@@ -459,7 +458,7 @@
 
                                             <div class="modal fade" id="hiraModal" tabindex="-1"
                                                 aria-labelledby="hiraModalLabel" aria-hidden="true">
-                                                <div class="modal-dialog modal-lg">
+                                                <div class="modal-dialog modal-xl custom-modal-width">
                                                     <div class="modal-content">
 
                                                         <div class="modal-body">
@@ -515,16 +514,7 @@
                                                         class="form-control" placeholder="Immediate action taken">
                                                 </div>
                                             </div>
-                                            <div class="col-md-4 mt-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label require">Recommended Corrective & Preventive
-                                                        Action</label>
-                                                    <input type="text" name="corrective_preventive_action"
-                                                        id="corrective_preventive_action" class="form-control"
-                                                        placeholder="Recommended Corrective & Preventive Action">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4 mt-2">
+                                            {{-- <div class="col-md-4 mt-2">
                                                 <div class="form-group form-input">
                                                     <label for="responsible_person_id"
                                                         class="form-label require">Responsible Person</label>
@@ -533,13 +523,15 @@
                                                         <option value="">Select Responsible Person</option>
                                                     </select>
                                                 </div>
-                                            </div>
+                                            </div> --}}
 
                                             <div class="col-md-4 mt-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Target Date</label>
                                                     <input type="text" name="target_date" id="target_date"
-                                                        class="form-control">
+                                                        class="form-control"
+                                                        value="{{ Displaydateformat($incident_report->target_date) }}"
+                                                        disabled>
                                                 </div>
                                             </div>
 
@@ -552,18 +544,21 @@
                                             </div>
 
                                             <div class="col-md-4 mt-3">
-                                                <div class="form-group form-input">
-                                                    <label for="risk_analysis" class="form-label require">Risk
-                                                        Analaysis</label><br>
-                                                    <input type="radio" id="yes" name="risk_analysis"
-                                                        value="1">
-                                                    <label for="yes">Yes</label>
-                                                    <input type="radio" id="no" name="risk_analysis"
-                                                        value="2">
-                                                    <label for="no">No</label><br>
-
+                                                <div class="form-group">
+                                                    <label class="form-label require d-block">Risk Analysis</label>
+                                                    <div class="form-check form-check-inline">
+                                                        <input type="radio" id="yes" name="risk_analysis"
+                                                            value="1" class="form-check-input">
+                                                        <label for="yes" class="form-check-label">Yes</label>
+                                                    </div>
+                                                    <div class="form-check form-check-inline">
+                                                        <input type="radio" id="no" name="risk_analysis"
+                                                            value="2" class="form-check-input">
+                                                        <label for="no" class="form-check-label">No</label>
+                                                    </div>
                                                 </div>
                                             </div>
+
                                             <div class="col-md-4 mt-2" id="risk_analysis_remark_container"
                                                 style="display: none;">
                                                 <div class="form-group form-input">
@@ -870,8 +865,198 @@
                                                 <div class="defect-spacer-bottom"></div>
                                             </div>
                                         </div>
+                                        <div class="row">
+                                            <div class="col-md-12 mt-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">Recommended Corrective & Preventive
+                                                        Action</label>
+                                                    <textarea type="text" name="corrective_preventive_action" id="corrective_preventive_action" class="form-control"
+                                                        placeholder="Recommended Corrective & Preventive Action"></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row mt-4" id="form-wrapper">
+                                            <div class="form-set">
+                                                <div class="card-header-inner">
+                                                    <h4 class="text-white p-1">RCPA</h4>
+                                                </div>
+                                                <div class="d-flex justify-content-end">
+                                                    <button class="btn btn-primary add-row me-3" type="button"
+                                                        id="add-row" style="width: 84px;">
+                                                        Add
+                                                    </button>
+                                                    <button type="button" class="btn btn-danger remove-row">
+                                                        <i class="fa-solid fa-trash"></i> Remove
+                                                    </button>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-4">
+                                                        <div class="form-group form-input">
+                                                            <label class="form-label require">Serial Number</label>
+                                                            <input type="text" name="serial_number[1]"
+                                                                class="form-control" placeholder="Serial Number"
+                                                                value="RCPA-00001" readonly>
+                                                        </div>
+                                                    </div>
 
+                                                    <div class="col-md-4">
+                                                        <div class="form-group form-input">
+                                                            <label class="form-label require">Recommended Corrective &
+                                                                Preventive Action</label>
+                                                            <input type="text" name="rcpa[1]" class="form-control"
+                                                                placeholder="Recommended Corrective & Preventive Action"
+                                                                value="">
+                                                        </div>
+                                                    </div>
 
+                                                    <div class="col-md-4">
+                                                        <div class="form-group form-input">
+                                                            <label class="form-label require">Responsibility</label>
+                                                            <select name="responsibility[1]"
+                                                                class="form-control responsibility-select"></select>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-md-4">
+                                                        <div class="form-group form-input">
+                                                            <label class="form-label require">Timeline</label>
+                                                            <input type="text" name="timeline[1]"
+                                                                class="form-control timeline-picker" value="">
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-md-4 mt-2">
+                                                        <div class="form-group form-input">
+                                                            <label class="form-label require">Status</label>
+                                                            <select name="capa_status[1]"
+                                                                class="form-control single-select" style="width: 100%">
+                                                                <option value="">Select RCPA Status
+                                                                </option>
+                                                                <option value="{{ encryptId(YES) }}">Open</option>
+                                                                <option value="{{ encryptId(NO) }}">In-Progress</option>
+                                                                <option value="{{ encryptId(NO) }}">Closed</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-md-12 mt-2 mb-2">
+                                                        <div class="form-group form-input">
+                                                            <label class="form-label">Remark if any</label>
+                                                            <textarea name="capa_remark[1]" class="form-control" placeholder="Remark" rows="3"></textarea>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <hr>
+                                        <div class="row">
+                                            <div class="col-md-12 mt-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">Main Root Cause</label>
+                                                    <textarea type="text" name="main_root_cause" id="main_root_cause" class="form-control"
+                                                        placeholder="Main Root Cause"></textarea>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mt-3">
+                                                <div class="form-group form-input">
+                                                    <label for="leading_factors" class="form-label require">Leading
+                                                        Factors</label><br>
+                                                    <input type="radio" id="human" name="leading_factors"
+                                                        value="1">
+                                                    <label for="human">Human Factor</label>
+                                                    <input type="radio" id="system" name="leading_factors"
+                                                        value="2">
+                                                    <label for="system">System Factor</label><br>
+
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <div class="row mt-2">
+                                                    <div class="card-header-inner">
+                                                        <h4 class="text-white">Recommended Causes</h4>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-md-12 mt-3 ua_uc_yes_no">
+                                                    <div class="form-group form-input">
+                                                        <label for="ua_uc" class="form-label require">UAUC</label><br>
+                                                        <input type="radio" id="ua_uc_yes" name="ua_uc_yes_no"
+                                                            value="1">
+                                                        <label for="ua_uc_yes">Yes</label>
+                                                        <input type="radio" id="ua_uc_no" name="ua_uc_yes_no"
+                                                            value="2">
+                                                        <label for="ua_uc_no">No</label>
+
+                                                    </div>
+                                                </div>
+
+                                                <div class = "ua_uc_div" style="display: none;">
+                                                    <div class="col-md-12 mt-3">
+                                                        <div class="form-group">
+                                                            <div class="form-check form-check-inline">
+                                                                <input class="form-check-input" type="checkbox"
+                                                                    id="ua" name="ua_or_uc[]" value="1">
+                                                                <label class="form-check-label" for="ua">Unsafe
+                                                                    Act</label>
+                                                            </div>
+                                                            <div class="form-check form-check-inline">
+                                                                <input class="form-check-input" type="checkbox"
+                                                                    id="uc" name="ua_or_uc[]" value="2">
+                                                                <label class="form-check-label" for="uc">Unsafe
+                                                                    Condition</label>
+                                                            </div>
+                                                            <div class="form-check form-check-inline">
+                                                                <input class="form-check-input" type="checkbox"
+                                                                    id="nc" name="ua_or_uc[]" value="3">
+                                                                <label class="form-check-label" for="nc">Natural
+                                                                    Causes</label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="risk_analysis_div mt-2" style="display: none;">
+                                                <div class="row">
+                                                    <div class="card-header-inner">
+                                                        <h4 class="text-white">Risk Level</h4>
+                                                    </div>
+                                                </div>
+                                                <div class="basic-form">
+                                                    <input type="hidden" name="incident_id" id="incident_id"
+                                                        value="{{ encryptId($incidentId) }}">
+
+                                                    <div class="row">
+                                                        <div class="col-md-12 mt-3">
+                                                            <div class="form-group form-input">
+                                                                <label for="risk_level" class="form-label require">Risk
+                                                                    Level</label><br>
+                                                                <input type="radio" id="low" name="risk_level"
+                                                                    value="1">
+                                                                <label for="low">Low</label>
+                                                                <input type="radio" id="medium" name="risk_level"
+                                                                    value="2">
+                                                                <label for="medium">Medium</label>
+                                                                <input type="radio" id="high" name="risk_level"
+                                                                    value="3">
+                                                                <label for="high">High</label>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-md-12 mt-2">
+                                                            <div class="form-group form-input">
+                                                                <label class="form-label required">Description of
+                                                                    CA</label>
+                                                                <textarea class="form-control" name="description_ca" id="description_ca"></textarea>
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                         <hr>
                                         <div class="submit-button" style="text-align: right;">
                                             <x-button-submit class="submit"></x-button-submit>
@@ -896,6 +1081,7 @@
     <script type="text/javascript" nonce="projectcab">
         $(document).ready(function() {
 
+
             $('input[name="risk_analysis"]').on('change', function() {
                 if ($('#no').is(':checked')) {
                     $('#risk_analysis_remark_container').show();
@@ -903,12 +1089,35 @@
                     $('#risk_analysis_remark_container').hide();
                 }
             });
+            $('input[name="ua_uc_yes_no"]').change(function() {
+                if ($('#ua_uc_yes').is(':checked')) {
+                    $('.ua_uc_div').show();
+                } else {
+                    $('.ua_uc_div').hide();
+                }
+            });
+            $('input[name="risk_analysis"]').change(function() {
+                if ($('#yes').is(':checked')) {
+                    $('.risk_analysis_div').show();
+                } else {
+                    $('.risk_analysis_div').hide();
+                }
+            });
+
 
             $("#root_cause_analysis").change(function() {
                 if ($(this).val() == "1") {
                     $(".whywhy").show(); // Show the Why Why Analysis section
                 } else {
                     $(".whywhy").hide(); // Hide it when another option is selected
+                }
+            });
+
+            $("#root_cause_analysis").change(function() {
+                if ($(this).val() == "2") {
+                    $(".fishbone").show(); // Show the Why Why Analysis section
+                } else {
+                    $(".fishbone").hide(); // Hide it when another option is selected
                 }
             });
             let whywhyanalysisIndex = {{ 1 }};
@@ -976,8 +1185,6 @@
                     Swal.fire("Warning!", "At least one row is required!", "error");
                 }
             });
-
-
         });
 
         $(document).ready(function() {
@@ -1291,6 +1498,208 @@
                     },
                 });
             });
+        });
+
+        $(document).ready(function() {
+            let form_set_count = 2;
+            let serial_number = parseInt("{{ getRCPACount() }}", 10) + 1;
+            const maxFormSets = 5;
+            const minFormSets = 1;
+
+            $(document).on('click', ".add-row", function() {
+                let currentFormSets = $('#form-wrapper .form-set').length;
+
+                if (currentFormSets >= maxFormSets) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Maximum RCPA Reached',
+                        text: 'You can only add up to 5 RCPA.',
+                        confirmButtonColor: '#3085d6'
+                    });
+                    return;
+                }
+                let newSerialNumber = 'RCPA-' + ('0000' + serial_number).slice(-5);
+                var newFormSet = `
+                <div class="form-set">
+                        <div class="card-header-inner">
+                            <h4 class="text-white p-1">RCPA</h4>
+                        </div>
+                        <div class="d-flex justify-content-end">
+                            <button class="btn btn-primary add-row me-3" type="button" style="width: 84px;">
+                                Add
+                            </button>
+                            <button type="button" class="btn btn-danger remove-row">
+                                <i class="fa-solid fa-trash"></i> Remove
+                            </button>
+                        </div>
+                        <div class="row">
+
+                             <div class="col-md-4">
+                            <div class="form-group form-input">
+                                <label class="form-label require">Serial Number</label>
+                                <input type="text" name="serial_number[${form_set_count}]" class="form-control" placeholder="Serial Number" value="${newSerialNumber}" readonly>
+                            </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group form-input">
+                                    <label class="form-label require">Recommended Corrective & Preventive Action</label>
+                                    <input type="text" name="rcpa[${form_set_count}]" class="form-control" placeholder="Recommended Corrective & Preventive Action" value="">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group form-input">
+                                    <label class="form-label require">Responsibility</label>
+                                    <select name="responsibility[${form_set_count}]" class="form-control responsibility-select"></select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group form-input">
+                                    <label class="form-label require">Timeline</label>
+                                    <input type="text" name="timeline[${form_set_count}]" class="form-control timeline-picker">
+                                </div>
+                            </div>
+                            <div class="col-md-4 mt-2">
+                                <div class="form-group form-input">
+                                    <label class="form-label require">Status</label>
+                                    <select name="capa_status[${form_set_count}]" class="form-control single-select" style="width: 100%">
+                                        <option value="">Select RCPA Status</option>
+                                        <option value="{{ encryptId(YES) }}">Open</option>
+                                        <option value="{{ encryptId(NO) }}">In-Progress</option>
+                                        <option value="{{ encryptId(NO) }}">Closed</option>
+                                    </select>
+                                    
+                                </div>
+                            </div>
+                            <div class="col-md-12 mt-2 mb-2">
+                                <div class="form-group form-input">
+                                    <label class="form-label">Remarks (If Any)</label>
+                                    <textarea name="capa_remark[${form_set_count}]" class="form-control" placeholder="Remark" rows="3"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>`;
+
+                $('#form-wrapper').append(newFormSet);
+                $("input[name='rcpa[" + form_set_count + "]']").rules('add', {
+                    required: true,
+                    noSpaces: true,
+                    messages: {
+                        required: 'Recommended Corrective & Preventive Action is required',
+                    }
+                });
+                $("input[name='timeline[" + form_set_count + "]']").rules('add', {
+                    required: true,
+                    noSpaces: true,
+                    messages: {
+                        required: 'Timeline is required',
+                    }
+                });
+                $("select[name='rcpa_status[" + form_set_count + "]']").rules('add', {
+                    required: true,
+                    messages: {
+                        required: 'RCPA Status is required',
+                    }
+                });
+                $("textarea[name='remark[" + form_set_count + "]']").rules('add', {
+                    required: true,
+                    messages: {
+                        required: 'Remark is required',
+                    }
+                });
+
+                let newElement = $('#form-wrapper').last().find('.responsibility-select');
+                initResponsibilitySelect(newElement);
+                let timelinePicker = $('#form-wrapper').last().find('.timeline-picker');
+                initDatePickers(timelinePicker);
+
+                form_set_count++;
+                updatePageIndices();
+            });
+
+            $(document).on('click', '.remove-row', function() {
+                let currentFormSets = $('#form-wrapper .form-set').length;
+
+                if (currentFormSets <= minFormSets) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Minimum RCPA Required',
+                        text: 'At least 1 RCPA is required.',
+                        confirmButtonColor: '#3085d6'
+                    });
+                    return;
+                }
+
+                $(this).closest('.form-set').remove();
+                updatePageIndices();
+            });
+
+            function updatePageIndices() {
+                $('#form-wrapper .form-set').each(function(index) {
+                    const i = index + 1;
+                    $(this).find("input[name^='serial_number']").val('RCPA-' + ('0000' + (i)).slice(-5));
+                    $(this).find('input[name^="rcpa"]').attr('name', 'rcpa[' + i + ']');
+                    $(this).find('input[name^="timeline"]').attr('name', 'timeline[' + i + ']');
+                    $(this).find('select[name^="capa_status"]').attr('name', 'capa_status[' + i + ']');
+                    $(this).find('select[name^="responsibility"]').attr('name', 'responsibility[' + i +
+                        ']');
+                    $(this).find('textarea[name^="capa_remark"]').attr('name', 'capa_remark[' + i + ']');
+                });
+            }
+
+
+            $(".submit").on('click', function() {
+                if ($("#incidentinvestigation").valid()) {
+                    $("#incidentinvestigation").submit();
+                } else {
+                    return false;
+                }
+            });
+
+            function initResponsibilitySelect(selector) {
+                $(selector).select2({
+                    placeholder: "Select Responsibility",
+                    allowClear: true,
+                    closeOnSelect: true,
+                    ajax: {
+                        url: "{{ admin_url('incident/initial-incident/teamMembers') }}",
+                        type: "GET",
+                        dataType: "json",
+                        delay: 250,
+                        data: function(params) {
+                            return {
+                                search: params.term
+                            };
+                        },
+                        processResults: function(data) {
+                            return {
+                                results: $.map(data, function(item) {
+                                    return {
+                                        id: item.id,
+                                        text: item.text
+                                    };
+                                })
+                            };
+                        },
+                        error: function(xhr, textStatus, errorThrown) {
+                            console.log("Error in AJAX request:", textStatus, errorThrown);
+                        }
+                    },
+                    minimumInputLength: 3,
+                    width: '100%',
+                    dropdownCssClass: 'form-control',
+                    selectionCssClass: 'form-control'
+                });
+            }
+
+            function initDatePickers(selector) {
+                $(selector).flatpickr({
+                    dateFormat: "d-m-Y",
+                    minDate: "today"
+                });
+            }
+            initDatePickers('.timeline-picker');
+            initResponsibilitySelect('.responsibility-select');
+
         });
     </script>
 @endpush

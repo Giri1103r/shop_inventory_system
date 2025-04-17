@@ -98,7 +98,7 @@ class FirstAiderlistController extends Controller
 
                         ->addColumn('action', function ($row) {
                             $btn = "";
-                            $btn .= '<a href="' . admin_url('ohc/first-aider/view/' . encryptId($row->inspection_id)) . '" class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a>';
+                            $btn .= '<a href="' . admin_url('ohc/first-aider/view/' . encryptId($row->inspection_id)) . '" class="view-icon me-1" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a>';
 
                             $btn .= '<a href="' . admin_url('ohc/first-aider/generalpdf/' . encryptId($row->inspection_id)) . '" style="margin-right: 5px;" title="PDF">
                             <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
@@ -116,7 +116,7 @@ class FirstAiderlistController extends Controller
 
                     return $datatables;
                 } catch (Exception $ex) {
-                    dd($ex);
+                    report($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }
@@ -142,7 +142,7 @@ class FirstAiderlistController extends Controller
             );
             return view('inspection.inspection_ohc.first_aider_list.add', $data);
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
         }
     }
 
@@ -174,14 +174,14 @@ class FirstAiderlistController extends Controller
 
                 Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
-                dd($ex);
+                report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
             return redirect(admin_url('ohc/first-aider/list'));
         } catch (Exception $ex) {
 
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/first-aider/list'));
         }
@@ -204,7 +204,7 @@ class FirstAiderlistController extends Controller
             }
             return view('inspection.inspection_ohc.first_aider_list.view', $data);
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
         }
     }
 
@@ -242,7 +242,7 @@ class FirstAiderlistController extends Controller
 
             return $mpdf->Output($filename, 'D');
         } catch (\Exception $ex) {
-            dd($ex);
+            report($ex);
             return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
         }
     }
@@ -267,6 +267,11 @@ class FirstAiderlistController extends Controller
     {
         try {
             $allData = $this->first_aider->exportdata();
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            } elseif (count($allData) > 20) {
+                return redirect()->back()->with('error',   __('inspection.excess_error'));
+            }
             $spreadsheet = new Spreadsheet();
             $sheet = $spreadsheet->getActiveSheet();
 
@@ -399,7 +404,6 @@ class FirstAiderlistController extends Controller
             $writer = new Xlsx($spreadsheet);
             $writer->save('php://output');
             exit;
-
         } catch (\Exception $e) {
             return back()->with('error', 'Excel Export Failed: ' . $e->getMessage());
         }
@@ -414,12 +418,15 @@ class FirstAiderlistController extends Controller
         try {
 
             $allData = $this->first_aider->exportdata();
-            $document_no = $this->document_reference->selectUsingName('FirstAiderList');
-
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
             } elseif (count($allData) > 20) {
                 return redirect()->back()->with('error',   __('inspection.excess_error'));
+            }
+
+            foreach( $allData as $details){
+                $document_no = $this->document_reference->selectOne($details->document_reference_id);
+
             }
 
 
@@ -454,7 +461,7 @@ class FirstAiderlistController extends Controller
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/first-aider/list'));
         }

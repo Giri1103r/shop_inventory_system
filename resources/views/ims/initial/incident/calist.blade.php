@@ -104,6 +104,7 @@
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
                                         <th>Sr. No</th>
+                                        <th>RCPA Id</th>
                                         <th>Unit</th>
                                         <th>Shift</th>
                                         <th>Approve Status</th>
@@ -206,6 +207,10 @@
                     {
                         data: 'sr_no',
                         name: 'sr_no'
+                    },
+                    {
+                        data: 'rcpa_id',
+                        name: 'rcpa_id'
                     },
                     {
                         data: 'unit_name',

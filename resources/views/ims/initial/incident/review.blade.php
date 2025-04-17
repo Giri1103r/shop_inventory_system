@@ -160,8 +160,6 @@
 
                                 </div>
                             </div>
-
-
                             <div class="card-body ">
 
                                 <div class="row">
@@ -324,7 +322,7 @@
                                                 </div>
                                                 <div class="col-md-4 mb-3">
                                                     <div class="form-group form-input">
-                                                        <label for="team_id" class="form-label require">Assign Team
+                                                        <label for="team_id" class="form-label require">I.M Team
                                                             members</label>
                                                         <select name="team_member[]" id="team_id"
                                                             class="form-control team_name" style="width: 100%" multiple>
@@ -334,24 +332,44 @@
                                                     </div>
                                                 </div>
 
-                                                <div class="col-md-12 mb-3">
+                                                <div class="col-md-4 mb-3">
                                                     <div class="form-group form-input">
-                                                        <label class="form-label require">Remark</label>
-                                                        <textarea name="remark" id="remark" class="form-control" rows="4" required></textarea>
+                                                        <label for="reported_by"
+                                                            class="form-label require">Incident/Accident Investigation
+                                                            Report Prepared by</label>
+                                                        <select name="reported_by" id="reported_by"
+                                                            class="form-control reported_by" style="width: 100%">
+                                                            <option value="">Select Prepared By</option>
+
+                                                        </select>
                                                     </div>
                                                 </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label require">Target Date</label>
+                                                        <input type="text" name="target_date" id="target_date"
+                                                            class="form-control">
+                                                    </div>
+                                                </div>
+                                            </div>
 
+                                            <div class="col-md-12 mb-3">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">Remark</label>
+                                                    <textarea name="remark" id="remark" class="form-control" rows="4" required></textarea>
+                                                </div>
                                             </div>
-                                            <hr>
-                                            <div class="submit-button" style="text-align: right;">
-                                                <x-button-submit class="submit"></x-button-submit>
-                                                <x-button-reset class=""></x-button-reset>
-                                                <x-button-cancel
-                                                    href="{{ admin_url('incident/initial-incident/list') }}"></x-button-cancel>
-                                            </div>
-                                        </form>
 
                                     </div>
+                                    <hr>
+                                    <div class="submit-button" style="text-align: right;">
+                                        <x-button-submit class="submit"></x-button-submit>
+                                        <x-button-reset class=""></x-button-reset>
+                                        <x-button-cancel
+                                            href="{{ admin_url('incident/initial-incident/list') }}"></x-button-cancel>
+                                    </div>
+                                    </form>
+
                                 </div>
                             @else
                                 <div class="card-body ">
@@ -374,8 +392,7 @@
                                             </div>
                                         </div>
                                         <div class="mb-3 col-md-4 form-input">
-                                            <label for="team_id" class="form-label">Assign Team
-                                                members</label>
+                                            <label for="team_id" class="form-label">I.M Team members</label>
                                             <div class="view_data">
                                                 {{ $getEHSReview->team_member_names }}
                                             </div>
@@ -393,7 +410,7 @@
                                 </div>
                             @endif
 
-                            @if ($incident_report->incident_status >= STATUS_EHSVERIFY_PENDING)
+                            @if ($incident_report->incident_status >= STATUS_INVESTIGATION_PENDING)
                                 <div class="card-body ">
                                     <div class="row">
                                         <div class="card-header-inner">
@@ -429,29 +446,6 @@
                                                 {{ implode(', ', $damagedLabels) }}
                                             </div>
                                         </div>
-
-                                        <div class="mb-3 col-md-4 form-input">
-                                            <label class="form-label view_label">HIRA</label>
-                                            <div class="view_data">
-                                                @if (!empty($getInvestigation->hira_moc[0]['hira_name']))
-                                                    {{ $getInvestigation->hira_moc[0]['hira_name'] }}
-                                                @else
-                                                    N/A
-                                                @endif
-                                            </div>
-                                        </div>
-
-                                        <div class="mb-3 col-md-4 form-input">
-                                            <label class="form-label">MOC</label>
-                                            <div class="view_data">
-                                                @if (!empty($getInvestigation->hira_moc[0]['moc_name']))
-                                                    {{ $getInvestigation->hira_moc[0]['moc_name'] }}
-                                                @else
-                                                    N/A
-                                                @endif
-                                            </div>
-                                        </div>
-
                                         <div class="mb-3 col-md-4 form-input">
                                             <label class="form-label">Possible Root
                                                 Cause
@@ -474,26 +468,6 @@
                                                 {{ $getInvestigation->action_taken }}
                                             </div>
                                         </div>
-
-                                        <div class="mb-3 col-md-4 form-input">
-                                            <label class="form-label view_label">Recommended Corrective & Preventive
-                                                Action</label>
-                                            <div class="view_data">
-                                                {{ $getInvestigation->corrective_preventive_action }}
-                                            </div>
-                                        </div>
-                                        <div class="mb-3 col-md-4 form-input">
-                                            <label class="form-label view_label">Responsible Person</label>
-                                            <div class="view_data">
-                                                {{ $getInvestigation->responsible_person }}
-                                            </div>
-                                        </div>
-                                        <div class="mb-3 col-md-4 form-input">
-                                            <label class="form-label view_label">Target Date</label>
-                                            <div class="view_data">
-                                                {{ $getInvestigation->target_date }}
-                                            </div>
-                                        </div>
                                         <div class="mb-3 col-md-4 form-input">
                                             <label class="form-label view_label">Remarks (If Any)</label>
                                             <div class="view_data">
@@ -506,6 +480,7 @@
                                                 {{ $getInvestigation->risk_analysis == 1 ? 'Yes' : 'No' }}
                                             </div>
                                         </div>
+
                                         @if ($getInvestigation->risk_analysis == 2)
                                             <div class="mb-3 col-md-4 form-input">
                                                 <label class="form-label view_label">Risk Analysis Remark</label>
@@ -725,16 +700,88 @@
                                                 <div class="defect-spacer-bottom"></div>
                                             </div>
                                         </div>
-
                                     @endif
-                                </div>
-                            @endif
 
-                            @if ($incident_report->incident_status >= STATUS_EHSVERIFY_PENDING)
-                                <div class="card-body">
+                                    <div class="mb-3 col-md-12 form-input">
+                                        <label class="form-label view_label">Recommended Corrective & Preventive
+                                            Action</label>
+                                        <div class="view_data">
+                                            {{ $getInvestigation->corrective_preventive_action }}
+                                        </div>
+                                    </div>
                                     <div class="row">
                                         <div class="card-header-inner">
-                                            <h4 class="text-white">UAUC</h4>
+                                            <h4 class="text-white">RCPA</h4>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        @foreach ($rcpa as $rcpa)
+                                            <div class="mb-3 col-md-4 form-input">
+                                                <label class="form-label view_label">Recommended Corrective & Preventive
+                                                    Action</label>
+                                                <div class="view_data">
+                                                    {{ $rcpa->rcpa }}
+                                                </div>
+                                            </div>
+                                            <div class="mb-3 col-md-4 form-input">
+                                                <label class="form-label view_label">Responsibility</label>
+                                                <div class="view_data">
+                                                    {{ $rcpa->responsibility }}
+                                                </div>
+                                            </div>
+                                            <div class="mb-3 col-md-4 form-input">
+                                                <label class="form-label view_label">Timeline</label>
+                                                <div class="view_data">
+                                                    {{ DisplayDateformat($rcpa->timeline) }}
+                                                </div>
+                                            </div>
+                                            <div class="mb-3 col-md-12 form-input">
+                                                <label class="form-label view_label">Status</label>
+                                                <div class="view_data">
+                                                    @if ($rcpa->capa_status == 1)
+                                                        <span class="badge bg-success">Open</span>
+                                                    @elseif($rcpa->capa_status == 2)
+                                                        <span class="badge bg-warning text-dark">In Progress</span>
+                                                    @elseif($rcpa->capa_status == 3)
+                                                        <span class="badge bg-secondary">Closed</span>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                            <div class="mb-3 col-md-12 form-input">
+                                                <label class="form-label view_label">Remark if any</label>
+                                                <div class="view_data">
+                                                    {{ $rcpa->remark }}
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                        <hr>
+
+                                        <div class="mb-3 col-md-12 form-input">
+                                            <label class="form-label view_label">Main Root Cause</label>
+                                            <div class="view_data">
+                                                {{ $getInvestigation->main_root_cause }}
+                                            </div>
+                                        </div>
+
+                                        <div class="mb-3 col-md-12 form-input">
+                                            <label class="form-label view_label">Leading Factors</label>
+                                            <div class="view_data d-flex gap-3">
+                                                <span>
+                                                    <i
+                                                        class="fas {{ $getInvestigation->leading_factors == 1 ? 'fa-check-circle text-success' : 'fa-times-circle text-danger' }}"></i>
+                                                    Human Factor
+                                                </span>
+                                                <span>
+                                                    <i
+                                                        class="fas {{ $getInvestigation->leading_factors == 2 ? ' fa-check-circle text-success' : 'fa-times-circle text-danger' }}"></i>
+                                                    System Factor
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="card-header-inner">
+                                            <h4 class="text-white">Recommended Causes</h4>
                                         </div>
                                     </div>
                                     <div class="row">
@@ -757,11 +804,15 @@
                                                         $ua_uc_values = explode(',', $incident_report->ua_or_uc);
                                                     @endphp
 
-                                                    <span>UA: {!! in_array('1', $ua_uc_values)
+                                                    <span>Unsafe Act: {!! in_array('1', $ua_uc_values)
                                                         ? '<i class="fas fa-check text-success"></i>'
                                                         : '<i class="fas fa-times text-danger"></i>' !!}</span>
                                                     <br>
-                                                    <span>UC: {!! in_array('2', $ua_uc_values)
+                                                    <span>Unsafe Condition: {!! in_array('2', $ua_uc_values)
+                                                        ? '<i class="fas fa-check text-success"></i>'
+                                                        : '<i class="fas fa-times text-danger"></i>' !!}</span>
+                                                    <br>
+                                                    <span>Natural Causes: {!! in_array('2', $ua_uc_values)
                                                         ? '<i class="fas fa-check text-success"></i>'
                                                         : '<i class="fas fa-times text-danger"></i>' !!}</span>
                                                 </div>
@@ -776,154 +827,38 @@
                                             </div>
                                         @endif
                                     </div>
+
+                                    @if ($getInvestigation->risk_analysis != 2)
+                                        <div class="row">
+                                            <div class="card-header-inner">
+                                                <h4 class="text-white">Risk Level</h4>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="mb-3 col-md-12 form-input">
+                                                <label for="name" class="form-label">Risk Level</label>
+                                                <div class="view_data">
+                                                    @if ($getrisklevel->risk_level == 1)
+                                                        Low
+                                                    @elseif($getrisklevel->risk_level == 2)
+                                                        Medium
+                                                    @else
+                                                        High
+                                                    @endif
+                                                </div>
+                                            </div>
+                                            <div class="mb-3 col-md-4 form-input">
+                                                <label class="form-label">Description of CA</label>
+                                                <div class="view_data">
+                                                    {{ $getrisklevel->description_ca }}
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    @endif
                                 </div>
                             @endif
-
-                            @if ($getInvestigation->risk_analysis != 2 && $incident_report->incident_status >= STATUS_EHSVERIFY_PENDING)
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="card-header-inner">
-                                            <h4 class="text-white">Risk Level</h4>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="mb-3 col-md-12 form-input">
-                                            <label for="name" class="form-label">Risk Level</label>
-                                            <div class="view_data">
-                                                @if ($getrisklevel->risk_level == 1)
-                                                    Low
-                                                @elseif($getrisklevel->risk_level == 2)
-                                                    Medium
-                                                @else
-                                                    High
-                                                @endif
-                                            </div>
-                                        </div>
-                                        <div class="mb-3 col-md-4 form-input">
-                                            <label class="form-label">Description of CA</label>
-                                            <div class="view_data">
-                                                {{ $getrisklevel->description_ca }}
-                                            </div>
-                                        </div>
-
-                                    </div>
-                                </div>
-                            @endif
-
-                            @if (
-                                $incident_report->incident_status == STATUS_EHSVERIFY_PENDING ||
-                                    $incident_report->incident_status == STATUS_EHSAPPROVAL_REJECTED)
-                                <div class="card-body ">
-                                    <div class="row">
-                                        <div class="card-header-inner">
-                                            <h4 class="text-white">Verification of the EHS Head</h4>
-                                        </div>
-                                    </div>
-                                    <div class="basic-form">
-                                        <form method="POST" id="ehs_head_verify"
-                                            action="{{ admin_url('incident/initial-incident/ehs_head_verify/submit') }}"
-                                            enctype="multipart/form-data">
-                                            @csrf
-                                            <div class="row">
-                                                <input type="hidden" class="form-control" name="incident_id"
-                                                    id="incident_id" value="{{ encryptId($incident_report->id) }}">
-
-                                                <input type="hidden" name="reviewer_emp_id" id="reviewer_emp_id"
-                                                    class="form-control" value="{{ Auth::user()->employee_id ?? '' }}">
-                                                <div class="col-md-4 mb-3">
-                                                    <div class="form-group form-input">
-                                                        <label for="name" class="form-label">Verifier Name</label>
-                                                        <input type="text" name="reviewer_name" id="reviewer_name"
-                                                            class="form-control" value="{{ Auth::user()->name ?? '' }}"
-                                                            readonly>
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-md-4 mb-3">
-                                                    <div class="form-group form-input">
-                                                        <label for="date" class="form-label require">Date</label>
-                                                        <input type="text" name ="date" id="date_datepicker"
-                                                            class="form-control" placeholder="Date" readonly
-                                                            value="{{ todaydate() }}">
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4 mb-3">
-                                                    <div class="form-group form-input">
-                                                        <label for="team_id" class="form-label require">Choose
-                                                            Assignee</label>
-                                                        <select name="team_member[]" id="team_id"
-                                                            class="form-control team_name" style="width: 100%">
-                                                            <option value="">Select Assignee</option>
-
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4">
-                                                    <div class="form-group form-input">
-                                                        <label class="form-label require">Target Date</label>
-                                                        <input type="text" name="target_date" id="target_date"
-                                                            class="form-control">
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-12 mb-3">
-                                                    <div class="form-group form-input">
-                                                        <label class="form-label require">Remark</label>
-                                                        <textarea name="remark" id="remark" class="form-control" rows="4" required></textarea>
-                                                    </div>
-                                                </div>
-
-                                            </div>
-                                            <hr>
-                                            <div class="submit-button" style="text-align: right;">
-                                                <x-button-submit class="submit"></x-button-submit>
-                                                <x-button-reset class=""></x-button-reset>
-                                                <x-button-cancel
-                                                    href="{{ admin_url('incident/initial-incident/list') }}"></x-button-cancel>
-                                            </div>
-                                        </form>
-
-                                    </div>
-                                </div>
-                            @elseif($getEHSVerify != null)
-                                <div class="card-body ">
-                                    <div class="row">
-                                        <div class="card-header-inner">
-                                            <h4 class="text-white">EHS Head Verify</h4>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="mb-3 col-md-4 form-input">
-                                            <label for="name" class="form-label">Verifier Name</label>
-                                            <div class="view_data">
-                                                {{ $getEHSVerify->reviewer_name }}
-                                            </div>
-                                        </div>
-                                        <div class="mb-3 col-md-4 form-input">
-                                            <label class="form-label view_label">{{ __('Date') }}</label>
-                                            <div class="view_data">
-                                                {{ Displaydateformat($getEHSVerify->date) }}
-                                            </div>
-                                        </div>
-                                        <div class="mb-3 col-md-4 form-input">
-                                            <label for="team_id" class="form-label">Choose Assignee</label>
-                                            <div class="view_data">
-                                                {{ $getEHSVerify->team_member_names }}
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="mb-3 col-md-12 form-input">
-                                            <label class="form-label">Remark</label>
-                                            <div class="view_data">
-                                                {{ $getEHSVerify->remark }}
-                                            </div>
-                                        </div>
-
-                                    </div>
-                                </div>
-                            @endif
-
-                            @if ($incident_report->incident_status == STATUS_ACTION_PENDING)
+                            {{-- @if ($rcpa->incident_status == STATUS_ACTION_PENDING)
                                 <div class="card-body ">
                                     <div class="row">
                                         <div class="card-header-inner">
@@ -938,6 +873,8 @@
                                             <div class="row">
                                                 <input type="hidden" class="form-control" name="incident_id"
                                                     id="incident_id" value="{{ encryptId($incident_report->id) }}">
+                                                <input type="hidden" class="form-control" name="rcpa_id"
+                                                    id="incident_id" value="{{ encryptId($rcpa->id) }}">
                                                 <div class="col-md-4 mb-3">
                                                     <div class="form-group form-input">
                                                         <label for="name" class="form-label">Submission By</label>
@@ -977,8 +914,8 @@
                                     </div>
                                 </div>
                             @elseif(
-                                $incident_report->incident_status > STATUS_ACTION_PENDING &&
-                                    $incident_report->incident_status != STATUS_EHSAPPROVAL_REJECTED)
+                                $rcpa->incident_status > STATUS_ACTION_PENDING &&
+                                    $rcpa->incident_status != STATUS_EHSAPPROVAL_REJECTED)
                                 <div class="card-body ">
                                     <div class="row">
                                         <div class="card-header-inner">
@@ -989,27 +926,27 @@
                                         <div class="mb-3 col-md-4 form-input">
                                             <label for="name" class="form-label">Submission By</label>
                                             <div class="view_data">
-                                                {{ getUsername($incident_report->action_submission_by) }}
+                                                {{ getUsername($rcpa->action_submission_by) }}
                                             </div>
                                         </div>
                                         <div class="mb-3 col-md-4 form-input">
                                             <label class="form-label view_label">{{ __('Date') }}</label>
                                             <div class="view_data">
-                                                {{ Displaydateformat($incident_report->action_submission_date) }}
+                                                {{ Displaydateformat($rcpa->action_submission_date) }}
                                             </div>
                                         </div>
 
                                         <div class="mb-3 col-md-4 form-input">
                                             <label class="form-label">Action Taken</label>
                                             <div class="view_data">
-                                                {{ $incident_report->action_submission_description }}
+                                                {{ $rcpa->action_submission_description }}
                                             </div>
                                         </div>
 
                                     </div>
                                 </div>
                             @endif
-                            @if ($incident_report->incident_status == STATUS_EHSAPPROVAL_PENDING)
+                            @if ($rcpa->incident_status == STATUS_EHSAPPROVAL_PENDING)
                                 <div class="card-body ">
                                     <div class="row">
                                         <div class="card-header-inner">
@@ -1024,6 +961,8 @@
                                             <div class="row">
                                                 <input type="hidden" class="form-control" name="incident_id"
                                                     id="incident_id" value="{{ encryptId($incident_report->id) }}">
+                                                    <input type="hidden" class="form-control" name="rcpa_id"
+                                                    id="rcpa_id" value="{{ encryptId($rcpa->id) }}">
                                                 <div class="col-md-4 mb-3">
                                                     <div class="form-group form-input">
                                                         <label for="name" class="form-label">Approval By</label>
@@ -1061,7 +1000,7 @@
 
                                     </div>
                                 </div>
-                            @endif
+                            @endif --}}
                         </div>
                     </div>
                 </div>
@@ -1085,7 +1024,7 @@
             });
 
 
-            $('#team_id').select2({
+            $('#team_id,#reported_by').select2({
                 placeholder: "Select Team Members",
                 allowClear: true,
                 closeOnSelect: true,
@@ -1119,6 +1058,7 @@
                 selectionCssClass: 'form-control'
             });
 
+
             // $('#team_id').select2({
             //     placeholder: "Select Team members",
             //     allowClear: true,
@@ -1128,6 +1068,12 @@
             $('#ehs_head_review').validate({
                 rules: {
                     "team_member[]": {
+                        required: true,
+                    },
+                    reported_by: {
+                        required: true,
+                    },
+                    target_date: {
                         required: true,
                     },
                     remark: {
@@ -1140,6 +1086,12 @@
                 messages: {
                     "team_member[]": {
                         required: "Please select a team member.",
+                    },
+                    reported_by: {
+                        required: "Please select a Incident/Accident Investigation Report Prepared by.",
+                    },
+                    target_date: {
+                        required: "Please select a Target Date.",
                     },
                     remark: {
                         required: "Please provide a remark.",

@@ -215,7 +215,7 @@
             </th>
             <th colspan="5"
                 style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
-                SHIFT: {{ getShift($hydrant_details->shift) ?? 'N/A' }}
+                SHIFT: {{ getShift($hydrant_details->shift_id) ?? 'N/A' }}
             </th>
         </tr>
         <tr>

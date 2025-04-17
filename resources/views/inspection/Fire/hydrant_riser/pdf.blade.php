@@ -201,7 +201,7 @@
             LOCATION: {{ getLocationName($first->location) }}
         </th>
         <th colspan="5" style="border: 1px solid black; text-align: left; padding: 6px;">
-            SHIFT: {{ getShiftname($first->shift_id) }}
+            SHIFT: {{ getShift($first->shift_id) }}
         </th>
     </tr>
 

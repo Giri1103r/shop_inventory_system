@@ -163,7 +163,6 @@ Route::group(['prefix' => 'audit/'], function () {
         Route::get('import', [AuditAnalysisController::class, 'import']);
         Route::post('import/Submit', [AuditAnalysisController::class, 'importSubmit']);
         Route::post('status', [AuditAnalysisController::class, 'statusChange']);
-        Route::post('unique', [AuditAnalysisController::class, 'Uniquecheck']);
         Route::get('employeeName', [AuditAnalysisController::class, 'employeename']);
         Route::get('ajax-list', [AuditAnalysisController::class, 'Uniquecheck']);
     });
@@ -494,6 +493,7 @@ Route::group(['prefix' => 'ohc/safety-petty-logbook/'], function () {
     Route::get('generalpdf/{id}', [SafetyPettyController::class, 'generalpdf']);
     Route::post('unique', [SafetyPettyController::class, 'uniqueCheck']);
     Route::get('get-signature', [SafetyPettyController::class, 'getSignature']);
+    Route::get('generalexcel/{id}', [SafetyPettyController::class, 'generalExcel']);
 });
 
 Route::group(['prefix' => 'fire/'], function () {
@@ -741,6 +741,7 @@ Route::group(['prefix' => 'fire/'], function () {
         Route::POST('level-one/verify/submit', [PASystemInspectionController::class, 'levelOneManagerSubmit']);
         Route::POST('level-two/verify/submit', [PASystemInspectionController::class, 'levelTwoManagerSubmit']);
         Route::GET('exportViewPdf/{id}', [PASystemInspectionController::class, 'ExportViewPDF']);
+        Route::GET('generalExcel/{id}', [PASystemInspectionController::class, 'generalExcel']);
         Route::GET('export/excel', [PASystemInspectionController::class, 'ExportExcel']);
         Route::GET('export/pdf', [PASystemInspectionController::class, 'ExportPDF']);
         Route::GET('get/locations', [PASystemInspectionController::class, 'GetLocations']);
@@ -762,6 +763,8 @@ Route::group(['prefix' => 'fire/'], function () {
         Route::GET('export/excel', [CoTypeFireExtinguisherController::class, 'ExportExcel']);
         Route::GET('export/pdf', [CoTypeFireExtinguisherController::class, 'ExportPDF']);
         Route::GET('get/department', [CoTypeFireExtinguisherController::class, 'GetDepartment']);
+        Route::GET('generalExcel/{id}', [CoTypeFireExtinguisherController::class, 'generalExcel']);
+
     });
 
     Route::group(['prefix' => 'fire-sand-bucket-inspection/'], function () {

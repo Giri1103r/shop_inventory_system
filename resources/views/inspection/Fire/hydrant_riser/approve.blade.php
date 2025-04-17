@@ -41,7 +41,7 @@
                                             <div class="form-group form-input">
                                                 <label class="form-label require">{{ __('inspection.issue_date') }}</label>
                                                 <div class="view_data">
-                                                    {{ Displaydateformat($document_no->issue_date) }}
+                                                    {{ ($document_no->issue_date) }}
                                                 </div>
                                             </div>
                                         </div>
@@ -58,7 +58,7 @@
                                                 <label
                                                     class="form-label require">{{ __('inspection.inspection_date') }}</label>
                                                 <div class="view_data">
-                                                    {{ Displaydateformat($inspection->date_of_inspection) }}
+                                                    {{ ($inspection->date_of_inspection) }}
                                                 </div>
                                             </div>
                                         </div>
@@ -82,7 +82,7 @@
                                             <div class="form-group form-input">
                                                 <label class="form-label require">{{ __('inspection.next_due') }}</label>
                                                 <div class="view_data">
-                                                    {{ Displaydateformat($inspection->next_due) }}
+                                                    {{ ($inspection->next_due) }}
                                                 </div>
                                             </div>
                                         </div>
@@ -334,7 +334,7 @@
                                     <hr>
                                 </div>
 
-                                @if ($inspection->inspection_status == WAITING_FOR_EHS_OFFICER_VERIFICATION)
+                                @if ($inspection->inspection_status == WAITING_FOR_EHS_OFFICER_VERIFICATION && (checkUserRole(ROLE_FIRE_ASSOCIATES) || isAdmin()))
                                     <div class="row mt-3">
                                         <div class="card-header-inner">
                                             <h4 class="text-white">{{ __('inspection.ehs_officer_verify') }}</h4>
@@ -404,34 +404,43 @@
                                             <h4 class="text-white">{{ __('inspection.ehs_officer_verify') }}</h4>
                                         </div>
                                         <div class="row mb-2">
-                                            @if (isset($inspection_details->verified_by))
+                                            @if (isset($inspection->verified_by))
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label ">{{ __('inspection.verified_by') }}</label>
                                                         <div class="view_data">
-                                                            {{ getUserName($inspection_details->verified_by) }}
+                                                            {{ getUserName($inspection->verified_by) }}
                                                         </div>
                                                     </div>
                                                 </div>
                                                 @php
                                                     $signature = GetFireSignature(
-                                                        $inspection_details->verified_by,
+                                                        $inspection->verified_by,
                                                         $inspection->id,
                                                         HYDRANT_RISER,
                                                     );
+
+                                                     $updated_time = GetFireUpdatedTime(
+                                                        $inspection->verified_by,
+                                                        $inspection->id,
+                                                        HYDRANT_RISER,
+                                                        WAITING_FOR_EHS_OFFICER_VERIFICATION,
+                                                    );
                                                 @endphp
                                             @endif
-                                            @if (isset($inspection_details->created_at))
+                                                
+                                            @if (isset($updated_time->created_at))
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label class="form-label ">{{ __('inspection.date') }}</label>
                                                         <div class="view_data">
-                                                            {{ Displaydateformat($inspection_details->created_at) }}
+                                                            {{ displaydateformat($updated_time->created_at) }}
                                                         </div>
                                                     </div>
                                                 </div>
                                             @endif
+                                         
                                             @if (isset($signature))
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
@@ -489,21 +498,27 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label class="form-label ">{{ __('inspection.date') }}</label>
-                                                        <div class="view_data">
-                                                            {{ Displaydateformat($inspection->created_at) }}
-                                                        </div>
-                                                    </div>
-                                                </div>
                                                 @php
                                                     $signature = GetFireSignature(
                                                         $inspection->created_by,
                                                         $inspection->id,
                                                         HYDRANT_RISER,
                                                     );
+                                                    $updated_time = GetFireUpdatedTime(
+                                                        $inspection->created_by,
+                                                        $inspection->id,
+                                                        HYDRANT_RISER,
+                                                        WAITING_FOR_CAPA_ACTION,
+                                                    );
                                                 @endphp
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label ">{{ __('inspection.date') }}</label>
+                                                        <div class="view_data">
+                                                            {{ displaydateformat($updated_time->created_at) }}
+                                                        </div>
+                                                    </div>
+                                                </div>
                                                 @if (isset($signature))
                                                     <div class="col-md-4 mb-2">
                                                         <div class="form-group form-input">
@@ -541,21 +556,28 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label class="form-label ">{{ __('inspection.date') }}</label>
-                                                        <div class="view_data">
-                                                            {{ Displaydateformat($inspection->created_at) }}
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                                
                                                 @php
                                                     $signature = GetFireSignature(
                                                         $inspection->verified_by,
                                                         $inspection->id,
                                                         HYDRANT_RISER,
                                                     );
+                                                    $updated_time = GetFireUpdatedTime(
+                                                        $inspection->verified_by,
+                                                        $inspection->id,
+                                                        HYDRANT_RISER,
+                                                        WAITING_FOR_CAPA_VERIFICATION,
+                                                    );
                                                 @endphp
+                                                 <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label ">{{ __('inspection.date') }}</label>
+                                                        <div class="view_data">
+                                                            {{ displaydateformat($updated_time->created_at) }}
+                                                        </div>
+                                                    </div>
+                                                </div>
                                                 @if (isset($signature))
                                                     <div class="col-md-4 mb-2">
                                                         <div class="form-group form-input">
@@ -594,21 +616,28 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label ">{{ __('inspection.date') }}</label>
-                                                    <div class="view_data">
-                                                        {{ Displaydateformat($inspection->created_at) }}
-                                                    </div>
-                                                </div>
-                                            </div>
+                                           
                                             @php
                                                 $signature = GetFireSignature(
                                                     $inspection->l1_manager_verified_by,
                                                     $inspection->id,
                                                     HYDRANT_RISER,
                                                 );
+                                                $updated_time = GetFireUpdatedTime(
+                                                    $inspection->l1_manager_verified_by,
+                                                    $inspection->id,
+                                                    HYDRANT_RISER,
+                                                    WAITING_FOR_L1_VERIFICATION,
+                                                );
                                             @endphp
+                                             <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label ">{{ __('inspection.date') }}</label>
+                                                    <div class="view_data">
+                                                        {{ displaydateformat($updated_time->created_at) }}
+                                                    </div>
+                                                </div>
+                                            </div>
                                             @if (isset($signature))
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
@@ -645,21 +674,28 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label ">{{ __('inspection.date') }}</label>
-                                                    <div class="view_data">
-                                                        {{ Displaydateformat($inspection->created_at) }}
-                                                    </div>
-                                                </div>
-                                            </div>
+                                           
                                             @php
                                                 $signature = GetFireSignature(
                                                     $inspection->l2_manager_verified_by,
                                                     $inspection->id,
                                                     HYDRANT_RISER,
                                                 );
+                                                $updated_time = GetFireUpdatedTime(
+                                                    $inspection->l2_manager_verified_by,
+                                                    $inspection->id,
+                                                    HYDRANT_RISER,
+                                                    WAITING_FOR_L2_VERIFICATION,
+                                                );
                                             @endphp
+                                             <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label ">{{ __('inspection.date') }}</label>
+                                                    <div class="view_data">
+                                                        {{ displaydateformat($updated_time->created_at) }}
+                                                    </div>
+                                                </div>
+                                            </div>
                                             @if (isset($signature))
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
@@ -684,10 +720,11 @@
                                 @endif
 
                                 @if (
-                                    $inspection->inspection_status == WAITING_FOR_CAPA_ACTION ||
+                                    ($inspection->inspection_status == WAITING_FOR_CAPA_ACTION ||
                                         $inspection->inspection_status == L2_MANAGER_REJECTED ||
                                         $inspection->inspection_status == EHS_OFFICER_REJECTED ||
-                                        $inspection->inspection_status == L1_MANAGER_REJECTED)
+                                        $inspection->inspection_status == L1_MANAGER_REJECTED) &&
+                                        (checkUserRole(ROLE_FIRE_ASSOCIATES) || isAdmin()))
                                     <div class="row mt-3">
                                         <div class="card-header-inner">
                                             <h4 class="text-white">{{ __('inspection.capa_action') }}</h4>
@@ -740,7 +777,7 @@
                                     </form>
                                 @endif
 
-                                @if ($inspection->inspection_status == WAITING_FOR_CAPA_VERIFICATION)
+                                @if ($inspection->inspection_status == WAITING_FOR_CAPA_VERIFICATION &&  (checkUserRole(ROLE_EHS_OFFICER) || isAdmin()))
                                     <form method="POST" id="forklistassessmentAdd"
                                         action="{{ admin_url('fire/hydrant-riser-inspection/capa/reverify/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
@@ -790,7 +827,7 @@
                                     </form>
                                 @endif
 
-                                @if ($inspection->inspection_status == WAITING_FOR_L1_VERIFICATION)
+                                @if ($inspection->inspection_status == WAITING_FOR_L1_VERIFICATION && (checkUserRole(ROLE_L1_MANAGER) || isAdmin()) )
                                     <form method="POST" id="levelOneManager"
                                         action="{{ admin_url('fire/hydrant-riser-inspection/level-one/verify/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
@@ -842,7 +879,7 @@
                                     </form>
                                 @endif
 
-                                @if ($inspection->inspection_status == WAITING_FOR_L2_VERIFICATION)
+                                @if ($inspection->inspection_status == WAITING_FOR_L2_VERIFICATION && (checkUserRole(ROLE_L2_MANAGER) || isAdmin()) )
                                     <form method="POST" id="levelTwoManager"
                                         action="{{ admin_url('fire/hydrant-riser-inspection/level-two/verify/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
