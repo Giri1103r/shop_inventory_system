@@ -164,8 +164,8 @@ class SafetyPermitController extends BaseController
                 $stateIsolationLoto = json_decode($safetypermit->state_isolation_loto, true) ?? [];
                 $state_of_isolation = [];
                 $other_if_any = [];
-// dd($stateIsolationLoto);
-$knownItems = ['Air', 'Gas', 'Electrical', 'Water/Liquid'];
+                // dd($stateIsolationLoto);
+                $knownItems = ['Air', 'Gas', 'Electrical', 'Water/Liquid'];
 
                 foreach ($knownItems as $item) {
                     $key = strtolower(str_replace('/', '_', $item));
@@ -193,9 +193,6 @@ $knownItems = ['Air', 'Gas', 'Electrical', 'Water/Liquid'];
                         'name' => $item,
                         'checked' => in_array($item, $stateIsolationLoto) ? 'Yes' : 'No'
                     ];
-
-
-
                 }
                 foreach ($stateIsolationLoto as $item) {
                     if (!in_array($item, $knownItems)) {
@@ -324,7 +321,10 @@ $knownItems = ['Air', 'Gas', 'Electrical', 'Water/Liquid'];
                     'job_location_area' => $safetypermit->job_location_area,
                     'created_by' => getusername($safetypermit->created_by),
                     'created_at' => Displaydateformat($safetypermit->created_at),
-
+                    'safety_permit_status' => [
+                        'id' => $status_log->status_id,
+                        'status' => $status_log->status_name,
+                    ],
                     'type_of_work' => [
                         'sub_permit' => $sub_permits,
 
