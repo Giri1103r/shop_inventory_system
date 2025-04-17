@@ -56,8 +56,6 @@ class DetectorInspectionDetails extends Model
         $resource_code = $request->resource_code;
         $response_indicator = $request->response_indicator;
 
-
-
         foreach ($department as $index => $department) {
             $data = array(
                 'inspection_id' => $id,

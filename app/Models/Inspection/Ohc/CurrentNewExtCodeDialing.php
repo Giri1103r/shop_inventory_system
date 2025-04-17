@@ -181,7 +181,11 @@ class CurrentNewExtCodeDialing extends Model
         }
 
         $query->orderBy('id', 'DESC');
-        return  $query->get();
+        $data = $query->get();
+
+        $query = $data->groupby('unit_name');
+
+        return  $query;
     }
 
     public function UniqueCheck($unit_id,$department_id,$emp_name_id,$number)

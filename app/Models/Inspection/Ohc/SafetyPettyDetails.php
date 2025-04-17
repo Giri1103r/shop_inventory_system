@@ -126,7 +126,6 @@ class SafetyPettyDetails extends Model
     public function store()
     {
         $request = request();
-
         $insertedData = [];
 
         foreach ($request->amount as $index => $amount) {
@@ -146,7 +145,7 @@ class SafetyPettyDetails extends Model
                 'created_by' => Auth::id(),
             );
 
-            $insertedData []=  $this->create($insert_array);
+            $insertedData[]=  $this->create($insert_array);
 
         }
 
@@ -225,6 +224,11 @@ class SafetyPettyDetails extends Model
         $query->orderBy('ohc_safety_petty_logbook.id', 'DESC');
 
         return $query->get();
+    }
+
+    public function selectOne($id)
+    {
+        return $this->where('id', $id)->where('status', 1)->where('trash', 'NO')->first();
     }
 
     protected static function booted()

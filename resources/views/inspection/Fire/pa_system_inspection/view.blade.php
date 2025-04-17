@@ -138,13 +138,23 @@
                                             <div class="card-header-inner p-2">
                                                 <h4 class="text-white">Fire PA System Observation</h4>
                                             </div>
-                                            <div class="col-md-12 mb-2">
+                                            {{-- <div class="col-md-12 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">{{ __('inspection.obs') }}</label>
                                                     <div class="view_data">
                                                         {{ $inspection->observation }}
                                                     </div>
 
+                                                </div>
+                                            </div> --}}
+
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label
+                                                        class="form-label require">Observation</label>
+                                                    <div class="view_data">
+                                                        {{ $inspection->observation_needed == '1' ? 'YES' : 'NO' }}
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -384,6 +394,7 @@
                                             @endif
                                         </div>
                                     @endif
+                                    {{-- FIRE ASSOICATE --}}
                                     @if (isset($inspection->capa_remarks))
                                         <div class="card-header-inner">
                                             <h4 class="text-white">{{ __('inspection.fire_associate_action') }}</h4>
@@ -402,7 +413,7 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label ">{{ __('inspection.date') }}</label>
                                                     <div class="view_data">
-                                                        {{ Displaydateformat($inspection->created_at) }}
+                                                        {{ Displaydateformat($inspection->fire_associate_updated_at) }}
                                                     </div>
                                                 </div>
                                             </div>
@@ -435,7 +446,8 @@
                                         </div>
                                     @endif
                                 </div>
-
+                           
+                                {{-- EHS OFFICER --}}
                                 @if ($inspection->capa_ehs_remarks)
                                     <div class="card-header-inner">
                                         <h4 class="text-white">{{ __('inspection.ehs_officer_reverification') }}
@@ -455,7 +467,7 @@
                                             <div class="form-group form-input">
                                                 <label class="form-label ">{{ __('inspection.date') }}</label>
                                                 <div class="view_data">
-                                                    {{ Displaydateformat($inspection->created_at) }}
+                                                    {{ Displaydateformat($inspection->ehs_officer_verified_at) }}
                                                 </div>
                                             </div>
                                         </div>
@@ -488,6 +500,9 @@
                                     </div>
                                 @endif
 
+
+                                {{-- LEVEL ONE MANAGER --}}
+
                                 @if (isset($inspection->level_one_manager_remarks))
                                     <div class="row">
                                         <div class="card-header-inner">
@@ -507,7 +522,7 @@
                                             <div class="form-group form-input">
                                                 <label class="form-label ">{{ __('inspection.date') }}</label>
                                                 <div class="view_data">
-                                                    {{ Displaydateformat($inspection->created_at) }}
+                                                    {{ Displaydateformat($inspection->l1_manager_updated_at) }}
                                                 </div>
                                             </div>
                                         </div>
@@ -539,6 +554,8 @@
                                         </div>
                                     </div>
                                 @endif
+
+                                {{-- LEVEL TWO MANAGER --}}
                                 @if (isset($inspection->level_two_manager_remarks))
                                     <div class="row">
                                         <div class="card-header-inner">
@@ -558,7 +575,7 @@
                                             <div class="form-group form-input">
                                                 <label class="form-label ">{{ __('inspection.date') }}</label>
                                                 <div class="view_data">
-                                                    {{ Displaydateformat($inspection->created_at) }}
+                                                    {{ Displaydateformat($inspection->l2_manager_updated_at) }}
                                                 </div>
                                             </div>
                                         </div>

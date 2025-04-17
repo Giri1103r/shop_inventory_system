@@ -247,7 +247,7 @@
                     ? '<span style="color: green;">&#10004;</span>'
                     : '<span style="color: red;">X</span>' !!}
             </td>
-            <td style="border: 1px solid black; padding: 6px; text-align: center;">
+            <td style="border: 1px solid black; padding: 6px; text-align: center;">z
                 {!! $detail->connection == 1
                     ? '<span style="color: green;">&#10004;</span>'
                     : '<span style="color: red;">X</span>' !!}

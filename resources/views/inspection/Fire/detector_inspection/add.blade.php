@@ -382,11 +382,11 @@
                                                         <div class="mb-2">
                                                             <label class="me-3">
                                                                 <input type="radio" name="observation_needed"
-                                                                    value="{{encryptId(1)}}"> Yes
+                                                                    value="{{encryptId(1)}}" class="validate-radio-required"> Yes
                                                             </label>
                                                             <label>
                                                                 <input type="radio" name="observation_needed"
-                                                                    value="{{encryptId(2)}}"> No
+                                                                    value="{{encryptId(2)}}" class="validate-radio-required"> No
                                                             </label>
                                                         </div>
 
@@ -527,7 +527,7 @@
                         signature_image: {
                             required: true,
                         },
-
+                      
                     },
                     messages: {
                         doc_no: {

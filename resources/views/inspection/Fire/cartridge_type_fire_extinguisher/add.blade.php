@@ -359,8 +359,17 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.obs') }}</label>
-                                                        <textarea name="observation" id="observation" class="form-control" placeholder="Observation" style="resize: none;"></textarea>
-
+                                                        {{-- <textarea name="observation" id="observation" class="form-control" placeholder="Observation" style="resize: none;"></textarea> --}}
+                                                        <div class="mb-2">
+                                                            <label class="me-3">
+                                                                <input type="radio" name="observation_needed"
+                                                                    value="{{encryptId(1)}}" class="validate-radio-required"> Yes
+                                                            </label>
+                                                            <label>
+                                                                <input type="radio" name="observation_needed"
+                                                                    value="{{encryptId(2)}}" class="validate-radio-required"> No
+                                                            </label>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -937,6 +946,55 @@
                     serial_number++;
                     form_set_count++;
                     updatePageIndices();
+
+                      $(document).on('click', '#add-obs', function() {
+                    let observationFormsets = $('.form-observation .form-obs').length;
+
+                    if (currentFormSets >= maxObsSets) {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Maximum Detector Inspection Observation Limit Reached',
+                            text: 'You can only add up to 5 Detector Inspection Observation.',
+                            confirmButtonColor: '#3085d6'
+                        });
+                        return;
+                    }
+
+                    var newObsSet = `
+                        <div class="row mt-4 form-obs">
+                                                <div class="card-header-inner p-2">
+                                                    <h4 class="text-white">Detector Inspection Observation</h4>
+                                                </div>
+
+                                                <div class="d-flex justify-content-end align-items-center gap-2 m-2">
+                                                    <button class="btn btn-primary add-row" type="button" id="add-row"
+                                                        style="width: 120px;">
+                                                        Add
+                                                    </button>
+                                                    <button class="btn btn-primary add-obs" type="button" id="add-obs"
+                                                        style="width: 150px;">
+                                                        Add Observation
+                                                    </button>
+                                                    <button type="button"
+                                                        class="btn btn-danger remove-row d-flex align-items-center"
+                                                        style="width: 120px;">
+                                                        <i class="fa-solid fa-trash me-2"></i> Remove
+                                                    </button>
+                                                </div>
+
+                                                <div class="col-md-12 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label require">{{ __('inspection.obs') }}</label>
+                                                        <textarea name="observation[1]" id="remarks" class="form-control" style="resize: none;"></textarea>
+
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                    `;
+
+                });
 
                 });
 

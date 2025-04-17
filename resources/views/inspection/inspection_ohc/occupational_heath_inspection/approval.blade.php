@@ -39,8 +39,7 @@
                         <div class="card">
                             <div class="card-header">
                                 <div class="align-back-btc">
-                                    <x-button-back
-                                        href="{{ admin_url('ohc/inspection/list') }}"></x-button-back>
+                                    <x-button-back href="{{ admin_url('ohc/inspection/list') }}"></x-button-back>
                                 </div>
                             </div>
 
@@ -101,27 +100,25 @@
                                             {{ getUnitname(isset($occupational_health_center->unit) ? $occupational_health_center->unit : '') }}
                                         </div>
                                     </div>
-                                    @if (!empty($requestorsignature) && !empty($requestorsignature->requestor_file_path))
+                                    @php
+                                        $requestorsignature = GetOHCSignature(
+                                            $occupational_health_center->created_by,
+                                            $occupational_health_center->id,
+                                            OHC_TYPE_OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST,
+                                        );
+                                    @endphp
                                     <div class="col-md-4 mb-2">
                                         <div class="form-group form-input">
                                             <label class="form-label" style="display: block;">
                                                 {{ __('inspection.signature') }}
                                             </label>
-                                            <img src="{{ admin_url($requestorsignature->requestor_file_path) }}"
-                                                alt="Signature Upload" style="width: 150px; margin-top: -10px;" />
+                                            <img src="{{ admin_url($requestorsignature) }}" alt="Signature Upload"
+                                                style="width: 150px; margin-top: -10px;" />
                                         </div>
                                     </div>
-                                @else
-                                <div class="col-md-4 mb-2">
-                                    <div class="form-group form-input">
-                                        <label class="form-label" style="display: block;">
-                                            {{ __('inspection.signature') }}
-                                        </label>
-                                        <img src="{{ admin_url($signatureview->signature_upload) }}"
-                                            alt="Signature Upload" style="width: 150px; margin-top: -10px;" />
-                                    </div>
-                                </div>
-                                @endif
+
+
+
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('common.created_by') }}</label>
                                         <div class="view_data">
@@ -191,32 +188,38 @@
                                                             </td>
 
                                                             @foreach ($getoption as $option)
-                                                            <td style="text-align: center;">
-                                                                @if ($option == 'Yes')
-                                                                    @if (isset($statuses[$checkPoint]) && $statuses[$checkPoint] == 'Yes')
-                                                                        <i class="fa-solid fa-check" style="color: #267709; width: 15px;"></i>
-                                                                    @else
-                                                                        <i class="fa-solid fa-times" style="color: #d40a0a; width: 15px;"></i>
+                                                                <td style="text-align: center;">
+                                                                    @if ($option == 'Yes')
+                                                                        @if (isset($statuses[$checkPoint]) && $statuses[$checkPoint] == 'Yes')
+                                                                            <i class="fa-solid fa-check"
+                                                                                style="color: #267709; width: 15px;"></i>
+                                                                        @else
+                                                                            <i class="fa-solid fa-times"
+                                                                                style="color: #d40a0a; width: 15px;"></i>
+                                                                        @endif
+                                                                    @elseif ($option == 'No')
+                                                                        @if (isset($statuses[$checkPoint]) && $statuses[$checkPoint] == 'No')
+                                                                            <i class="fa-solid fa-check"
+                                                                                style="color: #267709; width: 15px;"></i>
+                                                                        @else
+                                                                            <i class="fa-solid fa-times"
+                                                                                style="color: #d40a0a; width: 15px;"></i>
+                                                                        @endif
+                                                                    @elseif ($option == 'N/A')
+                                                                        @if (isset($statuses[$checkPoint]) && $statuses[$checkPoint] == 'N/A')
+                                                                            <i class="fa-solid fa-check"
+                                                                                style="color: #267709; width: 15px;"></i>
+                                                                        @else
+                                                                            <i class="fa-solid fa-times"
+                                                                                style="color: #d40a0a; width: 15px;"></i>
+                                                                        @endif
                                                                     @endif
-                                                                @elseif ($option == 'No')
-                                                                    @if (isset($statuses[$checkPoint]) && $statuses[$checkPoint] == 'No')
-                                                                        <i class="fa-solid fa-check" style="color: #267709; width: 15px;"></i>
-                                                                    @else
-                                                                        <i class="fa-solid fa-times" style="color: #d40a0a; width: 15px;"></i>
-                                                                    @endif
-                                                                @elseif ($option == 'N/A')
-                                                                    @if (isset($statuses[$checkPoint]) && $statuses[$checkPoint] == 'N/A')
-                                                                        <i class="fa-solid fa-check" style="color: #267709; width: 15px;"></i>
-                                                                    @else
-                                                                        <i class="fa-solid fa-times" style="color: #d40a0a; width: 15px;"></i>
-                                                                    @endif
-                                                                @endif
-                                                            </td>
-                                                        @endforeach
+                                                                </td>
+                                                            @endforeach
 
-                                                        <td >
-                                                            {{ $quantity[$checkPoint] ?? 'No Quantity Available' }}
-                                                        </td>
+                                                            <td>
+                                                                {{ $quantity[$checkPoint] ?? 'No Quantity Available' }}
+                                                            </td>
 
 
                                                             <td colspan="3">
@@ -232,7 +235,11 @@
                                         </table>
                                     </div>
                                 </div>
-                                @if ($occupational_health_center->approve_status == WAITING_FOR_EHS_OFFICER_VERIFICATION)
+                                @if (
+                                    ($occupational_health_center->approve_status == WAITING_FOR_EHS_OFFICER_VERIFICATION &&
+                                        CheckUserRole(ROLE_EHS_OFFICER)) ||
+                                        ($occupational_health_center->approve_status == WAITING_FOR_EHS_OFFICER_VERIFICATION &&
+                                            CheckUserRole(ROLE_SUPERADMIN)))
                                     <div class="row mt-3">
                                         <div class="card-header-inner">
                                             <h4 class="text-white">{{ __('inspection.ehs_officer_verify') }}</h4>
@@ -242,7 +249,8 @@
                                         action="{{ admin_url('ohc/inspection/ehsofficer/verify/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
                                         @csrf
-                                        <input type="hidden" value="{{ encryptId($occupational_health_center->id) }}" name="id">
+                                        <input type="hidden" value="{{ encryptId($occupational_health_center->id) }}"
+                                            name="id">
                                         <div class="row">
                                             <div class="col-md-4 form-group form-input mb-2">
                                                 <label class="form-label ">{{ __('inspection.name') }}</label>
@@ -314,7 +322,7 @@
                                                     </div>
                                                 </div>
                                                 @php
-                                                    $signature = GetSignature(
+                                                    $signature = GetOHCSignature(
                                                         $occupational_health_center->verified_by,
                                                         $occupational_health_center->id,
                                                         OHC_TYPE_OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST,
@@ -397,7 +405,7 @@
                                                     </div>
                                                 </div>
                                                 @php
-                                                    $signature = GetSignature(
+                                                    $signature = GetOHCSignature(
                                                         $occupational_health_center->created_by,
                                                         $occupational_health_center->id,
                                                         OHC_TYPE_OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST,
@@ -449,7 +457,7 @@
                                                     </div>
                                                 </div>
                                                 @php
-                                                    $signature = GetSignature(
+                                                    $signature = GetOHCSignature(
                                                         $occupational_health_center->verified_by,
                                                         $occupational_health_center->id,
                                                         OHC_TYPE_OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST,
@@ -479,11 +487,11 @@
                                     </div>
 
                                     @if (isset($occupational_health_center->level_one_manager_remarks))
-                                    <div class="row">
-                                        <div class="card-header-inner">
-                                            <h4 class="text-white">Level One Manager Action</h4>
+                                        <div class="row">
+                                            <div class="card-header-inner">
+                                                <h4 class="text-white">Level One Manager Action</h4>
+                                            </div>
                                         </div>
-                                    </div>
                                         <div class="row">
 
                                             <div class="col-md-4 mb-2">
@@ -504,7 +512,7 @@
                                                 </div>
                                             </div>
                                             @php
-                                                $signature = GetSignature(
+                                                $signature = GetOHCSignature(
                                                     $occupational_health_center->l1_manager_verified_by,
                                                     $occupational_health_center->id,
                                                     OHC_TYPE_OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST,
@@ -555,27 +563,27 @@
                                                 </div>
                                             </div>
                                             @php
-                                            $signature = GetSignature(
-                                                $occupational_health_center->l2_manager_verified_by,
-                                                $occupational_health_center->id,
-                                                OHC_TYPE_OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST,
-                                            );
-                                        @endphp
-                                        @if (isset(Auth::user()->signature_upload))
-                                            <label class="form-label"
-                                                style="display: block; ">{{ __('inspection.signature') }}</label>
-                                            <img src="{{ (Auth::user()->signature_upload) }}"
-                                                alt="Signature Upload" style="width: 150px; margin-top:-10px">
-                                        @elseif(isset($signature))
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label"
-                                                        style="display: block;">{{ __('inspection.signature') }}</label>
-                                                    <img src="{{ admin_url($signature) }}" alt="Signature Upload"
-                                                        style="width: 150px; margin-top: -10px;" />
+                                                $signature = GetOHCSignature(
+                                                    $occupational_health_center->l2_manager_verified_by,
+                                                    $occupational_health_center->id,
+                                                    OHC_TYPE_OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST,
+                                                );
+                                            @endphp
+                                            @if (isset(Auth::user()->signature_upload))
+                                                <label class="form-label"
+                                                    style="display: block; ">{{ __('inspection.signature') }}</label>
+                                                <img src="{{ Auth::user()->signature_upload }}" alt="Signature Upload"
+                                                    style="width: 150px; margin-top:-10px">
+                                            @elseif(isset($signature))
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label"
+                                                            style="display: block;">{{ __('inspection.signature') }}</label>
+                                                        <img src="{{ admin_url($signature) }}" alt="Signature Upload"
+                                                            style="width: 150px; margin-top: -10px;" />
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        @endif
+                                            @endif
                                             <div class="col-md-12 mb-2">
                                                 <div class="form-group form-input">
                                                     <label
@@ -591,18 +599,22 @@
                                 @endif
 
                                 @if (
-                                    $occupational_health_center->approve_status == WAITING_FOR_CAPA_ACTION ||
+                                    ($occupational_health_center->approve_status == WAITING_FOR_CAPA_ACTION ||
                                         $occupational_health_center->approve_status == L2_MANAGER_REJECTED ||
                                         $occupational_health_center->approve_status == EHS_OFFICER_REJECTED ||
-                                        $occupational_health_center->approve_status == L1_MANAGER_REJECTED)
+                                        ($occupational_health_center->approve_status == L1_MANAGER_REJECTED && CheckUserRole(ROLE_FIRE_ASSOCIATES)))||(
+                                        $occupational_health_center->approve_status == WAITING_FOR_CAPA_ACTION ||
+                                            $occupational_health_center->approve_status == L2_MANAGER_REJECTED ||
+                                            $occupational_health_center->approve_status == EHS_OFFICER_REJECTED ||
+                                            ($occupational_health_center->approve_status == L1_MANAGER_REJECTED && CheckUserRole(ROLE_SUPERADMIN))))
                                     <div class="row mt-3">
                                         <div class="card-header-inner">
                                             <h4 class="text-white">{{ __('inspection.capa_action') }}</h4>
                                         </div>
                                     </div>
                                     <form method="POST" id="capaAction"
-                                        action="{{ admin_url('ohc/inspection/capa/submit') }}"
-                                        autocomplete="off" enctype="multipart/form-data">
+                                        action="{{ admin_url('ohc/inspection/capa/submit') }}" autocomplete="off"
+                                        enctype="multipart/form-data">
                                         @csrf
                                         <input type="hidden" value="{{ encryptId($occupational_health_center->id) }}"
                                             name="id">
@@ -648,7 +660,10 @@
                                     </form>
                                 @endif
 
-                                @if ($occupational_health_center->approve_status == WAITING_FOR_CAPA_VERIFICATION)
+                                @if (
+                                    ($occupational_health_center->approve_status == WAITING_FOR_CAPA_VERIFICATION && CheckUserRole(ROLE_EHS_OFFICER)) ||
+                                        ($occupational_health_center->approve_status == WAITING_FOR_CAPA_VERIFICATION &&
+                                            CheckUserRole(ROLE_SUPERADMIN)))
                                     <form method="POST" id="forklistassessmentAdd"
                                         action="{{ admin_url('ohc/inspection/capa/reverify/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
@@ -699,7 +714,7 @@
                                     </form>
                                 @endif
 
-                                @if ($occupational_health_center->approve_status == WAITING_FOR_L1_VERIFICATION)
+                                @if (($occupational_health_center->approve_status == WAITING_FOR_L1_VERIFICATION && CheckUserRole(ROLE_L1_MANAGER)) || ($occupational_health_center->approve_status == WAITING_FOR_L1_VERIFICATION && CheckUserRole(ROLE_SUPERADMIN)))
                                     <form method="POST" id="levelOneManager"
                                         action="{{ admin_url('ohc/inspection/level-one/verify/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
@@ -751,7 +766,7 @@
                                     </form>
                                 @endif
 
-                                @if ($occupational_health_center->approve_status == WAITING_FOR_L2_VERIFICATION)
+                                @if (($occupational_health_center->approve_status == WAITING_FOR_L2_VERIFICATION&& CheckUserRole(ROLE_L2_MANAGER)) || ($occupational_health_center->approve_status == WAITING_FOR_L2_VERIFICATION && CheckUserRole(ROLE_SUPERADMIN)))
                                     <form method="POST" id="levelTwoManager"
                                         action="{{ admin_url('ohc/inspection/level-two/verify/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
@@ -813,181 +828,181 @@
 
     @stop
     @push('script')
-    <script>
-        $('#forklistassessmentAdd').validate({
-            rules: {
-                remarks: {
-                    required: true,
-                    minlength: 3,
-                    maxlength: 100,
-                    noSpaces: true,
+        <script>
+            $('#forklistassessmentAdd').validate({
+                rules: {
+                    remarks: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 100,
+                        noSpaces: true,
+                    },
+                    signature_image: {
+                        required: true,
+                    }
                 },
-                signature_image: {
-                    required: true,
-                }
-            },
-            messages: {
-                remarks: {
-                    required: "Remarks is Required",
-                    minlength: "Minimum Characters should be 3",
-                    maxlength: "Maximum Characters should not exceed 100",
+                messages: {
+                    remarks: {
+                        required: "Remarks is Required",
+                        minlength: "Minimum Characters should be 3",
+                        maxlength: "Maximum Characters should not exceed 100",
+                    },
+                    signature_image: {
+                        required: "Signature is Required",
+                    }
                 },
-                signature_image: {
-                    required: "Signature is Required",
+                errorElement: 'div',
+                errorPlacement: function(error, element) {
+                    error.addClass('invalid-feedback');
+                    element.closest('.form-input').append(error);
+                },
+                highlight: function(element) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function(element) {
+                    $(element).removeClass('is-invalid');
+                    $(element).closest('.form-input').find('.invalid-feedback').remove();
+                },
+                submitHandler: function(form) {
+                    form.submit();
+                },
+                invalidHandler: function(event, validator) {
+                    var errors = validator.numberOfInvalids();
+                    validator.errorList.forEach(function(error) {});
                 }
-            },
-            errorElement: 'div',
-            errorPlacement: function(error, element) {
-                error.addClass('invalid-feedback');
-                element.closest('.form-input').append(error);
-            },
-            highlight: function(element) {
-                $(element).addClass('is-invalid');
-            },
-            unhighlight: function(element) {
-                $(element).removeClass('is-invalid');
-                $(element).closest('.form-input').find('.invalid-feedback').remove();
-            },
-            submitHandler: function(form) {
-                form.submit();
-            },
-            invalidHandler: function(event, validator) {
-                var errors = validator.numberOfInvalids();
-                validator.errorList.forEach(function(error) {});
-            }
-        });
+            });
 
-        $.validator.addMethod("noSpaces", function(value) {
-            return value.trim().length > 0;
-        }, "Spaces are not allowed");
+            $.validator.addMethod("noSpaces", function(value) {
+                return value.trim().length > 0;
+            }, "Spaces are not allowed");
 
-        $('#capaAction').validate({
-            rules: {
-                capa_remarks: {
-                    required: true,
-                    minlength: 3,
-                    maxlength: 100,
-                    noSpaces: true,
+            $('#capaAction').validate({
+                rules: {
+                    capa_remarks: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 100,
+                        noSpaces: true,
+                    },
+                    signature_image: {
+                        required: true,
+                    }
                 },
-                signature_image: {
-                    required: true,
-                }
-            },
-            messages: {
-                capa_remarks: {
-                    required: "Remarks is Required",
-                    minlength: "Minimum Characters should be 3",
-                    maxlength: "Maximum Characters should not exceed 100",
+                messages: {
+                    capa_remarks: {
+                        required: "Remarks is Required",
+                        minlength: "Minimum Characters should be 3",
+                        maxlength: "Maximum Characters should not exceed 100",
+                    },
+                    signature_image: {
+                        required: "Signature is Required",
+                    }
                 },
-                signature_image: {
-                    required: "Signature is Required",
+                errorElement: 'div',
+                errorPlacement: function(error, element) {
+                    error.addClass('invalid-feedback');
+                    element.closest('.form-input').append(error);
+                },
+                highlight: function(element) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function(element) {
+                    $(element).removeClass('is-invalid');
+                    $(element).closest('.form-input').find('.invalid-feedback').remove();
+                },
+                submitHandler: function(form) {
+                    form.submit();
+                },
+                invalidHandler: function(event, validator) {
+                    var errors = validator.numberOfInvalids();
+                    validator.errorList.forEach(function(error) {});
                 }
-            },
-            errorElement: 'div',
-            errorPlacement: function(error, element) {
-                error.addClass('invalid-feedback');
-                element.closest('.form-input').append(error);
-            },
-            highlight: function(element) {
-                $(element).addClass('is-invalid');
-            },
-            unhighlight: function(element) {
-                $(element).removeClass('is-invalid');
-                $(element).closest('.form-input').find('.invalid-feedback').remove();
-            },
-            submitHandler: function(form) {
-                form.submit();
-            },
-            invalidHandler: function(event, validator) {
-                var errors = validator.numberOfInvalids();
-                validator.errorList.forEach(function(error) {});
-            }
-        });
+            });
 
-        $('#levelOneManager').validate({
-            rules: {
-                level_one_manager: {
-                    required: true,
-                    minlength: 3,
-                    maxlength: 100,
-                    noSpaces: true,
+            $('#levelOneManager').validate({
+                rules: {
+                    level_one_manager: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 100,
+                        noSpaces: true,
+                    },
+                    signature_image: {
+                        required: true,
+                    }
                 },
-                signature_image: {
-                    required: true,
-                }
-            },
-            messages: {
-                level_one_manager: {
-                    required: "Remarks is Required",
-                    minlength: "Minimum Characters should be 3",
-                    maxlength: "Maximum Characters should not exceed 100",
+                messages: {
+                    level_one_manager: {
+                        required: "Remarks is Required",
+                        minlength: "Minimum Characters should be 3",
+                        maxlength: "Maximum Characters should not exceed 100",
+                    },
+                    signature_image: {
+                        required: "Signature is Required",
+                    }
                 },
-                signature_image: {
-                    required: "Signature is Required",
+                errorElement: 'div',
+                errorPlacement: function(error, element) {
+                    error.addClass('invalid-feedback');
+                    element.closest('.form-input').append(error);
+                },
+                highlight: function(element) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function(element) {
+                    $(element).removeClass('is-invalid');
+                    $(element).closest('.form-input').find('.invalid-feedback').remove();
+                },
+                submitHandler: function(form) {
+                    form.submit();
+                },
+                invalidHandler: function(event, validator) {
+                    var errors = validator.numberOfInvalids();
+                    validator.errorList.forEach(function(error) {});
                 }
-            },
-            errorElement: 'div',
-            errorPlacement: function(error, element) {
-                error.addClass('invalid-feedback');
-                element.closest('.form-input').append(error);
-            },
-            highlight: function(element) {
-                $(element).addClass('is-invalid');
-            },
-            unhighlight: function(element) {
-                $(element).removeClass('is-invalid');
-                $(element).closest('.form-input').find('.invalid-feedback').remove();
-            },
-            submitHandler: function(form) {
-                form.submit();
-            },
-            invalidHandler: function(event, validator) {
-                var errors = validator.numberOfInvalids();
-                validator.errorList.forEach(function(error) {});
-            }
-        });
+            });
 
-        $('#levelTwoManager').validate({
-            rules: {
-                level_two_manager: {
-                    required: true,
-                    minlength: 3,
-                    maxlength: 100,
-                    noSpaces: true,
+            $('#levelTwoManager').validate({
+                rules: {
+                    level_two_manager: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 100,
+                        noSpaces: true,
+                    },
+                    signature_image: {
+                        required: true,
+                    }
                 },
-                signature_image: {
-                    required: true,
-                }
-            },
-            messages: {
-                level_two_manager: {
-                    required: "Remarks is Required",
-                    minlength: "Minimum Characters should be 3",
-                    maxlength: "Maximum Characters should not exceed 100",
+                messages: {
+                    level_two_manager: {
+                        required: "Remarks is Required",
+                        minlength: "Minimum Characters should be 3",
+                        maxlength: "Maximum Characters should not exceed 100",
+                    },
+                    signature_image: {
+                        required: "Signature is Required",
+                    }
                 },
-                signature_image: {
-                    required: "Signature is Required",
+                errorElement: 'div',
+                errorPlacement: function(error, element) {
+                    error.addClass('invalid-feedback');
+                    element.closest('.form-input').append(error);
+                },
+                highlight: function(element) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function(element) {
+                    $(element).removeClass('is-invalid');
+                    $(element).closest('.form-input').find('.invalid-feedback').remove();
+                },
+                submitHandler: function(form) {
+                    form.submit();
+                },
+                invalidHandler: function(event, validator) {
+                    var errors = validator.numberOfInvalids();
+                    validator.errorList.forEach(function(error) {});
                 }
-            },
-            errorElement: 'div',
-            errorPlacement: function(error, element) {
-                error.addClass('invalid-feedback');
-                element.closest('.form-input').append(error);
-            },
-            highlight: function(element) {
-                $(element).addClass('is-invalid');
-            },
-            unhighlight: function(element) {
-                $(element).removeClass('is-invalid');
-                $(element).closest('.form-input').find('.invalid-feedback').remove();
-            },
-            submitHandler: function(form) {
-                form.submit();
-            },
-            invalidHandler: function(event, validator) {
-                var errors = validator.numberOfInvalids();
-                validator.errorList.forEach(function(error) {});
-            }
-        });
-    </script>
-@endpush
+            });
+        </script>
+    @endpush

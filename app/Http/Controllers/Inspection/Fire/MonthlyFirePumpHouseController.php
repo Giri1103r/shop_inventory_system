@@ -228,7 +228,11 @@ class MonthlyFirePumpHouseController extends Controller
             ];
             $this->statusLog->create($insert_array);
             Session::flash('success', __('common.created_msg'));
-            return redirect(admin_url('fire/monthly-fire-pump-house-inspection/list'));
+            if ($monthly_fire_inspection->observation_needed == 1) {
+                return redirect(admin_url('fire/checklist-observation/add/' . encryptId($inspection_type) . '/' . encryptId($id)));
+            } else {
+                return redirect(admin_url('fire/monthly-fire-pump-house-inspection/list'));
+            }
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong!');
@@ -676,21 +680,13 @@ class MonthlyFirePumpHouseController extends Controller
         try {
 
             $allData = $this->monthlyfirepump->exportdata();
+            $inspection_type = MONTHLY_FIRE_PUMP;
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
             }
-            $header = [
-                __("common.sno"),
-                'Document Number',
-                'Issue Date',
-                'Revision Date',
-                __("inspection.inspection_status"),
-                __("common.created_by"),
-                __("common.created_date"),
-            ];
-
+            
             $data = array(
-                'header' => $header,
+                'inspection_type' => $inspection_type,
                 'content' => $allData,
                 'pagetitle' => "Monthly Fire Pump House Inspection",
             );
@@ -706,7 +702,7 @@ class MonthlyFirePumpHouseController extends Controller
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $view = view('inspection.fire.pdf.pdf', $data);
+            $view = view('inspection.fire.monthly_fire_pump_house.pdf', $data);
             $html = $view->render();
 
             $mpdf->WriteHTML($html);
@@ -714,6 +710,7 @@ class MonthlyFirePumpHouseController extends Controller
             $filename = "Monthly Fire Pump House Inspection.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
+            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('fire/monthly-fire-pump-house-inspection/list'));

@@ -163,7 +163,6 @@ Route::group(['prefix' => 'audit/'], function () {
         Route::get('import', [AuditAnalysisController::class, 'import']);
         Route::post('import/Submit', [AuditAnalysisController::class, 'importSubmit']);
         Route::post('status', [AuditAnalysisController::class, 'statusChange']);
-        Route::post('unique', [AuditAnalysisController::class, 'Uniquecheck']);
         Route::get('employeeName', [AuditAnalysisController::class, 'employeename']);
         Route::get('ajax-list', [AuditAnalysisController::class, 'Uniquecheck']);
     });
@@ -194,6 +193,7 @@ Route::group(['prefix' => 'audit/'], function () {
         Route::get('export/excel', [MonthlyAuditPlanController::class, 'exportExcel']);
         Route::get('export/pdf', [MonthlyAuditPlanController::class, 'exportPdf']);
         Route::get('generalpdf/{id}', [MonthlyAuditPlanController::class, 'generalpdf']);
+        Route::get('generalExcel/{id}', [MonthlyAuditPlanController::class, 'generalExcel']);
     });
 
     Route::group(['prefix' => 'inter-unit-audit/checklist/'], function () {
@@ -232,6 +232,7 @@ Route::group(['prefix' => 'inspection/gemba-walk/'], function () {
     Route::get('ehs-officer/{id}', [GembaWalkController::class, 'ehsOfficerReview']);
     Route::post('ehs-officer/review/submit', [GembaWalkController::class, 'ehsReviewSubmit']);
     Route::get('generalpdf/{id}', [GembaWalkController::class, 'generalpdf']);
+    Route::get('generalExcel/{id}', [GembaWalkController::class, 'generalExcel']);
     Route::get('export/pdf', [GembaWalkController::class, 'exportPdf']);
     Route::get('export/excel', [GembaWalkController::class, 'exportExcel']);
 });
@@ -365,6 +366,7 @@ Route::group(['prefix' => 'safety/'], function () {
         Route::get('export/excel', [MonthlyForkLiftInspectionController::class, 'exportExcel']);
         Route::get('export/pdf', [MonthlyForkLiftInspectionController::class, 'exportPdf']);
         Route::get('exportViewPdf/{id}', [MonthlyForkLiftInspectionController::class, 'exportViewPdf']);
+        Route::get('generalexcel/{id}', [MonthlyForkLiftInspectionController::class, 'generalExcel']);
     });
 
     Route::group(['prefix' => 'forklift-inspection/'], function () {
@@ -456,13 +458,8 @@ Route::group(['prefix' => 'msds/'], function () {
     Route::get('export/pdf', [MSDSController::class, 'exportPdf']);
     Route::post('status', [MSDSController::class, 'statusChange']);
     Route::post('unique', [MSDSController::class, 'Uniquecheck']);
-    Route::get('verification/{id}/{employee_type}', [MSDSController::class, 'approvals']);
-    Route::post('ehsofficer/verify/submit', [MSDSController::class, 'EHSOfficerSubmit']);
-    Route::post('capa/submit', [MSDSController::class, 'CAPASubmit']);
-    Route::post('capa/reverify/submit', [MSDSController::class, 'CAPAVerifySubmit']);
-    Route::post('level-one/verify/submit', [MSDSController::class, 'levelOneManagerSubmit']);
-    Route::post('level-two/verify/submit', [MSDSController::class, 'levelTwoManagerSubmit']);
     Route::get('generalpdf/{id}', [MSDSController::class, 'generalpdf']);
+    Route::GET('/generalExcel/{id}', [MSDSController::class, 'generalExcel']);
 });
 
 Route::group(['prefix' => 'rraa/ohc_fire_environment_compliance/'], function () {
@@ -477,13 +474,8 @@ Route::group(['prefix' => 'rraa/ohc_fire_environment_compliance/'], function () 
     Route::post('status', [RRAAController::class, 'statusChange']);
     Route::post('unique', [RRAAController::class, 'Uniquecheck']);
     Route::get('employeeid', [RRAAController::class, 'employeeid']);
-    Route::get('verification/{id}/{employee_type}', [RRAAController::class, 'approvals']);
-    Route::post('ehsofficer/verify/submit', [RRAAController::class, 'EHSOfficerSubmit']);
-    Route::post('capa/submit', [RRAAController::class, 'CAPASubmit']);
-    Route::post('capa/reverify/submit', [RRAAController::class, 'CAPAVerifySubmit']);
-    Route::post('level-one/verify/submit', [RRAAController::class, 'levelOneManagerSubmit']);
-    Route::post('level-two/verify/submit', [RRAAController::class, 'levelTwoManagerSubmit']);
     Route::get('generalpdf/{id}', [RRAAController::class, 'generalpdf']);
+    Route::GET('/generalExcel/{id}', [RRAAController::class, 'generalExcel']);
 });
 
 Route::group(['prefix' => 'ohc/safety-petty-logbook/'], function () {
@@ -501,6 +493,7 @@ Route::group(['prefix' => 'ohc/safety-petty-logbook/'], function () {
     Route::get('generalpdf/{id}', [SafetyPettyController::class, 'generalpdf']);
     Route::post('unique', [SafetyPettyController::class, 'uniqueCheck']);
     Route::get('get-signature', [SafetyPettyController::class, 'getSignature']);
+    Route::get('generalexcel/{id}', [SafetyPettyController::class, 'generalExcel']);
 });
 
 Route::group(['prefix' => 'fire/'], function () {
@@ -748,6 +741,7 @@ Route::group(['prefix' => 'fire/'], function () {
         Route::POST('level-one/verify/submit', [PASystemInspectionController::class, 'levelOneManagerSubmit']);
         Route::POST('level-two/verify/submit', [PASystemInspectionController::class, 'levelTwoManagerSubmit']);
         Route::GET('exportViewPdf/{id}', [PASystemInspectionController::class, 'ExportViewPDF']);
+        Route::GET('generalExcel/{id}', [PASystemInspectionController::class, 'generalExcel']);
         Route::GET('export/excel', [PASystemInspectionController::class, 'ExportExcel']);
         Route::GET('export/pdf', [PASystemInspectionController::class, 'ExportPDF']);
         Route::GET('get/locations', [PASystemInspectionController::class, 'GetLocations']);
@@ -769,6 +763,8 @@ Route::group(['prefix' => 'fire/'], function () {
         Route::GET('export/excel', [CoTypeFireExtinguisherController::class, 'ExportExcel']);
         Route::GET('export/pdf', [CoTypeFireExtinguisherController::class, 'ExportPDF']);
         Route::GET('get/department', [CoTypeFireExtinguisherController::class, 'GetDepartment']);
+        Route::GET('generalExcel/{id}', [CoTypeFireExtinguisherController::class, 'generalExcel']);
+
     });
 
     Route::group(['prefix' => 'fire-sand-bucket-inspection/'], function () {
@@ -895,6 +891,7 @@ Route::group(['prefix' => 'fire/'], function () {
         Route::POST('level-one/verify/submit', [HydrantRiserInspectionContoller::class, 'levelOneManagerSubmit']);
         Route::POST('level-two/verify/submit', [HydrantRiserInspectionContoller::class, 'levelTwoManagerSubmit']);
         Route::GET('exportViewPdf/{id}', [HydrantRiserInspectionContoller::class, 'ExportViewPDF']);
+        Route::GET('generalExcel/{id}', [HydrantRiserInspectionContoller::class, 'generalExcel']);
         Route::GET('export/excel', [HydrantRiserInspectionContoller::class, 'ExportExcel']);
         Route::GET('export/pdf', [HydrantRiserInspectionContoller::class, 'ExportPDF']);
         Route::GET('get/department', [HydrantRiserInspectionContoller::class, 'GetDepartment']);
@@ -910,6 +907,7 @@ Route::group(['prefix' => 'ohc/floor_stretcher/checklist/'], function () {
     Route::GET('export/excel', [FloorStretcherController::class, 'ExportExcel']);
     Route::GET('export/pdf', [FloorStretcherController::class, 'ExportPdf']);
     Route::GET('exportViewPdf/{id}', [FloorStretcherController::class, 'ExportViewPDF']);
+    Route::GET('export/excel/{id}', [FloorStretcherController::class, 'GeneralExcel']);
     Route::POST('status', [FloorStretcherController::class, 'StatusChange']);
     Route::POST('delete', [FloorStretcherController::class, 'Delete']);
 });
@@ -927,6 +925,8 @@ Route::group(['prefix' => 'ohc/first-aid-record/'], function () {
     Route::get('generalpdf/{id}', [FirstAidRecordController::class, 'generalpdf']);
     Route::get('first-aid-location/details', [FirstAidRecordController::class, 'getFirstAidDetails']);
     Route::post('unique', [FirstAidRecordController::class, 'Uniquecheck']);
+    Route::get('generalexcel/{id}', [FirstAidRecordController::class, 'generalExcel']);
+
 });
 
 Route::group(['prefix' => 'ohc/health-instrument/calibration-track-sheet/'], function () {
@@ -936,6 +936,7 @@ Route::group(['prefix' => 'ohc/health-instrument/calibration-track-sheet/'], fun
     Route::post('add/submit', [HealthInstrumentCalibrationController::class, 'store']);
     Route::get('view/{id}', [HealthInstrumentCalibrationController::class, 'view']);
     Route::get('generalpdf/{id}', [HealthInstrumentCalibrationController::class, 'generalpdf']);
+    Route::get('generalExcel/{id}', [HealthInstrumentCalibrationController::class, 'generalExcel']);
     Route::get('export/pdf', [HealthInstrumentCalibrationController::class, 'exportPdf']);
     Route::get('export/excel', [HealthInstrumentCalibrationController::class, 'exportExcel']);
     Route::post('status', [HealthInstrumentCalibrationController::class, 'statusChange']);
@@ -952,6 +953,7 @@ Route::group(['prefix' => 'ohc/monthly-medicine-store/inspection/'], function ()
     Route::get('export/excel', [MonthlyMedicineStoreController::class, 'exportExcel']);
     Route::post('status', [MonthlyMedicineStoreController::class, 'statusChange']);
     Route::GET('exportViewpdf/{id}', [MonthlyMedicineStoreController::class, 'ExportViewPDF']);
+    Route::get('generalexcel/{id}', [MonthlyMedicineStoreController::class, 'generalExcel']);
     Route::get('approval/{id}', [MonthlyMedicineStoreController::class, 'approval']);
     Route::post('verify/submit', [MonthlyMedicineStoreController::class, 'approvalSubmit']);
 });
@@ -964,6 +966,7 @@ Route::group(['prefix' => 'ohc/first-aid/opd-medicine-inspection/'], function ()
     Route::get('generalpdf/{id}', [FirstAidMedicineInspectionController::class, 'generalpdf']);
     Route::get('export/pdf', [FirstAidMedicineInspectionController::class, 'exportPdf']);
     Route::get('export/excel', [FirstAidMedicineInspectionController::class, 'exportExcel']);
+    Route::get('generalexcel/{id}', [FirstAidMedicineInspectionController::class, 'generalExcel']);
     Route::post('status', [FirstAidMedicineInspectionController::class, 'statusChange']);
     Route::GET('exportViewpdf/{id}', [FirstAidMedicineInspectionController::class, 'ExportViewPDF']);
     Route::get('approval/{id}', [FirstAidMedicineInspectionController::class, 'approval']);
@@ -980,6 +983,7 @@ Route::group(['prefix' => 'ohc/emergency-floor-first-aid-bag/checklist/'], funct
     Route::get('export/excel', [FirstAidBagChecklistController::class, 'exportExcel']);
     Route::post('status', [FirstAidBagChecklistController::class, 'statusChange']);
     Route::GET('exportViewpdf/{id}', [FirstAidBagChecklistController::class, 'ExportViewPDF']);
+    Route::get('generalexcel/{id}', [FirstAidBagChecklistController::class, 'generalExcel']);
     Route::get('approval/{id}', [FirstAidBagChecklistController::class, 'approval']);
     Route::post('verify/submit', [FirstAidBagChecklistController::class, 'approvalSubmit']);
 });
@@ -1013,6 +1017,7 @@ Route::group(['prefix' => 'ohc/ohc-hygiene-cleaning-checklist/'], function () {
     Route::get('export/excel', [OHCHygieneCleaningChecklistController::class, 'ExportExcel']);
     Route::get('approval/{id}', [OHCHygieneCleaningChecklistController::class, 'approval']);
     Route::post('verify/submit', [OHCHygieneCleaningChecklistController::class, 'approvalSubmit']);
+    Route::get('generalexcel/{id}', [OHCHygieneCleaningChecklistController::class, 'generalExcel']);
     Route::get('generalpdf/{id}', [OHCHygieneCleaningChecklistController::class, 'generalpdf']);
 });
 
@@ -1024,6 +1029,7 @@ Route::group(['prefix' => 'ohc/first-aid-box/weekly-inspection/'], function () {
     Route::post('add/submit', [WeeklyFirstAidBoxController::class, 'store']);
     Route::get('view/{id}', [WeeklyFirstAidBoxController::class, 'view']);
     Route::get('generalpdf/{id}', [WeeklyFirstAidBoxController::class, 'generalpdf']);
+    Route::get('generalExcel/{id}', [WeeklyFirstAidBoxController::class, 'generalExcel']);
     Route::get('export/pdf', [WeeklyFirstAidBoxController::class, 'ExportPDF']);
     Route::get('export/excel', [WeeklyFirstAidBoxController::class, 'ExportExcel']);
 });
@@ -1035,6 +1041,7 @@ Route::group(['prefix' => 'ohc/emergency-buyer-first-aid-bag/checklist/'], funct
     Route::post('add/submit', [EmergencyBuyerFirstAidBagChecklistController::class, 'store']);
     Route::get('view/{id}', [EmergencyBuyerFirstAidBagChecklistController::class, 'view']);
     Route::get('generalpdf/{id}', [EmergencyBuyerFirstAidBagChecklistController::class, 'generalpdf']);
+    Route::get('generalExcel/{id}', [EmergencyBuyerFirstAidBagChecklistController::class, 'generalExcel']);
     Route::get('export/pdf', [EmergencyBuyerFirstAidBagChecklistController::class, 'ExportPDF']);
     Route::get('export/excel', [EmergencyBuyerFirstAidBagChecklistController::class, 'ExportExcel']);
 });
@@ -1049,6 +1056,7 @@ Route::group(['prefix' => 'ohc/daily-vital-equipment'], function () {
     Route::GET('export/excel', [DailyVitalEquipmentController::class, 'ExportExcel']);
     Route::GET('export/pdf', [DailyVitalEquipmentController::class, 'ExportPDF']);
     Route::GET('exportViewPdf/{id}', [DailyVitalEquipmentController::class, 'exportViewPdf']);
+    Route::get('generalexcel/{id}', [DailyVitalEquipmentController::class, 'generalExcel']);
 });
 
 
@@ -1070,3 +1078,15 @@ Route::group(['prefix' => 'ohc/current-new-ext-code-dialing/'], function () {
     Route::post('import/Submit', [CurrentNewExtCodeDialingController::class, 'ImportSubmit']);
     Route::get('sample_download', [CurrentNewExtCodeDialingController::class, 'DownloadSample']);
 });
+
+
+
+//Role Pending
+//Safety walk observation - Role
+//Monthly Store Medicine - ohc - Role
+//OPD Medicine Inspection - ohc - Role
+//Emergency Floor First Aid Box Checklist - ohc - Role
+
+
+//PDF Pending
+// Safety Walk Observation - Whole PDF

@@ -251,7 +251,6 @@ class FireModularInspectionController extends Controller
                 'neck_ring.*' => 'required',
                 'cylinder_pressure.*' => 'required',
                 'remarks.*' => 'required',
-                'observation' => 'required',
             ];
 
             $messages = [
@@ -275,7 +274,6 @@ class FireModularInspectionController extends Controller
                 'cylinder_pressure.*.required' => 'Cylinder Pressure is required.',
                 'remarks.*.required' => 'Remarks are required.',
 
-                'observation.required' => 'Observation is required.',
             ];
 
 
@@ -286,15 +284,12 @@ class FireModularInspectionController extends Controller
                 return redirect()->back()->withErrors($validator)->withInput();
             }
 
-
-
             $inspection = $this->detector->store();
             $inspection_type = FIRE_MODULAR_INSPECTION;
             $id = $inspection->id;
 
             $inspection_details = $this->detector_details->store($id);
             $inspection_file = $this->files->file_upload($inspection_type, $id);
-            $checklist_store = $this->checklist_follow->store($inspection_type, $id);
             $signature_update = $this->signature->CheckedBySignature($id, $inspection_type);
 
             $ehsOfficer = GetEHSOfficer();
@@ -341,7 +336,11 @@ class FireModularInspectionController extends Controller
             ];
             $this->statusLog->create($insert_array);
             Session::flash('success', 'Your data added successfully');
-            return redirect(admin_url('fire/fire-modular-inspection/checklist/list'));
+            if (decryptId($request->observation_needed) == 1) {
+                return redirect(admin_url('fire/checklist-observation/add/' . encryptId($inspection_type) . '/' . encryptId($id)));
+            } else {
+                return redirect(admin_url('fire/fire-modular-inspection/checklist/list'));
+            }
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong !');

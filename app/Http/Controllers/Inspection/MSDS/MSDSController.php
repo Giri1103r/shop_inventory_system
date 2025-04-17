@@ -20,6 +20,16 @@ use App\Http\Controllers\Admin\AdminController;
 use App\Models\Inspection\InspectionStaticDocno;
 use App\Models\Inspection\MSDS\MSDSSignatureUpload;
 
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Border;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
+use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
+use PhpOffice\PhpSpreadsheet\RichText\RichText;
+
+
 class MSDSController extends Controller
 {
 
@@ -59,8 +69,11 @@ class MSDSController extends Controller
                             $btn = '';
                             $btn = '<a href="' . admin_url('msds/view/' . encryptId($row->id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
                             $btn .= '<a href="' . admin_url('msds/generalpdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
-                                <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
-                            </a>';
+                                        <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
+                                    </a>';
+                            $btn .= '<a href="' . admin_url('msds/generalExcel/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
+                                        <i class="fas fa-file-excel" style="color: #1D6F42;" aria-hidden="true"></i>
+                                    </a>';
                             return $btn;
                         })
                         ->rawColumns(['action', 'created_date','issue_date','created_by'])
@@ -151,51 +164,6 @@ class MSDSController extends Controller
         }
     }
 
-    public function ExportExcel(Request $request)
-    {
-
-        try {
-
-            $allData = $this->msdsDetails->exportdata();
-
-            if ($allData->isEmpty()) {
-                return redirect()->back()->with('error', 'No data found');
-            }
-
-            $header = [
-                __("common.sno"),
-                'Item Code',
-                'Name of Chemical',
-                __("common.created_by"),
-                __("common.created_date"),
-            ];
-
-            $i = 1;
-            foreach ($allData as $data) {
-
-                $export = [];
-                $export[] =  $i;
-                $export[] =  $data->item_code;
-                $export[] =  $data->name_of_chemical;
-                $export[] =  getusername($data->created_by);
-                $export[] =  Displaydateformat($data->created_at);
-
-                $exportData[] = $export;
-
-                $i++;
-            }
-
-            $writer = SimpleExcelWriter::streamDownload('MSDS.xlsx')
-                ->addHeader($header)
-                ->addRows(
-                    $exportData
-                );
-        } catch (Exception $ex) {
-            report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('msds/list'));
-        }
-    }
 
     public function ExportPdf(Request $request)
     {
@@ -244,6 +212,151 @@ class MSDSController extends Controller
         }
     }
 
+
+    public function ExportExcel(Request $request)
+    {
+        try {
+            $allData = $this->msdsDetails->exportdata();
+
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            }
+
+            $document_no = $this->document_reference->selectUsingName('MSDS');
+            $spreadsheet = new Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
+
+            $row = 1;
+            $i = 1;
+
+            foreach ($allData as $data) {
+                
+                $logoPath = public_path('assets/images/logo-dark.png');
+                if (file_exists($logoPath)) {
+                    $drawing = new Drawing();
+                    $drawing->setName('Logo');
+                    $drawing->setPath($logoPath);
+                    $drawing->setCoordinates('A' . $row);
+                    $drawing->setOffsetX(10);
+                    $drawing->setWidth(100);
+                    $drawing->setHeight(50);
+                    $drawing->setWorksheet($sheet);
+                }
+
+                $sheet->mergeCells("A{$row}:B" . ($row + 2));
+                $sheet->mergeCells("C{$row}:L" . ($row + 2));
+                $sheet->setCellValue("C{$row}", "Chemical (MSDS) Master List PN International Pvt.Ltd.");
+                $sheet->getStyle("A{$row}:O" . ($row + 2))->applyFromArray([
+                    'font' => ['bold' => true, 'size' => 14],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+                ]);
+
+                $docLabels = [
+                    'M1:N1' => 'Doc. No.',
+                    'M2:N2' => 'Issue Dt.',
+                    'M3:N3' => 'Rev. & Dt.',
+                ];
+
+                foreach ([0, 1, 2] as $idx) {
+                    $labelRow = $row + $idx;
+                    $labelCell = "M{$labelRow}";
+                    $mergeRange = "M{$labelRow}:N{$labelRow}";
+                    $sheet->mergeCells($mergeRange)->setCellValue($labelCell, array_values($docLabels)[$idx]);
+                    $sheet->getStyle($mergeRange)->applyFromArray([
+                        'font' => ['bold' => true, 'size' => 10],
+                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
+                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                    ]);
+                }
+
+                $sheet->setCellValue("O{$row}", $document_no->doc_no);
+                $sheet->setCellValue("O" . ($row + 1), Displaydateformat($document_no->issue_date));
+                $sheet->setCellValue("O" . ($row + 2), $document_no->rev_dt);
+
+                $sheet->getStyle("O{$row}:O" . ($row + 2))->applyFromArray([
+                    'font' => ['size' => 10],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                ]);
+
+                $headerRow = $row + 3;
+                $sheet->mergeCells("A{$headerRow}:C{$headerRow}")->setCellValue("A{$headerRow}", 'Sr. No');
+                $sheet->mergeCells("D{$headerRow}:F{$headerRow}")->setCellValue("D{$headerRow}", 'Item Code');
+                $sheet->mergeCells("G{$headerRow}:I{$headerRow}")->setCellValue("G{$headerRow}", 'Name Of Chemical');
+                $sheet->mergeCells("J{$headerRow}:L{$headerRow}")->setCellValue("J{$headerRow}", 'MSDS Available Status');
+                $sheet->mergeCells("M{$headerRow}:O{$headerRow}")->setCellValue("M{$headerRow}", 'Remarks');
+
+                $sheet->getStyle("A{$headerRow}:O{$headerRow}")->applyFromArray([
+                    'font' => ['bold' => true],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'fill' => ['fillType' => Fill::FILL_SOLID],
+                ]);
+
+                $dataRow = $headerRow + 1;
+
+                $sheet->mergeCells("A{$dataRow}:C{$dataRow}")->setCellValue("A{$dataRow}", 1); // Always 1 for each block
+                $sheet->mergeCells("D{$dataRow}:F{$dataRow}")->setCellValue("D{$dataRow}", $data->item_code ?? '');
+                $sheet->mergeCells("G{$dataRow}:I{$dataRow}")->setCellValue("G{$dataRow}", $data->name_of_chemical ?? '');
+                $sheet->mergeCells("J{$dataRow}:L{$dataRow}");
+
+                $status = strtoupper($data->msds_availability_status ?? '');
+                switch ($status) {
+                    case '1':
+                        $symbol = '✓';
+                        $color = '008000';
+                        break;
+                    case '2':
+                        $symbol = 'X';
+                        $color = 'FF0000';
+                        break;
+                    case 'null':
+                        $symbol = 'N/A';
+                        $color = '808080';
+                        break;
+                    default:
+                        $symbol = '-';
+                        $color = '808080';
+                        break;
+                }
+
+                $sheet->setCellValue("J{$dataRow}", $symbol);
+                $sheet->getStyle("J{$dataRow}:L{$dataRow}")->applyFromArray([
+                    'font' => ['name' => 'Segoe UI Symbol', 'color' => ['rgb' => $color], 'bold' => true, 'size' => 14],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                ]);
+
+                $sheet->mergeCells("M{$dataRow}:O{$dataRow}")->setCellValue("M{$dataRow}", $data->remark ?? '');
+                $sheet->getStyle("A{$dataRow}:O{$dataRow}")->applyFromArray([
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                ]);
+
+                $row = $dataRow + 5;
+                $i++;
+            }
+
+            foreach (range('A', 'O') as $col) {
+                $sheet->getColumnDimension($col)->setAutoSize(true);
+            }
+
+            $fileName = 'MSDS_Multi_Report.xlsx';
+            $writer = new Xlsx($spreadsheet);
+
+            return response()->streamDownload(function () use ($writer) {
+                $writer->save('php://output');
+            }, $fileName, [
+                'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            ]);
+        } catch (\Exception $e) {
+            report($e);
+            Session::flash('error', 'Something went wrong!');
+            return redirect(admin_url('msds/list'));
+        }
+    }
+
+
     public function generalpdf(Request $request)
     {
         try {
@@ -283,6 +396,172 @@ class MSDSController extends Controller
             return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
         }
     }
+
+
+    public function generalExcel(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+            $msdsDetails = $this->msdsDetails->selectOne($id);
+            $document_no = $this->document_reference->selectUsingName('MSDS');
+
+            $spreadsheet = new Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
+
+            $logoPath = public_path('assets/images/logo-dark.png');
+            if (file_exists($logoPath)) {
+                $drawing = new Drawing();
+                $drawing->setName('Logo');
+                $drawing->setPath($logoPath);
+                $drawing->setCoordinates('A1');
+                $drawing->setOffsetX(10);
+                $drawing->setWidth(100);
+                $drawing->setHeight(50);
+                $drawing->setWorksheet($sheet);
+            }
+
+            $sheet->mergeCells('A1:B3');
+            $sheet->mergeCells('C1:L3');
+            $sheet->setCellValue('C1', "Chemical (MSDS) Master List PN International Pvt.Ltd.");
+            $sheet->getStyle('C1')->applyFromArray([
+                'font' => ['bold' => true, 'size' => 14],
+                'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_CENTER,
+                    'vertical' => Alignment::VERTICAL_CENTER,
+                    'wrapText' => true
+                ],
+            ]);
+
+            $headerLabels = [
+                'M1:N1' => 'Doc. No.',
+                'M2:N2' => 'Issue Dt.',
+                'M3:N3' => 'Rev. & Dt.',
+            ];
+
+            foreach ($headerLabels as $cellRange => $label) {
+                $cell = explode(':', $cellRange)[0];
+                $sheet->mergeCells($cellRange)->setCellValue($cell, $label);
+                $sheet->getStyle($cell)->applyFromArray([
+                    'font' => ['bold' => true],
+                    'alignment' => [
+                        'horizontal' => Alignment::HORIZONTAL_CENTER,
+                        'vertical' => Alignment::VERTICAL_CENTER,
+                    ],
+                ]);
+            }
+
+            $sheet->setCellValue("O1", $document_no->doc_no);
+            $sheet->setCellValue("O2", Displaydateformat($document_no->issue_date));
+            $sheet->setCellValue("O3", $document_no->rev_dt);
+
+            $sheet->getStyle("M1:O3")->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE, 'color' => ['argb' => '000000']]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+            ]);
+
+            $headers = [
+                'Sr. No',
+                'Item Code',
+                'Name Of Chemical',
+                'MSDS Available Status',
+                'Remarks'
+            ];
+
+            $sheet->mergeCells('A4:C4')->setCellValue('A4', $headers[0]);
+            $sheet->mergeCells('D4:F4')->setCellValue('D4', $headers[1]);
+            $sheet->mergeCells('G4:I4')->setCellValue('G4', $headers[2]);
+            $sheet->mergeCells('J4:L4')->setCellValue('J4', $headers[3]);
+            $sheet->mergeCells('M4:O4')->setCellValue('M4', $headers[4]);
+
+            $sheet->getStyle('A4:O4')->applyFromArray([
+                'font' => ['bold' => true],
+                'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_CENTER,
+                    'vertical' => Alignment::VERTICAL_CENTER,
+                    'wrapText' => true
+                ],
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'fill' => [
+                    'fillType' => Fill::FILL_SOLID,
+                ],
+            ]);
+
+            $row = 5;
+            $sheet->mergeCells("A{$row}:C{$row}")->setCellValue("A{$row}", '1');
+            $sheet->mergeCells("D{$row}:F{$row}")->setCellValue("D{$row}", $msdsDetails->item_code ?? '');
+            $sheet->mergeCells("G{$row}:I{$row}")->setCellValue("G{$row}", $msdsDetails->name_of_chemical ?? '');
+
+            $sheet->mergeCells("J{$row}:L{$row}");
+
+            $status = strtoupper($msdsDetails->msds_availability_status ?? '');
+
+            switch ($status) {
+                case '1':
+                    $symbol = '✓';
+                    $color = '008000';
+                    break;
+                case '2':
+                    $symbol = 'X';
+                    $color = 'FF0000';
+                    break;
+                case 'null':
+                    $symbol = 'N/A';
+                    $color = '808080';
+                    break;
+                default:
+                    $symbol = '-';
+                    $color = '808080';
+                    break;
+            }
+
+            $sheet->setCellValue("J{$row}", $symbol);
+
+            $sheet->getStyle("J{$row}:L{$row}")->applyFromArray([
+                'font' => [
+                    'name' => 'Segoe UI Symbol',
+                    'color' => ['rgb' => $color],
+                    'bold' => true,
+                    'size' => 14,
+                ],
+                'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_CENTER,
+                    'vertical' => Alignment::VERTICAL_CENTER,
+                ],
+            ]);
+
+
+            $sheet->mergeCells("M{$row}:O{$row}")->setCellValue("M{$row}", $msdsDetails->remark ?? '');
+
+            $sheet->getStyle("A{$row}:O{$row}")->applyFromArray([
+                'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_CENTER,
+                    'vertical' => Alignment::VERTICAL_CENTER
+                ],
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+            ]);
+
+
+            foreach (range('A', 'O') as $col) {
+                $sheet->getColumnDimension($col)->setAutoSize(true);
+            }
+
+            $fileName = 'MSDS.xlsx';
+            $writer = new Xlsx($spreadsheet);
+
+            return response()->streamDownload(function () use ($writer) {
+                $writer->save('php://output');
+            }, $fileName, [
+                'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            ]);
+        } catch (\Exception $e) {
+            report($e);
+            Session::flash('error', 'Something went wrong!');
+            return redirect(admin_url('msds/list'));
+        }
+    }
+
+
+
 
 
 }

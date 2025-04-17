@@ -176,7 +176,7 @@
                             </tr>
                             <tr>
                                 <td style="border: 1px solid black; width:70px;">Issue Dt.</td>
-                                <td style="border: 1px solid black;">{{ $details->issue_date }}</td>
+                                <td style="border: 1px solid black;">{{ displaydateformat($details->issue_date) }}</td>
                             </tr>
                             <tr>
                                 <td style="border: 1px solid black; width:70px;">Rev.& Dt.</td>

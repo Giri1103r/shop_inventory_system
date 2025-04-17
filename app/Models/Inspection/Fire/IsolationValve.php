@@ -149,7 +149,7 @@ class IsolationValve extends Model
             'location' => decryptId($request->location_id),
             'shift' => decryptId($request->shift_id),
             'next_due' => DBdateformat($request->next_due),
-            'observation' => $request->observation,
+            // 'observation' => $request->observation,
             'unit' => decryptId($request->unit_id),
             'frequency' => decryptId($request->frequency_id),
             'inspection_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,
@@ -164,10 +164,12 @@ class IsolationValve extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_fire_isolation_valve.*', 'inspection_shift_option.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*', 'inspection_fire_isolation_valve.id as fire_id','inspection_fire_isolation_valve.created_by as checked_by','inspection_fire_isolation_valve_details.*')
+        $query = $this->select('inspection_fire_isolation_valve.*', 'inspection_shift_option.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*', 'inspection_fire_isolation_valve.id as fire_id','inspection_fire_isolation_valve.created_by as checked_by','inspection_fire_isolation_valve_details.*','inspection_static_docno.*','inspection_fire_isolation_valve_details.*')
             ->leftJoin('masters_location', 'inspection_fire_isolation_valve.location', '=', 'masters_location.id')
             ->leftJoin('inspection_shift_option', 'inspection_fire_isolation_valve.shift', '=', 'inspection_shift_option.id')
             ->leftJoin('masters_unit', 'inspection_fire_isolation_valve.unit', '=', 'masters_unit.id')
+            ->leftJoin('inspection_fire_isolation_valve_details', 'inspection_fire_isolation_valve.id', '=', 'inspection_fire_isolation_valve_details.inspection_id')
+            ->leftJoin('inspection_static_docno', 'inspection_fire_isolation_valve.document_reference_id', '=', 'inspection_static_docno.id')
             ->leftJoin('inspection_fire_isolation_valve_details', 'inspection_fire_isolation_valve.id', '=', 'inspection_fire_isolation_valve_details.inspection_id')
             ->leftJoin('inspection_frequency_option', 'inspection_fire_isolation_valve.frequency', '=', 'inspection_frequency_option.id');
 

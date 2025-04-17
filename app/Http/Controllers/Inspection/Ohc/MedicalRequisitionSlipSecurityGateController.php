@@ -125,16 +125,16 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
                         })
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            $btn .= '<a href="' . admin_url('ohc/medical-requisition-slip/fdo-security-gate/view/' . encryptId($row->inspection_id)) . '" class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a>';
+                            $btn .= '<a href="' . admin_url('ohc/medical-requisition-slip/fdo-security-gate/view/' . encryptId($row->inspection_id)) . '" class="view-icon me-1" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a>';
 
                             if (((checkUserRole(ROLE_SAFETY_OFFICER) && $row->approve_status == SAFETY_OFFICER_APPROVAL_PENDING) || (checkUserRole(ROLE_SUPERADMIN) && $row->approve_status == SAFETY_OFFICER_APPROVAL_PENDING)) || ((checkUserRole(ROLE_MEDICAL_ASSISTANT) && $row->approve_status == SAFETY_OFFICER_APPROVAL_PENDING) || (checkUserRole(ROLE_SUPERADMIN) && $row->approve_status == SAFETY_OFFICER_APPROVAL_PENDING))) {
-                                $btn .= '<a href="' . admin_url('ohc/medical-requisition-slip/fdo-security-gate/approval/view/' . encryptId($row->inspection_id)) . '" class="" title="Action"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('ohc/medical-requisition-slip/fdo-security-gate/approval/view/' . encryptId($row->inspection_id)) . '" class="me-1" title="Action"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
 
                             $btn .= '<a href="' . admin_url('ohc/medical-requisition-slip/fdo-security-gate/generalpdf/' . encryptId($row->inspection_id)) . '" style="margin-right: 5px;" title="PDF">
                             <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
                         </a>';
-              $btn .= '<a href="' . admin_url('ohc/medical-requisition-slip/fdo-security-gate/generalExcel/' . encryptId($row->inspection_id)) . '" style="margin-right: 5px;" title="PDF">
+                            $btn .= '<a href="' . admin_url('ohc/medical-requisition-slip/fdo-security-gate/generalExcel/' . encryptId($row->inspection_id)) . '" style="margin-right: 5px;" title="PDF">
                    <i class="fas fa-file-excel" style="color: #1D6F42;" aria-hidden="true"></i>
                 </a>';
                             return   $btn;
@@ -147,7 +147,7 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
 
                     return $datatables;
                 } catch (Exception $ex) {
-                    dd($ex);
+                     report($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }
@@ -180,7 +180,7 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
             );
             return view('inspection.inspection_ohc.medical_requisition_slip_security_gate.add', $data);
         } catch (Exception $ex) {
-            dd($ex);
+             report($ex);
         }
     }
 
@@ -254,7 +254,7 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
                 }
 
                 $notificationData = array(
-                    'notification_type' => 1,
+                    'notification_type' => OHC_INSPECTION,
                     'module_type' => 1,
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(
@@ -273,14 +273,14 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
 
                 Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
-                dd($ex);
+                 report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
             return redirect(admin_url('ohc/medical-requisition-slip/fdo-security-gate/list'));
         } catch (Exception $ex) {
 
-            dd($ex);
+             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/medical-requisition-slip/fdo-security-gate/list'));
         }
@@ -328,7 +328,7 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
             }
             return view('inspection.inspection_ohc.medical_requisition_slip_security_gate.view', $data);
         } catch (Exception $ex) {
-            dd($ex);
+             report($ex);
         }
     }
 
@@ -374,7 +374,7 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
             }
             return view('inspection.inspection_ohc.medical_requisition_slip_security_gate.approval', $data);
         } catch (Exception $ex) {
-            dd($ex);
+             report($ex);
         }
     }
 
@@ -409,7 +409,7 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
             }
 
             $data = [
-                'medicinerequisition' => $medicine_requisition_fdo_details,
+                'medicine_requisition_fdo_details' => $medicine_requisition_fdo_details,
                 'medicine_requisition_fdo_checklist' => $medicine_requisition_fdo_checklist_details,
                 'statuslog' => $statuslog,
                 'safetyofficer' => $safetyofficer,
@@ -440,7 +440,7 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
 
             return $mpdf->Output($filename, 'D');
         } catch (\Exception $ex) {
-            report($ex);
+             report($ex);
             return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
         }
     }
@@ -483,7 +483,7 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
                     ];
                     $mailsubject = 'Medical Requisition Slip- Fdo & Security Gate Approved';
                     $notificationData = array(
-                        'notification_type' => 1,
+                        'notification_type' => OHC_INSPECTION,
                         'module_type' => 1,
                         'notification_message' => $mailsubject,
                         'mobile_notification' => json_encode(array(
@@ -518,7 +518,7 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
                     ];
                     $mailsubject = 'Medical Requisition Slip- Fdo & Security Gate Rejected';
                     $notificationData = array(
-                        'notification_type' => 1,
+                        'notification_type' => OHC_INSPECTION,
                         'module_type' => 1,
                         'notification_message' => $mailsubject,
                         'mobile_notification' => json_encode(array(
@@ -552,7 +552,7 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
 
                 Session::flash('success', 'Your data has been Responded successfully!');
             } catch (Exception $ex) {
-                dd($ex);
+                 report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
@@ -574,44 +574,189 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
 
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
+            } elseif (count($allData) > 20) {
+                return redirect()->back()->with('error',   __('inspection.excess_error'));
+            }
+            $spreadsheet = new Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
+            for ($i = 1; $i <= 200; $i++) {
+                $sheet->getRowDimension($i)->setRowHeight(25);
+            }
+            $row = 1;
+            $currentRow = $row;
+          foreach( $allData as $details){
+
+            $currentRow = $row;
+
+            $medicine_requisition_fdo_details = $this->medicine_requisition_fdo_details->Selectone($details->id);
+            $medicine_requisition_fdo_checklist_details = $this->medicine_requisition_fdo_checklist->Selectone($details->id);
+            $document_no = $this->document_reference->selectOne($medicine_requisition_fdo_details->document_reference_id);
+            $safetyofficerSignature = GetOHCSignature($medicine_requisition_fdo_details->approved_by, $details->id, OHC_TYPE_MEDICINE_REQUISTION_FDO);
+            $RequestorSignature = GetOHCSignature($medicine_requisition_fdo_details->created_by, $details->id, OHC_TYPE_MEDICINE_REQUISTION_FDO);
+
+            $logoLeftPath = public_path('assets/images/logo-dark.png');
+            if (file_exists($logoLeftPath)) {
+                $sheet->mergeCells("A$currentRow:F" . ($currentRow + 2));
+
+                $drawing = new Drawing();
+                $drawing->setName('Left Logo');
+                $drawing->setPath($logoLeftPath);
+                $drawing->setCoordinates("B$currentRow");
+                $drawing->setOffsetX(100);
+                $drawing->setOffsetY(15);
+                $drawing->setWidth(70);
+                $drawing->setHeight(70);
+                $drawing->setWorksheet($sheet);
+
+                $range = "A$currentRow:F" . ($currentRow + 2);
+                $sheet->getStyle($range)->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                ]);
             }
 
-            $header = [
-                __("common.sno"),
-                'Document Number',
-                'Review date',
-                'Issued Date',
-                'Unit',
-                'Department',
-                'Approve Status',
-                __("common.created_by"),
-                __("common.created_date"),
-            ];
+            // Title Section
+            $sheet->mergeCells("G{$currentRow}:M" . ($currentRow + 2));
+            $sheet->setCellValue("G{$currentRow}", "MEDICAL REQUISITION ISSUE SLIP PN INTERNATIONAL PVT. LTD.");
 
-            $i = 1;
-            foreach ($allData as $data) {
+            $sheet->getStyle("G{$currentRow}")->applyFromArray([
+                'font' => ['bold' => true, 'size' => 14],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+            ]);
 
-                $export = [];
-                $export[] =  $i;
-                $export[] =  $data->doc_no;
-                $export[] =  $data->rev_dt;
-                $export[] =  Displaydateformat($data->issue_date);
-                $export[] =  ($data->unit_name);
-                $export[] =  ($data->department_name);
-                $export[] = getohcrequisitionfloorstatus($data->approve_status);
-                $export[] =  getusername($data->inspection_created_by);
-                $export[] =  Displaydateformat($data->inspection_created_at);
+            // Document Info
+            $sheet->mergeCells("N$currentRow:P$currentRow")->setCellValue("N$currentRow", 'Doc. No.');
+            $sheet->mergeCells("N" . ($currentRow + 1) . ":P" . ($currentRow + 1))->setCellValue("N" . ($currentRow + 1), 'Issue Dt.');
+            $sheet->mergeCells("N" . ($currentRow + 2) . ":P" . ($currentRow + 2))->setCellValue("N" . ($currentRow + 2), 'Rev. & Dt.');
 
-                $exportData[] = $export;
+            $sheet->mergeCells("Q$currentRow:S$currentRow")->setCellValue("Q$currentRow", $document_no->doc_no);
+            $sheet->mergeCells("Q" . ($currentRow + 1) . ":S" . ($currentRow + 1))->setCellValue("Q" . ($currentRow + 1), Displaydateformat($document_no->issue_date));
+            $sheet->mergeCells("Q" . ($currentRow + 2) . ":S" . ($currentRow + 2))->setCellValue("Q" . ($currentRow + 2), $document_no->rev_dt);
 
-                $i++;
+            $sheet->getStyle("N$currentRow:S" . ($currentRow + 2))->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                'font' => ['bold' => true],
+            ]);
+
+
+            $sheet->mergeCells("A" . ($currentRow + 3) . ":G" . ($currentRow + 3));
+            $richText1 = new RichText();
+            $richText1->createTextRun(' DEPARTMENT:- ')->getFont()->setBold(true);
+            $richText1->createText(getdepartment($medicine_requisition_fdo_details->department));
+            $sheet->getCell("A" . ($currentRow + 3))->setValue($richText1);
+
+            $sheet->mergeCells("H" . ($currentRow + 3) . ":N" . ($currentRow + 3));
+            $richText2 = new RichText();
+            $richText2->createTextRun('UNIT :-  ')->getFont()->setBold(true);
+            $richText2->createText(getUnitname($medicine_requisition_fdo_details->unit));
+            $sheet->getCell("H" . ($currentRow + 3))->setValue($richText2);
+
+            $sheet->mergeCells("O" . ($currentRow + 3) . ":S" . ($currentRow + 3));
+            $richText2 = new RichText();
+            $richText2->createTextRun('DATE :-  ')->getFont()->setBold(true);
+            $richText2->createText(Displaydateformat($medicine_requisition_fdo_details->date));
+            $sheet->getCell("O" . ($currentRow + 3))->setValue($richText2);
+
+            $sheet->getStyle("A" . ($currentRow + 3) . ":S" . ($currentRow + 3))->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+            ]);
+
+            $headerRow = $currentRow + 4;
+
+            $sheet->mergeCells("A$headerRow:C$headerRow")->setCellValue("A$headerRow", "SERIAL NO");
+            $sheet->mergeCells("D$headerRow:I$headerRow")->setCellValue("D$headerRow", "NAME OF THE MEDICINE");
+            $sheet->mergeCells("J$headerRow:N$headerRow")->setCellValue("J$headerRow", "QUANTITY");
+            $sheet->mergeCells("O$headerRow:S$headerRow")->setCellValue("O$headerRow", "REMARKS");
+
+            $sheet->getStyle("A$headerRow:S$headerRow")->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                'font' => ['bold' => true],
+            ]);
+
+
+            $inspectionRow = $headerRow + 1;
+            foreach ($medicine_requisition_fdo_checklist_details as $index => $detail) {
+                $sheet->mergeCells("A$inspectionRow:C$inspectionRow")->setCellValue("A$inspectionRow", $index + 1);
+                $medicineName = getMedicinename($detail->medicine_id) ?? '';
+                $material_expiry = Displaydateformat($detail->material_expiry) ?? '';
+                $sheet->mergeCells("D$inspectionRow:I$inspectionRow")->setCellValue("D$inspectionRow", $medicineName);
+                $sheet->mergeCells("J$inspectionRow:N$inspectionRow")->setCellValue("J$inspectionRow", $detail->quantity ?? '');
+                $sheet->mergeCells("O$inspectionRow:S$inspectionRow")->setCellValue("O$inspectionRow", $detail->remarks ?? '');
+
+                $sheet->getStyle("A$inspectionRow:S$inspectionRow")->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_LEFT, 'vertical' => Alignment::VERTICAL_CENTER],
+                ]);
+
+                $inspectionRow++;
             }
 
-            $writer = SimpleExcelWriter::streamDownload('Medicine Requisition Slip Floor.xlsx')
-                ->addHeader($header)
-                ->addRows(
-                    $exportData
-                );
+            $signatureStartRow = $inspectionRow;
+            $signatureEndRow = $signatureStartRow + 3;
+            $labelRow = $signatureEndRow + 1;
+            $imageHeight = 60;
+
+            // Requestor Signature
+            if (file_exists($RequestorSignature)) {
+                $sheet->mergeCells("A$signatureStartRow:J" . ($signatureStartRow + 2));
+
+                $drawing = new Drawing();
+                $drawing->setName('CREATOR SIGNATURE');
+                $drawing->setPath($RequestorSignature);
+                $drawing->setCoordinates("A$signatureStartRow");
+                $drawing->setOffsetX(100);
+                $drawing->setOffsetY(5);
+                $drawing->setWidth(70);
+                $drawing->setHeight(70);
+                $drawing->setWorksheet($sheet);
+                $sheet->getRowDimension($signatureStartRow + 2)->setRowHeight(40);
+                // Label + Name
+                $sheet->setCellValue("A" . ($signatureStartRow + 3), "CREATOR SIGNATURE: " . getUserName($medicine_requisition_fdo_details->created_by));
+                $sheet->mergeCells("A" . ($signatureStartRow + 3) . ":J" . ($signatureStartRow + 3));
+
+                $sheet->getStyle("A$signatureStartRow:J" . ($signatureStartRow + 3))->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                ]);
+            }
+
+            if (file_exists($safetyofficerSignature)) {
+                $sheet->mergeCells("K$signatureStartRow:S" . ($signatureStartRow + 2));
+
+                $drawing = new Drawing();
+                $drawing->setName('SAFETY OFFICER SIGNATURE');
+                $drawing->setPath($safetyofficerSignature);
+                $drawing->setCoordinates("M$signatureStartRow");
+                $drawing->setOffsetX(100);
+                $drawing->setOffsetY(5);
+                $drawing->setWidth(70);
+                $drawing->setHeight(70);
+                $drawing->setWorksheet($sheet);
+                $sheet->getRowDimension($signatureStartRow + 2)->setRowHeight(40);
+                // Label + Name
+                $sheet->setCellValue("K" . ($signatureStartRow + 3), "SAFETY OFFICER SIGNATURE: " . getUserName($medicine_requisition_fdo_details->verified_by));
+                $sheet->mergeCells("K" . ($signatureStartRow + 3) . ":S" . ($signatureStartRow + 3));
+
+                $sheet->getStyle("K$signatureStartRow:S" . ($signatureStartRow + 3))->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                ]);
+            }
+
+            $row =   $signatureStartRow + 8;
+          }
+          $fileName = 'Medical Requisition Slip- Fdo & Security Gate.xlsx';
+          $writer = new Xlsx($spreadsheet);
+
+          return response()->streamDownload(function () use ($writer) {
+              $writer->save('php://output');
+          }, $fileName, [
+              'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+          ]);
         } catch (Exception $ex) {
 
             report($ex);
@@ -626,11 +771,16 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
         try {
 
             $allData = $this->medicine_requisition_fdo_details->exportdata();
-            if ($allData->count() > 20) {
-                Session::flash('error', 'Export Data has Exceed the Limit 20!');
-                return redirect(admin_url('ohc/medical-requisition-slip/fdo-security-gate/list'));
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            } elseif (count($allData) > 20) {
+                return redirect()->back()->with('error',   __('inspection.excess_error'));
             }
-            $document_no = $this->document_reference->selectUsingName('MedicalRequisitionSlipFdoSecurityGate');
+
+            foreach( $allData as $details){
+                $document_no = $this->document_reference->selectOne($details->document_reference_id);
+
+            }
 
 
             $header = [
@@ -675,7 +825,7 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
             $mpdf->Output($filename, 'I');
         } catch (Exception $ex) {
 
-            dd($ex);
+             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/medical-requisition-slip/fdo-security-gate/list'));
         }
@@ -688,173 +838,171 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
             $id = decryptId($request->id);
             $spreadsheet = new Spreadsheet();
             $sheet = $spreadsheet->getActiveSheet();
-            $document_no = $this->document_reference->selectUsingName('MedicalRequisitionSlipFdoSecurityGate');
 
+
+
+            for ($i = 1; $i <= 200; $i++) {
+                $sheet->getRowDimension($i)->setRowHeight(25);
+            }
             $medicine_requisition_fdo_details = $this->medicine_requisition_fdo_details->Selectone($id);
             $medicine_requisition_fdo_checklist_details = $this->medicine_requisition_fdo_checklist->Selectone($id);
+            $document_no = $this->document_reference->selectOne($medicine_requisition_fdo_details->document_reference_id);
             $safetyofficerSignature = GetOHCSignature($medicine_requisition_fdo_details->approved_by, $id, OHC_TYPE_MEDICINE_REQUISTION_FDO);
             $RequestorSignature = GetOHCSignature($medicine_requisition_fdo_details->created_by, $id, OHC_TYPE_MEDICINE_REQUISTION_FDO);
-            $logoPath = public_path('assets/images/logo-dark.png');
+            $row = 1;
+            $currentRow = $row;
+            $logoLeftPath = public_path('assets/images/logo-dark.png');
+            if (file_exists($logoLeftPath)) {
+                $sheet->mergeCells("A$currentRow:F" . ($currentRow + 2));
 
-            if (file_exists($logoPath)) {
                 $drawing = new Drawing();
-                $drawing->setName('Logo');
-                $drawing->setDescription('Company Logo');
-                $drawing->setPath($logoPath);
-                $drawing->setCoordinates('A1');
-                $drawing->setOffsetX(5);
-                $drawing->setOffsetY(5);
-                $drawing->setWidth(60);
-                $drawing->setHeight(60);
+                $drawing->setName('Left Logo');
+                $drawing->setPath($logoLeftPath);
+                $drawing->setCoordinates("B$currentRow");
+                $drawing->setOffsetX(100);
+                $drawing->setOffsetY(15);
+                $drawing->setWidth(70);
+                $drawing->setHeight(70);
                 $drawing->setWorksheet($sheet);
-            }
 
-            $sheet->mergeCells("C1:L3");
-            $sheet->setCellValue("C1", "MEDICAL REQUISITION ISSUE SLIP\nPN INTERNATIONAL PVT. LTD.");
-            $sheet->getStyle("C1")->applyFromArray([
-                'font' => ['bold' => true, 'size' => 14],
-                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
-                'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['rgb' => 'FF0000']]
-            ]);
-
-            $headerLabels = [
-                'M1:N1' => 'Doc. No.',
-                'M2:N2' => 'Issue Dt.',
-                'M3:N3' => 'Rev. & Dt.',
-            ];
-
-            foreach ($headerLabels as $cellRange => $label) {
-                $cell = explode(':', $cellRange)[0];
-                $sheet->mergeCells($cellRange)->setCellValue($cell, $label);
-                $sheet->getStyle($cell)->applyFromArray([
-                    'font' => ['bold' => true],
-                    'alignment' => [
-                        'horizontal' => Alignment::HORIZONTAL_CENTER,
-                        'vertical' => Alignment::VERTICAL_CENTER,
-                    ],
+                $range = "A$currentRow:F" . ($currentRow + 2);
+                $sheet->getStyle($range)->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                 ]);
             }
 
-            $sheet->setCellValue("O1", $document_no->doc_no);
-            $sheet->setCellValue("O2", Displaydateformat($document_no->issue_date));
-            $sheet->setCellValue("O3", $document_no->rev_dt);
+            // Title Section
+            $sheet->mergeCells("G{$currentRow}:M" . ($currentRow + 2));
+            $sheet->setCellValue("G{$currentRow}", "MEDICAL REQUISITION ISSUE SLIP PN INTERNATIONAL PVT. LTD.");
 
-            $sheet->getStyle("M1:O3")->applyFromArray([
-                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THICK, 'color' => ['argb' => '000000']]],
-                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+            $sheet->getStyle("G{$currentRow}")->applyFromArray([
+                'font' => ['bold' => true, 'size' => 14],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
             ]);
 
-            $department = getdepartment($medicine_requisition_fdo_details->department);
-            $unit = getUnitname($medicine_requisition_fdo_details->unit);
-            $date = Displaydateformat($medicine_requisition_fdo_details->date);
+            // Document Info
+            $sheet->mergeCells("N$currentRow:P$currentRow")->setCellValue("N$currentRow", 'Doc. No.');
+            $sheet->mergeCells("N" . ($currentRow + 1) . ":P" . ($currentRow + 1))->setCellValue("N" . ($currentRow + 1), 'Issue Dt.');
+            $sheet->mergeCells("N" . ($currentRow + 2) . ":P" . ($currentRow + 2))->setCellValue("N" . ($currentRow + 2), 'Rev. & Dt.');
 
-            $infoData = [
-                'A4:E4' => ['label' => 'DEPARTMENT :- ', 'value' => $department],
-                'F4:K4' => ['label' => 'UNIT :- ', 'value' => $unit],
-                'L4:O4' => ['label' => 'DATE :- ', 'value' => $date],
-            ];
+            $sheet->mergeCells("Q$currentRow:S$currentRow")->setCellValue("Q$currentRow", $document_no->doc_no);
+            $sheet->mergeCells("Q" . ($currentRow + 1) . ":S" . ($currentRow + 1))->setCellValue("Q" . ($currentRow + 1), Displaydateformat($document_no->issue_date));
+            $sheet->mergeCells("Q" . ($currentRow + 2) . ":S" . ($currentRow + 2))->setCellValue("Q" . ($currentRow + 2), $document_no->rev_dt);
 
-            foreach ($infoData as $range => $data) {
-                $cell = explode(':', $range)[0];
-
-                $richText = new RichText();
-                $richText->createTextRun($data['label'])->getFont()->setBold(true);
-                $richText->createText($data['value']);
-
-                $sheet->mergeCells($range);
-                $sheet->getCell($cell)->setValue($richText);
-            }
-
-            $sheet->getStyle("A4:O4")->applyFromArray([
-                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THICK, 'color' => ['argb' => '000000']]],
-                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
-            ]);
-
-            $sheet->mergeCells("A5:C5")->setCellValue("A5", "SERIAL NO");
-            $sheet->mergeCells("D5:H5")->setCellValue("D5", "NAME OF THE MEDICINE");
-            $sheet->mergeCells("I5:K5")->setCellValue("I5", "QUANTITY");
-            $sheet->mergeCells("L5:O5")->setCellValue("L5", "REMARKS");
-
-            $sheet->getStyle("A5:O5")->applyFromArray([
-                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THICK]],
+            $sheet->getStyle("N$currentRow:S" . ($currentRow + 2))->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                 'font' => ['bold' => true],
             ]);
 
-            $row = 6;
-            foreach ($medicine_requisition_fdo_checklist_details as $index => $detail) {
-                $sheet->mergeCells("A$row:C$row")->setCellValue("A$row", $index + 1);
-                $medicineName = getMedicinename($detail->medicine_id) ?? '';
-                $sheet->mergeCells("D$row:H$row")->setCellValue("D$row", $medicineName);
-                $sheet->mergeCells("I$row:K$row")->setCellValue("I$row", $detail->quantity ?? '');
-                $sheet->mergeCells("L$row:O$row")->setCellValue("L$row", $detail->remarks ?? '');
 
-                $sheet->getStyle("A$row:O$row")->applyFromArray([
-                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THICK]],
+            $sheet->mergeCells("A" . ($currentRow + 3) . ":G" . ($currentRow + 3));
+            $richText1 = new RichText();
+            $richText1->createTextRun(' DEPARTMENT:- ')->getFont()->setBold(true);
+            $richText1->createText(getdepartment($medicine_requisition_fdo_details->department));
+            $sheet->getCell("A" . ($currentRow + 3))->setValue($richText1);
+
+            $sheet->mergeCells("H" . ($currentRow + 3) . ":N" . ($currentRow + 3));
+            $richText2 = new RichText();
+            $richText2->createTextRun('UNIT :-  ')->getFont()->setBold(true);
+            $richText2->createText(getUnitname($medicine_requisition_fdo_details->unit));
+            $sheet->getCell("H" . ($currentRow + 3))->setValue($richText2);
+
+            $sheet->mergeCells("O" . ($currentRow + 3) . ":S" . ($currentRow + 3));
+            $richText2 = new RichText();
+            $richText2->createTextRun('DATE :-  ')->getFont()->setBold(true);
+            $richText2->createText(Displaydateformat($medicine_requisition_fdo_details->date));
+            $sheet->getCell("O" . ($currentRow + 3))->setValue($richText2);
+
+            $sheet->getStyle("A" . ($currentRow + 3) . ":S" . ($currentRow + 3))->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+            ]);
+
+            $headerRow = $currentRow + 4;
+
+            $sheet->mergeCells("A$headerRow:C$headerRow")->setCellValue("A$headerRow", "SERIAL NO");
+            $sheet->mergeCells("D$headerRow:I$headerRow")->setCellValue("D$headerRow", "NAME OF THE MEDICINE");
+            $sheet->mergeCells("J$headerRow:N$headerRow")->setCellValue("J$headerRow", "QUANTITY");
+            $sheet->mergeCells("O$headerRow:S$headerRow")->setCellValue("O$headerRow", "REMARKS");
+
+            $sheet->getStyle("A$headerRow:S$headerRow")->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                'font' => ['bold' => true],
+            ]);
+
+
+            $inspectionRow = $headerRow + 1;
+            foreach ($medicine_requisition_fdo_checklist_details as $index => $detail) {
+                $sheet->mergeCells("A$inspectionRow:C$inspectionRow")->setCellValue("A$inspectionRow", $index + 1);
+                $medicineName = getMedicinename($detail->medicine_id) ?? '';
+                $material_expiry = Displaydateformat($detail->material_expiry) ?? '';
+                $sheet->mergeCells("D$inspectionRow:I$inspectionRow")->setCellValue("D$inspectionRow", $medicineName);
+                $sheet->mergeCells("J$inspectionRow:N$inspectionRow")->setCellValue("J$inspectionRow", $detail->quantity ?? '');
+                $sheet->mergeCells("O$inspectionRow:S$inspectionRow")->setCellValue("O$inspectionRow", $detail->remarks ?? '');
+
+                $sheet->getStyle("A$inspectionRow:S$inspectionRow")->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_LEFT, 'vertical' => Alignment::VERTICAL_CENTER],
                 ]);
 
-                $row++;
+                $inspectionRow++;
             }
 
-            $signatureStartRow = $row;
+            $signatureStartRow = $inspectionRow;
             $signatureEndRow = $signatureStartRow + 3;
             $labelRow = $signatureEndRow + 1;
             $imageHeight = 60;
 
             // Requestor Signature
-            $sheet->mergeCells("A{$signatureStartRow}:G{$signatureEndRow}");
             if (file_exists($RequestorSignature)) {
+                $sheet->mergeCells("A$signatureStartRow:J" . ($signatureStartRow + 2));
+
                 $drawing = new Drawing();
-                $drawing->setName('Requestor Signature');
-                $drawing->setDescription('Requestor Signature');
+                $drawing->setName('CREATOR SIGNATURE');
                 $drawing->setPath($RequestorSignature);
-                $drawing->setCoordinates("A{$signatureStartRow}");
-                $drawing->setOffsetX(110);
-                $drawing->setOffsetY(10);
-                $drawing->setWidth($imageHeight);
-                $drawing->setHeight($imageHeight);
+                $drawing->setCoordinates("A$signatureStartRow");
+                $drawing->setOffsetX(100);
+                $drawing->setOffsetY(5);
+                $drawing->setWidth(70);
+                $drawing->setHeight(70);
                 $drawing->setWorksheet($sheet);
+                $sheet->getRowDimension($signatureStartRow + 2)->setRowHeight(40);
+                // Label + Name
+                $sheet->setCellValue("A" . ($signatureStartRow + 3), "CREATOR SIGNATURE: " . getUserName($medicine_requisition_fdo_details->created_by));
+                $sheet->mergeCells("A" . ($signatureStartRow + 3) . ":J" . ($signatureStartRow + 3));
+
+                $sheet->getStyle("A$signatureStartRow:J" . ($signatureStartRow + 3))->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                ]);
             }
 
-            $sheet->mergeCells("A{$labelRow}:G{$labelRow}")->setCellValue("A{$labelRow}", "Requestor Signature");
-
-            // Medical Officer Signature
-            $sheet->mergeCells("H{$signatureStartRow}:O{$signatureEndRow}");
             if (file_exists($safetyofficerSignature)) {
+                $sheet->mergeCells("K$signatureStartRow:S" . ($signatureStartRow + 2));
+
                 $drawing = new Drawing();
-                $drawing->setName('Medical Officer Signature');
-                $drawing->setDescription('Medical Officer Signature');
+                $drawing->setName('SAFETY OFFICER SIGNATURE');
                 $drawing->setPath($safetyofficerSignature);
-                $drawing->setCoordinates("H{$signatureStartRow}");
-                $drawing->setOffsetX(130);
-                $drawing->setOffsetY(10);
-                $drawing->setWidth($imageHeight);
-                $drawing->setHeight($imageHeight);
+                $drawing->setCoordinates("M$signatureStartRow");
+                $drawing->setOffsetX(100);
+                $drawing->setOffsetY(5);
+                $drawing->setWidth(70);
+                $drawing->setHeight(70);
                 $drawing->setWorksheet($sheet);
+                $sheet->getRowDimension($signatureStartRow + 2)->setRowHeight(40);
+                // Label + Name
+                $sheet->setCellValue("K" . ($signatureStartRow + 3), "SAFETY OFFICER SIGNATURE: " . getUserName($medicine_requisition_fdo_details->verified_by));
+                $sheet->mergeCells("K" . ($signatureStartRow + 3) . ":S" . ($signatureStartRow + 3));
+
+                $sheet->getStyle("K$signatureStartRow:S" . ($signatureStartRow + 3))->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                ]);
             }
-
-            $sheet->mergeCells("H{$labelRow}:O{$labelRow}")->setCellValue("H{$labelRow}", "Medical Officer Signature");
-
-            $sheet->getStyle("A{$labelRow}:G{$labelRow}")->applyFromArray([
-                'font' => ['bold' => true],
-                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
-            ]);
-
-            $sheet->getStyle("H{$labelRow}:O{$labelRow}")->applyFromArray([
-                'font' => ['bold' => true],
-                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
-            ]);
-
-            $sheet->getStyle("A{$signatureStartRow}:G{$signatureEndRow}")->applyFromArray([
-                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THICK]],
-                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
-            ]);
-
-            $sheet->getStyle("H{$signatureStartRow}:O{$signatureEndRow}")->applyFromArray([
-                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THICK]],
-                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
-            ]);
 
             $fileName = 'Medical Requisition Slip- Fdo & Security Gate.xlsx';
             $writer = new Xlsx($spreadsheet);
@@ -870,5 +1018,4 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
             return redirect(admin_url('ohc/medical-requisition-slip/fdo-security-gate/list'));
         }
     }
-
 }

@@ -35,11 +35,13 @@ use App\Models\Inspection\audit\Master\Task;
 use App\Models\Inspection\Fire\DetectorType;
 use Kreait\Firebase\Messaging\AndroidConfig;
 use Kreait\Firebase\Messaging\WebPushConfig;
+use App\Models\Inspection\Fire\FireStatusLog;
 use App\Models\Inspection\MSDS\MSDSCheckList;
 use App\Models\Inspection\RRAA\RRAACheckList;
 use App\Models\Inspection\audit\AuditAnalysis;
 use App\Models\Inspection\Master\ChecklistType;
 use App\Models\Inspection\Ohc\SafetyPettyDetails;
+use App\Models\Inspection\Safety\SafetyStatusLog;
 use App\Models\Inspection\Safety\SignatureUpload;
 use App\Models\Inspection\Fire\IsolatingValveType;
 use App\Models\Inspection\Master\ChecklistSubType;
@@ -50,11 +52,15 @@ use App\Models\Inspection\MSDS\MSDSSignatureUpload;
 use App\Models\Inspection\Ohc\SafetyPettyChecklist;
 use App\Models\Inspection\RRAA\RRAASignatureUpload;
 use App\Models\Inspection\Fire\FireExtinguisherType;
+use App\Models\Inspection\Ohc\FirstAiderListDetails;
 use App\Models\Inspection\Fire\FireCheckListFollowUp;
 use App\Models\Inspection\Master\ChecklistSubTypeData;
 use App\Models\Inspection\Ohc\FirstAidRecordChecklist;
+use App\Models\Inspection\Ohc\DailyDepartmentFirstAidBox;
 use App\Models\Inspection\Master\ChecklistSubTypeDataName;
+use App\Models\Inspection\Ohc\MonthlyFirstAidboxChecklist;
 use App\Models\Inspection\GembaWalk\GembaWalkChecklistFile;
+use App\Models\Inspection\Ohc\MedicineRequisitionSlipFloor;
 use App\Models\Inspection\Ohc\MedicineRequistionFdoChecklist;
 use App\Models\Inspection\Safety\MonthlyPhysicalEquipmentList;
 use App\Models\Inspection\Fire\MonthlyPhysicalInspectionFileUpload;
@@ -1980,7 +1986,6 @@ if (!function_exists('getMonth')) {
         {
 
             $shift = DB::table('inspection_shift_option')->select('shift')->where('id', $userid)->where('trash', 'NO')->first();
-
             if ($shift == null) {
                 return '';
             } else {
@@ -2036,6 +2041,37 @@ if (!function_exists('getMonth')) {
         }
     }
 
+    if (!function_exists('GetSafetyUpdatedTime')) {
+        function GetSafetyUpdatedTime($userid, $id, $type, $from_status)
+        {
+            $created_by = $from_status == WAITING_FOR_CAPA_ACTION ? 'created_by' : 'approved_by';
+
+            $statusLog = SafetyStatusLog::where($created_by, $userid)
+                ->where('inspection_id', $id)
+                ->where('type', $type)
+                ->where('from_status', $from_status)
+                ->first();
+
+            return $statusLog ?? null;
+        }
+    }
+
+    if (!function_exists('GetFireUpdatedTime')) {
+        function GetFireUpdatedTime($userid, $id, $type, $from_status)
+        {
+            $created_by = $from_status == WAITING_FOR_CAPA_ACTION ? 'created_by' : 'approved_by';
+
+            $statusLog = FireStatusLog::where($created_by, $userid)
+                ->where('inspection_id', $id)
+                ->where('type', $type)
+                ->where('from_status', $from_status)
+                ->first();
+
+            return $statusLog ?? null;
+        }
+    }
+
+
     if (!function_exists('GetOHCSignature')) {
 
         function GetOHCSignature($userid, $id, $type)
@@ -2056,15 +2092,51 @@ if (!function_exists('getMonth')) {
 
     if (!function_exists('GetOHCMedicineFDO')) {
 
-        function GetOHCMedicineFDO( $id,)
+        function GetOHCMedicineFDO($id)
         {
 
-            $medicineRequisition =MedicineRequistionFdoChecklist::where('reference_id',$id)->where('status',1)->where('trash','NO')->get();
+            $medicineRequisition = MedicineRequistionFdoChecklist::where('reference_id', $id)->where('status', 1)->where('trash', 'NO')->get();
             return $medicineRequisition;
         }
-
     }
 
+    if (!function_exists('GetOHCMedicineFloor')) {
+
+        function GetOHCMedicineFloor($id)
+        {
+
+            $medicineRequisition = MedicineRequisitionSlipFloor::where('reference_id', $id)->where('status', 1)->where('trash', 'NO')->get();
+            return $medicineRequisition;
+        }
+    }
+    if (!function_exists('GetFirstAiderList')) {
+
+        function GetFirstAiderList($id)
+        {
+
+            $medicineRequisition = FirstAiderListDetails::where('reference_id', $id)->where('trash', 'NO')->get();
+            return $medicineRequisition;
+        }
+    }
+    if (!function_exists('GetOHCDailyDepartment')) {
+
+        function GetOHCDailyDepartment($id)
+        {
+
+            $medicineRequisition = DailyDepartmentFirstAidBox::where('reference_id', $id)->where('status', 1)->where('trash', 'NO')->get();
+            return $medicineRequisition;
+        }
+    }
+
+    if (!function_exists('GetMonthlyAuditChecklist')) {
+
+        function GetMonthlyAuditChecklist($id)
+        {
+
+            $medicineRequisition = MonthlyFirstAidboxChecklist::where('reference_id', $id)->where('status', 1)->where('trash', 'NO')->get();
+            return $medicineRequisition;
+        }
+    }
     if (!function_exists('GetSignature')) {
         function GetSignature($userid, $id, $type)
         {
@@ -2523,6 +2595,10 @@ if (!function_exists('getMonth')) {
                     break;
 
                 case CO_TYPE_FIRE_EXTINGUISHER_INSPECTION:
+                    return 'CTFE-000001';
+                    break;
+
+                case CARTRIDGE_TYPE_FIRE_EXTINGUISHER_INSPECTION:
                     return 'CTFE-000001';
                     break;
 

@@ -24,6 +24,16 @@ use Spatie\SimpleExcel\SimpleExcelWriter;
 use Yajra\DataTables\Facades\DataTables;
 use App\Models\Inspection\InspectionStaticDocno;
 
+
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Border;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
+use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
+use PhpOffice\PhpSpreadsheet\RichText\RichText;
+
 class FirstAiderlistController extends Controller
 {
 
@@ -87,14 +97,16 @@ class FirstAiderlistController extends Controller
                         })
 
                         ->addColumn('action', function ($row) {
-                            $btn ="";
-                            $btn .= '<a href="' . admin_url('ohc/first-aider/view/' . encryptId($row->inspection_id)) . '" class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a>';
+                            $btn = "";
+                            $btn .= '<a href="' . admin_url('ohc/first-aider/view/' . encryptId($row->inspection_id)) . '" class="view-icon me-1" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a>';
 
                             $btn .= '<a href="' . admin_url('ohc/first-aider/generalpdf/' . encryptId($row->inspection_id)) . '" style="margin-right: 5px;" title="PDF">
                             <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
                         </a>';
-
-                          return $btn;
+                            $btn .= '<a href="' . admin_url('ohc/first-aider/generalExcel/' . encryptId($row->inspection_id)) . '" style="margin-right: 5px;" title="Excel">
+                        <i class="fas fa-file-excel" style="color: #1D6F42;" aria-hidden="true"></i>
+                     </a>';
+                            return $btn;
                         })
                         ->rawColumns(['action', 'issue_date', 'created_by', 'inspection_status', 'last_updated_date', 'next_review_date'])
                         ->setFilteredRecords($data['filter_records'])
@@ -104,7 +116,7 @@ class FirstAiderlistController extends Controller
 
                     return $datatables;
                 } catch (Exception $ex) {
-                    dd($ex);
+                    report($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }
@@ -130,7 +142,7 @@ class FirstAiderlistController extends Controller
             );
             return view('inspection.inspection_ohc.first_aider_list.add', $data);
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
         }
     }
 
@@ -162,14 +174,14 @@ class FirstAiderlistController extends Controller
 
                 Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
-                dd($ex);
+                report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
             return redirect(admin_url('ohc/first-aider/list'));
         } catch (Exception $ex) {
 
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/first-aider/list'));
         }
@@ -192,7 +204,7 @@ class FirstAiderlistController extends Controller
             }
             return view('inspection.inspection_ohc.first_aider_list.view', $data);
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
         }
     }
 
@@ -230,7 +242,7 @@ class FirstAiderlistController extends Controller
 
             return $mpdf->Output($filename, 'D');
         } catch (\Exception $ex) {
-            dd($ex);
+            report($ex);
             return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
         }
     }
@@ -251,60 +263,154 @@ class FirstAiderlistController extends Controller
         }
     }
 
-    public function ExportExcel(Request $request)
+    public function ExportExcel()
     {
-
         try {
-
             $allData = $this->first_aider->exportdata();
-
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
+            } elseif (count($allData) > 20) {
+                return redirect()->back()->with('error',   __('inspection.excess_error'));
+            }
+            $spreadsheet = new Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
+
+            for ($i = 1; $i <= 200; $i++) {
+                $sheet->getRowDimension($i)->setRowHeight(25);
             }
 
-            $header = [
-                __("common.sno"),
-                'Document Number',
-                'Review date',
-                'Issued Date',
-                'Last Updated Date',
-                'Next Reiview Date',
-                __("common.status"),
-                __("common.created_by"),
-                __("common.created_date"),
-            ];
+            $row = 1;
 
-            $i = 1;
-            foreach ($allData as $data) {
+            foreach ($allData as $details) {
+                $document_no = $this->document_reference->selectOne($details->document_reference_id);
+                $first_aider = $this->first_aider->Selectone($details->id);
+                $first_aider_details = $this->first_aider_details->Selectone($details->id);
 
-                $export = [];
-                $export[] =  $i;
-                $export[] =  $data->doc_no;
-                $export[] =  $data->rev_dt;
-                $export[] =  Displaydateformat($data->issue_date);
-                $export[] = Displaydateformat($data->last_updated_date);
-                $export[] = Displaydateformat($data->next_review_date);
-                $export[] =  $data->status == 1 ? 'Active' : 'In-Active';
-                $export[] =  getusername($data->inspection_created_by);
-                $export[] =  Displaydateformat($data->inspection_created_at);
+                $currentRow = $row;
 
-                $exportData[] = $export;
+                // Logo Section
+                $logoLeftPath = public_path('assets/images/logo-dark.png');
+                if (file_exists($logoLeftPath)) {
+                    $sheet->mergeCells("A$currentRow:F" . ($currentRow + 2));
 
-                $i++;
+                    $drawing = new Drawing();
+                    $drawing->setName('Left Logo');
+                    $drawing->setPath($logoLeftPath);
+                    $drawing->setCoordinates("B$currentRow");
+                    $drawing->setOffsetX(100);
+                    $drawing->setOffsetY(15);
+                    $drawing->setWidth(70);
+                    $drawing->setHeight(70);
+                    $drawing->setWorksheet($sheet);
+
+                    $range = "A$currentRow:F" . ($currentRow + 2);
+                    $sheet->getStyle($range)->applyFromArray([
+                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                    ]);
+                }
+
+                // Title Section
+                $sheet->mergeCells("G{$currentRow}:M" . ($currentRow + 2));
+                $sheet->setCellValue("G{$currentRow}", "First Aider List PN International Pvt.Ltd");
+                $sheet->getStyle("G{$currentRow}")->applyFromArray([
+                    'font' => ['bold' => true, 'size' => 14],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                ]);
+
+                // Document Info
+                $sheet->mergeCells("N$currentRow:P$currentRow")->setCellValue("N$currentRow", 'Doc. No.');
+                $sheet->mergeCells("N" . ($currentRow + 1) . ":P" . ($currentRow + 1))->setCellValue("N" . ($currentRow + 1), 'Issue Dt.');
+                $sheet->mergeCells("N" . ($currentRow + 2) . ":P" . ($currentRow + 2))->setCellValue("N" . ($currentRow + 2), 'Rev. & Dt.');
+
+                $sheet->mergeCells("Q$currentRow:S$currentRow")->setCellValue("Q$currentRow", $document_no->doc_no);
+                $sheet->mergeCells("Q" . ($currentRow + 1) . ":S" . ($currentRow + 1))->setCellValue("Q" . ($currentRow + 1), Displaydateformat($document_no->issue_date));
+                $sheet->mergeCells("Q" . ($currentRow + 2) . ":S" . ($currentRow + 2))->setCellValue("Q" . ($currentRow + 2), $document_no->rev_dt);
+
+                $sheet->getStyle("N$currentRow:S" . ($currentRow + 2))->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                    'font' => ['bold' => true],
+                ]);
+
+                // Review Dates
+                $sheet->mergeCells("A" . ($currentRow + 3) . ":J" . ($currentRow + 3));
+                $richText1 = new RichText();
+                $richText1->createTextRun(' NEXT REVIEW DATE:- ')->getFont()->setBold(true);
+                $richText1->createText(Displaydateformat($first_aider->next_review_date));
+                $sheet->getCell("A" . ($currentRow + 3))->setValue($richText1);
+
+                $sheet->mergeCells("K" . ($currentRow + 3) . ":S" . ($currentRow + 3));
+                $richText2 = new RichText();
+                $richText2->createTextRun(' LAST UPDATED DATE :- ')->getFont()->setBold(true);
+                $richText2->createText(Displaydateformat($first_aider->last_updated_date));
+                $sheet->getCell("K" . ($currentRow + 3))->setValue($richText2);
+
+                $sheet->getStyle("A" . ($currentRow + 3) . ":S" . ($currentRow + 3))->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                ]);
+
+                // Table Header
+                $headerRow = $currentRow + 4;
+                $sheet->mergeCells("A$headerRow:C$headerRow")->setCellValue("A$headerRow", "SERIAL NO");
+                $sheet->mergeCells("D$headerRow:G$headerRow")->setCellValue("D$headerRow", "NAME OF THE EMPLOYEE");
+                $sheet->mergeCells("H$headerRow:J$headerRow")->setCellValue("H$headerRow", "DESIGNATION");
+                $sheet->mergeCells("K$headerRow:M$headerRow")->setCellValue("K$headerRow", "DEPARTMENT");
+                $sheet->mergeCells("N$headerRow:P$headerRow")->setCellValue("N$headerRow", "UNIT");
+                $sheet->mergeCells("Q$headerRow:S$headerRow")->setCellValue("Q$headerRow", "MOBILE NUMBER");
+
+                $sheet->getStyle("A$headerRow:S$headerRow")->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                    'font' => ['bold' => true],
+                ]);
+
+                // Details Rows
+                $inspectionRow = $headerRow + 1;
+                foreach ($first_aider_details as $index => $detail) {
+                    $empName = getEmployeename($detail->emp_id) ?? '-';
+                    $designation = $detail->designation_id ?? '-';
+                    $department = getDepartment($detail->department_id) ?? '-';
+                    $unit = getUnitname($detail->unit_id) ?? '-';
+                    $mobile = $detail->mobile_no ?? '-';
+
+                    $sheet->mergeCells("A$inspectionRow:C$inspectionRow")->setCellValue("A$inspectionRow", $index + 1);
+                    $sheet->mergeCells("D$inspectionRow:G$inspectionRow")->setCellValue("D$inspectionRow", $empName);
+                    $sheet->mergeCells("H$inspectionRow:J$inspectionRow")->setCellValue("H$inspectionRow", $designation);
+                    $sheet->mergeCells("K$inspectionRow:M$inspectionRow")->setCellValue("K$inspectionRow", $department);
+                    $sheet->mergeCells("N$inspectionRow:P$inspectionRow")->setCellValue("N$inspectionRow", $unit);
+                    $sheet->mergeCells("Q$inspectionRow:S$inspectionRow")->setCellValue("Q$inspectionRow", $mobile);
+
+                    $sheet->getStyle("A$inspectionRow:S$inspectionRow")->applyFromArray([
+                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                    ]);
+
+                    $inspectionRow++;
+                }
+
+                // Leave space before next record
+                $row = $inspectionRow + 2;
             }
 
-            $writer = SimpleExcelWriter::streamDownload('First Aider List.xlsx')
-                ->addHeader($header)
-                ->addRows(
-                    $exportData
-                );
-        } catch (Exception $ex) {
+            // Set headers for download
+            $filename = 'First Aider List.xlsx';
+            header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            header("Content-Disposition: attachment; filename=\"$filename\"");
+            header('Cache-Control: max-age=0');
 
-            report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('ohc/first-aider/list'));
+            $writer = new Xlsx($spreadsheet);
+            $writer->save('php://output');
+            exit;
+        } catch (\Exception $e) {
+            return back()->with('error', 'Excel Export Failed: ' . $e->getMessage());
         }
     }
+
+
+
 
     public function ExportPdf(Request $request)
     {
@@ -312,27 +418,23 @@ class FirstAiderlistController extends Controller
         try {
 
             $allData = $this->first_aider->exportdata();
-
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
+            } elseif (count($allData) > 20) {
+                return redirect()->back()->with('error',   __('inspection.excess_error'));
             }
 
-            $header = [
-                __("common.sno"),
-                'Document Number',
-                'Review date',
-                'Issued Date',
-                'Last Updated Date',
-                'Next Reiview Date',
+            foreach( $allData as $details){
+                $document_no = $this->document_reference->selectOne($details->document_reference_id);
 
-                __("common.status"),
-                __("common.created_by"),
-                __("common.created_date"),
-            ];
+            }
+
+
 
             $data = array(
-                'header' => $header,
+
                 'content' => $allData,
+                'document_no' => $document_no,
                 'pagetitle' => "First Aider List",
             );
 
@@ -359,7 +461,7 @@ class FirstAiderlistController extends Controller
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/first-aider/list'));
         }
@@ -404,6 +506,160 @@ class FirstAiderlistController extends Controller
             ]);
         } else {
             return response()->json(['message' => 'Employee not found'], 404);
+        }
+    }
+
+
+    public function generalExcel(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+            $spreadsheet = new Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
+            $document_no = $this->document_reference->selectUsingName('FirstAiderList');
+
+            $first_aider = $this->first_aider->Selectone($id);
+            $first_aider_details = $this->first_aider_details->Selectone($id);
+
+            $sheet->mergeCells("A1:F3");
+            $sheet->getStyle("A1:F3")->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER]
+            ]);
+            $logoLeftPath = public_path('assets/images/logo-dark.png');
+            if (file_exists($logoLeftPath)) {
+                $drawing = new Drawing();
+                $drawing->setName('Left Logo');
+                $drawing->setPath($logoLeftPath);
+                $drawing->setCoordinates('B1');
+                $drawing->setOffsetX(5);
+                $drawing->setOffsetY(5);
+                $drawing->setWidth(60);
+                $drawing->setHeight(60);
+                $drawing->setWorksheet($sheet);
+            }
+
+            $sheet->mergeCells("G1:M3");
+            $sheet->setCellValue("G1", "FIRST AIDER LIST PN INTERNATIONAL PVT. LTD.");
+            $sheet->getStyle("G1")->applyFromArray([
+                'font' => ['bold' => true, 'size' => 14],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+                'fill' => ['fillType' => Fill::FILL_SOLID],
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+            ]);
+
+            $headerLabels = [
+                'N1:P1' => 'Doc. No.',
+                'N2:P2' => 'Issue Dt.',
+                'N3:P3' => 'Rev. & Dt.',
+            ];
+
+            foreach ($headerLabels as $cellRange => $label) {
+                $cell = explode(':', $cellRange)[0];
+                $sheet->mergeCells($cellRange)->setCellValue($cell, $label);
+                $sheet->getStyle($cell)->applyFromArray([
+                    'font' => ['bold' => true],
+                    'alignment' => [
+                        'horizontal' => Alignment::HORIZONTAL_CENTER,
+                        'vertical' => Alignment::VERTICAL_CENTER,
+                    ],
+                ]);
+            }
+
+            $sheet->mergeCells("Q1:S1")->setCellValue("Q1", $document_no->doc_no);
+            $sheet->mergeCells("Q2:S2")->setCellValue("Q2", Displaydateformat($document_no->issue_date));
+            $sheet->mergeCells("Q3:S3")->setCellValue("Q3", $document_no->rev_dt);
+
+            $sheet->getStyle("N1:S3")->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE, 'color' => ['argb' => '000000']]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+            ]);
+
+            $sheet->mergeCells("A4:J4");
+            $richText1 = new RichText();
+            $richText1->createTextRun(' NEXT REVIEW DATE:- ')->getFont()->setBold(true);
+            $richText1->createText(Displaydateformat($first_aider->last_updated_date));
+            $sheet->getCell("A4")->setValue($richText1);
+
+            $sheet->mergeCells("K4:S4");
+            $richText2 = new RichText();
+            $richText2->createTextRun(' LAST UPDATED DATE :- ')->getFont()->setBold(true);
+            $richText2->createText(Displaydateformat($first_aider->next_review_date));
+            $sheet->getCell("K4")->setValue($richText2);
+
+            $sheet->getStyle("A4:S4")->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+            ]);
+
+
+
+
+
+
+            $sheet->mergeCells("A5:C5")->setCellValue("A5", "SERIAL NO");
+            $sheet->mergeCells("D5:G5")->setCellValue("D5", "NAME OF THE EMPLOYEE");
+            $sheet->mergeCells("H5:J5")->setCellValue("H5", "DESIGNATION");
+            $sheet->mergeCells("K5:M5")->setCellValue("K5", "DEPARTMENT");
+            $sheet->mergeCells("N5:P5")->setCellValue("N5", "UNIT");
+            $sheet->mergeCells("Q5:S5")->setCellValue("Q5", "MOBILE NUMER");
+
+            $sheet->getStyle("A5:S5")->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                'font' => ['bold' => true],
+            ]);
+
+            $row = 6;
+            foreach ($first_aider_details as $index => $detail) {
+
+                $sheet->mergeCells("A$row:C$row")->setCellValue("A$row", $index + 1);
+                $empName = getEmployeename($detail->emp_id) ?? '-';
+
+                $designation = $detail->designation_id ?? '-';
+                $department = getDepartment($detail->department_id) ?? '-';
+                $unit = getUnitname($detail->unit_id) ?? '-';
+                $mobile = $detail->mobile_no ?? '-';
+                $sheet->mergeCells("A$row:C$row")->setCellValue("A$row", $index + 1);
+
+                // NAME OF EMPLOYEE
+                $sheet->mergeCells("D$row:G$row")->setCellValue("D$row", $empName);
+
+                // DESIGNATION
+                $sheet->mergeCells("H$row:J$row")->setCellValue("H$row", $designation);
+
+                // DEPARTMENT
+                $sheet->mergeCells("K$row:M$row")->setCellValue("K$row", $department);
+
+                // UNIT
+                $sheet->mergeCells("N$row:P$row")->setCellValue("N$row", $unit);
+
+                // MOBILE NUMBER
+                $sheet->mergeCells("Q$row:S$row")->setCellValue("Q$row", $mobile);
+
+                // Styling
+                $sheet->getStyle("A$row:S$row")->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_LEFT, 'vertical' => Alignment::VERTICAL_CENTER],
+                ]);
+
+
+                $row++;
+            }
+
+
+            $fileName = 'first aider list.xlsx';
+            $writer = new Xlsx($spreadsheet);
+
+            return response()->streamDownload(function () use ($writer) {
+                $writer->save('php://output');
+            }, $fileName, [
+                'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            ]);
+        } catch (\Exception $ex) {
+            report($ex);
+            Session::flash('error', 'Something went wrong!');
+            return redirect(admin_url('ohc/medical-requisition-slip/fdo-security-gate/list'));
         }
     }
 }

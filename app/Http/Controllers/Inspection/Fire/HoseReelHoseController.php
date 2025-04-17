@@ -326,7 +326,11 @@ class HoseReelHoseController extends Controller
             ];
             $this->statusLog->create($insert_array);
             Session::flash('success', 'Your data added successfully');
-            return redirect(admin_url('fire/hose-reel-hose-inspection/list'));
+            if ($inspection->observation_needed == 1) {
+                return redirect(admin_url('fire/checklist-observation/add/' . encryptId($inspection_type) . '/' . encryptId($id)));
+            } else {
+                return redirect(admin_url('fire/hose-reel-hose-inspection/list'));
+            }
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong !');
@@ -790,21 +794,17 @@ class HoseReelHoseController extends Controller
         try {
 
             $allData = $this->hose_reel->exportdata();
+            $inspection_type = HOSE_REEL_INSPECTION;
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
             }
-            $header = [
-                __("common.sno"),
-                'Document Number',
-                'Issue Date',
-                'Revision Date',
-                __("inspection.inspection_status"),
-                __("common.created_by"),
-                __("common.created_date"),
-            ];
+
+            if (count($allData) > 20) {
+                return redirect()->back()->with('error', __('inspection.excess_error'));
+            }
 
             $data = array(
-                'header' => $header,
+                'inspection_type' => $inspection_type,
                 'content' => $allData,
                 'pagetitle' => "Hose Reel Inspection",
             );
@@ -815,13 +815,12 @@ class HoseReelHoseController extends Controller
                 'margin_left' => 10,
                 'margin_right' => 10,
                 'margin_top' => 10,
-
             ];
 
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $view = view('inspection.fire.pdf.pdf', $data);
+            $view = view('inspection.fire.hose_reel.pdf', $data);
             $html = $view->render();
 
             $mpdf->WriteHTML($html);
@@ -841,10 +840,15 @@ class HoseReelHoseController extends Controller
             $id = decryptId($request->id);
 
             if (Auth::check()) {
+                $inspection_type = HOSE_REEL_INSPECTION;
                 $status_log = $this->statusLog->selectOne($id, HOSE_REEL_INSPECTION);
                 $forklift_details = $this->hose_reel->selectOne($id);
                 $inspection = $this->hose_reel_details->GetDetails($forklift_details->id);
                 $document_no = $this->document_reference->selectOne($forklift_details->document_reference_id);
+
+                $approved_by = GetFireSignature($forklift_details->approved_by, $forklift_details->id, $inspection_type);
+                $verified_by = GetFireSignature($forklift_details->verified_by, $forklift_details->id, $inspection_type);
+                $checked_by = GetFireSignature($forklift_details->checked_by, $forklift_details->id, $inspection_type);
 
                 $data = [
                     'status_log' => $status_log,
@@ -852,6 +856,11 @@ class HoseReelHoseController extends Controller
                     'pagetitle' => "Hose Reel Inspection",
                     'inspection' => $inspection,
                     'document_no' => $document_no,
+                    'inspection_type' => $inspection_type,
+                    'approved_by' => $approved_by,
+                    'verified_by' => $verified_by,
+                    'checked_by' => $checked_by,
+
                 ];
             }
 
@@ -872,7 +881,7 @@ class HoseReelHoseController extends Controller
             $mpdf->WriteHTML($view);
 
             $filename = "Hose Reel Inspection.pdf";
-            return $mpdf->Output($filename, 'D');
+            return $mpdf->Output($filename, 'I');
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');

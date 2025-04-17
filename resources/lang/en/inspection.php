@@ -251,5 +251,8 @@ return [
     //Excess Error
     'excess_error' => 'You cannot download more than 20 items!',
 
+    'approved_by' => 'Approved By',
+    'verified_by' => 'Verified By',
+
 
 ];

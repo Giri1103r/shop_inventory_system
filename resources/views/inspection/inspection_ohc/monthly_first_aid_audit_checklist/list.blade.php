@@ -72,7 +72,7 @@
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
-                                      
+
                                         <th>Shift</th>
                                         <th>Frequency</th>
                                         <th>{{ __('common.created_date') }}</th>
@@ -219,6 +219,8 @@
                                         issue_date = $('#issue_date').val();
                                         rev_date = $('#rev_date').val();
                                         status = $('#status').val();
+                                        shift = $('#shift').val();
+                                        frequency = $('#frequency').val();
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
@@ -227,8 +229,7 @@
                                             '&document_number=' + document_number +
                                             '&issue_date=' + issue_date +
                                             '&rev_date=' + rev_date +
-                                            '&shift=' + shift +
-                                            '&frequency=' + frequency
+                                            '&shift=' + shift
                                     }
                                 },
                             ]

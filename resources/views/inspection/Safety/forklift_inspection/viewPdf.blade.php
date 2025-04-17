@@ -174,7 +174,7 @@
             <td width="50%" style="padding:5px;"><b>Revision Date</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
-                {{ isset($inspection_details->rev_dt) ? $inspection_details->rev_dt : '' }}
+                {{ isset($document_no->rev_dt) ? $document_no->rev_dt : '' }}
             </td>
         </tr>
         <tr>
@@ -294,6 +294,45 @@
 
         </tbody>
     </table>
+
+    <br>
+
+
+    @if ($inspection_details->observation_status != OBSERVATION_PENDING)
+        <div style="width:100%;">
+            <table style="width:100%;">
+                <tr>
+                    <td
+                        style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
+                        {{ __('inspection.approval') }}
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <table width="100%" style="width:100%;">
+            <tr>
+                <td width="50%" style="padding:5px;"><b>{{ __('inspection.verified_by') }}</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;">
+                    {{ getUserName($inspection_details->updated_by) }}</td>
+            </tr>
+            <tr>
+                <td width="50%" style="padding:5px;"><b>{{ __('inspection.date') }}</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;"> {{ Displaydateformat($inspection_details->updated_at) }}
+                </td>
+            </tr>
+            <tr>
+                <td width="50%" style="padding:5px;"><b>{{ __('inspection.remarks') }}</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;">
+                    {{ $inspection_details->approval_remarks }}
+                </td>
+            </tr>
+
+        </table>
+        <br>
+    @endif
     <br>
 
 </body>

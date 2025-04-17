@@ -99,7 +99,6 @@ class ForkLiftInspectionController extends Controller
                 }
             }
         }
-
         $data = array();
         return view('inspection.Safety.forklift_inspection.list', $data);
     }
@@ -235,7 +234,6 @@ class ForkLiftInspectionController extends Controller
                 'inspection' => $inspection,
                 'inspection_details' => $inspection_details,
                 'document_no' => $document_no,
-
             );
 
             return view('inspection.Safety.forklift_inspection.view', $data);
@@ -327,18 +325,8 @@ class ForkLiftInspectionController extends Controller
             }else if(count($allData) > 20){
                 return redirect()->back()->with('error', __('inspection.excess_error'));
             }
-            $header = [
-                __("common.sno"),
-                'Document Number',
-                'Issue Date',
-                'Revision Date',
-                "Status",
-                __("common.created_by"),
-                __("common.created_date"),
-            ];
 
             $data = array(
-                'header' => $header,
                 'content' => $allData,
                 'pagetitle' => "Forklift Inspection",
             );
@@ -404,7 +392,6 @@ class ForkLiftInspectionController extends Controller
             $filename = "Forklift Inspection.pdf";
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong!');
             return redirect(admin_url('safety/forklift-inspection/list'));

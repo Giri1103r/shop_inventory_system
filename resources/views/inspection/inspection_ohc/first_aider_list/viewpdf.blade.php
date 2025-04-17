@@ -149,134 +149,92 @@
             <tr>
                 <td
                     style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                    First Aider List
+                    FIRST AIDER LIST
                 </td>
             </tr>
         </table>
     </div>
 
-    <table width="100%" style="width:100%;">
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Document Number</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ isset($document_no->doc_no) ? $document_no->doc_no : '' }}</td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Issue Date</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ Displaydateformat(isset($document_no->issue_date) ? $document_no->issue_date : '') }}
-            </td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Revision Date</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ isset($document_no->rev_dt) ? $document_no->rev_dt : '' }}
-            </td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Next Review date</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ displayDateformat(isset($first_aider->next_review_date) ? $first_aider->next_review_date : '') }}
-            </td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Last Update Date</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ displayDateformat(isset($first_aider->last_updated_date) ? $first_aider->last_updated_date : '') }}
-            </td>
-        </tr>
-        {{-- <tr>
-            <td width="50%" style="padding:5px;"><b>Signature</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                @if (!empty($requestorsignature) && !empty($requestorsignature->file_path))
-                    <img src="{{ admin_url($requestorsignature->file_path) }}" alt="Requestor Signature"
-                        style="width: 150px; height: auto;" />
-                @elseif (!empty($signatureview) && !empty($signatureview->signature_upload))
-                    {{-- Fixed typo --}}
-                    {{-- <img src="{{ admin_url($signatureview->signature_upload) }}" alt="Approver Signature"
-                        style="width: 150px; height: auto;" />
-                @else
-                    <span>No signature available</span>
-                @endif
-            </td>
-        </tr> --}}
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Created By</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ getUsername(isset($first_aider->created_by) ? $first_aider->created_by : '') }}</td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Created Date</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;"> {{ displayDateformat($first_aider->created_at) }}</td>
-        </tr>
-    </table>
+    <table
+    style="width: 100%; border-collapse: collapse; font-family: Arial, sans-serif; text-align: center; border: 1px solid black;">
 
-    <br>
+    <tr>
+        <th  colspan="8" style="border:1px solid black;height:50;width:40">
+            <img src="{{ url('public/assets/images/logo-dark.png') }}" style="width:125px;height:50px;">
+        </th>
+        <th colspan="8" style="border:1px solid black;">
+            <h3>
+                <span><b> FIRST AIDER LIST</b></span>
+                <br>
+                <span><b> PN INTERNATIONAL PVT. LTD.</b></span>
+            </h3>
+        </th>
 
-    <div>
-        <div style="width:100%;">
-            <table style="width:100%;">
-                <tr>
-                    <td
-                        style="width:100%; background-color: #ce0f1f; color:#ffffff; padding: 10px 10px 10px; font-weight:bold;">
-                        Employee details
-                    </td>
-                </tr>
+        <th colspan="8" style="border:1px solid black;">
+            <table class="table table-bordered scrolldown">
+                <thead>
+                    <tr>
+                        <td style="border: 1px solid black;width:70;">Doc.No</td>
+                        <td style="border: 1px solid black;">{{$document_no->doc_no}}</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid black;width:70;">Issue Dt.</td>
+                        <td style="border: 1px solid black;">{{$document_no->issue_date}}</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid black;width:70;">Rev.& Dt.</td>
+                        <td style="border: 1px solid black;">{{$document_no->rev_dt}}</td>
+                    </tr>
+                </thead>
             </table>
-        </div>
-        <div class="table-responsive">
-            <div class="col-md-12">
-                @if (isset($first_aider_details) && $first_aider_details->isNotEmpty())
-                    <table class="table table-bordered table-hover tblborder">
-                        <thead>
-                            <tr>
-                                <th>S.NO</th>
-                                <th>Unit</th>
-                                <th>Department</th>
-                                <th>Employee Name</th>
-                                <th>Designation</th>
-                                <th>Mobile Number</th>
+
+        </th>
+    </tr>
+    <tr>
+        <th colspan="12"
+            style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
+            NEXT REVIEW DATE: {{ Displaydateformat($first_aider->last_updated_date) ?? 'N/A' }}
+        </th>
+        <th colspan="12"
+            style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
+            LAST UPDATED DATE: {{ Displaydateformat($first_aider->next_review_date) ?? 'N/A' }}
+        </th>
+
+    </tr>
+
+    <tr>
+        <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="2">SR. NO</th>
+        <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">NAME OF THE
+            EMPLOYEE</th>
+        <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">
+            DESIGNATION</th>
+        <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="5">DEPARTMENT
+        </th>
+        <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="5">UNIT
+        </th>
+        <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">MOBILE NUMBER
+        </th>
+
+    </tr>
+    @php
+        $medicineRequisitionDetails = GetFirstAiderList($first_aider->id);
+    @endphp
+
+    @foreach ($medicineRequisitionDetails as $details)
+        <tr>
+            <td style="border: 1px solid black; padding: 8px;" colspan="2">{{ $loop->iteration }}</td>
+            <td style="border: 1px solid black; padding: 8px;" colspan="4">{{ getEmployeename($details->emp_id) }}
+            </td>
+            <td style="border: 1px solid black; padding: 8px;" colspan="4">{{ $details->designation_id }}</td>
+            <td style="border: 1px solid black; padding: 8px;"colspan="5">{{ getDepartment($details->department_id) }}</td>
+            <td style="border: 1px solid black; padding: 8px;"colspan="5">{{getUnitname ($details->unit_id) }}</td>
+            <td style="border: 1px solid black; padding: 8px;"colspan="4">{{ $details->mobile_no }}</td>
+
+        </tr>
+    @endforeach
 
 
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @if ($first_aider_details->isEmpty())
-                                <tr>
-                                    <td colspan="4" class="text-center">No data is available</td>
-                                </tr>
-                            @else
-                                @foreach ($first_aider_details as $data)
-                                    <tr>
-                                        <td>{{ $loop->iteration }}</td>
-                                        <td>{{ getUnitname($data->unit_id) }}</td>
-                                        <td>{{ getDepartment($data->department_id) }}</td>
-                                        <td>{{ getEmployeename($data->emp_id) }}</td>
-                                        <td>{{ $data->designation_id }}</td>
-                                        <td>{{ $data->mobile_no }}</td>
-
-                                    </tr>
-                                @endforeach
-                            @endif
-                        </tbody>
-                    </table>
-                @else
-                    <div class="card-body">
-                        <p class="text-dark">{{ __('No status logs available.') }}</p>
-                    </div>
-                @endif
-            </div>
-        </div>
-        <br>
-    </div>
+</table>
 
 
 

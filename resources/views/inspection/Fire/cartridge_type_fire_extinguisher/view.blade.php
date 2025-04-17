@@ -137,13 +137,22 @@
                                             <div class="card-header-inner p-2">
                                                 <h4 class="text-white">Cartridge Type Fire Extinguisher Inspection Observation</h4>
                                             </div>
-                                            <div class="col-md-12 mb-2">
+                                            {{-- <div class="col-md-12 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">{{ __('inspection.obs') }}</label>
                                                     <div class="view_data">
                                                         {{ $inspection->observation }}
                                                     </div>
 
+                                                </div>
+                                            </div> --}}
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label
+                                                        class="form-label require">Observation</label>
+                                                    <div class="view_data">
+                                                        {{ $inspection->observation_needed == '1' ? 'YES' : 'NO' }}
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -435,7 +444,7 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label ">{{ __('inspection.date') }}</label>
                                                     <div class="view_data">
-                                                        {{ Displaydateformat($inspection->created_at) }}
+                                                        {{ Displaydateformat($inspection->fire_associate_updated_at) }}
                                                     </div>
                                                 </div>
                                             </div>
@@ -488,7 +497,7 @@
                                             <div class="form-group form-input">
                                                 <label class="form-label ">{{ __('inspection.date') }}</label>
                                                 <div class="view_data">
-                                                    {{ Displaydateformat($inspection->created_at) }}
+                                                    {{ Displaydateformat($inspection->ehs_officer_verified_at) }}
                                                 </div>
                                             </div>
                                         </div>
@@ -540,7 +549,7 @@
                                             <div class="form-group form-input">
                                                 <label class="form-label ">{{ __('inspection.date') }}</label>
                                                 <div class="view_data">
-                                                    {{ Displaydateformat($inspection->created_at) }}
+                                                    {{ Displaydateformat($inspection->l1_manager_updated_at) }}
                                                 </div>
                                             </div>
                                         </div>
@@ -591,7 +600,7 @@
                                             <div class="form-group form-input">
                                                 <label class="form-label ">{{ __('inspection.date') }}</label>
                                                 <div class="view_data">
-                                                    {{ Displaydateformat($inspection->created_at) }}
+                                                    {{ Displaydateformat($inspection->l2_manager_updated_at) }}
                                                 </div>
                                             </div>
                                         </div>

@@ -98,7 +98,7 @@
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">First Aid Box No</label>
                                         <div class="view_data">
-                                            {{ (isset($medicinerequisition->first_aid_box_no) ? $medicinerequisition->first_aid_box_no : '') }}
+                                            {{ isset($medicinerequisition->first_aid_box_no) ? $medicinerequisition->first_aid_box_no : '' }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
@@ -107,27 +107,24 @@
                                             {{ getFirstAider(isset($medicinerequisition->first_aider) ? $medicinerequisition->first_aider : '') }}
                                         </div>
                                     </div>
-                                    @if (!empty($requestorsignature) && !empty($requestorsignature->requestor_file_path))
-                                    <div class="col-md-4 mb-2">
-                                        <div class="form-group form-input">
-                                            <label class="form-label" style="display: block;">
-                                                {{ __('inspection.signature') }}
-                                            </label>
-                                            <img src="{{ admin_url($requestorsignature->requestor_file_path) }}"
-                                                alt="Signature Upload" style="width: 150px; margin-top: -10px;" />
+                                    @php
+                                        $signature = GetOHCSignature(
+                                            $medicinerequisition->created_by,
+                                            $medicinerequisition->id,
+                                            OHC_TYPE_DAILY_DEPARTMENT_FIRST_AID_BOX,
+                                        );
+                                    @endphp
+                                    @if (!empty($signature) && !empty($signature))
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label" style="display: block;">
+                                                    {{ __('inspection.signature') }}
+                                                </label>
+                                                <img src="{{ admin_url($signature) }}" alt="Signature Upload"
+                                                    style="width: 150px; margin-top: -10px;" />
+                                            </div>
                                         </div>
-                                    </div>
-                                @else
-                                    <div class="col-md-4 mb-2">
-                                        <div class="form-group form-input">
-                                            <label class="form-label" style="display: block;">
-                                                {{ __('inspection.signature') }}
-                                            </label>
-                                            <img src="{{ admin_url($signatureview->signature_upload) }}"
-                                                alt="Signature Upload" style="width: 150px; margin-top: -10px;" />
-                                        </div>
-                                    </div>
-                                @endif
+                                    @endif
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('common.created_by') }}</label>
                                         <div class="view_data">
@@ -195,8 +192,10 @@
 
                                 @if (
                                     (checkUserRole(ROLE_FLOOR_MANAGER) && $medicinerequisition->approve_status == MEDICAL_ASSISTANT_APPROVAL_PENDING) ||
-                                        (checkUserRole(ROLE_SUPERADMIN) && $medicinerequisition->approve_status == MEDICAL_ASSISTANT_APPROVAL_PENDING) ||
-                                        (checkUserRole(ROLE_MEDICAL_ASSISTANT) && $medicinerequisition->approve_status == MEDICAL_ASSISTANT_APPROVAL_PENDING))
+                                        (checkUserRole(ROLE_SUPERADMIN) &&
+                                            $medicinerequisition->approve_status == MEDICAL_ASSISTANT_APPROVAL_PENDING) ||
+                                        (checkUserRole(ROLE_MEDICAL_ASSISTANT) &&
+                                            $medicinerequisition->approve_status == MEDICAL_ASSISTANT_APPROVAL_PENDING))
                                     <div class="row">
                                         <div class="card-header-inner">
                                             <h4 class="text-white">Floor Manager /Medical Assistant Approval Pending</h4>
@@ -270,8 +269,7 @@
                                     </div>
                                 @endif
                                 @if (
-
-                                        $medicinerequisition->approve_status ==  MEDICAL_ASSISTANT_APPROVED ||
+                                    $medicinerequisition->approve_status == MEDICAL_ASSISTANT_APPROVED ||
                                         $medicinerequisition->approve_status == MEDICAL_ASSISTANT_REJECTED)
                                     <div class="row">
                                         <div class="card-header-inner">
@@ -344,7 +342,6 @@
 @stop
 @push('script')
     <script>
-
         // floor manager validation
 
         $(document).ready(function() {

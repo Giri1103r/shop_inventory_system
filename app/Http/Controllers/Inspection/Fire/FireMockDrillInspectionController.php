@@ -216,7 +216,6 @@ class FireMockDrillInspectionController extends Controller
             $id = $inspection->id;
             $inspection_details = $this->fire_mock_drill_inspection_details->store($id);
             $inspection_file = $this->files->file_upload($inspection_type, $id);
-            $checklist_store = $this->checklist_follow->store($inspection_type, $id);
             $signature_update = $this->signature->CheckedBySignature($id, $inspection_type);
 
             $ehsOfficer = GetEHSOfficer();
@@ -265,7 +264,6 @@ class FireMockDrillInspectionController extends Controller
             Session::flash('success', 'Your data added successfully');
             return redirect(admin_url('fire/fire-mock-drill-observation/list'));
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('fire/fire-mock-drill-observation/list'));

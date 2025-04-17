@@ -136,13 +136,23 @@
                                             <div class="card-header-inner p-2">
                                                 <h4 class="text-white">Fire PA System Observation</h4>
                                             </div>
-                                            <div class="col-md-12 mb-2">
+                                            {{-- <div class="col-md-12 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">{{ __('inspection.obs') }}</label>
                                                     <div class="view_data">
                                                         {{ $inspection->observation }}
                                                     </div>
 
+                                                </div>
+                                            </div> --}}
+
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label
+                                                        class="form-label require">Observation</label>
+                                                    <div class="view_data">
+                                                        {{ $inspection->observation_needed == '1' ? 'YES' : 'NO' }}
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -284,7 +294,8 @@
                                     <hr>
                                 </div>
 
-                                @if ($inspection->inspection_status == WAITING_FOR_EHS_OFFICER_VERIFICATION)
+                                @if ($inspection->inspection_status == WAITING_FOR_EHS_OFFICER_VERIFICATION &&
+                                        (checkUserRole(ROLE_FIRE_ASSOCIATES) || isAdmin()) )
                                     <div class="row mt-3">
                                         <div class="card-header-inner">
                                             <h4 class="text-white">{{ __('inspection.ehs_officer_verify') }}</h4>
@@ -443,7 +454,7 @@
                                                     <div class="form-group form-input">
                                                         <label class="form-label ">{{ __('inspection.date') }}</label>
                                                         <div class="view_data">
-                                                            {{ Displaydateformat($inspection->created_at) }}
+                                                            {{ Displaydateformat($inspection->fire_associate_updated_at) }}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -495,7 +506,7 @@
                                                     <div class="form-group form-input">
                                                         <label class="form-label ">{{ __('inspection.date') }}</label>
                                                         <div class="view_data">
-                                                            {{ Displaydateformat($inspection->created_at) }}
+                                                            {{ Displaydateformat($inspection->ehs_officer_verified_at) }}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -548,7 +559,7 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label ">{{ __('inspection.date') }}</label>
                                                     <div class="view_data">
-                                                        {{ Displaydateformat($inspection->created_at) }}
+                                                        {{ Displaydateformat($inspection->l1_manager_updated_at) }}
                                                     </div>
                                                 </div>
                                             </div>
@@ -599,7 +610,7 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label ">{{ __('inspection.date') }}</label>
                                                     <div class="view_data">
-                                                        {{ Displaydateformat($inspection->created_at) }}
+                                                        {{ Displaydateformat($inspection->l2_manager_updated_at) }}
                                                     </div>
                                                 </div>
                                             </div>
@@ -637,7 +648,8 @@
                                     $inspection->inspection_status == WAITING_FOR_CAPA_ACTION ||
                                         $inspection->inspection_status == L2_MANAGER_REJECTED ||
                                         $inspection->inspection_status == EHS_OFFICER_REJECTED ||
-                                        $inspection->inspection_status == L1_MANAGER_REJECTED)
+                                        $inspection->inspection_status == L1_MANAGER_REJECTED  &&
+                                        (checkUserRole(ROLE_FIRE_ASSOCIATES) || isAdmin()) )
                                     <div class="row mt-3">
                                         <div class="card-header-inner">
                                             <h4 class="text-white">{{ __('inspection.capa_action') }}</h4>
@@ -691,7 +703,7 @@
                                     </form>
                                 @endif
 
-                                @if ($inspection->inspection_status == WAITING_FOR_CAPA_VERIFICATION)
+                                @if ($inspection->inspection_status == WAITING_FOR_CAPA_VERIFICATION && (checkUserRole(ROLE_EHS_OFFICER) || isAdmin()) )
                                     <form method="POST" id="forklistassessmentAdd"
                                         action="{{ admin_url('fire/pa-system-inspection/capa/reverify/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
@@ -742,7 +754,7 @@
                                     </form>
                                 @endif
 
-                                @if ($inspection->inspection_status == WAITING_FOR_L1_VERIFICATION)
+                                @if ($inspection->inspection_status == WAITING_FOR_L1_VERIFICATION && (checkUserRole(ROLE_L1_MANAGER) || isAdmin()) )
                                     <form method="POST" id="levelOneManager"
                                         action="{{ admin_url('fire/pa-system-inspection/level-one/verify/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
@@ -795,7 +807,7 @@
                                     </form>
                                 @endif
 
-                                @if ($inspection->inspection_status == WAITING_FOR_L2_VERIFICATION)
+                                @if ($inspection->inspection_status == WAITING_FOR_L2_VERIFICATION  && (checkUserRole(ROLE_L2_MANAGER) || isAdmin()) )
                                     <form method="POST" id="levelTwoManager"
                                         action="{{ admin_url('fire/pa-system-inspection/level-two/verify/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">

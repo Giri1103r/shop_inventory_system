@@ -240,10 +240,10 @@
                     {{ isset($details->description) ? $details->description : '' }}
                 </td>
                 <td colspan="6" style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
-                    {!! getGivenSignatureBlock($type, $sub_type_given, $details->id, $details->amount_given_by) !!}
+                    {!! getGivenSignatureBlock($type, $sub_type_given, $details->safety_petty_id, $details->amount_given_by) !!}
                 </td>
                 <td colspan="6" style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
-                    {!! getReceivedSignatureBlock($type, $sub_type_given, $details->id, $details->sub_type_received) !!}
+                    {!! getReceivedSignatureBlock($type, $sub_type_received, $details->safety_petty_id, $details->amount_received_by) !!}
                 </td>
                 <td colspan="4" style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
                     {{ isset($details->remark) ? $details->remark : '' }}

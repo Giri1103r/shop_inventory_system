@@ -112,6 +112,10 @@
         .table-container {
             padding: 20px;
         }
+
+        .page-break {
+            page-break-before: always;
+        }
     </style>
 </head>
 
@@ -139,7 +143,6 @@
             </tr>
         </table>
     </htmlpagefooter>
-    @dd($content);
 
     @foreach ($content as $details)
         <div style="width:100%;">
@@ -152,50 +155,44 @@
                 </tr>
             </table>
         </div>
-        <table>
+        <table style="width: 100%; border-collapse: collapse; border: 3px double black;">
             <tr>
-                <th colspan="4" style="border:1px solid black;height:50;width:40">
+                <th colspan="3" style="border: 2px double black;">
                     <img src="{{ url('public/assets/images/logo-dark.png') }}" style="width:125px;height:50px;">
                 </th>
-                <th colspan="6" style="border:1px solid black;">
-                    <h3>
+                <th colspan="4" style="border: 2px double black; text-align: center;">
+                    <h3 style="margin: 0;">
                         <span><b>FORKLIFT INSPECTION</b></span>
-                        <br>
-
                     </h3>
                 </th>
-
-                <th colspan="6" style="border:1px solid black;">
-                    <table class="table table-bordered scrolldown">
-                        <thead>
-                            <tr>
-                                <td style="border: 1px solid black;width:70;">Doc.No</td>
-                                <td style="border: 1px solid black;">{{ $details->doc_no }}</td>
-                            </tr>
-                            <tr>
-                                <td style="border: 1px solid black;width:70;">Issue Dt.</td>
-                                <td style="border: 1px solid black;">{{ $details->issue_date }}</td>
-                            </tr>
-                            <tr>
-                                <td style="border: 1px solid black;width:70;">Rev.& Dt.</td>
-                                <td style="border: 1px solid black;">{{ $details->rev_dt }}</td>
-                            </tr>
-                        </thead>
+                <th colspan="3" style="border: 2px double black; padding: 0;">
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <tr>
+                            <td style="border: 2px double black; width: 30%;">Doc.No</td>
+                            <td style="border: 2px double black;">{{ $details['0']->doc_no }}</td>
+                        </tr>
+                        <tr>
+                            <td style="border: 2px double black;">Issue Dt.</td>
+                            <td style="border: 2px double black;">{{ displaydateformat($details['0']->issue_date) }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="border: 2px double black;">Rev.& Dt.</td>
+                            <td style="border: 2px double black;">{{ $details['0']->rev_dt }}</td>
+                        </tr>
                     </table>
-
                 </th>
             </tr>
         </table>
-
-
-
         <br>
         <table style="width: 100%; border-collapse: collapse; text-align: center;">
             <thead>
                 <tr>
-                    <th rowspan="2" style="border: 2px solid black; padding: 8px; background-color: #ddd;">SR. NO.
+                    <th rowspan="2" style="border: 2px solid black; padding: 8px; background-color: #ddd;">SR.
+                        NO.
                     </th>
-                    <th rowspan="2" style="border: 2px solid black; padding: 8px; background-color: #ddd;">DEPARTMENT
+                    <th rowspan="2" style="border: 2px solid black; padding: 8px; background-color: #ddd;">
+                        DEPARTMENT
                     </th>
                     <th rowspan="2" style="border: 2px solid black; padding: 8px; background-color: #ddd;">UNIT
                     </th>
@@ -212,7 +209,8 @@
                         CORRECTIVE AND PREVENTIVE ACTION</th>
                     <th style="border: 2px solid black; padding: 8px; background-color: #eee; font-weight: bold;">
                         RESPONSIBILITY</th>
-                    <th style="border: 2px solid black; padding: 8px; background-color: #eee; font-weight: bold;">DATE
+                    <th style="border: 2px solid black; padding: 8px; background-color: #eee; font-weight: bold;">
+                        DATE
                         OF
                         COMPLIANCE</th>
                     <th style="border: 2px solid black; padding: 8px; background-color: #eee; font-weight: bold;">
@@ -223,19 +221,21 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach ($inspection as $detail)
+                @foreach ($details as $detail)
                     <tr>
                         <td style="border: 2px solid black; padding: 8px;">{{ $loop->iteration }}</td>
-                        <td style="border: 2px solid black; padding: 8px;">{{ getDepartment($detail->department_id) }}
+                        <td style="border: 2px solid black; padding: 8px;">
+                            {{ getDepartment($detail->department_id) }}
                         </td>
                         <td style="border: 2px solid black; padding: 8px;">
                             {{ getUnitname($detail->unit_id) }}</td>
                         <td style="border: 2px solid black; padding: 8px;">{{ $detail->identification_no }}</td>
                         <td style="border: 2px solid black; padding: 8px;">{{ $detail->observation }}</td>
 
-                        <td style="border: 2px solid black; padding: 8px;">{{ $detail->correction_preventive_action }}
+                        <td style="border: 2px solid black; padding: 8px;">
+                            {{ $detail->correction_preventive_action }}
                         </td>
-                        <td style="border: 2px solid black; padding: 8px;">{{ $detail->responsibility }}
+                        <td style="border: 2px solid black; padding: 8px;">{{ getUserName($detail->responsibility) }}
                         </td>
                         <td style="border: 2px solid black; padding: 8px;">
                             {{ Displaydateformat($detail->date_of_compliance) }}</td>
@@ -254,13 +254,13 @@
                 @endforeach
                 @php
                     $prepared_by_signature = GetSafetySignature(
-                        $inspection_details->created_by,
-                        $inspection_details->id,
+                        $detail->checked_by,
+                        $detail->safety_id,
                         FORKLIFT_INSPECTION,
                     );
                     $verified_by_signature = GetSafetySignature(
-                        $inspection_details->updated_by,
-                        $inspection_details->id,
+                        $detail->verified_by,
+                        $detail->safety_id,
                         FORKLIFT_INSPECTION,
                     );
                 @endphp
@@ -269,14 +269,14 @@
                         style="border: 2px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
                         <img src="{{ admin_url($prepared_by_signature) }}" alt="Checked By Signature"
                             style="height: 50px;">
-                        <div>Checked & Prepared By: {{ getUsername($inspection_details->created_by) }}</div>
+                        <div>Checked & Prepared By: {{ getUsername($detail->checked_by) }}</div>
                     </td>
                     <td colspan="5"
                         style="border: 2px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
-                        @if ($inspection_details->updated_by != null)
+                        @if ($detail->verified_by != null)
                             <img src="{{ admin_url($verified_by_signature) }}" alt="Verified By Signature"
                                 style="height: 50px;">
-                            <div>Verified By: {{ getUsername($inspection_details->updated_by) }}</div>
+                            <div>Verified By: {{ getUsername($detail->verified_by) }}</div>
                         @else
                             <p>Inspection has not been Verified Yet</p>
                         @endif
@@ -285,9 +285,7 @@
 
             </tbody>
         </table>
-        @dd(1);
+        <div class="page-break"></div>
     @endforeach
-
 </body>
-
 </html>

@@ -3,6 +3,7 @@
 namespace App\Models\Inspection\Fire;
 
 use App\Scopes\TrashScope;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 
@@ -14,6 +15,7 @@ class PASystemInspection extends Model
     protected $fillable = [
         'id',
         'document_reference_id',
+        'observation_needed',
         'date_of_inspection',
         'location',
         'shift',
@@ -40,6 +42,10 @@ class PASystemInspection extends Model
         'updated_by',
         'created_at',
         'updated_at',
+        'ehs_officer_verified_at',
+        'l1_manager_updated_at',
+        'l2_manager_updated_at',
+        'fire_associate_updated_at',
     ];
 
     protected $attributes = [
@@ -71,8 +77,8 @@ class PASystemInspection extends Model
             });
         }
 
-        if (isset($request->location) && $request->location) {
-            $query = $query->where('inspection_fire_pa_system.location', 'LIKE', '%' . decryptId($request->location) . '%');
+        if (isset($request->location_id) && $request->location_id) {
+            $query = $query->where('inspection_fire_pa_system.location', 'LIKE', '%' . decryptId($request->location_id) . '%');
         }
         if (isset($request->frequency) && $request->frequency) {
             $query = $query->where('inspection_fire_pa_system.frequency', 'LIKE', '%' . decryptId($request->frequency) . '%');
@@ -147,7 +153,8 @@ class PASystemInspection extends Model
             'location' => decryptId($request->location_id),
             'shift' => decryptId($request->shift_id),
             'next_due' => DBdateformat($request->next_due),
-            'observation' => $request->observation,
+            // 'observation' => $request->observation,
+            'observation_needed' => decryptId($request->observation_needed),
             'unit' => decryptId($request->unit_id),
             'frequency' => decryptId($request->frequency_id),
             'inspection_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,
@@ -162,7 +169,7 @@ class PASystemInspection extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_fire_pa_system.*', 'inspection_fire_pa_system_checklist.*', 'inspection_shift_option.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*')
+        $query = $this->select('inspection_fire_pa_system.*', 'inspection_fire_pa_system_checklist.*', 'inspection_shift_option.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*','inspection_fire_pa_system.id as fire_pa_inspection_id','inspection_fire_pa_system.created_by as checked_by')
             ->leftJoin('masters_location', 'inspection_fire_pa_system.location', '=', 'masters_location.id')
             ->leftJoin('inspection_shift_option', 'inspection_fire_pa_system.shift', '=', 'inspection_shift_option.id')
             ->leftJoin('masters_unit', 'inspection_fire_pa_system.unit', '=', 'masters_unit.id')
@@ -178,9 +185,8 @@ class PASystemInspection extends Model
                 $query->orWhereRaw('inspection_frequency_option.frequency_name LIKE "%' . $search . '%"');
             });
         }
-
-        if (isset($request->location) && $request->location) {
-            $query = $query->where('inspection_fire_pa_system.location', 'LIKE', '%' . decryptId($request->location) . '%');
+        if (isset($request->location_id) && $request->location_id) {
+            $query = $query->where('inspection_fire_pa_system.location', 'LIKE', '%' . decryptId($request->location_id) . '%');
         }
         if (isset($request->frequency) && $request->frequency) {
             $query = $query->where('inspection_fire_pa_system.frequency', 'LIKE', '%' . decryptId($request->frequency) . '%');
@@ -223,6 +229,7 @@ class PASystemInspection extends Model
                 'inspection_status' => INSPECTION_APPROVED,
                 'updated_by' => Auth::id(),
                 'remarks' => $request->remarks,
+                'ehs_officer_verified_at' => Carbon::now(),
             ];
             $this->where('id', $id)->update($update_array);
         } else {
@@ -231,6 +238,7 @@ class PASystemInspection extends Model
                 'inspection_status' => WAITING_FOR_CAPA_ACTION,
                 'updated_by' => Auth::id(),
                 'capa_recomendation' => $request->remarks,
+                'ehs_officer_verified_at' => Carbon::now(),
             ];
             $this->where('id', $id)->update($update_array);
         }
@@ -243,6 +251,7 @@ class PASystemInspection extends Model
             'capa_remarks' => $request->capa_remarks,
             'updated_by' => Auth::id(),
             'inspection_status' => WAITING_FOR_CAPA_VERIFICATION,
+            'fire_associate_updated_at' => Carbon::now(),
         ];
         $this->where('id', $id)->update($update_array);
     }
@@ -256,6 +265,7 @@ class PASystemInspection extends Model
                 'updated_by' => Auth::id(),
                 'inspection_status' => WAITING_FOR_L1_VERIFICATION,
                 'capa_ehs_remarks' => $remarks,
+                'ehs_officer_verified_at' => Carbon::now(),
             ];
             $this->where('id', $id)->update($update_array);
         } else {
@@ -264,6 +274,7 @@ class PASystemInspection extends Model
                 'updated_by' => Auth::id(),
                 'inspection_status' => EHS_OFFICER_REJECTED,
                 'capa_ehs_remarks' => $remarks,
+                'ehs_officer_verified_at' => Carbon::now(),
             ];
             $this->where('id', $id)->update($update_array);
         }
@@ -277,6 +288,7 @@ class PASystemInspection extends Model
                 'updated_by' => Auth::id(),
                 'inspection_status' => WAITING_FOR_L2_VERIFICATION,
                 'level_one_manager_remarks' => $remarks,
+                'l1_manager_updated_at' => Carbon::now(),
             ];
             $this->where('id', $id)->update($update_array);
         } else {
@@ -285,6 +297,7 @@ class PASystemInspection extends Model
                 'updated_by' => Auth::id(),
                 'inspection_status' => L1_MANAGER_REJECTED,
                 'level_one_manager_remarks' => $remarks,
+                'l1_manager_updated_at' => Carbon::now(),
             ];
             $this->where('id', $id)->update($update_array);
         }
@@ -299,6 +312,7 @@ class PASystemInspection extends Model
                 'updated_by' => Auth::id(),
                 'inspection_status' => INSPECTION_APPROVED,
                 'level_two_manager_remarks' => $remarks,
+                'l2_manager_updated_at' => Carbon::now(),
             ];
             $this->where('id', $id)->update($update_array);
         } else {
@@ -307,6 +321,7 @@ class PASystemInspection extends Model
                 'updated_by' => Auth::id(),
                 'inspection_status' => L2_MANAGER_REJECTED,
                 'level_two_manager_remarks' => $remarks,
+                'l2_manager_updated_at' => Carbon::now(),
             ];
             $this->where('id', $id)->update($update_array);
         }

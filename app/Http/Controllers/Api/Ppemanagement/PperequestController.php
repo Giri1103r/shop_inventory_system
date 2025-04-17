@@ -201,20 +201,20 @@ class PperequestController extends BaseController
                         }
 
                         $file_name = time() . Str::random(10) . '.' . $fileExt;
-                        $file_path = $upload_path . '/' . $file_name;
+                        $file_path = 'public/'.$upload_path . '/' . $file_name;
 
                         $image_data = base64_decode($sign);
-                        file_put_contents(public_path($file_path), $image_data);
+                        file_put_contents(($file_path), $image_data);
                     }
                 }
                 if ($request->request_for == 1) {
 
-                    $employee = Employee::where('emp_id', $request->emp_id)
-                        ->select('unit', 'department', 'company')
-                        ->first();
+                    $employee = User::where('employee_id', $request->emp_id)
+                    ->select('unit_id', 'department_id', 'company_id')
+                    ->first();
 
-                    $unit = $employee->unit;
-                    $department = $employee->department;
+                    $unit = $employee->unit_id;
+                    $department = $employee->department_id;
                 } elseif ($request->request_for == 2) {
                     $work = Work::where('emp_id', $request->emp_id)
                         ->select('unit', 'department', 'company')
@@ -300,8 +300,6 @@ class PperequestController extends BaseController
                 ];
 
                 return $this->sendResponse($success, 'PPE Request Created successfully');
-            } else {
-                return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
             }
         } catch (Exception $ex) {
         report($ex);

@@ -247,15 +247,18 @@
                                         </p>
                                     @else
                                         <div class="col-md-4 mb-3">
+                                            <div class="form-group form-input">
+
+
                                             <label for="signature_image"
                                                 class="form-label fw-bold require">Requestor Signature</label>
                                             <input type="file"
-                                                class="form-control validate-file-accept validate-file-required"
+                                                class="form-control  validate-file-required"
                                                 accept="image/png, image/jpeg, image/jpg" name="signature_image"
                                                 id="signature_image">
                                             <div class="text-danger"></div>
                                             <small>Allowed file types: png, jpeg, jpg</small>
-
+                                        </div>
                                             <!-- Preview Container -->
                                             <div id="imagePreviewContainer" class="mt-2"
                                                 style="display: none;">
@@ -322,6 +325,11 @@
                     issue_date: {
                         required: true,
                     },
+                    signature_image: {
+                        required: true,
+                        extension: "png|jpeg|jpg",
+                        filesize: 5242880
+                    },
                     shift: {
                         required: true,
                     },
@@ -347,6 +355,12 @@
                         minlength: "Minimum Characters should be 3",
                         maxlength: "Maximum Characters should not exceed 100",
                     },
+                    signature_image: {
+                        required: "Please upload your signature image.",
+                        extension: "Allowed file types: PNG, JPEG, JPG.",
+                        filesize: "File must be less than 5 MB."
+                    },
+
                     issue_date: {
                         required: "Issue date is required",
                     },

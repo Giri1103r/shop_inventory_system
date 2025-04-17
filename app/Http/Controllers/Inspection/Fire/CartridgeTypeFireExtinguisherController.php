@@ -81,8 +81,8 @@ class CartridgeTypeFireExtinguisherController extends Controller
                         ->addColumn('created_date', function ($row) {
                             return Displaydateformat($row->created_at);
                         })
-                        ->addColumn('date_of_inspection', function ($row) {
-                            return Displaydateformat($row->date_of_inspection);
+                        ->addColumn('inspection_date', function ($row) {
+                            return Displaydateformat($row->inspection_date);
                         })
                         ->addColumn('next_due', function ($row) {
                             return Displaydateformat($row->next_due);
@@ -148,7 +148,7 @@ class CartridgeTypeFireExtinguisherController extends Controller
                                     </a>';
                             return $btn;
                         })
-                        ->rawColumns(['action', 'created_date', 'created_by', 'status', 'inspection_status', 'date_of_inspection', 'next_due', 'location', 'shift', 'frequency'])
+                        ->rawColumns(['action', 'created_date', 'created_by', 'status', 'inspection_status', 'inspection_date', 'next_due', 'location', 'shift', 'frequency'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -251,7 +251,7 @@ class CartridgeTypeFireExtinguisherController extends Controller
                 'safety_pin.*' => 'required',
                 'approach.*' => 'required',
                 'remarks.*' => 'required',
-                'observation' => 'required',
+                // 'observation' => 'required',
             ];
 
             $messages = [
@@ -276,7 +276,7 @@ class CartridgeTypeFireExtinguisherController extends Controller
                 'safety_pin.*.required' => 'Safety Pin is required.',
                 'approach.*.required' => 'Approach is required.',
                 'remarks.*.required' => 'Remarks are required.',
-                'observation.required' => 'Observation is  required.',
+                // 'observation.required' => 'Observation is  required.',
             ];
 
             $validator = Validator::make($request->all(), $rules, $messages);
@@ -292,7 +292,7 @@ class CartridgeTypeFireExtinguisherController extends Controller
             $inspection_details = $this->cartridge_type_details->store($id);
             $inspection_file = $this->files->file_upload($inspection_type, $id);
 
-            $checklist_store = $this->checklist_follow->store($inspection_type, $id);
+            // $checklist_store = $this->checklist_follow->store($inspection_type, $id);
             $signature_update = $this->signature->CheckedBySignature($id, $inspection_type);
 
             $ehsOfficer = GetEHSOfficer();
@@ -339,9 +339,14 @@ class CartridgeTypeFireExtinguisherController extends Controller
             ];
             $this->statusLog->create($insert_array);
             Session::flash('success', 'Your data added successfully');
-            return redirect(admin_url('fire/fire-extinguisher/cartridge/list'));
+
+            if ($inspection->observation_needed == 1) {
+                return redirect(admin_url('fire/checklist-observation/add/' . encryptId($inspection_type) . '/' . encryptId($id)));
+            } else {
+                return redirect(admin_url('fire/fire-extinguisher/cartridge/list'));
+            }
+
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('fire/fire-extinguisher/cartridge/list'));
@@ -370,7 +375,6 @@ class CartridgeTypeFireExtinguisherController extends Controller
             );
             return view('inspection.fire.cartridge_type_fire_extinguisher.view', $data);
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('fire/fire-extinguisher/cartridge/list'));
@@ -810,6 +814,7 @@ class CartridgeTypeFireExtinguisherController extends Controller
         try {
 
             $allData = $this->cartridge_type->exportdata();
+
             $inspection_type = CARTRIDGE_TYPE_FIRE_EXTINGUISHER_INSPECTION;
             $document_no = $this->document_reference->selectUsingName('CartridgeTypeFireExtinguisher');
 
