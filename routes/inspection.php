@@ -349,6 +349,8 @@ Route::group(['prefix' => 'safety/'], function () {
         Route::GET('export/excel', [MonthlyEyeWashInspectionController::class, 'exportExcel']);
         Route::GET('export/pdf', [MonthlyEyeWashInspectionController::class, 'exportPdf']);
         Route::GET('exportViewPdf/{id}', [MonthlyEyeWashInspectionController::class, 'exportViewPdf']);
+        Route::get('generalexcel/{id}', [MonthlyEyeWashInspectionController::class, 'generalExcel']);
+
     });
 
     Route::group(['prefix' => 'forklift-inspection/monthly/'], function () {
@@ -513,6 +515,7 @@ Route::group(['prefix' => 'fire/'], function () {
         Route::POST('level-two/verify/submit', [HooterInspectionController::class, 'levelTwoManagerSubmit']);
         Route::GET('exportViewPdf/{id}', [HooterInspectionController::class, 'ExportViewPDF']);
         Route::GET('export/excel', [HooterInspectionController::class, 'ExportExcel']);
+        Route::GET('export/excel/{id}', [HooterInspectionController::class, 'GeneralExcel']);
         Route::GET('export/pdf', [HooterInspectionController::class, 'ExportPDF']);
         Route::GET('get/department', [HooterInspectionController::class, 'GetDepartment']);
     });
@@ -841,6 +844,7 @@ Route::group(['prefix' => 'fire/'], function () {
         Route::POST('level-one/verify/submit', [CartridgeTypeFireExtinguisherController::class, 'levelOneManagerSubmit']);
         Route::POST('level-two/verify/submit', [CartridgeTypeFireExtinguisherController::class, 'levelTwoManagerSubmit']);
         Route::GET('exportViewPdf/{id}', [CartridgeTypeFireExtinguisherController::class, 'ExportViewPDF']);
+        Route::GET('generalExcel/{id}', [CartridgeTypeFireExtinguisherController::class, 'generalExcel']);
         Route::GET('export/excel', [CartridgeTypeFireExtinguisherController::class, 'ExportExcel']);
         Route::GET('export/pdf', [CartridgeTypeFireExtinguisherController::class, 'ExportPDF']);
         Route::GET('get/department', [CartridgeTypeFireExtinguisherController::class, 'GetDepartment']);

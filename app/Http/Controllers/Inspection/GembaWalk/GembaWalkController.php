@@ -1020,7 +1020,7 @@ class GembaWalkController extends Controller
                 'L2:M2' => 'Issue Dt.',
                 'L3:M3' => 'Rev. & Dt.',
             ];
-
+            
             foreach ($headerLabels as $cellRange => $label) {
                 $cell = explode(':', $cellRange)[0];
                 $sheet->mergeCells($cellRange)->setCellValue($cell, $label);
@@ -1030,19 +1030,19 @@ class GembaWalkController extends Controller
                         'horizontal' => Alignment::HORIZONTAL_CENTER,
                         'vertical' => Alignment::VERTICAL_CENTER,
                     ],
-                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['argb' => '000000']]],
-
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE, 'color' => ['argb' => '000000']]],
                 ]);
             }
-
+            
             $sheet->setCellValue("N1", $document_no->doc_no);
             $sheet->setCellValue("N2", Displaydateformat($document_no->issue_date));
             $sheet->setCellValue("N3", $document_no->rev_dt);
-
+            
             $sheet->getStyle("L1:N3")->applyFromArray([
-                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['argb' => '000000']]],
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE, 'color' => ['argb' => '000000']]],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
             ]);
+            
 
             $headers = [
                 'Sr.',
@@ -1337,9 +1337,18 @@ class GembaWalkController extends Controller
                 $sheet->setCellValue("N" . ($currentRow + 2), $document_no->rev_dt ?? '');
 
                 $sheet->getStyle("L{$currentRow}:N" . ($currentRow + 2))->applyFromArray([
-                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['argb' => '000000']]],
-                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                    'borders' => [
+                        'allBorders' => [
+                            'borderStyle' => Border::BORDER_DOUBLE,  
+                            'color' => ['argb' => '000000'],  
+                        ]
+                    ],
+                    'alignment' => [
+                        'horizontal' => Alignment::HORIZONTAL_CENTER, 
+                        'vertical' => Alignment::VERTICAL_CENTER
+                    ]
                 ]);
+
 
                 $columnWidths = [
                     'A' => 5,
