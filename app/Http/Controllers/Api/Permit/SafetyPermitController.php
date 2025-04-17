@@ -309,7 +309,6 @@ class SafetyPermitController extends BaseController
                         $ptwstatusLogs[] = $logEntry; // Push log entry to array
                     }
                 }
-
                 $success = [
                     'id' => $safetypermit->id,
                     'permit_id' => $safetypermit->permit_id,
@@ -322,8 +321,8 @@ class SafetyPermitController extends BaseController
                     'created_by' => getusername($safetypermit->created_by),
                     'created_at' => Displaydateformat($safetypermit->created_at),
                     'safety_permit_status' => [
-                        'id' => $status_log->status_id,
-                        'status' => $status_log->status_name,
+                        'id' => $safetypermit->status_id,
+                        'status' => $safetypermit->status_name,
                     ],
                     'type_of_work' => [
                         'sub_permit' => $sub_permits,
