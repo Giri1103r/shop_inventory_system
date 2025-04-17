@@ -146,7 +146,7 @@ class MonthlyEyeWashInspectionController extends Controller
                             $btn .= '<a href="' . admin_url('safety/eye-wash-inspection/monthly/exportViewPdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
                                         <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
                                     </a>';
-                            $btn .= '<a href="' . admin_url('safety/eye-wash-inspection/monthly/generalexcel/' . encryptId($row->inspection_id)) . '" style="margin-right: 5px;" title="EXCEL">
+                            $btn .= '<a href="' . admin_url('safety/eye-wash-inspection/monthly/generalexcel/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="EXCEL">
                                         <i class="fas fa-file-excel" style="color: #1D6F42;" aria-hidden="true"></i>
                                     </a>';
                             return $btn;
@@ -730,49 +730,232 @@ class MonthlyEyeWashInspectionController extends Controller
 
     public function ExportExcel(Request $request)
     {
-
         try {
             $allData = $this->eye_wash->exportdata();
+
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
             }
 
-            $header = [
-                __("common.sno"),
-                'Document Number',
-                'Issue Date',
-                'Revision Date',
-                __("inspection.inspection_status"),
-                __("common.created_by"),
-                __("common.created_date"),
-            ];
+            $spreadsheet = new Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
 
-            $i = 1;
-            foreach ($allData as $data) {
-
-                $export = [];
-                $export[] =  $i;
-                $export[] =  $data->doc_no;
-                $export[] =  $data->issue_date;
-                $export[] = $data->revision_data;
-                $export[] =  getInspectionStatus($data->inspection_status);;
-                $export[] =  getusername($data->created_by);
-                $export[] =  Displaydateformat($data->created_at);
-                $exportData[] = $export;
-                $i++;
+            foreach (range('A', 'M') as $col) {
+                $sheet->getColumnDimension($col)->setAutoSize(true);
+            }
+            for ($i = 1; $i <= 2000; $i++) {
+                $sheet->getRowDimension($i)->setRowHeight(25);
             }
 
-            $writer = SimpleExcelWriter::streamDownload('Monthly Eye Wash Inspection.xlsx')
-                ->addHeader($header)
-                ->addRows(
-                    $exportData
-                );
-        } catch (Exception $ex) {
-            report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            $logoPath = public_path('assets/images/logo-dark.png');
+            $startRow = 1;
+            $serial = 1;
+
+            foreach ($allData as $eye_wash) {
+                $inspection_data = $this->eye_wash_details->GetDetails($eye_wash->id);
+                $document_no = $this->document_reference->selectOne($eye_wash->document_reference_id);
+
+                $prepared_by_signature = GetSafetySignature($eye_wash->created_by, $eye_wash->id, EYE_WASH_INSPECTION);
+                $verified_by_signature = GetSafetySignature($eye_wash->updated_by, $eye_wash->id, EYE_WASH_INSPECTION);
+                $approved_by_signature = GetSafetySignature($eye_wash->approved_by, $eye_wash->id, EYE_WASH_INSPECTION);
+
+                if (file_exists($logoPath)) {
+                    $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
+                    $drawing->setName('Logo');
+                    $drawing->setDescription('Company Logo');
+                    $drawing->setPath($logoPath);
+                    $drawing->setCoordinates('A' . $startRow);
+                    $drawing->setOffsetX(5);
+                    $drawing->setOffsetY(5);
+                    $drawing->setHeight(60);
+                    $drawing->setWorksheet($sheet);
+                }
+
+                $sheet->mergeCells("C{$startRow}:K" . ($startRow + 2));
+                $sheet->setCellValue("C{$startRow}", 'MONTHLY SAFETY SHOWER CUM EYE WASH INSPECTION CHECKLIST PN INTERNATIONAL PVT. LTD.');
+                $sheet->getStyle("C{$startRow}:K" . ($startRow + 2))->applyFromArray([
+                    'font' => ['bold' => true, 'size' => 14],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                ]);
+
+                $sheet->mergeCells("A{$startRow}:B" . ($startRow + 2));
+                $sheet->getStyle("A{$startRow}:B" . ($startRow + 2))->applyFromArray([
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                    'borders' => ['outline' => ['borderStyle' => Border::BORDER_THIN]],
+                ]);
+
+                $labelMap = [
+                    'L' . $startRow => ['value' => 'Doc. No.', 'valueCell' => 'M' . $startRow, 'data' => $document_no->doc_no ?? ''],
+                    'L' . ($startRow + 1) => ['value' => 'Issue Dt.', 'valueCell' => 'M' . ($startRow + 1), 'data' => Displaydateformat($document_no->issue_date ?? '')],
+                    'L' . ($startRow + 2) => ['value' => 'Rev. & Dt.', 'valueCell' => 'M' . ($startRow + 2), 'data' => $document_no->rev_dt ?? ''],
+                ];
+
+                foreach ($labelMap as $cell => $info) {
+                    $sheet->setCellValue($cell, $info['value']);
+                    $sheet->setCellValue($info['valueCell'], $info['data']);
+                    $sheet->getStyle($cell)->applyFromArray([
+                        'font' => ['bold' => true],
+                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
+                    ]);
+                    $sheet->getStyle($info['valueCell'])->applyFromArray([
+                        'font' => ['bold' => true],
+                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
+                    ]);
+                }
+
+                $startRow += 3;
+
+                $sheet->mergeCells("A{$startRow}:D{$startRow}")->setCellValue("A{$startRow}", 'Date of Inspection:- ' . Displaydateformat($eye_wash->date_of_inspection));
+                $sheet->mergeCells("E{$startRow}:I{$startRow}")->setCellValue("E{$startRow}", 'Location :- ' . getLocationname($eye_wash->location));
+                $sheet->mergeCells("J{$startRow}:M{$startRow}")->setCellValue("J{$startRow}", 'Shift:- ' . getShift($eye_wash->shift));
+                $startRow++;
+
+                $sheet->mergeCells("A{$startRow}:D{$startRow}")->setCellValue("A{$startRow}", 'Next Due date:- ' . Displaydateformat($eye_wash->next_due));
+                $sheet->mergeCells("E{$startRow}:I{$startRow}")->setCellValue("E{$startRow}", 'Unit:- ' . getUnitname($eye_wash->unit));
+                $sheet->mergeCells("J{$startRow}:M{$startRow}")->setCellValue("J{$startRow}", 'Frequency:- ' . getFrequencyname($eye_wash->frequency));
+
+                $sheet->getStyle("A" . ($startRow-1) . ":M{$startRow}")->applyFromArray([
+                    'font' => ['bold' => true],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                ]);
+                $startRow++;
+
+                $headerStart = $startRow;
+                $sheet->mergeCells("A{$headerStart}:A" . ($headerStart + 2))->setCellValue("A{$headerStart}", 'SR. NO');
+                $sheet->mergeCells("B{$headerStart}:B" . ($headerStart + 2))->setCellValue("B{$headerStart}", 'LOCATION');
+                $sheet->mergeCells("C{$headerStart}:D" . ($headerStart + 2))->setCellValue("C{$headerStart}", 'RESOURCE CODE');
+
+                $sheet->mergeCells("E{$headerStart}:L{$headerStart}")->setCellValue("E{$headerStart}", 'CHECK ITEMS');
+                $sheet->mergeCells("E" . ($headerStart + 1) . ":G" . ($headerStart + 1))->setCellValue("E" . ($headerStart + 1), 'CONDITION');
+                $sheet->mergeCells("H" . ($headerStart + 1) . ":L" . ($headerStart + 1))->setCellValue("H" . ($headerStart + 1), 'WATER');
+
+                $sheet->setCellValue("E" . ($headerStart + 2), 'VALUE');
+                $sheet->setCellValue("F" . ($headerStart + 2), 'HANDS-FREE STAY OPEN VALVE');
+                $sheet->setCellValue("G" . ($headerStart + 2), 'FOOT PEDAL VALVE');
+                $sheet->setCellValue("H" . ($headerStart + 2), 'EYEWASH HEADS');
+                $sheet->setCellValue("I" . ($headerStart + 2), 'RECEPTACLE');
+                $sheet->setCellValue("J" . ($headerStart + 2), 'QUALITY');
+                $sheet->setCellValue("K" . ($headerStart + 2), 'PRESSURE');
+                $sheet->setCellValue("L" . ($headerStart + 2), 'TEMPERATURE');
+
+                $sheet->mergeCells("M{$headerStart}:M" . ($headerStart + 2))->setCellValue("M{$headerStart}", 'REMARKS');
+
+                $sheet->getStyle("A{$headerStart}:M" . ($headerStart + 2))->applyFromArray([
+                    'font' => ['bold' => true],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                ]);
+
+                $startRow = $headerStart + 3;
+
+                $sr = 1;
+                foreach ($inspection_data as $detail) {
+                    $sheet->setCellValue("A{$startRow}", $sr);
+                    $sheet->setCellValue("B{$startRow}", getLocationname($detail['location']) ?? '');
+                    $sheet->mergeCells("C{$startRow}:D{$startRow}")->setCellValue("C{$startRow}", $detail['resource_code'] ?? '');
+                    $sheet->setCellValue("E{$startRow}", $detail['value'] ?? '');
+                    $sheet->setCellValue("F{$startRow}", $detail['hand_free_stay_open_value'] ?? '');
+                    $sheet->setCellValue("G{$startRow}", $detail['foot_pedal_value'] ?? '');
+                    $sheet->setCellValue("H{$startRow}", $detail['eyewash_heads_value'] ?? '');
+                    $sheet->setCellValue("I{$startRow}", $detail['receptacle'] ?? '');
+                    $sheet->setCellValue("J{$startRow}", $detail['quality'] ?? '');
+                    $sheet->setCellValue("K{$startRow}", $detail['pressure'] ?? '');
+                    $sheet->setCellValue("L{$startRow}", $detail['temperature'] ?? '');
+                    $sheet->setCellValue("M{$startRow}", $detail['remarks'] ?? '');
+
+                    $sheet->getStyle("A{$startRow}:M{$startRow}")->applyFromArray([
+                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                    ]);
+
+                    $startRow++;
+                    $sr++;
+                }
+
+                $signatureRowStart = $startRow ;
+                $sheet->getRowDimension($signatureRowStart)->setRowHeight(80);
+
+                $sheet->mergeCells("A{$signatureRowStart}:E{$signatureRowStart}");
+                $sheet->getStyle("A{$signatureRowStart}:E{$signatureRowStart}")->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+                ]);
+
+                if (file_exists($prepared_by_signature)) {
+                    $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
+                    $drawing->setName('Prepared');
+                    $drawing->setPath($prepared_by_signature);
+                    $drawing->setCoordinates("C{$signatureRowStart}");
+                    $drawing->setOffsetX(5);
+                    $drawing->setOffsetY(5);
+                    $drawing->setHeight(40);
+                    $drawing->setWorksheet($sheet);
+                    $sheet->setCellValue("A{$signatureRowStart}", "\n\n\nPrepared By:\n" . getUsername($eye_wash->created_by));
+                } else {
+                    $sheet->setCellValue("A{$signatureRowStart}", "Prepared By:\nInspection not yet started");
+                }
+
+                $sheet->mergeCells("F{$signatureRowStart}:I{$signatureRowStart}");
+                $sheet->getStyle("F{$signatureRowStart}:I{$signatureRowStart}")->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+                ]);
+
+                if (file_exists($verified_by_signature)) {
+                    $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
+                    $drawing->setName('Verified');
+                    $drawing->setPath($verified_by_signature);
+                    $drawing->setCoordinates("G{$signatureRowStart}");
+                    $drawing->setOffsetX(5);
+                    $drawing->setOffsetY(5);
+                    $drawing->setHeight(40);
+                    $drawing->setWorksheet($sheet);
+                    $sheet->setCellValue("F{$signatureRowStart}", "\n\n\nVerified By:\n" . getUsername($eye_wash->updated_by));
+                } else {
+                    $sheet->setCellValue("F{$signatureRowStart}", "Verified By:\nInspection not yet completed");
+                }
+
+                $sheet->mergeCells("J{$signatureRowStart}:M{$signatureRowStart}");
+                $sheet->getStyle("J{$signatureRowStart}:M{$signatureRowStart}")->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+                ]);
+
+                if (file_exists($approved_by_signature)) {
+                    $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
+                    $drawing->setName('Approved');
+                    $drawing->setPath($approved_by_signature);
+                    $drawing->setCoordinates("L{$signatureRowStart}");
+                    $drawing->setOffsetX(5);
+                    $drawing->setOffsetY(5);
+                    $drawing->setHeight(40);
+                    $drawing->setWorksheet($sheet);
+                    $sheet->setCellValue("J{$signatureRowStart}", "\n\n\nApproved By:\n" . getUsername($eye_wash->approved_by));
+                } else {
+                    $sheet->setCellValue("J{$signatureRowStart}", "Approved By:\nApproval pending");
+                }
+
+                $startRow = $signatureRowStart + 5;
+            }
+
+            $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+            $fileName = 'Monthly Eye Wash Inspection All.xlsx';
+            $filePath = storage_path("app/public/{$fileName}");
+            $writer->save($filePath);
+
+            return response()->download($filePath)->deleteFileAfterSend(true);
+
+        } catch (\Exception $e) {
+            report($e);
+            Session::flash('error', 'Something went wrong!');
             return redirect(admin_url('safety/eye-wash-inspection/monthly/list'));
         }
     }
+
 
     public function ExportPdf(Request $request)
     {
@@ -826,9 +1009,9 @@ class MonthlyEyeWashInspectionController extends Controller
                 $inspection_details = $this->eye_wash->selectOne($id);
                 $inspection = $this->eye_wash_details->GetDetails($inspection_details->id);
                 $document_no = $this->document_reference->selectOne($inspection_details->document_reference_id);
-                $approved_by = GetSafetySignature($inspection_details->id,$inspection_details->approved_by,EYE_WASH_INSPECTION);
-                $verified_by = GetSafetySignature($inspection_details->id,$inspection_details->verified_by,EYE_WASH_INSPECTION);
-                $checked_by = GetSafetySignature($inspection_details->id,$inspection_details->verified_by,EYE_WASH_INSPECTION);
+                $approved_by = GetSafetySignature($inspection_details->id, $inspection_details->approved_by, EYE_WASH_INSPECTION);
+                $verified_by = GetSafetySignature($inspection_details->id, $inspection_details->verified_by, EYE_WASH_INSPECTION);
+                $checked_by = GetSafetySignature($inspection_details->id, $inspection_details->verified_by, EYE_WASH_INSPECTION);
                 $document_no = $this->document_reference->selectUsingName('MonthlyEyeWashInspection');
 
 
@@ -843,7 +1026,6 @@ class MonthlyEyeWashInspectionController extends Controller
                     'checked_by' => $checked_by,
                     'document_no' => $document_no,
                 ];
-
             }
 
             $property = [
@@ -871,6 +1053,7 @@ class MonthlyEyeWashInspectionController extends Controller
         }
     }
 
+
     public function generalExcel(Request $request)
     {
         try {
@@ -879,19 +1062,16 @@ class MonthlyEyeWashInspectionController extends Controller
             $sheet = $spreadsheet->getActiveSheet();
 
             $eye_wash = $this->eye_wash->find($id);
-
-
             $inspection_data = $this->eye_wash_details->GetDetails($eye_wash->id);
             $document_no = $this->document_reference->selectOne($eye_wash->document_reference_id);
 
-            $prepared_by_signature = GetFireSignature($eye_wash->created_by, $eye_wash->id, EYE_WASH_INSPECTION);
-            $verified_by_signature = GetFireSignature($eye_wash->updated_by, $eye_wash->id, EYE_WASH_INSPECTION);
-            $approved_by_signature = GetFireSignature($eye_wash->approved_by, $eye_wash->id, EYE_WASH_INSPECTION);
+            $prepared_by_signature = GetSafetySignature($eye_wash->created_by, $eye_wash->id, EYE_WASH_INSPECTION);
+            $verified_by_signature = GetSafetySignature($eye_wash->updated_by, $eye_wash->id, EYE_WASH_INSPECTION);
+            $approved_by_signature = GetSafetySignature($eye_wash->approved_by, $eye_wash->id, EYE_WASH_INSPECTION);
 
-            foreach (range('A', 'O') as $col) {
+                foreach (range('A', 'M') as $col) {
                 $sheet->getColumnDimension($col)->setAutoSize(true);
             }
-
             for ($i = 1; $i <= 200; $i++) {
                 $sheet->getRowDimension($i)->setRowHeight(25);
             }
@@ -910,9 +1090,9 @@ class MonthlyEyeWashInspectionController extends Controller
             }
 
             $sheet->mergeCells('A1:B3');
-            $sheet->mergeCells("C1:M3");
-            $sheet->setCellValue("C1", "MONTHLY SAFETY SHOWER CUM EYE WASH INSPECTION CHECKLIST PN INTERNATIONAL PVT. LTD.");
-            $sheet->getStyle("C1:M3")->applyFromArray([
+            $sheet->mergeCells('C1:K3');
+            $sheet->setCellValue('C1', 'MONTHLY SAFETY SHOWER CUM EYE WASH INSPECTION CHECKLIST PN INTERNATIONAL PVT. LTD.');
+            $sheet->getStyle('C1:K3')->applyFromArray([
                 'font' => ['bold' => true, 'size' => 14],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
@@ -923,21 +1103,19 @@ class MonthlyEyeWashInspectionController extends Controller
             ]);
 
             $labelMap = [
-                'N1' => ['value' => 'Doc. No.', 'valueCell' => 'O1', 'data' => $document_no->doc_no],
-                'N2' => ['value' => 'Issue Dt.', 'valueCell' => 'O2', 'data' => Displaydateformat($document_no->issue_date)],
-                'N3' => ['value' => 'Rev. & Dt.', 'valueCell' => 'O3', 'data' => $document_no->rev_dt],
+                'L1' => ['value' => 'Doc. No.', 'valueCell' => 'M1', 'data' => $document_no->doc_no],
+                'L2' => ['value' => 'Issue Dt.', 'valueCell' => 'M2', 'data' => Displaydateformat($document_no->issue_date)],
+                'L3' => ['value' => 'Rev. & Dt.', 'valueCell' => 'M3', 'data' => $document_no->rev_dt],
             ];
 
             foreach ($labelMap as $labelCell => $info) {
                 $sheet->setCellValue($labelCell, $info['value']);
                 $sheet->setCellValue($info['valueCell'], $info['data']);
-
                 $sheet->getStyle($labelCell)->applyFromArray([
                     'font' => ['bold' => true],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
                 ]);
-
                 $sheet->getStyle($info['valueCell'])->applyFromArray([
                     'font' => ['bold' => true],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
@@ -945,42 +1123,40 @@ class MonthlyEyeWashInspectionController extends Controller
                 ]);
             }
 
-            $sheet->mergeCells("A4:E4")->setCellValue("A4", "Date of Inspection:- " . Displaydateformat($eye_wash->inspection_date));
-            $sheet->mergeCells("F4:L4")->setCellValue("F4", "Location :- " . getLocationname($eye_wash->location));
-            $sheet->mergeCells("M4:O4")->setCellValue("M4", "Shift:- " . getShift($eye_wash->shift));
-            $sheet->mergeCells("A5:E5")->setCellValue("A5", "Next Due date:- " . Displaydateformat($eye_wash->next_due));
-            $sheet->mergeCells("F5:L5")->setCellValue("F5", "Unit:- " . getUnitname($eye_wash->unit));
-            $sheet->mergeCells("M5:O5")->setCellValue("M5", "Frequency:- " . getFrequencyname($eye_wash->frequency));
-            $sheet->getStyle("A4:O5")->applyFromArray([
+            $sheet->mergeCells('A4:D4')->setCellValue('A4', 'Date of Inspection:- ' . Displaydateformat($eye_wash->date_of_inspection));
+            $sheet->mergeCells('E4:I4')->setCellValue('E4', 'Location :- ' . getLocationname($eye_wash->location));
+            $sheet->mergeCells('J4:M4')->setCellValue('J4', 'Shift:- ' . getShift($eye_wash->shift));
+
+            $sheet->mergeCells('A5:D5')->setCellValue('A5', 'Next Due date:- ' . Displaydateformat($eye_wash->next_due));
+            $sheet->mergeCells('E5:I5')->setCellValue('E5', 'Unit:- ' . getUnitname($eye_wash->unit));
+            $sheet->mergeCells('J5:M5')->setCellValue('J5', 'Frequency:- ' . getFrequencyname($eye_wash->frequency));
+
+            $sheet->getStyle('A4:M5')->applyFromArray([
                 'font' => ['bold' => true],
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
             ]);
 
-            $sheet->mergeCells("A6:A8")->setCellValue("A6", "SR. NO");
-            $sheet->mergeCells("B6:B8")->setCellValue("B6", "LOCATION");
-            $sheet->mergeCells("C6:D8")->setCellValue("C6", "RESOURCE CODE");
-            $sheet->mergeCells("E6:F8")->setCellValue("E6", "");
+            $sheet->mergeCells('A6:A8')->setCellValue('A6', 'SR. NO');
+            $sheet->mergeCells('B6:B8')->setCellValue('B6', 'LOCATION');
+            $sheet->mergeCells('C6:D8')->setCellValue('C6', 'RESOURCE CODE');
 
-            $sheet->mergeCells("G6:N6")->setCellValue("G6", "CHECK ITEMS");
+            $sheet->mergeCells('E6:L6')->setCellValue('E6', 'CHECK ITEMS');
+            $sheet->mergeCells('E7:G7')->setCellValue('E7', 'CONDITION');
+            $sheet->mergeCells('H7:L7')->setCellValue('H7', 'WATER');
 
-            $sheet->mergeCells("G7:I7")->setCellValue("G7", "CONDITION");
-            $sheet->mergeCells("J7:N7")->setCellValue("J7", "WATER");
+            $sheet->setCellValue('E8', 'VALUE');
+            $sheet->setCellValue('F8', 'HANDS-FREE STAY OPEN VALVE');
+            $sheet->setCellValue('G8', 'FOOT PEDAL VALVE');
+            $sheet->setCellValue('H8', 'EYEWASH HEADS');
+            $sheet->setCellValue('I8', 'RECEPTACLE');
+            $sheet->setCellValue('J8', 'QUALITY');
+            $sheet->setCellValue('K8', 'PRESSURE');
+            $sheet->setCellValue('L8', 'TEMPERATURE');
 
-            $sheet->setCellValue("G8", "TYPE");
-            $sheet->setCellValue("H8", "HANDS-FREE STAY OPEN VALVE");
-            $sheet->setCellValue("I8", "FOOT PADEL VALVE");
-            $sheet->setCellValue("J8", "EYEWASH HEADS");
-            $sheet->setCellValue("K8", "RECEPTACLE");
-            $sheet->setCellValue("L8", "QUALITY");
-            $sheet->setCellValue("M8", "PRESSURE");
-            $sheet->setCellValue("N8", "TEMPRETURE
-(15-35 C)");
+            $sheet->mergeCells('M6:M8')->setCellValue('M6', 'REMARKS');
 
-            $sheet->mergeCells("O6:O8")->setCellValue("O6", "REMARK");
-
-
-            $sheet->getStyle("A6:O8")->applyFromArray([
+            $sheet->getStyle('A6:M8')->applyFromArray([
                 'font' => ['bold' => true],
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
@@ -989,55 +1165,23 @@ class MonthlyEyeWashInspectionController extends Controller
             $row = 9;
             $sr = 1;
             foreach ($inspection_data as $detail) {
-
                 $sheet->setCellValue("A{$row}", $sr);
-                $sheet->setCellValue("B{$row}", $detail['fire_point_no'] ?? '');
-                $sheet->mergeCells("C$row:D$row")->setCellValue("C$row", getDepartment($detail['department']) ?? '');
-                $sheet->mergeCells("E$row:F$row")->setCellValue("E$row", getLocationname($detail['location']) ?? '');
-                $sheet->setCellValue("G{$row}", getExtinguisherTypeName($detail['type']) ?? '');
-                $sheet->setCellValue("H{$row}", $detail['capacity'] ?? '');
-                $sheet->setCellValue("I{$row}", $detail['quantity'] ?? '');
+                $sheet->setCellValue("B{$row}", getLocationname($detail['location']) ?? '');
+                $sheet->mergeCells("C{$row}:D{$row}")->setCellValue("C{$row}", $detail['resource_code'] ?? '');
 
-                $dischargeTubeStatus = $detail->discharge_tube ?? '';
+                $sheet->setCellValue("E{$row}", $detail['value'] ?? '');
+                $sheet->setCellValue("F{$row}", $detail['hand_free_stay_open_value'] ?? '');
+                $sheet->setCellValue("G{$row}", $detail['foot_pedal_value'] ?? '');
+                $sheet->setCellValue("H{$row}", $detail['eyewash_heads_value'] ?? '');
+                $sheet->setCellValue("I{$row}", $detail['receptacle'] ?? '');
 
-                if ($dischargeTubeStatus == FUNCTIONAL) {
-                    $sheet->setCellValue("J{$row}", __('inspection.functional'));
-                    $sheet->getStyle("J{$row}");
-                } elseif ($dischargeTubeStatus == NON_FUNCTIONAL) {
-                    $sheet->setCellValue("J{$row}", __('inspection.non_functional'));
-                    $sheet->getStyle("J{$row}");
-                } else {
-                    $sheet->setCellValue("J{$row}", '');
-                }
+                $sheet->setCellValue("J{$row}", $detail['quality'] ?? '');
 
-                $dischargeHornStatus = $detail->discharge_horn ?? '';
-                if ($dischargeHornStatus == FUNCTIONAL) {
-                    $sheet->setCellValue("K{$row}", __('inspection.functional'));
-                    $sheet->getStyle("K{$row}");
-                } elseif ($dischargeHornStatus == NON_FUNCTIONAL) {
-                    $sheet->setCellValue("K{$row}", __('inspection.non_functional'));
-                    $sheet->getStyle("K{$row}");
-                } else {
-                    $sheet->setCellValue("K{$row}", '');
-                }
+                $sheet->setCellValue("K{$row}", $detail['pressure'] ?? '');
+                $sheet->setCellValue("L{$row}", $detail['temperature'] ?? '');
+                $sheet->setCellValue("M{$row}", $detail['remarks'] ?? '');
 
-                $sheet->setCellValue("L{$row}", $detail['weight_of_co2_in_fe'] ?? '');
-
-                $safetyPinStatus = $detail->safety_pin ?? '';
-                if ($safetyPinStatus == PRESENT) {
-                    $sheet->setCellValue("M{$row}", __('inspection.present'));
-                    $sheet->getStyle("M{$row}");
-                } elseif ($safetyPinStatus == MISSING) {
-                    $sheet->setCellValue("M{$row}", __('inspection.missing'));
-                    $sheet->getStyle("M{$row}");
-                } else {
-                    $sheet->setCellValue("M{$row}", '');
-                }
-
-                $sheet->setCellValue("N{$row}", $detail['approach'] ?? '');
-                $sheet->setCellValue("O{$row}", $detail['remarks'] ?? '');
-
-                $sheet->getStyle("A{$row}:O{$row}")->applyFromArray([
+                $sheet->getStyle("A{$row}:M{$row}")->applyFromArray([
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                 ]);
@@ -1046,79 +1190,96 @@ class MonthlyEyeWashInspectionController extends Controller
                 $row++;
             }
 
-            $signatureRow = $row;
-            $sheet->getRowDimension($signatureRow)->setRowHeight(80);
+            $signatureRowStart = $row;
+            $sheet->getRowDimension($signatureRowStart)->setRowHeight(80);
 
-            $sheet->mergeCells("A{$signatureRow}:E{$signatureRow}");
-            $sheet->getStyle("A{$signatureRow}:E{$signatureRow}")->applyFromArray([
+            $sheet->mergeCells("A{$signatureRowStart}:E{$signatureRowStart}");
+            $sheet->getStyle("A{$signatureRowStart}:E{$signatureRowStart}")->applyFromArray([
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+                'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_CENTER,
+                    'vertical' => Alignment::VERTICAL_CENTER,
+                    'wrapText' => true,
+                ],
             ]);
+
             if (file_exists($prepared_by_signature)) {
                 $drawing = new Drawing();
-                $drawing->setName('Prepared Signature');
+                $drawing->setName('Signature');
                 $drawing->setDescription('Prepared By');
                 $drawing->setPath($prepared_by_signature);
-                $drawing->setCoordinates("C{$signatureRow}");
+                $drawing->setCoordinates("C{$signatureRowStart}");
                 $drawing->setOffsetX(5);
                 $drawing->setOffsetY(5);
                 $drawing->setHeight(40);
                 $drawing->setWorksheet($sheet);
-                $sheet->setCellValue("A{$signatureRow}", "\n\n\nPrepared By:\n" . getUsername($eye_wash->created_by));
+                $sheet->setCellValue("A{$signatureRowStart}", "\n\n\nPrepared By:\n" . getUsername($eye_wash->created_by));
             } else {
-                $sheet->setCellValue("A{$signatureRow}", "Prepared By:\nInspection not yet started");
+                $sheet->setCellValue("A{$signatureRowStart}", "Prepared By:\nInspection not yet started");
             }
 
-            $sheet->mergeCells("F{$signatureRow}:K{$signatureRow}");
-            $sheet->getStyle("F{$signatureRow}:K{$signatureRow}")->applyFromArray([
+            $sheet->mergeCells("F{$signatureRowStart}:I{$signatureRowStart}");
+            $sheet->getStyle("F{$signatureRowStart}:I{$signatureRowStart}")->applyFromArray([
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+                'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_CENTER,
+                    'vertical' => Alignment::VERTICAL_CENTER,
+                    'wrapText' => true,
+                ],
             ]);
+
             if (file_exists($verified_by_signature)) {
                 $drawing = new Drawing();
-                $drawing->setName('Verified Signature');
+                $drawing->setName('Signature');
                 $drawing->setDescription('Verified By');
                 $drawing->setPath($verified_by_signature);
-                $drawing->setCoordinates("H{$signatureRow}");
+                $drawing->setCoordinates("G{$signatureRowStart}");
                 $drawing->setOffsetX(5);
                 $drawing->setOffsetY(5);
                 $drawing->setHeight(40);
                 $drawing->setWorksheet($sheet);
-                $sheet->setCellValue("F{$signatureRow}", "\n\n\nVerified By:\n" . getUsername($eye_wash->updated_by));
+                $sheet->setCellValue("F{$signatureRowStart}", "\n\n\nVerified By:\n" . getUsername($eye_wash->updated_by));
             } else {
-                $sheet->setCellValue("F{$signatureRow}", "Verified By:\nInspection not yet completed");
+                $sheet->setCellValue("F{$signatureRowStart}", "Verified By:\nInspection not yet completed");
             }
 
-            $sheet->mergeCells("L{$signatureRow}:O{$signatureRow}");
-            $sheet->getStyle("L{$signatureRow}:O{$signatureRow}")->applyFromArray([
+            $sheet->mergeCells("J{$signatureRowStart}:M{$signatureRowStart}");
+            $sheet->getStyle("J{$signatureRowStart}:M{$signatureRowStart}")->applyFromArray([
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+                'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_CENTER,
+                    'vertical' => Alignment::VERTICAL_CENTER,
+                    'wrapText' => true,
+                ],
             ]);
+
             if (file_exists($approved_by_signature)) {
                 $drawing = new Drawing();
-                $drawing->setName('Approved Signature');
+                $drawing->setName('Signature');
                 $drawing->setDescription('Approved By');
                 $drawing->setPath($approved_by_signature);
-                $drawing->setCoordinates("M{$signatureRow}");
+                $drawing->setCoordinates("L{$signatureRowStart}");
                 $drawing->setOffsetX(5);
                 $drawing->setOffsetY(5);
                 $drawing->setHeight(40);
                 $drawing->setWorksheet($sheet);
-                $sheet->setCellValue("L{$signatureRow}", "\n\n\nApproved By:\n" . getUsername($eye_wash->approved_by));
+                $sheet->setCellValue("J{$signatureRowStart}", "\n\n\nApproved By:\n" . getUsername($eye_wash->approved_by));
             } else {
-                $sheet->setCellValue("L{$signatureRow}", "Approved By:\nApproval pending");
+                $sheet->setCellValue("J{$signatureRowStart}", "Approved By:\nApproval pending");
             }
 
+
+
             $writer = new Xlsx($spreadsheet);
-            $fileName = 'CO2 Type Fire Extinguisher Inspection.xlsx';
-            $filePath = storage_path("app/public/$fileName");
+            $fileName = 'Monthly Eye Wash Inspection.xlsx';
+            $filePath = storage_path("app/public/{$fileName}");
             $writer->save($filePath);
 
             return response()->download($filePath)->deleteFileAfterSend(true);
         } catch (\Exception $e) {
             report($e);
             Session::flash('error', 'Something went wrong!');
-            return redirect(admin_url('fire/fire-extinguisher/co2/list'));
+            return redirect(admin_url('safety/eye-wash-inspection/monthly/list'));
         }
     }
 }
