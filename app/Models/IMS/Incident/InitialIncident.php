@@ -37,7 +37,10 @@ class InitialIncident extends Model
         'reporting_media',
         'reporting_media_others',
         'brief_description',
+        'immediate_action_taken',
         'investigation_assigned',
+        'investigation_reported_by',
+        'target_date',
         'choose_assignee',
         'ua_uc_yes_no',
         'ua_or_uc',
@@ -186,6 +189,7 @@ class InitialIncident extends Model
             'reporting_media' => $reporting_media,
             'reporting_media_others' => $request->reporting_media_others,
             'brief_description' => $request->brief_description,
+            'immediate_action_taken' => $request->immediate_action_taken,
             'incident_status' => STATUS_INCIDENT_REPORT,
             'created_by' => Auth::id()
         );
@@ -280,9 +284,13 @@ class InitialIncident extends Model
         $commaSeparatedTeamMembers = !empty($decryptedTeamMemberIds) ? implode(',', $decryptedTeamMemberIds) : null;
         $update_array = array(
             'investigation_assigned' => $commaSeparatedTeamMembers,
+            'investigation_reported_by' => decryptId($request->reported_by),
+            'target_date' => DBdateformat($request->target_date),
             'updated_by' => Auth::id(),
             'updated_at' => now(),
         );
+
+        // dd($update_array);
         return $this->where('id', $incident_Id)->update($update_array);
     }
 
@@ -312,19 +320,6 @@ class InitialIncident extends Model
             'ua_uc_yes_no' => $request->ua_uc_yes_no,
             'ua_or_uc' => $ua_or_uc,
             'description_uauc' => $request->description_uauc
-        );
-
-        return $this->where('id', $id)->update($update_array);
-    }
-    public function actiontakensubmit($id)
-    {
-
-        $request = request();
-
-        $update_array = array(
-            'action_submission_by' => Auth::id(),
-            'action_submission_date' => DBdateformat($request->action_submission_date),
-            'action_submission_description' => $request->action_submission_description
         );
 
         return $this->where('id', $id)->update($update_array);
@@ -413,7 +408,7 @@ class InitialIncident extends Model
             'masters_department.department_name as reported_department',
             'ims_initial_incident_evidence_upload.file_path',
             'ims_master_incident_type.incident_type_name',
-            'masters_location.location_name'
+            'masters_location.location_name',
         )
             ->where('ims_initial_incident.id', $id)
             ->leftJoin('masters_employee', 'masters_employee.id', '=', 'ims_initial_incident.reported_name')
@@ -421,6 +416,7 @@ class InitialIncident extends Model
             ->leftJoin('ims_master_incident_type', 'ims_master_incident_type.id', '=', 'ims_initial_incident.iir_type')
             ->leftJoin('masters_location', 'masters_location.id', '=', 'ims_initial_incident.location_id')
             ->leftJoin('ims_initial_incident_evidence_upload', 'ims_initial_incident_evidence_upload.incident_id', '=', 'ims_initial_incident.iir_type')
+            ->leftJoin('ims_rcpa_responsible', 'ims_rcpa_responsible.incident_id', '=', 'ims_initial_incident.id')
             ->first();
 
         return $data;
@@ -469,10 +465,10 @@ class InitialIncident extends Model
     // }
     public function getInvestigation($id)
     {
-        $data = $this->select('ims_initial_incident_investigation.*', 'masters_employee.emp_name as responsible_person')
+        $data = $this->select('ims_initial_incident_investigation.*')
             ->where('ims_initial_incident.id', $id)
             ->leftJoin('ims_initial_incident_investigation', 'ims_initial_incident_investigation.incident_id', '=', 'ims_initial_incident.id')
-            ->leftJoin('masters_employee', 'masters_employee.id', '=', 'ims_initial_incident_investigation.responsible_person_id')
+            // ->leftJoin('masters_employee', 'masters_employee.id', '=', 'ims_initial_incident_investigation.responsible_person_id')
             ->first();
 
         if ($data) {

@@ -28,10 +28,11 @@ class IncidentInvestigation extends Model
         'action_taken',
         'corrective_preventive_action',
         'responsible_person_id',
-        'target_date',
         'remark',
         'risk_analysis',
         'risk_analysis_remark',
+        'main_root_cause',
+        'leading_factors',
         'status',
         'trash',
         'created_by',
@@ -50,7 +51,10 @@ class IncidentInvestigation extends Model
     {
         $request = request();
 
-        $commaSeparatedDamaged = implode(',', $request->anything_damaged);
+        $commaSeparatedDamaged = is_array($request->anything_damaged)
+        ? implode(',', $request->anything_damaged)
+        : $request->anything_damaged;
+    
         $insert_array = array(
             'incident_id' => decryptId($request->incident_id),
             'witness_id' => !empty($request->witness_id) && is_array($request->witness_id)
@@ -60,11 +64,11 @@ class IncidentInvestigation extends Model
             'root_cause_analysis' => $request->root_cause ?? null,
             'action_taken' => $request->action_taken,
             'corrective_preventive_action' => $request->corrective_preventive_action,
-            'responsible_person_id' => decryptId($request->responsible_person_id),
-            'target_date' => DBdateformat($request->target_date),
             'remark' => $request->remark,
             'risk_analysis' => $request->risk_analysis,
             'risk_analysis_remark' => $request->risk_analysis_remark,
+            'main_root_cause' => $request->main_root_cause,
+            'leading_factors' => $request->leading_factors,
             'created_by' => Auth::id()
         );
 

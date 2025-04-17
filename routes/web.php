@@ -1239,6 +1239,7 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('/edit/{id}', [InitialIncidentController::class, 'edit']);
                 Route::post('/edit/submit', [InitialIncidentController::class, 'update']);
                 Route::get('/view/{id}', [InitialIncidentController::class, 'view']);
+                Route::get('/caview/{id}/{incident_id}', [InitialIncidentController::class, 'caview']);
                 Route::post('/delete', [InitialIncidentController::class, 'delete']);
                 Route::get('/export/excel', [InitialIncidentController::class, 'exportExcel']);
                 Route::get('/export/pdf', [InitialIncidentController::class, 'exportPdf']);
@@ -1252,6 +1253,8 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('/fetchEmployeeDetails/{emp_id}', [InitialIncidentController::class, 'fetchEmployeeDetails']);
                 Route::post('/deleteEvidence/{id}', [InitialIncidentController::class, 'deleteEvidence']);
                 Route::get('/review/{id}', [InitialIncidentController::class, 'review']);
+                Route::get('/ehsApproval/{id}/{incident_id}', [InitialIncidentController::class, 'ehsApproval']);
+                Route::get('/caSubmission/{id}/{incident_id}', [InitialIncidentController::class, 'caSubmission']);
                 Route::post('/ehs_head_review/submit', [InitialIncidentController::class, 'ehsHeadReviewSubmit']);
                 Route::get('/teamMembers', [InitialIncidentController::class, 'teamMembers']);
                 Route::get('/investigation/{incident_id}', [InitialIncidentController::class, 'investigation']);
@@ -1266,6 +1269,11 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/ehs_head_verify/submit', [InitialIncidentController::class, 'ehsHeadVerifySubmit']);
                 Route::post('/actiontaken/submit', [InitialIncidentController::class, 'actiontakenSubmit']);
                 Route::post('/ehApproval/submit', [InitialIncidentController::class, 'ehsApprovalSubmit']);
+                Route::get('/fetchEmployeeOrWorkerList/{type}', [InitialIncidentController::class, 'fetchEmployeeOrWorkerList']);
+                Route::get('/getemployeename', [InitialIncidentController::class, 'employeename']);
+                Route::get('/fetchPersonDetails/{id}/{type}', [InitialIncidentController::class, 'fetchPersonDetails']);
+                Route::post('/investigation/getbodyEmpdetails', [InitialIncidentController::class, 'getbodyEmpdetails']);
+                Route::post('/addInjury', [InitialIncidentController::class, 'addInjury']);
             });
 
 

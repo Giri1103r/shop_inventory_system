@@ -271,7 +271,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td width="50%" style="padding:5px;"><b>Assign Team members</b></td>
+                    <td width="50%" style="padding:5px;"><b>I.M Team members</b></td>
                     <td width="2%" style="padding:5px;">:</td>
                     <td width="48%" style="padding:5px;">
                         {{ $getEHSReview->team_member_names }}

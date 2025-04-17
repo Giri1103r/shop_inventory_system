@@ -755,6 +755,8 @@ class AccidentReportController extends Controller
             }
             return view('ims.incident.accidentReport.review', $data);
         } catch (Exception $ex) {
+
+            dd($ex);
         }
     }
 

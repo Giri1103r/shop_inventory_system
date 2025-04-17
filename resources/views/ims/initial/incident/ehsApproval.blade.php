@@ -160,8 +160,6 @@
 
                                 </div>
                             </div>
-
-
                             <div class="card-body ">
 
                                 <div class="row">
@@ -191,13 +189,13 @@
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label require">Shift</label>
+                                        <label class="form-label">Shift</label>
                                         <div class="view_data">
                                             {{ $incident_report->shift }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label require">Location</label>
+                                        <label class="form-label">Location</label>
                                         <div class="view_data">
                                             {{ $incident_report->location_name }}
                                         </div>
@@ -286,7 +284,7 @@
                                 </div>
                             </div>
 
-                            @if ($incident_report->incident_status >= STATUS_INVESTIGATION_PENDING)
+                            @if ($rcpa->incident_status >= STATUS_ACTION_PENDING)
                                 <div class="card-body ">
                                     <div class="row">
                                         <div class="card-header-inner">
@@ -325,7 +323,7 @@
                                 </div>
                             @endif
 
-                            @if ($incident_report->incident_status >= STATUS_INVESTIGATION_PENDING)
+                            @if ($rcpa->incident_status >= STATUS_ACTION_PENDING)
                                 <div class="card-body ">
                                     <div class="row">
                                         <div class="card-header-inner">
@@ -630,47 +628,45 @@
                                         </div>
                                     </div>
                                     <div class="row">
-                                        @foreach ($rcpa as $rcpa)
-                                            <div class="mb-3 col-md-4 form-input">
-                                                <label class="form-label view_label">Recommended Corrective & Preventive
-                                                    Action</label>
-                                                <div class="view_data">
-                                                    {{ $rcpa->rcpa }}
-                                                </div>
-                                            </div>
-                                            <div class="mb-3 col-md-4 form-input">
-                                                <label class="form-label view_label">Responsibility</label>
-                                                <div class="view_data">
-                                                    {{ $rcpa->responsibility }}
-                                                </div>
-                                            </div>
-                                            <div class="mb-3 col-md-4 form-input">
-                                                <label class="form-label view_label">Timeline</label>
-                                                <div class="view_data">
-                                                    {{ DisplayDateformat($rcpa->timeline) }}
-                                                </div>
-                                            </div>
-                                            <div class="mb-3 col-md-12 form-input">
-                                                <label class="form-label view_label">Status</label>
-                                                <div class="view_data">
-                                                    @if ($rcpa->capa_status == 1)
-                                                        <span class="badge bg-success">Open</span>
-                                                    @elseif($rcpa->capa_status == 2)
-                                                        <span class="badge bg-warning text-dark">In Progress</span>
-                                                    @elseif($rcpa->capa_status == 3)
-                                                        <span class="badge bg-secondary">Closed</span>
-                                                    @endif
-                                                </div>
-                                            </div>
-                                            <div class="mb-3 col-md-12 form-input">
-                                                <label class="form-label view_label">Remark if any</label>
-                                                <div class="view_data">
-                                                    {{ $rcpa->remark }}
-                                                </div>
-                                            </div>
-                                        @endforeach
-                                        <hr>
 
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <label class="form-label view_label">Recommended Corrective & Preventive
+                                                Action</label>
+                                            <div class="view_data">
+                                                {{ $rcpa->rcpa }}
+                                            </div>
+                                        </div>
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <label class="form-label view_label">Responsibility</label>
+                                            <div class="view_data">
+                                                {{ $rcpa->responsibility }}
+                                            </div>
+                                        </div>
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <label class="form-label view_label">Timeline</label>
+                                            <div class="view_data">
+                                                {{ DisplayDateformat($rcpa->timeline) }}
+                                            </div>
+                                        </div>
+                                        <div class="mb-3 col-md-12 form-input">
+                                            <label class="form-label view_label">Status</label>
+                                            <div class="view_data">
+                                                @if ($rcpa->capa_status == 1)
+                                                    <span class="badge bg-success">Open</span>
+                                                @elseif($rcpa->capa_status == 2)
+                                                    <span class="badge bg-warning text-dark">In Progress</span>
+                                                @elseif($rcpa->capa_status == 3)
+                                                    <span class="badge bg-secondary">Closed</span>
+                                                @endif
+                                            </div>
+                                        </div>
+                                        <div class="mb-3 col-md-12 form-input">
+                                            <label class="form-label view_label">Remark if any</label>
+                                            <div class="view_data">
+                                                {{ $rcpa->remark }}
+                                            </div>
+                                        </div>
+                                        <hr>
                                         <div class="mb-3 col-md-12 form-input">
                                             <label class="form-label view_label">Main Root Cause</label>
                                             <div class="view_data">
@@ -773,9 +769,64 @@
                                     @endif
                                 </div>
                             @endif
+                            @if ($rcpa->incident_status == STATUS_ACTION_PENDING)
+                                <div class="card-body ">
+                                    <div class="row">
+                                        <div class="card-header-inner">
+                                            <h4 class="text-white">Action submission</h4>
+                                        </div>
+                                    </div>
+                                    <div class="basic-form">
+                                        <form method="POST" id="action_submission"
+                                            action="{{ admin_url('incident/initial-incident/actiontaken/submit') }}"
+                                            enctype="multipart/form-data">
+                                            @csrf
+                                            <div class="row">
+                                                <input type="hidden" class="form-control" name="incident_id"
+                                                    id="incident_id" value="{{ encryptId($incident_report->id) }}">
+                                                <input type="hidden" class="form-control" name="rcpa_id"
+                                                    id="incident_id" value="{{ encryptId($rcpa->id) }}">
+                                                <div class="col-md-4 mb-3">
+                                                    <div class="form-group form-input">
+                                                        <label for="name" class="form-label">Submission By</label>
+                                                        <input type="text" name="reviewer_name" id="reviewer_name"
+                                                            class="form-control" value="{{ Auth::user()->name ?? '' }}"
+                                                            readonly>
+                                                    </div>
+                                                </div>
 
-                            @if (
-                                $rcpa->incident_status >= STATUS_EHSAPPROVAL_PENDING)
+                                                <div class="col-md-4 mb-3">
+                                                    <div class="form-group form-input">
+                                                        <label for="date" class="form-label require">Date</label>
+                                                        <input type="text" name ="action_submission_date"
+                                                            id="" class="form-control" placeholder="Date"
+                                                            readonly value="{{ todaydate() }}">
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-12 mb-3">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label require">Action Taken</label>
+                                                        <textarea name="action_submission_description" id="action_submission_description" class="form-control"
+                                                            rows="4" required></textarea>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                            <hr>
+                                            <div class="submit-button" style="text-align: right;">
+                                                <x-button-submit class="submit"></x-button-submit>
+                                                <x-button-reset class=""></x-button-reset>
+                                                <x-button-cancel
+                                                    href="{{ admin_url('incident/initial-incident/list') }}"></x-button-cancel>
+                                            </div>
+                                        </form>
+
+                                    </div>
+                                </div>
+                            @elseif(
+                                $rcpa->incident_status > STATUS_ACTION_PENDING &&
+                                    $rcpa->incident_status != STATUS_EHSAPPROVAL_REJECTED)
                                 <div class="card-body ">
                                     <div class="row">
                                         <div class="card-header-inner">
@@ -786,110 +837,81 @@
                                         <div class="mb-3 col-md-4 form-input">
                                             <label for="name" class="form-label">Submission By</label>
                                             <div class="view_data">
-                                                {{ getUsername($incident_report->action_submission_by) }}
+                                                {{ getUsername($rcpa->action_submission_by) }}
                                             </div>
                                         </div>
                                         <div class="mb-3 col-md-4 form-input">
                                             <label class="form-label view_label">{{ __('Date') }}</label>
                                             <div class="view_data">
-                                                {{ Displaydateformat($incident_report->action_submission_date) }}
+                                                {{ Displaydateformat($rcpa->action_submission_date) }}
                                             </div>
                                         </div>
 
                                         <div class="mb-3 col-md-4 form-input">
                                             <label class="form-label">Action Taken</label>
                                             <div class="view_data">
-                                                {{ $incident_report->action_submission_description }}
+                                                {{ $rcpa->action_submission_description }}
                                             </div>
                                         </div>
 
                                     </div>
                                 </div>
                             @endif
-                            @if ($rcpa->incident_status >= STATUS_INCIDENT_CLOSED)
+                            @if ($rcpa->incident_status == STATUS_EHSAPPROVAL_PENDING)
                                 <div class="card-body ">
                                     <div class="row">
                                         <div class="card-header-inner">
                                             <h4 class="text-white">EHS Approval</h4>
                                         </div>
                                     </div>
-                                    <div class="row">
-                                        <div class="mb-3 col-md-4 form-input">
-                                            <label for="name" class="form-label">Approval By</label>
-                                            <div class="view_data">
-                                                {{ $getEHSApprovalincident->reviewer_name }}
+                                    <div class="basic-form">
+                                        <form method="POST" id="ehs_approval"
+                                            action="{{ admin_url('incident/initial-incident/ehApproval/submit') }}"
+                                            enctype="multipart/form-data">
+                                            @csrf
+                                            <div class="row">
+                                                <input type="hidden" class="form-control" name="incident_id"
+                                                    id="incident_id" value="{{ encryptId($incident_report->id) }}">
+                                                    <input type="hidden" class="form-control" name="rcpa_id"
+                                                    id="rcpa_id" value="{{ encryptId($rcpa->id) }}">
+                                                <div class="col-md-4 mb-3">
+                                                    <div class="form-group form-input">
+                                                        <label for="name" class="form-label">Approval By</label>
+                                                        <input type="text" name="reviewer_name" id="reviewer_name"
+                                                            class="form-control" value="{{ Auth::user()->name ?? '' }}"
+                                                            readonly>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4 mb-3">
+                                                    <div class="form-group form-input">
+                                                        <label for="date" class="form-label require">Date</label>
+                                                        <input type="text" name ="date" id=""
+                                                            class="form-control" placeholder="Date" readonly
+                                                            value="{{ todaydate() }}">
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-12 mb-3">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label require">Remark</label>
+                                                        <textarea name="remark" id="remark" class="form-control" rows="4" required></textarea>
+                                                    </div>
+                                                </div>
+
                                             </div>
-                                        </div>
-                                        <div class="mb-3 col-md-4 form-input">
-                                            <label class="form-label view_label">{{ __('Date') }}</label>
-                                            <div class="view_data">
-                                                {{ Displaydateformat($getEHSApprovalincident->date) }}
+                                            <hr>
+                                            <div class="d-flex float-end gap-2 mx-auto">
+                                                <button type="submit" name="approve" value="approve"
+                                                    class="btn btn-success w-100">Approve</button>
+                                                <button type="submit" name="reject" value="reject"
+                                                    class="btn btn-danger w-100">Reject</button>
                                             </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="mb-3 col-md-12 form-input">
-                                            <label class="form-label">Remark</label>
-                                            <div class="view_data">
-                                                {{ $getEHSApprovalincident->remark }}
-                                            </div>
-                                        </div>
+                                        </form>
 
                                     </div>
                                 </div>
                             @endif
-
-                            <div class="card-body ">
-                                <div class="row">
-                                    <div class="card-header-inner">
-                                        <h4 class="text-white">Status logs</h4>
-                                    </div>
-                                </div>
-
-                                <div class="table-responsive">
-                                    <div class="col-md-12">
-                                        <table class="table table-bordered table-hover">
-                                            <thead>
-                                                <tr>
-                                                    <th> From Status</th>
-                                                    <th>To Status</th>
-                                                    <th>Approved By</th>
-                                                    <th style="width: 80%;">Remarks</th>
-                                                    <th style="width: 40%;">Date</th>
-
-                                                </tr>
-                                            </thead>
-
-                                            <tbody>
-                                                @if ($status_log->isEmpty())
-                                                    <tr>
-                                                        <td class="text-center" colspan="5">No data is available</td>
-                                                    </tr>
-                                                @else
-                                                    @foreach ($status_log as $status)
-                                                        <tr>
-                                                            <td>{{ isset($status['to_status']) ? $status['to_status'] : '-' }}
-                                                            </td>
-                                                            <td>{{ isset($status['status_name']) ? $status['status_name'] : '-' }}
-                                                            </td>
-                                                            <td>{{ isset($status['approved_by']) ? getUsername($status['approved_by']) : '-' }}
-                                                            </td>
-                                                            <td>{{ isset($status['remarks']) ? $status['remarks'] : '-' }}
-                                                            </td>
-                                                            <td>{{ null !== Displaydateformat($status['created_at']) ? Displaydateformat($status['created_at']) : '-' }}
-                                                            </td>
-                                                        </tr>
-                                                    @endforeach
-
-                                                @endif
-                                            </tbody>
-                                        </table>
-
-                                    </div>
-                                </div>
-
-
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -899,3 +921,264 @@
     </div>
 
 @stop
+
+@push('script')
+    <script type="text/javascript" nonce="projectcab">
+        $(document).ready(function() {
+            $('#resetform').on('click', function(e) {
+                e.preventDefault();
+                location.reload();
+            });
+            flatpickr("#target_date", {
+                dateFormat: "d-m-Y",
+                minDate: "today" // Allows only future dates
+            });
+
+
+            $('#team_id,#reported_by').select2({
+                placeholder: "Select Team Members",
+                allowClear: true,
+                closeOnSelect: true,
+                ajax: {
+                    url: "{{ admin_url('incident/initial-incident/teamMembers') }}",
+                    type: "GET",
+                    dataType: "json",
+                    delay: 250,
+                    data: function(params) {
+                        return {
+                            search: params.term // Search query
+                        };
+                    },
+                    processResults: function(data) {
+                        return {
+                            results: $.map(data, function(item) {
+                                return {
+                                    id: item.id,
+                                    text: item.text
+                                };
+                            })
+                        };
+                    },
+                    error: function(xhr, textStatus, errorThrown) {
+                        console.log("Error in AJAX request:", textStatus, errorThrown);
+                    }
+                },
+                minimumInputLength: 3,
+                width: '100%',
+                dropdownCssClass: 'form-control',
+                selectionCssClass: 'form-control'
+            });
+
+
+            // $('#team_id').select2({
+            //     placeholder: "Select Team members",
+            //     allowClear: true,
+            //     closeOnSelect: false,
+            // });
+
+            $('#ehs_head_review').validate({
+                rules: {
+                    "team_member[]": {
+                        required: true,
+                    },
+                    reported_by: {
+                        required: true,
+                    },
+                    target_date: {
+                        required: true,
+                    },
+                    remark: {
+                        required: true,
+                        minlength: 10,
+                        maxlength: 2000,
+                        pattern: /^[a-zA-Z0-9\s\-_'"()\n\r,.”.;]+$/
+                    }
+                },
+                messages: {
+                    "team_member[]": {
+                        required: "Please select a team member.",
+                    },
+                    reported_by: {
+                        required: "Please select a Incident/Accident Investigation Report Prepared by.",
+                    },
+                    target_date: {
+                        required: "Please select a Target Date.",
+                    },
+                    remark: {
+                        required: "Please provide a remark.",
+                        minlength: "Minimum 10 characters required.",
+                        maxlength: "Maximum 2000 characters allowed.",
+                        pattern: "Only alphanumeric characters and - _ ' \",”.; ( ) are allowed.",
+                    }
+                },
+                errorElement: 'span',
+                errorPlacement: function(error, element) {
+                    error.addClass('invalid-feedback');
+                    element.closest('.form-input').append(error);
+                },
+                highlight: function(element, errorClass, validClass) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function(element, errorClass, validClass) {
+                    $(element).removeClass('is-invalid');
+                },
+                submitHandler: function(form) {
+                    if ($('#vp_approval').data('conflict') === true) {
+                        return false;
+                    } else {
+                        form.submit(); // Submit the form when valid
+                    }
+                },
+                invalidHandler: function(event, validator) {
+                    var errors = validator.numberOfInvalids();
+                    validator.errorList.forEach(function(error) {
+
+                    });
+                }
+            });
+            $('#ehs_head_verify').validate({
+                rules: {
+                    "team_member[]": {
+                        required: true,
+                    },
+                    target_date: {
+                        required: true,
+                    },
+                    remark: {
+                        required: true,
+                        minlength: 10,
+                        maxlength: 2000,
+                        pattern: /^[a-zA-Z0-9\s\-_'"()\n\r,.”.;]+$/
+                    }
+                },
+                messages: {
+                    "team_member[]": {
+                        required: "Please select a Assignee.",
+                    },
+                    target_date: {
+                        required: "Please provide Target Date.",
+
+                    },
+                    remark: {
+                        required: "Please provide a remark.",
+                        minlength: "Minimum 10 characters required.",
+                        maxlength: "Maximum 2000 characters allowed.",
+                        pattern: "Only alphanumeric characters and - _ ' \",”.; ( ) are allowed.",
+                    }
+                },
+                errorElement: 'span',
+                errorPlacement: function(error, element) {
+                    error.addClass('invalid-feedback');
+                    element.closest('.form-input').append(error);
+                },
+                highlight: function(element, errorClass, validClass) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function(element, errorClass, validClass) {
+                    $(element).removeClass('is-invalid');
+                },
+                submitHandler: function(form) {
+                    if ($('#vp_approval').data('conflict') === true) {
+                        return false;
+                    } else {
+                        form.submit(); // Submit the form when valid
+                    }
+                },
+                invalidHandler: function(event, validator) {
+                    var errors = validator.numberOfInvalids();
+                    validator.errorList.forEach(function(error) {
+
+                    });
+                }
+            });
+            $('#action_submission').validate({
+                rules: {
+
+                    action_submission_description: {
+                        required: true,
+                        minlength: 10,
+                        maxlength: 2000,
+                        pattern: /^[a-zA-Z0-9\s\-_'"()\n\r,.”.;]+$/,
+                    }
+                },
+                messages: {
+
+                    action_submission_description: {
+                        required: "Please provide Action Taken.",
+                        minlength: "Minimum 10 characters required.",
+                        maxlength: "Maximum 2000 characters allowed.",
+                        pattern: "Only alphanumeric characters and - _ ' \",”.; ( ) are allowed.",
+                    }
+                },
+                errorElement: 'span',
+                errorPlacement: function(error, element) {
+                    error.addClass('invalid-feedback');
+                    element.closest('.form-input').append(error);
+                },
+                highlight: function(element, errorClass, validClass) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function(element, errorClass, validClass) {
+                    $(element).removeClass('is-invalid');
+                },
+                submitHandler: function(form) {
+                    if ($('#vp_approval').data('conflict') === true) {
+                        return false;
+                    } else {
+                        form.submit(); // Submit the form when valid
+                    }
+                },
+                invalidHandler: function(event, validator) {
+                    var errors = validator.numberOfInvalids();
+                    validator.errorList.forEach(function(error) {
+
+                    });
+                }
+            });
+            $('#ehs_approval').validate({
+                rules: {
+
+                    remark: {
+                        required: true,
+                        minlength: 10,
+                        maxlength: 2000,
+                        pattern: /^[a-zA-Z0-9\s\-_'"()\n\r,.”.;]+$/
+                    }
+                },
+                messages: {
+
+                    remark: {
+                        required: "Please provide remark.",
+                        minlength: "Minimum 10 characters required.",
+                        maxlength: "Maximum 2000 characters allowed.",
+                        pattern: "Only alphanumeric characters and - _ ' \",”.; ( ) are allowed.",
+                    }
+                },
+                errorElement: 'span',
+                errorPlacement: function(error, element) {
+                    error.addClass('invalid-feedback');
+                    element.closest('.form-input').append(error);
+                },
+                highlight: function(element, errorClass, validClass) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function(element, errorClass, validClass) {
+                    $(element).removeClass('is-invalid');
+                },
+                submitHandler: function(form) {
+                    if ($('#vp_approval').data('conflict') === true) {
+                        return false;
+                    } else {
+                        form.submit(); // Submit the form when valid
+                    }
+                },
+                invalidHandler: function(event, validator) {
+                    var errors = validator.numberOfInvalids();
+                    validator.errorList.forEach(function(error) {
+
+                    });
+                }
+            });
+        });
+    </script>
+@endpush

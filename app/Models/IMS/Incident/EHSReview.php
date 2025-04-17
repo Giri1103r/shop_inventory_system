@@ -23,8 +23,6 @@ class EHSReview extends Model
     protected $fillable = [
         'type',
         'inicdent_report_id',
-        'accident_report_id',
-        'fire_inicdent_report_id',
         'reviewer_emp_id',
         'reviewer_name',
         'date',
@@ -58,8 +56,6 @@ class EHSReview extends Model
         $insert_array = array(
             'type' => $type,
             'inicdent_report_id' =>  decryptId($request->incident_id) ?? null,
-            'accident_report_id' =>  decryptId($request->accident_report_id) ?? null,
-            'fire_inicdent_report_id' =>  decryptId($request->fire_inicdent_report_id) ?? null,
             'date' => DBdateformat($request->date),
             'reviewer_emp_id' => $request->reviewer_emp_id,
             'reviewer_name' => $request->reviewer_name,

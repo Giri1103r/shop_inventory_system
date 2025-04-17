@@ -13,16 +13,16 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class AccidentBodyParts extends Model
+class IncidentBodyParts extends Model
 {
     use  HasFactory;
 
 
-    protected $table = 'ims_accident_body_parts';
+    protected $table = 'ims_incident_body_parts';
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'accident_id',
+        'incident_id',
         'injury_id',
         'injury_person_id',
         'injury_person_name',
@@ -47,7 +47,7 @@ class AccidentBodyParts extends Model
 
         $partyname = $request->input('partyname');
         $acc_prim_add = $request->input('acc_prim_add');
-        $accident_id = $request->input('accident_id');
+        $incident_id = $request->input('incident_id');
         $injuredPerson_type = $request->input('injuredPerson_type');
 
         if (decryptId($injuredPerson_type) == 1 || decryptId($injuredPerson_type) == 2) {
@@ -56,17 +56,17 @@ class AccidentBodyParts extends Model
             $partyname = $partyname;
         }
 
-        $query = $this->select('ims_accident_body_parts.*');
+        $query = $this->select('ims_incident_body_parts.*');
 
         if ($acc_prim_add == 'acc_prim_add') {
-            $query->where('accident_id', decryptId($accident_id))
+            $query->where('incident_id', decryptId($incident_id))
                 ->where('status', 'T')
                 ->where(function ($q) use ($partyname) {
                     $q->where('injury_person_id', $partyname)
                         ->orWhere('injury_person_name', $partyname);
                 });
         } else {
-            $query->where('accident_id', decryptId($accident_id))
+            $query->where('incident_id', decryptId($incident_id))
                 ->where('status', 'Y')
                 ->where(function ($q) use ($partyname) {
                     $q->where('injury_person_id', $partyname)
@@ -86,8 +86,8 @@ class AccidentBodyParts extends Model
     {
         $request = request();
 
-        $accidentId = decryptId($request->accident_id);
-        $folderPath = 'accident/accident_body_parts/' . $accidentId;
+        $incident_id = decryptId($request->incident_id);
+        $folderPath = 'accident/accident_body_parts/' . $incident_id;
 
         $base64String = $request->bodypartimage;
 
@@ -112,7 +112,7 @@ class AccidentBodyParts extends Model
 
         if ($request['body_prim_id'] != 0) {
             $locdatas = [
-                'accident_id' => decryptId($request->accident_id),
+                'incident_id' => decryptId($request->incident_id),
                 'injury_person_id' => decryptId($request->injuredPerson),
                 'injury_person_name' => $request->injuredPerson,
                 'imgMapdata' => postData($request, 'imgMapdata'),
@@ -123,7 +123,7 @@ class AccidentBodyParts extends Model
             $updtBody =  $this->where('id', $request['body_prim_id'])->update($locdatas);
         } else {
             $locdatas = [
-                'accident_id' => decryptId($request->accident_id),
+                'incident_id' => decryptId($request->incident_id),
                 'injury_person_id' => decryptId($request->injuredPerson),
                 'injury_person_name' => $request->injuredPerson,
                 'imgMapdata' => postData($request, 'imgMapdata'),
@@ -154,7 +154,7 @@ class AccidentBodyParts extends Model
 
     public function updateStatusForIncident($accidentId, array $excludedEmpIds)
     {
-        return $this->where('accident_id', $accidentId)
+        return $this->where('incident_id', $accidentId)
             ->where(function ($query) use ($excludedEmpIds) {
                 $query->whereNotIn('injury_person_id', $excludedEmpIds)
                     ->whereNotIn('injury_person_name', $excludedEmpIds);

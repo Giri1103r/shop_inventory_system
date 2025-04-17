@@ -13,17 +13,16 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class AccidentInvestigationInjury extends Model
+class InjuryDetails extends Model
 {
     use  HasFactory;
 
 
-    protected $table = 'ims_accident_investigation_injury';
+    protected $table = 'ims_injury_details';
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'accident_id',
-        'accident_investigation_id',
+        'incident_id',
         'injury_person_type',
         'injury_person_id',
         'injury_person_name',
@@ -43,17 +42,16 @@ class AccidentInvestigationInjury extends Model
         'trash' => 'NO',
     ];
 
-    public function store($accident_id, $accident_investigationId)
+    public function store($incident_id)
     {
         $request = request();
-        $IncidentBodyParts = new AccidentBodyParts();
+        $IncidentBodyParts = new IncidentBodyParts();
 
         $injuryPerson = $request->input('injury_person');
         if (!empty($injuryPerson) && is_array($injuryPerson)) {
             foreach ($injuryPerson as $injuryPersonData) {
                 $insert_array = [
-                    'accident_id' => $accident_id,
-                    'accident_investigation_id' => $accident_investigationId,
+                    'incident_id' => $incident_id,
                     'injury_person_type' => decryptId($injuryPersonData['injury_person_type']),
                     'injury_person_id' => decryptId($injuryPersonData['injury_person_id']),
                     'injury_person_name' => $injuryPersonData['injury_person_name'],
@@ -83,7 +81,7 @@ class AccidentInvestigationInjury extends Model
                 }
             }
         }
-        $IncidentBodyParts->updateStatusForIncident(decryptId($accident_investigationId), $inj_person_arr);
+        $IncidentBodyParts->updateStatusForIncident(decryptId($incident_id), $inj_person_arr);
     }
 
     public function deleterecord($id)
