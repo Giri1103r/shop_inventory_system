@@ -445,6 +445,7 @@ Route::group(['prefix' => 'safety/'], function () {
         Route::get('export/excel', [OHSPlantSummaryReportController::class, 'exportExcel']);
         Route::get('export/pdf', [OHSPlantSummaryReportController::class, 'exportPdf']);
         Route::get('exportViewPdf/{id}', [OHSPlantSummaryReportController::class, 'exportViewPdf']);
+        Route::get('generalexcel/{id}', [OHSPlantSummaryReportController::class, 'generalExcel']);
     });
 });
 
