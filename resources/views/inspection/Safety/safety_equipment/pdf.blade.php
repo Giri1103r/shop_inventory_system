@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>SAFETY GALLERY INSPECTION | KARAM</title>
+    <title>FIRE SAFETY EQUIPMENT | KARAM</title>
 
     <style>
         .badge {
@@ -177,7 +177,7 @@
                             </tr>
                             <tr>
                                 <td style="border: 1px solid black; width:70px;">Issue Dt.</td>
-                                <td style="border: 1px solid black;">{{ $document_no->issue_date }}</td>
+                                <td style="border: 1px solid black;">{{ Displaydateformat($document_no->issue_date) }}</td>
                             </tr>
                             <tr>
                                 <td style="border: 1px solid black; width:70px;">Rev.& Dt.</td>
