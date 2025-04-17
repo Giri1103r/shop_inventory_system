@@ -705,10 +705,6 @@ class MonthlyForkLiftInspectionController extends Controller
         }
     }
 
-
-
-
-
     public function ExportExcel(Request $request)
     {
         try {
@@ -722,59 +718,49 @@ class MonthlyForkLiftInspectionController extends Controller
             $sheet = $spreadsheet->getActiveSheet();
             $currentRow = 1;
 
-            $applyBorderStyle = function ($range) use ($sheet) {
-                $sheet->getStyle($range)->applyFromArray([
-                    'borders' => [
-                        'allBorders' => [
-                            'borderStyle' => Border::BORDER_THIN,
-                            'color' => ['argb' => '000000'],
-                        ]
-                    ],
-                    'alignment' => [
-                        'horizontal' => Alignment::HORIZONTAL_CENTER,
-                        'vertical' => Alignment::VERTICAL_CENTER,
-                    ],
-                ]);
-            };
+            foreach (range('A', 'P') as $col) {
+                $sheet->getColumnDimension($col)->setAutoSize(true);
+            }
 
             foreach ($allData as $inspection) {
-                $inspection_detail = $this->forklift->selectOne($inspection->inspection_id);
-                $user_responses = json_decode($inspection_detail->responses, true);
-                $inspection_type = OHC_TYPE_MONTHLY_MEDICINE_STORE;
+                $user_responses = json_decode($inspection->responses, true);
+                $inspection_type = MONTHLY_FORKLIFT_INSPECTION;
 
-                $createdBySig = GetSafetySignature($inspection_detail->checked_by, $inspection_detail->id, $inspection_type);
-                $verifiedBySig = GetSafetySignature($inspection_detail->verified_by, $inspection_detail->id, $inspection_type);
-                $approvedBySig = GetSafetySignature($inspection_detail->approved_by, $inspection_detail->id, $inspection_type);
-                $document_no = $this->document_reference->selectOne($inspection_detail->document_reference_id);
+                $createdBySig = GetSafetySignature($inspection->checked_by, $inspection->inspection_id, $inspection_type);
+                $verifiedBySig = GetSafetySignature($inspection->verified_by, $inspection->inspection_id, $inspection_type);
+                $approvedBySig = GetSafetySignature($inspection->approved_by, $inspection->inspection_id, $inspection_type);
+                $document_no = $this->document_reference->selectOne($inspection->document_reference_id);
 
                 $leftLogoPath = public_path('assets/images/logo-dark.png');
+                $sheet->getRowDimension($currentRow)->setRowHeight(40);
+
                 if (file_exists($leftLogoPath)) {
-                    $sheet->mergeCells("A$currentRow:C" . ($currentRow + 2));
+                    $sheet->mergeCells("A$currentRow:D" . ($currentRow + 2));
                     $drawing = new Drawing();
                     $drawing->setPath($leftLogoPath);
                     $drawing->setCoordinates("A{$currentRow}");
                     $drawing->setOffsetX(80);
                     $drawing->setHeight(70);
                     $drawing->setWorksheet($sheet);
-                    $applyBorderStyle("A$currentRow:C" . ($currentRow + 2));
+                    $sheet->getStyle("A$currentRow:D" . ($currentRow + 2))->applyFromArray([
+                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    ]);
                 }
 
-                $sheet->mergeCells("I{$currentRow}:K{$currentRow}")->setCellValue("I{$currentRow}", 'Doc. No.');
-                $sheet->mergeCells("I" . ($currentRow + 1) . ":K" . ($currentRow + 1))->setCellValue("I" . ($currentRow + 1), 'Issue Dt.');
-                $sheet->mergeCells("I" . ($currentRow + 2) . ":K" . ($currentRow + 2))->setCellValue("I" . ($currentRow + 2), 'Rev. & Dt.');
-
-                $sheet->mergeCells("L{$currentRow}:M{$currentRow}")->setCellValue("L{$currentRow}", $document_no->doc_no ?? '-');
-                $sheet->mergeCells("L" . ($currentRow + 1) . ":M" . ($currentRow + 1))->setCellValue("L" . ($currentRow + 1), Displaydateformat($document_no->issue_date ?? null));
-                $sheet->mergeCells("L" . ($currentRow + 2) . ":M" . ($currentRow + 2))->setCellValue("L" . ($currentRow + 2), $document_no->rev_dt ?? '-');
-
-                $sheet->getStyle("I{$currentRow}:L" . ($currentRow + 2))->applyFromArray([
-                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
+                $sheet->mergeCells("L{$currentRow}:M{$currentRow}")->setCellValue("L{$currentRow}", 'Doc. No.');
+                $sheet->mergeCells("L" . ($currentRow + 1) . ":M" . ($currentRow + 1))->setCellValue("L" . ($currentRow + 1), 'Issue Dt.');
+                $sheet->mergeCells("L" . ($currentRow + 2) . ":M" . ($currentRow + 2))->setCellValue("L" . ($currentRow + 2), 'Rev. & Dt.');
+                $sheet->mergeCells("N{$currentRow}:P{$currentRow}")->setCellValue("N{$currentRow}", $document_no->doc_no ?? '-');
+                $sheet->mergeCells("N" . ($currentRow + 1) . ":P" . ($currentRow + 1))->setCellValue("N" . ($currentRow + 1), Displaydateformat($document_no->issue_date ?? null));
+                $sheet->mergeCells("N" . ($currentRow + 2) . ":P" . ($currentRow + 2))->setCellValue("N" . ($currentRow + 2), $document_no->rev_dt ?? '-');
+                $sheet->getStyle("L{$currentRow}:P" . ($currentRow + 2))->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                 ]);
 
-                $sheet->mergeCells("D{$currentRow}:H" . ($currentRow + 2));
-                $sheet->setCellValue("D{$currentRow}", "Monthly OHC Store Medicine Inspection Checklist PN International Pvt.Ltd");
-                $sheet->getStyle("D{$currentRow}")->applyFromArray([
+                $sheet->mergeCells("E{$currentRow}:K" . ($currentRow + 2));
+                $sheet->setCellValue("E{$currentRow}", "MONTHLY FORKLIFT INSPECTION CHECKLIST PN INTERNATIONAL PVT. LTD.");
+                $sheet->getStyle("E{$currentRow}")->applyFromArray([
                     'font' => ['bold' => true, 'size' => 14],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
@@ -782,82 +768,128 @@ class MonthlyForkLiftInspectionController extends Controller
 
                 $currentRow += 3;
 
-                $sheet->mergeCells("A$currentRow:D$currentRow")->setCellValue("A$currentRow", "DATE OF INSPECTION :- " . Displaydateformat($inspection_detail->date_of_inspection));
-                $sheet->mergeCells("E$currentRow:H$currentRow")->setCellValue("E$currentRow", "LOCATION :- " . getLocationname($inspection_detail->location));
-                $sheet->mergeCells("I$currentRow:M$currentRow")->setCellValue("I$currentRow", "SHIFT :- " . getShiftname($inspection_detail->shift));
-                $applyBorderStyle("A$currentRow:M$currentRow");
-                $currentRow++;
-
-                $sheet->mergeCells("A$currentRow:D$currentRow")->setCellValue("A$currentRow", "NEXT DUE ON :- " . Displaydateformat($inspection_detail->next_due));
-                $sheet->mergeCells("E$currentRow:H$currentRow")->setCellValue("E$currentRow", "UNIT :- " . getUnitname($inspection_detail->unit ?? '-'));
-                $sheet->mergeCells("I$currentRow:M$currentRow")->setCellValue("I$currentRow", "FREQUENCY :- " . getFrequencyname($inspection_detail->frequency ?? '-'));
-                $applyBorderStyle("A$currentRow:M$currentRow");
-                $currentRow++;
-
-                $sheet->mergeCells("A$currentRow:D$currentRow")->setCellValue("A$currentRow", "IDENTIFICATION NO :- " . ($inspection_detail->identification_no ?? '-'));
-                $sheet->mergeCells("E$currentRow:H$currentRow")->setCellValue("E$currentRow", "TYPE :- " . GetForkLiftType($inspection_detail->forklift_type ?? '-'));
-                $sheet->mergeCells("I$currentRow:M$currentRow")->setCellValue("I$currentRow", "CAPACITY :- " . ($inspection_detail->capacity ?? '-'));
-                $applyBorderStyle("A$currentRow:M$currentRow");
-                $currentRow += 2;
-
-                $sheet->mergeCells("A{$currentRow}:B{$currentRow}")->setCellValue("A{$currentRow}", "SR. NO.");
-                $sheet->mergeCells("C{$currentRow}:I{$currentRow}")->setCellValue("C{$currentRow}", "CHECK ITEMS");
-                $sheet->mergeCells("J{$currentRow}:K{$currentRow}")->setCellValue("J{$currentRow}", "STATUS (YES/NO)");
-                $sheet->mergeCells("L{$currentRow}:M{$currentRow}")->setCellValue("L{$currentRow}", "REMARK");
-                $sheet->getStyle("A{$currentRow}:M{$currentRow}")->applyFromArray([
+                $sheet->mergeCells("A$currentRow:E$currentRow")->setCellValue("A$currentRow", "DATE OF INSPECTION :- " . Displaydateformat($inspection->date_of_inspection));
+                $sheet->mergeCells("F$currentRow:K$currentRow")->setCellValue("F$currentRow", "LOCATION :- " . getLocationname($inspection->location));
+                $sheet->mergeCells("L$currentRow:P$currentRow")->setCellValue("L$currentRow", "SHIFT :- " . ($inspection->shift));
+                $sheet->getStyle("A$currentRow:P$currentRow")->applyFromArray([
                     'font' => ['bold' => true],
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                 ]);
+                $currentRow++;
+
+                $sheet->mergeCells("A$currentRow:E$currentRow")->setCellValue("A$currentRow", "NEXT DUE ON :- " . Displaydateformat($inspection->next_due));
+                $sheet->mergeCells("F$currentRow:K$currentRow")->setCellValue("F$currentRow", "UNIT :- " . getUnitname($inspection->unit ?? '-'));
+                $sheet->mergeCells("L$currentRow:P$currentRow")->setCellValue("L$currentRow", "FREQUENCY :- " . getFrequencyname($inspection->frequency ?? '-'));
+                $sheet->getStyle("A$currentRow:P$currentRow")->applyFromArray([
+                    'font' => ['bold' => true],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                ]);
+                $currentRow++;
+
+                $sheet->mergeCells("A$currentRow:E$currentRow")->setCellValue("A$currentRow", "IDENTIFICATION NO :- " . ($inspection->identification_no ?? '-'));
+                $sheet->mergeCells("F$currentRow:K$currentRow")->setCellValue("F$currentRow", "TYPE :- " . GetForkLiftType($inspection->forklift_type ?? '-'));
+                $sheet->mergeCells("L$currentRow:P$currentRow")->setCellValue("L$currentRow", "CAPACITY :- " . ($inspection->capacity ?? '-'));
+                $sheet->getStyle("A$currentRow:P$currentRow")->applyFromArray([
+                    'font' => ['bold' => true],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                ]);
+                $currentRow++;
+
+                $sheet->mergeCells("A$currentRow:E$currentRow")->setCellValue("A$currentRow", "SR. NO.");
+                $sheet->mergeCells("F$currentRow:K$currentRow")->setCellValue("F$currentRow", "CHECK ITEMS\n(DESCRIPTION / STATION / REMARKS)");
+                $sheet->mergeCells("L$currentRow:M$currentRow")->setCellValue("L$currentRow", "STATUS (YES/NO)");
+                $sheet->mergeCells("N$currentRow:P$currentRow")->setCellValue("N$currentRow", "REMARK");
+                $sheet->getStyle("A$currentRow:P$currentRow")->applyFromArray([
+                    'font' => ['bold' => true],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                ]);
+                $sheet->getStyle("F$currentRow:K$currentRow")->getAlignment()->setWrapText(true);
+                $currentRow++;
 
                 $srNo = 1;
                 foreach ($user_responses as $detail) {
-                    $sheet->setCellValue("A$currentRow", $srNo++);
-                    $sheet->mergeCells("C$currentRow:I$currentRow")->setCellValue("C$currentRow", GetChecklistTypeDate($detail['question_id']));
-                    $sheet->mergeCells("J$currentRow:K$currentRow")->setCellValue("J$currentRow", $detail['status'] ?? '-');
-                    $sheet->mergeCells("L$currentRow:M$currentRow")->setCellValue("L$currentRow", $detail['remarks'] ?? '-');
-                    $applyBorderStyle("A$currentRow:M$currentRow");
+                    $sheet->mergeCells("A$currentRow:E$currentRow")->setCellValue("A$currentRow", $srNo++);
+                    $sheet->mergeCells("F$currentRow:K$currentRow")->setCellValue("F$currentRow", GetChecklistTypeDate($detail['question_id']));
+
+                    $symbolCell = "L$currentRow";
+                    $tick = strtoupper(trim($detail['answer'] ?? '')) === 'YES' ? '✔️' : '❌';
+                    $tickColor = strtoupper(trim($detail['answer'] ?? '')) === 'YES' ? '00B050' : 'FF0000';
+
+                    $sheet->mergeCells("L$currentRow:M$currentRow")->setCellValue($symbolCell, $tick);
+                    $sheet->getStyle($symbolCell)->getFont()->getColor()->setARGB($tickColor);
+                    $sheet->getStyle($symbolCell)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+
+                    $sheet->mergeCells("N$currentRow:P$currentRow")->setCellValue("N$currentRow", $detail['remarks'] ?? '-');
+                    $sheet->getStyle("F$currentRow:K$currentRow")->getAlignment()->setWrapText(true);
+                    $sheet->getStyle("N$currentRow:P$currentRow")->getAlignment()->setWrapText(true);
+                    $sheet->getRowDimension($currentRow)->setRowHeight(-1);
+
+                    $sheet->getStyle("A$currentRow:P$currentRow")->applyFromArray([
+                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                    ]);
                     $currentRow++;
                 }
 
                 $signatureRow = $currentRow;
-                $sheet->getRowDimension($signatureRow)->setRowHeight(40);
+                $sheet->getRowDimension($signatureRow)->setRowHeight(60);
 
-                $sheet->mergeCells("A$signatureRow:D$signatureRow")->setCellValue("A$signatureRow", "CHECKED AND PREPARED BY :- ");
+                $approvedByName = getUserName($inspection->checked_by);
+                $sheet->mergeCells("A$signatureRow:E$signatureRow")->setCellValue("A$signatureRow", "CHECKED AND PREPARED BY: $approvedByName");
                 if (file_exists($createdBySig)) {
                     $drawing = new Drawing();
                     $drawing->setPath($createdBySig);
                     $drawing->setCoordinates("B{$signatureRow}");
                     $drawing->setOffsetX(60);
+                    $drawing->setOffsetY(10);
                     $drawing->setHeight(50);
                     $drawing->setWorksheet($sheet);
                 }
 
-                $sheet->mergeCells("E$signatureRow:I$signatureRow")->setCellValue("E$signatureRow", "VERIFIED BY :- ");
+                $approvedByName = getUserName($inspection->verified_by);
+                $sheet->mergeCells("F$signatureRow:K$signatureRow")->setCellValue("F$signatureRow", "VERIFIED BY: $approvedByName");
                 if (file_exists($verifiedBySig)) {
                     $drawing = new Drawing();
                     $drawing->setPath($verifiedBySig);
-                    $drawing->setCoordinates("F{$signatureRow}");
+                    $drawing->setCoordinates("H{$signatureRow}");
                     $drawing->setOffsetX(60);
+                    $drawing->setOffsetY(10);
                     $drawing->setHeight(50);
                     $drawing->setWorksheet($sheet);
                 }
 
-                $sheet->mergeCells("J$signatureRow:M$signatureRow")->setCellValue("J$signatureRow", "APPROVED BY :- ");
+                $approvedByName = getUserName($inspection->approved_by);
+                $sheet->mergeCells("L$signatureRow:P$signatureRow")->setCellValue("L$signatureRow", "APPROVED BY: $approvedByName");
                 if (file_exists($approvedBySig)) {
                     $drawing = new Drawing();
                     $drawing->setPath($approvedBySig);
-                    $drawing->setCoordinates("K{$signatureRow}");
+                    $drawing->setCoordinates("M{$signatureRow}");
                     $drawing->setOffsetX(60);
+                    $drawing->setOffsetY(10);
                     $drawing->setHeight(50);
                     $drawing->setWorksheet($sheet);
                 }
+                $sheet->getRowDimension($signatureRow)->setRowHeight(60);
+                $sheet->getStyle("A$signatureRow:P$signatureRow")->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => [
+                        'horizontal' => Alignment::HORIZONTAL_CENTER,
 
-                $currentRow = $signatureRow + 5;
+                        'wrapText' => true, // Wrap text to ensure padding works when text overflows
+                        'indent' => 1, // Simulates padding (higher value = more space)
+                    ],
+                ]);
+
+
+                $currentRow = $signatureRow + 4;
             }
 
             $writer = new Xlsx($spreadsheet);
-            $fileName = 'forklift_Equipment_Report_All.xlsx';
+            $fileName = 'Monthly Forklift Inspection.xlsx';
             $filePath = storage_path("app/public/{$fileName}");
             $writer->save($filePath);
 
@@ -868,6 +900,7 @@ class MonthlyForkLiftInspectionController extends Controller
             return redirect()->back();
         }
     }
+
 
 
 
