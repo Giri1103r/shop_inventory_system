@@ -353,6 +353,7 @@ class FloorStretcherController extends Controller
             $inspection_type = OHC_TYPE_FLOOR_STRETCHER;
 
             $signature = $this->floor_files->getFiles($id, $inspection_type);
+
             $username = getUsername($inspection_detail->created_by);
             $user_response = json_decode($inspection_detail->responses, true);
 
@@ -471,7 +472,7 @@ class FloorStretcherController extends Controller
                 }
             }
 
-            $sheet->mergeCells("A{$row}:J{$row}")->setCellValue("A{$row}", 'Auditor Name: ' . $username);
+            $sheet->mergeCells("A{$row}:J{$row}")->setCellValue("A{$row}", 'Auditor (Name & Signature):- ' . $username);
 
             $sheet->getStyle("A{$row}:J{$row}")->applyFromArray([
                 'font' => ['bold' => true],
@@ -483,7 +484,10 @@ class FloorStretcherController extends Controller
             ]);
 
             if (!empty($signature)) {
-                $signaturePath = public_path($signature);
+                // dd($signature);
+                // $signaturePath = public_path($signature);
+                $signaturePath = public_path($signature['file_path']);
+                // dd($signaturePath);
                 if (file_exists($signaturePath)) {
                     $drawing = new Drawing();
                     $drawing->setName('Signature');
