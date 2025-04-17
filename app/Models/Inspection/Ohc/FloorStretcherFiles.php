@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class FloorStretcherFiles extends Model
 {
-    protected $table = 'inspection_fire_signatureupload';
+    protected $table = 'inspection_ohc_floor_stretcher_files';
 
     protected $primaryKey = 'id';
 

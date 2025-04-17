@@ -511,6 +511,7 @@ Route::group(['prefix' => 'fire/'], function () {
         Route::POST('level-two/verify/submit', [HooterInspectionController::class, 'levelTwoManagerSubmit']);
         Route::GET('exportViewPdf/{id}', [HooterInspectionController::class, 'ExportViewPDF']);
         Route::GET('export/excel', [HooterInspectionController::class, 'ExportExcel']);
+        Route::GET('export/excel/{id}', [HooterInspectionController::class, 'GeneralExcel']);
         Route::GET('export/pdf', [HooterInspectionController::class, 'ExportPDF']);
         Route::GET('get/department', [HooterInspectionController::class, 'GetDepartment']);
     });
