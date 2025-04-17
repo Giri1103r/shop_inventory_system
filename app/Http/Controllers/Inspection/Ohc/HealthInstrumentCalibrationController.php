@@ -263,6 +263,7 @@ class HealthInstrumentCalibrationController extends Controller
     {
         try {
             $allData = $this->health_instrument_calibration->exportdata(); // grouped by unit
+            $document_no = $this->document_reference->selectUsingName('HealthInstrumentcalibration');
 
             if (empty($allData)) {
                 return redirect()->back()->with('error', 'No data found');
@@ -327,20 +328,27 @@ class HealthInstrumentCalibrationController extends Controller
                 ],
             ]);
 
-            $docInfo = [
-                'L1' => ['Doc. No.', 'OF/SA/133'],
-                'L2' => ['Issue Dt.', '15.05.2021'],
-                'L3' => ['Rev. & Dt.', '0'],
+
+             $labelMap = [
+                'L1' => ['value' => 'Doc. No.', 'valueCell' => 'M1', 'data' => $document_no->doc_no],
+                'L2' => ['value' => 'Issue Dt.', 'valueCell' => 'M2', 'data' => Displaydateformat($document_no->issue_date)],
+                'L3' => ['value' => 'Rev. & Dt.', 'valueCell' => 'M3', 'data' => $document_no->rev_dt],
             ];
 
-            foreach ($docInfo as $cell => [$label, $value]) {
-                $valueCell = 'M' . substr($cell, 1);
-                $sheet->setCellValue($cell, $label);
-                $sheet->setCellValue($valueCell, $value);
-                $sheet->getStyle("$cell:$valueCell")->applyFromArray([
+            foreach ($labelMap as $labelCell => $info) {
+                $sheet->setCellValue($labelCell, $info['value']);
+                $sheet->setCellValue($info['valueCell'], $info['data']);
+
+                $sheet->getStyle($labelCell)->applyFromArray([
                     'font' => ['bold' => true],
-                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
-                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
+                ]);
+
+                $sheet->getStyle($info['valueCell'])->applyFromArray([
+                    'font' => ['bold' => true],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
                 ]);
             }
 
@@ -417,6 +425,7 @@ class HealthInstrumentCalibrationController extends Controller
 
             return response()->download($filePath)->deleteFileAfterSend(true);
         } catch (Exception $ex) {
+            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after some time!');
             return redirect(admin_url('ohc/health-instrument/calibration-track-sheet/list'));
@@ -557,8 +566,6 @@ class HealthInstrumentCalibrationController extends Controller
                 ],
             ]);
 
-
-            // Document Info
             $docInfo = [
                 'L1' => ['Doc. No.', 'OF/SA/133'],
                 'L2' => ['Issue Dt.', '15.05.2021'],
@@ -579,10 +586,21 @@ class HealthInstrumentCalibrationController extends Controller
                         'wrapText' => true,
                     ],
                     'borders' => [
-                        'allBorders' => ['borderStyle' => Border::BORDER_THIN],
+                        'allBorders' => ['borderStyle' => Border::BORDER_DOUBLE], 
                     ],
                 ]);
             }
+
+            $sheet->setCellValue("M1", $document_no->doc_no);
+            $sheet->setCellValue("M2", Displaydateformat($document_no->issue_date));
+            $sheet->setCellValue("M3", $document_no->rev_dt);
+
+            $sheet->getStyle("L1:M3")->applyFromArray([
+                'borders' => [
+                    'allBorders' => ['borderStyle' => Border::BORDER_DOUBLE, 'color' => ['argb' => '000000']],
+                ],
+            ]);
+
 
 
             $sheet->setCellValue("M1", $document_no->doc_no);

@@ -839,6 +839,7 @@ Route::group(['prefix' => 'fire/'], function () {
         Route::POST('level-one/verify/submit', [CartridgeTypeFireExtinguisherController::class, 'levelOneManagerSubmit']);
         Route::POST('level-two/verify/submit', [CartridgeTypeFireExtinguisherController::class, 'levelTwoManagerSubmit']);
         Route::GET('exportViewPdf/{id}', [CartridgeTypeFireExtinguisherController::class, 'ExportViewPDF']);
+        Route::GET('generalExcel/{id}', [CartridgeTypeFireExtinguisherController::class, 'generalExcel']);
         Route::GET('export/excel', [CartridgeTypeFireExtinguisherController::class, 'ExportExcel']);
         Route::GET('export/pdf', [CartridgeTypeFireExtinguisherController::class, 'ExportPDF']);
         Route::GET('get/department', [CartridgeTypeFireExtinguisherController::class, 'GetDepartment']);
