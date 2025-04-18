@@ -774,6 +774,7 @@ class PperequestController extends BaseController
                             'message' => getUsername($updateEhsData['approved_by']) . " has " . removeUnderScore(getStatus($updateEhsData['approve_status']))  . " a PPE request at " . displaydateformat($empDetails->created_at) . " on " . getPpename($empDetails->ppe_name) . " from " . getDepartment($empDetails->department) . " DEPARTMENT",
                             'icon' => $img,
                             'style' => 'font-size: 1rem;',
+                            'module' => 1,
                         ]),
                         'web_link' => admin_url('ppe_request/view/' . encryptId($id)),
                         'assigned_user' =>  $assignedUserString,
