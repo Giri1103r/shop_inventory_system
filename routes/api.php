@@ -33,6 +33,9 @@ Route::middleware('api')->prefix('v1')->group(function () {
         Route::get('dashboard', [LoginController::class, 'index']);
         Route::post('logout', [LoginController::class, 'logout']);
 
+        Route::post('notification', [NotificationController::class, 'notification']);
+        Route::post('notification/update', [NotificationController::class, 'notificationUpdate']);
+
         /**
          * Master Routes
          */
