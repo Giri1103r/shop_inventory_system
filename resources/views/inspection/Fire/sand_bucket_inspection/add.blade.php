@@ -249,7 +249,7 @@
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.condition') }}</label>
+                                                            class="form-label require">{{ __('inspection.fire_bucket_stand_condition') }}</label>
                                                         <select name="condition[1]" id="condition"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Condition</option>
@@ -350,7 +350,7 @@
                                                         <div class="form-group form-input">
                                                             <label
                                                                 class="form-label require">{{ __('inspection.remarks') }}</label>
-                                                            <textarea name="remarks" id="remarks" class="form-control" style="resize: none;"></textarea>
+                                                            <textarea name="remarks[1]" id="remarks" class="form-control" style="resize: none;"></textarea>
 
                                                         </div>
                                                     </div>
@@ -693,7 +693,7 @@
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.condition') }}</label>
+                                                            class="form-label require">{{ __('inspection.fire_bucket_stand_condition') }}</label>
                                                         <select name="condition[${form_set_count}]" id="condition"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Condition</option>
@@ -941,6 +941,7 @@
                     $(this).find('select[name^="qualtiy_quantity_sand"]').attr('name', 'qualtiy_quantity_sand[' + idx +
                         ']');
                     $(this).find('input[name^="approach"]').attr('name', 'approach[' + idx + ']');
+                    $(this).find('input[name^="remarks"]').attr('name', 'remarks[' + idx + ']');
 
                     $(this).find('select').select2();
                 });

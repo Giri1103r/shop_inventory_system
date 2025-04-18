@@ -24,7 +24,6 @@ use App\Models\Master\Unit;
 use Illuminate\Http\Request;
 use Exception;
 
-
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
@@ -957,6 +956,17 @@ class PASystemInspectionController extends Controller
 
 
                 $row = $signatureRowStart + 6;
+
+                $lastRow = $signatureRowStart;
+
+                $sheet->getStyle("A{$titleRow}:K{$lastRow}")->applyFromArray([
+                    'borders' => [
+                        'outline' => [
+                            'borderStyle' => Border::BORDER_THICK,
+                            'color' => ['argb' => '000000'],
+                        ],
+                    ],
+                ]);
             }
 
             $writer = new Xlsx($spreadsheet);

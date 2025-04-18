@@ -187,9 +187,9 @@ class DailyVitalEquipmentController extends Controller
                     $drawing = new Drawing();
                     $drawing->setName('Logo');
                     $drawing->setPath($logoPath);
-                    $drawing->setCoordinates("A{$currentRow}");
-                    $drawing->setOffsetX(25);
-                    $drawing->setOffsetY(10);
+                    $drawing->setCoordinates("B{$currentRow}");
+                    $drawing->setOffsetX(5);
+                    $drawing->setOffsetY(5);
                     $drawing->setWidth(90);
                     $drawing->setHeight(50);
                     $drawing->setWorksheet($sheet);
@@ -443,8 +443,8 @@ class DailyVitalEquipmentController extends Controller
                 $drawing = new Drawing();
                 $drawing->setName('Logo');
                 $drawing->setPath($logoPath);
-                $drawing->setCoordinates("A1");
-                $drawing->setOffsetX(25);
+                $drawing->setCoordinates("B1");
+                $drawing->setOffsetX(5);
                 $drawing->setOffsetY(10);
                 $drawing->setWidth(90);
                 $drawing->setHeight(50);

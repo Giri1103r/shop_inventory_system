@@ -795,6 +795,7 @@ Route::group(['prefix' => 'fire/'], function () {
         Route::GET('export/excel', [SandBucketInspectionController::class, 'ExportExcel']);
         Route::GET('export/pdf', [SandBucketInspectionController::class, 'ExportPDF']);
         Route::GET('get/department', [SandBucketInspectionController::class, 'GetDepartment']);
+        Route::GET('generalExcel/{id}', [SandBucketInspectionController::class, 'generalExcel']);
     });
 
     Route::group(['prefix' => 'hose-box-inspection'], function () {
