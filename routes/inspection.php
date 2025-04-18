@@ -555,6 +555,8 @@ Route::group(['prefix' => 'fire/'], function () {
         Route::POST('level-one/verify/submit', [MonthlyFirePumpHouseController::class, 'levelOneManagerSubmit']);
         Route::POST('level-two/verify/submit', [MonthlyFirePumpHouseController::class, 'levelTwoManagerSubmit']);
         Route::GET('exportViewPdf/{id}', [MonthlyFirePumpHouseController::class, 'exportViewPdf']);
+        Route::GET('generalExcel/{id}', [MonthlyFirePumpHouseController::class, 'generalExcel']);
+
     });
 
     Route::group(['prefix' => 'fire_extinguisher-inspection'], function () {

@@ -64,6 +64,11 @@ class CoTypeFireExtinguisher extends Model
             ->leftJoin('masters_unit', 'inspection_co_type_fire_extinguisher.unit', '=', 'masters_unit.id')
             ->leftJoin('inspection_frequency_option', 'inspection_co_type_fire_extinguisher.frequency', '=', 'inspection_frequency_option.id');
 
+        if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_OFFICER) || CheckUserRole(ROLE_L1_MANAGER) || CheckUserRole(ROLE_L2_MANAGER)) {
+        } else if (CheckUserRole(ROLE_FIRE_ASSOCIATES)) {
+            $query->where('inspection_co_type_fire_extinguisher.created_by', Auth::id());
+        }
+
         $org_total =  $query;
         $org_total_counts = $org_total->count();
 
