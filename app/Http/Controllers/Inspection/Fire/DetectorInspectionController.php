@@ -26,6 +26,16 @@ use App\Models\Inspection\Fire\FireSignatureUpload;
 use App\Models\Inspection\Fire\FireCheckListFollowUp;
 use App\Models\Inspection\Fire\DetectorInspectionDetails;
 
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Border;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
+use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
+use PhpOffice\PhpSpreadsheet\RichText\RichText;
+use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+
 class DetectorInspectionController extends Controller
 {
     private $detector;
@@ -146,6 +156,9 @@ class DetectorInspectionController extends Controller
                             $btn .= '<a href="' . admin_url('fire/detector-inspection/exportViewPdf/' . encryptId($row->fire_detector_id)) . '" style="margin-right: 5px;" title="PDF">
                         <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
                     </a>';
+
+                    $btn .= '<a href="' . admin_url('fire/detector-inspection/generalExcel/' . encryptId($row->fire_detector_id)) . '" style="margin-right: 5px;" title="Excel"> <i class="fas fa-file-excel" style="color: #1D6F42;" aria-hidden="true"></i></a>';
+
                             return $btn;
                         })
                         ->rawColumns(['action', 'created_date', 'created_by', 'status', 'inspection_status', 'date_of_inspection', 'next_due', 'location', 'shift', 'frequency'])
@@ -198,6 +211,7 @@ class DetectorInspectionController extends Controller
 
             return view('inspection.fire.detector_inspection.add', $data);
         } catch (Exception $ex) {
+
             report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('fire/detector-inspection/list'));
@@ -335,6 +349,7 @@ class DetectorInspectionController extends Controller
                 return redirect(admin_url('fire/detector-inspection/list'));
             }
         } catch (Exception $ex) {
+            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('fire/detector-inspection/list'));
@@ -750,43 +765,308 @@ class DetectorInspectionController extends Controller
     {
         try {
             $allData = $this->detector->exportdata();
+            // dd($allData);
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
             }
 
-            $header = [
-                __("common.sno"),
-                'Document Number',
-                'Issue Date',
-                'Revision Date',
-                __("inspection.inspection_status"),
-                __("common.created_by"),
-                __("common.created_date"),
-            ];
+            $spreadsheet = new Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
 
-            $i = 1;
-            foreach ($allData as $data) {
-
-                $export = [];
-                $export[] =  $i;
-                $export[] =  $data->doc_no;
-                $export[] =  $data->issue_date;
-                $export[] = $data->revision_data;
-                $export[] =  getInspectionStatus($data->inspection_status);;
-                $export[] =  getusername($data->created_by);
-                $export[] =  Displaydateformat($data->created_at);
-                $exportData[] = $export;
-                $i++;
+            foreach (range('A', 'L') as $col) {
+                $sheet->getColumnDimension($col)->setAutoSize(true);
             }
 
-            $writer = SimpleExcelWriter::streamDownload('Detector Inspection.xlsx')
-                ->addHeader($header)
-                ->addRows(
-                    $exportData
-                );
-        } catch (Exception $ex) {
-            report($ex);
-            Session::flash('error', 'Something went wrong !');
+            for ($i = 1; $i <= 200; $i++) {
+                $sheet->getRowDimension($i)->setRowHeight(25);
+            }
+            $row = 1;
+
+            foreach ($allData as $groupedDetails) {
+                
+                $inspection_detail = $groupedDetails->first();
+                
+                $document_no = $this->document_reference->selectOne($inspection_detail->document_reference_id);
+                
+                $prepared_by_signature = GetFireSignature($inspection_detail->checked_by, $inspection_detail->fire_id, DETECTOR_INSPECTION);
+                $verified_by_signature = GetFireSignature($inspection_detail->verified_by, $inspection_detail->fire_id, DETECTOR_INSPECTION);
+                $approved_by_signature = GetFireSignature($inspection_detail->approved_by, $inspection_detail->fire_id, DETECTOR_INSPECTION);
+
+                $titleRow = $row;
+
+                $logoPath = public_path('assets/images/logo-dark.png');
+                if (file_exists($logoPath)) {
+                    $drawing = new Drawing();
+                    $drawing->setName('Logo');
+                    $drawing->setDescription('Company Logo');
+                    $drawing->setPath($logoPath);
+                    $drawing->setCoordinates('A' . $titleRow);
+                    $drawing->setOffsetX(5);
+                    $drawing->setOffsetY(5);
+                    $drawing->setHeight(60);
+                    $drawing->setWorksheet($sheet);
+                }
+
+                $sheet->mergeCells("A{$titleRow}:B" . ($titleRow + 2));
+                $sheet->getStyle("A{$titleRow}:B" . ($titleRow + 2))->applyFromArray([
+                    'font' => ['bold' => true, 'size' => 14],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                ]);
+
+                $sheet->mergeCells("C{$titleRow}:H" . ($titleRow + 2));
+                $sheet->setCellValue("C{$titleRow}", "FIRE EXTINGUISHER INSPECTION CHECKLIST (CARTIDGE TYPE) PN INTERNATIONAL PVT. LTD.");
+
+                $sheet->getStyle("C{$titleRow}:H" . ($titleRow + 2))->applyFromArray([
+                    'font' => ['bold' => true, 'size' => 14],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                ]);
+
+                $sheet->mergeCells("I{$titleRow}:J{$titleRow}")->setCellValue("I{$titleRow}", "Doc. No.");
+                $sheet->mergeCells("K{$titleRow}:L{$titleRow}")->setCellValue("K{$titleRow}", $document_no->doc_no ?? '');
+                
+                $sheet->mergeCells("I" . ($titleRow+1) . ":J" . ($titleRow+1))->setCellValue("I" . ($titleRow+1), "Issue Dt.");
+                $sheet->mergeCells("K" . ($titleRow+1) . ":L" . ($titleRow+1))->setCellValue("K" . ($titleRow+1), Displaydateformat($document_no->issue_date ?? ''));
+                
+                $sheet->mergeCells("I" . ($titleRow+2) . ":J" . ($titleRow+2))->setCellValue("I" . ($titleRow+2), "Rev. & Dt.");
+                $sheet->mergeCells("K" . ($titleRow+2) . ":L" . ($titleRow+2))->setCellValue("K" . ($titleRow+2), $document_no->rev_dt ?? '');
+                
+                $sheet->getStyle("I{$titleRow}:L" . ($titleRow+2))->applyFromArray([
+                    'font' => ['bold' => true],
+                    'alignment' => [
+                        'horizontal' => Alignment::HORIZONTAL_CENTER,
+                        'vertical' => Alignment::VERTICAL_CENTER,
+                    ],
+                    'borders' => [
+                        'allBorders' => [
+                            'borderStyle' => Border::BORDER_DOUBLE,
+                            'color' => ['argb' => '000000'],
+                        ],
+                    ],
+                ]);
+
+              
+
+                $headerInfoRow = $titleRow + 3;
+
+                $sheet->mergeCells("A{$headerInfoRow}:D{$headerInfoRow}")->setCellValue("A{$headerInfoRow}", "Date of Inspection:- " . Displaydateformat($inspection_detail->date_of_inspection));
+                $sheet->mergeCells("E{$headerInfoRow}:H{$headerInfoRow}")->setCellValue("E{$headerInfoRow}", "Location:- " . getLocationname($inspection_detail->location));
+                $sheet->mergeCells("I{$headerInfoRow}:L{$headerInfoRow}")->setCellValue("I{$headerInfoRow}", "Shift:- " . $inspection_detail->shift);
+                $sheet->getStyle("A{$headerInfoRow}:L{$headerInfoRow}")->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'font' => ['bold' => true],
+                ]);
+                $headerInfoRow++;
+
+                $sheet->mergeCells("A{$headerInfoRow}:D{$headerInfoRow}")->setCellValue("A{$headerInfoRow}", "Next Due Date:- " . Displaydateformat($inspection_detail->next_due));
+                $sheet->mergeCells("E{$headerInfoRow}:H{$headerInfoRow}")->setCellValue("E{$headerInfoRow}", "Unit:- " . getUnitname($inspection_detail->unit));
+                $sheet->mergeCells("I{$headerInfoRow}:L{$headerInfoRow}")->setCellValue("I{$headerInfoRow}", "Frequency:- " . getFrequencyname($inspection_detail->frequency));
+                $sheet->getStyle("A{$headerInfoRow}:L{$headerInfoRow}")->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'font' => ['bold' => true],
+                ]);
+                $headerInfoRow++;
+
+             
+                $headerStart = $headerInfoRow; 
+
+
+                $sheet->mergeCells("A{$headerStart}:A" . ($headerStart + 1))->setCellValue("A{$headerStart}", "SR. NO");
+                $sheet->mergeCells("B{$headerStart}:B" . ($headerStart + 1))->setCellValue("B{$headerStart}", "DEPARTMENT");
+                $sheet->mergeCells("C{$headerStart}:C" . ($headerStart + 1))->setCellValue("C{$headerStart}", "RESOURCE CODE");
+                $sheet->mergeCells("D{$headerStart}:E" . ($headerStart + 1))->setCellValue("D{$headerStart}", "TYPE OF DETECTOR");
+
+                $sheet->mergeCells("F{$headerStart}:I{$headerStart}")->setCellValue("F{$headerStart}", "CHECK ITEMS");
+                $sheet->mergeCells("J{$headerStart}:L" . ($headerStart + 1))->setCellValue("J{$headerStart}", "REMARK");
+
+                $sheet->setCellValue("F" . ($headerStart + 1), "PHYSICAL CONDITION");
+                $sheet->setCellValue("G" . ($headerStart + 1), "CABLE CONDITION");
+                $sheet->setCellValue("H" . ($headerStart + 1), "RESPONSE INDICATOR");
+                $sheet->setCellValue("I" . ($headerStart + 1), "WORKING STATUS");
+
+                $sheet->getStyle("A{$headerStart}:L" . ($headerStart + 1))->applyFromArray([
+                    'font' => ['bold' => true],
+                    'borders' => ['allBorders' => ['borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN]],
+                    'alignment' => [
+                        'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                        'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+                        'wrapText' => true,
+                    ],
+                ]);
+
+                foreach (range('A', 'L') as $col) {
+                    $sheet->getColumnDimension($col)->setAutoSize(true);
+                }
+                $sheet->getRowDimension($headerStart)->setRowHeight(25);
+                $sheet->getRowDimension($headerStart + 1)->setRowHeight(22);
+
+                
+                $dataRow = $headerStart + 2;
+                $sr = 1;
+
+                foreach ($groupedDetails as $detail) {
+
+                    $sheet->setCellValue("A{$dataRow}", $sr);
+                    $sheet->setCellValue("B{$dataRow}", getDepartment($detail['department']) ?? '');
+                    $sheet->setCellValue("C{$dataRow}", $detail['resource_code'] ?? '');
+                    $sheet->mergeCells("D{$dataRow}:E{$dataRow}")->setCellValue("D{$dataRow}", getDetectorName($detail['detector_type']) ?? '');
+                
+                    if ($detail['physical_condition'] == 1) {
+                        $sheet->setCellValue("F{$dataRow}", 'Good');
+                    } elseif ($detail['physical_condition'] == 2) {
+                        $sheet->setCellValue("F{$dataRow}", 'Fair');
+                    } elseif ($detail['physical_condition'] == 3) {
+                        $sheet->setCellValue("F{$dataRow}", 'Poor');
+                    } else {
+                        $sheet->setCellValue("F{$dataRow}", 'N/A');
+                    }
+                
+                    if ($detail['cable_condition'] == 1) {
+                        $sheet->setCellValue("G{$dataRow}", 'Good');
+                    } elseif ($detail['cable_condition'] == 2) {
+                        $sheet->setCellValue("G{$dataRow}", 'Fair');
+                    } elseif ($detail['cable_condition'] == 3) {
+                        $sheet->setCellValue("G{$dataRow}", 'Poor');
+                    } else {
+                        $sheet->setCellValue("G{$dataRow}", 'N/A');
+                    }
+                
+                    if ($detail['response_indicator'] == 1) {
+                        $sheet->setCellValue("H{$dataRow}", 'Working');
+                    } elseif ($detail['response_indicator'] == 0) {
+                        $sheet->setCellValue("H{$dataRow}", 'Not Working');
+                    } else {
+                        $sheet->setCellValue("H{$dataRow}", 'N/A');
+                    }
+                
+                    if ($detail['working_status'] == 1) {
+                        $sheet->setCellValue("I{$dataRow}", 'Operational');
+                    } elseif ($detail['working_status'] == 0) {
+                        $sheet->setCellValue("I{$dataRow}", 'Non Operational');
+                    } else {
+                        $sheet->setCellValue("I{$dataRow}", 'N/A');
+                    }
+                
+                    $sheet->mergeCells("J{$dataRow}:L{$dataRow}")->setCellValue("j{$dataRow}", $detail['remarks'] ?? '');
+                
+                    $sheet->getStyle("A{$dataRow}:L{$dataRow}")->applyFromArray([
+                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                    ]);
+                
+                    $sr++;
+                    $dataRow++;
+                }
+
+                $signatureRowStart = $dataRow;
+                $sheet->getRowDimension($signatureRowStart)->setRowHeight(80);
+                
+                // Prepared By
+                $sheet->mergeCells("A{$signatureRowStart}:C{$signatureRowStart}");
+                $sheet->getStyle("A{$signatureRowStart}:C{$signatureRowStart}")->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => [
+                        'horizontal' => Alignment::HORIZONTAL_CENTER,
+                        'vertical' => Alignment::VERTICAL_CENTER,
+                        'wrapText' => true
+                    ],
+                ]);
+                
+                if (file_exists($prepared_by_signature)) {
+                    $drawing = new Drawing();
+                    $drawing->setName('Prepared Signature');
+                    $drawing->setDescription('Prepared By');
+                    $drawing->setPath($prepared_by_signature);
+                    $drawing->setCoordinates("B{$signatureRowStart}");
+                    $drawing->setOffsetX(5);
+                    $drawing->setOffsetY(5);
+                    $drawing->setHeight(40);
+                    $drawing->setWorksheet($sheet);
+                    $sheet->setCellValue("A{$signatureRowStart}", "\n\n\nPrepared By:\n" . getUsername($inspection_detail->created_by));
+                } else {
+                    $sheet->setCellValue("A{$signatureRowStart}", "Prepared By:\nInspection not yet started");
+                }
+                
+                // Verified By
+                $sheet->mergeCells("D{$signatureRowStart}:H{$signatureRowStart}");
+                $sheet->getStyle("D{$signatureRowStart}:H{$signatureRowStart}")->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => [
+                        'horizontal' => Alignment::HORIZONTAL_CENTER,
+                        'vertical' => Alignment::VERTICAL_CENTER,
+                        'wrapText' => true
+                    ],
+                ]);
+                
+                if (file_exists($verified_by_signature)) {
+                    $drawing = new Drawing();
+                    $drawing->setName('Verified Signature');
+                    $drawing->setDescription('Verified By');
+                    $drawing->setPath($verified_by_signature);
+                    $drawing->setCoordinates("F{$signatureRowStart}");
+                    $drawing->setOffsetX(5);
+                    $drawing->setOffsetY(5);
+                    $drawing->setHeight(40);
+                    $drawing->setWorksheet($sheet);
+                    $sheet->setCellValue("D{$signatureRowStart}", "\n\n\nVerified By:\n" . getUsername($inspection_detail->updated_by));
+                } else {
+                    $sheet->setCellValue("D{$signatureRowStart}", "Verified By:\nInspection not yet completed");
+                }
+                
+                // Approved By
+                $sheet->mergeCells("I{$signatureRowStart}:L{$signatureRowStart}");
+                $sheet->getStyle("I{$signatureRowStart}:L{$signatureRowStart}")->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => [
+                        'horizontal' => Alignment::HORIZONTAL_CENTER,
+                        'vertical' => Alignment::VERTICAL_CENTER,
+                        'wrapText' => true
+                    ],
+                ]);
+                
+                if (file_exists($approved_by_signature)) {
+                    $drawing = new Drawing();
+                    $drawing->setName('Approved Signature');
+                    $drawing->setDescription('Approved By');
+                    $drawing->setPath($approved_by_signature);
+                    $drawing->setCoordinates("J{$signatureRowStart}");
+                    $drawing->setOffsetX(5);
+                    $drawing->setOffsetY(5);
+                    $drawing->setHeight(40);
+                    $drawing->setWorksheet($sheet);
+                    $sheet->setCellValue("I{$signatureRowStart}", "\n\n\nApproved By:\n" . getUsername($inspection_detail->approved_by));
+                } else {
+                    $sheet->setCellValue("I{$signatureRowStart}", "Approved By:\nApproval pending");
+                }
+                
+
+
+                $row = $signatureRowStart + 6;
+
+                $lastRow = $signatureRowStart; 
+
+                $sheet->getStyle("A{$titleRow}:L{$lastRow}")->applyFromArray([
+                    'borders' => [
+                        'outline' => [
+                            'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THICK,
+                            'color' => ['argb' => '000000'],
+                        ],
+                    ],
+                ]);
+
+            }
+
+            $writer = new Xlsx($spreadsheet);
+            $filename = 'Catridge Type Fire Extinguisher.xlsx';
+            header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            header("Content-Disposition: attachment; filename=\"$filename\"");
+            header('Cache-Control: max-age=0');
+            $writer->save('php://output');
+        } catch (\Exception $e) {
+            dd($e);
+            report($e);
+            Session::flash('error', 'Something went wrong!');
             return redirect(admin_url('fire/detector-inspection/list'));
         }
     }
@@ -889,4 +1169,243 @@ class DetectorInspectionController extends Controller
             return redirect(admin_url('fire/detector-inspection/list'));
         }
     }
+
+    public function generalExcel(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+            $spreadsheet = new Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
+            
+            $detector = $this->detector->find($id);
+            $inspection_data = $this->detector_details->GetDetails($detector->id);
+            $document_no = $this->document_reference->selectOne($detector->document_reference_id);
+            $prepared_by_signature = GetFireSignature($detector->created_by, $detector->id, DETECTOR_INSPECTION);
+            $verified_by_signature = GetFireSignature($detector->updated_by, $detector->id, DETECTOR_INSPECTION);
+            $approved_by_signature = GetFireSignature($detector->approved_by, $detector->id, DETECTOR_INSPECTION);
+    
+            foreach (range('A', 'L') as $col) {
+                $sheet->getColumnDimension($col)->setAutoSize(true);
+            }
+    
+            for ($i = 1; $i <= 200; $i++) {
+                $sheet->getRowDimension($i)->setRowHeight(25);
+            }
+    
+            // Add logo image
+            $logoPath = public_path('assets/images/logo-dark.png');
+            if (file_exists($logoPath)) {
+                $drawing = new Drawing();
+                $drawing->setName('Logo');
+                $drawing->setDescription('Company Logo');
+                $drawing->setPath($logoPath);
+                $drawing->setCoordinates('A1');
+                $drawing->setOffsetX(5);
+                $drawing->setOffsetY(5);
+                $drawing->setHeight(60);
+                $drawing->setWorksheet($sheet);
+            }
+    
+            $sheet->mergeCells('A1:B3');
+            $sheet->getStyle('A1:B3')->applyFromArray([
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                'borders' => ['outline' => ['borderStyle' => Border::BORDER_THIN]],
+            ]);
+    
+            $sheet->mergeCells("C1:H3");
+            $sheet->setCellValue("C1", "FIRE EXTINGUISHER INSPECTION CHECKLIST (CARTIDGE TYPE) PN INTERNATIONAL PVT. LTD.");
+            $sheet->getStyle("C1:H3")->applyFromArray([
+                'font' => ['bold' => true, 'size' => 14],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+            ]);
+    
+            $row = 1;
+
+            $sheet->mergeCells("I{$row}:J{$row}")->setCellValue("I{$row}", "Doc. No.");
+            $sheet->mergeCells("K{$row}:L{$row}")->setCellValue("K{$row}", $document_no->doc_no ?? '');
+            
+            $sheet->mergeCells("I" . ($row+1) . ":J" . ($row+1))->setCellValue("I" . ($row+1), "Issue Dt.");
+            $sheet->mergeCells("K" . ($row+1) . ":L" . ($row+1))->setCellValue("K" . ($row+1), Displaydateformat($document_no->issue_date ?? ''));
+            
+            $sheet->mergeCells("I" . ($row+2) . ":J" . ($row+2))->setCellValue("I" . ($row+2), "Rev. & Dt.");
+            $sheet->mergeCells("K" . ($row+2) . ":L" . ($row+2))->setCellValue("K" . ($row+2), $document_no->rev_dt ?? '');
+            
+            $sheet->getStyle("I{$row}:L" . ($row+2))->applyFromArray([
+                'font' => ['bold' => true],
+                'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_CENTER,
+                    'vertical' => Alignment::VERTICAL_CENTER,
+                ],
+                'borders' => [
+                    'allBorders' => [
+                        'borderStyle' => Border::BORDER_DOUBLE,
+                        'color' => ['argb' => '000000'],
+                    ],
+                ],
+            ]);
+            
+            $sheet->mergeCells("A4:D4")->setCellValue("A4", "Date of Inspection:- " . Displaydateformat($detector->date_of_inspection));
+            $sheet->mergeCells("E4:H4")->setCellValue("E4", "Location :- " . getLocationname($detector->location));
+            $sheet->mergeCells("I4:L4")->setCellValue("I4", "Shift:- " . getShift($detector->shift));
+            $sheet->mergeCells("A5:D5")->setCellValue("A5", "Next Due date:- " . Displaydateformat($detector->next_due));
+            $sheet->mergeCells("E5:H5")->setCellValue("E5", "Unit:- " . getUnitname($detector->unit));
+            $sheet->mergeCells("I5:L5")->setCellValue("I5", "Frequency:- " . getFrequencyname($detector->frequency));
+            $sheet->getStyle("A4:L5")->applyFromArray([
+                'font' => ['bold' => true],
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+            ]);
+    
+            $sheet->mergeCells("A6:A7")->setCellValue("A6", "SR. NO");
+            $sheet->mergeCells("B6:B7")->setCellValue("B6", "DEPARTMENT");
+            $sheet->mergeCells("C6:C7")->setCellValue("C6", "RESOURCE CODE");
+            $sheet->mergeCells("D6:E7")->setCellValue("D6", "TYPE OF DETECTOR");
+    
+            $sheet->mergeCells("F6:I6")->setCellValue("F6", "CHECK ITEMS");
+            $sheet->setCellValue("F7", "PHYSICAL CONDITION");
+            $sheet->setCellValue("G7", "CABLE CONDITION");
+            $sheet->setCellValue("H7", "RESPONSE INDICATOR");
+            $sheet->setCellValue("I7", "WORKING STATUS");
+    
+            $sheet->mergeCells("J6:L7")->setCellValue("J6", "REMARK");
+            $sheet->getStyle("A6:L7")->applyFromArray([
+                'font' => ['bold' => true],
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+            ]);
+    
+            $row = 8;
+            $sr = 1;
+                foreach ($inspection_data as $detail) {
+
+                    $sheet->setCellValue("A{$row}", $sr);
+                    $sheet->setCellValue("B{$row}", getDepartment($detail['department']) ?? '');
+                    $sheet->setCellValue("C{$row}", $detail['resource_code'] ?? '');
+                    $sheet->mergeCells("D{$row}:E{$row}")->setCellValue("D{$row}", getDetectorName($detail['detector_type']) ?? '');
+                
+                    if ($detail['physical_condition'] == 1) {
+                        $sheet->setCellValue("F{$row}", 'Good');
+                    } elseif ($detail['physical_condition'] == 2) {
+                        $sheet->setCellValue("F{$row}", 'Fair');
+                    } elseif ($detail['physical_condition'] == 3) {
+                        $sheet->setCellValue("F{$row}", 'Poor');
+                    } else {
+                        $sheet->setCellValue("F{$row}", 'N/A');
+                    }
+                
+                    if ($detail['cable_condition'] == 1) {
+                        $sheet->setCellValue("G{$row}", 'Good');
+                    } elseif ($detail['cable_condition'] == 2) {
+                        $sheet->setCellValue("G{$row}", 'Fair');
+                    } elseif ($detail['cable_condition'] == 3) {
+                        $sheet->setCellValue("G{$row}", 'Poor');
+                    } else {
+                        $sheet->setCellValue("G{$row}", 'N/A');
+                    }
+                
+                    if ($detail['response_indicator'] == 1) {
+                        $sheet->setCellValue("H{$row}", 'Working');
+                    } elseif ($detail['response_indicator'] == 0) {
+                        $sheet->setCellValue("H{$row}", 'Not Working');
+                    } else {
+                        $sheet->setCellValue("H{$row}", 'N/A');
+                    }
+                
+                    if ($detail['working_status'] == 1) {
+                        $sheet->setCellValue("I{$row}", 'Operational');
+                    } elseif ($detail['working_status'] == 0) {
+                        $sheet->setCellValue("I{$row}", 'Non Operational');
+                    } else {
+                        $sheet->setCellValue("I{$row}", 'N/A');
+                    }
+                
+                    $sheet->mergeCells("J{$row}:L{$row}")->setCellValue("J{$row}", $detail['remarks'] ?? '');
+                
+                    $sheet->getStyle("A{$row}:L{$row}")->applyFromArray([
+                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                    ]);
+                
+                    $sr++;
+                    $row++;
+                }
+            
+    
+            $signatureRow = $row;
+            $sheet->getRowDimension($signatureRow)->setRowHeight(80);
+    
+            $sheet->mergeCells("A{$signatureRow}:C{$signatureRow}");
+            $sheet->getStyle("A{$signatureRow}:C{$signatureRow}")->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+            ]);
+            if (file_exists($prepared_by_signature)) {
+                $drawing = new Drawing();
+                $drawing->setName('Prepared Signature');
+                $drawing->setDescription('Prepared By');
+                $drawing->setPath($prepared_by_signature);
+                $drawing->setCoordinates("B{$signatureRow}");
+                $drawing->setOffsetX(5);
+                $drawing->setOffsetY(5);
+                $drawing->setHeight(40);
+                $drawing->setWorksheet($sheet);
+                $sheet->setCellValue("A{$signatureRow}", "\n\n\nPrepared By:\n" . getUsername($detector->created_by));
+            } else {
+                $sheet->setCellValue("A{$signatureRow}", "Prepared By:\nInspection not yet started");
+            }
+    
+            $sheet->mergeCells("D{$signatureRow}:H{$signatureRow}");
+            $sheet->getStyle("D{$signatureRow}:H{$signatureRow}")->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+            ]);
+            if (file_exists($verified_by_signature)) {
+                $drawing = new Drawing();
+                $drawing->setName('Verified Signature');
+                $drawing->setDescription('Verified By');
+                $drawing->setPath($verified_by_signature);
+                $drawing->setCoordinates("F{$signatureRow}");
+                $drawing->setOffsetX(5);
+                $drawing->setOffsetY(5);
+                $drawing->setHeight(40);
+                $drawing->setWorksheet($sheet);
+                $sheet->setCellValue("D{$signatureRow}", "\n\n\nVerified By:\n" . getUsername($detector->updated_by));
+            } else {
+                $sheet->setCellValue("D{$signatureRow}", "Verified By:\nInspection not yet completed");
+            }
+    
+            $sheet->mergeCells("I{$signatureRow}:L{$signatureRow}");
+            $sheet->getStyle("I{$signatureRow}:L{$signatureRow}")->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+            ]);
+            if (file_exists($approved_by_signature)) {
+                $drawing = new Drawing();
+                $drawing->setName('Approved Signature');
+                $drawing->setDescription('Approved By');
+                $drawing->setPath($approved_by_signature);
+                $drawing->setCoordinates("J{$signatureRow}");
+                $drawing->setOffsetX(5);
+                $drawing->setOffsetY(5);
+                $drawing->setHeight(40);
+                $drawing->setWorksheet($sheet);
+                $sheet->setCellValue("I{$signatureRow}", "\n\n\nApproved By:\n" . getUsername($detector->approved_by));
+            } else {
+                $sheet->setCellValue("I{$signatureRow}", "Approved By:\nApproval pending");
+            }
+    
+            $writer = new Xlsx($spreadsheet);
+            $fileName = 'Detector Inspection Checklist.xlsx';
+            $filePath = storage_path("app/public/$fileName");
+            $writer->save($filePath);
+    
+            return response()->download($filePath)->deleteFileAfterSend(true);
+        } catch (\Exception $e) {
+            report($e);
+            Session::flash('error', 'Something went wrong!');
+            return redirect(admin_url('fire/fire-extinguisher/cartridge/list'));
+        }
+    }
+    
 }

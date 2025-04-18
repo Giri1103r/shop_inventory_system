@@ -10,7 +10,12 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Spatie\SimpleExcel\SimpleExcelWriter;
+use PhpOffice\PhpSpreadsheet\Style\Border;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 use App\Models\Inspection\InspectionStaticDocno;
 use App\Models\Inspection\Safety\OHSPlantSummaryReport;
 
@@ -25,7 +30,6 @@ class OHSPlantSummaryReportController extends Controller
         $this->unit = new Unit();
         $this->ohsreport = new OHSPlantSummaryReport();
         $this->document_reference = new InspectionStaticDocno();
-
     }
     public function Index(Request $request)
     {
@@ -114,6 +118,9 @@ class OHSPlantSummaryReportController extends Controller
                             $btn .= '<a href="' . admin_url('safety/ohc-plant-summary/exportViewPdf/' . encryptId($row->inspection_id)) . '" style="margin-right: 5px;" title="PDF">
                             <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
                         </a>';
+
+                            $btn .= '<a href="' . admin_url('safety/ohc-plant-summary/generalexcel/' . encryptId($row->inspection_id)) . '" style="margin-right: 5px;" title="Excel"> <i class="fas fa-file-excel" style="color: #1D6F42;" aria-hidden="true"></i></a>';
+
                             return $btn;
                         })
                         ->rawColumns(['action', 'created_date', 'created_by', 'status', 'issue_date', 'inspection_date'])
@@ -123,7 +130,7 @@ class OHSPlantSummaryReportController extends Controller
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
-                    dd($ex);
+
                     report($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
@@ -254,40 +261,192 @@ class OHSPlantSummaryReportController extends Controller
 
             $allData = $this->ohsreport->exportdata();
 
-            if ($allData->isEmpty()) {
-                return redirect()->back()->with('error', 'No data found');
-            }
+            $spreadsheet = new Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
+            $row = 1;
 
-            $header = [
-                __("common.sno"),
-                'Document Number',
-                'Issue Date',
-                'Revision Date',
-                __("Status"),
-                __("common.created_by"),
-                __("common.created_date"),
-            ];
-
-            $i = 1;
             foreach ($allData as $data) {
+                $startRow = $row;
+                $inspection_details = $this->ohsreport->selectOne($data->inspection_id);
+                $quantity_details = json_decode($inspection_details->quantity_details, true);
+                $fire_water_pump_details = json_decode($inspection_details->fire_water_pump_details, true);
+                $units = $this->unit->getUnit();
+                $document_no = $this->document_reference->selectOne($inspection_details->document_reference_id);
 
-                $export = [];
-                $export[] =  $i;
-                $export[] =  $data->doc_no;
-                $export[] =  $data->issue_date;
-                $export[] = $data->revision_data;
-                $export[] =  ($data->status == "1" ? 'Active' : 'InActive');
-                $export[] =  getusername($data->created_by);
-                $export[] =  Displaydateformat($data->created_at);
-                $exportData[] = $export;
-                $i++;
+
+
+                foreach (range('A', 'J') as $col) {
+                    $sheet->getColumnDimension($col)->setWidth(15);
+                    $sheet->getStyle($col)->getAlignment()->setWrapText(true);
+                }
+
+                $sheet->mergeCells("A{$row}:C" . ($row + 2));
+                $sheet->getStyle("A{$row}:C" . ($row + 2))->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]]
+                ]);
+
+                $logoPath = public_path('assets/images/logo-dark.png');
+                if (file_exists($logoPath)) {
+                    $drawing = new Drawing();
+                    $drawing->setName('Logo');
+                    $drawing->setPath($logoPath);
+                    $drawing->setCoordinates("B{$row}");
+                    $drawing->setOffsetX(25);
+                    $drawing->setOffsetY(10);
+                    $drawing->setWidth(90);
+                    $drawing->setHeight(50);
+                    $drawing->setWorksheet($sheet);
+                }
+
+                $sheet->mergeCells("D{$row}:H" . ($row + 2));
+                $sheet->setCellValue("D{$row}", 'OHS PLANT SUMMARY REPORT PN INTERNATIONAL PVT. LTD.');
+                $sheet->getStyle("D{$row}:H" . ($row + 2))->applyFromArray([
+                    'font' => ['bold' => true, 'size' => 14],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                ]);
+
+                $labelMap = [
+                    ["I{$row}", 'Doc. No.', $document_no->doc_no],
+                    ["I" . ($row + 1), 'Issue Dt.', Displaydateformat($document_no->issue_date)],
+                    ["I" . ($row + 2), 'Rev. & Dt.', $document_no->rev_dt],
+                ];
+
+                foreach ($labelMap as [$labelCell, $label, $data]) {
+                    $dataCell = str_replace('I', 'J', $labelCell);
+                    $sheet->setCellValue($labelCell, $label);
+                    $sheet->setCellValue($dataCell, $data);
+                    $sheet->getStyle("$labelCell:$dataCell")->applyFromArray([
+                        'font' => ['bold' => true],
+                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
+                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_LEFT, 'vertical' => Alignment::VERTICAL_CENTER],
+                        'wrapText' => true,
+                    ]);
+                }
+
+                $row += 3;
+
+                $sheet->mergeCells("A{$row}:E{$row}")->setCellValue("A{$row}", "Date:- " . Displaydateformat($inspection_details->inspection_date));
+                $sheet->mergeCells("F{$row}:J{$row}")->setCellValue("F{$row}", "UPDATED FREQUENCY :- " . $inspection_details->updated_frequency);
+                $sheet->getStyle("A{$row}:J{$row}")->applyFromArray([
+                    'font' => ['bold' => true],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                ]);
+
+                $row += 2;
+
+                $sheet->mergeCells("A{$row}:A" . ($row + 1))->setCellValue("A{$row}", "SR.NO");
+                $sheet->mergeCells("B{$row}:D" . ($row + 1))->setCellValue("B{$row}", "DESCRIPTION");
+                $sheet->mergeCells("E{$row}:H{$row}")->setCellValue("E{$row}", "QUANTITY");
+
+                $colIndex = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString('E');
+                foreach ($units as $unit) {
+                    $unitCol = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($colIndex);
+                    $sheet->setCellValue("{$unitCol}" . ($row + 1), $unit->unit_name);
+                    $colIndex++;
+                }
+
+                $sheet->mergeCells("I{$row}:J" . ($row + 1))->setCellValue("I{$row}", "TOTAL QUANTITY");
+
+                $sheet->getStyle("A{$row}:J" . ($row + 1))->applyFromArray([
+                    'font' => ['bold' => true],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                    'wrapText' => true,
+                ]);
+
+                $row += 2;
+
+                $sr = 1;
+                foreach ($quantity_details as $detail) {
+                    $sheet->mergeCells("B{$row}:D{$row}");
+                    $sheet->setCellValue("A{$row}", $sr);
+                    $sheet->setCellValue("B{$row}", $detail['description'] ?? '');
+                    $sheet->setCellValue("E{$row}", $detail['unit - 1'] ?? '');
+                    $sheet->setCellValue("F{$row}", $detail['unit - 2'] ?? '');
+                    $sheet->setCellValue("G{$row}", $detail['unit - 3'] ?? '');
+                    $sheet->setCellValue("H{$row}", $detail['unit - 4'] ?? '');
+                    $sheet->mergeCells("I{$row}:J{$row}");
+                    $sheet->setCellValue("I{$row}", $detail['total_quantity'] ?? '');
+
+                    $sheet->getStyle("A{$row}:J{$row}")->applyFromArray([
+                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                    ]);
+                    $row++;
+                    $sr++;
+                }
+
+                $row += 2;
+
+                $sheet->mergeCells("A{$row}:J{$row}")->setCellValue("A{$row}", "FIRE WATER PUMP DETAILS");
+                $sheet->getStyle("A{$row}:J{$row}")->applyFromArray([
+                    'font' => ['bold' => true, 'size' => 12],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                ]);
+                $row++;
+
+                $sheet->mergeCells("A{$row}:A" . ($row + 1))->setCellValue("A{$row}", "SR.NO");
+                $sheet->mergeCells("B{$row}:F" . ($row + 1))->setCellValue("B{$row}", "FIRE PUMP DETAILS");
+                $sheet->mergeCells("G{$row}:J{$row}")->setCellValue("G{$row}", "CAPACITY");
+
+                $colIndex = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString('G');
+                foreach ($units as $unit) {
+                    $unitCol = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($colIndex);
+                    $sheet->setCellValue("{$unitCol}" . ($row + 1), $unit->unit_name);
+                    $colIndex++;
+                }
+
+                $sheet->getStyle("A{$row}:J" . ($row + 1))->applyFromArray([
+                    'font' => ['bold' => true],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'wrapText' => true,
+                ]);
+                $row += 2;
+
+                $sr = 1;
+                foreach ($fire_water_pump_details as $item) {
+                    $sheet->setCellValue("A{$row}", $sr);
+                    $sheet->mergeCells("B{$row}:F{$row}");
+                    $sheet->setCellValue("B{$row}", $item['fire_pump_details'] ?? '');
+                    $sheet->setCellValue("G{$row}", $item['fire_pump_details_unit_1'] ?? '');
+                    $sheet->setCellValue("H{$row}", $item['fire_pump_details_unit_2'] ?? '');
+                    $sheet->setCellValue("I{$row}", $item['fire_pump_details_unit_3'] ?? '');
+                    $sheet->setCellValue("J{$row}", $item['fire_pump_details_unit_4'] ?? '');
+
+                    $sheet->getStyle("A{$row}:J{$row}")->applyFromArray([
+                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                    ]);
+                    $row++;
+                    $sr++;
+                }
+
+                $signatureRow = $row;
+                // $sheet->getRowDimension($signatureRow)->setRowHeight(60);
+
+                $approvedByName = getUserName($inspection_details->created_by);
+                $sheet->mergeCells("A$signatureRow:J$signatureRow")->setCellValue("A$signatureRow", "CHECKED AND PREPARED BY: $approvedByName");
+
+                $sheet->getStyle("A{$startRow}:J{$row}")->applyFromArray([
+                    'borders' => [
+                        'top'    => ['borderStyle' => Border::BORDER_THICK],
+                        'bottom' => ['borderStyle' => Border::BORDER_THICK],
+                        'left'   => ['borderStyle' => Border::BORDER_THICK],
+                        'right'  => ['borderStyle' => Border::BORDER_THICK],
+                    ],
+                ]);
+                $row += 4;
             }
 
-            $writer = SimpleExcelWriter::streamDownload('OHS Plant Summary Report.xlsx')
-                ->addHeader($header)
-                ->addRows(
-                    $exportData
-                );
+            $writer = new Xlsx($spreadsheet);
+            $fileName = 'OHS_All_Reports.xlsx';
+            $filePath = storage_path("app/public/$fileName");
+            $writer->save($filePath);
+
+            return response()->download($filePath)->deleteFileAfterSend(true);
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
@@ -383,6 +542,194 @@ class OHSPlantSummaryReportController extends Controller
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('safety/ohc-plant-summary/list'));
+        }
+    }
+
+    public function generalExcel(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+            $spreadsheet = new Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
+
+            $inspection_details = $this->ohsreport->selectOne($id);
+            $quantity_details = json_decode($inspection_details->quantity_details, true);
+            $fire_water_pump_details = json_decode($inspection_details->fire_water_pump_details, true);
+            $units = $this->unit->getUnit();
+            $document_no = $this->document_reference->selectOne($inspection_details->document_reference_id);
+
+            $prepared_by_signature = GetSafetySignature($inspection_details->created_by, $inspection_details->id, OHS_SUMMARY_REPORT);
+            $verified_by_signature = GetSafetySignature($inspection_details->updated_by, $inspection_details->id, OHS_SUMMARY_REPORT);
+
+            $sheet->mergeCells("A1:C3");
+            $sheet->getStyle("A1:C3")->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]]
+            ]);
+
+            $logoPath = public_path('assets/images/logo-dark.png');
+            if (file_exists($logoPath)) {
+                $drawing = new Drawing();
+                $drawing->setName('Logo');
+                $drawing->setPath($logoPath);
+                $drawing->setCoordinates("B1");
+                $drawing->setOffsetX(25);
+                $drawing->setOffsetY(10);
+                $drawing->setWidth(90);
+                $drawing->setHeight(50);
+                $drawing->setWorksheet($sheet);
+            }
+
+            foreach (range('A', 'J') as $col) {
+                $sheet->getColumnDimension($col)->setWidth(15);
+                $sheet->getStyle($col)->getAlignment()->setWrapText(true);
+            }
+
+            $sheet->mergeCells('D1:H3');
+            $sheet->setCellValue('D1', 'OHS PLANT SUMMARY REPORT PN INTERNATIONAL PVT. LTD.');
+            $sheet->getStyle('D1:H3')->applyFromArray([
+                'font' => ['bold' => true, 'size' => 14],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+            ]);
+
+            $labelMap = [
+                ['I1', 'Doc. No.', $document_no->doc_no],
+                ['I2', 'Issue Dt.', Displaydateformat($document_no->issue_date)],
+                ['I3', 'Rev. & Dt.', $document_no->rev_dt],
+            ];
+
+            foreach ($labelMap as [$labelCell, $label, $data]) {
+                $dataCell = str_replace('I', 'J', $labelCell);
+                $sheet->setCellValue($labelCell, $label);
+                $sheet->setCellValue($dataCell, $data);
+                $sheet->getStyle("$labelCell:$dataCell")->applyFromArray([
+                    'font' => ['bold' => true],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_LEFT, 'vertical' => Alignment::VERTICAL_CENTER],
+                    'wrapText' => true,
+                ]);
+            }
+
+            $sheet->mergeCells("A4:E4")->setCellValue("A4", "Date:- " . Displaydateformat($inspection_details->inspection_date));
+            $sheet->mergeCells("F4:J4")->setCellValue("F4", "UPDATED FREQUENCY :- " . ($inspection_details->updated_frequency));
+            $sheet->getStyle("A4:J4")->applyFromArray([
+                'font' => ['bold' => true],
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+            ]);
+
+            $sheet->mergeCells("A6:A7")->setCellValue("A6", "SR.NO");
+            $sheet->mergeCells("B6:D7")->setCellValue("B6", "DESCRIPTION");
+            $sheet->mergeCells("E6:H6")->setCellValue("E6", "QUANTITY");
+
+            $colIndex = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString('E');
+            foreach ($units as $unit) {
+                $unitCol = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($colIndex);
+                $sheet->setCellValue("{$unitCol}7", $unit->unit_name);
+                $colIndex++;
+            }
+
+            $sheet->mergeCells("I6:J7")->setCellValue("I6", "TOTAL QUANTITY");
+
+            $sheet->getStyle("A6:J7")->applyFromArray([
+                'font' => ['bold' => true],
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                'wrapText' => true,
+            ]);
+
+            $row = 8;
+            $sr = 1;
+            foreach ($quantity_details as $detail) {
+                $sheet->mergeCells("B{$row}:D{$row}");
+                $sheet->setCellValue("A$row", $sr);
+                $sheet->setCellValue("B$row", $detail['description'] ?? '');
+                $sheet->setCellValue("E$row", $detail['unit - 1'] ?? '');
+                $sheet->setCellValue("F$row", $detail['unit - 2'] ?? '');
+                $sheet->setCellValue("G$row", $detail['unit - 3'] ?? '');
+                $sheet->setCellValue("H$row", $detail['unit - 4'] ?? '');
+                $sheet->mergeCells("I{$row}:J{$row}");
+                $sheet->setCellValue("I$row", $detail['total_quantity'] ?? '');
+
+                $sheet->getStyle("A$row:J$row")->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                ]);
+                $row++;
+                $sr++;
+            }
+
+            $row += 2;
+            $sheet->mergeCells("A{$row}:J{$row}")->setCellValue("A{$row}", "FIRE WATER PUMP DETAILS");
+            $sheet->getStyle("A{$row}:J{$row}")->applyFromArray([
+                'font' => ['bold' => true, 'size' => 12],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+            ]);
+            $row++;
+
+            $sheet->mergeCells("A{$row}:A" . ($row + 1))->setCellValue("A{$row}", "SR.NO");
+            $sheet->mergeCells("B{$row}:F" . ($row + 1))->setCellValue("B{$row}", "FIRE PUMP DETAILS");
+            $sheet->mergeCells("G{$row}:J{$row}")->setCellValue("G{$row}", "CAPACITY");
+
+            $colIndex = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString('G');
+            foreach ($units as $unit) {
+                $unitCol = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($colIndex);
+                $sheet->setCellValue("{$unitCol}" . ($row + 1), $unit->unit_name);
+                $colIndex++;
+            }
+
+            $sheet->getStyle("A{$row}:J" . ($row + 1))->applyFromArray([
+                'font' => ['bold' => true],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'wrapText' => true,
+            ]);
+            $row += 2;
+
+            $sr = 1;
+            foreach ($fire_water_pump_details as $item) {
+                $sheet->setCellValue("A{$row}", $sr);
+                $sheet->mergeCells("B{$row}:F{$row}");
+                $sheet->setCellValue("B{$row}", $item['fire_pump_details'] ?? '');
+                $sheet->setCellValue("G{$row}", $item['fire_pump_details_unit_1'] ?? '');
+                $sheet->setCellValue("H{$row}", $item['fire_pump_details_unit_2'] ?? '');
+                $sheet->setCellValue("I{$row}", $item['fire_pump_details_unit_3'] ?? '');
+                $sheet->setCellValue("J{$row}", $item['fire_pump_details_unit_4'] ?? '');
+
+                $sheet->getStyle("A{$row}:J{$row}")->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                ]);
+                $row++;
+                $sr++;
+            }
+
+            $signatureRow = $row;
+            $approvedByName = getUserName($inspection_details->created_by);
+
+            $sheet->mergeCells("A$signatureRow:J$signatureRow")
+                ->setCellValue("A$signatureRow", "CHECKED AND PREPARED BY: $approvedByName");
+
+            $sheet->getStyle("A$signatureRow:J$signatureRow")->applyFromArray([
+                'borders' => [
+                    'allBorders' => ['borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN],
+                ],
+                'font' => ['bold' => true],
+                'alignment' => [
+                    'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT,
+                    'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+                ],
+            ]);
+            $writer = new Xlsx($spreadsheet);
+            $fileName = 'OHS Summary Report.xlsx';
+            $filePath = storage_path("app/public/$fileName");
+            $writer->save($filePath);
+
+            return response()->download($filePath)->deleteFileAfterSend(true);
+        } catch (\Exception $e) {
+            report($e);
+            Session::flash('error', 'Something went wrong!');
             return redirect(admin_url('safety/ohc-plant-summary/list'));
         }
     }

@@ -114,6 +114,7 @@ class FloorStretcherController extends Controller
             $checklistQuestions = getCheckListQuestion(OHC_FLOOR_STRECTHER_CHECKLIST);
             $options =  getoption(OHC_FLOOR_STRECTHER_CHECKLIST);
             $getoption = string_to_array($options->type);
+
             $data = array(
                 'shifts' => $shifts,
                 'units' => $unit,
@@ -123,6 +124,7 @@ class FloorStretcherController extends Controller
             );
             return view('inspection.ohc.floor_stretcher.add', $data);
         } catch (Exception $ex) {
+            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong!');
             return redirect(admin_url('ohc/floor_stretcher/checklist/list'));
@@ -212,6 +214,7 @@ class FloorStretcherController extends Controller
         }
     }
 
+
     public function ExportExcel()
     {
         try {
@@ -220,39 +223,167 @@ class FloorStretcherController extends Controller
                 return redirect()->back()->with('error', 'No data found');
             }
 
-            $header = [
-                __("common.sno"),
-                'Date of Inspection',
-                'Unit',
-                'Frequency',
-                'Shift',
-                __("common.created_by"),
-                __("common.created_date"),
-            ];
+            $spreadsheet = new Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
 
-            $i = 1;
+            $currentRow = 1;
+            $formSpacing = 5;
+
             foreach ($allData as $data) {
+                $inspection_type = OHC_TYPE_FLOOR_STRETCHER;
+                $signature = $this->floor_files->getFiles($data->id, $inspection_type);
 
-                $export = [];
-                $export[] =  $i;
-                $export[] =  Displaydateformat($data->issue_date);
-                $export[] =  getUnitname($data->unit);
-                $export[] =  getFrequencyname($data->frequency);
-                $export[] =  getShiftname($data->shift);
-                $export[] =  getusername($data->created_by);
-                $export[] =  Displaydateformat($data->created_at);
-                $exportData[] = $export;
-                $i++;
+                for ($i = $currentRow; $i <= $currentRow + 50; $i++) {
+                    $sheet->getRowDimension($i)->setRowHeight(25);
+                }
+
+                if ($currentRow == 1) {
+                    $widths = [5, 18, 25, 18, 18, 18, 18, 18, 18, 20];
+                    foreach (range('A', 'J') as $index => $col) {
+                        $sheet->getColumnDimension($col)->setWidth($widths[$index]);
+                    }
+                }
+
+                $sheet->getRowDimension($currentRow + 5)->setRowHeight(30);
+                $sheet->getRowDimension($currentRow + 6)->setRowHeight(60);
+
+                $logoPath = public_path('assets/images/logo-dark.png');
+                if (file_exists($logoPath)) {
+                    $logo = new Drawing();
+                    $logo->setName('Logo');
+                    $logo->setPath($logoPath);
+                    $logo->setCoordinates("B{$currentRow}");
+                    $logo->setOffsetX(10);
+                    $logo->setOffsetY(10);
+                    $logo->setWidth(90);
+                    $logo->setHeight(60);
+                    $logo->setWorksheet($sheet);
+                }
+
+                $sheet->mergeCells("A{$currentRow}:C" . ($currentRow + 2));
+                $sheet->mergeCells("D{$currentRow}:J" . ($currentRow + 2));
+                $sheet->setCellValue("D{$currentRow}", "Monthly Floor Patient Stretcher Checklist\nPN International Pvt. Ltd.");
+                $sheet->getStyle("D{$currentRow}")->applyFromArray([
+                    'font' => ['bold' => true, 'size' => 14],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                ]);
+                $sheet->getStyle("A{$currentRow}:J" . ($currentRow + 2))->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                ]);
+
+                $infoRow = $currentRow + 3;
+                $sheet->mergeCells("A{$infoRow}:E{$infoRow}")->setCellValue("A{$infoRow}", "Date: " . Displaydateformat($data->issue_date));
+                $sheet->mergeCells("F{$infoRow}:J{$infoRow}")->setCellValue("F{$infoRow}", "Shift: " . getShiftname($data->shift));
+
+                $infoRow2 = $currentRow + 4;
+                $sheet->mergeCells("A{$infoRow2}:E{$infoRow2}")->setCellValue("A{$infoRow2}", "Frequency: " . getFrequencyname($data->frequency));
+                $sheet->mergeCells("F{$infoRow2}:J{$infoRow2}")->setCellValue("F{$infoRow2}", "Unit: " . getUnitname($data->unit));
+
+                $sheet->getStyle("A{$infoRow}:J{$infoRow2}")->applyFromArray([
+                    'font' => ['bold' => true],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_LEFT, 'vertical' => Alignment::VERTICAL_CENTER],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                ]);
+
+                $headerRow1 = $currentRow + 5;
+                $headerRow2 = $currentRow + 6;
+
+                $sheet->mergeCells("A{$headerRow1}:A{$headerRow2}")->setCellValue("A{$headerRow1}", 'Sr. No.');
+                $sheet->mergeCells("B{$headerRow1}:B{$headerRow2}")->setCellValue("B{$headerRow1}", 'Resource Code');
+                $sheet->mergeCells("C{$headerRow1}:C{$headerRow2}")->setCellValue("C{$headerRow1}", 'Department/Location');
+                $sheet->mergeCells("D{$headerRow1}:J{$headerRow1}")->setCellValue("D{$headerRow1}", 'CHECK POINT (Yes/No)');
+
+                $sheet->setCellValue("D{$headerRow2}", 'Are the Stretcher Cover and patient stretcher clean?');
+                $sheet->setCellValue("E{$headerRow2}", 'Is the Stretcher Hanging Hooks OK?');
+                $sheet->setCellValue("F{$headerRow2}", 'Is the floor patient stretcher resource code correct and available?');
+                $sheet->setCellValue("G{$headerRow2}", 'Is the patient stretcher placed and floor Condition OK?');
+                $sheet->setCellValue("H{$headerRow2}", 'Is the stretcher hung properly in Designated Area?');
+                $sheet->setCellValue("I{$headerRow2}", 'Is the Patient Handling Stretcher Guide Line Displayed?');
+                $sheet->setCellValue("J{$headerRow2}", 'Remark');
+
+                $sheet->getStyle("A{$headerRow1}:J{$headerRow2}")->applyFromArray([
+                    'font' => ['bold' => true],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                ]);
+
+                $startDataRow = $currentRow + 7;
+                $row = $startDataRow;
+                $sr = 1;
+                $user_response = json_decode($data->responses, true);
+
+                foreach ($user_response['resource_code'] as $mainKey => $subResources) {
+                    foreach ($subResources as $subKey => $resource_code) {
+                        $sheet->setCellValue("A{$row}", $sr);
+                        $sheet->setCellValue("B{$row}", $resource_code);
+                        $sheet->setCellValue("C{$row}", GetChecklistTypeDate($subKey));
+
+                        $responses = $user_response['response'][$mainKey][$subKey] ?? [];
+
+                        $sheet->setCellValue("D{$row}", $responses['fs_first'] ?? '-');
+                        $sheet->setCellValue("E{$row}", $responses['fs_second'] ?? '-');
+                        $sheet->setCellValue("F{$row}", $responses['fs_third'] ?? '-');
+                        $sheet->setCellValue("G{$row}", $responses['fs_fourth'] ?? '-');
+                        $sheet->setCellValue("H{$row}", $responses['fs_fifth'] ?? '-');
+                        $sheet->setCellValue("I{$row}", $responses['fs_sixth'] ?? '-');
+
+                        $remark = $user_response['remarks'][$mainKey][$subKey] ?? '-';
+                        $sheet->setCellValue("J{$row}", $remark);
+
+                        $sheet->getStyle("A{$row}:J{$row}")->applyFromArray([
+                            'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                            'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                        ]);
+
+                        $sr++;
+                        $row++;
+                    }
+                }
+
+
+                $sheet->getRowDimension($row)->setRowHeight(80);
+
+                if (!empty($signature) && isset($signature['file_path'])) {
+                    $signaturePath = public_path(str_replace('public/', '', $signature['file_path']));
+
+                    if (file_exists($signaturePath)) {
+                        $sign = new Drawing();
+                        $sign->setName('Signature');
+                        $sign->setPath($signaturePath);
+                        $sign->setCoordinates("F{$row}");
+                        $sign->setOffsetX(5);
+                        $sign->setOffsetY(25);
+                        $sign->setHeight(40);
+                        $sign->setWorksheet($sheet);
+                    }
+                }
+
+                $sheet->mergeCells("A{$row}:J{$row}")->setCellValue("A{$row}", 'Auditor (Name & Signature):- ' . getUsername($data->created_by));
+
+                $sheet->getStyle("A{$row}:J{$row}")->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => [
+                        'horizontal' => Alignment::HORIZONTAL_CENTER,
+                        'vertical' => Alignment::VERTICAL_BOTTOM,
+                        'wrapText' => true,
+                    ],
+                ]);
+
+                $currentRow = $row + $formSpacing;
+
             }
 
-            $writer = SimpleExcelWriter::streamDownload('Floor Stretcher Inspection.xlsx')
-                ->addHeader($header)
-                ->addRows(
-                    $exportData
-                );
+            $writer = new Xlsx($spreadsheet);
+            $fileName = 'floor_stretcher_inspection_bulk.xlsx';
+            $filePath = storage_path("app/public/{$fileName}");
+            $writer->save($filePath);
+
+            return response()->download($filePath)->deleteFileAfterSend(true);
+
         } catch (Exception $ex) {
             report($ex);
-            Session::flash('error', 'Something went wrong !');
+            Session::flash('error', 'Something went wrong!');
             return redirect(admin_url('ohc/floor_stretcher/checklist/list'));
         }
     }
@@ -268,8 +399,6 @@ class FloorStretcherController extends Controller
             if (count($allData) > 20) {
                 return redirect()->back()->with('error', "__('inspection.excess_error')");
             }
-
-
 
             $data = array(
                 'content' => $allData,
@@ -335,7 +464,7 @@ class FloorStretcherController extends Controller
             $mpdf->WriteHTML($view);
 
             $filename = "Floor Stretcher Inspection.pdf";
-            return $mpdf->Output($filename, 'I');
+            return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong !');
@@ -349,7 +478,11 @@ class FloorStretcherController extends Controller
             $id = decryptId($request->id);
             $inspection_detail = $this->floor_strecther->selectOne($id);
             $inspection_type = OHC_TYPE_FLOOR_STRETCHER;
-            $inspection_file = $this->floor_files->getFiles($id, $inspection_type);
+
+            $signature = $this->floor_files->getFiles($id, $inspection_type);
+
+            $username = getUsername($inspection_detail->created_by);
+            $user_response = json_decode($inspection_detail->responses, true);
 
             $spreadsheet = new Spreadsheet();
             $sheet = $spreadsheet->getActiveSheet();
@@ -357,12 +490,12 @@ class FloorStretcherController extends Controller
             for ($i = 1; $i <= 200; $i++) {
                 $sheet->getRowDimension($i)->setRowHeight(25);
             }
+            $sheet->getRowDimension(6)->setRowHeight(30);
+            $sheet->getRowDimension(7)->setRowHeight(60);
 
-
-            $widths = [5, 15, 40, 30, 25, 35, 35, 40, 35, 30, 25];
-            foreach (range('A', 'K') as $index => $col) {
+            $widths = [5, 18, 25, 18, 18, 18, 18, 18, 18, 20];
+            foreach (range('A', 'J') as $index => $col) {
                 $sheet->getColumnDimension($col)->setWidth($widths[$index]);
-                
             }
 
             $logoPath = public_path('assets/images/logo-dark.png');
@@ -371,79 +504,153 @@ class FloorStretcherController extends Controller
                 $drawing->setName('Logo');
                 $drawing->setPath($logoPath);
                 $drawing->setCoordinates('B1');
-                $drawing->setOffsetX(20);
+                $drawing->setOffsetX(10);
                 $drawing->setOffsetY(10);
-                $drawing->setWidth(80);
+                $drawing->setWidth(90);
                 $drawing->setHeight(60);
                 $drawing->setWorksheet($sheet);
             }
 
-            $sheet->mergeCells("D1:J3");
-            $sheet->setCellValue("D1", "Monthly Floor Patient Stretcher Checklist\nPN International Pvt. Ltd.");
-            $sheet->getStyle("D1")->applyFromArray([
-                'font' => ['bold' => true, 'size' => 13],
+            $sheet->getStyle("A1:C3")->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+            ]);
+            $sheet->mergeCells('A1:C3');
+
+            $sheet->mergeCells('D1:J3');
+            $sheet->setCellValue('D1', "Monthly Floor Patient Stretcher Checklist\nPN International Pvt. Ltd.");
+            $sheet->getStyle('D1')->applyFromArray([
+                'font' => ['bold' => true, 'size' => 14],
                 'alignment' => [
                     'horizontal' => Alignment::HORIZONTAL_CENTER,
                     'vertical' => Alignment::VERTICAL_CENTER,
-                    'wrapText' => true
-                ],
-                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]]
-            ]);
-
-            $sheet->mergeCells("A4:F4")->setCellValue("A4", "Date: " . Displaydateformat($inspection_detail->date_of_inspection));
-            $sheet->mergeCells("G4:K4")->setCellValue("D4", "Shift :-");
-            $sheet->mergeCells("A5:F4")->setCellValue("G4", "Unit :-1");
-
-
-            $sheet->mergeCells("G5:K5")->setCellValue("A5", "Frequency :: Monthly");
-            $sheet->getStyle("A5")->applyFromArray([
-                'font' => ['bold' => true],
-                'alignment' => ['horizontal' => Alignment::HORIZONTAL_LEFT]
-            ]);
-
-
-            $headers = [
-                'A' => 'Sr. No.',
-                'B' => 'Resource code',
-                'C' => 'Department/Location',
-                'D' => 'Are the Stretcher Cover and patient stretcher clean?',
-                'E' => 'Is the Stretcher Hanging Hooks are Ok',
-                'F' => 'Is the floor patient stretcher resource code correct and available?',
-                'G' => 'Is the patient stretcher placed on the floor Condition is OK',
-                'H' => 'Is the patient’s stretcher placed on the floor and hung properly on a hook in Its Designated Area',
-                'I' => 'Is the Patient Handling Stretcher Guide Line Displayed',
-                'J' => 'Remark'
-            ];
-
-            foreach ($headers as $col => $text) {
-                $sheet->mergeCells("{$col}6:{$col}7");
-                $sheet->setCellValue("{$col}6", $text);
-            }
-
-            $sheet->getStyle("A6:K7")->applyFromArray([
-                'font' => ['bold' => true],
-                'alignment' => [
-                    'horizontal' => Alignment::HORIZONTAL_CENTER,
-                    'vertical' => Alignment::VERTICAL_CENTER,
-                    'wrapText' => true
+                    'wrapText' => true,
                 ],
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                'fill' => [
-                    'fillType' => Fill::FILL_SOLID,
-                    'startColor' => ['argb' => 'FFFFFFFF']
-                ]
+            ]);
+
+            $sheet->getStyle('D1:J3')->applyFromArray([
+                'borders' => [
+                    'allBorders' => [
+                        'borderStyle' => Border::BORDER_THIN,
+                    ],
+                ],
+            ]);
+
+            $sheet->mergeCells("A4:E4")->setCellValue('A4', "Date: " . Displaydateformat($inspection_detail->issue_date));
+            $sheet->mergeCells("F4:J4")->setCellValue('F4', "Shift: " . getShiftname($inspection_detail->shift));
+            $sheet->mergeCells("A5:E5")->setCellValue("A5", "Frequency: " . getFrequencyname($inspection_detail->frequency));
+            $sheet->mergeCells("F5:J5")->setCellValue("F5", "Unit: " . getUnitname($inspection_detail->unit));
+
+            $sheet->getStyle("A4:J5")->applyFromArray([
+                'font' => ['bold' => true],
+                'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_LEFT,
+                    'vertical' => Alignment::VERTICAL_CENTER,
+                ],
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+            ]);
+
+            $sheet->mergeCells('A6:A7')->setCellValue('A6', 'Sr. No.');
+            $sheet->mergeCells('B6:B7')->setCellValue('B6', 'Resource Code');
+            $sheet->mergeCells('C6:C7')->setCellValue('C6', 'Department/Location');
+            $sheet->mergeCells('D6:J6')->setCellValue('D6', 'CHECK POINT (Yes/No)');
+
+            $sheet->setCellValue('D7', 'Are the Stretcher Cover and patient stretcher clean?');
+            $sheet->setCellValue('E7', 'Is the Stretcher Hanging Hooks OK?');
+            $sheet->setCellValue('F7', 'Is the floor patient stretcher resource code correct and available?');
+            $sheet->setCellValue('G7', 'Is the patient stretcher placed and floor Condition OK?');
+            $sheet->setCellValue('H7', 'Is the stretcher hung properly in Designated Area?');
+            $sheet->setCellValue('I7', 'Is the Patient Handling Stretcher Guide Line Displayed?');
+            $sheet->setCellValue('J7', 'Remark');
+
+            $sheet->getStyle('A6:J7')->applyFromArray([
+                'font' => ['bold' => true],
+                'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_CENTER,
+                    'vertical' => Alignment::VERTICAL_CENTER,
+                    'wrapText' => true,
+                ],
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+            ]);
+
+            $row = 8;
+            $sr = 1;
+
+            foreach ($user_response['resource_code'] as $mainKey => $subResources) {
+                foreach ($subResources as $subKey => $resource_code) {
+                    $sheet->setCellValue("A{$row}", $sr);
+                    $sheet->setCellValue("B{$row}", $resource_code);
+                    $sheet->setCellValue("C{$row}", GetChecklistTypeDate($subKey));
+
+                    $responses = $user_response['response'][$mainKey][$subKey] ?? [];
+
+                    $sheet->setCellValue("D{$row}", $responses['fs_first'] ?? '-');
+                    $sheet->setCellValue("E{$row}", $responses['fs_second'] ?? '-');
+                    $sheet->setCellValue("F{$row}", $responses['fs_third'] ?? '-');
+                    $sheet->setCellValue("G{$row}", $responses['fs_fourth'] ?? '-');
+                    $sheet->setCellValue("H{$row}", $responses['fs_fifth'] ?? '-');
+                    $sheet->setCellValue("I{$row}", $responses['fs_sixth'] ?? '-');
+
+                    $remark = $user_response['remarks'][$mainKey][$subKey] ?? '-';
+                    $sheet->setCellValue("J{$row}", $remark);
+
+                    $sheet->getStyle("A{$row}:J{$row}")->applyFromArray([
+                        'alignment' => [
+                            'horizontal' => Alignment::HORIZONTAL_CENTER,
+                            'vertical' => Alignment::VERTICAL_CENTER,
+                        ],
+                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    ]);
+
+                    $sr++;
+                    $row++;
+                }
+            }
+
+            $sheet->getRowDimension($row)->setRowHeight(80);
+
+            if (!empty($signature) && isset($signature['file_path'])) {
+                $signaturePath = public_path(str_replace('public/', '', $signature['file_path']));
+
+                if (file_exists($signaturePath)) {
+                    $sign = new Drawing();
+                    $sign->setName('Signature');
+                    $sign->setPath($signaturePath);
+                    $sign->setCoordinates("F{$row}");
+                    $sign->setOffsetX(5);
+                    $sign->setOffsetY(25);
+                    $sign->setHeight(40);
+                    $sign->setWorksheet($sheet);
+                }
+            }
+
+            $sheet->mergeCells("A{$row}:J{$row}")->setCellValue("A{$row}", 'Auditor (Name & Signature):- ' . $username);
+
+            $sheet->getStyle("A{$row}:J{$row}")->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_CENTER,
+                    'vertical' => Alignment::VERTICAL_BOTTOM,
+                    'wrapText' => true,
+                ],
             ]);
 
             $writer = new Xlsx($spreadsheet);
-            $fileName = 'floor_stretcher_checklist.xlsx';
-            $filePath = storage_path("app/public/$fileName");
+            $fileName = 'floor stretcher checklist.xlsx';
+            $filePath = storage_path("app/public/{$fileName}");
             $writer->save($filePath);
 
             return response()->download($filePath)->deleteFileAfterSend(true);
+
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong!');
             return redirect(admin_url('ohc/floor_stretcher/checklist/list'));
         }
     }
+
+
+
+
+
 }

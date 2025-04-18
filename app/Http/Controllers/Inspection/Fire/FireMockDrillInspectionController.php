@@ -24,6 +24,16 @@ use App\Models\Inspection\Fire\FireCheckListFollowUp;
 use App\Models\Inspection\Fire\FireMockDrillInspection;
 use App\Models\Inspection\Fire\FireMockDrillInspectionDetails;
 
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Border;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
+use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
+use PhpOffice\PhpSpreadsheet\RichText\RichText;
+use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+
 class FireMockDrillInspectionController extends Controller
 {
     private $fire_mock_drill_inspection;
@@ -138,8 +148,11 @@ class FireMockDrillInspectionController extends Controller
                                 $btn .= '<a href="' . admin_url('fire/fire-mock-drill-observation/verification/' . encryptId($row->inspection_id)) . '/level-two-manager" class="" title="' . __('inspection.l2_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             $btn .= '<a href="' . admin_url('fire/fire-mock-drill-observation/exportViewPdf/' . encryptId($row->inspection_id)) . '" style="margin-right: 5px;" title="PDF">
-                        <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
-                    </a>';
+                                <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
+                            </a>';
+
+                            $btn .= '<a href="' . admin_url('fire/fire-mock-drill-observation/generalExcel/' . encryptId($row->inspection_id)) . '" style="margin-right: 5px;" title="Excel"> <i class="fas fa-file-excel" style="color: #1D6F42;" aria-hidden="true"></i></a>';
+ 
                             return $btn;
                         })
                         ->rawColumns(['action', 'created_date', 'created_by', 'status', 'inspection_status', 'issue_date'])
@@ -264,6 +277,7 @@ class FireMockDrillInspectionController extends Controller
             Session::flash('success', 'Your data added successfully');
             return redirect(admin_url('fire/fire-mock-drill-observation/list'));
         } catch (Exception $ex) {
+            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('fire/fire-mock-drill-observation/list'));
@@ -678,49 +692,276 @@ class FireMockDrillInspectionController extends Controller
         }
     }
 
+    // public function ExportExcel(Request $request)
+    // {
+    //     try {
+    //         $allData = $this->fire_mock_drill_inspection->exportdata();
+    //         dd($allData);
+    //         if ($allData->isEmpty()) {
+    //             return redirect()->back()->with('error', 'No data found');
+    //         }
+
+    //         $header = [
+    //             __("common.sno"),
+    //             'Document Number',
+    //             'Issue Date',
+    //             'Revision Date',
+    //             __("inspection.inspection_status"),
+    //             __("common.created_by"),
+    //             __("common.created_date"),
+    //         ];
+
+    //         $i = 1;
+    //         foreach ($allData as $data) {
+
+    //             $export = [];
+    //             $export[] =  $i;
+    //             $export[] =  $data->doc_no;
+    //             $export[] =  $data->issue_date;
+    //             $export[] = $data->revision_data;
+    //             $export[] =  getInspectionStatus($data->inspection_status);;
+    //             $export[] =  getusername($data->created_by);
+    //             $export[] =  Displaydateformat($data->created_at);
+    //             $exportData[] = $export;
+    //             $i++;
+    //         }
+
+    //         $writer = SimpleExcelWriter::streamDownload('Fire Mock Drill Inspection.xlsx')
+    //             ->addHeader($header)
+    //             ->addRows(
+    //                 $exportData
+    //             );
+    //     } catch (Exception $ex) {
+    //         report($ex);
+    //         Session::flash('error', 'Something went wrong !');
+    //         return redirect(admin_url('fire/fire-mock-drill-observation/list'));
+    //     }
+    // }
+
     public function ExportExcel(Request $request)
     {
         try {
             $allData = $this->fire_mock_drill_inspection->exportdata();
-            dd($allData);
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
             }
 
-            $header = [
-                __("common.sno"),
-                'Document Number',
-                'Issue Date',
-                'Revision Date',
-                __("inspection.inspection_status"),
-                __("common.created_by"),
-                __("common.created_date"),
-            ];
+            $spreadsheet = new Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
 
-            $i = 1;
-            foreach ($allData as $data) {
-
-                $export = [];
-                $export[] =  $i;
-                $export[] =  $data->doc_no;
-                $export[] =  $data->issue_date;
-                $export[] = $data->revision_data;
-                $export[] =  getInspectionStatus($data->inspection_status);;
-                $export[] =  getusername($data->created_by);
-                $export[] =  Displaydateformat($data->created_at);
-                $exportData[] = $export;
-                $i++;
+            foreach (range('A', 'L') as $col) {
+                $sheet->getColumnDimension($col)->setAutoSize(true);
             }
 
-            $writer = SimpleExcelWriter::streamDownload('Fire Mock Drill Inspection.xlsx')
-                ->addHeader($header)
-                ->addRows(
-                    $exportData
-                );
-        } catch (Exception $ex) {
-            report($ex);
-            Session::flash('error', 'Something went wrong !');
-            return redirect(admin_url('fire/fire-mock-drill-observation/list'));
+            for ($i = 1; $i <= 200; $i++) {
+                $sheet->getRowDimension($i)->setRowHeight(25);
+            }
+            $row = 1;
+
+            foreach ($allData as $groupedDetails) {
+
+                $inspection_detail = $groupedDetails->first();
+            
+                $document_no = $this->document_reference->selectOne($inspection_detail->document_reference_id);
+            
+                $prepared_by_signature = GetFireSignature($inspection_detail->checked_by, $inspection_detail->fire_id, DETECTOR_INSPECTION);
+                $verified_by_signature = GetFireSignature($inspection_detail->verified_by, $inspection_detail->fire_id, DETECTOR_INSPECTION);
+                $approved_by_signature = GetFireSignature($inspection_detail->approved_by, $inspection_detail->fire_id, DETECTOR_INSPECTION);
+            
+                $titleRow = $row;
+            
+                // Logo
+                $logoPath = public_path('assets/images/logo-dark.png');
+                if (file_exists($logoPath)) {
+                    $drawing = new Drawing();
+                    $drawing->setName('Logo');
+                    $drawing->setDescription('Company Logo');
+                    $drawing->setPath($logoPath);
+                    $drawing->setCoordinates('A' . $titleRow);
+                    $drawing->setOffsetX(5);
+                    $drawing->setOffsetY(5);
+                    $drawing->setHeight(60);
+                    $drawing->setWorksheet($sheet);
+                }
+            
+                $sheet->mergeCells("A{$titleRow}:B" . ($titleRow + 2));
+                $sheet->getStyle("A{$titleRow}:B" . ($titleRow + 2))->applyFromArray([
+                    'font' => ['bold' => true, 'size' => 14],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                ]);
+            
+                $sheet->mergeCells("C{$titleRow}:J" . ($titleRow + 2));
+                $sheet->setCellValue("C{$titleRow}", "MOCK DRILL OBSERVATION FOLLOW UP SHEET PN INTERNATIONAL PVT. LTD.");
+                $sheet->getStyle("C{$titleRow}:J" . ($titleRow + 2))->applyFromArray([
+                    'font' => ['bold' => true, 'size' => 14],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                ]);
+            
+                $sheet->setCellValue("K{$titleRow}", "Doc. No.");
+                $sheet->setCellValue("L{$titleRow}", $document_no->doc_no ?? '');
+            
+                $sheet->setCellValue("K" . ($titleRow + 1), "Issue Dt.");
+                $sheet->setCellValue("L" . ($titleRow + 1), Displaydateformat($document_no->issue_date ?? ''));
+            
+                $sheet->setCellValue("K" . ($titleRow + 2), "Rev. & Dt.");
+                $sheet->setCellValue("L" . ($titleRow + 2), $document_no->rev_dt ?? '');
+            
+                $sheet->getStyle("K{$titleRow}:L" . ($titleRow + 2))->applyFromArray([
+                    'font' => ['bold' => true],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                ]);
+            
+                $headerRow = $titleRow + 3;
+            
+                $headers = [
+                    'SL. NO.',
+                    'OBSERVATION',
+                    'DATE OF OBSERVATION',
+                    'SHIFT',
+                    'UNIT',
+                    'RECOMMENDED CORRECTIVE & PREVENTIVE ACTION',
+                    'ACTION TAKEN ',
+                    'RESPONSIBILITY',
+                    'TARGET DATE OF COMPLIANCE',
+                    'DATE OF CLOSURE',
+                    'STATUS',
+                    'REMARK',
+                ];
+            
+                $col = 'A';
+                foreach ($headers as $header) {
+                    $sheet->setCellValue("{$col}{$headerRow}", $header);
+                    $sheet->getStyle("{$col}{$headerRow}")->applyFromArray([
+                        'font' => ['bold' => true],
+                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                        'fill' => [
+                            'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                            'startColor' => ['argb' => 'FFEFEFEF'],
+                        ],
+                    ]);
+                    $col++;
+                }
+            
+                $dataRow = $headerRow + 1;
+                $sr = 1;
+            
+                foreach ($groupedDetails as $detail) {
+                    $sheet->setCellValue("A{$dataRow}", $sr);
+                    $sheet->setCellValue("B{$dataRow}", $detail['observation'] ?? '');
+                    $sheet->setCellValue("C{$dataRow}", Displaydateformat($detail['date_of_observation']) ?? '');
+                    $sheet->setCellValue("D{$dataRow}", getShift($detail['shift_id']) ?? '');
+                    $sheet->setCellValue("E{$dataRow}", getUnitname($detail['unit_id']) ?? '');
+                    $sheet->setCellValue("F{$dataRow}", $detail['capa_remarks'] ?? '');
+                    $sheet->setCellValue("G{$dataRow}", $detail['action_taken'] ?? '');
+                    $sheet->setCellValue("H{$dataRow}", getUsername($detail['emp_id']) ?? '');
+                    $sheet->setCellValue("I{$dataRow}", Displaydateformat($detail['date_of_compliance']) ?? '');
+                    $sheet->setCellValue("J{$dataRow}", $detail['date_of_clousure'] ? Displaydateformat($detail['date_of_clousure']) : 'The Action was not Completed');
+                    $sheet->setCellValue("K{$dataRow}", $detail->status == '1' ? 'Active' : 'InActive');
+                    $sheet->setCellValue("L{$dataRow}", $detail['remarks'] ?? '');
+            
+                    $sheet->getStyle("A{$dataRow}:L{$dataRow}")->applyFromArray([
+                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                    ]);
+            
+                    $sr++;
+                    $dataRow++;
+                }
+            
+                // Signature section
+                $signatureRowStart = $dataRow;
+                $sheet->getRowDimension($signatureRowStart)->setRowHeight(80);
+            
+                $sheet->mergeCells("A{$signatureRowStart}:D{$signatureRowStart}");
+                $sheet->getStyle("A{$signatureRowStart}:D{$signatureRowStart}")->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+                ]);
+                if (file_exists($prepared_by_signature)) {
+                    $drawing = new Drawing();
+                    $drawing->setName('Prepared Signature');
+                    $drawing->setDescription('Prepared By');
+                    $drawing->setPath($prepared_by_signature);
+                    $drawing->setCoordinates("C{$signatureRowStart}");
+                    $drawing->setOffsetX(5);
+                    $drawing->setOffsetY(5);
+                    $drawing->setHeight(40);
+                    $drawing->setWorksheet($sheet);
+                    $sheet->setCellValue("A{$signatureRowStart}", "\n\n\nPrepared By:\n" . getUsername($inspection_detail->created_by));
+                } else {
+                    $sheet->setCellValue("A{$signatureRowStart}", "Prepared By:\nInspection not yet started");
+                }
+            
+                $sheet->mergeCells("E{$signatureRowStart}:H{$signatureRowStart}");
+                $sheet->getStyle("E{$signatureRowStart}:H{$signatureRowStart}")->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+                ]);
+                if (file_exists($verified_by_signature)) {
+                    $drawing = new Drawing();
+                    $drawing->setName('Verified Signature');
+                    $drawing->setDescription('Verified By');
+                    $drawing->setPath($verified_by_signature);
+                    $drawing->setCoordinates("F{$signatureRowStart}");
+                    $drawing->setOffsetX(5);
+                    $drawing->setOffsetY(5);
+                    $drawing->setHeight(40);
+                    $drawing->setWorksheet($sheet);
+                    $sheet->setCellValue("E{$signatureRowStart}", "\n\n\nVerified By:\n" . getUsername($inspection_detail->updated_by));
+                } else {
+                    $sheet->setCellValue("E{$signatureRowStart}", "Verified By:\nInspection not yet completed");
+                }
+            
+                $sheet->mergeCells("I{$signatureRowStart}:L{$signatureRowStart}");
+                $sheet->getStyle("I{$signatureRowStart}:L{$signatureRowStart}")->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+                ]);
+                
+                if (file_exists($approved_by_signature)) {
+                    $drawing = new Drawing();
+                    $drawing->setName('Approved Signature');
+                    $drawing->setDescription('Approved By');
+                    $drawing->setPath($approved_by_signature);
+                    $drawing->setCoordinates("J{$signatureRowStart}");
+                    $drawing->setOffsetX(5);
+                    $drawing->setOffsetY(5);
+                    $drawing->setHeight(40);
+                    $drawing->setWorksheet($sheet);
+                    $sheet->setCellValue("I{$signatureRowStart}", "\n\n\nApproved By:\n" . getUsername($inspection_detail->approved_by));
+                } else {
+                    $sheet->setCellValue("I{$signatureRowStart}", "Approved By:\nApproval pending");
+                }
+            
+                $lastRow = $signatureRowStart;
+                $sheet->getStyle("A{$titleRow}:L{$lastRow}")->applyFromArray([
+                    'borders' => [
+                        'outline' => [
+                            'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THICK,
+                            'color' => ['argb' => '000000'],
+                        ],
+                    ],
+                ]);
+            
+                $row = $signatureRowStart + 6;
+            }
+            
+
+            $writer = new Xlsx($spreadsheet);
+            $filename = 'Catridge Type Fire Extinguisher.xlsx';
+            header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            header("Content-Disposition: attachment; filename=\"$filename\"");
+            header('Cache-Control: max-age=0');
+            $writer->save('php://output');
+        } catch (\Exception $e) {
+            dd($e);
+            report($e);
+            Session::flash('error', 'Something went wrong!');
+            return redirect(admin_url('fire/detector-inspection/list'));
         }
     }
 
@@ -820,6 +1061,217 @@ class FireMockDrillInspectionController extends Controller
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('fire/fire-mock-drill-observation/list'));
+        }
+    }
+
+
+    public function generalExcel(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+            $spreadsheet = new Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
+            
+            $fire_mock_drill = $this->fire_mock_drill_inspection->find($id);
+            $inspection_data = $this->fire_mock_drill_inspection_details->GetDetails($fire_mock_drill->id);
+            $document_no = $this->document_reference->selectOne($fire_mock_drill->document_reference_id);
+            $prepared_by_signature = GetFireSignature($fire_mock_drill->created_by, $fire_mock_drill->id, FIRE_MOCK_DRILL_INSPECION);
+            $verified_by_signature = GetFireSignature($fire_mock_drill->updated_by, $fire_mock_drill->id, FIRE_MOCK_DRILL_INSPECION);
+            $approved_by_signature = GetFireSignature($fire_mock_drill->approved_by, $fire_mock_drill->id, FIRE_MOCK_DRILL_INSPECION);
+    
+            foreach (range('A', 'L') as $col) {
+                $sheet->getColumnDimension($col)->setAutoSize(true);
+            }
+    
+            for ($i = 1; $i <= 200; $i++) {
+                $sheet->getRowDimension($i)->setRowHeight(25);
+            }
+    
+            // Add logo image
+            $logoPath = public_path('assets/images/logo-dark.png');
+            if (file_exists($logoPath)) {
+                $drawing = new Drawing();
+                $drawing->setName('Logo');
+                $drawing->setDescription('Company Logo');
+                $drawing->setPath($logoPath);
+                $drawing->setCoordinates('A1');
+                $drawing->setOffsetX(5);
+                $drawing->setOffsetY(5);
+                $drawing->setHeight(60);
+                $drawing->setWorksheet($sheet);
+            }
+    
+            $sheet->mergeCells('A1:B3');
+            $sheet->getStyle('A1:B3')->applyFromArray([
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                'borders' => ['outline' => ['borderStyle' => Border::BORDER_THIN]],
+            ]);
+    
+            $sheet->mergeCells("C1:J3");
+            $sheet->setCellValue("C1", "MOCK DRILL OBSERVATION FOLLOW UP SHEET PN INTERNATIONAL PVT. LTD.");
+            $sheet->getStyle("C1:J3")->applyFromArray([
+                'font' => ['bold' => true, 'size' => 14],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+            ]);
+    
+            $row = 1;
+
+            $labelMap = [
+
+                'K1' => ['value' => 'Doc. No.', 'valueCell' => 'L1', 'data' => $document_no->doc_no],
+                'K2' => ['value' => 'Issue Dt.', 'valueCell' => 'L2', 'data' => Displaydateformat($document_no->issue_date)],
+                'K3' => ['value' => 'Rev. & Dt.', 'valueCell' => 'L3', 'data' => $document_no->rev_dt],
+
+            ];
+
+            foreach ($labelMap as $labelCell => $info) {
+                $sheet->setCellValue($labelCell, $info['value']);
+                $sheet->setCellValue($info['valueCell'], $info['data']);
+
+                $sheet->getStyle($labelCell)->applyFromArray([
+                    'font' => ['bold' => true],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
+                ]);
+
+                $sheet->getStyle($info['valueCell'])->applyFromArray([
+                    'font' => ['bold' => true],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
+                ]);
+            }
+            
+           
+    
+            $headers = [
+                'SL. NO.',
+                'OBSERVATION',
+                'DATE OF OBSERVATION',
+                'SHIFT',
+                'UNIT',
+                'RECOMMENDED CORRECTIVE & PREVENTIVE ACTION',
+                'ACTION TAKEN ',
+                'RESPONSIBILITY',
+                'TARGET DATE OF COMPLIANCE',
+                'DATE OF CLOSURE',
+                'STATUS',
+                'REMARK',
+                
+            ];
+
+            $col = 'A';
+            foreach ($headers as $header) {
+                $sheet->setCellValue("{$col}4", $header);
+                $sheet->getStyle("{$col}4")->applyFromArray([
+                    'font' => ['bold' => true],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                ]);
+                $col++;
+            }
+    
+            $row = 5;
+            $sr = 1;
+                foreach ($inspection_data as $detail) {
+
+                    $sheet->setCellValue("A{$row}", $sr);
+                    $sheet->setCellValue("B{$row}", $detail['observation'] ?? '');
+                    $sheet->setCellValue("C{$row}", Displaydateformat($detail['date_of_observation']) ?? '');
+                    $sheet->setCellValue("D{$row}", getShift($detail['shift_id']) ?? '');
+                    $sheet->setCellValue("E{$row}", getUnitname($detail['unit_id']) ?? '');
+                    $sheet->setCellValue("F{$row}", $detail['capa_remarks'] ?? '');
+                    $sheet->setCellValue("G{$row}", $detail['action_taken'] ?? '');
+                    $sheet->setCellValue("H{$row}", getUsername($detail['emp_id']) ?? '');
+                    $sheet->setCellValue("I{$row}", Displaydateformat($detail['date_of_compliance']) ?? '');
+                    $sheet->setCellValue("J{$row}", $detail['date_of_clousure'] ? Displaydateformat($detail['date_of_clousure']) : 'The Action was not Completed');
+                    $sheet->setCellValue("K{$row}", $detail->status == '1' ? 'Active' : 'InActive');
+                    $sheet->setCellValue("L{$row}", $detail['remarks'] ?? '');
+
+                    $sheet->getStyle("A{$row}:L{$row}")->applyFromArray([
+                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                    ]);
+                
+                    $sr++;
+                    $row++;
+                }
+            
+    
+            $signatureRow = $row;
+            $sheet->getRowDimension($signatureRow)->setRowHeight(80);
+    
+            $sheet->mergeCells("A{$signatureRow}:D{$signatureRow}");
+            $sheet->getStyle("A{$signatureRow}:D{$signatureRow}")->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+            ]);
+            if (file_exists($prepared_by_signature)) {
+                $drawing = new Drawing();
+                $drawing->setName('Prepared Signature');
+                $drawing->setDescription('Prepared By');
+                $drawing->setPath($prepared_by_signature);
+                $drawing->setCoordinates("B{$signatureRow}");
+                $drawing->setOffsetX(5);
+                $drawing->setOffsetY(5);
+                $drawing->setHeight(40);
+                $drawing->setWorksheet($sheet);
+                $sheet->setCellValue("A{$signatureRow}", "\n\n\nPrepared By:\n" . getUsername($fire_mock_drill->created_by));
+            } else {
+                $sheet->setCellValue("A{$signatureRow}", "Prepared By:\nInspection not yet started");
+            }
+    
+            $sheet->mergeCells("E{$signatureRow}:H{$signatureRow}");
+            $sheet->getStyle("E{$signatureRow}:H{$signatureRow}")->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+            ]);
+            if (file_exists($verified_by_signature)) {
+                $drawing = new Drawing();
+                $drawing->setName('Verified Signature');
+                $drawing->setDescription('Verified By');
+                $drawing->setPath($verified_by_signature);
+                $drawing->setCoordinates("F{$signatureRow}");
+                $drawing->setOffsetX(5);
+                $drawing->setOffsetY(5);
+                $drawing->setHeight(40);
+                $drawing->setWorksheet($sheet);
+                $sheet->setCellValue("E{$signatureRow}", "\n\n\nVerified By:\n" . getUsername($fire_mock_drill->updated_by));
+            } else {
+                $sheet->setCellValue("E{$signatureRow}", "Verified By:\nInspection not yet completed");
+            }
+    
+            $sheet->mergeCells("I{$signatureRow}:L{$signatureRow}");
+            $sheet->getStyle("I{$signatureRow}:L{$signatureRow}")->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+            ]);
+            if (file_exists($approved_by_signature)) {
+                $drawing = new Drawing();
+                $drawing->setName('Approved Signature');
+                $drawing->setDescription('Approved By');
+                $drawing->setPath($approved_by_signature);
+                $drawing->setCoordinates("J{$signatureRow}");
+                $drawing->setOffsetX(5);
+                $drawing->setOffsetY(5);
+                $drawing->setHeight(40);
+                $drawing->setWorksheet($sheet);
+                $sheet->setCellValue("I{$signatureRow}", "\n\n\nApproved By:\n" . getUsername($fire_mock_drill->approved_by));
+            } else {
+                $sheet->setCellValue("I{$signatureRow}", "Approved By:\nApproval pending");
+            }
+    
+            $writer = new Xlsx($spreadsheet);
+            $fileName = 'Fire Mock Drill Observation.xlsx';
+            $filePath = storage_path("app/public/$fileName");
+            $writer->save($filePath);
+    
+            return response()->download($filePath)->deleteFileAfterSend(true);
+        } catch (\Exception $e) {
+        dd($e);
+            report($e);
+            Session::flash('error', 'Something went wrong!');
+            return redirect(admin_url('fire/fire-extinguisher/cartridge/list'));
         }
     }
 }
