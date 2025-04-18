@@ -27,6 +27,7 @@ class GembaWalk extends Model
         'trash',
         'created_by',
         'updated_by',
+        'verified_by',
         'updated_at',
         'created_at',
     ];
@@ -120,7 +121,6 @@ class GembaWalk extends Model
             'inspection_gemba_walk_checklist.*',
             'inspection_gemba_walk_checklist_files.file_path',
             'inspection_gemba_walk.created_by as user_id',
-            'inspection_gemba_walk.updated_by as verified_by'
 
         )
             ->leftJoin('inspection_gemba_walk_checklist', 'inspection_gemba_walk_checklist.gemba_walk_id', '=', 'inspection_gemba_walk.id')
@@ -181,6 +181,7 @@ class GembaWalk extends Model
         $update_array = array(
             'gemba_walk_status' => $gembaWalk_status,
             'updated_by' => Auth::id(),
+            'verified_by' => Auth::id(),
             'updated_at' => now(),
         );
         return $this->where('id', $gembaWalk_id)->update($update_array);
