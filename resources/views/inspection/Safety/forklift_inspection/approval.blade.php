@@ -175,7 +175,7 @@
                                             </div>
                                         @endforeach
                                     </div>
-                                    @if (checkUserRole(ROLE_EHS_OFFICER) || isAdmin())
+                                    @if (checkUserRole(ROLE_EHS_HEAD) || isAdmin())
                                         <div>
                                             <div class="card-header-inner p-2">
                                                 <h4 class="text-white">APPROVAL</h4>

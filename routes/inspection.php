@@ -668,6 +668,7 @@ Route::group(['prefix' => 'fire/'], function () {
         Route::get('export/pdf', [MonthlyPhysicalInspectionController::class, 'exportPdf']);
         Route::post('status', [MonthlyPhysicalInspectionController::class, 'statusChange']);
         Route::GET('exportViewPdf/{id}', [MonthlyPhysicalInspectionController::class, 'ExportViewPDF']);
+        Route::GET('export/excel/{id}', [MonthlyPhysicalInspectionController::class, 'GeneralExcel']);
     });
 
     Route::group(['prefix' => 'fire-safety/equipments/code-sheet/'], function () {

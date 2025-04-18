@@ -52,16 +52,20 @@ class DetectorInspection extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_fire_detector.*', 'inspection_shift_option.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*', 'inspection_fire_detector.id as fire_detector_id')
+        $query = $this->select('inspection_fire_detector.*', 'inspection_shift_option.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*', 'inspection_fire_detector.id as fire_detector_id', 'inspection_fire_detector.created_by as checked_by')
             ->leftJoin('masters_location', 'inspection_fire_detector.location', '=', 'masters_location.id')
             ->leftJoin('inspection_shift_option', 'inspection_fire_detector.shift', '=', 'inspection_shift_option.id')
             ->leftJoin('masters_unit', 'inspection_fire_detector.unit', '=', 'masters_unit.id')
             ->leftJoin('inspection_frequency_option', 'inspection_fire_detector.frequency', '=', 'inspection_frequency_option.id')
             ->leftJoin('inspection_static_docno', 'inspection_fire_detector.document_reference_id', '=', 'inspection_static_docno.id');
 
+        if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_OFFICER) || CheckUserRole(ROLE_L1_MANAGER) || CheckUserRole(ROLE_L2_MANAGER)) {
+        } else if (CheckUserRole(ROLE_FIRE_ASSOCIATES)) {
+            $query->where('inspection_fire_detector.created_by', Auth::id());
+        }
+
         $org_total =  $query;
         $org_total_counts = $org_total->count();
-
 
         if (isset($request->search) && isset($request->search['value']) && $request->search['value'] != '') {
             $search = $request->search['value'];
@@ -96,6 +100,7 @@ class DetectorInspection extends Model
             $query = $query->where('inspection_fire_detector.inspection_status', 'LIKE', '%' . decryptId($request->inspection_status) . '%');
         }
 
+
         if (isset($request->order) && count($request->order) > 0) {
             $columnName = $request->order[0]['column'];
             $columnorder = $request->order[0]['dir'];
@@ -114,6 +119,7 @@ class DetectorInspection extends Model
                     break;
             }
         }
+
 
         $data_count = $query;
         $total_records = $data_count->count();
