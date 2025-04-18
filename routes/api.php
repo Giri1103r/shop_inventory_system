@@ -82,6 +82,7 @@ Route::middleware('api')->prefix('v1')->group(function () {
             Route::post('/view', [SafetyPermitController::class, 'view']);
             Route::post('/approval', [SafetyPermitController::class, 'ehsapproval']);
             Route::post('/qrcode', [SafetyPermitController::class, 'qrcode']);
+            Route::post('/reassignEmployeeList', [SafetyPermitController::class, 'getReassignEmployee']);
 
 
         });
