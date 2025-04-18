@@ -29,12 +29,16 @@ class MasterController extends BaseController
             if (Auth::check()) {
                 $employeeList = Employee::select(
                     'masters_employee.id',
+                    'template_user_role.id as role_id',
+                    'template_user_role.role_name',
                     'masters_employee.emp_name',
                     'masters_employee.login_id',
                     'masters_employee.emp_id',
+                    'masters_employee.user_role',
                     'masters_department.id as department_id',
                     'masters_department.department_name'
                 )
+                    ->join('template_user_role', 'masters_employee.user_role', '=', 'template_user_role.id')
                     ->join('masters_department', 'masters_employee.department', '=', 'masters_department.id')
                     ->where('masters_employee.status', 1)
                     ->get()
@@ -44,6 +48,10 @@ class MasterController extends BaseController
                             'emp_name' => $employee->emp_name,
                             'emp_id' => $employee->emp_id,
                             'login_id' => $employee->login_id,
+                            'role' => [
+                                'id' => $employee->role_id,
+                                'role_name' => $employee->role_name
+                            ],
                             'department' => [
                                 'id' => $employee->department_id,
                                 'department_name' => $employee->department_name
@@ -51,20 +59,16 @@ class MasterController extends BaseController
                         ];
                     });
 
-                $success = [
-                    'responsible_person' => $employeeList,
-                ];
-
-                return $this->sendResponse($success, 'Employee details');
+                return $this->sendResponse(['responsible_person' => $employeeList], 'Employee details');
             }
 
             return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
         } catch (Exception $ex) {
             Log::error('Employee Fetch Error: ' . $ex->getMessage());
-
             return $this->sendError('Something went wrong.', ['error' => $ex->getMessage()], 500);
         }
     }
+
 
 
 
