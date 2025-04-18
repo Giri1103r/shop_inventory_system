@@ -334,7 +334,6 @@ class GembaWalkController extends Controller
     }
 
     public function approvals($id)
-
     {
         try {
             $id = decryptId($id);
@@ -359,7 +358,6 @@ class GembaWalkController extends Controller
             report($ex);
         }
     }
-
 
     public function CAPASubmit(Request $request)
     {
@@ -885,11 +883,12 @@ class GembaWalkController extends Controller
 
             if (Auth::check()) {
                 $gembaWalk_details = $this->gembaWalk->selectOne($id);
+                // dd($gembaWalk_details);
                 $status_log = $this->statusLog->selectOne($id);
                 $getUserId = $this->gembaWalk->getUserId($id);
                 $type = GEMBA_WALK;
                 $gembaWalk_approved_singnature = GetSignature($getUserId->created_by, $id, $type);
-                $gembaWalk_verified_singnature = GetSignature($getUserId->updated_by, $id, $type);
+                $gembaWalk_verified_singnature = GetSignature($getUserId->verified_by, $id, $type);
                 $gembaWalk_ehs_capa_details = $this->gembaWalkInspectionEhsAprroval->getEHSCapaReview($id);
                 $gembaWalk_ehs_floor_manager_details = $this->gembaWalkInspectionEhsAprroval->getEHSFloormanagerReview($id);
                 $gembaWalk_ehs_verificatioin_details = $this->gembaWalkInspectionEhsAprroval->getEHSOfficerReview($id);
@@ -942,7 +941,7 @@ class GembaWalkController extends Controller
             $type = GEMBA_WALK;
 
             $gembaWalk_approved_singnature = GetSignature($getUserId->created_by, $id, $type);
-            $gembaWalk_verified_singnature = GetSignature($getUserId->updated_by, $id, $type);
+            $gembaWalk_verified_singnature = GetSignature($getUserId->verified_by, $id, $type);
             $document_no = $this->document_reference->selectOne($getUserId->document_reference_id);
 
             $spreadsheet = new Spreadsheet();
