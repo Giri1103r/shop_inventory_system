@@ -617,6 +617,12 @@ class EmergencyBuyerFirstAidBagChecklistController extends Controller
 
                 // Add space before next block
                 $row = $signatureRow + 6;
+
+                $sheet->getStyle("A{$headerRowStart}:f{$signatureRow}")->applyFromArray([
+                    'borders' => [
+                        'outline' => ['borderStyle' => Border::BORDER_THICK, 'color' => ['argb' => '000000']],
+                    ],
+                ]);
             }
 
             $writer = new Xlsx($spreadsheet);

@@ -275,10 +275,13 @@
                     unit_id: {
                         required: true,
                     },
-                    frequency: {
+                    frequency_id: {
                         required: true,
                     },
                     signature_image: {
+                        required: true,
+                    },
+                    remark_by: {
                         required: true,
                     }
                 },
@@ -299,12 +302,15 @@
                     unit_id: {
                         required: "Unit selection is required",
                     },
-                    frequency: {
-                        required: "Frequency is required",
-                        digits: "Please enter a valid number"
+                    frequency_id: {
+                        required: "Frequency  selection is required",
+                        
                     },
                     signature_image: {
                         required: "Signature is required",
+                    },
+                    remark_by: {
+                        required: "Please add remarks",
                     }
                 },
                 errorElement: 'span',

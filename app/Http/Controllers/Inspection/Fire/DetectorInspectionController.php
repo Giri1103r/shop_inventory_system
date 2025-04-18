@@ -815,7 +815,7 @@ class DetectorInspectionController extends Controller
                 ]);
 
                 $sheet->mergeCells("C{$titleRow}:H" . ($titleRow + 2));
-                $sheet->setCellValue("C{$titleRow}", "FIRE EXTINGUISHER INSPECTION CHECKLIST (CARTIDGE TYPE) PN INTERNATIONAL PVT. LTD.");
+                $sheet->setCellValue("C{$titleRow}", "DETECTOR INSPECTION CHECKLIST PN INTERNATIONAL PVT. LTD.");
 
                 $sheet->getStyle("C{$titleRow}:H" . ($titleRow + 2))->applyFromArray([
                     'font' => ['bold' => true, 'size' => 14],
@@ -854,8 +854,9 @@ class DetectorInspectionController extends Controller
                 $sheet->mergeCells("E{$headerInfoRow}:H{$headerInfoRow}")->setCellValue("E{$headerInfoRow}", "Location:- " . getLocationname($inspection_detail->location));
                 $sheet->mergeCells("I{$headerInfoRow}:L{$headerInfoRow}")->setCellValue("I{$headerInfoRow}", "Shift:- " . $inspection_detail->shift);
                 $sheet->getStyle("A{$headerInfoRow}:L{$headerInfoRow}")->applyFromArray([
-                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                     'font' => ['bold' => true],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                 ]);
                 $headerInfoRow++;
 
@@ -863,8 +864,9 @@ class DetectorInspectionController extends Controller
                 $sheet->mergeCells("E{$headerInfoRow}:H{$headerInfoRow}")->setCellValue("E{$headerInfoRow}", "Unit:- " . getUnitname($inspection_detail->unit));
                 $sheet->mergeCells("I{$headerInfoRow}:L{$headerInfoRow}")->setCellValue("I{$headerInfoRow}", "Frequency:- " . getFrequencyname($inspection_detail->frequency));
                 $sheet->getStyle("A{$headerInfoRow}:L{$headerInfoRow}")->applyFromArray([
-                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                     'font' => ['bold' => true],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                 ]);
                 $headerInfoRow++;
 
@@ -887,10 +889,10 @@ class DetectorInspectionController extends Controller
 
                 $sheet->getStyle("A{$headerStart}:L" . ($headerStart + 1))->applyFromArray([
                     'font' => ['bold' => true],
-                    'borders' => ['allBorders' => ['borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN]],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                     'alignment' => [
-                        'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
-                        'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+                        'horizontal' => Alignment::HORIZONTAL_CENTER,
+                        'vertical' => Alignment::VERTICAL_CENTER,
                         'wrapText' => true,
                     ],
                 ]);
@@ -1058,7 +1060,7 @@ class DetectorInspectionController extends Controller
             }
 
             $writer = new Xlsx($spreadsheet);
-            $filename = 'Catridge Type Fire Extinguisher.xlsx';
+            $filename = 'Detector Inspection.xlsx';
             header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
             header("Content-Disposition: attachment; filename=\"$filename\"");
             header('Cache-Control: max-age=0');
@@ -1212,7 +1214,7 @@ class DetectorInspectionController extends Controller
             ]);
 
             $sheet->mergeCells("C1:H3");
-            $sheet->setCellValue("C1", "FIRE EXTINGUISHER INSPECTION CHECKLIST (CARTIDGE TYPE) PN INTERNATIONAL PVT. LTD.");
+            $sheet->setCellValue("C1", "DETECTOR INSPECTION CHECKLIST PN INTERNATIONAL PVT. LTD.");
             $sheet->getStyle("C1:H3")->applyFromArray([
                 'font' => ['bold' => true, 'size' => 14],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],

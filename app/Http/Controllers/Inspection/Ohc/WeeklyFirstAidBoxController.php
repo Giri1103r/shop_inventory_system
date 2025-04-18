@@ -609,6 +609,12 @@ class WeeklyFirstAidBoxController extends Controller
             
                 // Leave gap between inspections
                 $row = $signatureRowStart + 6;
+
+                $sheet->getStyle("A{$headerRowStart}:H{$signatureRowStart}")->applyFromArray([
+                    'borders' => [
+                        'outline' => ['borderStyle' => Border::BORDER_THICK, 'color' => ['argb' => '000000']],
+                    ],
+                ]);
             }
             
             // Output file (optional)

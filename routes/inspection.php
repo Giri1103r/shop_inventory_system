@@ -892,6 +892,7 @@ Route::group(['prefix' => 'fire/'], function () {
         Route::POST('level-one/verify/submit', [FireModularInspectionController::class, 'levelOneManagerSubmit']);
         Route::POST('level-two/verify/submit', [FireModularInspectionController::class, 'levelTwoManagerSubmit']);
         Route::GET('exportViewPdf/{id}', [FireModularInspectionController::class, 'ExportViewPDF']);
+        Route::GET('generalExcel/{id}', [FireModularInspectionController::class, 'generalExcel']);
         Route::GET('export/excel', [FireModularInspectionController::class, 'ExportExcel']);
         Route::GET('export/pdf', [FireModularInspectionController::class, 'ExportPDF']);
         Route::GET('get/department', [FireModularInspectionController::class, 'GetDepartment']);
