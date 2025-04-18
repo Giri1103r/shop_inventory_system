@@ -205,7 +205,7 @@
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.condition') }}</label>
+                                                            class="form-label require">{{ __('inspection.fire_bucket_stand_condition') }}</label>
                                                         <div class="view_data">
                                                             @if ($details->condition == GOOD)
                                                                 <p>Good</p>

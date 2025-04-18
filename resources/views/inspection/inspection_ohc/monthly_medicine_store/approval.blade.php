@@ -23,14 +23,9 @@
                                         href="{{ admin_url('ohc/monthly-medicine-store/inspection/list') }}"></x-button-back>
                                 </div>
                             </div>
-
                             <div class="card-body">
-
                                 <div class="basic-form mx-3">
-
-
                                     <div class="row">
-
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
                                                 <label
@@ -126,7 +121,6 @@
                                         </div>
                                     @endif
                                 </div>
-
                                 <div class="col-md-12 mb-2 form-input" id="capa_remarks">
                                     <label for="capa_remarks" class="form-label">Remarks</label>
                                     <textarea id="capa_remarks" class="form-control" rows="3" placeholder="Please provide Remarks..."
@@ -138,7 +132,6 @@
                                 </div>
                             </div>
                         </form>
-
                     </div>
                 </div>
             </div>

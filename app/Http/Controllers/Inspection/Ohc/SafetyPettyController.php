@@ -667,7 +667,7 @@ class SafetyPettyController extends Controller
                 $drawingGiven->setWidth(100);
                 $drawingGiven->setHeight(50);
 
-                $drawingGiven->setOffsetX(25);
+                $drawingGiven->setOffsetX(15);
                 $drawingGiven->setOffsetY(10);
                 $drawingGiven->setWorksheet($sheet);
             }

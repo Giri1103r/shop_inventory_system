@@ -117,6 +117,7 @@
                                                             <tr>
                                                                 <th style="text-align: center">Sr. No.</th>
                                                                 <th style="text-align: center">Name of Equipment</th>
+                                                                <th style="text-align: center">Frequency</th>
                                                                 <th style="text-align: center">Status</th>
                                                                 <th style="text-align: center">Remark</th>
                                                             </tr>
@@ -130,6 +131,24 @@
                                                                         <input type="hidden"
                                                                             name="id[{{ $medicines->id }}]"
                                                                             value="{{ encryptId($medicines->id) }}">
+                                                                    </td>
+                                                                    <td>
+                                                                        <div class="form-group form-input">
+                                                                            <select name="frequency[{{ $medicines->id }}]"
+                                                                                id="frequency_{{ $loop->iteration }}"
+                                                                                class=" form-control single-select"
+                                                                                style="width: 100%">
+                                                                                <option value="">Select
+                                                                                    {{ __('inspection.frequency') }}
+                                                                                </option>
+                                                                                @foreach ($frequencies as $frequency)
+                                                                                    <option
+                                                                                        value="{{ encryptId($frequency->id) }}">
+                                                                                        {{ $frequency->frequency_name }}
+                                                                                    </option>
+                                                                                @endforeach
+                                                                            </select>
+                                                                        </div>
                                                                     </td>
                                                                     <td>
                                                                         <div class="form-input">
@@ -277,6 +296,9 @@
                             },
                             location_id: {
                                 required: true,
+                            },
+                            frequency: {
+                                required: true,
                             }
 
                         },
@@ -289,6 +311,9 @@
                             },
                             location_id: {
                                 required: "Location is required",
+                            },
+                            frequency: {
+                                required: "Frequency is required",
                             }
                         },
                         errorElement: 'span',

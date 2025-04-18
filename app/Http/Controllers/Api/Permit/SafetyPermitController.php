@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\Permit;
 use App\Http\Controllers\Api\BaseController;
 use App\Http\Controllers\Controller;
 use App\Mail\SafetyPermitEmail;
+use App\Models\Master\Employee;
 use App\Models\Permit\SafetyApproveReject;
 use App\Models\Permit\SafetyPermit;
 use Exception;
@@ -324,6 +325,22 @@ class SafetyPermitController extends BaseController
                         'id' => $safetypermit->status_id,
                         'status' => $safetypermit->status_name,
                     ],
+                    'verified_by' => [
+                        'id' => $safetypermit->verified_by,
+                        'name' => getusername($safetypermit->verified_by),
+                    ],
+                    'resume_hold_by' => [
+                        'id' => $safetypermit->resume_hold_by,
+                        'name' => getusername($safetypermit->resume_hold_by),
+                    ],
+                    'reassign_to' => [
+                        'id' => $safetypermit->reassign_to,
+                        'name' => getusername($safetypermit->reassign_to),
+                    ],
+                    'approved_by' => [
+                        'id' => $safetypermit->approved_by,
+                        'name' => getusername($safetypermit->approved_by),
+                    ],
                     'type_of_work' => [
                         'sub_permit' => $sub_permits,
 
@@ -601,7 +618,7 @@ class SafetyPermitController extends BaseController
                         'message' => 'Safety Permit ' . $safetypermit->permit_id . $mailsubject . getUsername($approve->created_by),
                         'icon' =>  admin_url('public/assets/icons/permit_to_work.png'),
                         'id' => $safetypermit->id,
-                        'module' => 1,
+                        'module' => 3,
                     )),
                     'web_link' =>  admin_url('safetypermit/approvereject/' . encryptId($safetypermit->id)),
                     'assigned_user' => $UserIdsCommaSeparated,
@@ -647,7 +664,7 @@ class SafetyPermitController extends BaseController
                         'message' => 'Safety Permit ' . $safetypermit->permit_id . $mailsubject . getUsername($approve->created_by),
                         'icon' =>  admin_url('public/assets/icons/permit_to_work.png'),
                         'id' => $safetypermit->id,
-                        'module' => 1,
+                        'module' => 3,
                     )),
                     'web_link' =>  admin_url('safetypermit/approvereject/' . encryptId($safetypermit->id)),
                     'assigned_user' => $UserIdsCommaSeparated,
@@ -695,7 +712,7 @@ class SafetyPermitController extends BaseController
                         'message' => 'Safety Permit ' . $safetypermit->permit_id . $mailsubject . getUsername($approve->created_by),
                         'icon' =>  admin_url('public/assets/icons/permit_to_work.png'),
                         'id' => $safetypermit->id,
-                        'module' => 1,
+                        'module' => 3,
                     )),
                     'web_link' =>  admin_url('safetypermit/edit/' . encryptId($safetypermit->id)),
                     'assigned_user' => array_to_string($userids),
@@ -743,7 +760,7 @@ class SafetyPermitController extends BaseController
                         'message' => 'Safety Permit ' . $safetypermit->permit_id . $mailsubject . getUsername($approve->created_by),
                         'icon' =>  admin_url('public/assets/icons/permit_to_work.png'),
                         'id' => $safetypermit->id,
-                        'module' => 1,
+                        'module' => 3,
                     )),
                     'web_link' =>  admin_url('safetypermit/approvereject/' . encryptId($safetypermit->id)),
                     'assigned_user' => array_to_string($userids),
@@ -793,7 +810,7 @@ class SafetyPermitController extends BaseController
                         'message' => 'Safety Permit ' . $safetypermit->permit_id . $mailsubject . getUsername($approve->created_by),
                         'icon' =>  admin_url('public/assets/icons/permit_to_work.png'),
                         'id' => $safetypermit->id,
-                        'module' => 1,
+                        'module' => 3,
                     )),
                     'web_link' =>  admin_url('safetypermit/approvereject/' . encryptId($safetypermit->id)),
                     'assigned_user' => array_to_string($userids),
@@ -864,6 +881,58 @@ class SafetyPermitController extends BaseController
         } catch (Exception $ex) {
             Log::error('QR Code Generation Error: ' . $ex->getMessage());
             return $this->sendError('An error occurred.', ['error' => $ex->getMessage()], 500);
+        }
+    }
+
+    public function getReassig1nEmployee(Request $request)
+    {
+        $name = $request->input('search');
+        $unitId = $request->input('unitId');
+
+        $employees = Employee::where('emp_name', 'like', '%' . $name . '%')
+            ->where('status', 1)
+            ->whereRaw("FIND_IN_SET(?, user_role)", [3])
+            ->where('login_id', '!=', Auth::id())
+            ->limit(10)
+            ->get();
+
+        return response()->json(
+            $employees->map(function ($employee) {
+                return [
+                    'id' => $employee->login_id,
+                    'text' => $employee->emp_name . ' - ' . $employee->emp_id,
+                ];
+            })
+        );
+    }
+    public function getReassignEmployee()
+    {
+        try {
+            if (Auth::check()) {
+                $employeeList = Employee::select(
+                    'masters_employee.id',
+                    'masters_employee.emp_name',
+                    'masters_employee.login_id',
+                    'masters_employee.emp_id',
+                )
+                    ->where('masters_employee.status', 1)
+                    ->get()
+                    ->map(function ($employee) {
+                        return [
+                            'id' => $employee->id,
+                            'emp_name' => $employee->emp_name,
+                            'emp_id' => $employee->emp_id,
+                            'login_id' => $employee->login_id,
+                        ];
+                    });
+
+                return $this->sendResponse(['responsible_person' => $employeeList], 'Reassign Employee details');
+            }
+
+            return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
+        } catch (Exception $ex) {
+            Log::error('Employee Fetch Error: ' . $ex->getMessage());
+            return $this->sendError('Something went wrong.', ['error' => $ex->getMessage()], 500);
         }
     }
 }

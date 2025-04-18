@@ -38,6 +38,12 @@ class ForkLiftInspection extends Model
         $search = '';
         $query = $this->select('inspection_safety_forklift_inspection.*', 'inspection_static_docno.*', 'inspection_safety_forklift_inspection.id as inspection_id')
             ->leftJoin('inspection_static_docno', 'inspection_safety_forklift_inspection.document_reference_id', '=', 'inspection_static_docno.id');
+
+        if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_HEAD)) {
+        } else if (CheckUserRole(ROLE_EHS_OFFICER)) {
+            $query->where('inspection_safety_forklift_inspection.created_by', Auth::id());
+        }
+
         $org_total =  $query;
         $org_total_counts = $org_total->count();
 
