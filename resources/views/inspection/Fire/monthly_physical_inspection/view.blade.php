@@ -71,6 +71,7 @@
                                             <thead class="table-secondary">
                                                 <th style="text-align: center">Sr. No.</th>
                                                 <th style="text-align: center">Equipment Name</th>
+                                                <th style="text-align: center">Frequency</th>
                                                 <th style="text-align: center">Status</th>
                                                 <th style="text-align: center">Remarks</th>
                                             </thead>
@@ -79,9 +80,10 @@
                                                     <tr>
                                                         <td class="text-center">{{ $loop->iteration }}</td>
                                                         <td class="text-center">
-                                                            {{ getMonthlyInspectionEquipmentname($medicines['id']) }}
-                                                        <td class="text-center">{{ $medicines['status'] }}
-                                                        <td class="text-center">{{ $medicines['remarks'] }}
+                                                            {{ getMonthlyInspectionEquipmentname($medicines['id']) }}</td>
+                                                        <td class="text-center">{{ getFrequencyname($medicines['frequency']) }}</td>
+                                                        <td class="text-center">{{ $medicines['status'] }}</td>
+                                                        <td class="text-center">{{ $medicines['remarks'] }}</td>
                                                     </tr>
                                                 @endforeach
                                             </tbody>

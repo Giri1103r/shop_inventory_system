@@ -98,7 +98,7 @@ class DetectorInspectionController extends Controller
                             return Displaydateformat($row->next_due);
                         })
                         ->addColumn('created_by', function ($row) {
-                            return getUsername($row->created_by);
+                            return getUsername($row->checked_by);
                         })
                         ->addColumn('inspection_status', function ($row) {
                             $text = '';

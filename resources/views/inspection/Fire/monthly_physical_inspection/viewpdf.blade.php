@@ -217,6 +217,9 @@
                     Equipment Name
                 </th>
                 <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
+                    Frequency
+                </th>
+                <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
                     {{ __('inspection.status') }}
                 </th>
                 <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
@@ -235,6 +238,9 @@
                     </td>
                     <td style="border: 1px solid black; padding: 8px; text-align: center;">
                         {{ $medicines['status'] }}
+                    </td>
+                    <td style="border: 1px solid black; padding: 8px; text-align: center;">
+                        {{ getFrequencyname($medicines['frequency']) }}
                     </td>
                     <td style="border: 1px solid black; padding: 8px; text-align: center;">
                         {{ $medicines['remarks'] }}
