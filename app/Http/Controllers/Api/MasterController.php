@@ -29,12 +29,17 @@ class MasterController extends BaseController
             if (Auth::check()) {
                 $employeeList = Employee::select(
                     'masters_employee.id',
+                    'template_user_role.id as role_id',
+                    'template_user_role.role_name',
                     'masters_employee.emp_name',
                     'masters_employee.login_id',
                     'masters_employee.emp_id',
+                    'masters_employee.user_role',
                     'masters_department.id as department_id',
                     'masters_department.department_name'
                 )
+                    ->join('template_user_role', 'masters_employee.user_role', '=', 'template_user_role.id')
+                    ->join('masters_department', 'masters_employee.department', '=', 'masters_department.id')
                     ->join('masters_department', 'masters_employee.department', '=', 'masters_department.id')
                     ->where('masters_employee.status', 1)
                     ->get()
@@ -44,6 +49,10 @@ class MasterController extends BaseController
                             'emp_name' => $employee->emp_name,
                             'emp_id' => $employee->emp_id,
                             'login_id' => $employee->login_id,
+                            'role' => [
+                                'id' => $employee->role_id,
+                                'role_name' => $employee->role_name
+                            ],
                             'department' => [
                                 'id' => $employee->department_id,
                                 'department_name' => $employee->department_name

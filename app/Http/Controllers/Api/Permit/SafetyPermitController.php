@@ -324,6 +324,22 @@ class SafetyPermitController extends BaseController
                         'id' => $safetypermit->status_id,
                         'status' => $safetypermit->status_name,
                     ],
+                    'verified_by' => [
+                        'id' => $safetypermit->verified_by,
+                        'name' => getusername($safetypermit->verified_by),
+                    ],
+                    'resume_hold_by' => [
+                        'id' => $safetypermit->resume_hold_by,
+                        'name' => getusername($safetypermit->resume_hold_by),
+                    ],
+                    'reassign_to' => [
+                        'id' => $safetypermit->reassign_to,
+                        'name' => getusername($safetypermit->reassign_to),
+                    ],
+                    'approved_by' => [
+                        'id' => $safetypermit->approved_by,
+                        'name' => getusername($safetypermit->approved_by),
+                    ],
                     'type_of_work' => [
                         'sub_permit' => $sub_permits,
 
