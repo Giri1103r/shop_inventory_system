@@ -952,7 +952,7 @@ class FireMockDrillInspectionController extends Controller
             
 
             $writer = new Xlsx($spreadsheet);
-            $filename = 'Catridge Type Fire Extinguisher.xlsx';
+            $filename = 'Fire Mock Drill Observation .xlsx';
             header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
             header("Content-Disposition: attachment; filename=\"$filename\"");
             header('Cache-Control: max-age=0');

@@ -175,7 +175,6 @@ class FireModularInspection extends Model
             });
         }
 
-
         if (isset($request->location) && $request->location) {
             $query = $query->where('inspection_fire_modular_inspection.location', 'LIKE', '%' . decryptId($request->location) . '%');
         }

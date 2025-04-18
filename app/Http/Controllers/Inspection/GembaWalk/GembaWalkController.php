@@ -1326,6 +1326,7 @@ class GembaWalkController extends Controller
                 $sheet->getStyle("A" . ($currentRow + 3) . ":N" . ($currentRow + 3))->applyFromArray([
                     'font' => ['bold' => true],
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                 ]);
 
                 $sheet->mergeCells("L{$currentRow}:M{$currentRow}")->setCellValue("L{$currentRow}", 'Doc. No.');
@@ -1487,6 +1488,12 @@ class GembaWalkController extends Controller
                 ]);
 
                 $row = $signatureRowStart + 7;
+
+                $sheet->getStyle("A{$currentRow}:N{$signatureRowStart}")->applyFromArray([
+                    'borders' => [
+                        'outline' => ['borderStyle' => Border::BORDER_THICK, 'color' => ['argb' => '000000']],
+                    ],
+                ]);
             }
 
             $writer = new Xlsx($spreadsheet);
