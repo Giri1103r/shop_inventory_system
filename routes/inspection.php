@@ -146,6 +146,7 @@ Route::group(['prefix' => 'audit/'], function () {
         Route::post('unique', [AuditAssessmentController::class, 'Uniquecheck']);
         Route::get('employeeName', [AuditAssessmentController::class, 'employeename']);
         Route::get('generalpdf/{id}', [AuditAssessmentController::class, 'generalpdf']);
+        Route::get('generalExcel/{id}', [AuditAssessmentController::class, 'generalExcel']);
     });
 
     Route::group(['prefix' => '6s-analysis/'], function () {
@@ -214,6 +215,7 @@ Route::group(['prefix' => 'audit/'], function () {
         Route::post('unique', [InterUnitAuditController::class, 'Uniquecheck']);
         Route::get('employeeName', [InterUnitAuditController::class, 'employeename']);
         Route::get('generalpdf/{id}', [InterUnitAuditController::class, 'generalpdf']);
+        Route::get('generalExcel/{id}', [InterUnitAuditController::class, 'generalExcel']);
     });
 });
 

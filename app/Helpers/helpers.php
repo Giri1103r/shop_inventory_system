@@ -65,6 +65,7 @@ use App\Models\Inspection\Ohc\MedicineRequistionFdoChecklist;
 use App\Models\Inspection\Safety\MonthlyPhysicalEquipmentList;
 use App\Models\Inspection\Fire\MonthlyPhysicalInspectionFileUpload;
 use App\Models\IMS\Incident\Rcpa;
+use App\Models\Inspection\Fire\EmergencyLightInspectionDetails;
 
 if (!function_exists('get_encryptVal')) {
 
@@ -2124,6 +2125,15 @@ if (!function_exists('getMonth')) {
         {
 
             $medicineRequisition = DailyDepartmentFirstAidBox::where('reference_id', $id)->where('status', 1)->where('trash', 'NO')->get();
+            return $medicineRequisition;
+        }
+    }
+    if (!function_exists('GetEmeregencyLightInspection')) {
+
+        function GetEmeregencyLightInspection($id)
+        {
+
+            $medicineRequisition = EmergencyLightInspectionDetails::where('inspection_id', $id)->where('status', 1)->where('trash', 'NO')->get();
             return $medicineRequisition;
         }
     }

@@ -291,8 +291,8 @@ class PperequestController extends BaseController
                     'title' => $message,
                     'message' =>  $pperequest->emp_name . ' has a PPE request at ' . ' created by ' . getUsername($pperequest->created_by),
                     'module_id' => $pperequest->id,
-                    'module_type' => 1,
-                    'module_sub_type' => 1,
+                    'module_type' => 2,
+                    'module_sub_type' => 0,
                 ];
                 mobilePushNotification(array_to_string($hodId), $notifydata);
                 $success = [
@@ -397,7 +397,7 @@ class PperequestController extends BaseController
                 return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
             }
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
         }
     }

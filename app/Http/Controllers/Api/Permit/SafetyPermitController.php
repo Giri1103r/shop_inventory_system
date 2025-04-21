@@ -625,6 +625,14 @@ class SafetyPermitController extends BaseController
                     'created_by' => Auth::id(),
                 );
                 notificationSave($notificationData);
+                $notifydata = [
+                    'title' => $mailsubject,
+                    'message' =>   'Safety Permit ' . $safetypermit->permit_id . $mailsubject . getUsername($approve->created_by),
+                    'module_id' => $safetypermit->permit_id,
+                    'module_type' => 1,
+                    'module_sub_type' => 0,
+                ];
+                mobilePushNotification($UserIdsCommaSeparated, $notifydata);
             } elseif ($request->status == '2') {
                 $mailsubject = 'EHS Resumed the permit';
                 $Assignedusers = User::whereIn('id', [$approve->created_by, $safetypermit->created_by])
@@ -671,6 +679,14 @@ class SafetyPermitController extends BaseController
                     'created_by' => Auth::id(),
                 );
                 notificationSave($notificationData);
+                $notifydata = [
+                    'title' => $mailsubject,
+                    'message' =>   'Safety Permit ' . $safetypermit->permit_id . $mailsubject . getUsername($approve->created_by),
+                    'module_id' => $safetypermit->permit_id,
+                    'module_type' => 1,
+                    'module_sub_type' => 0,
+                ];
+                mobilePushNotification($UserIdsCommaSeparated, $notifydata);
             } elseif ($request->status == '3') {
                 $mailsubject = 'EHS declined the permit Rework the permit';
                 $notifywhere = array(
@@ -719,6 +735,14 @@ class SafetyPermitController extends BaseController
                     'created_by' => Auth::id(),
                 );
                 notificationSave($notificationData);
+                $notifydata = [
+                    'title' => $mailsubject,
+                    'message' =>   'Safety Permit ' . $safetypermit->permit_id . $mailsubject . getUsername($approve->created_by),
+                    'module_id' => $safetypermit->permit_id,
+                    'module_type' => 1,
+                    'module_sub_type' => 0,
+                ];
+                mobilePushNotification(array_to_string($userids), $notifydata);
             } elseif ($request->status == '4') {
                 $mailsubject = 'EHS Re-assigned the permit';
                 $notifywhere = array(
@@ -767,6 +791,14 @@ class SafetyPermitController extends BaseController
                     'created_by' => Auth::id(),
                 );
                 notificationSave($notificationData);
+                $notifydata = [
+                    'title' => $mailsubject,
+                    'message' =>   'Safety Permit ' . $safetypermit->permit_id . $mailsubject . getUsername($approve->created_by),
+                    'module_id' => $safetypermit->permit_id,
+                    'module_type' => 1,
+                    'module_sub_type' => 0,
+                ];
+                mobilePushNotification(array_to_string($userids), $notifydata);
             } elseif ($request->status == '5') {
                 // dd('STATUS_PLANT_HEAD_PENDING', $request);
                 $mailsubject = 'EHS Approved';
@@ -818,7 +850,14 @@ class SafetyPermitController extends BaseController
                 );
                 notificationSave($notificationData);
             }
-
+            $notifydata = [
+                'title' => $mailsubject,
+                'message' =>   'Safety Permit ' . $safetypermit->permit_id . $mailsubject . getUsername($approve->created_by),
+                'module_id' => $safetypermit->permit_id,
+                'module_type' => 1,
+                'module_sub_type' => 0,
+            ];
+            mobilePushNotification(array_to_string($userids), $notifydata);
             $insert_array = array(
                 'permit_type' => 2,
                 'permit_id' => $id,
