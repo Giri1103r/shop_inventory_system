@@ -340,10 +340,16 @@ class InitialIncidentController extends Controller
             $unitList  = $this->unit->select('id', 'unit_name')->where('status', '1')->get();
             $locationList  = $this->location->select('id', 'location_name')->where('status', '1')->get();
             $incTypeList  = $this->inctype->select('id', 'incident_type_name')->where('status', '1')->get();
+
+            $body_parts = $this->incident_body_parts->delete_temprow();
+
+            $randomID = getsequence('IncidentRandomID'); 
             $data = array(
                 'unitList' => $unitList,
                 'locationList' => $locationList,
                 'incTypeList' => $incTypeList,
+                'randomID' => $randomID,
+                'body_parts' => $body_parts,
             );
             return view('ims.initial.incident.add', $data);
         } catch (Exception $ex) {
@@ -486,6 +492,8 @@ class InitialIncidentController extends Controller
             $getEmpdetails = $this->incident_body_parts->getEmpdetails();
             return $getEmpdetails;
         } catch (Exception $ex) {
+
+            dd($ex);
             return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
         }
     }
@@ -496,14 +504,14 @@ class InitialIncidentController extends Controller
             $addInjury = $this->incident_body_parts->addInjury();
             return $addInjury;
         } catch (Exception $ex) {
-dd($ex);
+                dd($ex);
             return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
         }
     }
 
 
     public function Store(Request $request)
-    {
+    {   
         try {
 
             $rules = [
@@ -551,7 +559,8 @@ dd($ex);
 
                 $initialincident =   $this->initialincident->store();
                 $this->initialincidentevidence->store($initialincident);
-                $this->injury_details->store($initialincident);
+                $this->injury_details->store($initialincident->id, $initialincident->random_id);
+                // $investigation_injury =  $this->incident_body_parts->store($initialincident->random_id, $initialincident->id);
                 $incident_status = STATUS_INCIDENT_REPORT;
                 $user_role = ROLE_EHS_HEAD;
                 $mailsubject = 'Incident has been submitted';
@@ -608,7 +617,7 @@ dd($ex);
 
                 Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
-
+               dd($ex);
 
                 report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
@@ -616,7 +625,7 @@ dd($ex);
 
             return redirect(admin_url('incident/initial-incident/list'));
         } catch (Exception $ex) {
-
+            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('incident/initial-incident/list'));
@@ -743,6 +752,7 @@ dd($ex);
 
             $initialincident = $this->initialincident->selectOne($id);
             $initialincidentevidence = $this->initialincidentevidence->selectOne($id);
+            $injury_details = $this->injury_details->find_foreignkey($id);
             $unitList  = $this->unit->select('id', 'unit_name')->where('status', '1')->get();
             $locationList  = $this->location->select('id', 'location_name')->where('status', '1')->get();
             $incTypeList  = $this->inctype->select('id', 'incident_type_name')->where('status', '1')->get();
@@ -752,6 +762,7 @@ dd($ex);
                 'incTypeList' => $incTypeList,
                 'initialincident' => $initialincident,
                 'initialincidentevidence' => $initialincidentevidence,
+                'injury_details' => $injury_details,
             );
 
 

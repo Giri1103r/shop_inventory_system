@@ -42,7 +42,7 @@ class InjuryDetails extends Model
         'trash' => 'NO',
     ];
 
-    public function store($incident_id)
+    public function store($incident_id, $random_id)
     {
         $request = request();
         $IncidentBodyParts = new IncidentBodyParts();
@@ -70,18 +70,19 @@ class InjuryDetails extends Model
                 }
 
                 $injdata = [
+                    'incident_id' => $incident_id,
                     'injury_id' => $saveinjuryData->id,
                     'status' => 'Y',
                 ];
                 if (decryptId($injuryPersonData['injury_person_type']) == 1 || decryptId($injuryPersonData['injury_person_type']) == 2) {
 
-                    $updtinjBody = $IncidentBodyParts->where(['injury_person_id' => $saveinjuryData->injury_person_id, 'status' => 'T'])->update($injdata);
+                    $updtinjBody = $IncidentBodyParts->where(['random_id' => $random_id, 'injury_person_id' => $saveinjuryData->injury_person_id, 'status' => 'T'])->update($injdata);
                 } elseif (decryptId($injuryPersonData['injury_person_type']) == 3) {
-                    $updtinjBody = $IncidentBodyParts->where(['injury_person_name' => $saveinjuryData->injury_person_name, 'status' => 'T'])->update($injdata);
+                    $updtinjBody = $IncidentBodyParts->where(['random_id' => $random_id, 'injury_person_name' => $saveinjuryData->injury_person_name, 'status' => 'T'])->update($injdata);
                 }
             }
         }
-        $IncidentBodyParts->updateStatusForIncident(decryptId($incident_id), $inj_person_arr);
+        $IncidentBodyParts->updateStatusForIncident($random_id, $incident_id, $inj_person_arr);
     }
 
     public function deleterecord($id)
@@ -116,5 +117,20 @@ class InjuryDetails extends Model
             ->leftJoin('ims_accident_body_parts', 'ims_accident_investigation_injury.id', '=', 'ims_accident_body_parts.injury_id')
             ->where('accident_investigation_id', $id)
             ->get();
+    }
+
+    public function find_foreignkey($id)
+    {
+
+        $data = $this->select(
+            'ims_injury_details.*',
+            'ims_incident_body_parts.imgMapdata',
+            'ims_incident_body_parts.body_part_image',
+
+        )
+            ->leftJoin('ims_incident_body_parts', 'ims_injury_details.id', '=', 'ims_incident_body_parts.injury_id')
+            ->where('ims_injury_details.incident_id', $id)->get();
+// dd($data);
+        return $data;
     }
 }

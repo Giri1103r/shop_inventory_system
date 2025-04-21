@@ -23,6 +23,7 @@ class InitialIncident extends Model
 
     protected $fillable = [
         'sr_no',
+        'random_id',
         'incident_date_time',
         'unit_id',
         'shift',
@@ -38,6 +39,7 @@ class InitialIncident extends Model
         'reporting_media_others',
         'brief_description',
         'immediate_action_taken',
+        'anyone_injured',
         'investigation_assigned',
         'investigation_reported_by',
         'target_date',
@@ -175,6 +177,7 @@ class InitialIncident extends Model
             $reporting_media = decryptId($request->reporting_media);
         }
         $insert_array = array(
+            'random_id' => $request->random_id,
             'incident_date_time' => DBdatetimeformat($request->incident_date_time),
             'unit_id' => decryptId($request->unit_id),
             'shift' => $request->shift,
@@ -190,6 +193,7 @@ class InitialIncident extends Model
             'reporting_media_others' => $request->reporting_media_others,
             'brief_description' => $request->brief_description,
             'immediate_action_taken' => $request->immediate_action_taken,
+            'anyone_injured' => $request->anyone_injured,
             'incident_status' => STATUS_INCIDENT_REPORT,
             'created_by' => Auth::id()
         );
@@ -417,6 +421,8 @@ class InitialIncident extends Model
             ->leftJoin('masters_location', 'masters_location.id', '=', 'ims_initial_incident.location_id')
             ->leftJoin('ims_initial_incident_evidence_upload', 'ims_initial_incident_evidence_upload.incident_id', '=', 'ims_initial_incident.iir_type')
             ->leftJoin('ims_rcpa_responsible', 'ims_rcpa_responsible.incident_id', '=', 'ims_initial_incident.id')
+            ->leftJoin('ims_incident_body_parts', 'ims_incident_body_parts.incident_id', '=', 'ims_initial_incident.id')
+            ->leftJoin('ims_injury_details', 'ims_injury_details.incident_id', '=', 'ims_initial_incident.id')
             ->first();
 
         return $data;
