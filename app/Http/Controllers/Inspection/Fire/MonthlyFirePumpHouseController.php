@@ -696,7 +696,7 @@ class MonthlyFirePumpHouseController extends Controller
                 ]);
 
                 $sheet->mergeCells("E{$currentRow}:K" . ($currentRow + 2));
-                $sheet->setCellValue("E{$currentRow}", "MONTHLY FORKLIFT INSPECTION CHECKLIST PN INTERNATIONAL PVT. LTD.");
+                $sheet->setCellValue("E{$currentRow}", "MONTHLY FIRE PUMP HOUSE PHYSICAL INSPECTION CHECKLIST PN INTERNATIONAL PVT LTD 100% EOU");
                 $sheet->getStyle("E{$currentRow}")->applyFromArray([
                     'font' => ['bold' => true, 'size' => 14],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
@@ -791,7 +791,7 @@ class MonthlyFirePumpHouseController extends Controller
                     $drawing->setWidth(90);
                     $drawing->setWorksheet($sheet);
                 } else {
-                    $sheet->setCellValue("B{$currentRow}", "Pending");
+                    $sheet->setCellValue("A{$currentRow}", "CHECKED BY:- \nInspection not yet started");
                 }
 
                 if (file_exists($verifiedBySig)) {
@@ -802,8 +802,8 @@ class MonthlyFirePumpHouseController extends Controller
                     $drawing->setOffsetY(10);
                     $drawing->setWidth(90);
                     $drawing->setWorksheet($sheet);
-                }else {
-                    $sheet->setCellValue("H{$currentRow}", "Pending");
+                } else {
+                    $sheet->setCellValue("F{$currentRow}", "VERIFIED BY:- \nInspection not yet started");
                 }
 
                 if (file_exists($approvedBySig)) {
@@ -814,8 +814,8 @@ class MonthlyFirePumpHouseController extends Controller
                     $drawing->setOffsetY(10);
                     $drawing->setWidth(90);
                     $drawing->setWorksheet($sheet);
-                }else {
-                    $sheet->setCellValue("N{$currentRow}", "Pending");
+                } else {
+                    $sheet->setCellValue("L{$currentRow}", "APPROVED BY:- \nApproval pending");
                 }
 
                 $lastRow = $currentRow;
@@ -973,7 +973,7 @@ class MonthlyFirePumpHouseController extends Controller
             }
 
             // Title Area
-            $sheet->mergeCells("D1:H3")->setCellValue("D1", "MONTHLY FORKLIFT INSPECTION CHECKLIST PN INTERNATIONAL PVT. LTD.");
+            $sheet->mergeCells("D1:H3")->setCellValue("D1", "MONTHLY FIRE PUMP HOUSE PHYSICAL INSPECTION CHECKLIST PN INTERNATIONAL PVT LTD 100% EOU");
             $sheet->getStyle("D1")->applyFromArray([
                 'font' => ['bold' => true, 'size' => 14],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
@@ -1081,6 +1081,8 @@ class MonthlyFirePumpHouseController extends Controller
                 $drawing->setWidth(100);
                 $drawing->setHeight(40);
                 $drawing->setWorksheet($sheet);
+            }else {
+                $sheet->setCellValue("A{$signatureRow}", "CHECKED BY:- \nInspection not yet started");
             }
 
             if (file_exists($inspection_verified_by)) {
@@ -1093,6 +1095,8 @@ class MonthlyFirePumpHouseController extends Controller
                 $drawing->setWidth(100);
                 $drawing->setHeight(40);
                 $drawing->setWorksheet($sheet);
+            } else {
+                $sheet->setCellValue("E{$signatureRow}", "VERIFIED BY:- \nInspection not yet started");
             }
 
             if (file_exists($inspection_approved_by)) {
@@ -1105,6 +1109,8 @@ class MonthlyFirePumpHouseController extends Controller
                 $drawing->setWidth(100);
                 $drawing->setHeight(40);
                 $drawing->setWorksheet($sheet);
+            }else {
+                $sheet->setCellValue("J{$signatureRow}", "APPROVED BY:- \nApproval pending");
             }
 
             $writer = new Xlsx($spreadsheet);
