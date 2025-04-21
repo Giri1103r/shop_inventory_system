@@ -50,7 +50,7 @@ class FirstAidRecordDetails extends Model
             $query->where(function ($query) use ($search) {
                 $query
                     ->orWhere('month', 'LIKE', '%' . $search . '%')
-                    ->orWhere('year', 'LIKE', '%' . $search . '%');
+                    ->orWhereYear('year', 'LIKE', '%' . $search . '%');
             });
         }
 
@@ -156,7 +156,7 @@ class FirstAidRecordDetails extends Model
 
             $query =  $query->Where(function ($query) use ($search) {
                 $query->orWhere('month', 'LIKE', '%' . $search . '%')
-                    ->orWhere('year', 'LIKE', '%' . $search . '%');
+                    ->orWhereYear('year', 'LIKE', '%' . $search . '%');
             });
         }
         if ($request->has('month') && $request->month) {

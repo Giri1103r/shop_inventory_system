@@ -69,6 +69,7 @@ class SafetyPettyDetails extends Model
                     ->orWhere('masters_employee.emp_name', 'LIKE', '%' . $search . '%')
                     ->orWhere('masters_employee.emp_id', 'LIKE', '%' . $search . '%')
                     ->orWhere('masters_unit.unit_name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('masters_department.department_name', 'LIKE', '%' . $search . '%')
                     ->orWhere('ohc_safety_petty_logbook.employee_code', 'LIKE', '%' . $search . '%');
             });
         }
@@ -81,12 +82,10 @@ class SafetyPettyDetails extends Model
         }
 
         if ($request->has('emp_id') && $request->emp_id) {
-
             $query = $query->where('ohc_safety_petty_logbook.employee_name', 'LIKE', '%' . $request->emp_id . '%');
         }
 
         if ($request->has('employee_code') && $request->employee_code) {
-
             $query = $query->where('ohc_safety_petty_logbook.employee_code', 'LIKE', '%' . $request->employee_code . '%');
         }
 
@@ -204,23 +203,26 @@ class SafetyPettyDetails extends Model
                     ->orWhere('masters_employee.emp_name', 'LIKE', '%' . $search . '%')
                     ->orWhere('masters_employee.emp_id', 'LIKE', '%' . $search . '%')
                     ->orWhere('masters_unit.unit_name', 'LIKE', '%' . $search . '%')
-                    ->orWhere('masters_department.department_name', 'LIKE', '%' . $search . '%');
+                    ->orWhere('masters_department.department_name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('ohc_safety_petty_logbook.employee_code', 'LIKE', '%' . $search . '%');
+
             });
         }
 
-        if ($request->has('employee_name') && $request->employee_name) {
-            $query = $query->where('ohc_safety_petty_logbook.employee_name', 'LIKE', '%' . decryptId($request->employee_name) . '%');
+        if ($request->has('unit_id') && $request->unit_id) {
+            $query = $query->where('ohc_safety_petty_logbook.unit', 'LIKE', '%' . decryptId($request->unit_id) . '%');
         }
+        if ($request->has('department_id') && $request->department_id) {
+            $query = $query->where('ohc_safety_petty_logbook.department', 'LIKE', '%' . decryptId($request->department_id) . '%');
+        }
+
+        if ($request->has('emp_id') && $request->emp_id) {
+            $query = $query->where('ohc_safety_petty_logbook.employee_name', 'LIKE', '%' . $request->emp_id . '%');
+        }
+
         if ($request->has('employee_code') && $request->employee_code) {
             $query = $query->where('ohc_safety_petty_logbook.employee_code', 'LIKE', '%' . $request->employee_code . '%');
         }
-        if (isset($request->unit) && $request->unit) {
-            $query = $query->where('ohc_safety_petty_logbook.unit', 'LIKE', '%' . decryptId($request->unit) . '%');
-        }
-        if (isset($request->department) && $request->department) {
-            $query = $query->where('ohc_safety_petty_logbook.department', 'LIKE', '%' . decryptId($request->department) . '%');
-        }
-
         $query->orderBy('ohc_safety_petty_logbook.id', 'DESC');
 
         return $query->get();
