@@ -70,7 +70,7 @@ class GembaWalkInspectionEhsApproval extends Model
             'type' => $capa_type,
             'name' => $request->officer_name,
             'date' => DBdateformat($request->capa_date),
-            'capa' => $request->is_passed,
+            'capa' => decryptId($request->is_passed),
             'remarks' => $request->capa_remark,
             'created_by' => Auth::id()
 

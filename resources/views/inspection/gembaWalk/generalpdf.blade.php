@@ -735,10 +735,8 @@
                             @else
                                 @foreach ($status_log as $status)
                                     <tr>
-                                        <td>{{ isset($status['to_status']) ? $status['to_status'] : '-' }}
-                                        </td>
-                                        <td>{{ isset($status['status_name']) ? $status['status_name'] : '-' }}
-                                        </td>
+                                        <td>{{ getGembaWalkLogStatus($status['from_status'] ?? null) }}</td>
+                                        <td>{{ getGembaWalkLogStatus($status['to_status'] ?? null) }}</td>
                                         <td>{{ isset($status['approved_by']) ? getUsername($status['approved_by']) : '-' }}
                                         </td>
                                         <td>{{ isset($status['remarks']) ? $status['remarks'] : '-' }}
