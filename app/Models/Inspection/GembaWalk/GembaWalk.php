@@ -102,16 +102,33 @@ class GembaWalk extends Model
     public function store()
     {
         $request = request();
-        $insert_array = array(
-            'document_reference_id' => $request->document_reference_id,
-            'date' => DBdateformat($request->document_upload_date),
-            'shift_id' => decryptId($request->shift),
-            'observation_needed'=>decryptId($request->observation_needed),
-            'capa_needed'=>decryptId($request->is_passed),
-            'gemba_walk_status' => GEMBA_WALK_INSPECTION_WAITING_FOR_FLOOR_MANAGER_VERIFICATION,
-            'created_by' => Auth::id(),
-            'verified_by'=>Auth::id()
-        );
+        $capa_needed  = decryptId($request->is_passed);
+      
+        if ($capa_needed == 2) {
+
+            $insert_array = array(
+                'document_reference_id' => $request->document_reference_id,
+                'date' => DBdateformat($request->document_upload_date),
+                'shift_id' => decryptId($request->shift),
+                'observation_needed'=>decryptId($request->observation_needed),
+                'capa_needed'=>decryptId($request->is_passed),
+                'gemba_walk_status' => GEMBA_WALK_INSPECTION_WAITING_FOR_FLOOR_MANAGER_VERIFICATION,
+                'created_by' => Auth::id(),
+            );
+        }else{
+            $insert_array = array(
+                'document_reference_id' => $request->document_reference_id,
+                'date' => DBdateformat($request->document_upload_date),
+                'shift_id' => decryptId($request->shift),
+                'observation_needed'=>decryptId($request->observation_needed),
+                'capa_needed'=>decryptId($request->is_passed),
+                'gemba_walk_status' => GEMBA_WALK_INSPECTION_CLOSED,
+                'created_by' => Auth::id(),
+                'verified_by'=>Auth::id()
+            );
+        }
+
+        
         return $this->create($insert_array);
     }
 
