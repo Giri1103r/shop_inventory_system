@@ -92,22 +92,27 @@ class Fire extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_fire_table.*')->where('type', $type);
-        // dd($query);
-
+        $query = $this->select('inspection_fire_table.*', 'inspection_fire_certified_fire_fighter.*', 'inspection_static_docno.*')
+            ->where('inspection_fire_table.type', $type)
+            ->leftJoin('inspection_fire_certified_fire_fighter', 'inspection_fire_certified_fire_fighter.fire_id', '=', 'inspection_fire_table.id')
+            ->leftJoin('inspection_static_docno', 'inspection_static_docno.id', '=', 'inspection_fire_certified_fire_fighter.doc_no_id');
         if ($request->has('fire_no') && $request->fire_no) {
-            $query = $query->where('id', decryptId($request->fire_no));
+            $query = $query->where('inspection_fire_table.id', decryptId($request->fire_no));
         }
         if ($request->has('status') && $request->status) {
             $query = $query->where('status', decryptId($request->status));
         }
-        $query->orderBy('id', 'DESC');
-        return  $query->get();
+        $query->orderBy('inspection_fire_table.id', 'DESC');
+        $data = $query->get();
+        if ($data) {
+            $groupedData = $data->groupBy('fire_id');
+        }
+        return  $groupedData;
     }
 
     public function selectOne($id, $type)
     {
-        $data = $this->select('inspection_fire_table.*')->where('type', $type)->where('id',$id)->where('status', 1)
+        $data = $this->select('inspection_fire_table.*')->where('type', $type)->where('id', $id)->where('status', 1)
             ->first();
         return $data;
     }

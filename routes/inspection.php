@@ -658,7 +658,10 @@ Route::group(['prefix' => 'fire/'], function () {
         Route::get('export/excel', [CertifiedFireFighterController::class, 'exportExcel']);
         Route::get('export/pdf', [CertifiedFireFighterController::class, 'exportPdf']);
         Route::post('status', [CertifiedFireFighterController::class, 'statusChange']);
+        Route::GET('exportViewPdf/{id}', [CertifiedFireFighterController::class, 'ExportViewPDF']);
+        Route::GET('generalExcel/{id}', [CertifiedFireFighterController::class, 'generalExcel']);
     });
+    
     Route::group(['prefix' => 'equipment-monthly-physical-inspection/'], function () {
         Route::get('list', [MonthlyPhysicalInspectionController::class, 'index']);
         Route::post('list', [MonthlyPhysicalInspectionController::class, 'index']);
