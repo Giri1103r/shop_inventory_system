@@ -80,6 +80,55 @@ class TrainingAssessmentFeedback extends Model
         return true;
     }
 
+    public function store_api()
+    {
+        $request = request();
+        $data = $request->input('data');
+        $insertData = [];
+        foreach ($data as $item) {
+      
+
+            $trainingScheduleId = $item['training_schedule_id'];
+            $attendanceId = $item['attendance_id'];
+            $empName = $item['emp_name'];
+            $email = $item['email'];
+            $checked =  $item['checked'] ?? 0;
+            $mark = $item['mark'] ?? '';
+            $assessment = $item['assessment'] ?? '';
+            $feed_back = $item['feed_back'] ?? '';
+
+
+            $exists = $this->where('training_schedule_id', $trainingScheduleId)
+                ->where('attendance_id', $attendanceId)
+                ->where('emp_name', $empName)
+                ->where('email', $email)
+                ->exists();
+
+            if (!$exists) {
+                $insertData[] = [
+                    'training_schedule_id' => $trainingScheduleId,
+                    'attendance_id' => $attendanceId,
+                    'emp_name' => $empName,
+                    'email' => $email,
+                    'attended_status' =>  $checked ,
+                    'mark' => $mark,
+                    'assessment' => $assessment,
+                    'feedback' => $feed_back,
+                    'status' => 1,
+                    'created_by' => Auth::id(),
+                ];
+            }
+        }
+
+        if (!empty($insertData)) {
+            return $this->insert($insertData);
+        }
+
+        return true;
+    }
+
+
+
     public function updateStatus($trainingScheduleId)
     {
         $request = request();
