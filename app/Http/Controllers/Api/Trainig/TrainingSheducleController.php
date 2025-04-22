@@ -305,6 +305,7 @@ class TrainingSheducleController extends BaseController
                 foreach ($trainingAttendanceList as $attendance) {
                     $AttendanceList[] = [
                         'attendance_id' => $attendance->id,
+                        'training_schedule_id' => $attendance->training_schedule_id,
                         'attendance_date' => Displaydateformat($attendance->attendance_date),
                         'employee_name' => $attendance->emp_name,
                         'email' => $attendance->email,
