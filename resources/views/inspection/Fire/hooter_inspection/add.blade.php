@@ -326,12 +326,12 @@
 
                                                 <div class="mb-2">
                                                     <label class="me-3">
-                                                        <input type="radio" name="observation_needed"
+                                                        <input type="radio" name="observation"
                                                             value="{{ encryptId(1) }}" class="validate-radio-required">
                                                         Yes
                                                     </label>
                                                     <label>
-                                                        <input type="radio" name="observation_needed"
+                                                        <input type="radio" name="observation"
                                                             value="{{ encryptId(2) }}" class="validate-radio-required">
                                                         No
                                                     </label>
