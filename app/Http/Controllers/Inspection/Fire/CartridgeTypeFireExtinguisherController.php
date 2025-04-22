@@ -913,55 +913,28 @@ class CartridgeTypeFireExtinguisherController extends Controller
                 ]);
                 $headerInfoRow++;
 
-                // $columnWidths = [
-                //     'A' => 5,
-                //     'B' => 15,
-                //     'C' => 10,
-                //     'D' => 10,
-                //     'E' => 10,
-                //     'F' => 10,
-                //     'G' => 15,
-                //     'H' => 10,
-                //     'I' => 15,
-                //     'J' => 15,
-                //     'K' => 15,
-                //     'L' => 15,
-                //     'M' => 15,
-                //     'N' => 15,
-                //     'O' => 15,
-                //     'P' => 15,
+                $headerStart = $headerInfoRow;
 
-
-                // ];
-
-                // foreach ($columnWidths as $col => $width) {
-                //     $sheet->getColumnDimension($col)->setWidth($width);
-                // }
-                $headerStart = $headerInfoRow; 
-
-                // First header
                 $sheet->mergeCells("A{$headerStart}:A" . ($headerStart + 2))->setCellValue("A{$headerStart}", "SR. NO");
                 $sheet->mergeCells("B{$headerStart}:B" . ($headerStart + 2))->setCellValue("B{$headerStart}", "FIRE POINT NO.");
                 $sheet->mergeCells("C{$headerStart}:D" . ($headerStart + 2))->setCellValue("C{$headerStart}", "DEPARTMENT");
                 $sheet->mergeCells("E{$headerStart}:F" . ($headerStart + 2))->setCellValue("E{$headerStart}", "LOCATION");
                 $sheet->mergeCells("G{$headerStart}:O{$headerStart}")->setCellValue("G{$headerStart}", "CHECK ITEMS");
                 $sheet->mergeCells("P{$headerStart}:P" . ($headerStart + 2))->setCellValue("P{$headerStart}", "REMARK");
-                
-                // Second header
+
                 $sheet->mergeCells("G" . ($headerStart + 1) . ":I" . ($headerStart + 1))->setCellValue("G" . ($headerStart + 1), "DESCRIPTION");
                 $sheet->mergeCells("J" . ($headerStart + 1) . ":L" . ($headerStart + 1))->setCellValue("J" . ($headerStart + 1), "CONDITION");
                 $sheet->mergeCells("M" . ($headerStart + 1) . ":M" . ($headerStart + 2))->setCellValue("M" . ($headerStart + 1), "WEIGHT OF CARTIDGE");
                 $sheet->mergeCells("N" . ($headerStart + 1) . ":N" . ($headerStart + 2))->setCellValue("N" . ($headerStart + 1), "SAFETY PIN");
                 $sheet->mergeCells("O" . ($headerStart + 1) . ":O" . ($headerStart + 2))->setCellValue("O" . ($headerStart + 1), "APPROACH");
-                
-                // Third header
+
                 $sheet->setCellValue("G" . ($headerStart + 2), "TYPE");
                 $sheet->setCellValue("H" . ($headerStart + 2), "CAPACITY");
                 $sheet->setCellValue("I" . ($headerStart + 2), "QUANTITY");
                 $sheet->setCellValue("J" . ($headerStart + 2), "DISCHARGE TUBE");
                 $sheet->setCellValue("K" . ($headerStart + 2), "HANDLE");
                 $sheet->setCellValue("L" . ($headerStart + 2), "WHEEL");
-                
+
                 $sheet->getStyle("A{$headerStart}:P" . ($headerStart + 2))->applyFromArray([
                     'font' => ['bold' => true],
                     'alignment' => [
@@ -971,8 +944,8 @@ class CartridgeTypeFireExtinguisherController extends Controller
                     ],
                     'borders' => ['allBorders' => ['borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN]],
                 ]);
-                
-                
+
+
                 $dataRow = $headerStart + 3;
                 $sr = 1;
 
@@ -984,35 +957,35 @@ class CartridgeTypeFireExtinguisherController extends Controller
                     $sheet->setCellValue("G{$dataRow}", getExtinguisherTypeName($detail['extinguisher_type']) ?? '');
                     $sheet->setCellValue("H{$dataRow}", $detail['capacity'] ?? '');
                     $sheet->setCellValue("I{$dataRow}", $detail['quantity'] ?? '');
-                
+
                     $dischargeTubeStatus = $detail['discharge_tube'] ?? '';
                     $sheet->setCellValue("J{$dataRow}", $dischargeTubeStatus == FUNCTIONAL ? __('inspection.functional') : ($dischargeTubeStatus == NON_FUNCTIONAL ? __('inspection.non_functional') : ''));
-                
+
                     $handleStatus = $detail['handle'] ?? '';
                     $sheet->setCellValue("K{$dataRow}", $handleStatus == GOOD ? 'GOOD' : ($handleStatus == DAMAGED ? 'DAMAGED' : ''));
-                
+
                     $wheelStatus = $detail['wheel'] ?? '';
                     $sheet->setCellValue("L{$dataRow}", $wheelStatus == FUNCTIONAL ? __('inspection.functional') : ($wheelStatus == NON_FUNCTIONAL ? __('inspection.non_functional') : ''));
-                
+
                     $sheet->setCellValue("M{$dataRow}", $detail['weight_of_cartidge'] ?? '');
-                
+
                     $safetyPinStatus = $detail['safety_pin'] ?? '';
                     $sheet->setCellValue("N{$dataRow}", $safetyPinStatus == PRESENT ? __('inspection.present') : ($safetyPinStatus == MISSING ? __('inspection.missing') : ''));
-                
+
                     $sheet->setCellValue("O{$dataRow}", $detail['approach'] ?? '');
                     $sheet->setCellValue("P{$dataRow}", $detail['remarks'] ?? '');
-                
+
                     $sheet->getStyle("A{$dataRow}:P{$dataRow}")->applyFromArray([
                         'borders' => ['allBorders' => ['borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN]],
                         'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                     ]);
-                
+
                     $sr++;
                     $dataRow++;
                 }
-                
-                
-                
+
+
+
                 $signatureRowStart = $dataRow;
                 $sheet->getRowDimension($signatureRowStart)->setRowHeight(80);
 

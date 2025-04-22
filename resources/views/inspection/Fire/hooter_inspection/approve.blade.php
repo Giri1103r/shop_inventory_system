@@ -131,7 +131,7 @@
                                         @endif
                                     </div>
                                     <hr>
-                                    <div class="form-observation">
+                                    {{-- <div class="form-observation">
                                         <div class="row mt-4 form-obs">
                                             <div class="card-header-inner p-2">
                                                 <h4 class="text-white">Hooter Inspection Observation</h4>
@@ -147,7 +147,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <hr>
+                                    <hr> --}}
 
                                     @foreach ($inspection_details as $details)
                                         <div class="form-wrapper">

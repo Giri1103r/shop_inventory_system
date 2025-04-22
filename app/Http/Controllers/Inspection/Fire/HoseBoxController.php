@@ -335,7 +335,7 @@ class HoseBoxController extends Controller
             ];
             $this->statusLog->create($insert_array);
             Session::flash('success', 'Your data added successfully');
-            if ($inspection->observation_needed == 1) {
+            if ($inspection->observation == 1) {
                 return redirect(admin_url('fire/checklist-observation/add/' . encryptId($inspection_type) . '/' . encryptId($id)));
             } else {
                 return redirect(admin_url('fire/hose-box-inspection/list'));

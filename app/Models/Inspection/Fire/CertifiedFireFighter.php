@@ -16,7 +16,7 @@ class CertifiedFireFighter extends Model
         'id',
         'doc_no_id',
         'fire_id',
-        'sr_no',    
+        'sr_no',
         'emp_name',
         'department_id',
         'emp_code',
@@ -66,7 +66,7 @@ class CertifiedFireFighter extends Model
         $query = $this->select('inspection_fire_certified_fire_fighter.*', 'masters_department.department_name',  'inspection_fire_table.fire_no');
         $query = $query->leftJoin('inspection_fire_table', 'inspection_fire_certified_fire_fighter.fire_id', '=', 'inspection_fire_table.id');
         $query = $query->leftJoin('masters_department', 'inspection_fire_certified_fire_fighter.department_id', '=', 'masters_department.id');
-     
+
         $query->orderBy('id', 'DESC');
         return  $query->get();
     }
@@ -96,5 +96,9 @@ class CertifiedFireFighter extends Model
         }
 
         return $this->where('fire_id', $id)->update($update_data);
+    }
+
+    public function selectFireId($id){
+        return $this->where('fire_id', $id)->get();
     }
 }

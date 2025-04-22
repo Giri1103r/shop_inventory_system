@@ -66,9 +66,13 @@ class AmbientAirMonitoringYearlyController extends Controller
                             $btn = '';
                             $btn = '<a href="' . admin_url('environment/ambient-air/yearly/view/' . encryptId($row->id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
                             // if (CheckUserRole(ROLE_SUPERADMIN)) {
-                           
+
                             // $btn .= '<a href="javascript:void(0);"  data-id="' . encryptId($row->id) . '"  class="recordDelete" title="' . __('common.delete') . '"><i class="fa-solid fa-trash text-danger" ></i></i></a> ';
                             // }
+
+                            $btn .= '<a href="' . admin_url('environment/ambient-air/yearly/generalpdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF"> <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i></a>';
+                            $btn .= '<a href="' . admin_url('environment/ambient-air/yearly/generalExcel/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF"> <i class="fas fa-file-excel" style="color: #1D6F42;" aria-hidden="true"></i></a>';
+
                             return $btn;
                         })
                         ->rawColumns(['action', 'created_at', 'created_by', 'status'])
@@ -99,7 +103,7 @@ class AmbientAirMonitoringYearlyController extends Controller
                 ['type', "AmbientAir"],
                 ['status', '1']
             ])->first();
-            
+
             $data = array(
                 'locationList' => $locationList,
                 'staticDocno' => $staticDocno,
@@ -128,7 +132,7 @@ class AmbientAirMonitoringYearlyController extends Controller
                 $env_no = $request->ambient_air_no;
                $type = AMBIENT_AIR;
                 $environment =   $this->environment->store($env_no, $type);
- 
+
                 $this->ambient_air_monitoring->store($environment->id);
 
                 Session::flash('success', __('Your data has been created successfully'));
@@ -145,7 +149,7 @@ class AmbientAirMonitoringYearlyController extends Controller
         }
     }
 
-  
+
 
     public function View($id)
     {
@@ -273,6 +277,42 @@ class AmbientAirMonitoringYearlyController extends Controller
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             dd($ex);
+        }
+    }
+
+
+    public function generalpdf(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+
+            if (Auth::check()) {
+
+
+            $property = [
+                'tempDir' => 'public/pdf/temp/',
+                'mode' => 'c',
+                'margin_left' => 10,
+                'margin_right' => 10,
+                'margin_top' => 10,
+
+            ];
+            $data =[
+
+            ];
+
+            $mpdf = new \Mpdf\Mpdf($property);
+            $mpdf->setAutoTopMargin = 'stretch';
+
+            $html = view('inspection.environment.ambientAirMonitoring.viewpdf', $data)->render();
+            $mpdf->WriteHTML($html);
+
+            $filename = "ambientAirMonitoring.pdf";
+            return $mpdf->Output($filename, 'D');
+        }
+        } catch (Exception $ex) {
+            report($ex);
+            return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
         }
     }
 

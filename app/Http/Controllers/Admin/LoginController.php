@@ -48,12 +48,12 @@ class LoginController extends Controller
         $rules = [
             'email' => 'required',
             'password' => 'required',
-            // 'g-recaptcha-response' => 'required',
+            'g-recaptcha-response' => 'required',
         ];
         $messages = [
             'email.required' => 'Please enter your email address!',
             'password.required' => 'Please enter your password',
-            // 'g-recaptcha-response.required' => 'Please complete the reCAPTCHA verification',
+            'g-recaptcha-response.required' => 'Please complete the reCAPTCHA verification',
         ];
 
         $validator = Validator::make($request->all(), $rules, $messages);
@@ -75,6 +75,13 @@ class LoginController extends Controller
 
         $credentials = $request->only('email', 'password');
         $remember = $request->has('remember');
+
+        $user = User::where('email', $credentials['email'])->first();
+
+        if ($user->status == 0) {
+            Session::flash('error', 'Employee no longer exists');
+            return redirect()->back();
+        }
 
         if (Auth::attempt($credentials, $remember)) {
             $request->session()->regenerate();

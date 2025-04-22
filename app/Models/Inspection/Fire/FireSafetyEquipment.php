@@ -16,7 +16,7 @@ class FireSafetyEquipment extends Model
         'id',
         'doc_no_id',
         'fire_id',
-        'sr_no',    
+        'sr_no',
         'name_of_fire_safety',
         'resource_code',
         'series_code',
@@ -67,10 +67,11 @@ class FireSafetyEquipment extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_fire_fire_safety_equipmentr.*', 'masters_unit.unit_name',  'inspection_fire_table.fire_no');
+        $query = $this->select('inspection_fire_fire_safety_equipmentr.*', 'masters_unit.unit_name',  'inspection_fire_table.fire_no','inspection_static_docno.*');
         $query = $query->leftJoin('inspection_fire_table', 'inspection_fire_fire_safety_equipmentr.fire_id', '=', 'inspection_fire_table.id');
         $query = $query->leftJoin('masters_unit', 'inspection_fire_fire_safety_equipmentr.unit_id', '=', 'masters_unit.id');
-     
+        // $query = $query->leftJoin('inspection_static_docno', 'inspection_static_docno.id', '=', 'inspection_fire_fire_safety_equipmentr.doc_no_id');
+
         $query->orderBy('id', 'DESC');
         return  $query->get();
     }
@@ -100,5 +101,9 @@ class FireSafetyEquipment extends Model
         }
 
         return $this->where('fire_id', $id)->update($update_data);
+    }
+
+    public function selectFireId($id){
+        return $this->where('fire_id', $id)->get();
     }
 }
