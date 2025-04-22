@@ -337,6 +337,37 @@
                                                     </div>
                                                 </div>
 
+
+                                                <div class="form-observation">
+                                                    <div class="row mt-4 form-obs">
+                                                        <div class="card-header-inner p-2">
+                                                            <h4 class="text-white">CAPA Action</h4>
+                                                        </div>
+        
+                                                        <div class="col-md-12 mb-2">
+                                                            <div class="form-group form-input">
+                                                                <label
+                                                                    class="form-label require">Whether the Inspection has been passed Without the CAPA ?</label>
+        
+                                                                <!-- Radio Buttons for Observation Needed -->
+                                                                <div class="mb-2">
+                                                                    <label class="me-3">
+                                                                        <input type="radio" name="capa_needed"
+                                                                            value="{{encryptId(1)}}" class="validate-radio-required"> Yes
+                                                                    </label>
+                                                                    <label>
+                                                                        <input type="radio" name="capa_needed"
+                                                                            value="{{encryptId(2)}}" class="validate-radio-required"> No
+                                                                    </label>
+                                                                </div>
+        
+                                                               
+                                                            </div>
+                                                        </div>
+        
+                                                    </div>
+                                                </div>
+
                                                 <div class="submit-button mt-4" style="text-align: right;">
                                                     <x-button-submit class="submit"></x-button-submit>
                                                     <x-button-reset class=""></x-button-reset>
