@@ -144,7 +144,7 @@
 
     @foreach ($content as $inspection_id => $group)
         @php
-            // $first = $group->first();
+            $first = $group->first();
             $infoCells = [
                 ['Doc.No', $first->doc_no],
                 ['Issue Dt.', Displaydateformat($first->issue_date)],
