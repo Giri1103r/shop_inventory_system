@@ -273,6 +273,7 @@ class TrainingSheducleController extends BaseController
 
                 foreach ($nominationProcessList as $nomination) {
                     $nominationList[] = [
+                        'id'=>$nomination->id,
                         'emp_worker' => $nomination->emp_worker == 1 ? 'Employee' : 'Worker',
                         'employee_id' => $nomination->emp_id,
                         'employee_name' => $nomination->emp_name,
@@ -280,6 +281,10 @@ class TrainingSheducleController extends BaseController
                         'employee_type' => $nomination->employee_type,
                         'last_training_attended_on' => $nomination->last_training_attended_on,
                         'last_training_attended_topic' => $nomination->topic_name,
+                        'topic_id' => $nomination->topic_id,
+                        'from_date' => Displaydateformat($nomination->from_date),
+                        'to_date' => Displaydateformat($nomination->to_date),
+
                     ];
                 }
 
@@ -373,4 +378,51 @@ class TrainingSheducleController extends BaseController
             return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
         }
     }
+
+
+    public function storeAttendance(Request $request)
+    {
+        try {
+
+
+
+                // Save or update attendance
+              $success = $this->training_attendance->storeOrUpdate_api($request);
+
+                $attendanceDate = DBdateformat($request->attendance_date);
+                $trainingScheduleId = ($request->id);
+
+                $trainingHrsPerDay = $this->training_schedule
+                    ->where('id', $trainingScheduleId)
+                    ->value('training_hrs_perday');
+
+
+                $presentCount = $this->training_attendance
+                    ->where('training_schedule_id', $trainingScheduleId)
+                    ->where('attendance_date', $attendanceDate)
+                    ->where('attendance_status', 1)
+                    ->count();
+
+                $totalManHoursForDay = $presentCount * $trainingHrsPerDay;
+
+                $existingTrainingSchedule = $this->training_schedule
+                    ->select('training_man_hours')
+                    ->where('id', $trainingScheduleId)
+                    ->first();
+
+                $newTotalManHours = $existingTrainingSchedule && $existingTrainingSchedule->training_man_hours
+                    ? $existingTrainingSchedule->training_man_hours + $totalManHoursForDay
+                    : $totalManHoursForDay;
+
+                $this->training_schedule->updateTrainingManHours($trainingScheduleId, $newTotalManHours);
+
+                return $this->sendResponse($success, 'Attendance Stored Successfully');
+
+
+        } catch (Exception $ex) {
+            report($ex);
+            return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
+        }
+    }
+
 }

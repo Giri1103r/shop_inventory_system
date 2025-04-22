@@ -94,6 +94,7 @@ Route::middleware('api')->prefix('v1')->group(function () {
         Route::group(['prefix' => 'trainng/training-schedule'], function () {
             Route::post('/list', [TrainingSheducleController::class, 'list']);
             Route::post('/view', [TrainingSheducleController::class, 'view']);
+            Route::post('/attendance-recoder', [TrainingSheducleController::class, 'storeAttendance']);
 
         });
     });
