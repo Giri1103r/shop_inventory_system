@@ -66,6 +66,8 @@ use App\Models\Inspection\Safety\MonthlyPhysicalEquipmentList;
 use App\Models\Inspection\Fire\MonthlyPhysicalInspectionFileUpload;
 use App\Models\IMS\Incident\Rcpa;
 use App\Models\Inspection\Fire\EmergencyLightInspectionDetails;
+use App\Models\Inspection\GembaWalk\GembaWalkStatus;
+use App\Models\Inspection\GembaWalk\GembaWalkStatusLog;
 
 if (!function_exists('get_encryptVal')) {
 
@@ -2556,6 +2558,8 @@ if (!function_exists('getMonth')) {
         }
     }
 
+    // gemba Walk
+    
     if (!function_exists('getGembaWalkStatus')) {
         function getGembaWalkStatus($type_id)
         {
@@ -2565,6 +2569,24 @@ if (!function_exists('getMonth')) {
                 return 'Closed';
             } else {
                 return 'Unknown';
+            }
+        }
+    }
+
+    
+    if (!function_exists('getGembaWalkLogStatus')) {
+
+        function getGembaWalkLogStatus($id)
+        {
+
+            $user = GembaWalkStatus::select('*')
+            ->where('id', $id)
+            ->first();
+
+            if ($user == null) {
+                return '';
+            } else {
+                return $user->status_name;
             }
         }
     }
