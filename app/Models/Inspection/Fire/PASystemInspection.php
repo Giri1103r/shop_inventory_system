@@ -75,10 +75,12 @@ class PASystemInspection extends Model
             $search = $request->search['value'];
 
             $query = $query->where(function ($query) use ($search) {
-                $query->orWhereRaw('masters_location.location_name LIKE "%' . $search . '%"');
-                $query->orWhereRaw('masters_unit.unit_name LIKE "%' . $search . '%"');
-                $query->orWhereRaw('inspection_shift_option.shift LIKE "%' . $search . '%"');
-                $query->orWhereRaw('inspection_frequency_option.frequency_name LIKE "%' . $search . '%"');
+            $query->orWhereRaw('masters_location.location_name LIKE "%' . $search . '%"')
+                  ->orWhereRaw("DATE_FORMAT(inspection_fire_pa_system.date_of_inspection, '%d-%m-%Y') LIKE ?", ["%{$search}%"])
+                  ->orWhereRaw("DATE_FORMAT(inspection_fire_pa_system.next_due, '%d-%m-%Y') LIKE ?", ["%{$search}%"])
+                  ->orWhereRaw('masters_unit.unit_name LIKE "%' . $search . '%"')
+                  ->orWhereRaw('inspection_shift_option.shift LIKE "%' . $search . '%"')
+                  ->orWhereRaw('inspection_frequency_option.frequency_name LIKE "%' . $search . '%"');
             });
         }
 
@@ -184,10 +186,12 @@ class PASystemInspection extends Model
         if (isset($request->search) && isset($request->search['value']) && $request->search['value'] != '') {
             $search = $request->search['value'];
             $query = $query->where(function ($query) use ($search) {
-                $query->orWhereRaw('masters_location.location_name LIKE "%' . $search . '%"');
-                $query->orWhereRaw('masters_unit.unit_name LIKE "%' . $search . '%"');
-                $query->orWhereRaw('inspection_shift_option.shift LIKE "%' . $search . '%"');
-                $query->orWhereRaw('inspection_frequency_option.frequency_name LIKE "%' . $search . '%"');
+                $query->orWhereRaw('masters_location.location_name LIKE "%' . $search . '%"')
+                      ->orWhereRaw("DATE_FORMAT(inspection_fire_pa_system.date_of_inspection, '%d-%m-%Y') LIKE ?", ["%{$search}%"])
+                      ->orWhereRaw("DATE_FORMAT(inspection_fire_pa_system.next_due, '%d-%m-%Y') LIKE ?", ["%{$search}%"])
+                      ->orWhereRaw('masters_unit.unit_name LIKE "%' . $search . '%"')
+                      ->orWhereRaw('inspection_shift_option.shift LIKE "%' . $search . '%"')
+                      ->orWhereRaw('inspection_frequency_option.frequency_name LIKE "%' . $search . '%"');
             });
         }
         if (isset($request->location_id) && $request->location_id) {
@@ -211,6 +215,10 @@ class PASystemInspection extends Model
         if (isset($request->next_due) && $request->next_due) {
             $query = $query->where('inspection_fire_pa_system.next_due', 'LIKE', '%' . DBdateformat($request->next_due) . '%');
         }
+        if (isset($request->inspection_status) && $request->inspection_status) {
+            $query = $query->where('inspection_fire_pa_system.inspection_status', 'LIKE', '%' . decryptId($request->inspection_status) . '%');
+        }
+        
         $query->orderBy('inspection_fire_pa_system.id', 'DESC');
 
         $data = $query->get();

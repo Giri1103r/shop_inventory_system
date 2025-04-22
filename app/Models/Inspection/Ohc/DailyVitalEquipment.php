@@ -49,7 +49,7 @@ class DailyVitalEquipment extends Model
 
             $query->where(function ($query) use ($search) {
                 $query
-                    ->orWhere('ohc_daily_vital_equipment_checklist.date_of_inspection', 'LIKE', '%' . $search . '%')
+                    ->orWhereRaw("DATE_FORMAT(ohc_daily_vital_equipment_checklist.date_of_inspection, '%d-%m-%Y') LIKE ?", ["%{$search}%"])
                     ->orWhere('masters_unit.unit_name', 'LIKE', '%' . $search . '%')
                     ->orWhere('inspection_shift_option.shift', 'LIKE', '%' . $search . '%');
             });
@@ -132,7 +132,7 @@ class DailyVitalEquipment extends Model
             $search = $request->search['value'];
             $query = $query->where(function ($query) use ($search) {
                 $query
-                ->orWhere('ohc_daily_vital_equipment_checklist.date_of_inspection', 'LIKE', '%' . $search . '%')
+                ->orWhereRaw("DATE_FORMAT(ohc_daily_vital_equipment_checklist.date_of_inspection, '%d-%m-%Y') LIKE ?", ["%{$search}%"])
                 ->orWhere('masters_unit.unit_name', 'LIKE', '%' . $search . '%')
                 ->orWhere('inspection_shift_option.shift', 'LIKE', '%' . $search . '%');
             });

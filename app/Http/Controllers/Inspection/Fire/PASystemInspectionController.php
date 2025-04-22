@@ -1240,9 +1240,9 @@ class PASystemInspectionController extends Controller
                 $drawing->setOffsetY(5);
                 $drawing->setHeight(40);
                 $drawing->setWorksheet($sheet);
-                $sheet->setCellValue("A{$signatureRowStart}", "\n\n\nPrepared By:\n" . getUsername($pa_system->created_by));
+                $sheet->setCellValue("A{$signatureRowStart}", "\n\n\Checked By:\n" . getUsername($pa_system->created_by));
             } else {
-                $sheet->setCellValue("A{$signatureRowStart}", "Prepared By:\nInspection not yet started");
+                $sheet->setCellValue("A{$signatureRowStart}", "Checked By:\nInspection not yet started");
             }
 
             $sheet->mergeCells("E{$signatureRowStart}:H{$signatureRowStart}");

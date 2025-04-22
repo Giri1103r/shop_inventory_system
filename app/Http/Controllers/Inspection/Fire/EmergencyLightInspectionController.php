@@ -160,9 +160,9 @@ class EmergencyLightInspectionController extends Controller
                             $btn .= '<a href="' . admin_url('fire/emergency-light-inspection/exportViewPdf/' . encryptId($row->inspection_id)) . '" style="margin-right: 5px;" title="PDF">
                         <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
                     </a>';
-                //             $btn .= '<a href="' . admin_url('fire/emergency-light-inspection/exportViewExcel/' . encryptId($row->inspection_id)) . '" style="margin-right: 5px;" title="PDF">
-                //    <i class="fas fa-file-excel" style="color: #1D6F42;" aria-hidden="true"></i>
-                // </a>';
+                            //             $btn .= '<a href="' . admin_url('fire/emergency-light-inspection/exportViewExcel/' . encryptId($row->inspection_id)) . '" style="margin-right: 5px;" title="PDF">
+                            //    <i class="fas fa-file-excel" style="color: #1D6F42;" aria-hidden="true"></i>
+                            // </a>';
                             return $btn;
                         })
                         ->rawColumns(['action', 'created_date', 'created_by', 'status', 'inspection_status', 'issue_date'])
@@ -300,7 +300,7 @@ class EmergencyLightInspectionController extends Controller
                 'created_by' => Auth::id(),
             ];
             $this->statusLog->create($insert_array);
-            Session::flash('flash', 'Your data added successfully');
+            Session::flash('success', 'Your data added successfully');
             return redirect(admin_url('fire/emergency-light-inspection/list'));
         } catch (Exception $ex) {
             dd($ex);
@@ -896,8 +896,8 @@ class EmergencyLightInspectionController extends Controller
                 // Optional: Apply border or alignment styling to each row
                 $sheet->getStyle("A$row:M$row")->applyFromArray([
                     'alignment' => [
-                        'horizontal' =>Alignment::HORIZONTAL_LEFT,
-                        'vertical' =>Alignment::VERTICAL_CENTER,
+                        'horizontal' => Alignment::HORIZONTAL_LEFT,
+                        'vertical' => Alignment::VERTICAL_CENTER,
                     ],
                     'borders' => [
                         'top' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['argb' => '000000']],
@@ -973,25 +973,19 @@ class EmergencyLightInspectionController extends Controller
 
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
+            } elseif (count($allData) > 20) {
+                return redirect()->back()->with('error',   __('inspection.excess_error'));
+            }
+            foreach ($allData as $details) {
+                $document_no = $this->document_reference->SelectOne($details->document_reference_id);
+
             }
 
 
-            $document_no = $this->document_reference->selectUsingName('EmergencyLightInspection');
-            $header = [
-                __("common.sno"),
-                'Document Number',
-                'Issue Date',
-                'Revision Date',
-                __("inspection.inspection_status"),
-                __("common.created_by"),
-                __("common.created_date"),
-            ];
-
             $data = array(
-                'header' => $header,
+
                 'content' => $allData,
                 'document_no' => $document_no,
-
                 'pagetitle' => "Emergency Light Inspection",
             );
 
