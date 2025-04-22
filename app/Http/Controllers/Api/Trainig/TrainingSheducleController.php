@@ -274,6 +274,7 @@ class TrainingSheducleController extends BaseController
                 foreach ($nominationProcessList as $nomination) {
                     $nominationList[] = [
                         'id'=>$nomination->id,
+                        'training_schedule_id'=>$nomination->training_schedule_id,
                         'emp_worker' => $nomination->emp_worker == 1 ? 'Employee' : 'Worker',
                         'employee_id' => $nomination->emp_id,
                         'employee_name' => $nomination->emp_name,
@@ -284,6 +285,7 @@ class TrainingSheducleController extends BaseController
                         'topic_id' => $nomination->topic_id,
                         'from_date' => Displaydateformat($nomination->from_date),
                         'to_date' => Displaydateformat($nomination->to_date),
+
 
                     ];
                 }
@@ -341,6 +343,7 @@ class TrainingSheducleController extends BaseController
                 }
 
                 $success = [
+
                     'id' => $training_schedule->id,
                     'from_date' => Displaydateformat($training_schedule->from_date),
                     'to_date' => Displaydateformat($training_schedule->to_date),
