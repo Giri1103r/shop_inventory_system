@@ -93,7 +93,6 @@ class CertifiedFireFighterController extends Controller
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
-                    dd($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }
@@ -148,13 +147,11 @@ class CertifiedFireFighterController extends Controller
 
                 Session::flash('success', __('Your data has been created successfully'));
             } catch (Exception $ex) {
-                dd($ex);
                 Session::flash('error', __('common.message_error'));
             }
 
             return redirect(admin_url('fire/certified-fire-fighter/list'));
         } catch (Exception $ex) {
-            dd($ex);
             Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('fire/certified-fire-fighter/list'));
         }
@@ -191,7 +188,6 @@ class CertifiedFireFighterController extends Controller
 
     public function StatusChange(Request $request)
     {
-
         try {
             $id = decryptId($request->id);
             $type = 2;
@@ -366,7 +362,11 @@ class CertifiedFireFighterController extends Controller
 
             $allData = $this->fire->exportdata($type);
 
-            $document_no = $this->static_docno->selectUsingName('CertifiedFireFighter');
+            // $document_no = $this->static_docno->selectUsingName('CertifiedFireFighter');
+            $document_no  = $this->static_docno->select('id', 'doc_no','issue_date','rev_dt')->where([
+                                ['type', "CertifiedFireFighter"],
+                                ['status', '1']
+                            ])->first();
 
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
@@ -588,7 +588,7 @@ class CertifiedFireFighterController extends Controller
 
             return response()->download($filePath)->deleteFileAfterSend(true);
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             report($e);
             Session::flash('error', 'Something went wrong!');
             return redirect(admin_url('fire/certified-fire-fighter/list'));
