@@ -211,12 +211,21 @@ class TrainingSheducleController extends BaseController
                 $data['to_date'] = Displaydateformat($listdata['to_date'] ?? '');
                 $data['topic_name'] = $listdata['topic_name'] ?? '';
                 $data['trainer_id'] = getEmployeename($listdata['trainer_id'] ?? '');
+                $status = $listdata['training_status'] ?? null;
+                $data['training_status'] =
+                    in_array($status, [1, 2, 4, 5]) ? 'Training Pending' :
+                    ($status == 8 ? 'Training Completed' :
+                    (in_array($status, [6, 7]) ? 'Training in Progress' :
+                    ($status == 3 ? 'Training Rejected' : 'Unknown Status')));
                 $data['status'] = $listdata['status'] == 1 ? 'Active' : 'In-Active';
                 $data['created_by'] = getUsername($listdata['created_by'] ?? '');
                 $data['created_at'] = Displaydateformat($listdata['created_at'] ?? '');
 
+
+
                 $data_array[] = $data;
             }
+
 
             $traning_schedule_details = [
                 'per_page' => $traning_schedule_list['per_page'] ?? 0,
@@ -273,8 +282,8 @@ class TrainingSheducleController extends BaseController
 
                 foreach ($nominationProcessList as $nomination) {
                     $nominationList[] = [
-                        'id'=>$nomination->id,
-                        'training_schedule_id'=>$nomination->training_schedule_id,
+                        'id' => $nomination->id,
+                        'training_schedule_id' => $nomination->training_schedule_id,
                         'emp_worker' => $nomination->emp_worker == 1 ? 'Employee' : 'Worker',
                         'employee_id' => $nomination->emp_id,
                         'employee_name' => $nomination->emp_name,
@@ -295,8 +304,11 @@ class TrainingSheducleController extends BaseController
                 $AttendanceList = [];
                 foreach ($trainingAttendanceList as $attendance) {
                     $AttendanceList[] = [
+                        'attendance_id' => $attendance->id,
+                        'training_schedule_id' => $attendance->training_schedule_id,
                         'attendance_date' => Displaydateformat($attendance->attendance_date),
                         'employee_name' => $attendance->emp_name,
+                        'email' => $attendance->email,
                         'checked' => $attendance->attendance_status == 1 ? 'Yes' : 'No',
                     ];
                 }
@@ -306,9 +318,10 @@ class TrainingSheducleController extends BaseController
                 foreach ($trainingAssessmentList as $assessment) {
                     $AssessmentList[] = [
                         'employee_name' => $assessment->emp_name,
-                        'checked' => $assessment->attendance_status == 1 ? 'Yes' : 'No',
-                        'mark' => $assessment->mark == 1 ? 'Pass' : ($assessment->mark == 2 ? 'Fail' : 'Not Attended'),
-                        'assessment' => !empty($assessment->feedback) ? strip_tags($assessment->feedback) : '-',
+                        'checked' => $assessment->attended_status == 1 ? 'Yes' : 'No',
+                        'mark' => $assessment->mark,
+                        'assessment' =>   $assessment->assessment == 1 ? 'Pass' : ($assessment->mark == 2 ? 'Fail' : 'Not Attended'),
+                        'feed_back' => !empty($assessment->feedback) ? strip_tags($assessment->feedback) : '-' ,
                     ];
                 }
 
@@ -389,43 +402,59 @@ class TrainingSheducleController extends BaseController
 
 
 
-                // Save or update attendance
-              $success = $this->training_attendance->storeOrUpdate_api($request);
+            // Save or update attendance
+            $success = $this->training_attendance->storeOrUpdate_api($request);
 
-                $attendanceDate = DBdateformat($request->attendance_date);
-                $trainingScheduleId = ($request->id);
+            $attendanceDate = DBdateformat($request->attendance_date);
+            $trainingScheduleId = ($request->id);
 
-                $trainingHrsPerDay = $this->training_schedule
-                    ->where('id', $trainingScheduleId)
-                    ->value('training_hrs_perday');
-
-
-                $presentCount = $this->training_attendance
-                    ->where('training_schedule_id', $trainingScheduleId)
-                    ->where('attendance_date', $attendanceDate)
-                    ->where('attendance_status', 1)
-                    ->count();
-
-                $totalManHoursForDay = $presentCount * $trainingHrsPerDay;
-
-                $existingTrainingSchedule = $this->training_schedule
-                    ->select('training_man_hours')
-                    ->where('id', $trainingScheduleId)
-                    ->first();
-
-                $newTotalManHours = $existingTrainingSchedule && $existingTrainingSchedule->training_man_hours
-                    ? $existingTrainingSchedule->training_man_hours + $totalManHoursForDay
-                    : $totalManHoursForDay;
-
-                $this->training_schedule->updateTrainingManHours($trainingScheduleId, $newTotalManHours);
-
-                return $this->sendResponse($success, 'Attendance Stored Successfully');
+            $trainingHrsPerDay = $this->training_schedule
+                ->where('id', $trainingScheduleId)
+                ->value('training_hrs_perday');
 
 
+            $presentCount = $this->training_attendance
+                ->where('training_schedule_id', $trainingScheduleId)
+                ->where('attendance_date', $attendanceDate)
+                ->where('attendance_status', 1)
+                ->count();
+
+            $totalManHoursForDay = $presentCount * $trainingHrsPerDay;
+
+            $existingTrainingSchedule = $this->training_schedule
+                ->select('training_man_hours')
+                ->where('id', $trainingScheduleId)
+                ->first();
+
+            $newTotalManHours = $existingTrainingSchedule && $existingTrainingSchedule->training_man_hours
+                ? $existingTrainingSchedule->training_man_hours + $totalManHoursForDay
+                : $totalManHoursForDay;
+
+            $this->training_schedule->updateTrainingManHours($trainingScheduleId, $newTotalManHours);
+
+            return $this->sendResponse($success, 'Attendance Stored Successfully');
         } catch (Exception $ex) {
             report($ex);
             return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
         }
     }
 
+    public function endTrainingStore(Request $request)
+    {
+        try {
+            $trainingScheduleId = ($request->training_schedule_id);
+            $training_status = TRAINING_FEEDBACK_ADMIN_APPROVE;
+
+            $AssessmentStore = $this->training_assessment_feedback->store_api();
+            $updateStatus = $this->training_schedule->updateStatus($trainingScheduleId, $training_status);
+            $statuslog =  $this->training_statuslog->storestatus($trainingScheduleId, $training_status);
+            $success =[
+                'training_schedule'=>  $trainingScheduleId,
+            ];
+            return $this->sendResponse($success, 'Assessment update Successfully!');
+        } catch (Exception $ex) {
+            dd($ex);
+            return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
+        }
+    }
 }
