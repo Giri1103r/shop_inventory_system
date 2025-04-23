@@ -1307,4 +1307,6 @@ class PASystemInspectionController extends Controller
             return redirect(admin_url('fire/pa-system-inspection/list'));
         }
     }
+
+    
 }

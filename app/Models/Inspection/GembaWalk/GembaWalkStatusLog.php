@@ -31,5 +31,9 @@ class GembaWalkStatusLog extends Model
         ->get();
     }
 
+    public function getDetails($id){
+        return $this->where('gemba_walk_id', $id)->get();
+    }
+
     
 }

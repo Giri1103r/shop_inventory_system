@@ -101,16 +101,22 @@ class ChecklistSubTypeDataName extends Model
         return $this->where('id', $id)->first();
     }
 
-    public function UniqueCheck($subcategory_name, $category_id)
+    public function uniqueCheck($subcategory_name, $checklist_sub_type_id, $checklist_type_id)
     {
-
-        return $this->where('subcategory_name',  $subcategory_name)->where('category_id', $category_id)->get();
+        return $this->join('inspection_master_checklist_sub_type_data as parent', 'parent.id', '=', 'inspection_master_checklist_sub_type_data_name.checklist_sub_type_data_id')
+            ->where('inspection_master_checklist_sub_type_data_name.name', $subcategory_name)
+            ->where('parent.checklist_type_id', $checklist_type_id)
+            ->where('parent.checklist_sub_type_id', $checklist_sub_type_id)
+            ->get();
     }
 
-    public function ExistuniqueCheck($subcategory_name, $category_id, $id)
+    public function existUniqueCheck($subcategory_name, $checklist_sub_type_id, $checklist_type_id, $id)
     {
-        return $this->where('subcategory_name',  $subcategory_name)->where('category_id', $category_id)
-            ->where('id', '!=', $id)
+        return $this->join('inspection_master_checklist_sub_type_data as parent', 'parent.id', '=', 'inspection_master_checklist_sub_type_data_name.checklist_sub_type_data_id')
+            ->where('inspection_master_checklist_sub_type_data_name.name', $subcategory_name)
+            ->where('parent.checklist_type_id', $checklist_type_id)
+            ->where('parent.checklist_sub_type_id', $checklist_sub_type_id)
+            ->where('inspection_master_checklist_sub_type_data_name.id', '!=', $id)
             ->get();
     }
 

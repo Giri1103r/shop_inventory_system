@@ -89,7 +89,7 @@
                                                             @php $i = 1; @endphp
                                                             @foreach ($checklistSubTypeDataNameList as $dataNameList)
                                                                 <tr id="RowchecklistView0">
-                                                                    <td>
+                                                                    <td class="form-input">
                                                                         <input type="hidden"
                                                                             name="checklist[{{ $i }}][subTypeDataNameId]"
                                                                             value="{{ $dataNameList->id }}">
@@ -98,14 +98,17 @@
                                                                             class="form-control"
                                                                             value="{{ $dataNameList->name }}">
                                                                     </td>
-                                                                    <td>
+                                                                    <td class="form-input">
                                                                         <textarea name="checklist[{{ $i }}][description]" class="form-control">{{ $dataNameList->description }}</textarea>
                                                                     </td>
-                                                                    <td><button type="button"
-                                                                            class="btn btn-sm  removeeditrow"> <i
-                                                                                class="fa-solid fa-trash text-danger"></i></button>
+                                                                    <td>
+                                                                        <button type="button"
+                                                                            class="btn btn-sm removeeditrow">
+                                                                            <i class="fa-solid fa-trash text-danger"></i>
+                                                                        </button>
                                                                     </td>
                                                                 </tr>
+
                                                                 @php $i++; @endphp
                                                             @endforeach
                                                         </tbody>
@@ -195,16 +198,16 @@
                 checklistIndex = rowCount + 1; // Ensure checklistIndex is updated dynamically
 
                 const newRow = `
-            <tr id="RowchecklistView${checklistIndex}">
-                <td> <input type="hidden" name="checklist[${checklistIndex}][subTypeDataNameId]" value="">
-                    <input type="text" name="checklist[${checklistIndex}][name]" class="form-control"></td>
-                <td><textarea name="checklist[${checklistIndex}][description]" class="form-control"></textarea></td>
-                <td>
-                    <button type="button" class="btn btn-sm removeChecklistRow">
-                    <i class="fa-solid fa-trash text-danger"></i>
-                    </button>
-                </td>
-            </tr>`;
+                    <tr id="RowchecklistView${checklistIndex}">
+                        <td class="form-input"> <input type="hidden" name="checklist[${checklistIndex}][subTypeDataNameId]" value="">
+                            <input type="text" name="checklist[${checklistIndex}][name]" class="form-control"></td>
+                        <td class="form-input" ><textarea name="checklist[${checklistIndex}][description]" class="form-control"></textarea></td>
+                        <td >
+                            <button type="button" class="btn btn-sm removeChecklistRow">
+                            <i class="fa-solid fa-trash text-danger"></i>
+                            </button>
+                        </td>
+                    </tr>`;
 
                 $("#checklistBody").append(newRow);
                 addchecklistValidation(checklistIndex);
@@ -236,22 +239,59 @@
                 }
             });
 
-            function addchecklistValidation(checklistIndex) {
-                $(`input[name="checklist[${checklistIndex}][name]"]`).rules("add", {
+            function addchecklistValidation(index) {
+
+                let dataName = $(`input[name="checklist[${index}][name]"]`);
+
+                dataName.rules("add", {
                     required: true,
                     minlength: 3,
-                    maxlength: 100,
+                    maxlength: 200,
                     pattern: /^[a-zA-Z0-9\s\-_'"()]*$/,
+                    remote: {
+                        url: '{{ admin_url('inspection/master/checklist-sub-type-data/unique') }}',
+                        type: 'post',
+                        data: {
+                            checklist_type_id: function() {
+                                return $('#checklist_type_id').val();
+                            },
+                            checklist_sub_type_id: function() {
+                                return $('#checklist_sub_type_id').val();
+                            },
+                            subcategory_name: function() {
+                                return dataName.val();
+                            },
+                            id: function() {
+                                return $(`input[name="checklist[${index}][subTypeDataNameId]"]`).val();
+                            }
+                        }
+                    },
                     messages: {
                         required: "Checklist Sub-Type Data Name is Required",
-                        minlength: "{{ __('common.validate_min_length') }}",
-                        maxlength: "Maximum Characters should not exceed 100",
+                        minlength: "Minimum 3 characters required",
+                        maxlength: "Maximum 200 characters allowed",
                         pattern: "Only alphanumeric characters and -, _, ', \", () are allowed",
+                        remote: "Checklist Sub-Type Data Name should be unique"
                     }
                 });
 
 
+                $(`textarea[name="checklist[${index}][description]"]`).rules("add", {
+                    required: true,
+                    minlength: 3,
+                    maxlength: 500,
+                    pattern: /^[a-zA-Z0-9\s\-_'"()]*$/,
+
+                    messages: {
+                        required: "Checklist description is required",
+                        minlength: "Minimum 5 characters required",
+                        maxlength: "Maximum 500 characters allowed",
+                        pattern: "Only alphanumeric characters and -, _, ', \", () are allowed",
+
+                    }
+                });
             }
+
             $(function() {
                 $(document).on('click', '#resetform', function() {
                     $('#editchecklist .single-select').val('');
@@ -268,31 +308,7 @@
                         },
                         checklist_sub_type_id: {
                             required: true,
-                        },
-                        'checklist[0][name]': {
-                            required: true,
-                            minlength: 3,
-                            maxlength: 100,
-                            pattern: /^[a-zA-Z0-9\s\-_'"()]*$/,
-
-                            // remote: {
-                            //     url: '{{ admin_url('inspection/master/checklist-sub-type-data/unique') }}',
-                            //     type: 'post',
-                            //     data: {
-
-                            //         checklist_type_id: function() {
-                            //             return $('#checklist_type_id').val();
-                            //         },
-                            //         checklist_sub_type_id: function() {
-                            //             return $('#checklist_sub_type_id').val();
-                            //         },
-                            //         unit_name: function() {
-                            //             return $('#unit_name').val();
-                            //         },
-                            //     }
-                            // }
-                        },
-
+                        }
                     },
                     messages: {
                         checklist_type_id: {
@@ -300,15 +316,7 @@
                         },
                         checklist_sub_type_id: {
                             required: "Checklist Sub Type Name is Required",
-                        },
-                        'checklist[0][name]': {
-                            required: "Checklist Sub-Type Data Name is Required",
-                            minlength: "{{ __('common.validate_min_length') }}",
-                            maxlength: "Maximum Characters should not exceed 100",
-                            pattern: "Only alphanumeric characters and -, _, ', \", () are allowed",
-                            // remote: "Checklist Sub-Type Data Name should be unique"
-                        },
-
+                        }
                     },
                     errorElement: 'span',
                     errorPlacement: function(error, element) {
@@ -324,20 +332,69 @@
                     submitHandler: function(form) {
                         console.log('test');
                         form.submit();
-
                     },
                     invalidHandler: function(event, validator) {
                         var errors = validator.numberOfInvalids();
-                        console.log(errors + " field(s) are invalid");
-                        validator.errorList.forEach(function(error) {
-                            console.log("Field: " + error.element.name + ", Error: " +
-                                error
-                                .message);
-                        });
+
                     }
                 });
+
+                $('#checklistBody').find('tr').each(function(index) {
+                    let nameInput = $(this).find('input[name^="checklist["][name$="[name]"]');
+                    let descInput = $(this).find('textarea[name^="checklist["][name$="[description]"]');
+
+                    nameInput.rules("add", {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 200,
+                        pattern: /^[a-zA-Z0-9\s\-_'"()]*$/,
+                        remote: {
+                            url: '{{ admin_url('inspection/master/checklist-sub-type-data/unique') }}',
+                            type: 'post',
+                            data: {
+                                checklist_type_id: function() {
+                                    return $('#checklist_type_id').val();
+                                },
+                                checklist_sub_type_id: function() {
+                                    return $('#checklist_sub_type_id').val();
+                                },
+                                subcategory_name: function() {
+                                    return nameInput.val();
+                                },
+                                id: function() {
+                                    return $('#id').val();
+                                }
+                            }
+                        },
+                        messages: {
+                            required: "Checklist Sub-Type Data Name is Required",
+                            minlength: "Minimum 3 characters required",
+                            maxlength: "Maximum 200 characters allowed",
+                            pattern: "Only alphanumeric characters and -, _, ', \", () are allowed",
+                            remote: "Checklist Sub-Type Data Name should be unique"
+                        }
+                    });
+
+                    descInput.rules("add", {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 500,
+                        pattern: /^[a-zA-Z0-9\s\-_'"()]*$/,
+
+                        messages: {
+                            required: "Description is Required",
+                            minlength: "Minimum 3 characters required",
+                            maxlength: "Maximum 500 characters allowed",
+                            pattern: "Only alphanumeric characters and -, _, ', \", () are allowed",
+
+                        }
+                    });
+                });
+
             });
         });
+
+
         $(document).on("click", ".removeeditrow", function() {
             var row = $(this).closest("tr"); // Select the closest row
             var rowId = row.find("input[name*='[subTypeDataNameId]']").val();
@@ -381,7 +438,7 @@
                             error: function() {
                                 Swal.fire("Error!",
                                     "Something went wrong. Please try again later.", "error"
-                                    );
+                                );
                             }
                         });
                     }

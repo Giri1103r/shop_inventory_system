@@ -256,10 +256,12 @@
                 $("#lesson_learned_block").append(newRow);
 
                 newRow.find("input[name*='[name_of_fire_safety]']").rules("add", {
+                    required: true,
                     minlength: 3,
                     maxlength: 200,
                     pattern: /^[a-zA-Z0-9\s\-_'"()]*$/,
                     messages: {
+                        required: "The name is required",
                         minlength: "The name must be at least 3 characters long.",
                         maxlength: "The name cannot exceed 200 characters.",
                         pattern: "Only letters, numbers, spaces, and special characters (-, _, ', \", ()) are allowed."
@@ -267,35 +269,55 @@
                 });
 
                 newRow.find("input[name*='[resource_code]']").rules("add", {
+                    required: true,
                     minlength: 3,
                     maxlength: 100,
                     messages: {
+                        required: "Resource code is required",
                         minlength: "Resource code must be exactly 3 digits.",
                         maxlength: "Resource code must be exactly 100 digits."
                     }
                 });
                 newRow.find("input[name*='[series_code]']").rules("add", {
+                    required: true,
                     minlength: 3,
                     maxlength: 100,
                     messages: {
-                        minlength: "Resource code must be exactly 3 digits.",
-                        maxlength: "Resource code must be exactly 100 digits."
+                        required: "Series code is required",
+                        minlength: "Series code must be exactly 3 digits.",
+                        maxlength: "Series code must be exactly 100 digits."
                     }
                 });
                 newRow.find("input[name*='[allotted_series_code]']").rules("add", {
+                    required: true,
                     minlength: 3,
                     maxlength: 100,
                     messages: {
-                        minlength: "Resource code must be exactly 3 digits.",
-                        maxlength: "Resource code must be exactly 100 digits."
+                        required: "Allotted Series code is required",
+                        minlength: "Allotted Series code must be exactly 3 digits.",
+                        maxlength: "Allotted Series code must be exactly 100 digits."
                     }
                 });
                 newRow.find("input[name*='[total_allotted_code]']").rules("add", {
+                    required: true,
                     minlength: 3,
                     maxlength: 100,
                     messages: {
-                        minlength: "Resource code must be exactly 3 digits.",
-                        maxlength: "Resource code must be exactly 100 digits."
+                        required: "Total Allotted Code is required",
+                        minlength: "Total Allotted Code must be exactly 3 digits.",
+                        maxlength: "Total Allotted Code must be exactly 100 digits."
+                    }
+                });
+                newRow.find("select[name*='[unit_id]']").rules("add", {
+                    required: true,
+                    messages: {
+                        required: "Total Allotted Code is required",
+                    }
+                });
+                newRow.find("textarea[name*='[remark]']").rules("add", {
+                    required: true,
+                    messages: {
+                        required: "Remark is required",
                     }
                 });
 
@@ -321,49 +343,71 @@
         $('#addfire').validate({
             rules: {
                 'fire[1][name_of_fire_safety]': {
+                    required: true,
                     minlength: 3,
                     maxlength: 200,
                     pattern: /^[a-zA-Z0-9\s\-_'"()]*$/
                 },
                 'fire[1][resource_code]': {
+                    required: true,
                     minlength: 3,
                     maxlength: 100
                 },
                 'fire[1][series_code]': {
+                    required: true,
                     minlength: 3,
                     maxlength: 100
                 },
                 'fire[1][allotted_series_code]': {
+                    required: true,
                     minlength: 3,
                     maxlength: 100
                 },
                 'fire[1][total_allotted_code]': {
+                    required: true,
                     minlength: 3,
                     maxlength: 100
-                }
+                },
+                'fire[1][remark]': {
+                    required: true,
+                },
+                'fire[1][unit_id]': {
+                    required: true,
+                },
             },
             messages: {
                 'fire[1][name_of_fire_safety]': {
+                    required: "The name is required",
                     minlength: "The name must be at least 3 characters long.",
                     maxlength: "The name cannot exceed 200 characters.",
                     pattern: "Only letters, numbers, spaces, and special characters (-, _, ', \", ()) are allowed."
                 },
                 'fire[1][resource_code]': {
+                    required: "Resource code is required",
                     minlength: "Resource code must be exactly 3 digits.",
                     maxlength: "Resource code must be exactly 100 digits."
                 },
                 'fire[1][series_code]': {
+                    required: "Series code is required",
                     minlength: "Series code must be at least 3 characters long.",
                     maxlength: "Series code cannot exceed 100 characters."
                 },
                 'fire[1][allotted_series_code]': {
+                    required: "Allotted series code is required",
                     minlength: "Allotted series code must be at least 3 characters long.",
                     maxlength: "Allotted series code cannot exceed 100 characters."
                 },
                 'fire[1][total_allotted_code]': {
+                    required: "Total allotted code is required",
                     minlength: "Total allotted code must be at least 3 characters long.",
                     maxlength: "Total allotted code cannot exceed 100 characters."
-                }
+                },
+                'fire[1][remark]': {
+                    required: "Remark is required",
+                },
+                'fire[1][unit_id]': {
+                    required: "Unit is required",
+                },
             },
             errorElement: 'span',
             errorPlacement: function(error, element) {

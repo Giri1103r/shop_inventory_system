@@ -206,6 +206,63 @@
                 });
             }
 
+            $('#addfire').validate({
+                rules: {
+                    'fire[1][emp_name]': {
+                        required: true,
+                        pattern: /^[a-zA-Z0-9\s\-_'"()]*$/,
+                    },
+                    'fire[1][emp_code]': {
+                        required: true,
+                        pattern: /^[a-zA-Z0-9\s\-_'"()]*$/,
+                    },
+                    'fire[1][emp_phone]': {
+                        required: true,
+                        number: true,
+                        pattern: /^[0-9]{10}$/,
+                    },
+                    'fire[1][department_id]': {
+                        required: true,
+                    },
+                    'fire[1][emp_status]': {
+                        required: true,
+                    },
+                },
+                messages: {
+                    'fire[1][emp_name]': {
+                        required: "Emp Name is required",
+                        pattern: "Only alphanumeric characters and -, _, ', \", () are allowed",
+
+                    },
+                    'fire[1][emp_code]': {
+                        required: "Emp Code is required",
+                        pattern: "Only alphanumeric characters and -, _, ', \", () are allowed",
+
+                    },
+                    'fire[1][emp_phone]': {
+                        required: "Contact Number is required",
+                        number: "Only numeric values are allowed.",
+                        pattern: "Phone number must be exactly 10 digits (only numbers)."
+                    },
+                    'fire[1][department_id]': {
+                        required: "Department is required",
+                    },
+                    'fire[1][emp_status]': {
+                        required: "Emp Status is required",
+                    },
+                },
+                errorElement: 'span',
+                errorPlacement: function(error, element) {
+                    error.addClass('invalid-feedback');
+                    element.closest('.form-input').append(error);
+                },
+                highlight: function(element) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function(element) {
+                    $(element).removeClass('is-invalid');
+                }
+            });
 
             $("#dynamic-add-more").on("click", function() {
                 let rowCount = $("#lesson_learned_block .lesson_learned_row").length;
@@ -248,20 +305,58 @@
 
                 $("#lesson_learned_block").append(newRow);
 
-                newRow.find("input[name*='[emp_name]']").rules("add", {
-                    pattern: /^[a-zA-Z0-9\s\-_'"()]*$/,
-                    messages: {
-                        pattern: "Only alphanumeric characters and -, _, ', \", () are allowed.",
-                    }
+                newRow.find("input[name*='[emp_name]']").each(function () {
+                    $(this).rules("add", {
+                        required: true,
+                        pattern: /^[a-zA-Z0-9\s\-_'"()]*$/,
+                        messages: {
+                            required: "Emp Name is required",
+                            pattern: "Only alphanumeric characters and -, _, ', \", () are allowed.",
+                        }
+                    });
                 });
 
-                newRow.find("input[name*='[emp_phone]']").rules("add", {
-                    pattern: /^[0-9]{10}$/,
-                    messages: {
-                        pattern: "Phone number must be exactly 10 digits (only numbers)."
-                    }
+                newRow.find("input[name*='[emp_phone]']").each(function () {
+                    $(this).rules("add", {
+                        required: true,
+                        pattern: /^[0-9]{10}$/,
+                        messages: {
+                            required: "Phone number is required",
+                            pattern: "Phone number must be exactly 10 digits (only numbers)."
+                        }
+                    });
                 });
 
+                newRow.find("input[name*='[emp_code]']").each(function () {
+                    $(this).rules("add", {
+                        required: true,
+                        pattern: /^[a-zA-Z0-9\s\-_'"()]*$/,
+                        messages: {
+                            required: "Emp Code is required",
+                            pattern: "Only alphanumeric characters and -, _, ', \", () are allowed.",
+                        }
+                    });
+                });
+
+                newRow.find("select[name*='[emp_status]']").each(function () {
+                    $(this).rules("add", {
+                        required: true,
+                        messages: {
+                            required: "Emp Status is required",
+                        }
+                    });
+                });
+
+                newRow.find("select[name*='[department_id]']").each(function () {
+                    $(this).rules("add", {
+                        required: true,
+                        messages: {
+                            required: "Department is required",
+                        }
+                    });
+                });
+
+                $('#addfire').validate();
 
                 $('.single-select').select2();
             });
@@ -281,39 +376,6 @@
             });
 
         });
-        $('#addfire').validate({
 
-            rules: {
-                'fire[1][emp_name]': {
-                    pattern: /^[a-zA-Z0-9\s\-_'"()]*$/,
-                },
-                'fire[1][emp_phone]': {
-                    number: true,
-                    pattern: /^[0-9]{10}$/,
-                },
-            },
-            messages: {
-                'fire[1][emp_name]': {
-                    pattern: "Only alphanumeric characters and -, _, ', \", () are allowed",
-
-                },
-                'fire[1][emp_phone]': {
-                    number: "Only numeric values are allowed.",
-                    pattern: "Phone number must be exactly 10 digits (only numbers)."
-
-                },
-            },
-            errorElement: 'span',
-            errorPlacement: function(error, element) {
-                error.addClass('invalid-feedback');
-                element.closest('.form-input').append(error);
-            },
-            highlight: function(element) {
-                $(element).addClass('is-invalid');
-            },
-            unhighlight: function(element) {
-                $(element).removeClass('is-invalid');
-            }
-        });
     </script>
 @endpush

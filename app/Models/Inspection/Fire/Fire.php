@@ -85,17 +85,31 @@ class Fire extends Model
         return $this->create($insert_array);
     }
 
-
-
-
     public function exportdata($type)
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_fire_table.*', 'inspection_fire_certified_fire_fighter.*', 'inspection_static_docno.*')
-            ->where('inspection_fire_table.type', $type)
+        $query = $this->select(
+            'inspection_fire_table.*',
+            'inspection_fire_certified_fire_fighter.*',
+            'inspection_fire_fire_safety_equipmentr.*',
+            'inspection_static_docno.*'
+        )
             ->leftJoin('inspection_fire_certified_fire_fighter', 'inspection_fire_certified_fire_fighter.fire_id', '=', 'inspection_fire_table.id')
-            ->leftJoin('inspection_static_docno', 'inspection_static_docno.id', '=', 'inspection_fire_certified_fire_fighter.doc_no_id');
+            ->leftJoin('inspection_fire_fire_safety_equipmentr', 'inspection_fire_fire_safety_equipmentr.fire_id', '=', 'inspection_fire_table.id')
+            ->leftJoin('inspection_static_docno', function ($join) {
+                $join->on(function ($query) {
+                    $query->on('inspection_static_docno.id', '=', 'inspection_fire_certified_fire_fighter.doc_no_id')
+                        ->orOn('inspection_static_docno.id', '=', 'inspection_fire_fire_safety_equipmentr.doc_no_id');
+                });
+            })
+            ->where('inspection_fire_table.type', $type)
+            ->where(function ($query) {
+                $query->where('inspection_static_docno.type', 'CertifiedFireFighter')
+                    ->orWhere('inspection_static_docno.type', 'FireSafetyEquipment');
+            });
+
+
         if ($request->has('fire_no') && $request->fire_no) {
             $query = $query->where('inspection_fire_table.id', decryptId($request->fire_no));
         }

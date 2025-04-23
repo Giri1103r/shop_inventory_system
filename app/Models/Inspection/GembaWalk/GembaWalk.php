@@ -23,6 +23,7 @@ class GembaWalk extends Model
         'shift_id',
         'gemba_walk_status',
         'observation_needed',
+        'capa_needed',
         'status',
         'trash',
         'created_by',
@@ -42,7 +43,7 @@ class GembaWalk extends Model
         $request = request();
 
         $search = '';
-        $query = $this->select('inspection_gemba_walk.*', 'inspection_gemba_walk_status.status_name', 'inspection_gemba_walk_status.bg_color', 'inspection_shift_option.shift')
+        $query = $this->select('inspection_gemba_walk.*', 'inspection_gemba_walk_status.status_name', 'inspection_gemba_walk_status.bg_color', 'inspection_shift_option.shift','inspection_gemba_walk.id as gemba_walk_id')
             ->leftJoin('inspection_shift_option', 'inspection_shift_option.id', '=', 'inspection_gemba_walk.shift_id')
             ->leftJoin('inspection_gemba_walk_status', 'inspection_gemba_walk_status.id', '=', 'inspection_gemba_walk.gemba_walk_status');
 
@@ -101,14 +102,33 @@ class GembaWalk extends Model
     public function store()
     {
         $request = request();
-        $insert_array = array(
-            'document_reference_id' => $request->document_reference_id,
-            'date' => DBdateformat($request->document_upload_date),
-            'shift_id' => decryptId($request->shift),
-            'observation_needed'=>decryptId($request->observation_needed),
-            'gemba_walk_status' => GEMBA_WALK_INSPECTION_WAITING_FOR_CAPA_ACTION,
-            'created_by' => Auth::id()
-        );
+        $capa_needed  = decryptId($request->is_passed);
+      
+        if ($capa_needed == 2) {
+
+            $insert_array = array(
+                'document_reference_id' => $request->document_reference_id,
+                'date' => DBdateformat($request->document_upload_date),
+                'shift_id' => decryptId($request->shift),
+                'observation_needed'=>decryptId($request->observation_needed),
+                'capa_needed'=>decryptId($request->is_passed),
+                'gemba_walk_status' => GEMBA_WALK_INSPECTION_WAITING_FOR_FLOOR_MANAGER_VERIFICATION,
+                'created_by' => Auth::id(),
+            );
+        }else{
+            $insert_array = array(
+                'document_reference_id' => $request->document_reference_id,
+                'date' => DBdateformat($request->document_upload_date),
+                'shift_id' => decryptId($request->shift),
+                'observation_needed'=>decryptId($request->observation_needed),
+                'capa_needed'=>decryptId($request->is_passed),
+                'gemba_walk_status' => GEMBA_WALK_INSPECTION_CLOSED,
+                'created_by' => Auth::id(),
+                'verified_by'=>Auth::id()
+            );
+        }
+
+        
         return $this->create($insert_array);
     }
 
@@ -181,7 +201,6 @@ class GembaWalk extends Model
         $update_array = array(
             'gemba_walk_status' => $gembaWalk_status,
             'updated_by' => Auth::id(),
-            'verified_by' => Auth::id(),
             'updated_at' => now(),
         );
         return $this->where('id', $gembaWalk_id)->update($update_array);

@@ -13,6 +13,7 @@ use App\Models\Inspection\Master\ChecklistType;
 use App\Models\Inspection\Master\ChecklistSubType;
 use App\Models\Inspection\Master\ChecklistSubTypeData;
 use App\Models\Inspection\Master\ChecklistSubTypeDataName;
+use Illuminate\Support\Facades\Response;
 
 class ChecklistSubTypeDataController extends Controller
 {
@@ -136,18 +137,21 @@ class ChecklistSubTypeDataController extends Controller
             $checklist_type_id = decryptId($request->checklist_type_id);
             $checklist_sub_type_id = decryptId($request->checklist_sub_type_id);
             $id = $request->id;
+
             if ($id == '') {
-                $record = $this->checklist_subtype_dataName->uniqueCheck($subcategory_name,$checklist_sub_type_id,$checklist_type_id);
+                $record = $this->checklist_subtype_dataName->uniqueCheck($subcategory_name, $checklist_sub_type_id, $checklist_type_id);
             } else {
                 $id = decryptId($id);
-                $record = $this->checklist_subtype_dataName->ExistuniqueCheck($subcategory_name,$checklist_sub_type_id,$checklist_type_id, $id);
+                $record = $this->checklist_subtype_dataName->existUniqueCheck($subcategory_name, $checklist_sub_type_id, $checklist_type_id, $id);
             }
-            if ($record->count()) {
+
+            if (count($record) > 0) {
                 return Response::json(false);
             }
             return Response::json(true);
         }
     }
+    
     public function View($id)
     {
         try {
