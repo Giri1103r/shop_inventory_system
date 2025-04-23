@@ -365,7 +365,8 @@ class AppServiceProvider extends ServiceProvider
         defined('CHECKLIST_AUDIT_ASSESSMENT') or define('CHECKLIST_AUDIT_ASSESSMENT', 7);
         defined('CHECKLIST_FIRE_PUMP_HOUSE_INSECTION_CHECKLIST') or define('CHECKLIST_FIRE_PUMP_HOUSE_INSECTION_CHECKLIST', 8);
         defined('INTER_UNIT_AUDIT_CHECKLIST') or define('INTER_UNIT_AUDIT_CHECKLIST', 9);
-        defined('FIRE_PRE_NOC_CHECKLIST') or define('FIRE_PRE_NOC_CHECKLIST', 10);
+        // defined('FIRE_PRE_NOC_CHECKLIST') or define('FIRE_PRE_NOC_CHECKLIST', 10);
+        defined('FIRE_PRE_NOC_CHECKLIST') or define('FIRE_PRE_NOC_CHECKLIST', 5);
 
         // Fire
         defined('HOOTER_INSPECTION') or define('HOOTER_INSPECTION', 1);

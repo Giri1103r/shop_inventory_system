@@ -312,54 +312,66 @@
                 $("#lesson_learned_block").append(newRow);
                 newRow.find("input[name*='[pm10]']").rules("add", {
                     number: true,
+                    required:true,
                     range: [0, 500],
                     messages: {
                         number: "Only numeric values are allowed.",
+                        required: "Please enter the PM 10.",
                         range: "Value must be between 0 and 500 µg/m³."
                     }
                 });
 
                 newRow.find("input[name*='[pm25]']").rules("add", {
                     number: true,
+                    required:true,
                     range: [0, 500],
                     messages: {
                         number: "Only numeric values are allowed.",
+                        required: "Please enter the PM 25.",
                         range: "Value must be between 0 and 500 µg/m³."
                     }
                 });
 
                 newRow.find("input[name*='[so2]']").rules("add", {
                     number: true,
+                    required:true,
                     range: [0, 500],
                     messages: {
                         number: "Only numeric values are allowed.",
+                        required: "Please enter the so2.",
                         range: "Value must be between 0 and 500 µg/m³."
                     }
                 });
 
                 newRow.find("input[name*='[no2]']").rules("add", {
                     number: true,
+                    required:true,
                     range: [0, 500],
                     messages: {
                         number: "Only numeric values are allowed.",
+                        required: "Please enter the no2.",
                         range: "Value must be between 0 and 500 µg/m³."
                     }
                 });
 
                 newRow.find("input[name*='[co]']").rules("add", {
                     number: true,
+                    required:true,
                     range: [0, 50],
                     messages: {
                         number: "Only numeric values are allowed.",
+                        required: "Please enter the co.",
                         range: "Value must be between 0 and 50 mg/m³."
                     }
                 });
 
                 newRow.find("input[name*='[next_due_date_of_monitoring]']").rules("add", {
+                    required:true,
                     greaterThan: function() {
                         return newRow.find("input[name*='[date_of_monitoring]']");
                     },
                     messages: {
+                        required: "Please enter the Date of monitoring.",
                         greaterThan: "Next Due Date should be after the Date of Monitoring."
                     }
                 });
@@ -389,50 +401,62 @@
             rules: {
                 'monitoring[1][pm10]': {
                     number: true,
+                    required:true,
                     range: [0, 500]
                 },
                 'monitoring[1][pm25]': {
                     number: true,
+                    required:true,
                     range: [0, 500]
                 },
                 'monitoring[1][so2]': {
                     number: true,
+                    required:true,
                     range: [0, 500]
                 },
                 'monitoring[1][no2]': {
                     number: true,
+                    required:true,
                     range: [0, 500]
                 },
                 'monitoring[1][co]': {
                     number: true,
+                    required:true,
                     range: [0, 50]
                 },
                 'monitoring[1][next_due_date_of_monitoring]': {
-                    greaterThan: '#date_of_monitoring_1'
+                    greaterThan: '#date_of_monitoring_1',
+                    required:true,
                 }
             },
             messages: {
                 'monitoring[1][pm10]': {
                     number: "Only numeric values are allowed.",
+                    required: "Please enter the pm10.",
                     range: "Value must be between 0 and 500 µg/m³."
                 },
                 'monitoring[1][pm25]': {
                     number: "Only numeric values are allowed.",
+                    required: "Please enter the pm25.",
                     range: "Value must be between 0 and 500 µg/m³."
                 },
                 'monitoring[1][so2]': {
                     number: "Only numeric values are allowed.",
+                    required: "Please enter the so2.",
                     range: "Value must be between 0 and 500 µg/m³."
                 },
                 'monitoring[1][no2]': {
                     number: "Only numeric values are allowed.",
+                    required: "Please enter the no2.",
                     range: "Value must be between 0 and 500 µg/m³."
                 },
                 'monitoring[1][co]': {
                     number: "Only numeric values are allowed.",
+                    required: "Please enter the co.",
                     range: "Value must be between 0 and 50 mg/m³."
                 },
                 'monitoring[1][next_due_date_of_monitoring]': {
+                    required: "Please enter the next due date.",
                     greaterThan: "Next Due Date should be after the Date of Monitoring."
                 }
             },

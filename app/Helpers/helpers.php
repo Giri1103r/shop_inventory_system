@@ -2216,6 +2216,19 @@ if (!function_exists('getMonth')) {
                     } else {
                         return $name->file_path;
                     }
+                case OBSERVATION_FOLLOWUP:
+                    $name = FireSignatureUpload::where('emp_id', $userid)->where('inspection_id', $id)->where('type', OBSERVATION_FOLLOWUP)
+                        ->where('status', 1)->where('trash', 'NO')->first();
+
+                    if ($name == null) {
+                        $name = User::where('id', $userid)->first();
+                        if ($name == null) {
+                            return null;
+                        }
+                        return $name->signature_upload;
+                    } else {
+                        return $name->file_path;
+                    }
 
                 case FIRE_EXTINGUISHER_INSPECTION:
                     $name = FireSignatureUpload::where('emp_id', $userid)->where('inspection_id', $id)->where('type', FIRE_EXTINGUISHER_INSPECTION)
@@ -2559,7 +2572,7 @@ if (!function_exists('getMonth')) {
     }
 
     // gemba Walk
-    
+
     if (!function_exists('getGembaWalkStatus')) {
         function getGembaWalkStatus($type_id)
         {
@@ -2573,15 +2586,15 @@ if (!function_exists('getMonth')) {
         }
     }
 
-    
+
     if (!function_exists('getGembaWalkLogStatus')) {
 
         function getGembaWalkLogStatus($id)
         {
 
             $user = GembaWalkStatus::select('*')
-            ->where('id', $id)
-            ->first();
+                ->where('id', $id)
+                ->first();
 
             if ($user == null) {
                 return '';
