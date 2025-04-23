@@ -111,10 +111,6 @@
         .table-container {
             padding: 20px;
         }
-
-        .page-break {
-            page-break-before: always;
-        }
     </style>
 </head>
 
@@ -122,7 +118,13 @@
     <htmlpageheader name="myHeader1" style="display:block;">
         <table border="0" style="width:100%;border:0;border-bottom: 4px solid #000;background-color: #FFF;">
             <tr style="">
-
+                <td border="0" style="width:50%;float:left;text-align:left;">
+                    <img src="{{ url('public/assets/images/logo-dark.png') }}" style="width:125px;height:50px;">
+                </td>
+                <td border="0"
+                    style="width:50%;float:right;text-align:right;font-size: 24px;font-weight:bold;font-family: Georgia, serif;">
+                    WORK ZONE NOISE MONITORING SURVEY REPORT (EXTERNAL)
+                </td>
             </tr>
         </table>
     </htmlpageheader>
@@ -142,62 +144,50 @@
             </tr>
         </table>
     </htmlpagefooter>
-    @foreach ($exportedData as $data)
-        <div style="width:100%;">
-            <table style="width:100%;">
-                <tr>
-                    <td
-                        style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                        WORK ZONE NOISE MONITORING SURVEY REPORT (EXTERNAL)
-                    </td>
-                </tr>
-            </table>
-        </div>
-        @php
-            $environmentData = $data['environmentData'];
-            $workNoiseDataList = $data['workNoiseDataList'];
-            $document_no = $data['document_no'];
-        @endphp
-        <table
-            style="width: 100%; border-collapse: collapse; font-family: Arial, sans-serif; text-align: center; border: 1px solid black;">
 
+    <div style="width:100%;">
+        <table style="width:100%;">
             <tr>
-                <th colspan="10" style="border:1px solid black;height:50;width:40">
-                    <img src="{{ url('public/assets/images/logo-dark.png') }}" style="width:125px;height:50px;">
-                </th>
-                <th colspan="14" style="border:1px solid black;">
-                    <h3>
-                        <span><b>WORK ZONE NOISE MONITORING SURVEY REPORT (EXTERNAL)</b></span>
-                        <br>
-                        <span><b>PN INTERNATIONAL PVT. LTD.</b></span>
-                    </h3>
-                </th>
+                <td
+                    style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
+                    WORK ZONE NOISE MONITORING SURVEY REPORT (EXTERNAL)
 
-                <th colspan="10" style="border:1px solid black;">
-                    <table class="table table-bordered scrolldown">
-                        <thead>
-                            <tr>
-                                <td style="border: 1px solid black;width:70;">Doc.No</td>
-                                <td style="border: 1px solid black;">{{ $document_no->doc_no }}</td>
-                            </tr>
-                            <tr>
-                                <td style="border: 1px solid black;width:70;">Issue Dt.</td>
-                                <td style="border: 1px solid black;">
-                                    {{ Displaydateformat($document_no->issue_date) }}</td>
-                            </tr>
-                            <tr>
-                                <td style="border: 1px solid black;width:70;">Rev.& Dt.</td>
-                                <td style="border: 1px solid black;">{{ $document_no->rev_dt }}</td>
-                            </tr>
-                        </thead>
-                    </table>
-
-                </th>
+                </td>
             </tr>
+        </table>
+    </div>
+    <table style="width: 100%; border-collapse: collapse; font-family: Arial, sans-serif; text-align: center; border: 1px solid black;">
 
+        {{-- Header Row with Logo and Doc Info --}}
+        <tr>
+            <th colspan="10" style="border:1px solid black;height:50px;">
+                <img src="{{ url('public/assets/images/logo-dark.png') }}" style="width:125px;height:50px;">
+            </th>
+            <th colspan="14" style="border:1px solid black;">
+                <h3>
+                    <b>WORK ZONE NOISE MONITORING SURVEY REPORT (EXTERNAL)</b><br>
+                    <b>PN INTERNATIONAL PVT. LTD.</b>
+                </h3>
+            </th>
+            <th colspan="10" style="border:1px solid black; padding:0;">
+                <table style="width:100%; border-collapse: collapse;">
+                    <tr>
+                        <td style="border: 1px solid black; width:70px;">Doc.No</td>
+                        <td style="border: 1px solid black;">{{ $document_no->doc_no }}</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid black;">Issue Dt.</td>
+                        <td style="border: 1px solid black;">{{ Displaydateformat($document_no->issue_date) }}</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid black;">Rev.& Dt.</td>
+                        <td style="border: 1px solid black;">{{ $document_no->rev_dt }}</td>
+                    </tr>
+                </table>
+            </th>
+        </tr>
 
-            <tr>
-             {{-- Column Headers --}}
+        {{-- Column Headers --}}
         <tr>
             <th colspan="2" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">SR. NO</th>
             <th colspan="4" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">LOCATION</th>
@@ -229,9 +219,8 @@
             </tr>
         @endforeach
 
-        </table>
-        <div class="page-break"></div>
-    @endforeach
+    </table>
+
 
 </body>
 

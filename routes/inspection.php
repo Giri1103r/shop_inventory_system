@@ -246,6 +246,8 @@ Route::group(['prefix' => 'environment/'], function () {
         Route::get('add', [AmbientNoiseMonitoringController::class, 'add']);
         Route::post('add/submit', [AmbientNoiseMonitoringController::class, 'store']);
         Route::get('view/{id}', [AmbientNoiseMonitoringController::class, 'view']);
+        Route::get('generalpdf/{id}', [AmbientNoiseMonitoringController::class, 'generalpdf']);
+        Route::get('generalExcel/{id}', [AmbientNoiseMonitoringController::class, 'generalExcel']);
         Route::post('delete', [AmbientNoiseMonitoringController::class, 'delete']);
         Route::get('export/excel', [AmbientNoiseMonitoringController::class, 'exportExcel']);
         Route::get('export/pdf', [AmbientNoiseMonitoringController::class, 'exportPdf']);
@@ -259,6 +261,8 @@ Route::group(['prefix' => 'environment/'], function () {
         Route::get('add', [WorkNoiseMonitoringController::class, 'add']);
         Route::post('add/submit', [WorkNoiseMonitoringController::class, 'store']);
         Route::get('view/{id}', [WorkNoiseMonitoringController::class, 'view']);
+        Route::get('generalpdf/{id}', [WorkNoiseMonitoringController::class, 'generalpdf']);
+        Route::get('generalExcel/{id}', [WorkNoiseMonitoringController::class, 'generalExcel']);
         Route::post('delete', [WorkNoiseMonitoringController::class, 'delete']);
         Route::get('export/excel', [WorkNoiseMonitoringController::class, 'exportExcel']);
         Route::get('export/pdf', [WorkNoiseMonitoringController::class, 'exportPdf']);
@@ -272,6 +276,8 @@ Route::group(['prefix' => 'environment/'], function () {
         Route::get('add', [AmbientAirMonitoringYearlyController::class, 'add']);
         Route::post('add/submit', [AmbientAirMonitoringYearlyController::class, 'store']);
         Route::get('view/{id}', [AmbientAirMonitoringYearlyController::class, 'view']);
+        Route::get('generalpdf/{id}', [AmbientAirMonitoringYearlyController::class, 'generalpdf']);
+        Route::get('generalExcel/{id}', [AmbientAirMonitoringYearlyController::class, 'generalExcel']);
         Route::post('delete', [AmbientAirMonitoringYearlyController::class, 'delete']);
         Route::get('export/excel', [AmbientAirMonitoringYearlyController::class, 'exportExcel']);
         Route::get('export/pdf', [AmbientAirMonitoringYearlyController::class, 'exportPdf']);
@@ -284,6 +290,8 @@ Route::group(['prefix' => 'environment/'], function () {
         Route::get('add', [WorkZoneAirMonitoringController::class, 'add']);
         Route::post('add/submit', [WorkZoneAirMonitoringController::class, 'store']);
         Route::get('view/{id}', [WorkZoneAirMonitoringController::class, 'view']);
+        Route::get('generalpdf/{id}', [WorkZoneAirMonitoringController::class, 'generalpdf']);
+        Route::get('generalExcel/{id}', [WorkZoneAirMonitoringController::class, 'generalExcel']);
         Route::post('delete', [WorkZoneAirMonitoringController::class, 'delete']);
         Route::get('export/excel', [WorkZoneAirMonitoringController::class, 'exportExcel']);
         Route::get('export/pdf', [WorkZoneAirMonitoringController::class, 'exportPdf']);
@@ -296,6 +304,8 @@ Route::group(['prefix' => 'environment/'], function () {
         Route::get('add', [DgSetStackEmissionMonitoringController::class, 'add']);
         Route::post('add/submit', [DgSetStackEmissionMonitoringController::class, 'store']);
         Route::get('view/{id}', [DgSetStackEmissionMonitoringController::class, 'view']);
+        Route::get('generalpdf/{id}', [DgSetStackEmissionMonitoringController::class, 'generalpdf']);
+        Route::get('generalExcel/{id}', [DgSetStackEmissionMonitoringController::class, 'generalExcel']);
         Route::post('delete', [DgSetStackEmissionMonitoringController::class, 'delete']);
         Route::get('export/excel', [DgSetStackEmissionMonitoringController::class, 'exportExcel']);
         Route::get('export/pdf', [DgSetStackEmissionMonitoringController::class, 'exportPdf']);
@@ -308,6 +318,8 @@ Route::group(['prefix' => 'environment/'], function () {
         Route::get('add', [LuxMonitoringController::class, 'add']);
         Route::post('add/submit', [LuxMonitoringController::class, 'store']);
         Route::get('view/{id}', [LuxMonitoringController::class, 'view']);
+        Route::get('generalpdf/{id}', [LuxMonitoringController::class, 'generalpdf']);
+        Route::get('generalExcel/{id}', [LuxMonitoringController::class, 'generalExcel']);
         Route::post('delete', [LuxMonitoringController::class, 'delete']);
         Route::get('export/excel', [LuxMonitoringController::class, 'exportExcel']);
         Route::get('export/pdf', [LuxMonitoringController::class, 'exportPdf']);
@@ -352,7 +364,6 @@ Route::group(['prefix' => 'safety/'], function () {
         Route::GET('export/pdf', [MonthlyEyeWashInspectionController::class, 'exportPdf']);
         Route::GET('exportViewPdf/{id}', [MonthlyEyeWashInspectionController::class, 'exportViewPdf']);
         Route::get('generalexcel/{id}', [MonthlyEyeWashInspectionController::class, 'generalExcel']);
-
     });
 
     Route::group(['prefix' => 'forklift-inspection/monthly/'], function () {
@@ -558,7 +569,6 @@ Route::group(['prefix' => 'fire/'], function () {
         Route::POST('level-two/verify/submit', [MonthlyFirePumpHouseController::class, 'levelTwoManagerSubmit']);
         Route::GET('exportViewPdf/{id}', [MonthlyFirePumpHouseController::class, 'exportViewPdf']);
         Route::GET('generalExcel/{id}', [MonthlyFirePumpHouseController::class, 'generalExcel']);
-
     });
 
     Route::group(['prefix' => 'fire_extinguisher-inspection'], function () {
@@ -663,7 +673,7 @@ Route::group(['prefix' => 'fire/'], function () {
         Route::GET('exportViewPdf/{id}', [CertifiedFireFighterController::class, 'ExportViewPDF']);
         Route::GET('generalExcel/{id}', [CertifiedFireFighterController::class, 'generalExcel']);
     });
-    
+
     Route::group(['prefix' => 'equipment-monthly-physical-inspection/'], function () {
         Route::get('list', [MonthlyPhysicalInspectionController::class, 'index']);
         Route::post('list', [MonthlyPhysicalInspectionController::class, 'index']);
@@ -784,7 +794,6 @@ Route::group(['prefix' => 'fire/'], function () {
         Route::GET('export/pdf', [CoTypeFireExtinguisherController::class, 'ExportPDF']);
         Route::GET('get/department', [CoTypeFireExtinguisherController::class, 'GetDepartment']);
         Route::GET('generalExcel/{id}', [CoTypeFireExtinguisherController::class, 'generalExcel']);
-
     });
 
     Route::group(['prefix' => 'fire-sand-bucket-inspection/'], function () {
@@ -951,7 +960,6 @@ Route::group(['prefix' => 'ohc/first-aid-record/'], function () {
     Route::get('first-aid-location/details', [FirstAidRecordController::class, 'getFirstAidDetails']);
     Route::post('unique', [FirstAidRecordController::class, 'Uniquecheck']);
     Route::get('generalexcel/{id}', [FirstAidRecordController::class, 'generalExcel']);
-
 });
 
 Route::group(['prefix' => 'ohc/health-instrument/calibration-track-sheet/'], function () {

@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>AMBIENT AIR MONITORING -YEARLY| KARAM</title>
+    <title>DG SET STACK EMISSION MONITORING MASTER SHEET| KARAM</title>
 
     <style>
         .badge {
@@ -123,7 +123,7 @@
                 </td>
                 <td border="0"
                     style="width:50%;float:right;text-align:right;font-size: 24px;font-weight:bold;font-family: Georgia, serif;">
-                    AMBIENT AIR MONITORING -YEARLY
+                    DG SET STACK EMISSION MONITORING MASTER SHEET
                 </td>
             </tr>
         </table>
@@ -150,7 +150,7 @@
             <tr>
                 <td
                     style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                    AMBIENT AIR MONITORING -YEARLY
+                    DG SET STACK EMISSION MONITORING MASTER SHEET
 
                 </td>
             </tr>
@@ -160,16 +160,16 @@
 
         {{-- Header Row with Logo and Doc Info --}}
         <tr>
-            <th colspan="10" style="border:1px solid black;height:50px;">
+            <th colspan="8" style="border:1px solid black;height:50px;">
                 <img src="{{ url('public/assets/images/logo-dark.png') }}" style="width:125px;height:50px;">
             </th>
-            <th colspan="14" style="border:1px solid black;">
+            <th colspan="8" style="border:1px solid black;">
                 <h3>
-                    <b>AMBIENT AIR MONITORING -YEARLY</b><br>
+                    <b>DG SET STACK EMISSION MONITORING MASTER SHEET</b><br>
                     <b>PN INTERNATIONAL PVT. LTD.</b>
                 </h3>
             </th>
-            <th colspan="13" style="border:1px solid black; padding:0;">
+            <th colspan="8" style="border:1px solid black; padding:0;">
                 <table style="width:100%; border-collapse: collapse;">
                     <tr>
                         <td style="border: 1px solid black; width:70px;">Doc.No</td>
@@ -190,33 +190,25 @@
         {{-- Column Headers --}}
         <tr>
             <th colspan="2" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">SR. NO</th>
-            <th colspan="4" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">LOCATION</th>
-            <th colspan="2" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">UNIT</th>
-            <th colspan="3" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">PM 10</th>
-            <th colspan="3" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">PM 2.5</th>
-            <th colspan="3" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">SO2</th>
-            <th colspan="3" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">NO2</th>
-            <th colspan="3" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">CO</th>
+            <th colspan="4" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">D.G Set Resource code</th>
+            <th colspan="2" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">KVA Rating</th>
+            <th colspan="3" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">Installation Loacation</th>
+            <th colspan="3" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">Engine Sr No</th>
             <th colspan="3" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">DATE OF MONITORING</th>
             <th colspan="3" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">NEXT DUE DATE OF MONITORING</th>
-            <th colspan="4" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">ACT/RULE</th>
             <th colspan="4" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">REMARKS</th>
         </tr>
 
         {{-- Table Body --}}
-        @foreach ($ambientAirDataList as $list)
+        @foreach ($DgSetDataList as $list)
             <tr>
                 <td colspan="2" style="border: 1px solid black; padding: 8px;">{{ $list->sr_no }}</td>
-                <td colspan="4" style="border: 1px solid black; padding: 8px;">{{ $list->location_name }}</td>
-                <td colspan="2" style="border: 1px solid black; padding: 8px;">{{ $list->unit_name }}</td>
-                <td colspan="3" style="border: 1px solid black; padding: 8px;">{{ $list->pm10 }}</td>
-                <td colspan="3" style="border: 1px solid black; padding: 8px;">{{ $list->pm25 }}</td>
-                <td colspan="3" style="border: 1px solid black; padding: 8px;">{{ $list->so2 }}</td>
-                <td colspan="3" style="border: 1px solid black; padding: 8px;">{{ $list->no2 }}</td>
-                <td colspan="3" style="border: 1px solid black; padding: 8px;">{{ $list->co }}</td>
+                <td colspan="4" style="border: 1px solid black; padding: 8px;">{{ $list->dg_no }}</td>
+                <td colspan="2" style="border: 1px solid black; padding: 8px;">{{ $list->kva_rating }}</td>
+                <td colspan="3" style="border: 1px solid black; padding: 8px;">{{ $list->location }}</td>
+                <td colspan="3" style="border: 1px solid black; padding: 8px;">{{ $list->engine_srno }}</td>
                 <td colspan="3" style="border: 1px solid black; padding: 8px;">{{ Displaydateformat($list->date_of_monitoring) }}</td>
                 <td colspan="3" style="border: 1px solid black; padding: 8px;">{{ Displaydateformat($list->next_due_date_of_monitoring) }}</td>
-                <td colspan="4" style="border: 1px solid black; padding: 8px;">{{ $list->act_rule }}</td>
                 <td colspan="4" style="border: 1px solid black; padding: 8px;">{{ $list->remark }}</td>
             </tr>
         @endforeach

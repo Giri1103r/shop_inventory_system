@@ -70,7 +70,7 @@
                                             </div>
 
                                         </div>
-                                        
+
                                         <div class="card-body">
                                             <div class="row">
                                                 <div class="card-header-inner d-flex justify-content-between">
@@ -111,6 +111,15 @@
                                                         <select class="form-control single-select"
                                                             name="monitoring[1][unit_id]" style="width: 100%"
                                                             id="unit_id_1">
+                                                            <option value="">Select Unit</option>
+
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-md-4 form-input">
+                                                        <label for="" class="form-label">Unit</label>
+                                                        <select class="form-control single-select"
+                                                            name="monitoring[1][department_id]" style="width: 100%"
+                                                            id="department_id_1">
                                                             <option value="">Select Unit</option>
 
                                                         </select>
@@ -261,7 +270,7 @@
                     }
                 });
 
-  
+
             }
 
             function updateRowIndexes() {
@@ -312,6 +321,34 @@
                     });
                 } else {
                     unitSelect.empty().append('<option value="">Select Unit</option>');
+                }
+            });
+
+            $(document).on("change", "select[id^='unit_id_']", function() {
+                let unitId = $(this).val();
+                let rowId = $(this).attr("id").match(/\d+/)[0];
+                let departmentSelect = $("#department_id_" + rowId);
+
+                if (unitId) {
+                    $.ajax({
+                        url: "{{ admin_url('department/ajax-list') }}/" + unitId + "/0",
+                        type: "GET",
+                        dataType: "json",
+                        success: function(data) {
+                            departmentSelect.empty().append(
+                                '<option value="">Select Department</option>');
+                            $.each(data, function(key, value) {
+                                departmentSelect.append('<option value="' + value.id +
+                                    '">' +
+                                    value.name + '</option>');
+                            });
+                        },
+                        error: function() {
+                            alert("Error fetching Department. Please try again.");
+                        },
+                    });
+                } else {
+                    departmentSelect.empty().append('<option value="">Select Department</option>');
                 }
             });
 
