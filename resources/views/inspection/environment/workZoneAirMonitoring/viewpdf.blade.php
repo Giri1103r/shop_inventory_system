@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>WORK ZONE NOISE MONITORING SURVEY REPORT (EXTERNAL)| KARAM</title>
+    <title>WORK ZONE AIR MONITORING (YEARLY)| KARAM</title>
 
     <style>
         .badge {
@@ -111,10 +111,6 @@
         .table-container {
             padding: 20px;
         }
-
-        .page-break {
-            page-break-before: always;
-        }
     </style>
 </head>
 
@@ -122,7 +118,14 @@
     <htmlpageheader name="myHeader1" style="display:block;">
         <table border="0" style="width:100%;border:0;border-bottom: 4px solid #000;background-color: #FFF;">
             <tr style="">
+                <td border="0" style="width:50%;float:left;text-align:left;">
+                    <img src="{{ url('public/assets/images/logo-dark.png') }}" style="width:125px;height:50px;">
+                </td>
+                <td border="0"
+                    style="width:50%;float:right;text-align:right;font-size: 24px;font-weight:bold;font-family: Georgia, serif;">
+                    WORK ZONE AIR MONITORING (YEARLY)
 
+                </td>
             </tr>
         </table>
     </htmlpageheader>
@@ -142,96 +145,94 @@
             </tr>
         </table>
     </htmlpagefooter>
-    @foreach ($exportedData as $data)
-        <div style="width:100%;">
-            <table style="width:100%;">
-                <tr>
-                    <td
-                        style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                        WORK ZONE NOISE MONITORING SURVEY REPORT (EXTERNAL)
-                    </td>
-                </tr>
-            </table>
-        </div>
-        @php
-            $environmentData = $data['environmentData'];
-            $workNoiseDataList = $data['workNoiseDataList'];
-            $document_no = $data['document_no'];
-        @endphp
-        <table
-            style="width: 100%; border-collapse: collapse; font-family: Arial, sans-serif; text-align: center; border: 1px solid black;">
 
+    <div style="width:100%;">
+        <table style="width:100%;">
             <tr>
-                <th colspan="10" style="border:1px solid black;height:50;width:40">
-                    <img src="{{ url('public/assets/images/logo-dark.png') }}" style="width:125px;height:50px;">
-                </th>
-                <th colspan="14" style="border:1px solid black;">
-                    <h3>
-                        <span><b>WORK ZONE NOISE MONITORING SURVEY REPORT (EXTERNAL)</b></span>
-                        <br>
-                        <span><b>PN INTERNATIONAL PVT. LTD.</b></span>
-                    </h3>
-                </th>
+                <td
+                    style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
+                    WORK ZONE AIR MONITORING (YEARLY)
 
-                <th colspan="10" style="border:1px solid black;">
-                    <table class="table table-bordered scrolldown">
-                        <thead>
-                            <tr>
-                                <td style="border: 1px solid black;width:70;">Doc.No</td>
-                                <td style="border: 1px solid black;">{{ $document_no->doc_no }}</td>
-                            </tr>
-                            <tr>
-                                <td style="border: 1px solid black;width:70;">Issue Dt.</td>
-                                <td style="border: 1px solid black;">
-                                    {{ Displaydateformat($document_no->issue_date) }}</td>
-                            </tr>
-                            <tr>
-                                <td style="border: 1px solid black;width:70;">Rev.& Dt.</td>
-                                <td style="border: 1px solid black;">{{ $document_no->rev_dt }}</td>
-                            </tr>
-                        </thead>
-                    </table>
-
-                </th>
+                </td>
             </tr>
+        </table>
+    </div>
+    <table style="width: 100%; border-collapse: collapse; font-family: Arial, sans-serif; text-align: center; border: 1px solid black;">
 
+        {{-- Header Row with Logo and Doc Info --}}
+        <tr>
+            <th colspan="17" style="border:1px solid black;height:50px;">
+                <img src="{{ url('public/assets/images/logo-dark.png') }}" style="width:125px;height:50px;">
+            </th>
+            <th colspan="17" style="border:1px solid black;">
+                <h3>
+                    <b>WORK ZONE AIR MONITORING (YEARLY)</b><br>
+                    <b>PN INTERNATIONAL PVT. LTD.</b>
+                </h3>
+            </th>
+            <th colspan="15" style="border:1px solid black; padding:0;">
+                <table style="width:100%; border-collapse: collapse;">
+                    <tr>
+                        <td style="border: 1px solid black; width:70px;">Doc.No</td>
+                        <td style="border: 1px solid black;">{{ $document_no->doc_no }}</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid black;">Issue Dt.</td>
+                        <td style="border: 1px solid black;">{{ Displaydateformat($document_no->issue_date) }}</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid black;">Rev.& Dt.</td>
+                        <td style="border: 1px solid black;">{{ $document_no->rev_dt }}</td>
+                    </tr>
+                </table>
+            </th>
+        </tr>
 
-            <tr>
-             {{-- Column Headers --}}
+        {{-- Column Headers --}}
         <tr>
             <th colspan="2" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">SR. NO</th>
             <th colspan="4" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">LOCATION</th>
             <th colspan="2" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">UNIT</th>
-            <th colspan="3" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">NOISE LEVEL (dBA)</th>
+            <th colspan="3" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">DEPARTMENT</th>
             <th colspan="3" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">DATE OF MONITORING</th>
             <th colspan="3" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">NEXT DUE DATE OF MONITORING</th>
-            <th colspan="3" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">NOISE LEVEL (dBA)</th>
+            <th colspan="3" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">SPM</th>
+            <th colspan="3" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">SO2</th>
+            <th colspan="3" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">NO2</th>
             <th colspan="3" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">DATE OF MONITORING</th>
             <th colspan="3" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">NEXT DUE DATE OF MONITORING</th>
+            <th colspan="3" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">SPM</th>
+            <th colspan="3" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">SO2</th>
+            <th colspan="3" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">NO2</th>
             <th colspan="4" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">ACT/RULE</th>
             <th colspan="4" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">REMARKS</th>
         </tr>
 
         {{-- Table Body --}}
-        @foreach ($workNoiseDataList as $list)
+        @foreach ($workZoneAirDataList as $list)
+    
             <tr>
                 <td colspan="2" style="border: 1px solid black; padding: 8px;">{{ $list->sr_no }}</td>
                 <td colspan="4" style="border: 1px solid black; padding: 8px;">{{ $list->location_name }}</td>
                 <td colspan="2" style="border: 1px solid black; padding: 8px;">{{ $list->unit_name }}</td>
-                <td colspan="3" style="border: 1px solid black; padding: 8px;">{{ $list->noise_level_dba }}</td>
+                <td colspan="3" style="border: 1px solid black; padding: 8px;">{{ getDepartment($list->department_id) }}</td>
                 <td colspan="3" style="border: 1px solid black; padding: 8px;">{{Displaydateformat($list->date_of_monitoring) }}</td>
                 <td colspan="3" style="border: 1px solid black; padding: 8px;">{{ Displaydateformat($list->next_due_date_of_monitoring) }}</td>
-                <td colspan="3" style="border: 1px solid black; padding: 8px;">{{ $list->noise_level_dba_no  }}</td>
-                <td colspan="3" style="border: 1px solid black; padding: 8px;">{{ Displaydateformat($list->date_of_monitoring_date)}}</td>
-                <td colspan="3" style="border: 1px solid black; padding: 8px;">{{ Displaydateformat($list->next_due_date_of_monitoring_date) }}</td>
+                <td colspan="3" style="border: 1px solid black; padding: 8px;">{{ $list->spm  }}</td>
+                <td colspan="3" style="border: 1px solid black; padding: 8px;">{{ $list->so2  }}</td>
+                <td colspan="3" style="border: 1px solid black; padding: 8px;">{{ $list->no2  }}</td>
+                <td colspan="3" style="border: 1px solid black; padding: 8px;">{{ Displaydateformat($list->date_of_monitoring2)}}</td>
+                <td colspan="3" style="border: 1px solid black; padding: 8px;">{{ Displaydateformat($list->next_due_date_of_monitoring2)}}</td>
+                <td colspan="3" style="border: 1px solid black; padding: 8px;">{{ $list->spm_session2  }}</td>
+                <td colspan="3" style="border: 1px solid black; padding: 8px;">{{ $list->so2_session2  }}</td>
+                <td colspan="3" style="border: 1px solid black; padding: 8px;">{{ $list->no2_session2 }}</td>
                 <td colspan="4" style="border: 1px solid black; padding: 8px;">{{ $list->act_rule }}</td>
                 <td colspan="4" style="border: 1px solid black; padding: 8px;">{{ $list->remark }}</td>
             </tr>
         @endforeach
 
-        </table>
-        <div class="page-break"></div>
-    @endforeach
+    </table>
+
 
 </body>
 

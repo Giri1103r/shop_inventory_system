@@ -43,7 +43,7 @@ class GembaWalk extends Model
         $request = request();
 
         $search = '';
-        $query = $this->select('inspection_gemba_walk.*', 'inspection_gemba_walk_status.status_name', 'inspection_gemba_walk_status.bg_color', 'inspection_shift_option.shift')
+        $query = $this->select('inspection_gemba_walk.*', 'inspection_gemba_walk_status.status_name', 'inspection_gemba_walk_status.bg_color', 'inspection_shift_option.shift','inspection_gemba_walk.id as gemba_walk_id')
             ->leftJoin('inspection_shift_option', 'inspection_shift_option.id', '=', 'inspection_gemba_walk.shift_id')
             ->leftJoin('inspection_gemba_walk_status', 'inspection_gemba_walk_status.id', '=', 'inspection_gemba_walk.gemba_walk_status');
 

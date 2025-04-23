@@ -83,9 +83,9 @@ class GembaWalkController extends Controller
                             ->addColumn('status', function ($row) {
                                 $text = "<span style='color:red'>In-Active<span>";
                                 if ($row->status == 1) {
-                                    $text = "<span style='color:green;cursor:pointer' class= 'statusChange' data-id='" . encryptId($row->id) . "' data-type = '1' >Active<span>";
+                                    $text = "<span style='color:green;cursor:pointer' class= 'statusChange' data-id='" . encryptId($row->gemba_walk_id) . "' data-type = '1' >Active<span>";
                                 } else if ($row->status == 0) {
-                                    $text = "<span style='color:red;cursor:pointer' class= 'statusChange' data-id='" . encryptId($row->id) . "' data-type = '0' >In-Active<span>";
+                                    $text = "<span style='color:red;cursor:pointer' class= 'statusChange' data-id='" . encryptId($row->gemba_walk_id) . "' data-type = '0' >In-Active<span>";
                                 }
                                 return $text;
                             })
@@ -105,19 +105,19 @@ class GembaWalkController extends Controller
                                 return "<span class='" . $row->bg_color . "' >" . $row->status_name . "</span>";
                             })
                             ->addColumn('action', function ($row) {
-                                $btn = '<a href="' . admin_url('inspection/gemba-walk/view/' . encryptId($row->id)) . '" title="View"><i class="fa-solid fa-eye"></i></a> ';
+                                $btn = '<a href="' . admin_url('inspection/gemba-walk/view/' . encryptId($row->gemba_walk_id)) . '" title="View"><i class="fa-solid fa-eye"></i></a> ';
 
 
                                 if (($row->gemba_walk_status == GEMBA_WALK_INSPECTION_WAITING_FOR_FLOOR_MANAGER_VERIFICATION || $row->gemba_walk_status == GEMBA_WALK_INSPECTION_REJECTED) && (CheckUserRole(ROLE_FLOOR_MANAGER) || isAdmin())) {
-                                    $btn .= '<a href="' . admin_url('inspection/gemba-walk/floor-manager/' . encryptId($row->id)) . '" title="' . 'Floor Manager Action' . '"><i class="fa-solid fa-check-to-slot text-primary"></i></a> ';
+                                    $btn .= '<a href="' . admin_url('inspection/gemba-walk/floor-manager/' . encryptId($row->gemba_walk_id)) . '" title="' . 'Floor Manager Action' . '"><i class="fa-solid fa-check-to-slot text-primary"></i></a> ';
                                 }
 
                                 if ($row->gemba_walk_status == GEMBA_WALK_INSPECTION_WAITING_FOR_EHS_OFFICER_VERIFICATION  && (CheckUserRole(ROLE_EHS_OFFICER) || isAdmin())) {
-                                    $btn .= '<a href="' . admin_url('inspection/gemba-walk/ehs-officer/' . encryptId($row->id)) . '" title="' . 'EHS Officer Action' . '"><i class="fa-solid fa-check-to-slot text-primary"></i></a> ';
+                                    $btn .= '<a href="' . admin_url('inspection/gemba-walk/ehs-officer/' . encryptId($row->gemba_walk_id)) . '" title="' . 'EHS Officer Action' . '"><i class="fa-solid fa-check-to-slot text-primary"></i></a> ';
                                 }
 
-                                $btn .= '<a href="' . admin_url('inspection/gemba-walk/generalpdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF"> <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i></a>';
-                                $btn .= '<a href="' . admin_url('inspection/gemba-walk/generalExcel/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF"> <i class="fas fa-file-excel" style="color: #1D6F42;" aria-hidden="true"></i></a>';
+                                $btn .= '<a href="' . admin_url('inspection/gemba-walk/generalpdf/' . encryptId($row->gemba_walk_id)) . '" style="margin-right: 5px;" title="PDF"> <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i></a>';
+                                $btn .= '<a href="' . admin_url('inspection/gemba-walk/generalExcel/' . encryptId($row->gemba_walk_id)) . '" style="margin-right: 5px;" title="PDF"> <i class="fas fa-file-excel" style="color: #1D6F42;" aria-hidden="true"></i></a>';
 
                                 return $btn;
                             })

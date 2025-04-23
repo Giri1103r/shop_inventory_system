@@ -85,15 +85,17 @@
                                                         </thead>
                                                         <tbody id="checklistBody">
                                                             <tr id="RowchecklistView0">
-                                                                <td><input type="text" name="checklist[0][name]"
-                                                                        class="form-control" id="sub_type_data_name_0"></td>
                                                                 <td>
-                                                                    <textarea name="checklist[0][description]" class="form-control"></textarea>
+                                                                    <div class="form-group form-input">
+                                                                        <input type="text" name="checklist[0][name]" class="form-control" id="sub_type_data_name_0">
+                                                                    </div>
                                                                 </td>
-                                                                <td><button type="button"
-                                                                        class="btn btn-sm  removeChecklistRow"> <i
-                                                                            class="fa-solid fa-trash text-danger"></i></button>
+                                                                <td>
+                                                                    <div class="form-group form-input">
+                                                                        <textarea name="checklist[0][description]" class="form-control"></textarea>
+                                                                    </div>
                                                                 </td>
+                                                                
                                                             </tr>
                                                         </tbody>
                                                     </table>
@@ -161,6 +163,7 @@
             }
         });
         $(document).ready(function() {
+
             let checklistIndex = 1;
             $(".addchecklistBody").on("click", function() {
                 let rowCount = $("#checklistBody tr").length;
@@ -175,15 +178,25 @@
                 //     return;
                 // }
                 const newRow = `
-            <tr id="RowchecklistView${checklistIndex}">
-                <td><input type="text" name="checklist[${checklistIndex}][name]" id="sub_type_data_name_${checklistIndex}" class="form-control"></td>
-                <td><textarea name="checklist[${checklistIndex}][description]" class="form-control"></textarea></td>
-                <td>
-                    <button type="button" class="btn btn-sm  removeChecklistRow">
-                    <i class="fa-solid fa-trash text-danger"></i>
-                    </button>
-                </td>
-            </tr>`;
+                                <tr id="RowchecklistView${checklistIndex}">
+                        <td>
+                            <div class="form-group form-input">
+                                <input type="text" name="checklist[${checklistIndex}][name]" id="sub_type_data_name_${checklistIndex}" class="form-control data_name">
+                            </div>
+                        </td>
+                        <td>
+                            <div class="form-group form-input">
+                                <textarea name="checklist[${checklistIndex}][description]" class="form-control"></textarea>
+                            </div>
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-sm removeChecklistRow">
+                                <i class="fa-solid fa-trash text-danger"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    `
+
 
                 $("#checklistBody").append(newRow);
                 addchecklistValidation(checklistIndex);
@@ -220,19 +233,50 @@
 
 
             function addchecklistValidation(checklistIndex) {
-                $(`input[name="checklist[${checklistIndex}][name]"]`).rules("add", {
+
+                let dataName = $(`#sub_type_data_name_${checklistIndex}`);
+
+                dataName.rules('add', {
                     required: true,
                     minlength: 3,
                     maxlength: 200,
                     pattern: /^[a-zA-Z0-9\s\-_'"()?\/&%]+$/,
+                    remote: {
+                        url: '{{ admin_url('inspection/master/checklist-sub-type-data/unique') }}',
+                        type: 'post',
+                        data: {
+                            checklist_type_id: function () {
+                                return $('#checklist_type_id').val();
+                            },
+                            checklist_sub_type_id: function () {
+                                return $('#checklist_sub_type_id').val();
+                            },
+                            subcategory_name: function () {
+                                return dataName.val(); 
+                            }
+                        }
+                    },
                     messages: {
                         required: "Checklist Sub-Type Data Name is Required",
                         minlength: "{{ __('common.validate_min_length') }}",
-                        maxlength: "Maximum Characters should not exceed 100",
+                        maxlength: "Maximum Characters should not exceed 200",
                         pattern: "Only alphanumeric characters and -, _, ', \", (), ? are allowed",
+                        remote: "Checklist Sub-Type Data Name should be unique"
                     }
                 });
 
+                $(`textarea[name="checklist[${checklistIndex}][description]"]`).rules("add", {
+                    required: true,
+                    minlength: 3,
+                    maxlength: 500,
+                    pattern: /^[a-zA-Z0-9\s\-_'"()?\/&%]+$/,
+                    messages: {
+                        required: "Checklist Sub-Type Data Description is Required",
+                        minlength: "{{ __('common.validate_min_length') }}",
+                        maxlength: "Maximum Characters should not exceed 500",
+                        pattern: "Only alphanumeric characters and -, _, ', \", (), ? are allowed",
+                    }
+                });
 
             }
             $(function() {
@@ -257,21 +301,28 @@
                             minlength: 3,
                             maxlength: 200,
                             pattern: /^[a-zA-Z0-9\s\-_'"()?\/&%]+$/,
-                            // remote: {
-                            //     url: '{{ admin_url('checklist-sub-type-data/unique') }}',
-                            //     type: 'post',
-                            //     data: {
-                            //         checklist_type_id: function() {
-                            //             return $('#checklist_type_id').val();
-                            //         },
-                            //         checklist_sub_type_id: function() {
-                            //             return $('#checklist_sub_type_id').val();
-                            //         },
-                            //         subcategory_name: function() {
-                            //             return $('#sub_type_data_name_0').val();
-                            //         },
-                            //     }
-                            // }
+                            remote: {
+                                url: '{{ admin_url('inspection/master/checklist-sub-type-data/unique') }}',
+                                type: 'post',
+                                data: {
+                                    checklist_type_id: function() {
+                                        return $('#checklist_type_id').val();
+                                    },
+                                    checklist_sub_type_id: function() {
+                                        return $('#checklist_sub_type_id').val();
+                                    },
+                                    subcategory_name: function() {
+                                        return $('#sub_type_data_name_0').val();
+                                    },
+                                }
+                            }
+                        },
+                        'checklist[0][description]': {
+                            required: true,
+                            minlength: 3,
+                            maxlength: 500,
+                            pattern: /^[a-zA-Z0-9\s\-_'"()?\/&%]+$/,
+                            
                         },
 
                     },
@@ -285,9 +336,15 @@
                         'checklist[0][name]': {
                             required: "Checklist Sub-Type Data Name is Required",
                             minlength: "{{ __('common.validate_min_length') }}",
-                            maxlength: "Maximum Characters should not exceed 100",
+                            maxlength: "Maximum Characters should not exceed 200",
                             pattern: "Only alphanumeric characters and -, _, ', \", () are allowed",
-                            // remote: "Checklist Sub-Type Data Name should be unique"
+                            remote: "Checklist Sub-Type Data Name should be unique"
+                        },
+                        'checklist[0][description]': {
+                            required: "Checklist Sub-Type Data Description  is Required",
+                            minlength: "{{ __('common.validate_min_length') }}",
+                            maxlength: "Maximum Characters should not exceed 500",
+                            pattern: "Only alphanumeric characters and -, _, ', \", () are allowed",
                         },
 
                     },
