@@ -166,6 +166,8 @@ Route::group(['prefix' => 'audit/'], function () {
         Route::post('status', [AuditAnalysisController::class, 'statusChange']);
         Route::get('employeeName', [AuditAnalysisController::class, 'employeename']);
         Route::get('ajax-list', [AuditAnalysisController::class, 'Uniquecheck']);
+        Route::GET('exportViewPdf/{id}', [AuditAnalysisController::class, 'ExportViewPDF']);
+        Route::GET('generalExcel/{id}', [AuditAnalysisController::class, 'generalExcel']);
     });
 
     Route::group(['prefix' => 'master/task/'], function () {
