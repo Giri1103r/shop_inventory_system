@@ -41,7 +41,7 @@ class AmbientNoiseMonitoring extends Model
         'status' => 1,
         'trash' => 'NO',
     ];
-   
+
 
     public function store($environmentId)
     {
@@ -81,7 +81,7 @@ class AmbientNoiseMonitoring extends Model
         $query = $query->leftJoin('inspection_environment_table', 'inspection_environment_ambient_noise_monitoring.environment_id', '=', 'inspection_environment_table.id');
         $query = $query->leftJoin('masters_location', 'inspection_environment_ambient_noise_monitoring.location_id', '=', 'masters_location.id');
         $query = $query->leftJoin('masters_unit', 'inspection_environment_ambient_noise_monitoring.unit_id', '=', 'masters_unit.id');
-        
+
         $query->orderBy('id', 'DESC');
         return  $query->get();
     }

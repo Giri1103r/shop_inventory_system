@@ -209,7 +209,6 @@ class AuditAnalysisController extends Controller
 
     public function ExportExcel(Request $request)
     {
-
         try {
 
             $allData = $this->auditAnalysis->exportdata();
@@ -218,38 +217,178 @@ class AuditAnalysisController extends Controller
                 return redirect()->back()->with('error', 'No data found');
             }
 
-            $header = [
-                __("common.sno"),
-                'Document Number',
-                'Issue Date',
-                'Revision Date',
-                __("common.status"),
-                __("common.created_by"),
-                __("common.created_date"),
-            ];
+            $spreadsheet = new Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
 
-            $i = 1;
-            foreach ($allData as $data) {
-
-                $export = [];
-                $export[] =  $i;
-                $export[] =  $data->document_number;
-                $export[] =  $data->issue_date;
-                $export[] = $data->revision_date;
-                $export[] =  $data->status == 1 ? 'Active' : 'In-Active';
-                $export[] =  getusername($data->created_by);
-                $export[] =  Displaydateformat($data->created_at);
-
-                $exportData[] = $export;
-
-                $i++;
+            foreach (range('A', 'S') as $col) {
+                $sheet->getColumnDimension($col)->setAutoSize(true);
+            }
+            for ($i = 1; $i <= 1000; $i++) {
+                $sheet->getRowDimension($i)->setRowHeight(25);
             }
 
-            $writer = SimpleExcelWriter::streamDownload('MSDS.xlsx')
-                ->addHeader($header)
-                ->addRows(
-                    $exportData
-                );
+            $row = 1;
+
+            foreach ($allData as $auditAnalysisData) {
+
+                $srGlobal = 1;
+                $rowStart = $row;
+
+                $leftLogoPath = public_path('assets/images/logo-dark.png');
+                if (file_exists($leftLogoPath)) {
+                    $leftDrawing = new Drawing();
+                    $leftDrawing->setName('LeftLogo');
+                    $leftDrawing->setDescription('Left Company Logo');
+                    $leftDrawing->setPath($leftLogoPath);
+                    $leftDrawing->setCoordinates('A' . $row);
+                    $leftDrawing->setOffsetX(35);
+                    $leftDrawing->setOffsetY(5);
+                    $leftDrawing->setHeight(60);
+                    $leftDrawing->setWorksheet($sheet);
+                }
+                $sheet->mergeCells("A{$row}:B" . ($row + 2));
+                $sheet->getStyle("A{$row}:B" . ($row + 2))->applyFromArray([
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                    'borders' => ['outline' => ['borderStyle' => Border::BORDER_THIN]],
+                ]);
+
+                $leftAuditLogo = public_path('assets/images/audit_left_logo.jpg');
+                if (file_exists($leftAuditLogo)) {
+                    $leftAuditDrawing = new Drawing();
+                    $leftAuditDrawing->setName('LeftAuditLogo');
+                    $leftAuditDrawing->setDescription('Left Audit Logo');
+                    $leftAuditDrawing->setPath($leftAuditLogo);
+                    $leftAuditDrawing->setCoordinates('C' . $row);
+                    $leftAuditDrawing->setOffsetX(25);
+                    $leftAuditDrawing->setOffsetY(10);
+                    $leftAuditDrawing->setHeight(60);
+                    $leftAuditDrawing->setWorksheet($sheet);
+                }
+                $sheet->mergeCells('C'.$row.':D'.($row+2));
+
+                $rightAuditLogo = public_path('assets/images/audit_right_logo.jpg');
+                if (file_exists($rightAuditLogo)) {
+                    $rightAuditDrawing = new Drawing();
+                    $rightAuditDrawing->setName('RightAuditLogo');
+                    $rightAuditDrawing->setDescription('Right Audit Logo');
+                    $rightAuditDrawing->setPath($rightAuditLogo);
+                    $rightAuditDrawing->setCoordinates('P' . $row);
+                    $rightAuditDrawing->setOffsetX(130);
+                    $rightAuditDrawing->setOffsetY(10);
+                    $rightAuditDrawing->setHeight(60);
+                    $rightAuditDrawing->setWorksheet($sheet);
+                }
+                $sheet->mergeCells('P'.$row.':Q'.($row+2));
+
+                $sheet->mergeCells('E'.$row.':O'.($row+2));
+                $sheet->setCellValue('E'.$row, "   6'S AUDIT ANALYSIS REPORT (FY FROM ….... TO ……) PN INTERNATIONAL PVT LTD");
+                $sheet->getStyle('E'.$row.':O'.($row+2))->applyFromArray([
+                    'font' => ['bold' => true, 'size' => 14],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                    'borders' => ['outline' => ['borderStyle' => Border::BORDER_THIN]],
+                ]);
+
+                $document_no = $this->static_docno->select('id', 'doc_no', 'issue_date', 'rev_dt')
+                    ->where([
+                        ['type', "6SAuditAnalysis"],
+                        ['status', '1']
+                    ])->first();
+
+                $labelMap = [
+                    'R' . $row => ['label' => 'Doc. No.', 'value' => $document_no->doc_no ?? ''],
+                    'R' . ($row + 1) => ['label' => 'Issue Dt.', 'value' => Displaydateformat($document_no->issue_date) ?? ''],
+                    'R' . ($row + 2) => ['label' => 'Rev. & Dt.', 'value' => $document_no->rev_dt ?? ''],
+                ];
+
+                foreach ($labelMap as $cell => $info) {
+                    $sheet->setCellValue($cell, $info['label']);
+                    $sheet->setCellValue(chr(ord($cell[0])+1).substr($cell,1), $info['value']);
+                    $sheet->getStyle($cell)->applyFromArray([
+                        'font' => ['bold' => true],
+                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
+                    ]);
+                    $sheet->getStyle(chr(ord($cell[0])+1).substr($cell,1))->applyFromArray([
+                        'font' => ['bold' => true],
+                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
+                    ]);
+                }
+
+                $row += 3;
+
+                $months = ['April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December', 'January', 'February', 'March'];
+
+                $sheet->mergeCells('A'.$row.':A'.($row+1))->setCellValue('A'.$row, 'Sr. No.');
+                $sheet->mergeCells('B'.$row.':B'.($row+1))->setCellValue('B'.$row, 'Department Name');
+                $sheet->mergeCells('C'.$row.':C'.($row+1))->setCellValue('C'.$row, 'Unit');
+                $sheet->mergeCells('D'.$row.':O'.$row)->setCellValue('D'.$row, 'MARKS OBTAINED');
+
+                $col = 'D';
+                foreach ($months as $month) {
+                    $sheet->setCellValue($col.($row+1), $month);
+                    $col++;
+                }
+
+                $sheet->mergeCells('P'.$row.':P'.($row+1))->setCellValue('P'.$row, "Total No's of Audit");
+                $sheet->mergeCells('Q'.$row.':Q'.($row+1))->setCellValue('Q'.$row, 'Total Marks');
+                $sheet->mergeCells('R'.$row.':R'.($row+1))->setCellValue('R'.$row, 'Marks Obtained');
+                $sheet->mergeCells('S'.$row.':S'.($row+1))->setCellValue('S'.$row, '%');
+
+                $sheet->getStyle('A'.$row.':S'.($row+1))->applyFromArray([
+                    'font' => ['bold' => true],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+                ]);
+
+                $row += 2;
+
+                foreach ($auditAnalysisData as $detail) {
+                    $sheet->setCellValue('A'.$row, $srGlobal++);
+                    $sheet->setCellValue('B'.$row, $detail['department_name'] ?? '');
+                    $sheet->setCellValue('C'.$row, $detail['unit_name'] ?? '');
+
+                    $marks = json_decode($detail['marks'] ?? '{}', true);
+                    $col = 'D';
+                    foreach ($months as $month) {
+                        $value = $marks[strtolower($month)] ?? 0;
+                        $sheet->setCellValue($col.$row, $value);
+                        $col++;
+                    }
+
+                    $sheet->setCellValue('P'.$row, $detail['no_of_audit'] ?? '');
+                    $sheet->setCellValue('Q'.$row, $detail['total_marks'] ?? '');
+                    $sheet->setCellValue('R'.$row, $detail['marks_obtained'] ?? '');
+                    $sheet->setCellValue('S'.$row, $detail['percentage'] ?? '');
+
+                    $sheet->getStyle('A'.$row.':S'.$row)->applyFromArray([
+                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                    ]);
+
+                    $row++;
+                }
+
+                $lastDataRow = $row - 1;
+                $sheet->getStyle('A'.$rowStart.':S'.$lastDataRow)->applyFromArray([
+                    'borders' => [
+                        'outline' => [
+                            'borderStyle' => Border::BORDER_THICK,
+                            'color' => ['argb' => '000000'],
+                        ],
+                    ],
+                ]);
+
+                $row += 4;
+            }
+
+            $writer = new Xlsx($spreadsheet);
+            $fileName = "6'S AUDIT ANALYSIS REPORT.xlsx";
+            $filePath = storage_path("app/public/$fileName");
+            $writer->save($filePath);
+
+            return response()->download($filePath)->deleteFileAfterSend(true);
+
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
@@ -259,29 +398,26 @@ class AuditAnalysisController extends Controller
 
     public function ExportPdf(Request $request)
     {
-
         try {
 
             $allData = $this->auditAnalysis->exportdata();
 
+            $document_no = $this->static_docno->select('id', 'doc_no', 'issue_date', 'rev_dt')
+                        ->where([
+                            ['type', "6SAuditAnalysis"],
+                            ['status', '1']
+                        ])->first();
+
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
+            } elseif (count($allData) > 20) {
+                return redirect()->back()->with('error', __('inspection.excess_error'));
             }
 
-            $header = [
-                __("common.sno"),
-                'Document Number',
-                'Issue Date',
-                'Revision Date',
-                __("common.status"),
-                __("common.created_by"),
-                __("common.created_date"),
-            ];
-
             $data = array(
-                'header' => $header,
                 'content' => $allData,
-                'pagetitle' => "MSDS Details",
+                'document_no' => $document_no,
+                'pagetitle' => "6'S AUDIT ANALYSIS REPORT",
             );
 
             $property = [
@@ -301,10 +437,9 @@ class AuditAnalysisController extends Controller
 
             $mpdf->WriteHTML($html);
 
-            $filename = "MSDS.pdf";
+            $filename = "6'S AUDIT ANALYSIS REPORT.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('audit/6s-analysis/list'));
@@ -428,327 +563,175 @@ class AuditAnalysisController extends Controller
         }
     }
 
-    // public function generalExcel(Request $request)
-    // {
-    //     try {
-
-    //         $id = decryptId($request->id);
-    //         $spreadsheet = new Spreadsheet();
-    //         $sheet = $spreadsheet->getActiveSheet();
-
-    //         $auditData =   $this->auditAnalysis->selectOne($id);
-    //         $auditAnalysisData =   $this->auditAnalysisCheckList->selectOne($id);
-
-    //         $document_no  = $this->static_docno->select('id', 'doc_no', 'issue_date', 'rev_dt')->where([
-    //                             ['type', "6SAuditAnalysis"],
-    //                             ['status', '1']
-    //                         ])->first();
-
-    //         foreach (range('A', 'L') as $col) {
-    //             $sheet->getColumnDimension($col)->setAutoSize(true);
-    //         }
-
-    //         for ($i = 1; $i <= 200; $i++) {
-    //             $sheet->getRowDimension($i)->setRowHeight(25);
-    //         }
-
-    //         $logoPath = public_path('assets/images/logo-dark.png');
-    //         if (file_exists($logoPath)) {
-    //             $drawing = new Drawing();
-    //             $drawing->setName('Logo');
-    //             $drawing->setDescription('Company Logo');
-    //             $drawing->setPath($logoPath);
-    //             $drawing->setCoordinates('A1');
-    //             $drawing->setOffsetX(5);
-    //             $drawing->setOffsetY(5);
-    //             $drawing->setHeight(60);
-    //             $drawing->setWorksheet($sheet);
-    //         }
-
-    //         $logoPath = public_path('assets/images/audit_left_logo.jpg');
-    //         if (file_exists($logoPath)) {
-    //             $drawing = new Drawing();
-    //             $drawing->setName('Logo');
-    //             $drawing->setDescription('Audit Left Logo');
-    //             $drawing->setPath($logoPath);
-    //             $drawing->setCoordinates('A1');
-    //             $drawing->setOffsetX(5);
-    //             $drawing->setOffsetY(5);
-    //             $drawing->setHeight(60);
-    //             $drawing->setWorksheet($sheet);
-    //         }
-
-    //         $logoPath = public_path('assets/images/audit_right_logo.jpg');
-    //         if (file_exists($logoPath)) {
-    //             $drawing = new Drawing();
-    //             $drawing->setName('Logo');
-    //             $drawing->setDescription('Audit Right Logo');
-    //             $drawing->setPath($logoPath);
-    //             $drawing->setCoordinates('A1');
-    //             $drawing->setOffsetX(5);
-    //             $drawing->setOffsetY(5);
-    //             $drawing->setHeight(60);
-    //             $drawing->setWorksheet($sheet);
-    //         }
-
-    //         $sheet->mergeCells('A1:B3');
-    //         $sheet->mergeCells("C1:I3");
-    //         $sheet->setCellValue("C1", "   6'S AUDIT ANALYSIS REPORT (FY FROM ….... TO ……) PN INTERNATIONAL PVT LTD");
-    //         $sheet->getStyle("C1:I3")->applyFromArray([
-    //             'font' => ['bold' => true, 'size' => 14],
-    //             'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
-    //             'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-    //         ]);
-    //         $sheet->getStyle('A1:B3')->applyFromArray([
-    //             'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
-    //             'borders' => ['outline' => ['borderStyle' => Border::BORDER_THIN]],
-    //         ]);
-
-    //         $labelMap = [
-
-    //             'J1' => ['value' => 'Doc. No.', 'valueCell' => 'K1', 'data' => $document_no->doc_no],
-    //             'J2' => ['value' => 'Issue Dt.', 'valueCell' => 'K2', 'data' => Displaydateformat($document_no->issue_date)],
-    //             'J3' => ['value' => 'Rev. & Dt.', 'valueCell' => 'K3', 'data' => $document_no->rev_dt],
-
-    //         ];
-
-    //         foreach ($labelMap as $labelCell => $info) {
-    //             $sheet->setCellValue($labelCell, $info['value']);
-    //             $sheet->setCellValue($info['valueCell'], $info['data']);
-
-    //             $sheet->getStyle($labelCell)->applyFromArray([
-    //                 'font' => ['bold' => true],
-    //                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
-    //                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
-    //             ]);
-
-    //             $sheet->getStyle($info['valueCell'])->applyFromArray([
-    //                 'font' => ['bold' => true],
-    //                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
-    //                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
-    //             ]);
-    //         }
-
-    //         $sheet->mergeCells("A6:A7")->setCellValue("A6", "Sr.No.");
-    //         $sheet->mergeCells("B6:B7")->setCellValue("B6", "Department Name");
-    //         $sheet->mergeCells("B6:B7")->setCellValue("B6", "Unit");
-    //         $sheet->mergeCells("C6:I6")->setCellValue("C6", "MARKS OBTAINED");
-
-    //         $sheet->setCellValue("C7", "April");
-    //         $sheet->setCellValue("D7", "May");
-    //         $sheet->setCellValue("E7", "June");
-    //         $sheet->setCellValue("F7", "July");
-    //         $sheet->setCellValue("G7", "August");
-    //         $sheet->setCellValue("H7", "September");
-    //         $sheet->setCellValue("I7", "October");
-    //         $sheet->setCellValue("I7", "November");
-    //         $sheet->setCellValue("I7", "December");
-    //         $sheet->setCellValue("I7", "January");
-    //         $sheet->setCellValue("I7", "February");
-    //         $sheet->setCellValue("I7", "March");
-    //         $sheet->mergeCells("J6:K7")->setCellValue("J6", "Total No's of Audit");
-    //         $sheet->mergeCells("J6:K7")->setCellValue("J6", "Total Marks");
-    //         $sheet->mergeCells("J6:K7")->setCellValue("J6", "Total Marks Obtained");
-    //         $sheet->mergeCells("J6:K7")->setCellValue("J6", "%");
-
-    //         $sheet->getStyle("A6:K7")->applyFromArray([
-    //             'font' => ['bold' => true],
-    //             'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-    //             'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
-    //         ]);
-
-    //         $row = 8;
-    //         $sr = 1;
-    //         foreach ($auditAnalysisData as $detail) {
-    //             $sheet->setCellValue("A$row", $sr);
-    //             $sheet->setCellValue("B$row", $detail['department_name'] ?? '');
-    //             $sheet->setCellValue("C$row", $detail['unit_name'] ?? '');
-    //             @php
-    //                     $marks = json_decode($records->first()->marks ?? '{}', true);
-    //                 @endphp
-
-    //                 @foreach ($months as $month)
-    //                     @php
-    //                         $mark = $marks[strtolower($month)] ?? '-';
-    //                     @endphp
-    //                     <td style="border: 1px solid black; padding: 8px;">{{ $mark }}</td>
-    //             @endforeach
-    //             $sheet->setCellValue("C$row", $detail['no_of_audit'] ?? '');
-    //             $sheet->setCellValue("C$row", $detail['total_marks'] ?? '');
-    //             $sheet->setCellValue("C$row", $detail['marks_obtained'] ?? '');
-    //             $sheet->setCellValue("C$row", $detail['percentage'] ?? '');
-
-
-    //             $sheet->getStyle("A$row:K$row")->applyFromArray([
-    //                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-    //                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
-    //             ]);
-
-    //             $sr++;
-    //             $row++;
-    //         }
-
-    //         $writer = new Xlsx($spreadsheet);
-    //         $fileName = "6'S AUDIT ANALYSIS REPORT.xlsx";
-    //         $filePath = storage_path("app/public/$fileName");
-    //         $writer->save($filePath);
-
-    //         return response()->download($filePath)->deleteFileAfterSend(true);
-    //     } catch (Exception $ex) {
-    //         dd($ex);
-    //         report($ex);
-    //         Session::flash('error', 'Something went wrong!');
-    //         return redirect(admin_url('audit/6s-analysis/list'));
-    //     }
-    // }
     public function generalExcel(Request $request)
-{
-    try {
-        $id = decryptId($request->id);
-        $spreadsheet = new Spreadsheet();
-        $sheet = $spreadsheet->getActiveSheet();
+    {
+        try {
+            $id = decryptId($request->id);
+            $spreadsheet = new Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
 
-        $auditData = $this->auditAnalysis->selectOne($id);
-        $auditAnalysisData = $this->auditAnalysisCheckList->selectOne($id);
+            $auditData = $this->auditAnalysis->selectOne($id);
+            $auditAnalysisData = $this->auditAnalysisCheckList->selectOne($id);
 
-        $document_no = $this->static_docno->select('id', 'doc_no', 'issue_date', 'rev_dt')
-            ->where([
-                ['type', "6SAuditAnalysis"],
-                ['status', '1']
-            ])->first();
+            $document_no = $this->static_docno->select('id', 'doc_no', 'issue_date', 'rev_dt')
+                ->where([
+                    ['type', "6SAuditAnalysis"],
+                    ['status', '1']
+                ])->first();
 
-        // Set columns auto-size
-        foreach (range('A', 'O') as $col) {
-            $sheet->getColumnDimension($col)->setAutoSize(true);
-        }
-
-        // Set rows height
-        for ($i = 1; $i <= 200; $i++) {
-            $sheet->getRowDimension($i)->setRowHeight(25);
-        }
-
-        // Insert Logos
-        $logoPaths = [
-            ['path' => public_path('assets/images/logo-dark.png'), 'coordinates' => 'A1'],
-            ['path' => public_path('assets/images/audit_left_logo.jpg'), 'coordinates' => 'A1'],
-            ['path' => public_path('assets/images/audit_right_logo.jpg'), 'coordinates' => 'K1'],
-        ];
-
-        foreach ($logoPaths as $logo) {
-            if (file_exists($logo['path'])) {
-                $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
-                $drawing->setName('Logo');
-                $drawing->setDescription('Logo');
-                $drawing->setPath($logo['path']);
-                $drawing->setCoordinates($logo['coordinates']);
-                $drawing->setOffsetX(5);
-                $drawing->setOffsetY(5);
-                $drawing->setHeight(60);
-                $drawing->setWorksheet($sheet);
+            foreach (range('A', 'S') as $col) {
+                $sheet->getColumnDimension($col)->setAutoSize(true);
             }
-        }
 
-        // Merge and Set Main Title
-        $sheet->mergeCells('C1:J3');
-        $sheet->setCellValue('C1', "   6'S AUDIT ANALYSIS REPORT (FY FROM ….... TO ……) PN INTERNATIONAL PVT LTD");
-        $sheet->getStyle('C1:J3')->applyFromArray([
-            'font' => ['bold' => true, 'size' => 14],
-            'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
-            'borders' => ['outline' => ['borderStyle' => Border::BORDER_THIN]],
-        ]);
+            for ($i = 1; $i <= 200; $i++) {
+                $sheet->getRowDimension($i)->setRowHeight(25);
+            }
 
-        // Static Labels (Doc No, Issue Date, Rev)
-        $labelMap = [
-            'L1' => ['label' => 'Doc. No.', 'value' => $document_no->doc_no ?? ''],
-            'L2' => ['label' => 'Issue Dt.', 'value' => Displaydateformat($document_no->issue_date) ?? ''],
-            'L3' => ['label' => 'Rev. & Dt.', 'value' => $document_no->rev_dt ?? ''],
-        ];
+            $leftLogoPath = public_path('assets/images/logo-dark.png');
+            if (file_exists($leftLogoPath)) {
+                $leftDrawing = new Drawing();
+                $leftDrawing->setName('LeftLogo');
+                $leftDrawing->setDescription('Left Company Logo');
+                $leftDrawing->setPath($leftLogoPath);
+                $leftDrawing->setCoordinates('A1');
+                $leftDrawing->setOffsetX(35);
+                $leftDrawing->setOffsetY(5);
+                $leftDrawing->setHeight(60);
+                $leftDrawing->setWorksheet($sheet);
+            }
 
-        foreach ($labelMap as $cell => $info) {
-            $sheet->setCellValue($cell, $info['label']);
-            $sheet->setCellValue(chr(ord($cell[0]) + 1) . substr($cell, 1), $info['value']); // Next column
-            $sheet->getStyle($cell)->applyFromArray([
-                'font' => ['bold' => true],
+            $sheet->mergeCells("A1:B3");
+            $sheet->getStyle("A1:B3")->applyFromArray([
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
-                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
+                'borders' => ['outline' => ['borderStyle' => Border::BORDER_THIN]],
             ]);
-            $sheet->getStyle(chr(ord($cell[0]) + 1) . substr($cell, 1))->applyFromArray([
-                'font' => ['bold' => true],
+
+            $leftAuditLogo = public_path('assets/images/audit_left_logo.jpg');
+            if (file_exists($leftAuditLogo)) {
+                $rightDrawing = new Drawing();
+                $rightDrawing->setName('LeftAuditLogo');
+                $rightDrawing->setDescription('Left Audit Logo');
+                $rightDrawing->setPath($leftAuditLogo);
+                $rightDrawing->setCoordinates('C1');
+                $rightDrawing->setOffsetX(25);
+                $rightDrawing->setOffsetY(10);
+                $rightDrawing->setHeight(60);
+                $rightDrawing->setWorksheet($sheet);
+            }
+            $sheet->mergeCells('C1:D3');
+
+            $rightAuditLogo = public_path('assets/images/audit_right_logo.jpg');
+            if (file_exists($rightAuditLogo)) {
+                $rightDrawing = new Drawing();
+                $rightDrawing->setName('RightAuditLogo');
+                $rightDrawing->setDescription('Right Audit Logo');
+                $rightDrawing->setPath($rightAuditLogo);
+                $rightDrawing->setCoordinates('P1');
+                $rightDrawing->setOffsetX(130);
+                $rightDrawing->setOffsetY(10);
+                $rightDrawing->setHeight(60);
+                $rightDrawing->setWorksheet($sheet);
+            }
+
+            $sheet->mergeCells('P1:Q3');
+
+            $sheet->mergeCells('E1:O3');
+            $sheet->setCellValue('E1', "   6'S AUDIT ANALYSIS REPORT (FY FROM ….... TO ……) PN INTERNATIONAL PVT LTD");
+            $sheet->getStyle('E1:O3')->applyFromArray([
+                'font' => ['bold' => true, 'size' => 14],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
-                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
+                'borders' => ['outline' => ['borderStyle' => Border::BORDER_THIN]],
             ]);
-        }
 
-        // Column Headers
-        $months = ['April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December', 'January', 'February', 'March'];
+            $labelMap = [
+                'R1' => ['label' => 'Doc. No.', 'value' => $document_no->doc_no ?? ''],
+                'R2' => ['label' => 'Issue Dt.', 'value' => Displaydateformat($document_no->issue_date) ?? ''],
+                'R3' => ['label' => 'Rev. & Dt.', 'value' => $document_no->rev_dt ?? ''],
+            ];
 
-        $sheet->mergeCells('A6:A7')->setCellValue('A6', 'Sr. No.');
-        $sheet->mergeCells('B6:B7')->setCellValue('B6', 'Department Name');
-        $sheet->mergeCells('C6:C7')->setCellValue('C6', 'Unit');
-        $sheet->mergeCells('D6:O6')->setCellValue('D6', 'MARKS OBTAINED');
+            foreach ($labelMap as $cell => $info) {
+                $sheet->setCellValue($cell, $info['label']);
+                $sheet->setCellValue(chr(ord($cell[0]) + 1) . substr($cell, 1), $info['value']);
+                $sheet->getStyle($cell)->applyFromArray([
+                    'font' => ['bold' => true],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
+                ]);
+                $sheet->getStyle(chr(ord($cell[0]) + 1) . substr($cell, 1))->applyFromArray([
+                    'font' => ['bold' => true],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
+                ]);
+            }
 
-        $col = 'D';
-        foreach ($months as $month) {
-            $sheet->setCellValue($col.'7', $month);
-            $col++;
-        }
+            $months = ['April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December', 'January', 'February', 'March'];
 
-        $sheet->mergeCells('P6:P7')->setCellValue('P6', "Total No's of Audit");
-        $sheet->mergeCells('Q6:Q7')->setCellValue('Q6', 'Total Marks');
-        $sheet->mergeCells('R6:R7')->setCellValue('R6', 'Marks Obtained');
-        $sheet->mergeCells('S6:S7')->setCellValue('S6', '%');
+            $sheet->mergeCells('A4:A5')->setCellValue('A4', 'Sr. No.');
+            $sheet->mergeCells('B4:B5')->setCellValue('B4', 'Department Name');
+            $sheet->mergeCells('C4:C5')->setCellValue('C4', 'Unit');
+            $sheet->mergeCells('D4:O4')->setCellValue('D4', 'MARKS OBTAINED');
 
-        $sheet->getStyle('A6:S7')->applyFromArray([
-            'font' => ['bold' => true],
-            'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-            'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
-        ]);
-
-        // Fill Data
-        $row = 8;
-        $sr = 1;
-
-        foreach ($auditAnalysisData as $detail) {
-            $sheet->setCellValue('A'.$row, $sr);
-            $sheet->setCellValue('B'.$row, $detail['department_name'] ?? '');
-            $sheet->setCellValue('C'.$row, $detail['unit_name'] ?? '');
-
-            $marks = json_decode($detail['marks'] ?? '{}', true);
             $col = 'D';
             foreach ($months as $month) {
-                $value = $marks[strtolower($month)] ?? 0;
-                $sheet->setCellValue($col.$row, $value);
+                $sheet->setCellValue($col.'5', $month);
                 $col++;
             }
 
-            $sheet->setCellValue('P'.$row, $detail['no_of_audit'] ?? '');
-            $sheet->setCellValue('Q'.$row, $detail['total_marks'] ?? '');
-            $sheet->setCellValue('R'.$row, $detail['marks_obtained'] ?? '');
-            $sheet->setCellValue('S'.$row, $detail['percentage'] ?? '');
+            $sheet->mergeCells('P4:P5')->setCellValue('P4', "Total No's of Audit");
+            $sheet->mergeCells('Q4:Q5')->setCellValue('Q4', 'Total Marks');
+            $sheet->mergeCells('R4:R5')->setCellValue('R4', 'Marks Obtained');
+            $sheet->mergeCells('S4:S5')->setCellValue('S4', '%');
 
-            $sheet->getStyle('A'.$row.':S'.$row)->applyFromArray([
+            $sheet->getStyle('A4:S5')->applyFromArray([
+                'font' => ['bold' => true],
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER,'wrapText' => true],
             ]);
 
-            $sr++;
-            $row++;
+            $row = 6;
+            $sr = 1;
+
+            foreach ($auditAnalysisData as $detail) {
+                $sheet->setCellValue('A'.$row, $sr);
+                $sheet->setCellValue('B'.$row, $detail['department_name'] ?? '');
+                $sheet->setCellValue('C'.$row, $detail['unit_name'] ?? '');
+
+                $marks = json_decode($detail['marks'] ?? '{}', true);
+                $col = 'D';
+                foreach ($months as $month) {
+                    $value = $marks[strtolower($month)] ?? 0;
+                    $sheet->setCellValue($col.$row, $value);
+                    $col++;
+                }
+
+                $sheet->setCellValue('P'.$row, $detail['no_of_audit'] ?? '');
+                $sheet->setCellValue('Q'.$row, $detail['total_marks'] ?? '');
+                $sheet->setCellValue('R'.$row, $detail['marks_obtained'] ?? '');
+                $sheet->setCellValue('S'.$row, $detail['percentage'] ?? '');
+
+                $sheet->getStyle('A'.$row.':S'.$row)->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                ]);
+
+                $sr++;
+                $row++;
+
+            }
+
+            $writer = new Xlsx($spreadsheet);
+            $fileName = "6S Audit Analysis Report.xlsx";
+            $filePath = storage_path("app/public/$fileName");
+            $writer->save($filePath);
+
+            return response()->download($filePath)->deleteFileAfterSend(true);
+
+        } catch (\Exception $ex) {
+            report($ex);
+            Session::flash('error', 'Something went wrong!');
+            return redirect(admin_url('audit/6s-analysis/list'));
         }
-
-        // Export
-        $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
-        $fileName = "6S_Audit_Analysis_Report.xlsx";
-        $filePath = storage_path("app/public/$fileName");
-        $writer->save($filePath);
-
-        return response()->download($filePath)->deleteFileAfterSend(true);
-
-    } catch (\Exception $ex) {
-        report($ex);
-        Session::flash('error', 'Something went wrong!');
-        return redirect(admin_url('audit/6s-analysis/list'));
     }
-}
 
 
 

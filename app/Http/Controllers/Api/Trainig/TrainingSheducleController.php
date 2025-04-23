@@ -286,6 +286,7 @@ class TrainingSheducleController extends BaseController
                         'training_schedule_id' => $nomination->training_schedule_id,
                         'emp_worker' => $nomination->emp_worker == 1 ? 'Employee' : 'Worker',
                         'employee_id' => $nomination->emp_id,
+                        'department_id' => $nomination->department_name,
                         'employee_name' => $nomination->emp_name,
                         'email_id' => $nomination->email,
                         'employee_type' => $nomination->employee_type,

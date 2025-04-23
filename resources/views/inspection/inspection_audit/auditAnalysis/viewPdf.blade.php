@@ -232,11 +232,11 @@
             @foreach ($auditAnalysisData  as $records)
                 @php
                     $months = ['April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December', 'January', 'February', 'March'];
-                    $unitName = $records->unit_name ?? '-';
+                    $marks = json_decode($records->marks ?? '{}', true);
 
+                    $unitName = $records->unit_name ?? '-';
                     $auditCounts = $records->sum('no_of_audit');
                     $totalMarks = $records->sum('total_marks');
-
                     $marksObtained = $records->sum('marks_obtained');
                     $percentage = $records->percentage;
 
@@ -247,11 +247,8 @@
                     <td style="border: 1px solid black; padding: 8px; text-align: center;">{{ $records->department_name }}</td>
                     <td style="border: 1px solid black; padding: 8px; text-align: center;">{{ $unitName }}</td>
 
-                    @php
-                        $marks = json_decode($records->first()->marks ?? '{}', true);
-                    @endphp
-
                     @foreach ($months as $month)
+
                         @php
                             $mark = $marks[strtolower($month)] ?? '-';
                         @endphp

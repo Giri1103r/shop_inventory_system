@@ -17,6 +17,17 @@ use App\Models\Inspection\environment\Environment;
 use App\Models\Inspection\InspectionStaticDocno;
 use App\Models\Master\Location;
 use App\Models\Master\Unit;
+use Illuminate\Support\Facades\Response as FacadesResponse;
+
+
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Border;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
+use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
+use PhpOffice\PhpSpreadsheet\RichText\RichText;
 
 class AmbientNoiseMonitoringController extends Controller
 {
@@ -41,7 +52,7 @@ class AmbientNoiseMonitoringController extends Controller
         if (Auth::check()) {
             if ($request->ajax()) {
                 try {
-                   $type = AMBIENTNOISE;
+                    $type = AMBIENTNOISE;
                     $data  = $this->environment->list($type);
                     $datatables = DataTables::of($data['data'])
                         ->addIndexColumn()
@@ -64,13 +75,22 @@ class AmbientNoiseMonitoringController extends Controller
                         })
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            $btn = '<a href="' . admin_url('environment/ambient-noise/view/' . encryptId($row->id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
-                            // if (CheckUserRole(ROLE_SUPERADMIN)) {
-                           
-                            // $btn .= '<a href="javascript:void(0);"  data-id="' . encryptId($row->id) . '"  class="recordDelete" title="' . __('common.delete') . '"><i class="fa-solid fa-trash text-danger" ></i></i></a> ';
-                            // }
+
+                            $btn .= '<a href="' . admin_url('environment/ambient-noise/view/' . encryptId($row->id)) . '" class="view-icon me-1" title="' . __('common.view') . '">
+                                        <i class="fa-solid fa-eye"></i>
+                                     </a> ';
+
+                            $btn .= '<a href="' . admin_url('environment/ambient-noise/generalpdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
+                                        <i class="fas fa-file-pdf" style="color: #e67265;" aria-hidden="true"></i>
+                                     </a>';
+
+                            $btn .= '<a href="' . admin_url('environment/ambient-noise/generalExcel/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="Excel">
+                                        <i class="fas fa-file-excel" style="color: #1D6F42;" aria-hidden="true"></i>
+                                     </a>';
+
                             return $btn;
                         })
+
                         ->rawColumns(['action', 'created_at', 'created_by', 'status'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
@@ -95,11 +115,11 @@ class AmbientNoiseMonitoringController extends Controller
     {
         try {
             $locationList  = $this->location->select('id', 'location_name')->where('status', '1')->get();
-            $staticDocno  = $this->static_docno->select('id', 'doc_no','issue_date','rev_dt')->where([
+            $staticDocno  = $this->static_docno->select('id', 'doc_no', 'issue_date', 'rev_dt')->where([
                 ['type', "AmbientNoise"],
                 ['status', '1']
             ])->first();
-            
+
             $data = array(
                 'locationList' => $locationList,
                 'staticDocno' => $staticDocno,
@@ -126,9 +146,9 @@ class AmbientNoiseMonitoringController extends Controller
 
             try {
                 $env_no = $request->ambient_noise_no;
-               $type = AMBIENTNOISE;
+                $type = AMBIENTNOISE;
                 $environment =   $this->environment->store($env_no, $type);
- 
+
                 $this->ambient_noise_monitoring->store($environment->id);
 
                 Session::flash('success', __('Your data has been created successfully'));
@@ -158,9 +178,9 @@ class AmbientNoiseMonitoringController extends Controller
                 $record = $this->ambient_noise_monitoring->ExistuniqueCheck($subcategory_name, $category_id, $id);
             }
             if ($record->count()) {
-                return Response::json(false);
+                return FacadesResponse::json(false);
             }
-            return Response::json(true);
+            return FacadesResponse::json(true);
         }
     }
 
@@ -169,10 +189,10 @@ class AmbientNoiseMonitoringController extends Controller
         try {
             $id = decryptId($id);
             if (Auth::check()) {
-               $type = AMBIENTNOISE;
-                $environmentData =   $this->environment->selectOne($id,$type);
+                $type = AMBIENTNOISE;
+                $environmentData =   $this->environment->selectOne($id, $type);
                 $ambientNoiseDataList = $this->ambient_noise_monitoring->selectOne($id);
-                $staticDocno  = $this->static_docno->select('id', 'doc_no','issue_date','rev_dt')->where([
+                $staticDocno  = $this->static_docno->select('id', 'doc_no', 'issue_date', 'rev_dt')->where([
                     ['type', "AmbientNoise"],
                     ['status', '1']
                 ])->first();
@@ -191,13 +211,15 @@ class AmbientNoiseMonitoringController extends Controller
     }
 
 
+
+
     public function StatusChange(Request $request)
     {
 
         try {
             $id = decryptId($request->id);
-           $type = AMBIENTNOISE;
-            $environmentID = $this->environment->statuschange($id,$type);
+            $type = AMBIENTNOISE;
+            $environmentID = $this->environment->statuschange($id, $type);
             $this->ambient_noise_monitoring->statuschange($id);
 
             return response()->json(['status' => 'success', 'msg' => 'status changed'], 200);
@@ -210,36 +232,131 @@ class AmbientNoiseMonitoringController extends Controller
     public function ExportExcel()
     {
         try {
-           $type = AMBIENTNOISE;
+            $type = AMBIENTNOISE;
             $allData =   $this->environment->exportdata($type);
-            $header = [
-                __("common.sno"),
-                __("Ambient Noise Monitoring Id"),
-                __("common.status"),
-                __("common.created_by"),
-                __("common.created_date"),
-            ];
 
-            $i = 1;
-            foreach ($allData as $data) {
-
-                $export = [];
-                $export[] =  $i;
-                $export[] = $data->environment_no;
-                $export[] =  $data->status == 1 ? 'Active' : 'In-Active';
-                $export[] =  getusername($data->created_by);
-                $export[] =  Displaydateformat($data->created_at);
-
-                $exportData[] = $export;
-
-                $i++;
+            $spreadsheet = new Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
+            for ($i = 1; $i <= 200; $i++) {
+                $sheet->getRowDimension($i)->setRowHeight(25);
             }
 
-            $writer = SimpleExcelWriter::streamDownload('Ambient Noise Monitoring.xlsx')
-                ->addHeader($header)
-                ->addRows(
-                    $exportData
-                );
+            $row = 1;
+            $currentRow = $row;
+            foreach ($allData as $details) {
+                $currentRow = $row;
+                $environmentData =   $this->environment->selectOne($details->id, $type);
+                $ambientNoiseDataList = $this->ambient_noise_monitoring->selectOne($details->id);
+                $document_no  = $this->static_docno->select('id', 'doc_no', 'issue_date', 'rev_dt')->where([
+                    ['type', "AmbientNoise"],
+                    ['status', '1']
+                ])->first();
+
+                $logoPath = public_path('assets/images/logo-dark.png');
+                $logoLeftPath = public_path('assets/images/logo-dark.png');
+                if (file_exists($logoLeftPath)) {
+                    $sheet->mergeCells("A$currentRow:F" . ($currentRow + 2));
+
+                    $drawing = new Drawing();
+                    $drawing->setName('Left Logo');
+                    $drawing->setPath($logoLeftPath);
+                    $drawing->setCoordinates("B$currentRow");
+                    $drawing->setOffsetX(100);
+                    $drawing->setOffsetY(15);
+                    $drawing->setWidth(70);
+                    $drawing->setHeight(70);
+                    $drawing->setWorksheet($sheet);
+
+                    $range = "A$currentRow:F" . ($currentRow + 2);
+                    $sheet->getStyle($range)->applyFromArray([
+                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                    ]);
+                }
+
+                // Title Section
+                $sheet->mergeCells("G{$currentRow}:M" . ($currentRow + 2));
+                $sheet->setCellValue("G{$currentRow}", "AMBIENT NOISE MONITORING SURVEY REPORT(EXTERNAL) PN INTERNATIONAL PVT. LTD");
+                $sheet->getStyle("G{$currentRow}")->applyFromArray([
+                    'font' => ['bold' => true, 'size' => 14],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                ]);
+
+
+                // document number
+
+
+                $sheet->mergeCells("N$currentRow:P$currentRow")->setCellValue("N$currentRow", 'Doc. No.');
+                $sheet->mergeCells("N" . ($currentRow + 1) . ":P" . ($currentRow + 1))->setCellValue("N" . ($currentRow + 1), 'Issue Dt.');
+                $sheet->mergeCells("N" . ($currentRow + 2) . ":P" . ($currentRow + 2))->setCellValue("N" . ($currentRow + 2), 'Rev. & Dt.');
+
+                $sheet->mergeCells("Q$currentRow:S$currentRow")->setCellValue("Q$currentRow", $document_no->doc_no);
+                $sheet->mergeCells("Q" . ($currentRow + 1) . ":S" . ($currentRow + 1))->setCellValue("Q" . ($currentRow + 1), Displaydateformat($document_no->issue_date));
+                $sheet->mergeCells("Q" . ($currentRow + 2) . ":S" . ($currentRow + 2))->setCellValue("Q" . ($currentRow + 2), $document_no->rev_dt);
+
+                $sheet->getStyle("N$currentRow:S" . ($currentRow + 2))->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                    'font' => ['bold' => true],
+                ]);
+
+                $headerRow = $currentRow + 3;
+
+                $sheet->mergeCells("A$headerRow:B$headerRow")->setCellValue("A$headerRow", "SERIAL NO");
+                $sheet->mergeCells("C$headerRow:D$headerRow")->setCellValue("C$headerRow", "Location");
+                $sheet->mergeCells("E$headerRow:F$headerRow")->setCellValue("E$headerRow", "Unit");
+                $sheet->mergeCells("G$headerRow:H$headerRow")->setCellValue("G$headerRow", "NOISE LEVEL (dBA)");
+                $sheet->mergeCells("I$headerRow:J$headerRow")->setCellValue("I$headerRow", "Date of Monitoring");
+                $sheet->mergeCells("K$headerRow:L$headerRow")->setCellValue("K$headerRow", "Next Due Date Of Monitoring");
+                $sheet->mergeCells("M$headerRow:M$headerRow")->setCellValue("M$headerRow", "NOISE LEVEL (dBA) (Day)");
+                $sheet->mergeCells("N$headerRow:N$headerRow")->setCellValue("N$headerRow", "NOISE LEVEL (dBA) (Night)");
+                $sheet->mergeCells("O$headerRow:O$headerRow")->setCellValue("O$headerRow", "Date of Monitoring");
+                $sheet->mergeCells("P$headerRow:P$headerRow")->setCellValue("P$headerRow", "Next Due Date Of Monitoring");
+                $sheet->mergeCells("Q$headerRow:Q$headerRow")->setCellValue("Q$headerRow", "Act/Rule");
+                $sheet->mergeCells("R$headerRow:S$headerRow")->setCellValue("R$headerRow", "Remark");
+
+
+
+                $sheet->getStyle("A$headerRow:S$headerRow")->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                    'font' => ['bold' => true],
+                ]);
+
+                $inspectionRow = $headerRow + 1;
+                foreach ($ambientNoiseDataList as $index => $detail) {
+
+                    $sheet->mergeCells("A$inspectionRow:B$inspectionRow")->setCellValue("A$inspectionRow", $detail->sr_no);
+                    $sheet->mergeCells("C$inspectionRow:D$inspectionRow")->setCellValue("C$inspectionRow", getLocationname($detail->location_id));
+                    $sheet->mergeCells("E$inspectionRow:F$inspectionRow")->setCellValue("E$inspectionRow", $detail->unit_name);
+                    $sheet->mergeCells("G$inspectionRow:H$inspectionRow")->setCellValue("G$inspectionRow", $detail->noise_level_dba);
+                    $sheet->mergeCells("I$inspectionRow:J$inspectionRow")->setCellValue("I$inspectionRow", Displaydateformat($detail->date_of_monitoring));
+                    $sheet->mergeCells("K$inspectionRow:L$inspectionRow")->setCellValue("K$inspectionRow", Displaydateformat($detail->next_due_date_of_monitoring));
+                    $sheet->mergeCells("M$inspectionRow:M$inspectionRow")->setCellValue("M$inspectionRow", $detail->noise_level_dba_day);
+                    $sheet->mergeCells("N$inspectionRow:N$inspectionRow")->setCellValue("N$inspectionRow", $detail->noise_level_dba_night);
+                    $sheet->mergeCells("O$inspectionRow:O$inspectionRow")->setCellValue("O$inspectionRow", Displaydateformat($detail->date_of_monitoring_date));
+                    $sheet->mergeCells("P$inspectionRow:P$inspectionRow")->setCellValue("P$inspectionRow", Displaydateformat($detail->next_due_date_of_monitoring_date));
+                    $sheet->mergeCells("Q$inspectionRow:Q$inspectionRow")->setCellValue("Q$inspectionRow", $detail->act_rule);
+                    $sheet->mergeCells("R$inspectionRow:S$inspectionRow")->setCellValue("R$inspectionRow", $detail->remark);
+
+                    $sheet->getStyle("A$inspectionRow:S$inspectionRow")->applyFromArray([
+                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_LEFT, 'vertical' => Alignment::VERTICAL_CENTER],
+                    ]);
+
+                    $inspectionRow++;
+                }
+                $row =  $inspectionRow + 2;
+            }
+            $fileName = 'ambientNoise.xlsx';
+            $writer = new Xlsx($spreadsheet);
+
+            return response()->streamDownload(function () use ($writer) {
+                $writer->save('php://output');
+            }, $fileName, [
+                'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            ]);
         } catch (Exception $ex) {
             report($ex);
         }
@@ -248,24 +365,32 @@ class AmbientNoiseMonitoringController extends Controller
     public function ExportPDF()
     {
         try {
-
             ini_set("pcre.backtrack_limit", "5000000");
-           $type = AMBIENTNOISE;
-            $allData =   $this->environment->exportdata($type);
+            $type = AMBIENTNOISE;
+            $allData = $this->environment->exportdata($type);
 
-            $header = [
-                __("common.sno"),
-                __("Ambient Noise Monitoring Id"),
-                __("common.status"),
-                __("common.created_by"),
-                __("common.created_date"),
-            ];
+            $exportedData = [];
 
-            $data = array(
-                'header' => $header,
-                'content' => $allData,
+            foreach ($allData as $details) {
+                $environmentData = $this->environment->selectOne($details->id, $type);
+                $ambientNoiseDataList = $this->ambient_noise_monitoring->selectOne($details->id);
+                $document_no = $this->static_docno->select('id', 'doc_no', 'issue_date', 'rev_dt')
+                    ->where([
+                        ['type', "AmbientNoise"],
+                        ['status', '1']
+                    ])->first();
+
+                $exportedData[] = [
+                    'environmentData' => $environmentData,
+                    'ambientNoiseDataList' => $ambientNoiseDataList,
+                    'document_no' => $document_no,
+                ];
+            }
+
+            $data = [
+                'exportedData' => $exportedData,
                 'pagetitle' => "Ambient Noise Monitoring",
-            );
+            ];
 
             $property = [
                 'tempDir' => 'public/pdf/temp/',
@@ -273,7 +398,6 @@ class AmbientNoiseMonitoringController extends Controller
                 'margin_left' => 10,
                 'margin_right' => 10,
                 'margin_top' => 10,
-
             ];
 
             $mpdf = new \Mpdf\Mpdf($property);
@@ -282,16 +406,186 @@ class AmbientNoiseMonitoringController extends Controller
             $view = view('inspection.environment.ambientNoiseMonitoring.pdf', $data);
             $html = $view->render();
 
-
-
-            $mpdf->WriteHTML($html);
-
             $filename = "Ambient Noise Monitoring Details.pdf";
+            $mpdf->WriteHTML($html);
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             dd($ex);
         }
     }
 
+    public function generalpdf(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
 
+            if (Auth::check()) {
+                $type = AMBIENTNOISE;
+                $environmentData =   $this->environment->selectOne($id, $type);
+                $ambientNoiseDataList = $this->ambient_noise_monitoring->selectOne($id);
+                $document_no  = $this->static_docno->select('id', 'doc_no', 'issue_date', 'rev_dt')->where([
+                    ['type', "AmbientNoise"],
+                    ['status', '1']
+                ])->first();
+
+                $property = [
+                    'tempDir' => 'public/pdf/temp/',
+                    'mode' => 'c',
+                    'margin_left' => 10,
+                    'margin_right' => 10,
+                    'margin_top' => 10,
+
+                ];
+                $data = [
+                    'environmentData' => $environmentData,
+                    'ambientNoiseDataList' => $ambientNoiseDataList,
+                    'document_no' => $document_no,
+                ];
+                // dd( $data);
+                $mpdf = new \Mpdf\Mpdf($property);
+                $mpdf->setAutoTopMargin = 'stretch';
+
+                $html = view('inspection.environment.ambientNoiseMonitoring.viewpdf', $data)->render();
+                $mpdf->WriteHTML($html);
+
+                $filename = "ambientAirMonitoring.pdf";
+                return $mpdf->Output($filename, 'I');
+            }
+        } catch (Exception $ex) {
+            dd($ex);
+            return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
+        }
+    }
+
+    public function generalExcel(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+
+            if (Auth::check()) {
+                $spreadsheet = new Spreadsheet();
+                $sheet = $spreadsheet->getActiveSheet();
+                $type = AMBIENTNOISE;
+                $environmentData =   $this->environment->selectOne($id, $type);
+                $ambientNoiseDataList = $this->ambient_noise_monitoring->selectOne($id);
+                $document_no  = $this->static_docno->select('id', 'doc_no', 'issue_date', 'rev_dt')->where([
+                    ['type', "AmbientNoise"],
+                    ['status', '1']
+                ])->first();
+
+                for ($i = 1; $i <= 200; $i++) {
+                    $sheet->getRowDimension($i)->setRowHeight(25);
+                }
+
+                $row = 1;
+                $currentRow = $row;
+                $logoPath = public_path('assets/images/logo-dark.png');
+                $logoLeftPath = public_path('assets/images/logo-dark.png');
+                if (file_exists($logoLeftPath)) {
+                    $sheet->mergeCells("A$currentRow:F" . ($currentRow + 2));
+
+                    $drawing = new Drawing();
+                    $drawing->setName('Left Logo');
+                    $drawing->setPath($logoLeftPath);
+                    $drawing->setCoordinates("B$currentRow");
+                    $drawing->setOffsetX(100);
+                    $drawing->setOffsetY(15);
+                    $drawing->setWidth(70);
+                    $drawing->setHeight(70);
+                    $drawing->setWorksheet($sheet);
+
+                    $range = "A$currentRow:F" . ($currentRow + 2);
+                    $sheet->getStyle($range)->applyFromArray([
+                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                    ]);
+                }
+
+                // Title Section
+                $sheet->mergeCells("G{$currentRow}:M" . ($currentRow + 2));
+                $sheet->setCellValue("G{$currentRow}", "AMBIENT NOISE MONITORING SURVEY REPORT(EXTERNAL) PN INTERNATIONAL PVT. LTD");
+                $sheet->getStyle("G{$currentRow}")->applyFromArray([
+                    'font' => ['bold' => true, 'size' => 14],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                ]);
+
+
+                // document number
+
+
+                $sheet->mergeCells("N$currentRow:P$currentRow")->setCellValue("N$currentRow", 'Doc. No.');
+                $sheet->mergeCells("N" . ($currentRow + 1) . ":P" . ($currentRow + 1))->setCellValue("N" . ($currentRow + 1), 'Issue Dt.');
+                $sheet->mergeCells("N" . ($currentRow + 2) . ":P" . ($currentRow + 2))->setCellValue("N" . ($currentRow + 2), 'Rev. & Dt.');
+
+                $sheet->mergeCells("Q$currentRow:S$currentRow")->setCellValue("Q$currentRow", $document_no->doc_no);
+                $sheet->mergeCells("Q" . ($currentRow + 1) . ":S" . ($currentRow + 1))->setCellValue("Q" . ($currentRow + 1), Displaydateformat($document_no->issue_date));
+                $sheet->mergeCells("Q" . ($currentRow + 2) . ":S" . ($currentRow + 2))->setCellValue("Q" . ($currentRow + 2), $document_no->rev_dt);
+
+                $sheet->getStyle("N$currentRow:S" . ($currentRow + 2))->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                    'font' => ['bold' => true],
+                ]);
+
+                $headerRow = $currentRow + 3;
+
+                $sheet->mergeCells("A$headerRow:B$headerRow")->setCellValue("A$headerRow", "SERIAL NO");
+                $sheet->mergeCells("C$headerRow:D$headerRow")->setCellValue("C$headerRow", "Location");
+                $sheet->mergeCells("E$headerRow:F$headerRow")->setCellValue("E$headerRow", "Unit");
+                $sheet->mergeCells("G$headerRow:H$headerRow")->setCellValue("G$headerRow", "NOISE LEVEL (dBA)");
+                $sheet->mergeCells("I$headerRow:J$headerRow")->setCellValue("I$headerRow", "Date of Monitoring");
+                $sheet->mergeCells("K$headerRow:L$headerRow")->setCellValue("K$headerRow", "Next Due Date Of Monitoring");
+                $sheet->mergeCells("M$headerRow:M$headerRow")->setCellValue("M$headerRow", "NOISE LEVEL (dBA) (Day)");
+                $sheet->mergeCells("N$headerRow:N$headerRow")->setCellValue("N$headerRow", "NOISE LEVEL (dBA) (Night)");
+                $sheet->mergeCells("O$headerRow:O$headerRow")->setCellValue("O$headerRow", "Date of Monitoring");
+                $sheet->mergeCells("P$headerRow:P$headerRow")->setCellValue("P$headerRow", "Next Due Date Of Monitoring");
+                $sheet->mergeCells("Q$headerRow:Q$headerRow")->setCellValue("Q$headerRow", "Act/Rule");
+                $sheet->mergeCells("R$headerRow:S$headerRow")->setCellValue("R$headerRow", "Remark");
+
+
+
+                $sheet->getStyle("A$headerRow:S$headerRow")->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                    'font' => ['bold' => true],
+                ]);
+
+                $inspectionRow = $headerRow + 1;
+                foreach ($ambientNoiseDataList as $index => $detail) {
+
+                    $sheet->mergeCells("A$inspectionRow:B$inspectionRow")->setCellValue("A$inspectionRow", $detail->sr_no);
+                    $sheet->mergeCells("C$inspectionRow:D$inspectionRow")->setCellValue("C$inspectionRow", getLocationname($detail->location_id));
+                    $sheet->mergeCells("E$inspectionRow:F$inspectionRow")->setCellValue("E$inspectionRow", $detail->unit_name);
+                    $sheet->mergeCells("G$inspectionRow:H$inspectionRow")->setCellValue("G$inspectionRow", $detail->noise_level_dba);
+                    $sheet->mergeCells("I$inspectionRow:J$inspectionRow")->setCellValue("I$inspectionRow", Displaydateformat($detail->date_of_monitoring));
+                    $sheet->mergeCells("K$inspectionRow:L$inspectionRow")->setCellValue("K$inspectionRow", Displaydateformat($detail->next_due_date_of_monitoring));
+                    $sheet->mergeCells("M$inspectionRow:M$inspectionRow")->setCellValue("M$inspectionRow", $detail->noise_level_dba_day);
+                    $sheet->mergeCells("N$inspectionRow:N$inspectionRow")->setCellValue("N$inspectionRow", $detail->noise_level_dba_night);
+                    $sheet->mergeCells("O$inspectionRow:O$inspectionRow")->setCellValue("O$inspectionRow", Displaydateformat($detail->date_of_monitoring_date));
+                    $sheet->mergeCells("P$inspectionRow:P$inspectionRow")->setCellValue("P$inspectionRow", Displaydateformat($detail->next_due_date_of_monitoring_date));
+                    $sheet->mergeCells("Q$inspectionRow:Q$inspectionRow")->setCellValue("Q$inspectionRow", $detail->act_rule);
+                    $sheet->mergeCells("R$inspectionRow:S$inspectionRow")->setCellValue("R$inspectionRow", $detail->remark);
+
+                    $sheet->getStyle("A$inspectionRow:S$inspectionRow")->applyFromArray([
+                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_LEFT, 'vertical' => Alignment::VERTICAL_CENTER],
+                    ]);
+
+                    $inspectionRow++;
+                }
+            }
+            $fileName = 'ambientNoise.xlsx';
+            $writer = new Xlsx($spreadsheet);
+
+            return response()->streamDownload(function () use ($writer) {
+                $writer->save('php://output');
+            }, $fileName, [
+                'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            ]);
+        } catch (Exception $ex) {
+            dd($ex);
+            return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
+        }
+    }
 }
