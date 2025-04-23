@@ -126,7 +126,23 @@ class FireCheckListFollowUp extends Model
 
         return $this->create($data);
     }
+    public function statuschange($id)
+    {
+        $request = request();
 
+        $type = $request->types;
+        if ($type == 1) {
+            $update_data = array(
+                'status' => 0,
+            );
+        } else {
+            $update_data = array(
+                'status' => 1,
+            );
+        }
+
+        return $this->where('id', $id)->update($update_data);
+    }
 
     public function selectOne($id, $observationid)
     {
@@ -143,7 +159,9 @@ class FireCheckListFollowUp extends Model
             ->where('inspection_fire_checklist_follow.status', 1)
             ->where('inspection_fire_checklist_follow.id', $id)
             ->where('inspection_fire_observation.id', $observationid)->first();
+
         return $data;
+
     }
 
 
@@ -151,7 +169,20 @@ class FireCheckListFollowUp extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_fire_checklist_follow.*');
+        $query = $this->select(
+            'inspection_fire_checklist_follow.*',
+            'inspection_fire_observation.*',
+            'inspection_fire_checklist_follow.id as inspectionid',
+            'inspection_fire_observation.id as observationid'
+        )
+        ->leftJoin(
+            'inspection_fire_observation',
+            'inspection_fire_observation.inspection_id',
+            '=',
+            'inspection_fire_checklist_follow.id'
+        )
+        ->where('inspection_fire_checklist_follow.trash', 'NO')
+        ->orderBy('inspection_fire_checklist_follow.id', 'desc');
         if (isset($request->search) && isset($request->search['value']) && $request->search['value'] != '') {
             $search = $request->search['value'];
             $query = $query->where(function ($query) use ($search) {
@@ -174,7 +205,7 @@ class FireCheckListFollowUp extends Model
         if (isset($request->inspection_status) && $request->inspection_status) {
             $query = $query->where('inspection_fire_checklist_follow.inspection_status', decryptId($request->inspection_status));
         }
-        $query->orderBy('id', 'DESC');
+        $query->orderBy('inspection_fire_checklist_follow.id', 'DESC'); 
 
         return  $query->get();
     }

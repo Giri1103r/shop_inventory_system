@@ -550,7 +550,7 @@ Route::group(['prefix' => 'fire/'], function () {
         Route::POST('level-one/verify/submit', [EmergencyLightInspectionController::class, 'levelOneManagerSubmit']);
         Route::POST('level-two/verify/submit', [EmergencyLightInspectionController::class, 'levelTwoManagerSubmit']);
         Route::GET('exportViewPdf/{id}', [EmergencyLightInspectionController::class, 'ExportViewPDF']);
-        Route::GET('exportViewExcel/{id}', [EmergencyLightInspectionController::class, 'ExportExcel']);
+        Route::GET('exportViewExcel/{id}', [EmergencyLightInspectionController::class, 'generalExcel']);
         Route::GET('export/excel', [EmergencyLightInspectionController::class, 'ExportExcel']);
         Route::GET('export/pdf', [EmergencyLightInspectionController::class, 'ExportPDF']);
         Route::GET('get/department', [EmergencyLightInspectionController::class, 'GetDepartment']);
@@ -752,6 +752,8 @@ Route::group(['prefix' => 'fire/'], function () {
         Route::get('edit/{id}', [FirePreNocController::class, 'edit']);
         Route::post('edit/submit', [FirePreNocController::class, 'update']);
         Route::get('view/{id}', [FirePreNocController::class, 'view']);
+        Route::get('generalpdf/{id}', [FirePreNocController::class, 'generalpdf']);
+        Route::get('generalExcel/{id}', [FirePreNocController::class, 'generalExcel']);
         Route::post('delete', [FirePreNocController::class, 'delete']);
         Route::get('export/excel', [FirePreNocController::class, 'exportExcel']);
         Route::get('export/pdf', [FirePreNocController::class, 'exportPdf']);
@@ -846,6 +848,8 @@ Route::group(['prefix' => 'fire/'], function () {
         Route::get('edit/{id}', [ChecklistObservationFollowupController::class, 'edit']);
         Route::post('edit/submit', [ChecklistObservationFollowupController::class, 'update']);
         Route::get('view/{id}/{observationid}', [ChecklistObservationFollowupController::class, 'view']);
+        Route::get('generalpdf/{id}/{observationid}', [ChecklistObservationFollowupController::class, 'generalpdf']);
+        Route::get('generalExcel/{id}/{observationid}', [ChecklistObservationFollowupController::class, 'generalExcel']);
         Route::post('delete', [ChecklistObservationFollowupController::class, 'delete']);
         Route::GET('verification/{id}/{observationid}', [ChecklistObservationFollowupController::class, 'approvals']);
         Route::POST('ehsofficer/verify/submit', [ChecklistObservationFollowupController::class, 'EHSOfficerSubmit']);

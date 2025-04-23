@@ -77,7 +77,7 @@
                                                         value="">
                                                 </div>
                                             </div>
-                                            
+
                                         </div>
 
                                         <div class="row mt-4">
@@ -262,7 +262,7 @@
                                 <input type="text" name="obs[${form_set_count}][serial_number]" class="form-control" placeholder="Serial Number" value="${newSerialNumber}" readonly>
                             </div>
                         </div>
-                       
+
                             <div class="col-md-4">
                                 <div class="form-group form-input">
                                     <label class="form-label require">Unit Name</label>

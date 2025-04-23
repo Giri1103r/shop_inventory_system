@@ -147,12 +147,12 @@
                             data: 'issuedate',
                             name: 'issuedate'
                         },
-                       
+
                         {
                             data: 'rev_date',
                             name: 'rev_date'
                         },
-                       
+
                         {
                             data: 'status',
                             name: 'status'
@@ -192,7 +192,7 @@
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('audit/assessment/export/pdf') }}" +
+                                            "{{ admin_url('fire/pre-noc/checklist/export/pdf') }}" +
                                             '?search=' + searchValue +
                                             '&checklist=' + checklist +
                                             '&status=' + status
@@ -208,7 +208,7 @@
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('audit/assessment/export/excel') }}" +
+                                            "{{ admin_url('fire/pre-noc/checklist/export/excel') }}" +
                                             '?search=' + searchValue +
                                             '&checklist=' + checklist +
                                             '&status=' + status
@@ -340,7 +340,7 @@
 
                         if (result.value) {
                             $.ajax({
-                                url: "{{ admin_url('audit/assessment/delete') }}",
+                                url: "{{ admin_url('fire/pre-noc/checklist/delete') }}",
                                 type: 'post',
                                 headers: {
                                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]')

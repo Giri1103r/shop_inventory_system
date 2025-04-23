@@ -972,7 +972,7 @@ $row =   $signatureStartRow +8;
 
             $sheet->mergeCells("A" . ($currentRow + 4) . ":G" . ($currentRow + 4));
             $richText1 = new RichText();
-            $richText1->createTextRun(' DATE OF INSPECTION:- ')->getFont()->setBold(true);
+            $richText1->createTextRun(' DEPARTMENT:- ')->getFont()->setBold(true);
             $richText1->createText(getDepartment($medicinerequisition->department));
             $sheet->getCell("A" . ($currentRow + 4))->setValue($richText1);
 
