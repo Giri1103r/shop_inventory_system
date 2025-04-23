@@ -148,6 +148,7 @@ class ChecklistSubTypeDataController extends Controller
             return Response::json(true);
         }
     }
+    
     public function View($id)
     {
         try {
