@@ -181,7 +181,7 @@
                                 <tr id="RowchecklistView${checklistIndex}">
                         <td>
                             <div class="form-group form-input">
-                                <input type="text" name="checklist[${checklistIndex}][name]" id="sub_type_data_name_${checklistIndex}" class="form-control">
+                                <input type="text" name="checklist[${checklistIndex}][name]" id="sub_type_data_name_${checklistIndex}" class="form-control data_name">
                             </div>
                         </td>
                         <td>
@@ -233,33 +233,50 @@
 
 
             function addchecklistValidation(checklistIndex) {
-                $(`input[name="checklist[${checklistIndex}][name]"]`).rules("add", {
+
+                let dataName = $(`#sub_type_data_name_${checklistIndex}`);
+
+                dataName.rules('add', {
                     required: true,
                     minlength: 3,
                     maxlength: 200,
                     pattern: /^[a-zA-Z0-9\s\-_'"()?\/&%]+$/,
+                    remote: {
+                        url: '{{ admin_url('inspection/master/checklist-sub-type-data/unique') }}',
+                        type: 'post',
+                        data: {
+                            checklist_type_id: function () {
+                                return $('#checklist_type_id').val();
+                            },
+                            checklist_sub_type_id: function () {
+                                return $('#checklist_sub_type_id').val();
+                            },
+                            subcategory_name: function () {
+                                return dataName.val(); 
+                            }
+                        }
+                    },
                     messages: {
                         required: "Checklist Sub-Type Data Name is Required",
                         minlength: "{{ __('common.validate_min_length') }}",
-                        maxlength: "Maximum Characters should not exceed 100",
+                        maxlength: "Maximum Characters should not exceed 200",
                         pattern: "Only alphanumeric characters and -, _, ', \", (), ? are allowed",
+                        remote: "Checklist Sub-Type Data Name should be unique"
                     }
                 });
 
                 $(`textarea[name="checklist[${checklistIndex}][description]"]`).rules("add", {
                     required: true,
                     minlength: 3,
-                    maxlength: 200,
+                    maxlength: 500,
                     pattern: /^[a-zA-Z0-9\s\-_'"()?\/&%]+$/,
                     messages: {
                         required: "Checklist Sub-Type Data Description is Required",
                         minlength: "{{ __('common.validate_min_length') }}",
-                        maxlength: "Maximum Characters should not exceed 100",
+                        maxlength: "Maximum Characters should not exceed 500",
                         pattern: "Only alphanumeric characters and -, _, ', \", (), ? are allowed",
                     }
                 });
-
-
 
             }
             $(function() {
@@ -303,7 +320,7 @@
                         'checklist[0][description]': {
                             required: true,
                             minlength: 3,
-                            maxlength: 200,
+                            maxlength: 500,
                             pattern: /^[a-zA-Z0-9\s\-_'"()?\/&%]+$/,
                             
                         },
@@ -319,16 +336,15 @@
                         'checklist[0][name]': {
                             required: "Checklist Sub-Type Data Name is Required",
                             minlength: "{{ __('common.validate_min_length') }}",
-                            maxlength: "Maximum Characters should not exceed 100",
+                            maxlength: "Maximum Characters should not exceed 200",
                             pattern: "Only alphanumeric characters and -, _, ', \", () are allowed",
-                            // remote: "Checklist Sub-Type Data Name should be unique"
+                            remote: "Checklist Sub-Type Data Name should be unique"
                         },
                         'checklist[0][description]': {
                             required: "Checklist Sub-Type Data Description  is Required",
                             minlength: "{{ __('common.validate_min_length') }}",
-                            maxlength: "Maximum Characters should not exceed 100",
+                            maxlength: "Maximum Characters should not exceed 500",
                             pattern: "Only alphanumeric characters and -, _, ', \", () are allowed",
-                            // remote: "Checklist Sub-Type Data Name should be unique"
                         },
 
                     },
