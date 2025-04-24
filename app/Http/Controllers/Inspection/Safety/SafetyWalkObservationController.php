@@ -403,7 +403,7 @@ class SafetyWalkObservationController extends Controller
                 $last_month_observation_details = $this->observation_details->GetLastMonthDetails($last_month_inspection);
                 $document_no = $this->document_reference->selectOne($inspection_details->document_reference_id);
                 $prepared_by_signature = GetSafetySignature($inspection_details->created_by, $inspection_details->safety_id, SAFETY_WALK_OBSERVATION);
-                $verified_by_signature = GetSafetySignature($inspection_details->updated_by, $inspection_details->safety_id, SAFETY_WALK_OBSERVATION);
+                $verified_by_signature = GetSafetySignature($inspection_details->verified_by, $inspection_details->safety_id, SAFETY_WALK_OBSERVATION);
 
                 foreach (range('A', 'J') as $col) {
                     $sheet->getColumnDimension($col)->setAutoSize(true);
@@ -493,9 +493,12 @@ class SafetyWalkObservationController extends Controller
                     $sheet->mergeCells("A{$row}:J{$row}")->setCellValue("A{$row}", 'Previous Month Observations');
                     $sheet->getStyle("A{$row}:J{$row}")->applyFromArray([
                         'font' => ['bold' => true],
-                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
+                        // 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
+                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                         'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                     ]);
+                    $sheet->getRowDimension($row)->setRowHeight(30);
+
                     $row++;
 
                     $sr = 1;
@@ -511,9 +514,13 @@ class SafetyWalkObservationController extends Controller
                                 $drawing->setPath($imagePath);
                                 $drawing->setCoordinates("E{$row}");
                                 $drawing->setHeight(60);
+                                $drawing->setOffsetX(5);
                                 $drawing->setWidth(80);
+                                $drawing->setOffsetY(20);
                                 $drawing->setWorksheet($sheet);
                                 $sheet->getRowDimension($row)->setRowHeight(90);
+                                $sheet->getColumnDimension('E')->setWidth(20);
+                                // $sheet->getRowDimension($row)->setRowHeight(90);
                             } else {
                                 $sheet->setCellValue("E{$row}", 'No Image');
                             }
@@ -522,9 +529,12 @@ class SafetyWalkObservationController extends Controller
                             $sheet->setCellValue("H{$row}", $observation->date_of_compliance);
                             $sheet->setCellValue("I{$row}", $observation->observation_status == 1 ? 'Active' : ($observation->observation_status == 0 ? 'Inactive' : 'Unknown'));
                             $sheet->setCellValue("J{$row}", $observation->remarks);
+
                             $sheet->getStyle("A{$row}:J{$row}")->applyFromArray([
+                                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                             ]);
+
                             $row++;
                             $sr++;
                         }
@@ -535,9 +545,12 @@ class SafetyWalkObservationController extends Controller
                     $sheet->mergeCells("A{$row}:J{$row}")->setCellValue("A{$row}", 'Current Month Observations');
                     $sheet->getStyle("A{$row}:J{$row}")->applyFromArray([
                         'font' => ['bold' => true],
-                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
+                        // 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
+                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                         'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                     ]);
+                    $sheet->getRowDimension($row)->setRowHeight(30);
+
                     $row++;
 
                     $sr = 1;
@@ -552,9 +565,13 @@ class SafetyWalkObservationController extends Controller
                             $drawing->setPath($imagePath);
                             $drawing->setCoordinates("E{$row}");
                             $drawing->setHeight(60);
+                            $drawing->setOffsetX(5);
                             $drawing->setWidth(80);
+                            $drawing->setOffsetY(20);
                             $drawing->setWorksheet($sheet);
                             $sheet->getRowDimension($row)->setRowHeight(90);
+                            $sheet->getColumnDimension('E')->setWidth(20);
+                            // $sheet->getRowDimension($row)->setRowHeight(90);
                         } else {
                             $sheet->setCellValue("E{$row}", 'No Image');
                         }
@@ -565,6 +582,7 @@ class SafetyWalkObservationController extends Controller
                         $sheet->setCellValue("J{$row}", $observation->remarks);
                         $sheet->getStyle("A{$row}:J{$row}")->applyFromArray([
                             'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                            'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                         ]);
                         $row++;
                         $sr++;
@@ -716,7 +734,7 @@ class SafetyWalkObservationController extends Controller
             $last_month_observation_details = $this->observation_details->GetLastMonthDetails($last_month_inspection);
             $document_no = $this->document_reference->selectOne($inspection_details->document_reference_id);
             $prepared_by_signature = GetSafetySignature($inspection_details->created_by,$inspection_details->id,SAFETY_WALK_OBSERVATION,);
-            $verified_by_signature = GetSafetySignature($inspection_details->updated_by,$inspection_details->id,SAFETY_WALK_OBSERVATION,);
+            $verified_by_signature = GetSafetySignature($inspection_details->verified_by,$inspection_details->id,SAFETY_WALK_OBSERVATION,);
 
             $spreadsheet = new Spreadsheet();
             $sheet = $spreadsheet->getActiveSheet();
@@ -863,6 +881,7 @@ class SafetyWalkObservationController extends Controller
 
                         $sheet->getStyle("A{$row}:J{$row}")->applyFromArray([
                             'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                            'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                         ]);
                         $row++;
                     }
@@ -897,7 +916,7 @@ class SafetyWalkObservationController extends Controller
                         $drawing->setOffsetX(5);
                         $drawing->setOffsetY(5);
                         $sheet->getRowDimension($row)->setRowHeight(90);
-                            $sheet->getColumnDimension('E')->setWidth(20);
+                        $sheet->getColumnDimension('E')->setWidth(20);
                         $drawing->setWorksheet($sheet);
                     } else {
                         $sheet->setCellValue("E{$row}", 'No Image');
@@ -911,6 +930,7 @@ class SafetyWalkObservationController extends Controller
 
                     $sheet->getStyle("A{$row}:J{$row}")->applyFromArray([
                         'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                     ]);
                     $row++;
                 }
@@ -937,7 +957,7 @@ class SafetyWalkObservationController extends Controller
                 $drawing->setDescription('Prepared By');
                 $drawing->setPath($prepared_by_signature);
                 $drawing->setCoordinates("C{$signatureRowStart}");
-                $drawing->setOffsetX(100);
+                $drawing->setOffsetX(50);
                 $drawing->setOffsetY(5);
                 $drawing->setHeight(60);
                 $drawing->setWorksheet($sheet);
@@ -977,7 +997,7 @@ class SafetyWalkObservationController extends Controller
 
             // Output
             $writer = new Xlsx($spreadsheet);
-            $fileName = 'Safety_Walk_Observation_Sheet.xlsx';
+            $fileName = 'Safety Walk Observation Sheet.xlsx';
 
             header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
             header("Content-Disposition: attachment; filename=\"{$fileName}\"");
