@@ -20,6 +20,15 @@ use App\Models\Inspection\Safety\SignatureUpload;
 use App\Models\Inspection\Safety\SafetyWalkObservation;
 use App\Models\Inspection\Safety\SafetyWalkObservationDetails;
 
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Border;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
+use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
+use PhpOffice\PhpSpreadsheet\RichText\RichText;
+
 class SafetyWalkObservationController extends Controller
 {
     private $safety_walk;
@@ -71,8 +80,11 @@ class SafetyWalkObservationController extends Controller
                             $btn = '';
                             $btn = '<a href="' . admin_url('safety/safety-walk-observation/view/' . encryptId($row->inspection_id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
                             $btn .= '<a href="' . admin_url('safety/safety-walk-observation/exportViewPdf/' . encryptId($row->inspection_id)) . '" style="margin-right: 5px;" title="PDF">
-                        <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
-                    </a>';
+                                        <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
+                                    </a>';
+                            $btn .= '<a href="' . admin_url('safety/safety-walk-observation/generalExcel/' . encryptId($row->inspection_id)) . '" style="margin-right: 5px;" title="EXCEL">
+                                        <i class="fas fa-file-excel" style="color: #1D6F42;" aria-hidden="true"></i>
+                                    </a>';
 
                             if ($row->observation_status == OBSERVATION_PENDING && (isAdmin())) {
                                 $btn .= '<a href="' . admin_url('safety/safety-walk-observation/approval/' . encryptId($row->inspection_id)) . '" class="" title="' . __('inspection.approval') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
@@ -98,7 +110,6 @@ class SafetyWalkObservationController extends Controller
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
-                    dd($ex);
                     report($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
@@ -256,7 +267,6 @@ class SafetyWalkObservationController extends Controller
             Session::flash('success', 'Safety Walk Observation added successfully!');
             return redirect(admin_url('safety/safety-walk-observation/list'));
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('safety/safety-walk-observation/list'));
@@ -299,7 +309,6 @@ class SafetyWalkObservationController extends Controller
                 'inspection' => $inspection,
                 'inspection_details' => $inspection_details,
                 'document_no' => $document_no,
-
             );
 
             return view('inspection.Safety.safety_walk_observation.approval', $data);
@@ -409,50 +418,7 @@ class SafetyWalkObservationController extends Controller
         }
     }
 
-    public function exportViewPdf(Request $request)
-    {
-        try {
-            $id = decryptId($request->id);
-            if (Auth::check()) {
-                $inspection_details = $this->safety_walk->selectOne($id);
-                $current_month_inspection = $this->observation_details->GetDetails($inspection_details->id);
-                $last_month_inspection = $this->safety_walk->GetLastMonthObservation($id);
-                $last_month_observation_details = $this->observation_details->GetLastMonthDetails($last_month_inspection);
-                $document_no = $this->document_reference->selectOne($inspection_details->document_reference_id);
 
-
-                $data = [
-                    'inspection_details' => $inspection_details,
-                    'inspection' => $current_month_inspection,
-                    'last_month_observation_details' => $last_month_observation_details,
-                    'pagetitle' => "Safety Walk Observation",
-                    'document_no' => $document_no,
-                ];
-            }
-            $property = [
-                'tempDir' => 'public/pdf/temp/',
-                'mode' => 'c',
-                'margin_left' => 10,
-                'margin_right' => 10,
-                'margin_top' => 10,
-
-            ];
-
-            $mpdf = new \Mpdf\Mpdf($property);
-            $mpdf->setAutoTopMargin = 'stretch';
-
-            $html = view('inspection.Safety.safety_walk_observation.viewPdf', $data);
-            $view = $html->render();
-            $mpdf->WriteHTML($view);
-
-            $filename = "Safety Walk Observation.pdf";
-            return $mpdf->Output($filename, 'D');
-        } catch (Exception $ex) {
-            report($ex);
-            Session::flash('error', 'Something went wrong!');
-            return redirect(admin_url('safety/safety-walk-observation/list'));
-        }
-    }
 
     public function approvalSubmit(Request $request)
     {
@@ -509,10 +475,252 @@ class SafetyWalkObservationController extends Controller
             Session::flash('success', __('common.updated_msg'));
             return redirect(admin_url('safety/safety-walk-observation/list'));
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
             Session::flash('error', 'Something Went wrong!');
             return redirect(admin_url('safety/safety-walk-observation/list'));
         }
     }
+    public function exportViewPdf(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+            if (Auth::check()) {
+                $inspection_details = $this->safety_walk->selectOne($id);
+                $current_month_inspection = $this->observation_details->GetDetails($inspection_details->id);
+                $last_month_inspection = $this->safety_walk->GetLastMonthObservation($id);
+                $last_month_observation_details = $this->observation_details->GetLastMonthDetails($last_month_inspection);
+                $document_no = $this->document_reference->selectOne($inspection_details->document_reference_id);
+
+                $data = [
+                    'inspection_details' => $inspection_details,
+                    'inspection' => $current_month_inspection,
+                    'last_month_observation_details' => $last_month_observation_details,
+                    'pagetitle' => "Safety Walk Observation",
+                    'document_no' => $document_no,
+                ];
+            }
+            $property = [
+                'tempDir' => 'public/pdf/temp/',
+                'mode' => 'c',
+                'margin_left' => 10,
+                'margin_right' => 10,
+                'margin_top' => 10,
+
+            ];
+
+            $mpdf = new \Mpdf\Mpdf($property);
+            $mpdf->setAutoTopMargin = 'stretch';
+
+            $html = view('inspection.Safety.safety_walk_observation.viewPdf', $data);
+            $view = $html->render();
+            $mpdf->WriteHTML($view);
+
+            $filename = "Safety Walk Observation.pdf";
+            return $mpdf->Output($filename, 'D');
+        } catch (Exception $ex) {
+            report($ex);
+            Session::flash('error', 'Something went wrong!');
+            return redirect(admin_url('safety/safety-walk-observation/list'));
+        }
+    }
+
+    public function generalExcel(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+            $inspection_details = $this->safety_walk->selectOne($id);
+            $current_month_inspection = $this->observation_details->GetDetails($inspection_details->id);
+            $last_month_inspection = $this->safety_walk->GetLastMonthObservation($id);
+            $last_month_observation_details = $this->observation_details->GetLastMonthDetails($last_month_inspection);
+            $document_no = $this->document_reference->selectOne($inspection_details->document_reference_id);
+
+            $spreadsheet = new Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
+
+            // Set column widths
+            foreach (range('A', 'J') as $col) {
+                $sheet->getColumnDimension($col)->setAutoSize(true);
+            }
+
+            $row = 1;
+
+            // Left Logo
+            $logoPath = public_path('assets/images/logo-dark.png');
+            if (file_exists($logoPath)) {
+                $drawing = new Drawing();
+                $drawing->setName('Logo');
+                $drawing->setDescription('Company Logo');
+                $drawing->setPath($logoPath);
+                $drawing->setCoordinates('A1');
+                $drawing->setOffsetX(5);
+                $drawing->setOffsetY(5);
+                $drawing->setHeight(60);
+                $drawing->setWorksheet($sheet);
+            }
+            $sheet->mergeCells('A1:B3');
+            $sheet->getStyle('A1:B3')->applyFromArray([
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                'borders' => ['outline' => ['borderStyle' => Border::BORDER_THIN]],
+            ]);
+
+            // Title
+            $sheet->mergeCells('C1:F3');
+            $sheet->setCellValue('C1', "Safety Walk Observation Sheet\nPN International Pvt Ltd");
+            $sheet->getStyle('C1:F3')->applyFromArray([
+                'font' => ['bold' => true, 'size' => 14],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+            ]);
+
+            // Right Logo
+            $rightlogoPath = public_path('assets/images/safety_walk_logo.jpg');
+            if (file_exists($rightlogoPath)) {
+                $drawing = new Drawing();
+                $drawing->setName('Safety Walk Logo');
+                $drawing->setDescription('Safety Walk Logo');
+                $drawing->setPath($rightlogoPath);
+                $drawing->setCoordinates('H1');
+                $drawing->setOffsetX(5);
+                $drawing->setOffsetY(5);
+                $drawing->setHeight(50);
+                $drawing->setWorksheet($sheet);
+            }
+            $sheet->mergeCells('G1:H3');
+            $sheet->getStyle('F1:H3')->applyFromArray([
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                'borders' => ['outline' => ['borderStyle' => Border::BORDER_THIN]],
+            ]);
+
+            // Document Info
+            $sheet->setCellValue('I1', 'Document No.');
+            $sheet->setCellValue('I2', 'Issue Date');
+            $sheet->setCellValue('I3', 'Rev . No');
+            $sheet->setCellValue('J1', $document_no->doc_no ?? '');
+            $sheet->setCellValue('J2', $document_no->issue_date ?? '');
+            $sheet->setCellValue('J3', $document_no->rev_dt ?? '');
+            $sheet->getStyle('I1:J3')->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+            ]);
+
+            // Row 4
+            $sheet->mergeCells('A4:D4')->setCellValue('A4', "Date of Inspection: " . Displaydateformat($inspection_details->date));
+            $sheet->mergeCells('E4:F4')->setCellValue('E4', "Shift: " . getShift($inspection_details->shift_id));
+            $sheet->mergeCells('G4:J5')->setCellValue('G4', "Safety Walk Taken By: " . $inspection_details->safety_walk_taken_by);
+            $sheet->getRowDimension($row)->setRowHeight(20);
+
+            // Row 5
+            $row = 5;
+            $sheet->mergeCells('A5:D5')->setCellValue('A5', "Month: " . $inspection_details->month);
+            $sheet->mergeCells('E5:F5')->setCellValue('E5', "Unit: " . getUnitname($inspection_details->unit));
+            $sheet->getRowDimension($row)->setRowHeight(20);
+
+            $sheet->getStyle('A4:J5')->applyFromArray([
+                'font' => ['bold' => true],
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+            ]);
+
+            $row += 1;
+
+            // Previous Month Observations
+            if (!empty($last_month_observation_details)) {
+                $sheet->mergeCells("A{$row}:E{$row}")->setCellValue("A{$row}", 'Previous Month Observations');
+                $sheet->getStyle("A{$row}")->applyFromArray([
+                    'font' => ['bold' => true],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
+                ]);
+                $row++;
+
+                $headers = ['Sr. No.', 'Location', 'Observation Date', 'Observation', 'Picture', 'Recommended Action', 'Responsibility', 'Date of Compliance', 'Status', 'Remarks'];
+                $sheet->fromArray($headers, null, "A{$row}");
+                $sheet->getStyle("A{$row}:J{$row}")->applyFromArray([
+                    'font' => ['bold' => true, 'size' => 12],
+                    'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['argb' => 'FFEFEFEF']],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                ]);
+                $row++;
+
+                $sr = 1;
+                foreach ($last_month_observation_details as $details) {
+                    foreach($details as $details){
+
+                       $sheet->setCellValue("A{$row}", $sr++);
+                       $sheet->setCellValue("B{$row}", getLocationName($details->location));
+                       $sheet->setCellValue("C{$row}", Displaydateformat($details->observation_date));
+                       $sheet->setCellValue("D{$row}", $details->observation);
+                       $sheet->setCellValue("E{$row}", 'Image Link');
+                       $sheet->setCellValue("F{$row}", $details->recomended_action);
+                       $sheet->setCellValue("G{$row}", getUsername($details->responsibility));
+                       $sheet->setCellValue("H{$row}", $details->date_of_compliance);
+                       $sheet->setCellValue("I{$row}", $details->observation_status == 1 ? 'Active' : ($details->observation_status == 0 ? 'Inactive' : 'Unknown'));
+                       $sheet->setCellValue("J{$row}", $details->remarks);
+
+                       $sheet->getStyle("A{$row}:J{$row}")->applyFromArray([
+                           'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                       ]);
+                       $row++;
+
+                    }
+                 }
+            }
+
+            $row += 1 ;
+
+            // Current Month Observations
+            if (!empty($current_month_inspection)) {
+                $sheet->mergeCells("A{$row}:E{$row}")->setCellValue("A{$row}", 'Current Month Observations');
+                $sheet->getStyle("A{$row}")->applyFromArray([
+                    'font' => ['bold' => true],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
+                ]);
+                $row++;
+
+                $headers = ['Sr. No.', 'Location', 'Observation Date', 'Observation', 'Picture', 'Recommended Action', 'Responsibility', 'Date of Compliance', 'Status', 'Remarks'];
+                $sheet->fromArray($headers, null, "A{$row}");
+                $sheet->getStyle("A{$row}:J{$row}")->applyFromArray([
+                    'font' => ['bold' => true, 'size' => 12],
+                    'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['argb' => 'FFEFEFEF']],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                ]);
+                $row++;
+
+                $sr = 1;
+                foreach ($current_month_inspection as $details) {
+                    $sheet->setCellValue("A{$row}", $sr++);
+                    $sheet->setCellValue("B{$row}", getLocationName($details->location));
+                    $sheet->setCellValue("C{$row}", Displaydateformat($details->observation_date));
+                    $sheet->setCellValue("D{$row}", $details->observation);
+                    $sheet->setCellValue("E{$row}", 'Image Link');
+                    $sheet->setCellValue("F{$row}", $details->recomended_action);
+                    $sheet->setCellValue("G{$row}", getUsername($details->responsibility));
+                    $sheet->setCellValue("H{$row}", $details->date_of_compliance);
+                    $sheet->setCellValue("I{$row}", $details->observation_status == 1 ? 'Active' : ($details->observation_status == 0 ? 'Inactive' : 'Unknown'));
+                    $sheet->setCellValue("J{$row}", $details->remarks);
+
+                    $sheet->getStyle("A{$row}:J{$row}")->applyFromArray([
+                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    ]);
+                    $row++;
+                }
+            }
+
+            // Output
+            $writer = new Xlsx($spreadsheet);
+            $fileName = 'Safety_Walk_Observation_Sheet.xlsx';
+
+            header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            header("Content-Disposition: attachment; filename=\"{$fileName}\"");
+            $writer->save('php://output');
+
+        } catch (Exception $ex) {
+            dd($ex);
+            report($ex);
+            Session::flash('error', 'Something went wrong!');
+            return redirect(admin_url('safety/safety-walk-observation/list'));
+        }
+    }
+
 }
