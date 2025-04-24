@@ -239,12 +239,12 @@
                             <th>Description</th>
                             <th>Hazard</th>
                             <th>Image</th>
-                            <th>capa</th>
+                            <th>CAPA</th>
                             <th>Date of Compliance</th>
                             <th>Responsible Person</th>
                             <th>Status</th>
-                            <th>remark</th>
-                            <th>observation</th>
+                            <th>Remark</th>
+                            <th>Observation</th>
 
 
                         </tr>

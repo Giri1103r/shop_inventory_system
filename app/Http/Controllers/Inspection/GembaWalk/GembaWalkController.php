@@ -117,7 +117,7 @@ class GembaWalkController extends Controller
                                 }
 
                                 $btn .= '<a href="' . admin_url('inspection/gemba-walk/generalpdf/' . encryptId($row->gemba_walk_id)) . '" style="margin-right: 5px;" title="PDF"> <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i></a>';
-                                $btn .= '<a href="' . admin_url('inspection/gemba-walk/generalExcel/' . encryptId($row->gemba_walk_id)) . '" style="margin-right: 5px;" title="PDF"> <i class="fas fa-file-excel" style="color: #1D6F42;" aria-hidden="true"></i></a>';
+                                $btn .= '<a href="' . admin_url('inspection/gemba-walk/generalExcel/' . encryptId($row->gemba_walk_id)) . '" style="margin-right: 5px;" title="Excel"> <i class="fas fa-file-excel" style="color: #1D6F42;" aria-hidden="true"></i></a>';
 
                                 return $btn;
                             })

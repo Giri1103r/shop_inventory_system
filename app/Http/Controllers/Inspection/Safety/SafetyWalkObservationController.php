@@ -403,6 +403,8 @@ class SafetyWalkObservationController extends Controller
                 $prepared_by_signature = GetSafetySignature($inspection_details->created_by, $inspection_details->safety_id, SAFETY_WALK_OBSERVATION);
                 $verified_by_signature = GetSafetySignature($inspection_details->verified_by, $inspection_details->safety_id, SAFETY_WALK_OBSERVATION);
 
+                $titleRow = $row;
+
                 foreach (range('A', 'J') as $col) {
                     $sheet->getColumnDimension($col)->setAutoSize(true);
                 }
@@ -461,7 +463,7 @@ class SafetyWalkObservationController extends Controller
 
                 $sheet->mergeCells("A{$row}:D{$row}")->setCellValue("A{$row}", "Date of Inspection: " . Displaydateformat($inspection_details->date));
                 $sheet->mergeCells("E{$row}:F{$row}")->setCellValue("E{$row}", "Shift: " . getShift($inspection_details->shift_id));
-                $sheet->mergeCells("G{$row}:J" . ($row + 1))->setCellValue("G{$row}", "Safety Walk Taken By: " . $inspection_details->safety_walk_taken_by);
+                $sheet->mergeCells("G{$row}:J" . ($row + 1))->setCellValue("G{$row}", "Safety Walk Taken By:- " . $inspection_details->safety_walk_taken_by);
                 $sheet->getRowDimension($row)->setRowHeight(20);
                 $row++;
                 $sheet->mergeCells("A{$row}:D{$row}")->setCellValue("A{$row}", "Month: " . $inspection_details->month);
@@ -582,42 +584,53 @@ class SafetyWalkObservationController extends Controller
                         $sr++;
                     }
                 }
-
-                $sheet->getRowDimension($row)->setRowHeight(80);
-                $sheet->mergeCells("A{$row}:E{$row}");
+                $signatureRowStart = $row;
+                $sheet->getRowDimension($signatureRowStart)->setRowHeight(80);
+                $sheet->mergeCells("A{$signatureRowStart}:E{$signatureRowStart}");
                 if (file_exists($prepared_by_signature)) {
                     $drawing = new Drawing();
                     $drawing->setPath($prepared_by_signature);
-                    $drawing->setCoordinates("C{$row}");
+                    $drawing->setCoordinates("C{$signatureRowStart}");
                     $drawing->setOffsetX(50);
                     $drawing->setOffsetY(5);
                     $drawing->setHeight(60);
                     $drawing->setWorksheet($sheet);
                 }
-                $sheet->setCellValue("A{$row}", "\n\n\nPrepared By:\n" . getUsername($inspection_details->created_by));
-                $sheet->getStyle("A{$row}:E{$row}")->applyFromArray([
+                $sheet->setCellValue("A{$signatureRowStart}", "\n\n\nPrepared By:- \n" . getUsername($inspection_details->created_by));
+                $sheet->getStyle("A{$signatureRowStart}:E{$signatureRowStart}")->applyFromArray([
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_BOTTOM],
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                 ]);
 
-                $sheet->mergeCells("F{$row}:J{$row}");
+                $sheet->mergeCells("F{$signatureRowStart}:J{$signatureRowStart}");
                 if (file_exists($verified_by_signature)) {
                     $drawing = new Drawing();
                     $drawing->setPath($verified_by_signature);
-                    $drawing->setCoordinates("H{$row}");
+                    $drawing->setCoordinates("H{$signatureRowStart}");
                     $drawing->setOffsetX(5);
                     $drawing->setOffsetY(5);
                     $drawing->setHeight(60);
                     $drawing->setWorksheet($sheet);
-                    $sheet->setCellValue("F{$row}", "\n\n\nVerified By:\n" . getUsername($inspection_details->verified_by));
+                    $sheet->setCellValue("F{$signatureRowStart}", "\n\n\nVerified By:- \n" . getUsername($inspection_details->verified_by));
                 } else {
-                    $sheet->setCellValue("F{$row}", "Not Verified Yet");
+                    $sheet->setCellValue("F{$signatureRowStart}", "Not Verified Yet");
                 }
-                $sheet->getStyle("F{$row}:J{$row}")->applyFromArray([
+                $sheet->getStyle("F{$signatureRowStart}:J{$signatureRowStart}")->applyFromArray([
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_BOTTOM],
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                 ]);
                 $row += 5;
+
+               $lastRow = $signatureRowStart;
+
+                $sheet->getStyle("A{$titleRow}:J{$lastRow}")->applyFromArray([
+                    'borders' => [
+                        'outline' => [
+                            'borderStyle' => Border::BORDER_THICK,
+                            'color' => ['argb' => '000000'],
+                        ],
+                    ],
+                ]);
             }
 
             $writer = new Xlsx($spreadsheet);
@@ -796,7 +809,7 @@ class SafetyWalkObservationController extends Controller
 
             $sheet->mergeCells('A4:D4')->setCellValue('A4', "Date of Inspection: " . Displaydateformat($inspection_details->date));
             $sheet->mergeCells('E4:F4')->setCellValue('E4', "Shift: " . getShift($inspection_details->shift_id));
-            $sheet->mergeCells('G4:J5')->setCellValue('G4', "Safety Walk Taken By: " . $inspection_details->safety_walk_taken_by);
+            $sheet->mergeCells('G4:J5')->setCellValue('G4', "Safety Walk Taken By:- " . $inspection_details->safety_walk_taken_by);
             $sheet->getRowDimension(4)->setRowHeight(20);
 
             $row = 5;
@@ -947,10 +960,10 @@ class SafetyWalkObservationController extends Controller
                 $drawing->setOffsetY(5);
                 $drawing->setHeight(60);
                 $drawing->setWorksheet($sheet);
-                $sheet->setCellValue("A{$signatureRowStart}", "\n\n\nPrepared By:\n" . getUsername($inspection_details->created_by));
+                $sheet->setCellValue("A{$signatureRowStart}", "\n\n\nPrepared By:- \n" . getUsername($inspection_details->created_by));
             } else {
 
-                $sheet->setCellValue("A{$signatureRowStart}", "Prepared By:\n" . getUsername($inspection_details->created_by));
+                $sheet->setCellValue("A{$signatureRowStart}", "Prepared By:- \n" . getUsername($inspection_details->created_by));
             }
 
             $sheet->mergeCells("F{$signatureRowStart}:J{$signatureRowStart}");
@@ -973,7 +986,7 @@ class SafetyWalkObservationController extends Controller
                 $drawing->setOffsetY(5);
                 $drawing->setHeight(60);
                 $drawing->setWorksheet($sheet);
-                $sheet->setCellValue("F{$signatureRowStart}", "\n\n\nVerified By:\n" . getUsername($inspection_details->verified_by));
+                $sheet->setCellValue("F{$signatureRowStart}", "\n\n\nVerified By:- \n" . getUsername($inspection_details->verified_by));
             } else {
                 $sheet->setCellValue("F{$signatureRowStart}", "Not Verified Yet");
             }
