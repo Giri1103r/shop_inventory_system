@@ -26,6 +26,7 @@ class IncidentBodyParts extends Model
         'random_id',
         'injury_id',
         'injury_person_id',
+        'injured_person_type',
         'injury_person_name',
         'imgMapdata',
         'body_part_image',
@@ -45,12 +46,14 @@ class IncidentBodyParts extends Model
     public function getEmpdetails()
     {
         $request = request();
-
+        // dd($request);
         $partyname = $request->input('partyname');
         $acc_prim_add = $request->input('acc_prim_add');
-        // dd($acc_prim_add);
+        $incident_id = $request->input('incident_id');
         $random_id = $request->input('random_id');
         $injuredPerson_type = $request->input('injuredPerson_type');
+        $injury_id = $request->input('injury_id');
+        // dd($injury_id);
 
         if (decryptId($injuredPerson_type) == 1 || decryptId($injuredPerson_type) == 2) {
             $partyname = decryptId($partyname);
@@ -62,22 +65,52 @@ class IncidentBodyParts extends Model
 
         if ($acc_prim_add == 'acc_prim_add') {
             $query->where('random_id', $random_id)
+                ->where('injured_person_type', decryptId($injuredPerson_type))
                 ->where('status', 'T')
+                ->where('trash', 'NO')
+                ->where(function ($q) use ($partyname) {
+                    $q->where('injury_person_id', $partyname)
+                        ->orWhere('injury_person_name', $partyname);
+                });
+        } elseif ($acc_prim_add == 'acc_prim_edit') {
+            $query->where('random_id', $random_id)
+                ->where('incident_id', $incident_id)
+                ->where('injury_id', $injury_id)
+                ->where('injured_person_type', decryptId($injuredPerson_type))
+                ->where('trash', 'NO')
+                ->where(function ($q) {
+                    $q->where('status', 'Y')
+                        ->orWhere('status', 'N');
+                })
                 ->where(function ($q) use ($partyname) {
                     $q->where('injury_person_id', $partyname)
                         ->orWhere('injury_person_name', $partyname);
                 });
         } else {
             $query->where('random_id', $random_id)
+                ->where('incident_id', $incident_id)
+                ->where('injury_id', decryptId($injury_id))
+                ->where('injured_person_type', decryptId($injuredPerson_type))
                 ->where('status', 'Y')
+                ->where('trash', 'NO')
                 ->where(function ($q) use ($partyname) {
                     $q->where('injury_person_id', $partyname)
                         ->orWhere('injury_person_name', $partyname);
                 });
         }
+        // $sql = $query->toSql();
+        // $bindings = $query->getBindings();
 
-        $get_data = $query->get();  // Executes the query
-        //dd($get_data->toSql(), $query->getBindings());
+        // // Use vsprintf to replace the placeholders with the bindings
+        // $fullSql = vsprintf(str_replace('?', '%s', $sql), array_map(function ($binding) {
+        //     return is_numeric($binding) ? $binding : "'$binding'";
+        // }, $bindings));
+
+        // dd($fullSql);
+        $get_data = $query->get(); // Executes the query
+
+
+        // dd($get_data->toSql(), $query->getBindings());
 
         $response['empdata'] = $get_data;
 
@@ -87,6 +120,8 @@ class IncidentBodyParts extends Model
     public function addInjury()
     {
         $request = request();
+
+        // dd($request);
         $random_id = $request->random_id;
         $folderPath = 'incident/body_parts/' . $random_id;
 
@@ -113,9 +148,10 @@ class IncidentBodyParts extends Model
 
         if ($request['body_prim_id'] != 0) {
             $locdatas = [
-                'incident_id' => decryptId($request->incident_id),
+                'incident_id' => $request->incident_id,
                 'random_id' => $random_id,
                 'injury_person_id' => decryptId($request->injuredPerson),
+                'injured_person_type' => decryptId($request->injury_person_type),
                 'injury_person_name' => $request->injuredPerson,
                 'imgMapdata' => postData($request, 'imgMapdata'),
                 'body_part_image' => $storedImagePath,
@@ -124,10 +160,21 @@ class IncidentBodyParts extends Model
             ];
             $updtBody =  $this->where('id', $request['body_prim_id'])->update($locdatas);
         } else {
+
+            // dd($request);
+            // dd($request->incident_id, $request->random_id,$request->injury_id );
+            // if ($request->injury_id != '') {
+            //     $this->where([
+            //         ['incident_id', '=', $request->incident_id],
+            //         ['random_id', '=', $request->random_id],
+            //         ['injury_id', '=', $request->injury_id],
+            //     ])->update(['trash' => 'YES']);
+            // }
             $locdatas = [
                 'incident_id' => decryptId($request->incident_id),
                 'random_id' => $random_id,
                 'injury_person_id' => decryptId($request->injuredPerson),
+                'injured_person_type' => decryptId($request->injury_person_type),
                 'injury_person_name' => $request->injuredPerson,
                 'imgMapdata' => postData($request, 'imgMapdata'),
                 'body_part_image' => $storedImagePath,
@@ -155,11 +202,12 @@ class IncidentBodyParts extends Model
     }
 
 
-    public function updateStatusForIncident($random_id, $incident_id, array $excludedEmpIds)
+    public function updateStatusForIncident($random_id, $incident_id, $injured_person_type, array $excludedEmpIds)
     {
 
         // dd($random_id, $incident_id);
         return $this->where('random_id', $random_id)
+            ->where('injured_person_type', $injured_person_type)
             ->where(function ($query) use ($excludedEmpIds) {
                 $query->whereNotIn('injury_person_id', $excludedEmpIds)
                     ->whereNotIn('injury_person_name', $excludedEmpIds);
@@ -168,5 +216,22 @@ class IncidentBodyParts extends Model
                 'incident_id' => $incident_id,
                 'status' => 'N'
             ]);
+    }
+
+    public function updateBodyParts($random_id, $injury_person_id, $incident_id, array $injuryDetailsArray)
+    {
+
+        $update_array = [
+            'injury_person_id' => $injuryDetailsArray['injury_person_id'] ?? null,
+            'injured_person_type' => $injuryDetailsArray['injury_person_type'] ?? null,
+            'injury_person_name' => $injuryDetailsArray['injury_person_name'] ?? null,
+            'status' => 'N'
+        ];
+
+        $update_array = $this->where('injury_id', $injury_person_id)->where('incident_id', $incident_id)
+            ->where('random_id', $random_id)->update($update_array);
+
+
+        return $update_array;
     }
 }

@@ -25,6 +25,7 @@ class IntialIncidentEvidencefile extends Model
     protected $fillable = [
         'id',
         'incident_id',
+        'capa_id',
         'file_type',
         'file_name',
         'file_orgname',
@@ -93,6 +94,55 @@ class IntialIncidentEvidencefile extends Model
         }
     }
 
+    // public function capaEvidence($initialincident, $capa_id)
+    // {
+    //     $request = request();
+        
+    //     $initialIncidentEvidence = $request->file('evidence');
+    //     if (!empty($initialIncidentEvidence)) {
+    //         foreach ($initialIncidentEvidence as $groupIndex => $siteImageGroup) {
+                
+    //             foreach ($siteImageGroup as $index => $siteImage) {
+    //                 // dd($siteImage);
+    //                 if ($siteImage) {
+    //                     $uploadPath = 'public/uploads/initial/incident/' . $capa_id;
+    //                     $folderPath = 'public/uploads/initial/incident/' . $capa_id;
+
+    //                     if (!File::exists($folderPath)) {
+    //                         File::makeDirectory($folderPath, 0755, true);
+    //                     }
+
+                       
+    //                     $fileName = $siteImage->getClientOriginalName();
+    //                     $fileSize = $siteImage->getSize();
+    //                     $fileExt = $siteImage->getClientOriginalExtension();
+    //                     $filenewname = time() . Str::random(10) . '.' . $siteImage->getClientOriginalExtension();
+    //                     $siteImage->move($folderPath, $filenewname);
+
+    //                     $path = 'public/uploads/initial/incident/' . $capa_id ."/". $filenewname;
+    //                     $userId = Auth::id();
+
+    //                     $insertData = [
+    //                         'incident_id' => $initialincident->id,
+    //                         'capa_id' => $capa_id,
+    //                         'file_name' => $filenewname,
+    //                         'file_orgname' => $fileName,
+    //                         'file_path' => $path,
+    //                         'file_size' => $fileSize,
+    //                         'file_extension' => $fileExt,
+    //                         'created_by' => $userId,
+    //                     ];
+
+    //                     $this->create($insertData);
+
+    //                     \Log::info("File saved: " . $filenewname);
+    //                 } else {
+    //                     \Log::warning("Uploaded data is not a valid file: " . json_encode($siteImage));
+    //                 }
+    //             }
+    //         }
+    //     }
+    // }
 
     public function updates($id)
     {

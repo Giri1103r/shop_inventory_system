@@ -282,7 +282,104 @@
                                             </div>
                                         @endif
                                     </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label">Immediate Action Taken</label>
+                                        <div class="view_data">
+                                            {{ $incident_report->immediate_action_taken }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label">If any person has injured?</label>
+                                        <div class="view_data">
+                                            @if ($incident_report->anyone_injured == 1)
+                                                <i class="fas fa-check-circle text-success" style="font-size: 1.5rem;"></i>
+                                                Yes
+                                                <i class="fas fa-times-circle text-danger" style="font-size: 1.5rem;"></i>
+                                                No
+                                            @else
+                                                <i class="fas fa-times-circle text-danger" style="font-size: 1.5rem;"></i>
+                                                Yes
+                                                <i class="fas fa-check-circle text-success" style="font-size: 1.5rem;"></i>
+                                                No
+                                            @endif
+                                        </div>
+                                    </div>
+                                    @if ($incident_report->anyone_injured == 1)
+                                        <div class="row">
+                                            <div class="card-header-inner">
+                                                <h4 class="text-white">Injured Person Details</h4>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <table class="table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Injury Person Type</th>
+                                                        <th>Injury Person Name</th>
+                                                        <th>Injury Person Employee ID</th>
+                                                        <th>Injury Person Designation</th>
+                                                        <th>Injury Person Department</th>
+                                                        <th>Injury Body Parts</th>
+                                                        <th>Description</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach ($injury_details as $injury)
+                                                        <tr>
+                                                            <td>
+                                                                {{ $injury->injury_person_type == 1 ? 'Employee' : ($injury->injury_person_type == 2 ? 'Worker' : 'Others') }}
+                                                            </td>
+                                                            <td>
+                                                                @if ($injury->injury_person_type == 1 || $injury->injury_person_type == 2)
+                                                                    {{ $injury->emp_name }}
+                                                                @else
+                                                                    {{ $injury->injury_person_name }}
+                                                                @endif
+                                                            </td>
+                                                            <td>{{ $injury->emp_id }}</td>
+                                                            <td>{{ $injury->injury_person_designation }}</td>
+                                                            <td>
+                                                                {{-- @if ($injury->injury_person_type == 1 || $injury->injury_person_type == 2)
+                                                                {{ $injury->department_name }}
+                                                            @else --}}
+                                                                {{ $injury->injury_person_department_id }}
+                                                                {{-- @endif --}}
+                                                            </td>
+                                                            <td>
+                                                                @if ($injury->body_part_image)
+                                                                    <a href="{{ admin_url('storage/app/public/uploads/' . $injury->body_part_image) }}"
+                                                                        target="_blank">
+                                                                        <img src="{{ admin_url('storage/app/public/uploads/' . $injury->body_part_image) }}"
+                                                                            alt="Body Parts Image"
+                                                                            style="max-width: 100px; max-height: 100px; object-fit: contain;">
+                                                                    </a>
+                                                                @endif
+                                                            </td>
 
+
+                                                            <td>
+                                                                @php
+                                                                    $imgMapDataDecoded = json_decode(
+                                                                        $injury->imgMapdata,
+                                                                        true,
+                                                                    );
+                                                                @endphp
+                                                                @if ($imgMapDataDecoded)
+                                                                    <ul>
+                                                                        @foreach ($imgMapDataDecoded['map']['total'] as $key => $value)
+                                                                            <li>{{ ucfirst($key) }}:
+                                                                                {{ $value }}</li>
+                                                                        @endforeach
+                                                                    </ul>
+                                                                @endif
+                                                            </td>
+                                                        </tr>
+                                                    @endforeach
+                                                </tbody>
+                                            </table>
+
+                                        </div>
+                                    @endif
                                 </div>
                             </div>
 
@@ -290,7 +387,7 @@
                                 <div class="card-body ">
                                     <div class="row">
                                         <div class="card-header-inner">
-                                            <h4 class="text-white">EHS Head Review</h4>
+                                            <h4 class="text-white">Accelerating Incident Investigations</h4>
                                         </div>
                                     </div>
                                     <div class="row">
@@ -312,6 +409,12 @@
                                                 {{ $getEHSReview->team_member_names }}
                                             </div>
                                         </div>
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <label for="team_id" class="form-label">Incident/Accident Investigation Report Prepared by</label>
+                                            <div class="view_data">
+                                                {{ getUsername($incident_report->investigation_reported_by) }}
+                                            </div>
+                                        </div>
                                     </div>
                                     <div class="row">
                                         <div class="mb-3 col-md-12 form-input">
@@ -325,7 +428,7 @@
                                 </div>
                             @endif
 
-                            @if ($incident_report->incident_status >= STATUS_INVESTIGATION_PENDING)
+                            @if ($incident_report->incident_status > STATUS_INVESTIGATION_PENDING)
                                 <div class="card-body ">
                                     <div class="row">
                                         <div class="card-header-inner">
@@ -774,8 +877,7 @@
                                 </div>
                             @endif
 
-                            @if (
-                                $rcpa->incident_status >= STATUS_EHSAPPROVAL_PENDING)
+                            {{-- @if ($rcpa->incident_status >= STATUS_EHSAPPROVAL_PENDING)
                                 <div class="card-body ">
                                     <div class="row">
                                         <div class="card-header-inner">
@@ -786,20 +888,20 @@
                                         <div class="mb-3 col-md-4 form-input">
                                             <label for="name" class="form-label">Submission By</label>
                                             <div class="view_data">
-                                                {{ getUsername($incident_report->action_submission_by) }}
+                                                {{ getUsername($rcpa->action_submission_by) }}
                                             </div>
                                         </div>
                                         <div class="mb-3 col-md-4 form-input">
                                             <label class="form-label view_label">{{ __('Date') }}</label>
                                             <div class="view_data">
-                                                {{ Displaydateformat($incident_report->action_submission_date) }}
+                                                {{ Displaydateformat($rcpa->action_submission_date) }}
                                             </div>
                                         </div>
 
                                         <div class="mb-3 col-md-4 form-input">
                                             <label class="form-label">Action Taken</label>
                                             <div class="view_data">
-                                                {{ $incident_report->action_submission_description }}
+                                                {{ $rcpa->action_submission_description }}
                                             </div>
                                         </div>
 
@@ -837,7 +939,7 @@
 
                                     </div>
                                 </div>
-                            @endif
+                            @endif --}}
 
                             <div class="card-body ">
                                 <div class="row">

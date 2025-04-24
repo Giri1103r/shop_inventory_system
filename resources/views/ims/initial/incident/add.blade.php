@@ -1248,6 +1248,7 @@
                                     <!-- /.box-body -->
                                 </div>
                                 <input type="hidden" name="injuredPerson" id="injuredPerson" value="">
+                                <input type="hidden" name="injury_person_type" id="injury_person_type" value="">
 
                                 @if ($is_ready_only != 1)
                                     <div class="savesubmit text-center">
@@ -2195,6 +2196,7 @@
 
             var errorcount = '0';
             var injuredPerson = '0';
+            var injury_person_type = '0';
 
             if ((injuredPerson_emp == '' ||  injuredPerson_emp == null) && (injuredPerson_empName == '' || injuredPerson_empName == null) ) {
                 Swal.fire('Error', 'Please Select Victim Name', 'error');
@@ -2203,8 +2205,10 @@
                 errorcount = '0';
                 if (injuredPerson_emp != '') {
                     injuredPerson = injuredPerson_emp;
+                    injury_person_type = injuredPerson_type;
                 } else {
                     injuredPerson = injuredPerson_empName;
+                    injury_person_type = injuredPerson_type;
                 }
             }
 
@@ -2214,8 +2218,8 @@
             } else {
 
                 $('#injuredPerson').val(injuredPerson);
+                $('#injury_person_type').val(injury_person_type);
                 var random_id = $('#random_id').val();
-                alert(random_id);
                 var acc_prim_add = $('#acc_prim_add').val();
 
                 var emp_details = get_emp_details_by_id(injuredPerson, random_id, acc_prim_add, inj_id,

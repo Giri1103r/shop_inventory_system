@@ -231,6 +231,8 @@ class InitialIncident extends Model
             'reporting_media' => $reporting_media,
             'reporting_media_others' => $request->reporting_media_others,
             'brief_description' => $request->brief_description,
+            'immediate_action_taken' => $request->immediate_action_taken,
+            'anyone_injured' => $request->anyone_injured,
             'updated_by' => Auth::id()
         );
 
@@ -282,6 +284,7 @@ class InitialIncident extends Model
     public function investigationassigned($incident_Id)
     {
         $request = request();
+       
         $decryptedTeamMemberIds = is_array($request->team_member)
             ? array_map('decryptId', $request->team_member)
             : [];
@@ -294,7 +297,6 @@ class InitialIncident extends Model
             'updated_at' => now(),
         );
 
-        // dd($update_array);
         return $this->where('id', $incident_Id)->update($update_array);
     }
 

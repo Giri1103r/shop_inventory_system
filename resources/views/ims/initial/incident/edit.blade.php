@@ -278,6 +278,10 @@
                                         @csrf
                                         <input type="hidden" name="id" id="id"
                                             value="{{ encryptId($initialincident->id) }}">
+                                        <input type="hidden" name="acc_prim_id" id="acc_prim_id"
+                                            value="{{ $initialincident->id }} ">
+                                        <input type="hidden" name="acc_prim_add" id="acc_prim_add"
+                                            value="{{ 'acc_prim_edit' }} ">
                                         <div class="row mt-3">
                                             <div class="card-header-inner">
                                                 <h4 class="text-white">Incident Reported By</h4>
@@ -363,7 +367,8 @@
                                                     <div class="form-check">
                                                         <input type="checkbox" name="reporting_media[]"
                                                             id="reporting_media_extension" class="form-check-input"
-                                                            value="3" @if (in_array('3', $selectedMedia)) checked @endif>
+                                                            value="3"
+                                                            @if (in_array('3', $selectedMedia)) checked @endif>
                                                         <label class="form-check-label"
                                                             for="reporting_media_extension">Extension</label>
                                                     </div>
@@ -558,8 +563,8 @@
 
                                             </div>
 
-                                            <div
-                                                class="row mt-2 injuryDetails {{ $initialincident->anyone_injured == '1' ? '' : 'd-none' }} ">
+                                            <div class="row mt-2 injuryDetails"
+                                                style="{{ isset($initialincident) && $initialincident->anyone_injured == 1 ? '' : 'display:none;' }}">
 
                                                 <div class="card-header-inner d-flex justify-content-between">
                                                     <a class="text-white card-link">Injured Person Details</a>
@@ -571,6 +576,10 @@
                                                     @foreach ($injury_details as $key => $injury)
                                                         <div class="injury-details-templat">
                                                             <div class="row injury-append" style="margin-top: 20px;">
+                                                                <input type="hidden"
+                                                                    name="injury_person[{{ $key }}][injury_detail_id]"
+                                                                    id ="injury_detail_id_{{ $key }}"
+                                                                    value="{{ $injury->id }}">
                                                                 <div class="col-md-4 form-input">
                                                                     <label for=""
                                                                         class="form-label require">Injury
@@ -578,39 +587,48 @@
                                                                         Type</label>
                                                                     <select
                                                                         class="form-control require single-select selectInjPersontype"
-                                                                        name="injury_person[0][injury_person_type]"
+                                                                        name="injury_person[{{ $key }}][injury_person_type]"
                                                                         alt="0" style="width: 100%"
-                                                                        id="RowInjTypedata_0">
+                                                                        id="RowInjTypedata_{{ $key }}" disabled>
                                                                         <option value="">Select Person Type</option>
-                                                                        <option value="{{ encryptId('1') }}" {{ $injury->injury_person_type == 1 ? 'selected' : '' }}>Employee
+                                                                        <option value="{{ encryptId('1') }}"
+                                                                            {{ $injury->injury_person_type == 1 ? 'selected' : '' }}>
+                                                                            Employee
                                                                         </option>
-                                                                        <option value="{{ encryptId('2') }}"  {{ $injury->injury_person_type == 2 ? 'selected' : '' }}>Worker
+                                                                        <option value="{{ encryptId('2') }}"
+                                                                            {{ $injury->injury_person_type == 2 ? 'selected' : '' }}>
+                                                                            Worker
                                                                         </option>
-                                                                        <option value="{{ encryptId('3') }}"  {{ $injury->injury_person_type == 3 ? 'selected' : '' }}>Others
+                                                                        <option value="{{ encryptId('3') }}"
+                                                                            {{ $injury->injury_person_type == 3 ? 'selected' : '' }}>
+                                                                            Others
                                                                         </option>
                                                                     </select>
                                                                 </div>
                                                                 <!-- Injury Person Name (Text Inputs) -->
-                                                                <div class="col-md-4 form-input"
-                                                                    id="injuryPersonTextContainer_0">
+                                                                <div class="col-md-4 form-input {{ $injury->injury_person_type == 3 ? '' : 'd-none' }}"
+                                                                    id="">
                                                                     <label class="form-label require">Injury Person
                                                                         Name</label>
                                                                     <input type="text"
                                                                         class="form-control injuryPersonName require"
-                                                                        name="injury_person[0][injury_person_name]"
-                                                                        alt="0" id="RowInjothersdata_0"
-                                                                        placeholder="Enter Injury Person Name">
+                                                                        name="injury_person[{{ $key }}][injury_person_name]"
+                                                                        alt="0"
+                                                                        id="RowInjothersdata_{{ $key }}"
+                                                                        placeholder="Enter Injury Person Name"
+                                                                        value="{{ $injury->injury_person_name }}"
+                                                                        disabled>
                                                                 </div>
                                                                 <!-- Injury Person Name (Dropdown) -->
-                                                                <div class="col-md-4 form-input d-none"
-                                                                    id="injuryPersonDropdownContainer_0">
+                                                                <div class="col-md-4 form-input {{ $injury->injury_person_type == 1 || $injury->injury_person_type == 2 ? '' : 'd-none' }}"
+                                                                    id="">
                                                                     <label class="form-label require">Injury Person
                                                                         Name</label>
                                                                     <select alt="0"
-                                                                        class="form-control require injuryPersonName single-select"
+                                                                        class="form-control require injuryPersonEmployeeName single-select"
                                                                         style="width: 100%"
-                                                                        name="injury_person[0][injury_person_id]"
-                                                                        id="RowInjEmpdata_0">
+                                                                        name="injury_person[{{ $key }}][injury_person_id]"
+                                                                        id="RowInjEmpdata_{{ $key }}" disabled>
                                                                         <option value="" disabled selected>Select
                                                                             Injury
                                                                             Person
@@ -619,15 +637,32 @@
                                                                     </select>
                                                                 </div>
 
-
+                                                                {{-- <div class="col-md-4 form-input {{$injury->injury_person_type == 2 ? '' : 'd-none' }}"
+                                                                    id="">
+                                                                    <label class="form-label require">Injury Person
+                                                                        Name</label>
+                                                                    <select alt="0"
+                                                                        class="form-control require injuryPersonWorkerName single-select"
+                                                                        style="width: 100%"
+                                                                        name="injury_person[{{$key}}][injury_person_id]"
+                                                                        id="RowInjEmpdata_{{ $key }}">
+                                                                        <option value="" disabled selected>Select
+                                                                            Injury
+                                                                            Person
+                                                                            Name
+                                                                        </option>
+                                                                    </select>
+                                                                </div> --}}
 
                                                                 <!-- Designation -->
                                                                 <div class="col-md-4 form-input">
                                                                     <label class="form-label require">Injury Person
                                                                         Designation</label>
                                                                     <input type="text" alt="0"
-                                                                        name="injury_person[0][injury_person_designation]"
-                                                                        class="form-control InjPerDest" id="InjPerDest_0" value="{{ $injury->injury_person_designation ?? '' }}">
+                                                                        name="injury_person[{{ $key }}][injury_person_designation]"
+                                                                        class="form-control InjPerDest" disabled
+                                                                        id="InjPerDest_{{ $key }}"
+                                                                        value="{{ $injury->injury_person_designation ?? '' }}">
                                                                 </div>
 
                                                                 <!-- Department -->
@@ -635,39 +670,49 @@
                                                                     id="injuryPersonDepttexxt_0">
                                                                     <label class="form-label require">Injury Person
                                                                         Department</label>
-                                                                    <input type="text" alt="0"
-                                                                        name="injury_person[0][injury_person_department_id]"
-                                                                        class="form-control InjPerDept" id="InjPerDept_0">
+                                                                    <input type="text" alt="0" disabled
+                                                                        name="injury_person[{{ $key }}][injury_person_department_id]"
+                                                                        class="form-control InjPerDept"
+                                                                        id="InjPerDept_{{ $key }}"
+                                                                        value="{{ $injury->injury_person_department_id ?? '' }}">
                                                                 </div>
 
                                                                 <!-- Department Dropdown for Others -->
-                                                                {{-- <div class="col-md-4 form-input" id="injuryPersonDeptDropdown_0">
-                                                            <label class="form-label require">Injury Person Department</label>
-                                                            <select alt="0" class="form-control single-select"
-                                                                name="injury_person[0][injury_person_department_id]"
-                                                                style="width: 100%">
-                                                                <option value="">Select Department</option>
-                                                                @foreach ($departmentList as $department)
-                                                                    <option value="{{ encryptId($department->id) }}">
-                                                                        {{ $department->department_name }}</option>
-                                                                @endforeach
-                                                            </select>
-                                                        </div> --}}
+                                                                {{-- <div class="col-md-4 form-input"
+                                                                    id="injuryPersonDeptDropdown_0">
+                                                                    <label class="form-label require">Injury Person
+                                                                        Department</label>
+                                                                    <select alt="0"
+                                                                        class="form-control single-select"
+                                                                        name="injury_person[0][injury_person_department_id]"
+                                                                        style="width: 100%">
+                                                                        <option value="">Select Department</option>
+                                                                        @foreach ($departmentList as $department)
+                                                                            <option
+                                                                                value="{{ encryptId($department->id) }}">
+                                                                                {{ $department->department_name }}</option>
+                                                                        @endforeach
+                                                                    </select>
+                                                                </div> --}}
                                                                 <div class="col-md-4">
                                                                     <div class="form-group form-input">
                                                                         <label for="nature_of_injury"
                                                                             class="form-label">Nature of
                                                                             Injury</label>
-                                                                        <select alt="0"
-                                                                            name="injury_person[0][nature_of_injury]"
-                                                                            id="nature_of_injury_0" style="width: 100%"
-                                                                            class="form-control single-select">
+                                                                        <select
+                                                                            name="injury_person[{{ $key }}][nature_of_injury]"
+                                                                            alt="0"
+                                                                            id="nature_of_injury_{{ $key }}"
+                                                                            style="width: 100%"
+                                                                            class="form-control single-select" disabled>
                                                                             <option value="">Select Nature of Injury
                                                                             </option>
-                                                                            <option value="{{ encryptId('1') }}">Major
-                                                                            </option>
-                                                                            <option value="{{ encryptId('2') }}">Minor
-                                                                            </option>
+                                                                            <option value="{{ encryptId('1') }}"
+                                                                                {{ $injury->nature_of_injury == 1 ? 'selected' : '' }}>
+                                                                                Major</option>
+                                                                            <option value="{{ encryptId('2') }}"
+                                                                                {{ $injury->nature_of_injury == 2 ? 'selected' : '' }}>
+                                                                                Minor</option>
                                                                         </select>
                                                                     </div>
                                                                 </div>
@@ -679,7 +724,8 @@
                                                                         Injury</label>
                                                                     <br>
                                                                     <span class="input-group-addon injury-btn btn btn-info"
-                                                                        data-id="0" data-injid="0" attr_emp=""
+                                                                        data-id="{{ $key }}"
+                                                                        data-injid="{{ $key }}" attr_emp=""
                                                                         alt="0"><i class="fa fa-male"
                                                                             aria-hidden="true"></i></span>
                                                                 </div>
@@ -691,6 +737,124 @@
                                                             </div>
                                                         </div>
                                                     @endforeach
+                                                    <div class="injury-details-templat1">
+                                                    </div>
+                                                @else
+                                                    {{-- <div class="row mt-2 injuryDetails" style="display: none;">
+
+                                                        <div class="card-header-inner d-flex justify-content-between">
+                                                            <a class="text-white card-link">Injured Person Details</a>
+                                                            <div class="btn btn-warning btn-sm addMoreInjuryDetails">Add
+                                                            </div>
+                                                        </div> --}}
+
+
+                                                    <div class="injury-details-templat1">
+                                                        <div class="row injury-append" style="margin-top: 20px;">
+                                                            <div class="col-md-4 form-input">
+                                                                <label for="" class="form-label require">Injury
+                                                                    Person
+                                                                    Type</label>
+                                                                <select
+                                                                    class="form-control require single-select selectInjPersontype"
+                                                                    name="injury_person[0][injury_person_type]"
+                                                                    alt="0" style="width: 100%"
+                                                                    id="RowInjTypedata_0">
+                                                                    <option value="">Select Person Type</option>
+                                                                    <option value="{{ encryptId('1') }}">Employee
+                                                                    </option>
+                                                                    <option value="{{ encryptId('2') }}">Worker
+                                                                    </option>
+                                                                    <option value="{{ encryptId('3') }}">Others
+                                                                    </option>
+                                                                </select>
+                                                            </div>
+                                                            <!-- Injury Person Name (Text Inputs) -->
+                                                            <div class="col-md-4 form-input"
+                                                                id="injuryPersonTextContainer_0">
+                                                                <label class="form-label require">Injury Person
+                                                                    Name</label>
+                                                                <input type="text"
+                                                                    class="form-control injuryPersonName require"
+                                                                    name="injury_person[0][injury_person_name]"
+                                                                    alt="0" id="RowInjothersdata_0"
+                                                                    placeholder="Enter Injury Person Name">
+                                                            </div>
+                                                            <!-- Injury Person Name (Dropdown) -->
+                                                            <div class="col-md-4 form-input d-none"
+                                                                id="injuryPersonDropdownContainer_0">
+                                                                <label class="form-label require">Injury Person
+                                                                    Name</label>
+                                                                <select alt="0"
+                                                                    class="form-control require injuryPersonName single-select"
+                                                                    style="width: 100%"
+                                                                    name="injury_person[0][injury_person_id]"
+                                                                    id="RowInjEmpdata_0">
+                                                                    <option value="" disabled selected>Select
+                                                                        Injury
+                                                                        Person
+                                                                        Name
+                                                                    </option>
+                                                                </select>
+                                                            </div>
+
+
+
+                                                            <!-- Designation -->
+                                                            <div class="col-md-4 form-input">
+                                                                <label class="form-label require">Injury Person
+                                                                    Designation</label>
+                                                                <input type="text" alt="0"
+                                                                    name="injury_person[0][injury_person_designation]"
+                                                                    class="form-control InjPerDest" id="InjPerDest_0">
+                                                            </div>
+
+                                                            <!-- Department -->
+                                                            <div class="col-md-4 form-input "
+                                                                id="injuryPersonDepttexxt_0">
+                                                                <label class="form-label require">Injury Person
+                                                                    Department</label>
+                                                                <input type="text" alt="0"
+                                                                    name="injury_person[0][injury_person_department_id]"
+                                                                    class="form-control InjPerDept" id="InjPerDept_0">
+                                                            </div>
+                                                            <div class="col-md-4">
+                                                                <div class="form-group form-input">
+                                                                    <label for="nature_of_injury"
+                                                                        class="form-label">Nature of
+                                                                        Injury</label>
+                                                                    <select alt="0"
+                                                                        name="injury_person[0][nature_of_injury]"
+                                                                        id="nature_of_injury_0" style="width: 100%"
+                                                                        class="form-control single-select">
+                                                                        <option value="">Select Nature of Injury
+                                                                        </option>
+                                                                        <option value="{{ encryptId('1') }}">Major
+                                                                        </option>
+                                                                        <option value="{{ encryptId('2') }}">Minor
+                                                                        </option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="col-md-2 form-input">
+                                                                <label for="inputFirstName" class="form-label">Location of
+                                                                    the
+                                                                    Injury</label>
+                                                                <br>
+                                                                <span class="input-group-addon injury-btn btn btn-info"
+                                                                    data-id="0" data-injid="0" attr_emp=""
+                                                                    alt="0"><i class="fa fa-male"
+                                                                        aria-hidden="true"></i></span>
+                                                            </div>
+                                                            <div class="col-md-2 text-right">
+                                                                <button type="button"
+                                                                    class="btn btn-danger btn-sm removeInjuryDetails"
+                                                                    style="margin-top: 35px;">Remove</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    {{-- </div> --}}
                                                 @endif
                                             </div>
                                         </div>
@@ -734,7 +898,11 @@
                         <input type="hidden" name="body_prim_id" id="body_prim_id" value="">
                         <input type="hidden" name="injury_id" id="injury_id" value="">
                         <input type="hidden" name="bodypartimage" id="bodypartimage">
-                        <input type="hidden" name="random_id" id="random_id" value="{{ $initialincident->randomID }}">
+                        <input type="hidden" name="incident_id" id="incident_id" value="{{ $initialincident->id }}">
+                        <input type="hidden" name="random_id" id="random_id"
+                            value="{{ $initialincident->random_id }}">
+
+
                         <div class="container-fluid1">
 
                             <div class="box-body1 box-group">
@@ -1323,6 +1491,7 @@
                                     <!-- /.box-body -->
                                 </div>
                                 <input type="hidden" name="injuredPerson" id="injuredPerson" value="">
+                                <input type="hidden" name="injury_person_type" id="injury_person_type" value="">
 
                                 @if ($is_ready_only != 1)
                                     <div class="savesubmit text-center">
@@ -1347,8 +1516,8 @@
                     </form>
                 </div>
                 <!--<div class="modal-footer">
-                                                      <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                       </div>-->
+                                                                                                                  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                                                                                   </div>-->
             </div>
         </div>
     </div>
@@ -1591,12 +1760,18 @@
         });
         $(document).ready(function() {
             $('input[name="anyone_injured"]').on('change', function() {
-                if ($(this).val() == '1') {
-                    $('.injuryDetails').show();
+                if ($(this).val() === '1') {
+                    $('.injuryDetails').slideDown();
                 } else {
-                    $('.injuryDetails').hide();
+                    $('.injuryDetails').slideUp();
                 }
             });
+
+            // if ($('input[name="anyone_injured"]:checked').val() == '1') {
+            //     $('.editInjuryDetails').show();
+            // } else {
+            //     $('.editInjuryDetails').hide();
+            // }
 
             function initializeSelect2() {
                 $('.responsible_person').select2({
@@ -1632,101 +1807,152 @@
             // Initialize select2 on page load
             initializeSelect2();
 
-            let injuryIndex = 0;
+            function initializeInjuryRows() {
+                @foreach ($injury_details as $key => $injury)
+                    setupInjuryRow(
+                        {{ $key }},
+                        {{ $injury->injury_person_type }},
+                        "{{ encryptId($injury->injury_person_id) }}",
+                        "{{ $injury->injury_person_name }}"
+                    );
+                @endforeach
+            }
 
-            // Add new injury details row
+            function setupInjuryRow(rowKey, personType, encryptedId, personName) {
+                const $empDropdown = $(`#RowInjEmpdata_${rowKey}`);
+                const $othersInput = $(`#RowInjothersdata_${rowKey}`);
+
+                if (personType == 1 || personType == 2) {
+                    $empDropdown.closest('.form-input').removeClass('d-none');
+                    $othersInput.closest('.form-input').addClass('d-none');
+                    loadPersonDropdown(rowKey, personType, encryptedId);
+                } else if (personType == 3) {
+                    $empDropdown.closest('.form-input').addClass('d-none');
+                    $othersInput.closest('.form-input').removeClass('d-none');
+                    $othersInput.val(personName);
+                }
+            }
+
+            function loadPersonDropdown(rowKey, personType, selectedEncryptedId) {
+                const $dropdown = $(`#RowInjEmpdata_${rowKey}`);
+                const endpoint = personType == 1 ? "{{ url('incident/initial-incident/get-employees') }}" :
+                    "{{ url('incident/initial-incident/get-workers') }}";
+
+                $dropdown.empty().append('<option value="">Loading...</option>');
+
+                $.getJSON(endpoint, function(response) {
+                    $dropdown.empty().append('<option value="">Select Person</option>');
+
+                    if (response && response.length) {
+                        response.forEach(person => {
+                            const $option = new Option(person.text, person.id);
+                            if (person.id === selectedEncryptedId) {
+                                $option.selected = true;
+                            }
+                            $dropdown.append($option);
+                        });
+                    }
+
+                    if ($dropdown.hasClass('select2-hidden-accessible')) {
+                        $dropdown.select2('destroy');
+                    }
+                    $dropdown.select2({
+                        placeholder: "Select Person",
+                        allowClear: true
+                    });
+
+                    $dropdown.trigger('change');
+                }).fail(function(xhr) {
+                    console.error('Error loading person list:', xhr.responseText);
+                    $dropdown.empty().append('<option value="">Error loading data</option>');
+                });
+            }
+
+            initializeInjuryRows();
+            let injuryIndex_count = {{ count($injury_details) }};
+            let injuryIndex = (injuryIndex_count > 0) ? injuryIndex_count : 1;
             $(document).on("click", ".addMoreInjuryDetails", function() {
                 injuryIndex++;
                 let newRow = `
-           <div class="row injury-append" style="margin-top: 20px;" id="injuryDetails_${injuryIndex}">
-            <div class="col-md-4 form-input">
-                    <label for="" class="form-label require">Injury Person Type</label>
-                    <select class="form-control require single-select selectInjPersontype" alt="${injuryIndex}" name="injury_person[${injuryIndex}][injury_person_type]" style="width: 100%" id="RowInjTypedata_${injuryIndex}">
-                        <option value="">Select Person Type</option>
-                        <option value="{{ encryptId('1') }}">Employee</option>
-                        <option value="{{ encryptId('2') }}">Worker</option>
-                        <option value="{{ encryptId('3') }}">Others</option>
-                    </select>
-            </div>
-            <div class="col-md-4 form-input" id="injuryPersonTextContainer_${injuryIndex}">
-                    <label class="form-label require">Injury Person Name</label>
-                <input type="text"  alt="${injuryIndex}" class="form-control injuryPersonNamerequire"
-                    name="injury_person[${injuryIndex}][injury_person_name]" id="RowInjothersdata_${injuryIndex}"
-                    placeholder="Enter Injury Person Name">
-            </div>
-                    <!-- Injury Person Name (Dropdown) -->
-                <div class="col-md-4 form-input d-none" id="injuryPersonDropdownContainer_${injuryIndex}">
-                    <label class="form-label require">Injury Person Name</label>
-                    <select class="form-control require injuryPersonName single-select" alt="${injuryIndex}"  style="width: 100%" name="injury_person[${injuryIndex}][injury_person_id]"  id="RowInjEmpdata_${injuryIndex}">
-                        <option value="" disabled selected>Select Injury Person Name  </option> </select>
-                </div>
+                <div class="row injury-append" style="margin-top: 20px;" id="injuryDetails_${injuryIndex}">
+                     <input type="hidden" name="injury_person[${injuryIndex}][is_new]" value="1">
+                    <div class="col-md-4 form-input">
+                        <label for="" class="form-label require">Injury Person Type</label>
+                        <select class="form-control require single-select selectInjPersontype" alt="${injuryIndex}" name="injury_person[${injuryIndex}][injury_person_type]" style="width: 100%" id="RowInjTypedata_${injuryIndex}">
+                            <option value="">Select Person Type</option>
+                            <option value="{{ encryptId('1') }}">Employee</option>
+                            <option value="{{ encryptId('2') }}">Worker</option>
+                            <option value="{{ encryptId('3') }}">Others</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 form-input" id="injuryPersonTextContainer_${injuryIndex}">
+                        <label class="form-label require">Injury Person Name</label>
+                        <input type="text" alt="${injuryIndex}" class="form-control injuryPersonNamerequire"
+                            name="injury_person[${injuryIndex}][injury_person_name]" id="RowInjothersdata_${injuryIndex}"
+                            placeholder="Enter Injury Person Name">
+                    </div>
+                    <div class="col-md-4 form-input d-none" id="injuryPersonDropdownContainer_${injuryIndex}">
+                        <label class="form-label require">Injury Person Name</label>
+                        <select class="form-control require injuryPersonName single-select" alt="${injuryIndex}" style="width: 100%" name="injury_person[${injuryIndex}][injury_person_id]" id="RowInjEmpdata_${injuryIndex}">
+                            <option value="">Select Injury Person Name</option>
+                        </select>
+                    </div>
 
-            <div class="col-md-4 form-input">
-                <label class="form-label require">Injury Person Designation</label>
-                <input type="text" alt="${injuryIndex}" name="injury_person[${injuryIndex}][injury_person_designation]" id="InjPerDest_${injuryIndex}" class="form-control InjPerDest">
-            </div>
-                <div class="col-md-4 form-input" id="injuryPersonDepttexxt_${injuryIndex}">
-                    <label class="form-label require">Injury Person Department</label>
-                    <input type="text" alt="${injuryIndex}"  name="injury_person[${injuryIndex}][injury_person_department_id]"
-                    class="form-control InjPerDept" id="InjPerDept_${injuryIndex}"> 
-                    
-                </div>
+                    <div class="col-md-4 form-input">
+                        <label class="form-label require">Injury Person Designation</label>
+                        <input type="text" alt="${injuryIndex}" name="injury_person[${injuryIndex}][injury_person_designation]" id="InjPerDest_${injuryIndex}" class="form-control InjPerDest">
+                    </div>
+                    <div class="col-md-4 form-input" id="injuryPersonDepttexxt_${injuryIndex}">
+                        <label class="form-label require">Injury Person Department</label>
+                        <input type="text" alt="${injuryIndex}" name="injury_person[${injuryIndex}][injury_person_department_id]"
+                            class="form-control InjPerDept" id="InjPerDept_${injuryIndex}">
+                    </div>
 
-
-
-            <div class="col-md-4">
-                <div class="form-group form-input">
-                <label for="nature_of_injury_${injuryIndex}" class="form-label">Nature of  Injury</label>
-                    <select name="injury_person[${injuryIndex}][nature_of_injury]" alt="${injuryIndex}"  id="nature_of_injury_${injuryIndex}"
-                    style="width: 100%" class="form-control single-select">
-                        <option value="">Nature of Injury</option>
-                        <option value="{{ encryptId('1') }}">Major</option>
-                        <option value="{{ encryptId('2') }}">Minor</option>
+                    <div class="col-md-4">
+                        <div class="form-group form-input">
+                            <label for="nature_of_injury_${injuryIndex}" class="form-label">Nature of Injury</label>
+                            <select name="injury_person[${injuryIndex}][nature_of_injury]" alt="${injuryIndex}" id="nature_of_injury_${injuryIndex}"
+                                style="width: 100%" class="form-control single-select">
+                                <option value="">Nature of Injury</option>
+                                <option value="{{ encryptId('1') }}">Major</option>
+                                <option value="{{ encryptId('2') }}">Minor</option>
                             </select>
-                </div>
-             </div>   
+                        </div>
+                    </div>
 
-                <div class="col-md-2 form-input">
-                    <label for="inputFirstName" class="form-label require">Location of the Injury</label></br>
-                    <span class="input-group-addon injury-btn btn btn-info" data-id='${injuryIndex}' data-injid="${injuryIndex}" attr_emp="" alt="${injuryIndex}"><i class="fa fa-male" aria-hidden="true"></i></span>
-                </div>
-            <div class="col-md-2 text-right">
-                <button type="button" class="btn btn-danger btn-sm removeInjuryDetails" data-index="${injuryIndex}" style="margin-top: 35px;">Remove</button>
-            </div>
-              </div>`;
+                    <div class="col-md-2 form-input">
+                        <label for="inputFirstName" class="form-label require">Location of the Injury</label></br>
+                        <span class="input-group-addon injury-btn btn btn-info" data-id='${injuryIndex}' data-injid="${injuryIndex}" attr_emp="" alt="${injuryIndex}"><i class="fa fa-male" aria-hidden="true"></i></span>
+                    </div>
+                    <div class="col-md-2 text-right">
+                        <button type="button" class="btn btn-danger btn-sm removeInjuryDetails" data-index="${injuryIndex}" style="margin-top: 35px;">Remove</button>
+                    </div>
+                </div>`;
 
-                $(".injury-details-templat").append(newRow);
+                $(".injury-details-templat1").append(newRow);
                 $(".single-select").select2();
-
                 addInjuryPersonValidation(injuryIndex);
-                initializeSelect2();
-
             });
 
             $(document).on("change", "[name^='injury_person'][name$='[injury_person_type]']", function() {
                 var injury_person_type = $(this).val();
                 var injuryIndex = $(this).attr("alt");
-                // Get the index of the current row
                 var injuryPersonDropdownContainer = $("#injuryPersonDropdownContainer_" + injuryIndex);
                 var injuryPersonTextContainer = $("#injuryPersonTextContainer_" + injuryIndex);
                 var injuryPersonDropdown = $('#RowInjEmpdata_' + injuryIndex);
-                var injuryPersonDeptDropdown = $("#injuryPersonDeptDropdown_" + injuryIndex);
-                var injuryPersonDepttexxt = $("#injuryPersonDepttexxt_" + injuryIndex);
+                var injuryPersonDeptInput = $('#InjPerDept_' + injuryIndex);
 
                 // Reset Fields
                 injuryPersonDropdown.empty().append('<option value="">Select Injury Person Name</option>');
                 $('#RowInjothersdata_' + injuryIndex).val("");
                 $('#InjPerDest_' + injuryIndex).val("");
-                $('#InjPerDept_' + injuryIndex).val("");
+                injuryPersonDeptInput.val("");
 
                 if (injury_person_type === "{{ encryptId('1') }}" || injury_person_type ===
                     "{{ encryptId('2') }}") {
-                    // Show Injury Person Name Dropdown, Hide Text Field
                     injuryPersonDropdownContainer.removeClass("d-none");
                     injuryPersonTextContainer.addClass("d-none");
-                    injuryPersonDeptDropdown.addClass("d-none");
 
-                    // Fetch Employee/Worker List
                     $.ajax({
                         url: "{{ url('incident/initial-incident/fetchEmployeeOrWorkerList') }}/" +
                             injury_person_type,
@@ -1734,11 +1960,18 @@
                         dataType: "json",
                         success: function(data) {
                             if (data.length > 0) {
+                                // Get existing value if editing
+                                var existingPersonId = $("#RowInjEmpdata_" + injuryIndex).data(
+                                    'existing-value') || '';
+
                                 $.each(data, function(index, item) {
+                                    var isSelected = (item.id == existingPersonId) ?
+                                        'selected' : '';
                                     injuryPersonDropdown.append(
-                                        `<option value="${item.id}">${item.text}</option>`
+                                        `<option value="${item.id}" ${isSelected}>${item.text}</option>`
                                     );
                                 });
+
                             } else {
                                 Swal.fire("No Data", "No records found for the selected type.",
                                     "info");
@@ -1749,17 +1982,18 @@
                                 "error");
                         }
                     });
-
                 } else if (injury_person_type === "{{ encryptId('3') }}") {
-                    // Show Input Fields for Others
                     injuryPersonTextContainer.removeClass("d-none");
                     injuryPersonDropdownContainer.addClass("d-none");
-                    injuryPersonDeptDropdown.removeClass("d-none");
 
+                    // Set existing name if editing
+                    var existingName = $('#RowInjothersdata_' + injuryIndex).data('existing-value') || '';
+                    if (existingName) {
+                        $('#RowInjothersdata_' + injuryIndex).val(existingName);
+                    }
                 } else {
                     injuryPersonDropdownContainer.addClass("d-none");
                     injuryPersonTextContainer.addClass("d-none");
-                    injuryPersonDeptDropdown.removeClass("d-none");
                 }
             });
 
@@ -1769,6 +2003,8 @@
                 var injuryIndex = $this.attr("alt");
                 var injury_person_type = $("#RowInjTypedata_" + injuryIndex).val();
                 var isAlreadySelected = false;
+
+                // Check for duplicate selections
                 $(".injuryPersonName").not(this).each(function() {
                     var existing_person_id = $(this).val();
                     var existing_index = $(this).attr("alt");
@@ -1776,7 +2012,7 @@
                     if (existing_person_id === injury_person_id && existing_person_type ===
                         injury_person_type && injury_person_id !== "") {
                         isAlreadySelected = true;
-                        return false; // Exit loop
+                        return false;
                     }
                 });
 
@@ -1787,42 +2023,28 @@
                         text: "Selected value already exists for the same injury type.",
                         confirmButtonText: "OK"
                     }).then(() => {
-                        $this.val("").trigger("change"); // Reset field after alert is closed
+                        $this.val("").trigger("change");
                     });
+                    return;
                 }
 
-                // Define Designation and Department fields
+                // Fetch person details
                 var injuryPersonDesignation = $("#InjPerDest_" + injuryIndex);
                 var injuryPersonDeptInput = $("#InjPerDept_" + injuryIndex);
-                if (injury_person_type != 'R1ZPdDJJQnR5WmZNUVJUaDhaelhIdz09') {
+
+                if (injury_person_type && injury_person_id) {
                     $.ajax({
                         url: "{{ url('incident/initial-incident/fetchPersonDetails') }}/" +
-                            injury_person_id +
-                            "/" + injury_person_type,
+                            injury_person_id + "/" + injury_person_type,
                         type: "GET",
                         dataType: "json",
                         success: function(response) {
                             if (response.employee || response.worker) {
                                 let person = response.employee || response.worker;
-
-                                if (person.designation) {
-                                    injuryPersonDesignation.val(person.designation).prop(
-                                        "readonly",
-                                        true);
-                                } else {
-                                    injuryPersonDesignation.val("").prop("readonly", false);
-                                }
-
-                                if (person.department_name) {
-                                    injuryPersonDeptInput.val(person.department_name).prop(
-                                        "readonly", true);
-
-
-                                } else {
-                                    injuryPersonDeptInput.val("").prop("readonly", false);
-                                }
-                            } else {
-                                Swal.fire("Error", "Data could not be fetched.", "error");
+                                injuryPersonDesignation.val(person.designation || "").prop(
+                                    "readonly", !!person.designation);
+                                injuryPersonDeptInput.val(person.department_name || "").prop(
+                                    "readonly", !!person.department_name);
                             }
                         },
                         error: function() {
@@ -1833,39 +2055,85 @@
                 }
             });
 
-            // Remove injury details row
-            $(document).on("click", ".removeInjuryDetails", function() {
-                var $row = $(this).closest(".injury-append");
 
-                if ($(".injury-append").length > 1) {
+            // $(document).on("click", ".removeInjuryDetails", function() {
+            //     var $row = $(this).closest(".injury-append");
+
+            //     if ($(".injury-append").length > 1) {
+            //         Swal.fire({
+            //             title: 'Are you sure?',
+            //             text: "Do you really want to delete this row?",
+            //             icon: 'warning',
+            //             showCancelButton: true,
+            //             confirmButtonColor: '#d33',
+            //             cancelButtonColor: '#3085d6',
+            //             confirmButtonText: 'Yes, delete it!',
+            //             cancelButtonText: 'Cancel'
+            //         }).then((result) => {
+            //             if (result.isConfirmed) {
+            //                 $row.remove();
+            //                 Swal.fire('Deleted!', 'The row has been deleted.', 'success');
+            //             }
+            //         });
+            //     } else {
+            //         Swal.fire('Action Denied', 'At least one row is required.', 'warning');
+            //     }
+            // });
+
+
+            $(document).on("click", ".removeInjuryDetails", function() {
+                let $row = $(this).closest('.row.injury-append');
+                var incident_id = $('#incident_id').val();
+                let injuryId = $row.find('input[name*="[injury_detail_id]"]').val();
+
+                if (injuryId) {
                     Swal.fire({
                         title: 'Are you sure?',
-                        text: "Do you really want to delete this row?",
+                        text: "You want to remove this injury!",
                         icon: 'warning',
                         showCancelButton: true,
-                        confirmButtonColor: '#d33',
-                        cancelButtonColor: '#3085d6',
-                        confirmButtonText: 'Yes, delete it!',
-                        cancelButtonText: 'Cancel'
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes, remove it!'
                     }).then((result) => {
                         if (result.isConfirmed) {
-                            $row.remove();
-                            Swal.fire(
-                                'Deleted!',
-                                'The row has been deleted.',
-                                'success'
-                            );
+                            $.ajax({
+                                url: "{{ url('incident/initial-incident/injuryDelete') }}/" +
+                                    incident_id + "/" + injuryId,
+                                method: 'post',
+                                data: {
+                                    _token: '{{ csrf_token() }}'
+                                },
+                                success: function(response) {
+                                    $row.remove();
+                                    Swal.fire(
+                                        'Removed!',
+                                        'Injury has been removed.',
+                                        'success'
+                                    );
+                                },
+                                error: function(xhr) {
+                                    Swal.fire(
+                                        'Error!',
+                                        'Failed to remove injury.',
+                                        'error'
+                                    );
+                                }
+                            });
                         }
                     });
                 } else {
+                    // If it's a new record (no ID), just remove from UI
+                    $row.remove();
                     Swal.fire(
-                        'Action Denied',
-                        'At least one row is required.',
-                        'warning'
+                        'Removed!',
+                        'Injury has been removed.',
+                        'success'
                     );
                 }
             });
 
+            // Add validation rules
             function addInjuryPersonValidation(injuryIndex) {
                 $(`select[name="injury_person[${injuryIndex}][injury_person_type]"]`).rules("add", {
                     required: true,
@@ -1873,7 +2141,7 @@
                         required: "Injury Person Type is required."
                     }
                 });
-                $(`input[name="injury_person[${injuryIndex}][injury_person_id]"]`).rules("add", {
+                $(`select[name="injury_person[${injuryIndex}][injury_person_id]"]`).rules("add", {
                     required: true,
                     messages: {
                         required: "Injury Person Name is required."
@@ -1891,13 +2159,12 @@
                         required: "Injury Person Designation is required."
                     }
                 });
-                $(`select[name="injury_person[${injuryIndex}][injury_person_department_id]"], input[name="injury_person[${injuryIndex}][injury_person_department_id]"]`)
-                    .rules("add", {
-                        required: true,
-                        messages: {
-                            required: "Injury Person Department is required."
-                        }
-                    });
+                $(`input[name="injury_person[${injuryIndex}][injury_person_department_id]"]`).rules("add", {
+                    required: true,
+                    messages: {
+                        required: "Injury Person Department is required."
+                    }
+                });
             }
             $(function() {
                 $('#accidentinvestigation').validate({
@@ -2244,24 +2511,34 @@
             var getid = $(this).data('id');
             var inj_id = $(this).data('injid');
             var injuredPerson_type = $('#RowInjTypedata_' + getid).val();
+
             var injuredPerson_emp = $('#RowInjEmpdata_' + getid).val();
             var injuredPerson_others = $('#RowInjothersdata_' + getid).val();
             var injuredPerson_empName = $('#RowInjothersdata_' + getid).val();
-
+            var injury_detail_id = $('#injury_detail_id_' + getid).val();
+            //    alert(injury_detail_id); 
             var errorcount = '0';
             var injuredPerson = '0';
+            var injury_person_type = '0';
+            var injury_id = '0';
 
             if ((injuredPerson_emp == '' || injuredPerson_emp == null) && (injuredPerson_empName == '' ||
                     injuredPerson_empName == null)) {
                 Swal.fire('Error', 'Please Select Victim Name', 'error');
                 errorcount = '1';
             } else {
+                // alert(injuredPerson_emp);
                 errorcount = '0';
-                if (injuredPerson_emp != '') {
+                if (injuredPerson_emp != '' && injuredPerson_emp != null) {
                     injuredPerson = injuredPerson_emp;
+                    injury_person_type = injuredPerson_type;
+                    injury_id = injury_detail_id;
                 } else {
                     injuredPerson = injuredPerson_empName;
+                    injury_person_type = injuredPerson_type;
+                    injury_id = injury_detail_id;
                 }
+
             }
 
             if (errorcount == '1') {
@@ -2270,12 +2547,15 @@
             } else {
 
                 $('#injuredPerson').val(injuredPerson);
+                $('#injury_person_type').val(injury_person_type);
+                $('#injury_id').val(injury_id);
                 var random_id = $('#random_id').val();
-                alert(random_id);
+                var incident_id = $('#incident_id').val();
+                var acc_prim_id = $('#acc_prim_id').val();
                 var acc_prim_add = $('#acc_prim_add').val();
-
-                var emp_details = get_emp_details_by_id(injuredPerson, random_id, acc_prim_add, inj_id,
-                    injuredPerson_type);
+                // alert(injury_id);
+                var emp_details = get_emp_details_by_id(incident_id, injuredPerson, random_id, acc_prim_add, inj_id,
+                    injuredPerson_type, injury_id);
 
 
                 $("#injury_model [name='injperson']").val(injuredPerson);
@@ -2284,13 +2564,16 @@
 
         });
 
-        function get_emp_details_by_id(injuredPerson, random_id, acc_prim_add, inj_id, injuredPerson_type) {
+        function get_emp_details_by_id(incident_id, injuredPerson, random_id, acc_prim_add, inj_id, injuredPerson_type,
+            injury_id) {
             var url = "{{ admin_url('incident/initial-incident/investigation/getbodyEmpdetails') }}";
             var data = {
                 partyname: injuredPerson,
+                incident_id: incident_id,
                 random_id: random_id,
                 acc_prim_add: acc_prim_add,
                 injuredPerson_type: injuredPerson_type,
+                injury_id: injury_id,
             };
 
             $.ajax({
@@ -2298,16 +2581,18 @@
                 url: url,
                 data: data,
                 success: function(data) {
-                    console.log(data); // Inspect the response
+                    console.log(data);
+
                     if (data['empdata'] && data['empdata'].length > 0) {
                         $.each(data['empdata'], function(i, emp) {
                             $("#imgMapdata1").val(emp['imgMapdata']);
                             $("#body_prim_id").val(emp['id']);
-                            $("#injury_id").val(inj_id);
+                            $("#injury_id").val(injury_id);
                         });
                     } else {
+                        // alert(injury_id);
                         $("#body_prim_id").val(0);
-                        $("#injury_id").val(inj_id);
+                        $("#injury_id").val(injury_id);
                     }
                 },
                 error: function(xhr, status, error) {
