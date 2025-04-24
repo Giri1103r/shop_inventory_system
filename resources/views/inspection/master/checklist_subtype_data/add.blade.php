@@ -265,18 +265,7 @@
                     }
                 });
 
-                $(`textarea[name="checklist[${checklistIndex}][description]"]`).rules("add", {
-                    required: true,
-                    minlength: 3,
-                    maxlength: 500,
-                    pattern: /^[a-zA-Z0-9\s\-_'"()?\/&%]+$/,
-                    messages: {
-                        required: "Checklist Sub-Type Data Description is Required",
-                        minlength: "{{ __('common.validate_min_length') }}",
-                        maxlength: "Maximum Characters should not exceed 500",
-                        pattern: "Only alphanumeric characters and -, _, ', \", (), ? are allowed",
-                    }
-                });
+                
 
             }
             $(function() {
@@ -317,13 +306,7 @@
                                 }
                             }
                         },
-                        'checklist[0][description]': {
-                            required: true,
-                            minlength: 3,
-                            maxlength: 500,
-                            pattern: /^[a-zA-Z0-9\s\-_'"()?\/&%]+$/,
-                            
-                        },
+                       
 
                     },
                     messages: {
@@ -340,12 +323,7 @@
                             pattern: "Only alphanumeric characters and -, _, ', \", () are allowed",
                             remote: "Checklist Sub-Type Data Name should be unique"
                         },
-                        'checklist[0][description]': {
-                            required: "Checklist Sub-Type Data Description  is Required",
-                            minlength: "{{ __('common.validate_min_length') }}",
-                            maxlength: "Maximum Characters should not exceed 500",
-                            pattern: "Only alphanumeric characters and -, _, ', \", () are allowed",
-                        },
+                       
 
                     },
                     errorElement: 'span',

@@ -2509,8 +2509,6 @@ if (!function_exists('getMonth')) {
         {
             if ($id == GEMBA_WALK_INSPECTION_START) {
                 return 'Gemba Walk Start';
-            } else if ($id == GEMBA_WALK_INSPECTION_WAITING_FOR_CAPA_ACTION) {
-                return 'Waiting for CAPA Action';
             } else if ($id == GEMBA_WALK_INSPECTION_WAITING_FOR_FLOOR_MANAGER_VERIFICATION) {
                 return 'Waiting for Floor manager Action';
             } else if ($id == GEMBA_WALK_INSPECTION_WAITING_FOR_EHS_OFFICER_VERIFICATION) {

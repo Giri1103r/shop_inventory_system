@@ -276,20 +276,20 @@
                 });
 
 
-                $(`textarea[name="checklist[${index}][description]"]`).rules("add", {
-                    required: true,
-                    minlength: 3,
-                    maxlength: 500,
-                    pattern: /^[a-zA-Z0-9\s\-_'"()]*$/,
+                // $(`textarea[name="checklist[${index}][description]"]`).rules("add", {
+                //     required: true,
+                //     minlength: 3,
+                //     maxlength: 500,
+                //     pattern: /^[a-zA-Z0-9\s\-_'"()]*$/,
 
-                    messages: {
-                        required: "Checklist description is required",
-                        minlength: "Minimum 5 characters required",
-                        maxlength: "Maximum 500 characters allowed",
-                        pattern: "Only alphanumeric characters and -, _, ', \", () are allowed",
+                //     messages: {
+                //         required: "Checklist description is required",
+                //         minlength: "Minimum 5 characters required",
+                //         maxlength: "Maximum 500 characters allowed",
+                //         pattern: "Only alphanumeric characters and -, _, ', \", () are allowed",
 
-                    }
-                });
+                //     }
+                // });
             }
 
             $(function() {
@@ -341,7 +341,7 @@
 
                 $('#checklistBody').find('tr').each(function(index) {
                     let nameInput = $(this).find('input[name^="checklist["][name$="[name]"]');
-                    let descInput = $(this).find('textarea[name^="checklist["][name$="[description]"]');
+                    // let descInput = $(this).find('textarea[name^="checklist["][name$="[description]"]');
 
                     nameInput.rules("add", {
                         required: true,
@@ -375,20 +375,20 @@
                         }
                     });
 
-                    descInput.rules("add", {
-                        required: true,
-                        minlength: 3,
-                        maxlength: 500,
-                        pattern: /^[a-zA-Z0-9\s\-_'"()]*$/,
+                    // descInput.rules("add", {
+                    //     required: true,
+                    //     minlength: 3,
+                    //     maxlength: 500,
+                    //     pattern: /^[a-zA-Z0-9\s\-_'"()]*$/,
 
-                        messages: {
-                            required: "Description is Required",
-                            minlength: "Minimum 3 characters required",
-                            maxlength: "Maximum 500 characters allowed",
-                            pattern: "Only alphanumeric characters and -, _, ', \", () are allowed",
+                    //     messages: {
+                    //         required: "Description is Required",
+                    //         minlength: "Minimum 3 characters required",
+                    //         maxlength: "Maximum 500 characters allowed",
+                    //         pattern: "Only alphanumeric characters and -, _, ', \", () are allowed",
 
-                        }
-                    });
+                    //     }
+                    // });
                 });
 
             });
