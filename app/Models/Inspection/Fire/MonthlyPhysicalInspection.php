@@ -39,10 +39,8 @@ class MonthlyPhysicalInspection extends Model
             ->leftJoin('masters_location', 'inspection_fire_monthly_physical_inspection.location', '=', 'masters_location.id')
             ->leftJoin('masters_unit', 'inspection_fire_monthly_physical_inspection.unit', '=', 'masters_unit.id');
 
-
         $org_total =  $query;
         $org_total_counts = $org_total->count();
-
 
 
         if (isset($request->search) && isset($request->search['value']) && $request->search['value'] != '') {
@@ -121,9 +119,9 @@ class MonthlyPhysicalInspection extends Model
                 'id' => $id,
                 'remarks' => $request->remarks[$index],
                 'status' => $request->status[$index],
+                'frequency' =>  decryptId($request->frequency[$index]),
             ];
         }
-
 
         $inspected_data = json_encode($inspected_data);
         $insert_array = [

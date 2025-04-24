@@ -273,7 +273,7 @@ class PperequestController extends BaseController
                         'title' => $message,
                         'message' => $pperequest->emp_name . ' has a PPE request at ' . displaydateformat($pperequest->created_at) . ' on ' . getPpename($pperequest->ppe_name) . ' from ' . getDepartment($pperequest->department) . ' DEPARTMENT ',
                         'icon' => $img,
-                        'module' => 1,
+                        'module' => 2,
                         'style' => 'font-size: 1rem;'
                     ]),
                     'web_link' => admin_url('ppe_request/hodapproval/view/' . encryptId($id)),
@@ -291,8 +291,8 @@ class PperequestController extends BaseController
                     'title' => $message,
                     'message' =>  $pperequest->emp_name . ' has a PPE request at ' . ' created by ' . getUsername($pperequest->created_by),
                     'module_id' => $pperequest->id,
-                    'module_type' => 1,
-                    'module_sub_type' => 1,
+                    'module_type' => 2,
+                    'module_sub_type' => 0,
                 ];
                 mobilePushNotification(array_to_string($hodId), $notifydata);
                 $success = [
@@ -397,7 +397,7 @@ class PperequestController extends BaseController
                 return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
             }
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
         }
     }
@@ -493,7 +493,7 @@ class PperequestController extends BaseController
                             'title' => $message,
                             'message' => getUsername($updateData['approved_by']) . " has " . removeUnderScore(getStatus($updateData['approve_status']))  . " a PPE request at " . displaydateformat($emp_details->created_at) . " on " . getPpename($emp_details->ppe_name) . " from " . getDepartment($emp_details->department) . " DEPARTMENT",
                             'icon' => $img,
-                            'module' => 1,
+                            'module' => 2,
                             'style' => 'font-size: 1rem;'
                         ]),
                         'web_link' => url('ppe_request/ehsapproval/view/' . encryptId($id)),
@@ -565,7 +565,7 @@ class PperequestController extends BaseController
                             'title' => $message,
                             'message' => getUsername($updateData['approved_by']) . " has " . removeUnderScore(getStatus($updateData['approve_status']))  . " a PPE request at " . displaydateformat($emp_details->created_at) . " on " . getPpename($emp_details->ppe_name) . " from " . getDepartment($emp_details->department) . " DEPARTMENT",
                             'icon' => $img,
-                            'module' => 1,
+                            'module' => 2,
                             'style' => 'font-size: 1rem;'
                         ]),
                         'web_link' => url('ppe_request/ehsapproval/view/' . encryptId($id)),
@@ -706,7 +706,7 @@ class PperequestController extends BaseController
                             'message' => getUsername($updateEhsData['approved_by']) . " has " . removeUnderScore(getStatus($updateEhsData['approve_status']))  . " a PPE request at " . displaydateformat($empDetails->created_at) . " on " . getPpename($empDetails->ppe_name) . " from " . getDepartment($empDetails->department) . " DEPARTMENT",
                             'icon' => $img,
                             'style' => 'font-size: 1rem;',
-                            'module' => 1,
+                            'module' => 2,
                         ]),
                         'web_link' => admin_url('ppe_request/view/' . encryptId($id)),
                         'assigned_user' => $assignedUserString,
@@ -774,6 +774,7 @@ class PperequestController extends BaseController
                             'message' => getUsername($updateEhsData['approved_by']) . " has " . removeUnderScore(getStatus($updateEhsData['approve_status']))  . " a PPE request at " . displaydateformat($empDetails->created_at) . " on " . getPpename($empDetails->ppe_name) . " from " . getDepartment($empDetails->department) . " DEPARTMENT",
                             'icon' => $img,
                             'style' => 'font-size: 1rem;',
+                            'module' => 2,
                         ]),
                         'web_link' => admin_url('ppe_request/view/' . encryptId($id)),
                         'assigned_user' =>  $assignedUserString,

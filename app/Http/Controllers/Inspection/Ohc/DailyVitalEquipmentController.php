@@ -181,38 +181,72 @@ class DailyVitalEquipmentController extends Controller
                     $sheet->getRowDimension($currentRow + $i)->setRowHeight(25);
                 }
 
-                $sheet->mergeCells("A{$currentRow}:C" . ($currentRow + 2));
+                $sheet->mergeCells("A{$currentRow}:B" . ($currentRow + 2));
                 $logoPath = public_path('assets/images/logo-dark.png');
                 if (file_exists($logoPath)) {
                     $drawing = new Drawing();
                     $drawing->setName('Logo');
                     $drawing->setPath($logoPath);
                     $drawing->setCoordinates("A{$currentRow}");
-                    $drawing->setOffsetX(25);
-                    $drawing->setOffsetY(10);
+                    $drawing->setOffsetX(5);
+                    $drawing->setOffsetY(5);
                     $drawing->setWidth(90);
                     $drawing->setHeight(50);
                     $drawing->setWorksheet($sheet);
                 }
-                $sheet->getStyle("A{$currentRow}:C" . ($currentRow + 2))->applyFromArray([
+                $sheet->getStyle("A{$currentRow}:B" . ($currentRow + 2))->applyFromArray([
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                 ]);
+
+                $sheet->mergeCells("C{$currentRow}:C" . ($currentRow + 2));
+
+                $logoRightPath = public_path('assets/images/plus-image.webp');
+                if (file_exists($logoRightPath)) {
+                    $drawing = new Drawing();
+                    $drawing->setName('Left Logo');
+                    $drawing->setPath($logoRightPath);
+                    $drawing->setCoordinates("C{$currentRow}");
+
+                    $drawing->setOffsetX(20);
+                    $drawing->setOffsetY(15);
+                    $drawing->setWidth(30);
+                    $drawing->setHeight(60);
+                    $drawing->setWorksheet($sheet);
+
+                }
+
+                $sheet->mergeCells("I{$currentRow}:I" . ($currentRow + 2));
+
+                $logoRightPath = public_path('assets/images/plus-image.webp');
+                if (file_exists($logoRightPath)) {
+                    $drawing = new Drawing();
+                    $drawing->setName('Right Logo');
+                    $drawing->setPath($logoRightPath);
+                    $drawing->setCoordinates("I{$currentRow}");
+
+                    $drawing->setOffsetX(20);
+                    $drawing->setOffsetY(15);
+                    $drawing->setWidth(30);
+                    $drawing->setHeight(60);
+                    $drawing->setWorksheet($sheet);
+
+                }
 
                 $sheet->mergeCells("D{$currentRow}:H" . ($currentRow + 2));
                 $sheet->setCellValue("D{$currentRow}", "OCCUPATIONAL HEALTH CENTER\nपारमर्शिक स्वास्थ्य केंद्र\nPN INTERNATIONAL PVT LTD");
                 $sheet->getStyle("D{$currentRow}")->applyFromArray([
                     'font' => ['bold' => true, 'size' => 14],
-                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    // 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
                 ]);
 
-                $sheet->mergeCells("I{$currentRow}:K{$currentRow}")->setCellValue("I{$currentRow}", 'Doc. No.');
-                $sheet->mergeCells("I" . ($currentRow + 1) . ":K" . ($currentRow + 1))->setCellValue("I" . ($currentRow + 1), 'Issue Dt.');
-                $sheet->mergeCells("I" . ($currentRow + 2) . ":K" . ($currentRow + 2))->setCellValue("I" . ($currentRow + 2), 'Rev. & Dt.');
+                $sheet->mergeCells("J{$currentRow}:K{$currentRow}")->setCellValue("J{$currentRow}", 'Doc. No.');
+                $sheet->mergeCells("J" . ($currentRow + 1) . ":K" . ($currentRow + 1))->setCellValue("J" . ($currentRow + 1), 'Issue Dt.');
+                $sheet->mergeCells("J" . ($currentRow + 2) . ":K" . ($currentRow + 2))->setCellValue("J" . ($currentRow + 2), 'Rev. & Dt.');
                 $sheet->mergeCells("L{$currentRow}:M{$currentRow}")->setCellValue("L{$currentRow}", $document_no->doc_no);
                 $sheet->mergeCells("L" . ($currentRow + 1) . ":M" . ($currentRow + 1))->setCellValue("L" . ($currentRow + 1), Displaydateformat($document_no->issue_date));
                 $sheet->mergeCells("L" . ($currentRow + 2) . ":M" . ($currentRow + 2))->setCellValue("L" . ($currentRow + 2), $document_no->rev_dt);
-                $sheet->getStyle("I{$currentRow}:M" . ($currentRow + 2))->applyFromArray([
+                $sheet->getStyle("J{$currentRow}:M" . ($currentRow + 2))->applyFromArray([
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                 ]);
@@ -288,7 +322,8 @@ class DailyVitalEquipmentController extends Controller
                 $sheet->mergeCells("H{$row}:M{$row}");
                 $sheet->getStyle("A{$row}:M{$row}")->applyFromArray([
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER,
+                    'vertical' => Alignment::VERTICAL_CENTER],
                 ]);
 
                 if (file_exists($inspection_created_by)) {
@@ -301,12 +336,19 @@ class DailyVitalEquipmentController extends Controller
                     $drawing->setWidth(120);
                     $drawing->setHeight(50);
                     $drawing->setWorksheet($sheet);
+                }else {
+                    $sheet->setCellValue("H{$row}", "Inspection not yet started");
+                    $sheet->getStyle("H{$row}:M{$row}")->applyFromArray([
+                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER,
+                        'vertical' => Alignment::VERTICAL_CENTER],
+                        'font' => ['italic' => true],
+                    ]);
                 }
 
                 $sheet->getStyle("A{$currentRow}:M{$row}")->applyFromArray([
                     'borders' => [
                         'outline' => [
-                            'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THICK,
+                            'borderStyle' => Border::BORDER_THICK,
                             'color' => ['argb' => '000000'],
                         ],
                     ],
@@ -437,21 +479,23 @@ class DailyVitalEquipmentController extends Controller
                 $sheet->getRowDimension($i)->setRowHeight(25);
             }
 
-            $sheet->mergeCells("A1:C3");
+            $row = 1;
+
+            $sheet->mergeCells("A1:B3");
             $logoPath = public_path('assets/images/logo-dark.png');
             if (file_exists($logoPath)) {
                 $drawing = new Drawing();
                 $drawing->setName('Logo');
                 $drawing->setPath($logoPath);
                 $drawing->setCoordinates("A1");
-                $drawing->setOffsetX(25);
+                $drawing->setOffsetX(5);
                 $drawing->setOffsetY(10);
                 $drawing->setWidth(90);
                 $drawing->setHeight(50);
                 $drawing->setWorksheet($sheet);
             }
 
-            $sheet->getStyle("A1:C3")->applyFromArray([
+            $sheet->getStyle("A1:B3")->applyFromArray([
                 'borders' => [
                     'allBorders' => [
                         'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
@@ -459,11 +503,45 @@ class DailyVitalEquipmentController extends Controller
                 ],
             ]);
 
+
+            $sheet->mergeCells("C{$row}:C" . ($row + 2));
+
+            $logoRightPath = public_path('assets/images/plus-image.webp');
+            if (file_exists($logoRightPath)) {
+                $drawing = new Drawing();
+                $drawing->setName('Left Logo');
+                $drawing->setPath($logoRightPath);
+                $drawing->setCoordinates("C{$row}");
+
+                $drawing->setOffsetX(20);
+                $drawing->setOffsetY(15);
+                $drawing->setWidth(30);
+                $drawing->setHeight(60);
+                $drawing->setWorksheet($sheet);
+
+            }
+
+            $sheet->mergeCells("I{$row}:I" . ($row + 2));
+
+            $logoRightPath = public_path('assets/images/plus-image.webp');
+            if (file_exists($logoRightPath)) {
+                $drawing = new Drawing();
+                $drawing->setName('Right Logo');
+                $drawing->setPath($logoRightPath);
+                $drawing->setCoordinates("I{$row}");
+
+                $drawing->setOffsetX(20);
+                $drawing->setOffsetY(15);
+                $drawing->setWidth(30);
+                $drawing->setHeight(60);
+                $drawing->setWorksheet($sheet);
+
+            }
+
             $sheet->mergeCells("D1:H3");
             $sheet->setCellValue("D1", "OCCUPATIONAL HEALTH CENTER\nपारमर्शिक स्वास्थ्य केंद्र\nPN INTERNATIONAL PVT LTD");
             $sheet->getStyle("D1")->applyFromArray([
                 'font' => ['bold' => true, 'size' => 14],
-                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                 'alignment' => [
                     'horizontal' => Alignment::HORIZONTAL_CENTER,
                     'vertical' => Alignment::VERTICAL_CENTER,
@@ -471,13 +549,13 @@ class DailyVitalEquipmentController extends Controller
                 ],
             ]);
 
-            $sheet->mergeCells("I1:K1")->setCellValue("I1", 'Doc. No.');
-            $sheet->mergeCells("I2:K2")->setCellValue("I2", 'Issue Dt.');
-            $sheet->mergeCells("I3:K3")->setCellValue("I3", 'Rev. & Dt.');
+            $sheet->mergeCells("J1:K1")->setCellValue("J1", 'Doc. No.');
+            $sheet->mergeCells("J2:K2")->setCellValue("J2", 'Issue Dt.');
+            $sheet->mergeCells("J3:K3")->setCellValue("J3", 'Rev. & Dt.');
             $sheet->mergeCells("L1:M1")->setCellValue("L1", $document_no->doc_no);
             $sheet->mergeCells("L2:M2")->setCellValue("L2", Displaydateformat($document_no->issue_date));
             $sheet->mergeCells("L3:M3")->setCellValue("L3", $document_no->rev_dt);
-            $sheet->getStyle("I1:M3")->applyFromArray([
+            $sheet->getStyle("J1:M3")->applyFromArray([
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
             ]);
@@ -571,6 +649,13 @@ class DailyVitalEquipmentController extends Controller
                 $drawing->setWidth(120);
                 $drawing->setHeight(50);
                 $drawing->setWorksheet($sheet);
+            }else {
+                $sheet->setCellValue("H{$row}", "Inspection not yet started");
+                $sheet->getStyle("H{$row}:M{$row}")->applyFromArray([
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER,
+                    'vertical' => Alignment::VERTICAL_CENTER],
+                    'font' => ['italic' => true],
+                ]);
             }
 
             $writer = new Xlsx($spreadsheet);

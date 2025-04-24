@@ -271,7 +271,7 @@ class RRAAController extends Controller
             $currentRow = 1;
 
             foreach ($allData as $recordIndex => $data) {
-               
+
                 $logoPath = public_path('assets/images/logo-dark.png');
                 if (file_exists($logoPath)) {
                     $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
@@ -442,7 +442,7 @@ class RRAAController extends Controller
             $html = view('inspection.rraa.generalpdf', $data)->render();
             $mpdf->WriteHTML($html);
 
-            $filename = "RRAA Details.pdf";
+            $filename = "RRAA.pdf";
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);

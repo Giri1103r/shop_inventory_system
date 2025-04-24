@@ -133,7 +133,7 @@
     <div class="logo-box">
         <a href="{{ url('/dashboard') }}" class="logo logo-light text-center">
             <span class="logo-sm">
-                <img src="{{ url('public/assets/images/logo-sm.png') }}" alt="" height="22">
+                <img src="{{ url('public/assets/images/klogo.jpg') }}" alt="" height="22">
             </span>
             <span class="logo-lg">
                 <img src="{{ url('public/assets/images/logo-dark.png') }}" alt="" height="16">
@@ -141,7 +141,7 @@
         </a>
         <a href="{{ url('/dashboard') }}" class="logo logo-dark text-center">
             <span class="logo-sm">
-                <img src="{{ url('public/assets/images/logo-sm.png') }}" alt="" height="22">
+                <img src="{{ url('public/assets/images/klogo.jpg') }}" alt="" height="22">
             </span>
             <span class="logo-lg">
                 <img src="{{ url('public/assets/images/logo-dark.png') }}" alt="" height="16">

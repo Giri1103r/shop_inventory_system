@@ -280,14 +280,14 @@
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.nozzle') }}</label>
+                                                            class="form-label require">{{ __('inspection.status_hose') }}</label>
                                                         <select name="status_of_hose[1]" id="status_of_hose"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Status Of The Hose
                                                             </option>
                                                             <option value="{{ encryptId(OPERATIONAL) }}">
                                                                 Operational </option>
-                                                            <option value="{{ encryptId(NON_OPERATIONAL) }}">
+                                                            <option value="{{ encryptId(NONOPERATIONAL) }}">
                                                                 Non Operational </option>
                                                         </select>
                                                     </div>
@@ -318,12 +318,12 @@
 
                                                 <div class="mb-2">
                                                     <label class="me-3">
-                                                        <input type="radio" name="observation_needed"
+                                                        <input type="radio" name="observation"
                                                             value="{{ encryptId(1) }}" class="validate-radio-required">
                                                         Yes
                                                     </label>
                                                     <label>
-                                                        <input type="radio" name="observation_needed"
+                                                        <input type="radio" name="observation"
                                                             value="{{ encryptId(2) }}" class="validate-radio-required">
                                                         No
                                                     </label>
@@ -707,14 +707,14 @@
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.nozzle') }}</label>
+                                                            class="form-label require">{{ __('inspection.status_hose') }}</label>
                                                         <select name="status_of_hose[${form_set_count}]" id="status_of_hose-${form_set_count}"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Status Of The Hose
                                                             </option>
                                                             <option value="{{ encryptId(OPERATIONAL) }}">
                                                                 Operational </option>
-                                                            <option value="{{ encryptId(NON_OPERATIONAL) }}">
+                                                            <option value="{{ encryptId(NONOPERATIONAL) }}">
                                                                 Non Operational </option>
                                                         </select>
                                                     </div>

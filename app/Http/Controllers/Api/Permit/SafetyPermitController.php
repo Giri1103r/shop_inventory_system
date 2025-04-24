@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\Permit;
 use App\Http\Controllers\Api\BaseController;
 use App\Http\Controllers\Controller;
 use App\Mail\SafetyPermitEmail;
+use App\Models\Master\Employee;
 use App\Models\Permit\SafetyApproveReject;
 use App\Models\Permit\SafetyPermit;
 use Exception;
@@ -164,8 +165,8 @@ class SafetyPermitController extends BaseController
                 $stateIsolationLoto = json_decode($safetypermit->state_isolation_loto, true) ?? [];
                 $state_of_isolation = [];
                 $other_if_any = [];
-// dd($stateIsolationLoto);
-$knownItems = ['Air', 'Gas', 'Electrical', 'Water/Liquid'];
+                // dd($stateIsolationLoto);
+                $knownItems = ['Air', 'Gas', 'Electrical', 'Water/Liquid'];
 
                 foreach ($knownItems as $item) {
                     $key = strtolower(str_replace('/', '_', $item));
@@ -193,9 +194,6 @@ $knownItems = ['Air', 'Gas', 'Electrical', 'Water/Liquid'];
                         'name' => $item,
                         'checked' => in_array($item, $stateIsolationLoto) ? 'Yes' : 'No'
                     ];
-
-
-
                 }
                 foreach ($stateIsolationLoto as $item) {
                     if (!in_array($item, $knownItems)) {
@@ -312,7 +310,6 @@ $knownItems = ['Air', 'Gas', 'Electrical', 'Water/Liquid'];
                         $ptwstatusLogs[] = $logEntry; // Push log entry to array
                     }
                 }
-
                 $success = [
                     'id' => $safetypermit->id,
                     'permit_id' => $safetypermit->permit_id,
@@ -324,7 +321,26 @@ $knownItems = ['Air', 'Gas', 'Electrical', 'Water/Liquid'];
                     'job_location_area' => $safetypermit->job_location_area,
                     'created_by' => getusername($safetypermit->created_by),
                     'created_at' => Displaydateformat($safetypermit->created_at),
-
+                    'safety_permit_status' => [
+                        'id' => $safetypermit->status_id,
+                        'status' => $safetypermit->status_name,
+                    ],
+                    'verified_by' => [
+                        'id' => $safetypermit->verified_by,
+                        'name' => getusername($safetypermit->verified_by),
+                    ],
+                    'resume_hold_by' => [
+                        'id' => $safetypermit->resume_hold_by,
+                        'name' => getusername($safetypermit->resume_hold_by),
+                    ],
+                    'reassign_to' => [
+                        'id' => $safetypermit->reassign_to,
+                        'name' => getusername($safetypermit->reassign_to),
+                    ],
+                    'approved_by' => [
+                        'id' => $safetypermit->approved_by,
+                        'name' => getusername($safetypermit->approved_by),
+                    ],
                     'type_of_work' => [
                         'sub_permit' => $sub_permits,
 
@@ -507,7 +523,7 @@ $knownItems = ['Air', 'Gas', 'Electrical', 'Water/Liquid'];
                 return $this->sendResponse($success, 'Safety Permit Details');
             }
         } catch (Exception $ex) {
-            report($ex);
+            dd($ex);
             return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
         }
     }
@@ -602,13 +618,21 @@ $knownItems = ['Air', 'Gas', 'Electrical', 'Water/Liquid'];
                         'message' => 'Safety Permit ' . $safetypermit->permit_id . $mailsubject . getUsername($approve->created_by),
                         'icon' =>  admin_url('public/assets/icons/permit_to_work.png'),
                         'id' => $safetypermit->id,
-                        'module' => 1,
+                        'module' => 3,
                     )),
                     'web_link' =>  admin_url('safetypermit/approvereject/' . encryptId($safetypermit->id)),
                     'assigned_user' => $UserIdsCommaSeparated,
                     'created_by' => Auth::id(),
                 );
                 notificationSave($notificationData);
+                $notifydata = [
+                    'title' => $mailsubject,
+                    'message' =>   'Safety Permit ' . $safetypermit->permit_id . $mailsubject . getUsername($approve->created_by),
+                    'module_id' => $safetypermit->permit_id,
+                    'module_type' => 1,
+                    'module_sub_type' => 0,
+                ];
+                mobilePushNotification($UserIdsCommaSeparated, $notifydata);
             } elseif ($request->status == '2') {
                 $mailsubject = 'EHS Resumed the permit';
                 $Assignedusers = User::whereIn('id', [$approve->created_by, $safetypermit->created_by])
@@ -648,13 +672,21 @@ $knownItems = ['Air', 'Gas', 'Electrical', 'Water/Liquid'];
                         'message' => 'Safety Permit ' . $safetypermit->permit_id . $mailsubject . getUsername($approve->created_by),
                         'icon' =>  admin_url('public/assets/icons/permit_to_work.png'),
                         'id' => $safetypermit->id,
-                        'module' => 1,
+                        'module' => 3,
                     )),
                     'web_link' =>  admin_url('safetypermit/approvereject/' . encryptId($safetypermit->id)),
                     'assigned_user' => $UserIdsCommaSeparated,
                     'created_by' => Auth::id(),
                 );
                 notificationSave($notificationData);
+                $notifydata = [
+                    'title' => $mailsubject,
+                    'message' =>   'Safety Permit ' . $safetypermit->permit_id . $mailsubject . getUsername($approve->created_by),
+                    'module_id' => $safetypermit->permit_id,
+                    'module_type' => 1,
+                    'module_sub_type' => 0,
+                ];
+                mobilePushNotification($UserIdsCommaSeparated, $notifydata);
             } elseif ($request->status == '3') {
                 $mailsubject = 'EHS declined the permit Rework the permit';
                 $notifywhere = array(
@@ -696,13 +728,21 @@ $knownItems = ['Air', 'Gas', 'Electrical', 'Water/Liquid'];
                         'message' => 'Safety Permit ' . $safetypermit->permit_id . $mailsubject . getUsername($approve->created_by),
                         'icon' =>  admin_url('public/assets/icons/permit_to_work.png'),
                         'id' => $safetypermit->id,
-                        'module' => 1,
+                        'module' => 3,
                     )),
                     'web_link' =>  admin_url('safetypermit/edit/' . encryptId($safetypermit->id)),
                     'assigned_user' => array_to_string($userids),
                     'created_by' => Auth::id(),
                 );
                 notificationSave($notificationData);
+                $notifydata = [
+                    'title' => $mailsubject,
+                    'message' =>   'Safety Permit ' . $safetypermit->permit_id . $mailsubject . getUsername($approve->created_by),
+                    'module_id' => $safetypermit->permit_id,
+                    'module_type' => 1,
+                    'module_sub_type' => 0,
+                ];
+                mobilePushNotification(array_to_string($userids), $notifydata);
             } elseif ($request->status == '4') {
                 $mailsubject = 'EHS Re-assigned the permit';
                 $notifywhere = array(
@@ -744,13 +784,21 @@ $knownItems = ['Air', 'Gas', 'Electrical', 'Water/Liquid'];
                         'message' => 'Safety Permit ' . $safetypermit->permit_id . $mailsubject . getUsername($approve->created_by),
                         'icon' =>  admin_url('public/assets/icons/permit_to_work.png'),
                         'id' => $safetypermit->id,
-                        'module' => 1,
+                        'module' => 3,
                     )),
                     'web_link' =>  admin_url('safetypermit/approvereject/' . encryptId($safetypermit->id)),
                     'assigned_user' => array_to_string($userids),
                     'created_by' => Auth::id(),
                 );
                 notificationSave($notificationData);
+                $notifydata = [
+                    'title' => $mailsubject,
+                    'message' =>   'Safety Permit ' . $safetypermit->permit_id . $mailsubject . getUsername($approve->created_by),
+                    'module_id' => $safetypermit->permit_id,
+                    'module_type' => 1,
+                    'module_sub_type' => 0,
+                ];
+                mobilePushNotification(array_to_string($userids), $notifydata);
             } elseif ($request->status == '5') {
                 // dd('STATUS_PLANT_HEAD_PENDING', $request);
                 $mailsubject = 'EHS Approved';
@@ -794,7 +842,7 @@ $knownItems = ['Air', 'Gas', 'Electrical', 'Water/Liquid'];
                         'message' => 'Safety Permit ' . $safetypermit->permit_id . $mailsubject . getUsername($approve->created_by),
                         'icon' =>  admin_url('public/assets/icons/permit_to_work.png'),
                         'id' => $safetypermit->id,
-                        'module' => 1,
+                        'module' => 3,
                     )),
                     'web_link' =>  admin_url('safetypermit/approvereject/' . encryptId($safetypermit->id)),
                     'assigned_user' => array_to_string($userids),
@@ -802,7 +850,14 @@ $knownItems = ['Air', 'Gas', 'Electrical', 'Water/Liquid'];
                 );
                 notificationSave($notificationData);
             }
-
+            $notifydata = [
+                'title' => $mailsubject,
+                'message' =>   'Safety Permit ' . $safetypermit->permit_id . $mailsubject . getUsername($approve->created_by),
+                'module_id' => $safetypermit->permit_id,
+                'module_type' => 1,
+                'module_sub_type' => 0,
+            ];
+            mobilePushNotification(array_to_string($userids), $notifydata);
             $insert_array = array(
                 'permit_type' => 2,
                 'permit_id' => $id,
@@ -865,6 +920,58 @@ $knownItems = ['Air', 'Gas', 'Electrical', 'Water/Liquid'];
         } catch (Exception $ex) {
             Log::error('QR Code Generation Error: ' . $ex->getMessage());
             return $this->sendError('An error occurred.', ['error' => $ex->getMessage()], 500);
+        }
+    }
+
+    public function getReassig1nEmployee(Request $request)
+    {
+        $name = $request->input('search');
+        $unitId = $request->input('unitId');
+
+        $employees = Employee::where('emp_name', 'like', '%' . $name . '%')
+            ->where('status', 1)
+            ->whereRaw("FIND_IN_SET(?, user_role)", [3])
+            ->where('login_id', '!=', Auth::id())
+            ->limit(10)
+            ->get();
+
+        return response()->json(
+            $employees->map(function ($employee) {
+                return [
+                    'id' => $employee->login_id,
+                    'text' => $employee->emp_name . ' - ' . $employee->emp_id,
+                ];
+            })
+        );
+    }
+    public function getReassignEmployee()
+    {
+        try {
+            if (Auth::check()) {
+                $employeeList = Employee::select(
+                    'masters_employee.id',
+                    'masters_employee.emp_name',
+                    'masters_employee.login_id',
+                    'masters_employee.emp_id',
+                )
+                    ->where('masters_employee.status', 1)
+                    ->get()
+                    ->map(function ($employee) {
+                        return [
+                            'id' => $employee->id,
+                            'emp_name' => $employee->emp_name,
+                            'emp_id' => $employee->emp_id,
+                            'login_id' => $employee->login_id,
+                        ];
+                    });
+
+                return $this->sendResponse(['responsible_person' => $employeeList], 'Reassign Employee details');
+            }
+
+            return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
+        } catch (Exception $ex) {
+            Log::error('Employee Fetch Error: ' . $ex->getMessage());
+            return $this->sendError('Something went wrong.', ['error' => $ex->getMessage()], 500);
         }
     }
 }

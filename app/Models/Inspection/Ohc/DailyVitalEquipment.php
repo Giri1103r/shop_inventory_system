@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class DailyVitalEquipment extends Model
 {
-    protected $table = 'ohc_daily_vital_equipment_checklist';
+    protected $table = 'inspection_ohc_daily_vital_equipment_checklist';
 
     protected $primaryKey = 'id';
 
@@ -37,9 +37,9 @@ class DailyVitalEquipment extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('ohc_daily_vital_equipment_checklist.*', 'inspection_shift_option.*', 'masters_unit.*','ohc_daily_vital_equipment_checklist.created_by as checked_by')
-            ->leftJoin('inspection_shift_option', 'ohc_daily_vital_equipment_checklist.shift', '=', 'inspection_shift_option.id')
-            ->leftJoin('masters_unit', 'ohc_daily_vital_equipment_checklist.unit', '=', 'masters_unit.id');
+        $query = $this->select('inspection_ohc_daily_vital_equipment_checklist.*', 'inspection_shift_option.*', 'masters_unit.*','inspection_ohc_daily_vital_equipment_checklist.created_by as checked_by')
+            ->leftJoin('inspection_shift_option', 'inspection_ohc_daily_vital_equipment_checklist.shift', '=', 'inspection_shift_option.id')
+            ->leftJoin('masters_unit', 'inspection_ohc_daily_vital_equipment_checklist.unit', '=', 'masters_unit.id');
 
         $org_total =  $query;
         $org_total_counts = $org_total->count();
@@ -49,25 +49,25 @@ class DailyVitalEquipment extends Model
 
             $query->where(function ($query) use ($search) {
                 $query
-                    ->orWhere('ohc_daily_vital_equipment_checklist.date_of_inspection', 'LIKE', '%' . $search . '%')
+                    ->orWhereRaw("DATE_FORMAT(inspection_ohc_daily_vital_equipment_checklist.date_of_inspection, '%d-%m-%Y') LIKE ?", ["%{$search}%"])
                     ->orWhere('masters_unit.unit_name', 'LIKE', '%' . $search . '%')
                     ->orWhere('inspection_shift_option.shift', 'LIKE', '%' . $search . '%');
             });
         }
 
         if ($request->has('unit') && $request->unit) {
-            $query = $query->where('ohc_daily_vital_equipment_checklist.unit','LIKE', '%' . decryptId($request->unit) . '%');
+            $query = $query->where('inspection_ohc_daily_vital_equipment_checklist.unit','LIKE', '%' . decryptId($request->unit) . '%');
         }
         if (isset($request->date_of_inspection) && $request->date_of_inspection) {
-            $query = $query->whereDate('ohc_daily_vital_equipment_checklist.date_of_inspection', '=', DBdateformat($request->date_of_inspection));
+            $query = $query->whereDate('inspection_ohc_daily_vital_equipment_checklist.date_of_inspection', '=', DBdateformat($request->date_of_inspection));
         }
         if ($request->has('shift') && $request->shift) {
-            $query = $query->where('ohc_daily_vital_equipment_checklist.shift', 'LIKE', '%' . decryptId($request->shift) . '%');
+            $query = $query->where('inspection_ohc_daily_vital_equipment_checklist.shift', 'LIKE', '%' . decryptId($request->shift) . '%');
         }
         $data_count = $query;
         $total_records = $data_count->count();
 
-        $query->orderBy('ohc_daily_vital_equipment_checklist.id', 'DESC');
+        $query->orderBy('inspection_ohc_daily_vital_equipment_checklist.id', 'DESC');
 
         if ($request->length != -1) {
             $query->offset($request->start)->limit($request->length);
@@ -124,31 +124,31 @@ class DailyVitalEquipment extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('ohc_daily_vital_equipment_checklist.*', 'inspection_shift_option.*', 'masters_unit.*','ohc_daily_vital_equipment_checklist.created_by as checked_by')
-            ->leftJoin('inspection_shift_option', 'ohc_daily_vital_equipment_checklist.shift', '=', 'inspection_shift_option.id')
-            ->leftJoin('masters_unit', 'ohc_daily_vital_equipment_checklist.unit', '=', 'masters_unit.id');
+        $query = $this->select('inspection_ohc_daily_vital_equipment_checklist.*', 'inspection_shift_option.*', 'masters_unit.*','inspection_ohc_daily_vital_equipment_checklist.created_by as checked_by')
+            ->leftJoin('inspection_shift_option', 'inspection_ohc_daily_vital_equipment_checklist.shift', '=', 'inspection_shift_option.id')
+            ->leftJoin('masters_unit', 'inspection_ohc_daily_vital_equipment_checklist.unit', '=', 'masters_unit.id');
 
         if (isset($request->search) && isset($request->search['value']) && $request->search['value'] != '') {
             $search = $request->search['value'];
             $query = $query->where(function ($query) use ($search) {
                 $query
-                ->orWhere('ohc_daily_vital_equipment_checklist.date_of_inspection', 'LIKE', '%' . $search . '%')
+                ->orWhereRaw("DATE_FORMAT(inspection_ohc_daily_vital_equipment_checklist.date_of_inspection, '%d-%m-%Y') LIKE ?", ["%{$search}%"])
                 ->orWhere('masters_unit.unit_name', 'LIKE', '%' . $search . '%')
                 ->orWhere('inspection_shift_option.shift', 'LIKE', '%' . $search . '%');
             });
         }
 
         if ($request->has('unit') && $request->unit) {
-            $query = $query->where('ohc_daily_vital_equipment_checklist.unit','LIKE', '%' . decryptId($request->unit) . '%');
+            $query = $query->where('inspection_ohc_daily_vital_equipment_checklist.unit','LIKE', '%' . decryptId($request->unit) . '%');
         }
         if (isset($request->date_of_inspection) && $request->date_of_inspection) {
-            $query = $query->whereDate('ohc_daily_vital_equipment_checklist.date_of_inspection', '=', DBdateformat($request->date_of_inspection));
+            $query = $query->whereDate('inspection_ohc_daily_vital_equipment_checklist.date_of_inspection', '=', DBdateformat($request->date_of_inspection));
         }
         if ($request->has('shift') && $request->shift) {
-            $query = $query->where('ohc_daily_vital_equipment_checklist.shift', 'LIKE', '%' . decryptId($request->shift) . '%');
+            $query = $query->where('inspection_ohc_daily_vital_equipment_checklist.shift', 'LIKE', '%' . decryptId($request->shift) . '%');
         }
 
-        $query->orderBy('ohc_daily_vital_equipment_checklist.id', 'DESC');
+        $query->orderBy('inspection_ohc_daily_vital_equipment_checklist.id', 'DESC');
 
         return  $query->get();
     }

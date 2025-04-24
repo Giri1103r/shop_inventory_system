@@ -232,64 +232,95 @@
                     return;
                 }
 
-                let newRow = $(".lesson_learned_row").first().clone();
-                newRow.find("input, select, textarea").each(function() {
+
+                let firstRow = $(".lesson_learned_row").first();
+
+                firstRow.find(".single-select").select2('destroy');
+
+                let newRow = firstRow.clone();
+                let newRowNumber = rowCount + 1;
+
+                firstRow.find(".single-select").select2();
+
+                newRow.find("input, select, textarea, button").each(function() {
                     let oldName = $(this).attr("name");
                     let oldId = $(this).attr("id");
 
                     if (oldName) {
-                        let newName = oldName.replace(/\[\d+\]/, "[" + (rowCount + 1) + "]");
+                        let newName = oldName.replace(/\[\d+\]/, "[" + newRowNumber + "]");
                         $(this).attr("name", newName);
                     }
                     if (oldId) {
-                        let newId = oldId.replace(/\d+$/, rowCount + 1);
+                        let newId = oldId.replace(/_\d+$/, "_" + newRowNumber);
                         $(this).attr("id", newId);
                     }
-                    if ($(this).is("input[type='text'], textarea")) {
+
+                    if ($(this).is("input[type='text'], textarea, input[type='number']")) {
                         $(this).val("");
                     }
                     if ($(this).is("select")) {
                         $(this).val("").trigger("change");
                     }
                 });
-                newRow.find("input[name*='[sr_no]']").val("DG-" + String(rowCount + 1).padStart(4,
+                newRow.find("input[name$='[sr_no]']").val("AMBIENT-" + String(rowCount + 1).padStart(4,
                     '0'));
 
                 newRow.find(".invalid-feedback").remove();
                 newRow.find(".is-invalid").removeClass("is-invalid");
-                newRow.find(".select2-container").remove();
+
                 newRow.find(".single-select").select2();
 
                 $("#lesson_learned_block").append(newRow);
-                newRow.find("input[name*='[kva_rating]']").rules("add", {
+
+                newRow.find("input[name$='[kva_rating]']").rules("add", {
                     number: true,
+                    required: true,
                     min: 0,
                     messages: {
                         number: "Only numeric values are allowed.",
-                        min: "KVA Rating must be a positive number."
+                        min: "KVA Rating must be a positive number.",
+                        required: "KVA Rating is required."
                     }
                 });
 
-                newRow.find("input[name*='[dg_no]']").rules("add", {
+                newRow.find("input[name$='[dg_no]']").rules("add", {
                     pattern: /^[a-zA-Z0-9\-_'"()\s]+$/,
+                    required: true,
                     messages: {
                         pattern: "Only alphanumeric characters and (-, _, ‘, “, ()) are allowed.",
+                        required: "DG Set number is required.",
                     }
                 });
-                newRow.find("input[name*='[location]']").rules("add", {
+                newRow.find("input[name$='[location]']").rules("add", {
                     pattern: /^[a-zA-Z0-9\-_'"()\s]+$/,
+                    required: true,
                     messages: {
                         pattern: "Only alphanumeric characters and (-, _, ‘, “, ()) are allowed.",
+                        required: "Please Enter the Location.",
                     }
                 });
-                newRow.find("input[name*='[engine_srno]']").rules("add", {
+                newRow.find("input[name$='[engine_srno]']").rules("add", {
                     pattern: /^[a-zA-Z0-9\-_'"()\s]+$/,
+                    required: true,
                     messages: {
                         pattern: "Only alphanumeric characters and (-, _, ‘, “, ()) are allowed.",
+                        required: "Please Enter the Engine number.",
                     }
                 });
+                newRow.find("input[name$='[date_of_monitoring]']").rules("add", {
 
+                    required: true,
+                    messages: {
+                        required: "Please select the Date.",
+                    }
+                });
+                newRow.find("input[name$='[next_due_date_of_monitoring]']").rules("add", {
 
+                    required: true,
+                    messages: {
+                        required: "Please select the Date.",
+                    }
+                });
 
                 initializeFlatpickr();
                 $('.single-select').select2();
@@ -312,49 +343,146 @@
             initializeFlatpickr();
         });
 
+        function addValidationRules(row) {
+            newRow.find("input[name$='[kva_rating]']").rules("add", {
+                    number: true,
+                    required: true,
+                    min: 0,
+                    messages: {
+                        number: "Only numeric values are allowed.",
+                        min: "KVA Rating must be a positive number.",
+                        required: "KVA Rating is required."
+                    }
+                });
 
-        $('#addambient').validate({
-            rules: {
+                newRow.find("input[name$='[dg_no]']").rules("add", {
+                    pattern: /^[a-zA-Z0-9\-_'"()\s]+$/,
+                    required: true,
+                    messages: {
+                        pattern: "Only alphanumeric characters and (-, _, ‘, “, ()) are allowed.",
+                        required: "DG Set number is required.",
+                    }
+                });
+                newRow.find("input[name$='[location]']").rules("add", {
+                    pattern: /^[a-zA-Z0-9\-_'"()\s]+$/,
+                    required: true,
+                    messages: {
+                        pattern: "Only alphanumeric characters and (-, _, ‘, “, ()) are allowed.",
+                        required: "Please Enter the Location.",
+                    }
+                });
+                newRow.find("input[name$='[engine_srno]']").rules("add", {
+                    pattern: /^[a-zA-Z0-9\-_'"()\s]+$/,
+                    required: true,
+                    messages: {
+                        pattern: "Only alphanumeric characters and (-, _, ‘, “, ()) are allowed.",
+                        required: "Please Enter the Engine number.",
+                    }
+                });
+                newRow.find("input[name$='[date_of_monitoring]']").rules("add", {
+
+                    required: true,
+                    messages: {
+                        required: "Please select the Date.",
+                    }
+                });
+                newRow.find("input[name$='[next_due_date_of_monitoring]']").rules("add", {
+
+                    required: true,
+                    messages: {
+                        required: "Please select the Date.",
+                    }
+                });
+
+        }
+
+        $(function() {
+            $.validator.setDefaults({
+                highlight: function(element) {
+                    $(element).addClass('is-invalid');
+                    if ($(element).hasClass('single-select')) {
+                        $(element).next('.select2-container').find('.select2-selection')
+                            .addClass('is-invalid');
+                    }
+                },
+                unhighlight: function(element) {
+                    $(element).removeClass('is-invalid');
+                    if ($(element).hasClass('single-select')) {
+                        $(element).next('.select2-container').find('.select2-selection')
+                            .removeClass('is-invalid');
+                    }
+                },
+                errorPlacement: function(error, element) {
+                    if (element.hasClass('single-select')) {
+                        error.addClass('invalid-feedback').insertAfter(element.next(
+                            '.select2-container'));
+                    } else {
+                        error.addClass('invalid-feedback').insertAfter(element);
+                    }
+                }
+            });
+
+            $('#addambient').validate({
+                rules: {
                 'monitoring[1][kva_rating]': {
+                    required: true,
                     number: true,
                     min: 0,
                 },
                 'monitoring[1][dg_no]': {
+                    required: true,
                     pattern: /^[a-zA-Z0-9\-_'"()\s]+$/,
                 },
                 'monitoring[1][location]': {
+                    required: true,
                     pattern: /^[a-zA-Z0-9\-_'"()\s]+$/,
                 },
                 'monitoring[1][engine_srno]': {
+                    required: true,
                     pattern: /^[a-zA-Z0-9\-_'"()\s]+$/,
+                },
+                'monitoring[1][date_of_monitoring]': {
+                    required: true,
+                },
+                'monitoring[1][next_due_date_of_monitoring]': {
+                    required: true,
                 },
             },
             messages: {
                 'monitoring[1][kva_rating]': {
                     number: "Only numeric values are allowed.",
-                    min: "KVA Rating must be a positive number."
+                    min: "KVA Rating must be a positive number.",
+                    required: "Please Enter the KVA rating.",
                 },
                 'monitoring[1][dg_no]': {
                     pattern: "Only alphanumeric characters and (-, _, ‘, “, ()) are allowed.",
+                    required: "Please Enter the DG Set Number.",
                 },
                 'monitoring[1][location]': {
                     pattern: "Only alphanumeric characters and (-, _, ‘, “, ()) are allowed.",
+                    required: "Please Enter the Location.",
                 },
                 'monitoring[1][engine_srno]': {
                     pattern: "Only alphanumeric characters and (-, _, ‘, “, ()) are allowed.",
+                    required: "Please Enter the Engine Number.",
+
+                },
+                'monitoring[1][date_of_monitoring]': {
+                    required: "Please Select the date.",
+                },
+                'monitoring[1][next_due_date_of_monitoring]': {
+                    required: "Please Select the date.",
                 },
             },
-            errorElement: 'span',
-            errorPlacement: function(error, element) {
-                error.addClass('invalid-feedback');
-                element.closest('.form-input').append(error);
-            },
-            highlight: function(element) {
-                $(element).addClass('is-invalid');
-            },
-            unhighlight: function(element) {
-                $(element).removeClass('is-invalid');
-            }
+                submitHandler: function(form) {
+                    form.submit();
+                }
+            });
+
+            $("#lesson_learned_block .lesson_learned_row").each(function() {
+                addValidationRules($(this));
+            });
         });
+
     </script>
 @endpush

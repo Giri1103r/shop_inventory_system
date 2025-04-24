@@ -155,102 +155,109 @@
         </table>
     </div>
 
-    <table width="100%" style="width:100%;">
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Audit ID</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ isset($audit_assessment->audit_id) ? $audit_assessment->audit_id : '' }}</td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Name Of The Shop Floor</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ isset($audit_assessment->floor_name) ? $audit_assessment->floor_name : '' }}</td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Date Of Audit</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ displayDateformat($audit_assessment->audit_date) }}
-            </td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Shift</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ getShiftname(isset($audit_assessment->shift_id) ? $audit_assessment->shift_id : '') }}</td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Floor Executive on Duty</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ getUsername(isset($audit_assessment->floor_executive) ? $audit_assessment->floor_executive : '') }}
-            </td>
-        </tr>
-    </table>
 
-    <br>
-    @php
-        $user_response = json_decode($audit_assessment->checklist, true);
-    @endphp
-    <div class="table-responsive">
-        <div class="col-md-12">
-            <table class="table table-bordered table-hover tblborder">
-                <thead>
-                    <tr>
 
-                        <th colspan="5"
-                            style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
-                            Check Points
-                        </th>
 
-                        <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;"
-                            class="require">
-                            YES/NO/NA
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @php $srNo = 1; @endphp
-                    @foreach ($user_response as $subcategory => $questions)
+    <table
+        style="width: 100%; border-collapse: collapse; font-family: Arial, sans-serif; text-align: center; border: 1px solid black;">
+
+        <tr>
+            <th colspan="10" >
+                <img src="{{ url('public/assets/images/logo-dark.png') }}" style="width:125px;height:50px;">
+            </th>
+            <th colspan="12" style="border:1px solid black;">
+                <h3>
+                    <span><b>6S AUDIT ASSESSMENT</b></span>
+                    <br>
+
+                </h3>
+            </th>
+            <th colspan="2"
+               >
+                {{ $document_no->doc_no ?? 'N/A' }}
+            </th>
+
+        </tr>
+        <tr>
+            <th colspan="24"
+                style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
+                Name Of The Shop Floor: {{ $audit_assessment->floor_name ?? 'N/A' }}
+            </th>
+        </tr>
+        <tr>
+            <th colspan="24"
+                style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
+                Date Of Audit: {{ Displaydateformat($audit_assessment->audit_date) ?? 'N/A' }}
+            </th>
+        </tr>
+        <tr>
+            <th colspan="24"
+                style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
+                Shift: {{ getShift($audit_assessment->shift_id) ?? 'N/A' }}
+            </th>
+        </tr>
+        <tr>
+            <th colspan="24"
+                style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
+                Floor Executive On Duty: {{ $audit_assessment->floor_executive ?? 'N/A' }}
+            </th>
+        </tr>
+
+
+        <tr>
+
+            <th colspan="12"
+                style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
+                Check Points
+            </th>
+
+            <th colspan="12"
+                style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;"
+                class="require">
+                YES/NO/NA
+            </th>
+        </tr>
+        @php $srNo = 1; @endphp
+        @php
+            $user_response = json_decode($audit_assessment->checklist, true);
+        @endphp
+        @foreach ($user_response as $subcategory => $questions)
+            @php
+                $rowCount = count($questions);
+                $firstRow = true;
+            @endphp
+            @foreach ($questions as $questionId => $answer)
+                <tr>
+                    @if ($firstRow)
+                        <td rowspan="{{ $rowCount }}"
+                            style="border: 1px solid black; padding: 8px; font-weight: bold;">
+                            {{ GetSubChecklistTypeName($subcategory) }}
+                        </td>
                         @php
-                            $rowCount = count($questions);
-                            $firstRow = true;
+                            $srNo++;
+                            $firstRow = false;
                         @endphp
-                        @foreach ($questions as $questionId => $answer)
-                            <tr>
-                                @if ($firstRow)
-                                    <td rowspan="{{ $rowCount }}"
-                                        style="border: 1px solid black; padding: 8px; font-weight: bold;">
-                                        {{ GetSubChecklistTypeName($subcategory) }}
-                                    </td>
-                                    @php
-                                        $srNo++;
-                                        $firstRow = false;
-                                    @endphp
-                                @endif
-                                <td colspan="4" style="border: 1px solid black; padding: 8px;">
-                                    {{ GetChecklistTypeDate($questionId) }}
-                                </td>
-                                <td
-                                    style="border: 1px solid black; padding: 8px; text-align: center;">
-                                    @if ($answer == 'YES')
-                                        <span style="color: green; font-size: 20px;">✓</span>
-                                    @elseif ($answer == 'NO')
-                                        <span style="color: red; font-size: 20px;">X</span>
-                                    @elseif ($answer == 'N/A')
-                                        <span
-                                            style="color: rgb(191, 212, 4); font-size: 20px;">X</span>
-                                    @endif
-                                </td>
-                            </tr>
-                        @endforeach
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
-    </div>
+                    @endif
+
+                    <td colspan="11" style="border: 1px solid black; padding: 8px;">
+                        {{ GetChecklistTypeDate($questionId) }}
+                    </td>
+
+                    <td colspan="12" style="border: 1px solid black; padding: 8px; text-align: center;">
+                        @if ($answer == 'YES')
+                            <span style="color: green; font-size: 20px;">✓</span>
+                        @elseif ($answer == 'NO')
+                            <span style="color: red; font-size: 20px;">X</span>
+                        @elseif ($answer == 'N/A')
+                            <span style="color: rgb(191, 212, 4); font-size: 20px;">X</span>
+                        @endif
+                    </td>
+                </tr>
+            @endforeach
+        @endforeach
+
+
+    </table>
 </body>
 
 </html>

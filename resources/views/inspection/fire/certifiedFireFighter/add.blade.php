@@ -207,6 +207,7 @@
             }
 
 
+
             $("#dynamic-add-more").on("click", function() {
                 let rowCount = $("#lesson_learned_block .lesson_learned_row").length;
                 if (rowCount >= 200) {
@@ -218,50 +219,97 @@
                     return;
                 }
 
-                let newRow = $(".lesson_learned_row").first().clone();
-                newRow.find("input, select, textarea").each(function() {
+                let firstRow = $(".lesson_learned_row").first();
+
+                firstRow.find(".single-select").select2('destroy');
+
+                let newRow = firstRow.clone();
+                let newRowNumber = rowCount + 1;
+
+                firstRow.find(".single-select").select2();
+
+                newRow.find("input, select, textarea, button").each(function() {
                     let oldName = $(this).attr("name");
                     let oldId = $(this).attr("id");
 
                     if (oldName) {
-                        let newName = oldName.replace(/\[\d+\]/, "[" + (rowCount + 1) + "]");
+                        let newName = oldName.replace(/\[\d+\]/, "[" + newRowNumber + "]");
                         $(this).attr("name", newName);
                     }
                     if (oldId) {
-                        let newId = oldId.replace(/\d+$/, rowCount + 1);
+                        let newId = oldId.replace(/_\d+$/, "_" + newRowNumber);
                         $(this).attr("id", newId);
                     }
-                    if ($(this).is("input[type='text'], textarea")) {
+
+                    if ($(this).is("input[type='text'], textarea, input[type='number']")) {
                         $(this).val("");
                     }
                     if ($(this).is("select")) {
                         $(this).val("").trigger("change");
                     }
                 });
-                newRow.find("input[name*='[sr_no]']").val("SNO-" + String(rowCount + 1).padStart(4,
+                newRow.find("input[name$='[sr_no]']").val("AMBIENT-" + String(rowCount + 1).padStart(4,
                     '0'));
 
                 newRow.find(".invalid-feedback").remove();
                 newRow.find(".is-invalid").removeClass("is-invalid");
-                newRow.find(".select2-container").remove();
+
                 newRow.find(".single-select").select2();
 
                 $("#lesson_learned_block").append(newRow);
 
-                newRow.find("input[name*='[emp_name]']").rules("add", {
-                    pattern: /^[a-zA-Z0-9\s\-_'"()]*$/,
-                    messages: {
-                        pattern: "Only alphanumeric characters and -, _, ', \", () are allowed.",
-                    }
+                newRow.find("input[name$='[emp_name]']").each(function() {
+                    $(this).rules("add", {
+                        required: true,
+                        pattern: /^[a-zA-Z0-9\s\-_'"()]*$/,
+                        messages: {
+                            required: "Emp Name is required",
+                            pattern: "Only alphanumeric characters and -, _, ', \", () are allowed.",
+                        }
+                    });
                 });
 
-                newRow.find("input[name*='[emp_phone]']").rules("add", {
-                    pattern: /^[0-9]{10}$/,
-                    messages: {
-                        pattern: "Phone number must be exactly 10 digits (only numbers)."
-                    }
+                newRow.find("input[name$='[emp_phone]']").each(function() {
+                    $(this).rules("add", {
+                        required: true,
+                        pattern: /^[0-9]{10}$/,
+                        messages: {
+                            required: "Phone number is required",
+                            pattern: "Phone number must be exactly 10 digits (only numbers)."
+                        }
+                    });
                 });
 
+                newRow.find("input[name$='[emp_code]']").each(function() {
+                    $(this).rules("add", {
+                        required: true,
+                        pattern: /^[a-zA-Z0-9\s\-_'"()]*$/,
+                        messages: {
+                            required: "Emp Code is required",
+                            pattern: "Only alphanumeric characters and -, _, ', \", () are allowed.",
+                        }
+                    });
+                });
+
+                newRow.find("select[name$='[emp_status]']").each(function() {
+                    $(this).rules("add", {
+                        required: true,
+                        messages: {
+                            required: "Emp Status is required",
+                        }
+                    });
+                });
+
+                newRow.find("select[name$='[department_id]']").each(function() {
+                    $(this).rules("add", {
+                        required: true,
+                        messages: {
+                            required: "Department is required",
+                        }
+                    });
+                });
+
+                $('#addfire').validate();
 
                 $('.single-select').select2();
             });
@@ -281,39 +329,141 @@
             });
 
         });
-        $('#addfire').validate({
 
-            rules: {
-                'fire[1][emp_name]': {
+
+        function addValidationRules(row) {
+            newRow.find("input[name$='[emp_name]']").each(function() {
+                $(this).rules("add", {
+                    required: true,
                     pattern: /^[a-zA-Z0-9\s\-_'"()]*$/,
-                },
-                'fire[1][emp_phone]': {
-                    number: true,
+                    messages: {
+                        required: "Emp Name is required",
+                        pattern: "Only alphanumeric characters and -, _, ', \", () are allowed.",
+                    }
+                });
+            });
+
+            newRow.find("input[name$='[emp_phone]']").each(function() {
+                $(this).rules("add", {
+                    required: true,
                     pattern: /^[0-9]{10}$/,
-                },
-            },
-            messages: {
-                'fire[1][emp_name]': {
-                    pattern: "Only alphanumeric characters and -, _, ', \", () are allowed",
+                    messages: {
+                        required: "Phone number is required",
+                        pattern: "Phone number must be exactly 10 digits (only numbers)."
+                    }
+                });
+            });
 
-                },
-                'fire[1][emp_phone]': {
-                    number: "Only numeric values are allowed.",
-                    pattern: "Phone number must be exactly 10 digits (only numbers)."
+            newRow.find("input[name$='[emp_code]']").each(function() {
+                $(this).rules("add", {
+                    required: true,
+                    pattern: /^[a-zA-Z0-9\s\-_'"()]*$/,
+                    messages: {
+                        required: "Emp Code is required",
+                        pattern: "Only alphanumeric characters and -, _, ', \", () are allowed.",
+                    }
+                });
+            });
 
+            newRow.find("select[name$='[emp_status]']").each(function() {
+                $(this).rules("add", {
+                    required: true,
+                    messages: {
+                        required: "Emp Status is required",
+                    }
+                });
+            });
+
+            newRow.find("select[name$='[department_id]']").each(function() {
+                $(this).rules("add", {
+                    required: true,
+                    messages: {
+                        required: "Department is required",
+                    }
+                });
+            });
+
+        }
+        $(function() {
+            $.validator.setDefaults({
+                highlight: function(element) {
+                    $(element).addClass('is-invalid');
+                    if ($(element).hasClass('single-select')) {
+                        $(element).next('.select2-container').find('.select2-selection')
+                            .addClass('is-invalid');
+                    }
                 },
-            },
-            errorElement: 'span',
-            errorPlacement: function(error, element) {
-                error.addClass('invalid-feedback');
-                element.closest('.form-input').append(error);
-            },
-            highlight: function(element) {
-                $(element).addClass('is-invalid');
-            },
-            unhighlight: function(element) {
-                $(element).removeClass('is-invalid');
-            }
+                unhighlight: function(element) {
+                    $(element).removeClass('is-invalid');
+                    if ($(element).hasClass('single-select')) {
+                        $(element).next('.select2-container').find('.select2-selection')
+                            .removeClass('is-invalid');
+                    }
+                },
+                errorPlacement: function(error, element) {
+                    if (element.hasClass('single-select')) {
+                        error.addClass('invalid-feedback').insertAfter(element.next(
+                            '.select2-container'));
+                    } else {
+                        error.addClass('invalid-feedback').insertAfter(element);
+                    }
+                }
+            });
+
+            $('#addfire').validate({
+                rules: {
+                    'fire[1][emp_name]': {
+                        required: true,
+                        pattern: /^[a-zA-Z0-9\s\-_'"()]*$/,
+                    },
+                    'fire[1][emp_code]': {
+                        required: true,
+                        pattern: /^[a-zA-Z0-9\s\-_'"()]*$/,
+                    },
+                    'fire[1][emp_phone]': {
+                        required: true,
+                        number: true,
+                        pattern: /^[0-9]{10}$/,
+                    },
+                    'fire[1][department_id]': {
+                        required: true,
+                    },
+                    'fire[1][emp_status]': {
+                        required: true,
+                    },
+                },
+                messages: {
+                    'fire[1][emp_name]': {
+                        required: "Emp Name is required",
+                        pattern: "Only alphanumeric characters and -, _, ', \", () are allowed",
+
+                    },
+                    'fire[1][emp_code]': {
+                        required: "Emp Code is required",
+                        pattern: "Only alphanumeric characters and -, _, ', \", () are allowed",
+
+                    },
+                    'fire[1][emp_phone]': {
+                        required: "Contact Number is required",
+                        number: "Only numeric values are allowed.",
+                        pattern: "Phone number must be exactly 10 digits (only numbers)."
+                    },
+                    'fire[1][department_id]': {
+                        required: "Department is required",
+                    },
+                    'fire[1][emp_status]': {
+                        required: "Emp Status is required",
+                    },
+                },
+
+                submitHandler: function(form) {
+                    form.submit();
+                }
+            });
+
+            $("#lesson_learned_block .lesson_learned_row").each(function() {
+                addValidationRules($(this));
+            });
         });
     </script>
 @endpush

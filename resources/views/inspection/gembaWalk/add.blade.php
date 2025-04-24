@@ -322,11 +322,11 @@
                                                                 <div class="mb-2">
                                                                     <label class="me-3">
                                                                         <input type="radio" name="observation_needed"
-                                                                            value="{{encryptId(1)}}"> Yes
+                                                                            value="{{encryptId(1)}}" class="validate-radio-required"> Yes
                                                                     </label>
                                                                     <label>
                                                                         <input type="radio" name="observation_needed"
-                                                                            value="{{encryptId(2)}}"> No
+                                                                            value="{{encryptId(2)}}" class="validate-radio-required"> No
                                                                     </label>
                                                                 </div>
         
@@ -336,6 +336,54 @@
         
                                                     </div>
                                                 </div>
+
+
+                                                <div class="form-capa">
+                                                    <div class="row mt-4">
+                                                        <div class="card-header-inner p-2">
+                                                            <h4 class="text-white">CAPA Action</h4>
+                                                        </div>
+
+                                                        <div class="col-md-12 mb-2">
+                                                            <div class="form-group form-input">
+                                                                <label class="form-label require">Whether the Inspection has been passed Without the CAPA?</label>
+
+                                                                <div class="mb-2">
+                                                                    <label class="me-3">
+                                                                        <input type="radio" name="is_passed"
+                                                                            value="{{ encryptId(1) }}" id="capa_yes" class="validate-radio-required"> Yes   
+                                                                    </label>
+                                                                    <label>
+                                                                        <input type="radio" name="is_passed"
+                                                                            value="{{ encryptId(2) }}" id="capa_no" class="validate-radio-required"> No
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4 mb-2" id="verified_by" style="display: none;">
+                                                    <div class="form-group form-input">
+                                                        <label for="gemba_walk_verified_by" class="form-label">Signature Upload</label>
+                                                        <input type="file"
+                                                            class="form-control validate-file-accept validate-file-required"
+                                                            name="gemba_walk_verified_by" id="gemba_walk_verified_by">
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4 mt-2" id="remark_section" style="display: none;">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label">Remark</label>
+                                                        <textarea class="form-control" name="capa_remark" id="checklist_remark_0"></textarea>
+                                                    </div>
+                                                </div>
+
+                                                <input type="hidden" name="officer_name" class="form-control"
+                                                value="{{ Auth::user()->name }}" readonly>
+
+                                                <input type="hidden" name="capa_date" id="capa_date" value="{{ todaydate() }}">
+
 
                                                 <div class="submit-button mt-4" style="text-align: right;">
                                                     <x-button-submit class="submit"></x-button-submit>
@@ -369,6 +417,24 @@
                 location.reload();
             });
         });
+
+        $(document).ready(function () {
+            $('#verified_by').hide();
+            $('#remark_section').hide();
+
+            $('input[name="is_passed"]').change(function () {
+                const selectedValue = $(this).val();
+
+                if (selectedValue === '{{ encryptId(1) }}') {
+                    $('#verified_by').show();
+                    $('#remark_section').hide();
+                } else if (selectedValue === '{{ encryptId(2) }}') {
+                    $('#remark_section').show();
+                    $('#verified_by').hide();
+                }
+            });
+        });
+
         $(document).ready(function() {
 
             flatpickr("#document_upload_date", {

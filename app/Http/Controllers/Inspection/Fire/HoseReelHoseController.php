@@ -14,16 +14,21 @@ use App\Models\Inspection\Master\Shift;
 use Illuminate\Support\Facades\Session;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Spatie\SimpleExcel\SimpleExcelWriter;
+use PhpOffice\PhpSpreadsheet\Style\Border;
 use App\Models\Inspection\Fire\HoseBoxType;
 use App\Models\Inspection\Master\Frequency;
 use App\Mail\Inspection\Fire\FireInspection;
 use App\Models\Inspection\Fire\FireStatusLog;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use App\Models\Inspection\Fire\FireFileUpload;
+use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 use App\Models\Inspection\InspectionStaticDocno;
 use App\Models\Inspection\Fire\FireSignatureUpload;
-use App\Models\Inspection\Fire\FireCheckListFollowUp;
 use App\Models\Inspection\Fire\HoseReelHoseDetails;
+use App\Models\Inspection\Fire\FireCheckListFollowUp;
 use App\Models\Inspection\Fire\HoseReelHoseInspection;
 
 class HoseReelHoseController extends Controller
@@ -143,6 +148,7 @@ class HoseReelHoseController extends Controller
                             $btn .= '<a href="' . admin_url('fire/hose-reel-hose-inspection/exportViewPdf/' . encryptId($row->inspection_id)) . '" style="margin-right: 5px;" title="PDF">
                         <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
                     </a>';
+                            $btn .= '<a href="' . admin_url('fire/hose-reel-hose-inspection/export/excel/' . encryptId($row->inspection_id)) . '" style="margin-right: 5px;" title="Excel"> <i class="fas fa-file-excel" style="color: #1D6F42;" aria-hidden="true"></i></a>';
                             return $btn;
                         })
                         ->rawColumns(['action', 'created_date', 'created_by', 'status', 'inspection_status', 'issue_date'])
@@ -326,7 +332,7 @@ class HoseReelHoseController extends Controller
             ];
             $this->statusLog->create($insert_array);
             Session::flash('success', 'Your data added successfully');
-            if ($inspection->observation_needed == 1) {
+            if ($inspection->observation == 1) {
                 return redirect(admin_url('fire/checklist-observation/add/' . encryptId($inspection_type) . '/' . encryptId($id)));
             } else {
                 return redirect(admin_url('fire/hose-reel-hose-inspection/list'));
@@ -752,39 +758,255 @@ class HoseReelHoseController extends Controller
                 return redirect()->back()->with('error', 'No data found');
             }
 
-            $header = [
-                __("common.sno"),
-                'Document Number',
-                'Issue Date',
-                'Revision Date',
-                __("inspection.inspection_status"),
-                __("common.created_by"),
-                __("common.created_date"),
-            ];
+            $spreadsheet = new Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
+            $row = 1;
 
-            $i = 1;
-            foreach ($allData as $data) {
+            foreach ($allData as $groupedDetails) {
+                $inspection_detail = $groupedDetails->first();
+                $document_no = $this->document_reference->selectOne($inspection_detail->document_reference_id);
+                $prepared_by_signature = GetFireSignature($inspection_detail->checked_by, $inspection_detail->fire_id, HOSE_REEL_INSPECTION);
+                $verified_by_signature = GetFireSignature($inspection_detail->verified_by, $inspection_detail->fire_id, HOSE_REEL_INSPECTION);
+                $approved_by_signature = GetFireSignature($inspection_detail->approved_by, $inspection_detail->fire_id, HOSE_REEL_INSPECTION);
 
-                $export = [];
-                $export[] =  $i;
-                $export[] =  $data->doc_no;
-                $export[] =  $data->issue_date;
-                $export[] = $data->revision_data;
-                $export[] =  getInspectionStatus($data->inspection_status);;
-                $export[] =  getusername($data->created_by);
-                $export[] =  Displaydateformat($data->created_at);
-                $exportData[] = $export;
-                $i++;
+                $titleRow = $row;
+
+                $logoPath = public_path('assets/images/logo-dark.png');
+                if (file_exists($logoPath)) {
+                    $drawing = new Drawing();
+                    $drawing->setName('Logo');
+                    $drawing->setDescription('Company Logo');
+                    $drawing->setPath($logoPath);
+                    $drawing->setCoordinates('A' . $titleRow);
+                    $drawing->setOffsetX(5);
+                    $drawing->setOffsetY(5);
+                    $drawing->setHeight(60);
+                    $drawing->setWorksheet($sheet);
+                }
+
+                $sheet->mergeCells("A{$titleRow}:B" . ($titleRow + 2));
+                $sheet->getStyle("A{$titleRow}:B" . ($titleRow + 2))->applyFromArray([
+                    'font' => ['bold' => true, 'size' => 14],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                ]);
+
+                $sheet->mergeCells("C{$titleRow}:I" . ($titleRow + 2));
+                $sheet->setCellValue("C{$titleRow}", "HOSE BOX INSPECTION CHECKLIST PN INTERNATIONAL PVT. LTD.");
+
+                $sheet->getStyle("C{$titleRow}:I" . ($titleRow + 2))->applyFromArray([
+                    'font' => ['bold' => true, 'size' => 14],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                ]);
+
+                $sheet->setCellValue("J{$titleRow}", "Doc. No.");
+                $sheet->setCellValue("K{$titleRow}", $document_no->doc_no ?? '');
+
+                $sheet->setCellValue("J" . ($titleRow + 1), "Issue Dt.");
+                $sheet->setCellValue("K" . ($titleRow + 1), Displaydateformat($document_no->issue_date ?? ''));
+
+                $sheet->setCellValue("J" . ($titleRow + 2), "Rev. & Dt.");
+                $sheet->setCellValue("K" . ($titleRow + 2), $document_no->rev_dt ?? '');
+
+                $sheet->getStyle("J{$titleRow}:K" . ($titleRow + 2))->applyFromArray([
+                    'font' => ['bold' => true],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                ]);
+
+                $headerInfoRow = $titleRow + 3;
+
+                $sheet->mergeCells("A{$headerInfoRow}:D{$headerInfoRow}")->setCellValue("A{$headerInfoRow}", "Date of Inspection:- " . Displaydateformat($inspection_detail->date_of_inspection));
+                $sheet->mergeCells("E{$headerInfoRow}:H{$headerInfoRow}")->setCellValue("E{$headerInfoRow}", "Location:- " . getLocationname($inspection_detail->location));
+                $sheet->mergeCells("I{$headerInfoRow}:K{$headerInfoRow}")->setCellValue("I{$headerInfoRow}", "Shift:- " . $inspection_detail->shift);
+                $sheet->getStyle("A{$headerInfoRow}:K{$headerInfoRow}")->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                ]);
+                $headerInfoRow++;
+
+                $sheet->mergeCells("A{$headerInfoRow}:D{$headerInfoRow}")->setCellValue("A{$headerInfoRow}", "Next Due Date:- " . Displaydateformat($inspection_detail->next_due));
+                $sheet->mergeCells("E{$headerInfoRow}:H{$headerInfoRow}")->setCellValue("E{$headerInfoRow}", "Unit:- " . getUnitname($inspection_detail->unit));
+                $sheet->mergeCells("I{$headerInfoRow}:K{$headerInfoRow}")->setCellValue("I{$headerInfoRow}", "Frequency:- " . getFrequencyname($inspection_detail->frequency));
+                $sheet->getStyle("A{$headerInfoRow}:K{$headerInfoRow}")->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                ]);
+                $headerInfoRow++;
+
+                $columnWidths = [
+                    'A' => 5,
+                    'B' => 15,
+                    'C' => 10,
+                    'D' => 10,
+                    'E' => 10,
+                    'F' => 10,
+                    'G' => 15,
+                    'H' => 15,
+                    'I' => 15,
+                    'J' => 15,
+                    'K' => 15,
+                ];
+
+                foreach ($columnWidths as $col => $width) {
+                    $sheet->getColumnDimension($col)->setWidth($width);
+                }
+
+                $headerStart = $headerInfoRow;
+
+                $sheet->mergeCells("A{$headerStart}:A" . ($headerStart + 1))->setCellValue("A{$headerStart}", "SR.NO");
+                $sheet->mergeCells("B{$headerStart}:B" . ($headerStart + 1))->setCellValue("B{$headerStart}", "DEPARTMENT");
+                $sheet->mergeCells("C{$headerStart}:C" . ($headerStart + 1))->setCellValue("C{$headerStart}", "LOCATION");
+                $sheet->mergeCells("D{$headerStart}:H{$headerStart}")->setCellValue("D{$headerStart}", "CHECK ITEMS");
+
+                $sheet->setCellValue("D" . ($headerStart + 1), "LENGTH");
+                $sheet->setCellValue("E" . ($headerStart + 1), "NOZZLE CONDITION");
+                $sheet->setCellValue("F" . ($headerStart + 1), "HOSE CONDITION");
+                $sheet->setCellValue("G" . ($headerStart + 1), "FLOW TEST");
+                $sheet->setCellValue("H" . ($headerStart + 1), "STATUS");
+                $sheet->setCellValue("I" . ($headerStart + 1), "APPROACH");
+
+                $sheet->mergeCells("J{$headerStart}:K" . ($headerStart + 1))->setCellValue("J{$headerStart}", "REMARKS");
+
+                $sheet->getStyle("A{$headerStart}:K" . ($headerStart + 1))->applyFromArray([
+                    'font' => ['bold' => true],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                ]);
+
+                $dataRow = $headerStart + 2;
+                $sr = 1;
+                $statusMap = [YES => 'YES', 0 => 'NO'];
+
+                foreach ($groupedDetails as $detail) {
+                    $sheet->setCellValue("A$dataRow", $sr);
+                    $sheet->setCellValue("B$dataRow", GetDeptName($detail['department'] ?? ''));
+                    $sheet->setCellValue("C$dataRow", getLocationname($detail['location']) ?? '');
+
+                    $length = $detail['length'] ?? '';
+                    $nozzle = $detail['nozzle'] ?? '';
+                    $hose = $detail['hose'] ?? '';
+                    $flow = $detail['flow'] ?? '';
+                    $status_of_hose = $detail['status_of_hose'] ?? '';
+                    $approach = $detail['approach'] ?? '';
+                    $remark = $detail['remarks'] ?? '';
+
+                    $statusMap = [YES => 'YES', 0 => 'NO'];
+                    $function_map = [FUNCTIONAL => 'Functional', NON_FUNCTIONAL => 'Non-Functional'];
+                    $present_map = [PRESENT => 'Present', MISSING => 'Missing'];
+                    $good_map = [GOOD => 'Good', FAIR => 'Fair', POOR => 'Poor'];
+                    $pass_map = [PASS => 'Pass', FAIL => 'Fail'];
+
+                    $operation_map = [OPERATIONAL => 'Operational', NONOPERATIONAL => 'Non Operational'];
+
+                    $sheet->setCellValue("D$dataRow", $length);
+                    $sheet->setCellValue("E$dataRow", $good_map[$nozzle] ?? $nozzle);
+                    $sheet->setCellValue("F$dataRow", $good_map[$hose] ?? $hose);
+                    $sheet->setCellValue("G$dataRow", $pass_map[$flow] ?? $flow);
+                    $sheet->setCellValue("H$dataRow", $operation_map[$status_of_hose] ?? $status_of_hose);
+                    $sheet->setCellValue("I$dataRow", $approach);
+                    $sheet->mergeCells("J$dataRow:K$dataRow")->setCellValue("J$dataRow", $remark);
+                    $sheet->getStyle("A{$dataRow}:K{$dataRow}")->applyFromArray([
+                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                    ]);
+                    $sr++;
+                    $dataRow++;
+                }
+
+                $signatureRowStart = $dataRow;
+                $sheet->getRowDimension($signatureRowStart)->setRowHeight(80);
+
+                $sheet->mergeCells("A{$signatureRowStart}:D{$signatureRowStart}");
+                $sheet->getStyle("A{$signatureRowStart}:D{$signatureRowStart}")->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => [
+                        'horizontal' => Alignment::HORIZONTAL_CENTER,
+                        'vertical' => Alignment::VERTICAL_CENTER,
+                        'wrapText' => true,
+                    ],
+                ]);
+
+                if (file_exists($prepared_by_signature)) {
+                    $drawing = new Drawing();
+                    $drawing->setName('Signature');
+                    $drawing->setDescription('Prepared By');
+                    $drawing->setPath($prepared_by_signature);
+                    $drawing->setCoordinates("B{$signatureRowStart}");
+                    $drawing->setOffsetX(60);
+                    $drawing->setOffsetY(5);
+                    $drawing->setHeight(40);
+                    $drawing->setWorksheet($sheet);
+
+                    $sheet->setCellValue("A{$signatureRowStart}", "\n\n\nPrepared By:\n" . getUsername($inspection_detail->checked_by));
+                } else {
+                    $sheet->setCellValue("A{$signatureRowStart}", "Prepared By:\nInspection not yet started");
+                }
+
+                $sheet->mergeCells("E{$signatureRowStart}:G{$signatureRowStart}");
+                $sheet->getStyle("E{$signatureRowStart}:G{$signatureRowStart}")->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => [
+                        'horizontal' => Alignment::HORIZONTAL_CENTER,
+                        'vertical' => Alignment::VERTICAL_CENTER,
+                        'wrapText' => true,
+                    ],
+                ]);
+
+                if (file_exists($verified_by_signature)) {
+                    $drawing = new Drawing();
+                    $drawing->setName('Signature');
+                    $drawing->setDescription('Verified By');
+                    $drawing->setPath($verified_by_signature);
+                    $drawing->setCoordinates("F{$signatureRowStart}");
+                    $drawing->setOffsetX(5);
+                    $drawing->setOffsetY(5);
+                    $drawing->setHeight(40);
+                    $drawing->setWorksheet($sheet);
+
+                    $sheet->setCellValue("E{$signatureRowStart}", "\n\n\nVerified By:\n" . getUsername($inspection_detail->verified_by));
+                } else {
+                    $sheet->setCellValue("E{$signatureRowStart}", "Verified By:\nInspection not yet completed");
+                }
+
+                $sheet->mergeCells("H{$signatureRowStart}:K{$signatureRowStart}");
+                $sheet->getStyle("H{$signatureRowStart}:K{$signatureRowStart}")->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => [
+                        'horizontal' => Alignment::HORIZONTAL_CENTER,
+                        'vertical' => Alignment::VERTICAL_CENTER,
+                        'wrapText' => true,
+                    ],
+                ]);
+
+                if (file_exists($approved_by_signature)) {
+                    $drawing = new Drawing();
+                    $drawing->setName('Signature');
+                    $drawing->setDescription('Approved By');
+                    $drawing->setPath($approved_by_signature);
+                    $drawing->setCoordinates("J{$signatureRowStart}");
+                    $drawing->setOffsetX(5);
+                    $drawing->setOffsetY(5);
+                    $drawing->setHeight(40);
+                    $drawing->setWorksheet($sheet);
+
+                    $sheet->setCellValue("H{$signatureRowStart}", "\n\n\nApproved By:\n" . getUsername($inspection_detail->approved_by));
+                } else {
+                    $sheet->setCellValue("H{$signatureRowStart}", "Approved By:\nApproval pending");
+                }
+
+
+                $row = $signatureRowStart + 6;
             }
 
-            $writer = SimpleExcelWriter::streamDownload('Hose Reel Inspection.xlsx')
-                ->addHeader($header)
-                ->addRows(
-                    $exportData
-                );
-        } catch (Exception $ex) {
-            report($ex);
-            Session::flash('error', 'Something went wrong !');
+            $fileName = 'Hose Reel Hose Inspection.xlsx';
+            $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+            $tempFile = storage_path("app/public/{$fileName}");
+            $writer->save($tempFile);
+
+            return response()->download($tempFile)->deleteFileAfterSend(true);
+        } catch (\Exception $e) {
+            report($e);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('fire/hose-reel-hose-inspection/list'));
         }
     }
@@ -885,6 +1107,229 @@ class HoseReelHoseController extends Controller
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('fire/hose-reel-hose-inspection/list'));
+        }
+    }
+
+    public function GeneralExcel(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+            $spreadsheet = new Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
+
+            $inspection         = $this->hose_reel->selectOne($id);
+            $inspection_data    = $this->hose_reel_details->GetDetails($inspection->id);
+            $document_no        = $this->document_reference->selectOne($inspection->document_reference_id);
+
+            $prepared_by_signature = GetFireSignature($inspection->created_by, $inspection->id, HOSE_REEL_INSPECTION);
+            $verified_by_signature = GetFireSignature($inspection->updated_by, $inspection->id, HOSE_REEL_INSPECTION);
+            $approved_by_signature = GetFireSignature($inspection->approved_by, $inspection->id, HOSE_REEL_INSPECTION);
+
+            foreach (range('A', 'L') as $col) {
+                $sheet->getColumnDimension($col)->setAutoSize(true);
+            }
+
+            for ($i = 1; $i <= 200; $i++) {
+                $sheet->getRowDimension($i)->setRowHeight(25);
+            }
+
+            $logoPath = public_path('assets/images/logo-dark.png');
+            if (file_exists($logoPath)) {
+                $drawing = new Drawing();
+                $drawing->setName('Logo');
+                $drawing->setDescription('Company Logo');
+                $drawing->setPath($logoPath);
+                $drawing->setCoordinates('A1');
+                $drawing->setOffsetX(5);
+                $drawing->setOffsetY(5);
+                $drawing->setHeight(60);
+                $drawing->setWorksheet($sheet);
+            }
+
+            $sheet->mergeCells('A1:B3');
+            $sheet->mergeCells("C1:I3");
+            $sheet->setCellValue("C1", "HOSE BOX INSPECTION CHECKLIST PN INTERNATIONAL PVT. LTD.");
+            $sheet->getStyle("C1:I3")->applyFromArray([
+                'font'       => ['bold' => true, 'size' => 14],
+                'alignment'  => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+                'borders'    => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+            ]);
+            $sheet->getStyle('A1:B3')->applyFromArray([
+                'alignment'  => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                'borders'    => ['outline' => ['borderStyle' => Border::BORDER_THIN]],
+            ]);
+
+            $labelMap = [
+                'J1' => ['value' => 'Doc. No.',     'valueCell' => 'K1', 'data' => $document_no->doc_no],
+                'J2' => ['value' => 'Issue Dt.',    'valueCell' => 'K2', 'data' => Displaydateformat($document_no->issue_date)],
+                'J3' => ['value' => 'Rev. & Dt.',   'valueCell' => 'K3', 'data' => $document_no->rev_dt],
+            ];
+
+            foreach ($labelMap as $labelCell => $info) {
+                $sheet->setCellValue($labelCell, $info['value']);
+                $sheet->setCellValue($info['valueCell'], $info['data']);
+
+                $sheet->getStyle($labelCell)->applyFromArray([
+                    'font'      => ['bold' => true],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                    'borders'   => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
+                ]);
+                $sheet->getStyle($info['valueCell'])->applyFromArray([
+                    'font'      => ['bold' => true],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                    'borders'   => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
+                ]);
+            }
+
+            $sheet->mergeCells("A4:D4")->setCellValue("A4", "Date of Inspection:- " . Displaydateformat($inspection->date_of_inspection));
+            $sheet->mergeCells("E4:H4")->setCellValue("E4", "Location :- " . getLocationname($inspection->location));
+            $sheet->mergeCells("I4:K4")->setCellValue("I4", "Shift:- " . getShift($inspection->shift));
+            $sheet->mergeCells("A5:D5")->setCellValue("A5", "Next Due date:- " . Displaydateformat($inspection->next_due));
+            $sheet->mergeCells("E5:H5")->setCellValue("E5", "Unit:- " . getUnitname($inspection->unit));
+            $sheet->mergeCells("I5:K5")->setCellValue("I5", "Frequency:- " . getFrequencyname($inspection->frequency));
+            $sheet->getStyle("A4:K5")->applyFromArray([
+                'font'      => ['bold' => true],
+                'borders'   => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+            ]);
+
+            $sheet->mergeCells("A6:A7")->setCellValue("A6", "SR.NO");
+            $sheet->mergeCells("B6:B7")->setCellValue("B6", "DEPARTMENT");
+            $sheet->mergeCells("C6:C7")->setCellValue("C6", "LOCATION");
+            $sheet->mergeCells("D6:H6")->setCellValue("D6", "CHECK ITEMS");
+            $sheet->setCellValue("D7", "LENGTH");
+            $sheet->setCellValue("E7", "NOZZLE CONDITION");
+            $sheet->setCellValue("F7", "HOSE CONDITION");
+            $sheet->setCellValue("G7", "FLOW TEST");
+            $sheet->setCellValue("H7", "STATUS");
+            $sheet->setCellValue("I7", "APPROACH");
+            $sheet->mergeCells("J6:K7")->setCellValue("J6", "REMARKS");
+
+            $sheet->getStyle("A6:K7")->applyFromArray([
+                'font'      => ['bold' => true],
+                'borders'   => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+            ]);
+
+            $row = 8;
+            $sr  = 1;
+            foreach ($inspection_data as $detail) {
+                $sheet->setCellValue("A$row", $sr);
+                $sheet->setCellValue("B$row", GetDeptName($detail['department'] ?? ''));
+                $sheet->setCellValue("C$row", getLocationname($detail['location']) ?? '');
+
+                $length = $detail['length'] ?? '';
+                $nozzle = $detail['nozzle'] ?? '';
+                $hose = $detail['hose'] ?? '';
+                $flow = $detail['flow'] ?? '';
+                $status_of_hose = $detail['status_of_hose'] ?? '';
+                $approach = $detail['approach'] ?? '';
+                $remark              = $detail['remarks'] ?? '';
+
+                $statusMap = [YES => 'YES', 0 => 'NO'];
+                $function_map = [FUNCTIONAL => 'Functional', NON_FUNCTIONAL => 'Non-Functional'];
+                $present_map = [PRESENT => 'Present', MISSING => 'Missing'];
+                $good_map = [GOOD => 'Good', FAIR => 'Fair', POOR => 'Poor'];
+                $pass_map = [PASS => 'Pass', FAIL => 'Fail'];
+
+                $operation_map = [OPERATIONAL => 'Operational', NONOPERATIONAL => 'Non Operational'];
+
+                $sheet->setCellValue("D$row", $length);
+                $sheet->setCellValue("E$row", $good_map[$nozzle] ?? $nozzle);
+                $sheet->setCellValue("F$row", $good_map[$hose] ?? $hose);
+                $sheet->setCellValue("G$row", $pass_map[$flow] ?? $flow);
+                $sheet->setCellValue("H$row", $operation_map[$status_of_hose] ?? $status_of_hose);
+                $sheet->setCellValue("I$row", $approach);
+                $sheet->mergeCells("J$row:K$row")->setCellValue("J$row", $remark);
+
+                $sheet->getStyle("A$row:K$row")->applyFromArray([
+                    'borders'   => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                ]);
+
+                $sr++;
+                $row++;
+            }
+
+            $signatureRowStart = $row;
+            $sheet->getRowDimension($signatureRowStart)->setRowHeight(80);
+
+            // Prepared By
+            $sheet->mergeCells("A{$signatureRowStart}:D{$signatureRowStart}");
+            $sheet->getStyle("A{$signatureRowStart}:D{$signatureRowStart}")->applyFromArray([
+                'borders'   => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+            ]);
+
+            if (file_exists($prepared_by_signature)) {
+                $drawing = new Drawing();
+                $drawing->setName('Signature');
+                $drawing->setDescription('Prepared By');
+                $drawing->setPath($prepared_by_signature);
+                $drawing->setCoordinates("C{$signatureRowStart}");
+                $drawing->setOffsetX(5);
+                $drawing->setOffsetY(5);
+                $drawing->setHeight(40);
+                $drawing->setWorksheet($sheet);
+                $sheet->setCellValue("A{$signatureRowStart}", "\n\n\nPrepared By:\n" . getUsername($inspection->created_by));
+            } else {
+                $sheet->setCellValue("A{$signatureRowStart}", "Prepared By:\nInspection not yet started");
+            }
+
+            // Verified By
+            $sheet->mergeCells("E{$signatureRowStart}:H{$signatureRowStart}");
+            $sheet->getStyle("E{$signatureRowStart}:H{$signatureRowStart}")->applyFromArray([
+                'borders'   => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+            ]);
+
+            if (file_exists($verified_by_signature)) {
+                $drawing = new Drawing();
+                $drawing->setName('Signature');
+                $drawing->setDescription('Verified By');
+                $drawing->setPath($verified_by_signature);
+                $drawing->setCoordinates("G{$signatureRowStart}");
+                $drawing->setOffsetX(5);
+                $drawing->setOffsetY(5);
+                $drawing->setHeight(40);
+                $drawing->setWorksheet($sheet);
+                $sheet->setCellValue("E{$signatureRowStart}", "\n\n\nVerified By:\n" . getUsername($inspection->updated_by));
+            } else {
+                $sheet->setCellValue("E{$signatureRowStart}", "Verified By:\nInspection not yet completed");
+            }
+
+            // Approved By
+            $sheet->mergeCells("I{$signatureRowStart}:K{$signatureRowStart}");
+            $sheet->getStyle("I{$signatureRowStart}:K{$signatureRowStart}")->applyFromArray([
+                'borders'   => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+            ]);
+
+            if (file_exists($approved_by_signature)) {
+                $drawing = new Drawing();
+                $drawing->setName('Signature');
+                $drawing->setDescription('Approved By');
+                $drawing->setPath($approved_by_signature);
+                $drawing->setCoordinates("J{$signatureRowStart}");
+                $drawing->setOffsetX(5);
+                $drawing->setOffsetY(5);
+                $drawing->setHeight(40);
+                $drawing->setWorksheet($sheet);
+                $sheet->setCellValue("I{$signatureRowStart}", "\n\n\nApproved By:\n" . getUsername($inspection->approved_by));
+            } else {
+                $sheet->setCellValue("I{$signatureRowStart}", "Approved By:\nApproval pending");
+            }
+
+            $writer   = new Xlsx($spreadsheet);
+            $fileName = 'Hose Box Inspection.xlsx';
+            $filePath = storage_path("app/public/$fileName");
+            $writer->save($filePath);
+
+            return response()->download($filePath)->deleteFileAfterSend(true);
+        } catch (\Exception $e) {
+            report($e);
+            Session::flash('error', 'Something went wrong!');
             return redirect(admin_url('fire/hose-reel-hose-inspection/list'));
         }
     }

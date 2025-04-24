@@ -261,14 +261,14 @@ class PpeExemptionController extends BaseController
 
                 // mobile push notification
 
-                // $notifydata = [
-                //     'title' => $message,
-                //     'message' =>  $ppeexemption->emp_name . ' has a PPE Exemption at ' . ' created by ' . getUsername($ppeexemption->created_by),
-                //     'module_id' => $ppeexemption->id,
-                //     'module_type' => 1,
-                //     'module_sub_type' => 1,
-                // ];
-                // mobilePushNotification(array_to_string($assigned_user), $notifydata);
+                $notifydata = [
+                    'title' => $message,
+                    'message' =>  $ppeexemption->emp_name . ' has a PPE Exemption at ' . ' created by ' . getUsername($ppeexemption->created_by),
+                    'module_id' => $ppeexemption->id,
+                    'module_type' => 1,
+                    'module_sub_type' => 0,
+                ];
+                mobilePushNotification(array_to_string($assigned_user), $notifydata);
                 $success = [
                     'ppe_exemption' => $ppeexemption->id
                 ];

@@ -155,55 +155,71 @@
         </table>
     </div>
 
-    <table width="100%" style="width:100%;">
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Audit ID</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ isset($inter_unit_audit->audit_id) ? $inter_unit_audit->audit_id : '' }}</td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Name of Safety Officer</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ isset($inter_unit_audit->safety_officer) ? $inter_unit_audit->safety_officer : '' }}</td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Date Of Audit</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ displayDateformat($inter_unit_audit->audit_date) }}
-            </td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Shift</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ getUnitname(isset($inter_unit_audit->unit_id) ? $inter_unit_audit->unit_id : '') }}</td>
-        </tr>
-    </table>
-
-    <br>
     @php
         $user_response = json_decode($inter_unit_audit->checklist, true);
     @endphp
     <div class="table-responsive">
         <div class="col-md-12">
             <table class="table table-bordered table-hover tblborder">
-                <thead>
-                    <tr>
-                        <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
-                            Sr. No</th>
-                        <th colspan="2"
-                            style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
-                            Check Points</th>
+                <tr>
+                    <th colspan="8" style="border:1px solid black;height:50;width:40">
+                        <img src="{{ url('public/assets/images/logo-dark.png') }}" style="width:125px;height:50px;">
+                    </th>
+                    <th colspan="8" style="border:1px solid black;">
+                        <h3>
+                            <span><b>Inter Unit Monthly Audit Checklist</b></span>
+                            <br>
+                            <span><b>PN International Pvt. Ltd</b></span>
+                        </h3>
+                    </th>
 
-                        <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
-                            YES/NO</th>
-                        <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
-                            Remarks</th>
-                    </tr>
-                </thead>
+                    <th colspan="8" style="border:1px solid black;">
+                        <table class="table table-bordered scrolldown">
+                            <thead>
+                                <tr>
+                                    <td style="border: 1px solid black;width:70;">Doc.No</td>
+                                    <td style="border: 1px solid black;"></td>
+                                </tr>
+                                <tr>
+                                    <td style="border: 1px solid black;width:70;">Issue Dt.</td>
+                                    <td style="border: 1px solid black;"></td>
+                                </tr>
+                                <tr>
+                                    <td style="border: 1px solid black;width:70;">Rev.& Dt.</td>
+                                    <td style="border: 1px solid black;"></td>
+                                </tr>
+                            </thead>
+                        </table>
+
+                    </th>
+                </tr>
+                <tr>
+                    <th colspan="8"
+                        style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
+                        Name of Safety Officer: {{ ($inter_unit_audit->safety_officer) ?? 'N/A' }}
+                    </th>
+                    <th colspan="8"
+                        style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
+                        Date of Audit: {{ Displaydateformat($inter_unit_audit->audit_date) ?? 'N/A' }}
+                    </th>
+                    <th colspan="8"
+                    style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
+                    Unit: {{ getUnitname($inter_unit_audit->unit_id) ?? 'N/A' }}
+                </th>
+                </tr>
+                <tr>
+                    <th colspan="4" style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
+                        Sr. No</th>
+                    <th colspan="10"
+                        style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
+                        Check Points</th>
+
+                    <th  colspan="4" style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
+                        OK/NOT-OK</th>
+                    <th colspan="6" style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
+                        Remarks</th>
+                </tr>
+
                 <tbody>
                     @php
                         $srNo = 1;
@@ -216,7 +232,7 @@
 
                         @if (!in_array($sectionName, $displayedSections))
                             <tr>
-                                <td colspan="5"
+                                <td colspan="24"
                                     style="border: 1px solid black; padding: 8px; background-color: #f5f5f5; font-weight: bold; text-align: center;">
                                     {{ $sectionName }}
                                 </td>
@@ -225,20 +241,20 @@
                         @endif
 
                         <tr>
-                            <td style="border: 1px solid black; padding: 8px; font-weight: bold; text-align: center;">
+                            <td colspan="4" style="border: 1px solid black; padding: 8px; font-weight: bold; text-align: center;">
                                 {{ $srNo }}
                             </td>
-                            <td colspan="2" style="border: 1px solid black; padding: 8px;">
+                            <td colspan="10" style="border: 1px solid black; padding: 8px;">
                                 {{ GetChecklistTypeDate($checklistId) }}
                             </td>
-                            <td style="border: 1px solid black; padding: 8px; text-align: center;">
+                            <td colspan="4" style="border: 1px solid black; padding: 8px; text-align: center;">
                                 @if (($data['response'] ?? '') == 'Ok')
                                     <span style="color: green; font-size: 20px;">✓</span>
                                 @elseif (($data['response'] ?? '') == 'Not Ok')
                                     <span style="color: red; font-size: 20px;">X</span>
                                 @endif
                             </td>
-                            <td style="border: 1px solid black; padding: 8px; text-align: center;">
+                            <td colspan="6" style="border: 1px solid black; padding: 8px; text-align: center;">
                                 {{ $data['remarks'] ?? '-' }}
                             </td>
                         </tr>

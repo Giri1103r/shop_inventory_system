@@ -23,10 +23,12 @@ class GembaWalk extends Model
         'shift_id',
         'gemba_walk_status',
         'observation_needed',
+        'capa_needed',
         'status',
         'trash',
         'created_by',
         'updated_by',
+        'verified_by',
         'updated_at',
         'created_at',
     ];
@@ -41,7 +43,7 @@ class GembaWalk extends Model
         $request = request();
 
         $search = '';
-        $query = $this->select('inspection_gemba_walk.*', 'inspection_gemba_walk_status.status_name', 'inspection_gemba_walk_status.bg_color', 'inspection_shift_option.shift')
+        $query = $this->select('inspection_gemba_walk.*', 'inspection_gemba_walk_status.status_name', 'inspection_gemba_walk_status.bg_color', 'inspection_shift_option.shift','inspection_gemba_walk.id as gemba_walk_id')
             ->leftJoin('inspection_shift_option', 'inspection_shift_option.id', '=', 'inspection_gemba_walk.shift_id')
             ->leftJoin('inspection_gemba_walk_status', 'inspection_gemba_walk_status.id', '=', 'inspection_gemba_walk.gemba_walk_status');
 
@@ -100,14 +102,33 @@ class GembaWalk extends Model
     public function store()
     {
         $request = request();
-        $insert_array = array(
-            'document_reference_id' => $request->document_reference_id,
-            'date' => DBdateformat($request->document_upload_date),
-            'shift_id' => decryptId($request->shift),
-            'observation_needed'=>decryptId($request->observation_needed),
-            'gemba_walk_status' => GEMBA_WALK_INSPECTION_WAITING_FOR_CAPA_ACTION,
-            'created_by' => Auth::id()
-        );
+        $capa_needed  = decryptId($request->is_passed);
+
+        if ($capa_needed == 2) {
+
+            $insert_array = array(
+                'document_reference_id' => $request->document_reference_id,
+                'date' => DBdateformat($request->document_upload_date),
+                'shift_id' => decryptId($request->shift),
+                'observation_needed'=>decryptId($request->observation_needed),
+                'capa_needed'=>decryptId($request->is_passed),
+                'gemba_walk_status' => GEMBA_WALK_INSPECTION_WAITING_FOR_FLOOR_MANAGER_VERIFICATION,
+                'created_by' => Auth::id(),
+            );
+        }else{
+            $insert_array = array(
+                'document_reference_id' => $request->document_reference_id,
+                'date' => DBdateformat($request->document_upload_date),
+                'shift_id' => decryptId($request->shift),
+                'observation_needed'=>decryptId($request->observation_needed),
+                'capa_needed'=>decryptId($request->is_passed),
+                'gemba_walk_status' => GEMBA_WALK_INSPECTION_CLOSED,
+                'created_by' => Auth::id(),
+                'verified_by'=>Auth::id()
+            );
+        }
+
+
         return $this->create($insert_array);
     }
 
@@ -120,13 +141,12 @@ class GembaWalk extends Model
             'inspection_gemba_walk_checklist.*',
             'inspection_gemba_walk_checklist_files.file_path',
             'inspection_gemba_walk.created_by as user_id',
-            'inspection_gemba_walk.updated_by as verified_by'
 
         )
             ->leftJoin('inspection_gemba_walk_checklist', 'inspection_gemba_walk_checklist.gemba_walk_id', '=', 'inspection_gemba_walk.id')
             ->leftJoin('inspection_gemba_walk_checklist_files', function ($join) {
                 $join->on('inspection_gemba_walk_checklist_files.gemba_walk_checklist_id', '=', 'inspection_gemba_walk_checklist.id')
-                     ->where('inspection_gemba_walk_checklist_files.file_type', '=', 3); 
+                     ->where('inspection_gemba_walk_checklist_files.file_type', '=', 3);
             })
             ->where('inspection_gemba_walk.id', $id)
             ->get();
@@ -190,7 +210,7 @@ class GembaWalk extends Model
     {
         $request = request();
         $search = '';
-      
+
         $query = $this->select(
             'inspection_gemba_walk.*',
             'inspection_gemba_walk.id as inspection_id',
@@ -207,7 +227,7 @@ class GembaWalk extends Model
         ->leftJoin('inspection_gemba_walk_checklist', 'inspection_gemba_walk_checklist.gemba_walk_id', '=', 'inspection_gemba_walk.id')
         ->leftJoin('inspection_gemba_walk_checklist_files', function ($join) {
             $join->on('inspection_gemba_walk_checklist_files.gemba_walk_checklist_id', '=', 'inspection_gemba_walk_checklist.id')
-                 ->where('inspection_gemba_walk_checklist_files.file_type', '=', 3); 
+                 ->where('inspection_gemba_walk_checklist_files.file_type', '=', 3);
         })
         ->leftJoin('inspection_shift_option', 'inspection_shift_option.id', '=', 'inspection_gemba_walk.shift_id')
         ->leftJoin('inspection_gemba_walk_status', 'inspection_gemba_walk_status.id', '=', 'inspection_gemba_walk.gemba_walk_status')

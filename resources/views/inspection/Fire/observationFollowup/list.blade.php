@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'Fire Pre Noc Checklist')
-@section('pageurl', admin_url('fire/pre-noc/checklist/list'))
+@section('title', 'CHECKLIST OBSERVATION FOLLOW UP SHEET')
+@section('pageurl', admin_url('fire/checklist-observation/list'))
 
 
 @section('content')
@@ -15,7 +15,7 @@
                         <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
                         {{-- @if (CheckUserPermission('add')) --}}
                             {{-- <x-button-add dataId="" class="add btn btn-primary ms-1"
-                                href="{{ admin_url('fire/pre-noc/checklist/add') }}">Add</x-button-add> --}}
+                                href="{{ admin_url('fire/checklist-observation/add') }}">Add</x-button-add> --}}
                         {{-- @endif --}}
                     </div>
                     <div id="search" class="collapse">
@@ -147,12 +147,11 @@
                             data: 'date_of_inspection',
                             name: 'date_of_inspection'
                         },
-                       
                         {
                             data: 'observation_status',
                             name: 'observation_status'
                         },
-                       
+
                         {
                             data: 'status',
                             name: 'status'
@@ -192,7 +191,7 @@
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('audit/assessment/export/pdf') }}" +
+                                            "{{ admin_url('fire/checklist-observation/export/pdf') }}" +
                                             '?search=' + searchValue +
                                             '&checklist=' + checklist +
                                             '&status=' + status
@@ -208,7 +207,7 @@
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('audit/assessment/export/excel') }}" +
+                                            "{{ admin_url('fire/checklist-observation/export/excel') }}" +
                                             '?search=' + searchValue +
                                             '&checklist=' + checklist +
                                             '&status=' + status
@@ -247,12 +246,12 @@
                     var id = $(this).data('id');
                     var types = $(this).data('type');
                     if (types == 1) {
-                        var title = '{{ __('Do You want to In-Activate Fire Pre Noc Checklist checklist') }}';
+                        var title = '{{ __('Do You want to In-Activate checklist Observation') }}';
                         var text = '{{ __('common.inactive') }}';
                         var btncolor = '#dc3545'
 
                     } else {
-                        var title = '{{ __('Do You want to Activate Fire Pre Noc Checklist checklist') }}';
+                        var title = '{{ __('Do You want to Activate checklist Observation') }}';
                         var text = '{{ __('common.active') }}';
                         var btncolor = '#7ddc35'
                     }
@@ -272,7 +271,7 @@
 
                         if (result.value) {
                             $.ajax({
-                                url: "{{ admin_url('fire/pre-noc/checklist/status') }}",
+                                url: "{{ admin_url('fire/checklist-observation/status') }}",
                                 type: 'post',
 
                                 data: {
@@ -340,7 +339,7 @@
 
                         if (result.value) {
                             $.ajax({
-                                url: "{{ admin_url('audit/assessment/delete') }}",
+                                url: "{{ admin_url('fire/checklist-observation/listdelete') }}",
                                 type: 'post',
                                 headers: {
                                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]')

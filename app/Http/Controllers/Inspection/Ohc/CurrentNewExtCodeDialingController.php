@@ -372,7 +372,14 @@ class CurrentNewExtCodeDialingController extends Controller
                         $dataRow++;
                         $sr++;
                     }
+
                 }
+
+                $sheet->getStyle("A{$row}:D{$dataRow}")->applyFromArray([
+                    'borders' => [
+                        'outline' => ['borderStyle' => Border::BORDER_THICK, 'color' => ['argb' => '000000']],
+                    ],
+                ]);
             }
 
 

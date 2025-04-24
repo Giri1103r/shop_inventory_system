@@ -24,7 +24,6 @@ use App\Models\Master\Unit;
 use Illuminate\Http\Request;
 use Exception;
 
-
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
@@ -957,6 +956,17 @@ class PASystemInspectionController extends Controller
 
 
                 $row = $signatureRowStart + 6;
+
+                $lastRow = $signatureRowStart;
+
+                $sheet->getStyle("A{$titleRow}:K{$lastRow}")->applyFromArray([
+                    'borders' => [
+                        'outline' => [
+                            'borderStyle' => Border::BORDER_THICK,
+                            'color' => ['argb' => '000000'],
+                        ],
+                    ],
+                ]);
             }
 
             $writer = new Xlsx($spreadsheet);
@@ -1230,9 +1240,9 @@ class PASystemInspectionController extends Controller
                 $drawing->setOffsetY(5);
                 $drawing->setHeight(40);
                 $drawing->setWorksheet($sheet);
-                $sheet->setCellValue("A{$signatureRowStart}", "\n\n\nPrepared By:\n" . getUsername($pa_system->created_by));
+                $sheet->setCellValue("A{$signatureRowStart}", "\n\n\Checked By:\n" . getUsername($pa_system->created_by));
             } else {
-                $sheet->setCellValue("A{$signatureRowStart}", "Prepared By:\nInspection not yet started");
+                $sheet->setCellValue("A{$signatureRowStart}", "Checked By:\nInspection not yet started");
             }
 
             $sheet->mergeCells("E{$signatureRowStart}:H{$signatureRowStart}");
@@ -1297,4 +1307,6 @@ class PASystemInspectionController extends Controller
             return redirect(admin_url('fire/pa-system-inspection/list'));
         }
     }
+
+    
 }

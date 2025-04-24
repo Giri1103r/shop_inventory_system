@@ -683,6 +683,8 @@ class SafetyPermit extends Model
             'ptw_masters_typeofwork_checklist.checked',
             'ptw_masters_typeofwork_checklist.check_points',
             'ptw_masters_typeofwork_checklist.default_enable',
+            'ptw_status.status_name',
+            'ptw_status.id as status_id',
             DB::raw("(SELECT GROUP_CONCAT(file_path SEPARATOR ', ')
                       FROM ptw_masters_typeofwork_upload
                       WHERE FIND_IN_SET(ptw_masters_typeofwork_upload.typeofwork_id, ptw_safety.sub_permit)
@@ -693,6 +695,7 @@ class SafetyPermit extends Model
             ->leftJoin('ptw_masters_typeofwork', function ($join) {
                 $join->on('ptw_masters_typeofwork.id', '=', DB::raw('SUBSTRING_INDEX(ptw_safety.sub_permit, ",", 1)'));
             })
+            ->leftJoin('ptw_status', 'ptw_status.id', '=', 'ptw_safety.permit_status')
             ->leftJoin('ptw_masters_typeofwork_checklist', 'ptw_masters_typeofwork_checklist.typeofwork_id', '=', 'ptw_masters_typeofwork.id')
             ->leftJoin('ptw_masters_typeofwork_upload', 'ptw_masters_typeofwork_upload.typeofwork_id', '=', 'ptw_masters_typeofwork.id')
 

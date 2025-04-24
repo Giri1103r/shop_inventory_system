@@ -130,6 +130,7 @@ return [
     'approval' => 'Approval',
 
 
+
     // Floor Stretcher
     'dept/location' => 'Department / Location',
     'fs_first' => 'Are the Stretcher Cover and patient stretcher clean?',
@@ -221,9 +222,10 @@ return [
     //Fire Sand Bucket Inspection
     'fire_sand_bucket_stand_no' => 'Fire Sand Bucket Stand No.',
     'fire_sand_bucket_no' => 'Fire Sand Bucket No.',
-    'qualtiy_quantity_sand' => 'Select Quality and Quantity of Sand',
-    'paint_condition' => 'Select the Paint Condition',
-    'fire_bucket_condition' => 'Select the Fire Bucket Condition',
+    'qualtiy_quantity_sand' => 'Quality and Quantity of Sand',
+    'paint_condition' => 'Paint Condition',
+    'fire_bucket_condition' => 'Fire Bucket Condition',
+    'fire_bucket_stand_condition' => 'Fire Bucket Stand Condition',
 
     // Hose Box Inspection
     'hose_box_inspection' => 'Hose Box Inspection',
@@ -238,6 +240,7 @@ return [
     'flow' => 'Flow Test',
     'fail' => 'Fail',
     'pass' => 'Pass',
+    'status_hose' => 'Status Of Hose',
 
     //Fire Modular Inspection
     'types_of_equipment' => 'Types Of Equipment',

@@ -107,7 +107,7 @@ class InterUnitAudit extends Model
         $request = request();
         $search = '';
 
-        $query = $this->select('inspection_audit_assessment.*');
+        $query = $this->select('inspection_audit_inter_unit.*');
 
         if (isset($request->search) && isset($request->search['value']) && $request->search['value'] != '') {
             $search = $request->search['value'];

@@ -107,6 +107,9 @@
         .table_card td {
             text-align: center;
         }
+        .page-break {
+            page-break-before: always;
+        }
 
         .table-container {
             padding: 20px;
@@ -146,8 +149,6 @@
 
 
     @foreach ($content as $details)
-
-
         <br>
 
         <div style="width:100%;">
@@ -163,7 +164,7 @@
         <table
             style="width: 100%; border-collapse: collapse; font-family: Arial, sans-serif; text-align: center; border: 1px solid black;">
             <tr>
-                <th  colspan="4" style="border:1px solid black;height:50;width:40">
+                <th colspan="4" style="border:1px solid black;height:50;width:40">
                     <img src="{{ url('public/assets/images/logo-dark.png') }}" style="width:125px;height:50px;">
                 </th>
                 <th colspan="4" style="border:1px solid black;">
@@ -179,15 +180,15 @@
                         <thead>
                             <tr>
                                 <td style="border: 1px solid black;width:70;">Doc.No</td>
-                                <td style="border: 1px solid black;">{{$document_no->doc_no}}</td>
+                                <td style="border: 1px solid black;">{{ $document_no->doc_no }}</td>
                             </tr>
                             <tr>
                                 <td style="border: 1px solid black;width:70;">Issue Dt.</td>
-                                <td style="border: 1px solid black;">{{$document_no->issue_date}}</td>
+                                <td style="border: 1px solid black;">{{ $document_no->issue_date }}</td>
                             </tr>
                             <tr>
                                 <td style="border: 1px solid black;width:70;">Rev.& Dt.</td>
-                                <td style="border: 1px solid black;">{{$document_no->rev_dt}}</td>
+                                <td style="border: 1px solid black;">{{ $document_no->rev_dt }}</td>
                             </tr>
                         </thead>
                     </table>
@@ -205,7 +206,7 @@
                 </th>
                 <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;"
                     colspan="4">
-                    SHIFT: {{ ($details->shift) ?? 'N/A' }}
+                    SHIFT: {{ $details->shift ?? 'N/A' }}
                 </th>
             </tr>
             <tr>
@@ -254,8 +255,10 @@
                 <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">POWER SUPPLY</th>
                 <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">STATUS</th>
             </tr>
-
-
+            @php
+                $inspection = GetEmeregencyLightInspection($details->id);
+            @endphp
+            @foreach ($inspection as $details)
                 <tr>
                     <td style="border: 1px solid black; padding: 8px;">{{ $loop->iteration }}</td>
                     <td style="border: 1px solid black; padding: 8px;">{{ getDepartment($details->department) }}</td>
@@ -285,25 +288,51 @@
 
 
                 </tr>
+            @endforeach
+            @php
+                $checked_by = GetSignature($details->created_by, $details->id, EMERGENCY_LIGHT_INSPECTION);
+                $approved_by = GetSignature($details->approved_by, $details->id, EMERGENCY_LIGHT_INSPECTION);
+                $verified_by = GetSignature($details->verified_by, $details->id, EMERGENCY_LIGHT_INSPECTION);
+            @endphp
+            <tr>
+                <td colspan="4" style="border: 1px solid black; padding: 6px; text-align: center;">
+                    <div class="view_data">
+                        @if (!empty($details->created_by))
+                            <img src="{{ admin_url($checked_by) }}" alt=""
+                                style="max-height: 60px; display: block; margin: 0 auto 5px;">
+                            <p style="margin: 0;">Checked By:- {{ getUsername($details->created_by) }}</p>
+                        @else
+                            <p style="margin: 0;">Checked By:- Not yet checked</p>
+                        @endif
+                    </div>
+                </td>
+                <td colspan="4" style="border: 1px solid black; padding: 6px; text-align: center;">
+                    <div class="view_data">
+                        @if (!empty($details->updated_by))
+                            <img src="{{ admin_url($verified_by) }}" alt=""
+                                style="max-height: 60px; display: block; margin: 0 auto 5px;">
+                            <p style="margin: 0;">Verified By:- {{ getUsername($details->verified_by) }}</p>
+                        @else
+                            <p style="margin: 0;">Verified By:- Not yet verified</p>
+                        @endif
+                    </div>
+                </td>
+                <td colspan="4" style="border: 1px solid black; padding: 6px; text-align: center;">
+                    <div class="view_data">
+                        @if (!empty($details->approved_by))
+                            <img src="{{ admin_url($approved_by) }}" alt=""
+                                style="max-height: 60px; display: block; margin: 0 auto 5px;">
+                            <p style="margin: 0;">Approved By:- {{ getUsername($details->approved_by) }}</p>
+                        @else
+                            <p style="margin: 0;">Approved By:- Not yet approved</p>
+                        @endif
+                    </div>
+                </td>
+            </tr>
 
-                <tr>
-
-                    <th colspan="12" style="border:1px solid black;">
-                        <h3>
-                            <span><b>OBSERVATION</b></span>
-
-                        </h3>
-                    </th>
-
-
-                </tr>
-                <tr>
-                    <td colspan="8"   style="border: 1px solid black; padding: 8px;">{{ $details->observation }}</td>
-                    <td colspan="4"  > <img src="{{ admin_url($details->file_path) }}" alt="Signature Upload"
-                        style="width: 150px; margin-top: -10px;" /></td>
-                </tr>
 
         </table>
+        <div class="page-break"></div>
     @endforeach
     <br>
     </div>

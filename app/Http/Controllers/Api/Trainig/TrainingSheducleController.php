@@ -189,7 +189,7 @@ class TrainingSheducleController extends BaseController
 
                 $traning_schedule_array->where(function ($query) use ($searchDate) {
                     $query->orWhereDate('training_schedule.from_date', $searchDate)
-                          ->orWhereDate('training_schedule.to_date', $searchDate);
+                        ->orWhereDate('training_schedule.to_date', $searchDate);
                 });
             }
 
@@ -211,12 +211,21 @@ class TrainingSheducleController extends BaseController
                 $data['to_date'] = Displaydateformat($listdata['to_date'] ?? '');
                 $data['topic_name'] = $listdata['topic_name'] ?? '';
                 $data['trainer_id'] = getEmployeename($listdata['trainer_id'] ?? '');
+                $status = $listdata['training_status'] ?? null;
+                $data['training_status'] =
+                    in_array($status, [1, 2, 4, 5]) ? 'Training Pending' :
+                    ($status == 8 ? 'Training Completed' :
+                    (in_array($status, [6, 7]) ? 'Training in Progress' :
+                    ($status == 3 ? 'Training Rejected' : 'Unknown Status')));
                 $data['status'] = $listdata['status'] == 1 ? 'Active' : 'In-Active';
                 $data['created_by'] = getUsername($listdata['created_by'] ?? '');
                 $data['created_at'] = Displaydateformat($listdata['created_at'] ?? '');
 
+
+
                 $data_array[] = $data;
             }
+
 
             $traning_schedule_details = [
                 'per_page' => $traning_schedule_list['per_page'] ?? 0,
@@ -247,9 +256,108 @@ class TrainingSheducleController extends BaseController
                 $id = $request->id;
 
                 $training_schedule = $this->training_schedule->selectOne($id);
+                $nominationProcessList = $this->nomination_process->getNomination($training_schedule->id);
+                $trainingAssessmentList = $this->training_assessment_feedback->getAssessment($training_schedule->id);
+                $attendanceDate = $request->attendance_date;
+                $trainingAttendanceList = $this->training_attendance
+                    ->where('status', 1)
+                    ->where('training_schedule_id', $training_schedule->id)
+                    ->when($attendanceDate, function ($query, $attendanceDate) {
+                        return $query->whereDate('attendance_date', DBdateformat($attendanceDate));
+                    })
+                    ->get();
+                $statusLog = $this->training_statuslog->where('training_schedule_id', $training_schedule->id)->where('training_status', 3)->get();
+                $trainingAssessmentList = $this->training_assessment_feedback->getAssessment($training_schedule->id);
+                // Status Log
+                $EhsStatusLog = [];
 
+                foreach ($statusLog as $log) {
+                    $EhsStatusLog[] = [
+                        'date' => Displaydateformat($log->created_at),
+                        'remarks' => $log->remarks,
+                    ];
+                }
+                // Nomination Process
+                $nominationList = [];
+
+                foreach ($nominationProcessList as $nomination) {
+                    $nominationList[] = [
+                        'id' => $nomination->id,
+                        'training_schedule_id' => $nomination->training_schedule_id,
+                        'emp_worker' => $nomination->emp_worker == 1 ? 'Employee' : 'Worker',
+                        'employee_id' => $nomination->emp_id,
+                        'department_id' => $nomination->department_name,
+                        'employee_name' => $nomination->emp_name,
+                        'email_id' => $nomination->email,
+                        'employee_type' => $nomination->employee_type,
+                        'last_training_attended_on' => $nomination->last_training_attended_on,
+                        'last_training_attended_topic' => $nomination->topic_name,
+                        'topic_id' => $nomination->topic_id,
+                        'from_date' => Displaydateformat($nomination->from_date),
+                        'to_date' => Displaydateformat($nomination->to_date),
+
+
+                    ];
+                }
+
+                // training attendance list
+
+                $AttendanceList = [];
+                foreach ($trainingAttendanceList as $attendance) {
+                    $AttendanceList[] = [
+                        'attendance_id' => $attendance->id,
+                        'training_schedule_id' => $attendance->training_schedule_id,
+                        'attendance_date' => Displaydateformat($attendance->attendance_date),
+                        'employee_name' => $attendance->emp_name,
+                        'email' => $attendance->email,
+                        'checked' => $attendance->attendance_status == 1 ? 'Yes' : 'No',
+                    ];
+                }
+                // training assessment list
+                $AssessmentList = [];
+
+                foreach ($trainingAssessmentList as $assessment) {
+                    $AssessmentList[] = [
+                        'employee_name' => $assessment->emp_name,
+                        'checked' => $assessment->attended_status == 1 ? 'Yes' : 'No',
+                        'mark' => $assessment->mark,
+                        'assessment' =>   $assessment->assessment == 1 ? 'Pass' : ($assessment->mark == 2 ? 'Fail' : 'Not Attended'),
+                        'feed_back' => !empty($assessment->feedback) ? strip_tags($assessment->feedback) : '-' ,
+                    ];
+                }
+
+                // training feed back
+
+                $trainingFeedbackList = collect();
+
+                foreach ($trainingAssessmentList as $assessment) {
+                    $feedbackList = $this->training_feedback->getfeedbackList($assessment->id);
+                    $trainingFeedbackList = $trainingFeedbackList->merge($feedbackList);
+                }
+
+                $feedBack = [];
+                foreach ($trainingFeedbackList as $feedback) {
+                    $feedBack[] = [
+                        'employee_id' => $feedback->emp_id,
+                        'employee_name' => $feedback->emp_name,
+                        'trainer_feedback' => $feedback->trainer_feedback,
+                        'training_feedback' => $feedback->training_feedback,
+                    ];
+                }
+                $ehsData = [];
+
+                if (!empty($EhsStatusLog)) {
+                    $ehsData['rejection_log'] = $EhsStatusLog;
+                }
+
+                if (!empty($training_schedule->approver_name) && !empty($training_schedule->date) && !empty($training_schedule->remark)) {
+                    $ehsData['approver_name'] = $training_schedule->approver_name;
+                    $ehsData['date'] = Displaydateformat($training_schedule->date);
+                    $ehsData['remarks'] = $training_schedule->remark;
+                }
 
                 $success = [
+
                     'id' => $training_schedule->id,
                     'from_date' => Displaydateformat($training_schedule->from_date),
                     'to_date' => Displaydateformat($training_schedule->to_date),
@@ -270,8 +378,11 @@ class TrainingSheducleController extends BaseController
                     'status' =>  $training_schedule->status == 1 ? 'Active' : 'In-Active',
                     'created_by' => getusername($training_schedule->created_by),
                     'created_at' => Displaydateformat($training_schedule->created_at),
-
-
+                    'ehs_head_approval_pending' => $ehsData,
+                    'nomination_process' => $nominationList,
+                    'training_attendance' => $AttendanceList,
+                    'training_assessment' => $AssessmentList,
+                    'training_feedback' => $feedBack,
 
                 ];
 
@@ -281,6 +392,69 @@ class TrainingSheducleController extends BaseController
             }
         } catch (Exception $ex) {
             report($ex);
+            return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
+        }
+    }
+
+
+    public function storeAttendance(Request $request)
+    {
+        try {
+
+
+
+            // Save or update attendance
+            $success = $this->training_attendance->storeOrUpdate_api($request);
+
+            $attendanceDate = DBdateformat($request->attendance_date);
+            $trainingScheduleId = ($request->id);
+
+            $trainingHrsPerDay = $this->training_schedule
+                ->where('id', $trainingScheduleId)
+                ->value('training_hrs_perday');
+
+
+            $presentCount = $this->training_attendance
+                ->where('training_schedule_id', $trainingScheduleId)
+                ->where('attendance_date', $attendanceDate)
+                ->where('attendance_status', 1)
+                ->count();
+
+            $totalManHoursForDay = $presentCount * $trainingHrsPerDay;
+
+            $existingTrainingSchedule = $this->training_schedule
+                ->select('training_man_hours')
+                ->where('id', $trainingScheduleId)
+                ->first();
+
+            $newTotalManHours = $existingTrainingSchedule && $existingTrainingSchedule->training_man_hours
+                ? $existingTrainingSchedule->training_man_hours + $totalManHoursForDay
+                : $totalManHoursForDay;
+
+            $this->training_schedule->updateTrainingManHours($trainingScheduleId, $newTotalManHours);
+
+            return $this->sendResponse($success, 'Attendance Stored Successfully');
+        } catch (Exception $ex) {
+            report($ex);
+            return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
+        }
+    }
+
+    public function endTrainingStore(Request $request)
+    {
+        try {
+            $trainingScheduleId = ($request->training_schedule_id);
+            $training_status = TRAINING_FEEDBACK_ADMIN_APPROVE;
+
+            $AssessmentStore = $this->training_assessment_feedback->store_api();
+            $updateStatus = $this->training_schedule->updateStatus($trainingScheduleId, $training_status);
+            $statuslog =  $this->training_statuslog->storestatus($trainingScheduleId, $training_status);
+            $success =[
+                'training_schedule'=>  $trainingScheduleId,
+            ];
+            return $this->sendResponse($success, 'Assessment update Successfully!');
+        } catch (Exception $ex) {
+            dd($ex);
             return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
         }
     }

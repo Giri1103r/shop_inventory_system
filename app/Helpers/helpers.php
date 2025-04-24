@@ -12,6 +12,7 @@ use App\Models\UploadLogType;
 use App\Models\UserPermission;
 use App\Models\Master\Employee;
 use App\Models\Master\UserRole;
+use App\Models\IMS\Incident\Rcpa;
 use App\Models\Master\Department;
 use App\Models\Master\PpeRequest;
 use Illuminate\Support\Facades\DB;
@@ -52,10 +53,13 @@ use App\Models\Inspection\MSDS\MSDSSignatureUpload;
 use App\Models\Inspection\Ohc\SafetyPettyChecklist;
 use App\Models\Inspection\RRAA\RRAASignatureUpload;
 use App\Models\Inspection\Fire\FireExtinguisherType;
+use App\Models\Inspection\GembaWalk\GembaWalkStatus;
 use App\Models\Inspection\Ohc\FirstAiderListDetails;
 use App\Models\Inspection\Fire\FireCheckListFollowUp;
 use App\Models\Inspection\Master\ChecklistSubTypeData;
 use App\Models\Inspection\Ohc\FirstAidRecordChecklist;
+use App\Models\Inspection\GembaWalk\GembaWalkStatusLog;
+use App\Models\Inspection\Safety\SafetyWalkObservation;
 use App\Models\Inspection\Ohc\DailyDepartmentFirstAidBox;
 use App\Models\Inspection\Master\ChecklistSubTypeDataName;
 use App\Models\Inspection\Ohc\MonthlyFirstAidboxChecklist;
@@ -63,8 +67,9 @@ use App\Models\Inspection\GembaWalk\GembaWalkChecklistFile;
 use App\Models\Inspection\Ohc\MedicineRequisitionSlipFloor;
 use App\Models\Inspection\Ohc\MedicineRequistionFdoChecklist;
 use App\Models\Inspection\Safety\MonthlyPhysicalEquipmentList;
+use App\Models\Inspection\Fire\EmergencyLightInspectionDetails;
 use App\Models\Inspection\Fire\MonthlyPhysicalInspectionFileUpload;
-use App\Models\IMS\Incident\Rcpa;
+use App\Models\Inspection\Safety\SafetyWalkObservationDetails;
 
 if (!function_exists('get_encryptVal')) {
 
@@ -2127,6 +2132,15 @@ if (!function_exists('getMonth')) {
             return $medicineRequisition;
         }
     }
+    if (!function_exists('GetEmeregencyLightInspection')) {
+
+        function GetEmeregencyLightInspection($id)
+        {
+
+            $medicineRequisition = EmergencyLightInspectionDetails::where('inspection_id', $id)->where('status', 1)->where('trash', 'NO')->get();
+            return $medicineRequisition;
+        }
+    }
 
     if (!function_exists('GetMonthlyAuditChecklist')) {
 
@@ -2193,6 +2207,19 @@ if (!function_exists('getMonth')) {
 
                 case MONTHLY_FIRE_PUMP:
                     $name = FireSignatureUpload::where('emp_id', $userid)->where('inspection_id', $id)->where('type', MONTHLY_FIRE_PUMP)
+                        ->where('status', 1)->where('trash', 'NO')->first();
+
+                    if ($name == null) {
+                        $name = User::where('id', $userid)->first();
+                        if ($name == null) {
+                            return null;
+                        }
+                        return $name->signature_upload;
+                    } else {
+                        return $name->file_path;
+                    }
+                case OBSERVATION_FOLLOWUP:
+                    $name = FireSignatureUpload::where('emp_id', $userid)->where('inspection_id', $id)->where('type', OBSERVATION_FOLLOWUP)
                         ->where('status', 1)->where('trash', 'NO')->first();
 
                     if ($name == null) {
@@ -2484,8 +2511,6 @@ if (!function_exists('getMonth')) {
         {
             if ($id == GEMBA_WALK_INSPECTION_START) {
                 return 'Gemba Walk Start';
-            } else if ($id == GEMBA_WALK_INSPECTION_WAITING_FOR_CAPA_ACTION) {
-                return 'Waiting for CAPA Action';
             } else if ($id == GEMBA_WALK_INSPECTION_WAITING_FOR_FLOOR_MANAGER_VERIFICATION) {
                 return 'Waiting for Floor manager Action';
             } else if ($id == GEMBA_WALK_INSPECTION_WAITING_FOR_EHS_OFFICER_VERIFICATION) {
@@ -2546,6 +2571,8 @@ if (!function_exists('getMonth')) {
         }
     }
 
+    // gemba Walk
+
     if (!function_exists('getGembaWalkStatus')) {
         function getGembaWalkStatus($type_id)
         {
@@ -2555,6 +2582,24 @@ if (!function_exists('getMonth')) {
                 return 'Closed';
             } else {
                 return 'Unknown';
+            }
+        }
+    }
+
+
+    if (!function_exists('getGembaWalkLogStatus')) {
+
+        function getGembaWalkLogStatus($id)
+        {
+
+            $user = GembaWalkStatus::select('*')
+                ->where('id', $id)
+                ->first();
+
+            if ($user == null) {
+                return '';
+            } else {
+                return $user->status_name;
             }
         }
     }
@@ -2835,3 +2880,40 @@ if (!function_exists('getValveTypeName')) {
         return null;
     }
 }
+
+
+function GetLastMonthObservation($id)
+{
+    $data = SafetyWalkObservation::where('id', $id)->first();
+    $current_month = $data->month;
+    $current_year = $data->created_at->year;
+
+    $month = Carbon::parse($current_month)->month;
+    $last_month = $month - 1;
+
+    if ($last_month == 0) {
+        $last_month = 12;
+        $current_year -= 1;
+    }
+
+    $last_month_name = Carbon::createFromFormat('m', $last_month)->format('F');
+
+    $last_month_record = SafetyWalkObservation::where('month', $last_month_name)
+        ->whereYear('created_at', $current_year)
+        ->get();
+
+    return $last_month_record;
+}
+
+
+function GetLastMonthDetails($lastMonthObservationDetails)
+{
+    if (count($lastMonthObservationDetails) > 0) {
+        foreach ($lastMonthObservationDetails as $lastMonthObservationDetail) {
+            $lastMonth[] = SafetyWalkObservationDetails::where('safety_walk_observation_id', $lastMonthObservationDetail->id)->get();
+        }
+        return $lastMonth;
+    }
+    return false;
+}
+

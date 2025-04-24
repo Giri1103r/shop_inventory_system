@@ -11,7 +11,7 @@ class FirstAidRecordDetails extends Model
 {
     use  HasFactory;
 
-    protected $table = 'ohc_first_aid_record_details';
+    protected $table = 'inspection_ohc_first_aid_record_details';
 
     protected $primaryKey = 'id';
 
@@ -39,7 +39,7 @@ class FirstAidRecordDetails extends Model
         $request = request();
         $search = '';
 
-        $query = $this->select('ohc_first_aid_record_details.*');
+        $query = $this->select('inspection_ohc_first_aid_record_details.*');
 
         $org_total =  $query;
         $org_total_counts = $org_total->count();
@@ -50,7 +50,7 @@ class FirstAidRecordDetails extends Model
             $query->where(function ($query) use ($search) {
                 $query
                     ->orWhere('month', 'LIKE', '%' . $search . '%')
-                    ->orWhere('year', 'LIKE', '%' . $search . '%');
+                    ->orWhereYear('year', 'LIKE', '%' . $search . '%');
             });
         }
 
@@ -138,17 +138,17 @@ class FirstAidRecordDetails extends Model
         $search = '';
 
         $query = $this->select(
-            'ohc_first_aid_record_details.*',
-            'ohc_first_aid_record_checklist.*',
+            'inspection_ohc_first_aid_record_details.*',
+            'inspection_ohc_first_aid_record_checklist.*',
             'masters_department.*',
             'masters_unit.*',
-            'ohc_first_aid_record_details.created_by as checked_by',
-            'ohc_first_aid_record_details.id as first_aid_record_id'
+            'inspection_ohc_first_aid_record_details.created_by as checked_by',
+            'inspection_ohc_first_aid_record_details.id as first_aid_record_id'
         )
-            ->leftJoin('ohc_first_aid_record_checklist', 'ohc_first_aid_record_details.id', '=', 'ohc_first_aid_record_checklist.ohc_first_aid_record_details_id')
-            ->leftJoin('masters_department', 'ohc_first_aid_record_checklist.department', '=', 'masters_department.id')
-            ->leftJoin('masters_unit', 'ohc_first_aid_record_checklist.unit', '=', 'masters_unit.id')
-            ->where('ohc_first_aid_record_details.trash', 'NO');
+            ->leftJoin('inspection_ohc_first_aid_record_checklist', 'inspection_ohc_first_aid_record_details.id', '=', 'inspection_ohc_first_aid_record_checklist.inspection_ohc_first_aid_record_details_id')
+            ->leftJoin('masters_department', 'inspection_ohc_first_aid_record_checklist.department', '=', 'masters_department.id')
+            ->leftJoin('masters_unit', 'inspection_ohc_first_aid_record_checklist.unit', '=', 'masters_unit.id')
+            ->where('inspection_ohc_first_aid_record_details.trash', 'NO');
 
 
         if ($request->search != null || $request->search != '') {
@@ -156,7 +156,7 @@ class FirstAidRecordDetails extends Model
 
             $query =  $query->Where(function ($query) use ($search) {
                 $query->orWhere('month', 'LIKE', '%' . $search . '%')
-                    ->orWhere('year', 'LIKE', '%' . $search . '%');
+                    ->orWhereYear('year', 'LIKE', '%' . $search . '%');
             });
         }
         if ($request->has('month') && $request->month) {
@@ -165,11 +165,11 @@ class FirstAidRecordDetails extends Model
         if ($request->has('year') && $request->year) {
             $query = $query->where('year', 'LIKE', '%' . $request->year . '%');
         }
-        $query->orderBy('ohc_first_aid_record_details.id', 'DESC');
+        $query->orderBy('inspection_ohc_first_aid_record_details.id', 'DESC');
 
         $data = $query->get();
         if ($data) {
-            return $data = $data->groupBy('ohc_first_aid_record_details_id');
+            return $data = $data->groupBy('inspection_ohc_first_aid_record_details_id');
         }else{
             return $data;
         }
@@ -177,6 +177,6 @@ class FirstAidRecordDetails extends Model
 
     // protected static function booted()
     // {
-    //     static::addGlobalScope(new TrashScope('ohc_first_aid_record_details'));
+    //     static::addGlobalScope(new TrashScope('inspection_ohc_first_aid_record_details'));
     // }
 }

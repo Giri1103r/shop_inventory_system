@@ -239,12 +239,12 @@
                             <th>Description</th>
                             <th>Hazard</th>
                             <th>Image</th>
-                            <th>capa</th>
+                            <th>CAPA</th>
                             <th>Date of Compliance</th>
                             <th>Responsible Person</th>
                             <th>Status</th>
-                            <th>remark</th>
-                            <th>observation</th>
+                            <th>Remark</th>
+                            <th>Observation</th>
 
 
                         </tr>
@@ -735,10 +735,8 @@
                             @else
                                 @foreach ($status_log as $status)
                                     <tr>
-                                        <td>{{ isset($status['to_status']) ? $status['to_status'] : '-' }}
-                                        </td>
-                                        <td>{{ isset($status['status_name']) ? $status['status_name'] : '-' }}
-                                        </td>
+                                        <td>{{ getGembaWalkLogStatus($status['from_status'] ?? null) }}</td>
+                                        <td>{{ getGembaWalkLogStatus($status['to_status'] ?? null) }}</td>
                                         <td>{{ isset($status['approved_by']) ? getUsername($status['approved_by']) : '-' }}
                                         </td>
                                         <td>{{ isset($status['remarks']) ? $status['remarks'] : '-' }}

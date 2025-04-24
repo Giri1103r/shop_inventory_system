@@ -309,42 +309,42 @@
 
 
                     var newRow = `
-            <tr>
-                <td>
-                    <div class="form-group form-input">
-                        <label for="medicine_id" class="require">Medicine Name</label>
-                        <select name="medicine_id[${medicine_requisition_row_count}]" class="form-control single-select" style="width: 100%">
-                            <option value="">Select the Medicine Name</option>
-                            @foreach ($medicine as $list)
-                                                                            <option value="{{ encryptId($list->medicine_id) }}">
-                                                                                {{ getMedicinename($list->medicine_id) }}
-                                                                            </option>
-                                                                        @endforeach
-                        </select>
-                    </div>
-                </td>
+                            <tr>
+                                <td>
+                                    <div class="form-group form-input">
+                                        <label for="medicine_id" class="require">Medicine Name</label>
+                                        <select name="medicine_id[${medicine_requisition_row_count}]" class="form-control single-select" style="width: 100%">
+                                            <option value="">Select the Medicine Name</option>
+                                            @foreach ($medicine as $list)
+                                                                                            <option value="{{ encryptId($list->medicine_id) }}">
+                                                                                                {{ getMedicinename($list->medicine_id) }}
+                                                                                            </option>
+                                                                                        @endforeach
+                                        </select>
+                                    </div>
+                                </td>
 
-                <td>
-                    <div class="form-group form-input">
-                        <label for="quantity" class="require">Quantity</label>
-                        <input type="text" name="quantity[${medicine_requisition_row_count}]"   placeholder="Enter the quantity" class="form-control">
-                         <span id="quantity-error" style=" display:none;"  class="text-danger quantity-error">Quantity must be less than available quantity.</span>
+                                <td>
+                                    <div class="form-group form-input">
+                                        <label for="quantity" class="require">Quantity</label>
+                                        <input type="text" name="quantity[${medicine_requisition_row_count}]"   placeholder="Enter the quantity" class="form-control">
+                                        <span id="quantity-error" style=" display:none;"  class="text-danger quantity-error">Quantity must be less than available quantity.</span>
 
 
-                    </div>
-                </td>
-                <td>
-                    <div class="form-group form-input">
-                        <label for="remarks" class="">Remarks</label>
-                        <textarea name="remarks[${medicine_requisition_row_count}]" cols="10" rows="2" class="form-control"></textarea>
-                    </div>
-                </td>
-                <td>
-                    <div class="d-flex justify-content-center align-items-center bg-danger mt-2 ml-2 text-white rounded delete-row" style="width: 30px; height: 30px;">
-                        <i class="fa-solid fa-trash"></i>
-                    </div>
-                </td>
-            </tr>`;
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="form-group form-input">
+                                        <label for="remarks" class="">Remarks</label>
+                                        <textarea name="remarks[${medicine_requisition_row_count}]" cols="10" rows="2" class="form-control"></textarea>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex justify-content-center align-items-center bg-danger mt-2 ml-2 text-white rounded delete-row" style="width: 30px; height: 30px;">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </div>
+                                </td>
+                            </tr>`;
 
                     $('#medicine-tbody').append(newRow);
 
@@ -515,21 +515,13 @@
                         issue_date: {
                             required: true,
                         },
-                        signature_image: {
-                            required: true,
-                            extension: "png|jpeg|jpg",
-                            filesize: 5242880
-                        },
+
                         document_no: {
                             required: true,
                             minlength: 3,
                             maxlength: 30,
                         },
-                        signature_image: {
-                            required: "Please upload your signature image.",
-                            extension: "Allowed file types: PNG, JPEG, JPG.",
-                            filesize: "File must be less than 5 MB."
-                        },
+                     
                         review_date: {
                             required: true,
                         },
@@ -601,21 +593,6 @@
 
 
             });
-            document.getElementById("signature_image").addEventListener("change", function(event) {
-                let file = event.target.files[0];
 
-                if (file) {
-                    let reader = new FileReader();
-
-                    reader.onload = function(e) {
-                        document.getElementById("imagePreview").src = e.target.result;
-                        document.getElementById("imagePreviewContainer").style.display = "block";
-                    };
-
-                    reader.readAsDataURL(file);
-                } else {
-                    document.getElementById("imagePreviewContainer").style.display = "none";
-                }
-            });
         </script>
     @endpush

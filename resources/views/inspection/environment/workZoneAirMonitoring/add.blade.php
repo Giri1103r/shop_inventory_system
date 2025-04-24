@@ -40,26 +40,26 @@
                                                 </div>
                                             </div>
                                             <div class="row">
-                                                <div class="col-md-4 form-input">
+                                                <div class="col-md-4 form-input mt-2">
                                                     <label class="form-label">Work Zone Air No</label>
                                                     <input type="text" class="form-control" name="work_zone_air_no"
                                                         id="work_zone_air_no" value = "{{ getsequence('workZoneAirNo') }}"
                                                         readonly>
                                                 </div>
-                                                <div class="col-md-4 form-input">
+                                                <div class="col-md-4 form-input mt-2">
                                                     <label class="form-label">Doc. No</label>
                                                     <input type="text" class="form-control" name="doc_no" id="doc_no"
                                                         readonly value="{{ $staticDocno->doc_no }}">
                                                 </div>
 
-                                                <div class="col-md-4 form-input">
+                                                <div class="col-md-4 form-input mt-2">
                                                     <label class="form-label">Issue Dt.</label>
                                                     <input type="text" class="form-control" name="issue_date"
                                                         id="issue_date" readonly
                                                         value="{{ Displaydateformat($staticDocno->issue_date) }}">
                                                 </div>
 
-                                                <div class="col-md-4 form-input mt-2">
+                                                <div class="col-md-4 form-input  mt-2">
                                                     <label class="form-label">Rev. & Dt.</label>
                                                     <input type="text" class="form-control" name="rev_dt" id="rev_dt"
                                                         readonly value="{{ $staticDocno->rev_dt }}">
@@ -70,7 +70,7 @@
                                             </div>
 
                                         </div>
-                                        
+
                                         <div class="card-body">
                                             <div class="row">
                                                 <div class="card-header-inner d-flex justify-content-between">
@@ -87,14 +87,14 @@
                                             <div id="lesson_learned_block">
                                                 <div class="row lesson_learned_row" style="margin-top: 20px;">
 
-                                                    <div class="col-md-4 form-input">
+                                                    <div class="col-md-4 form-input mt-2">
                                                         <label class="form-label">SR NO</label>
                                                         <input type="text" class="form-control sr-no"
                                                             name="monitoring[1][sr_no]" id="sr_no_1" readonly
                                                             value="WORKZONE-AIR-0001">
 
                                                     </div>
-                                                    <div class="col-md-4 form-input">
+                                                    <div class="col-md-4 form-input mt-2">
                                                         <label for="" class="form-label">Location</label>
                                                         <select class="form-control single-select"
                                                             name="monitoring[1][location_id]" style="width: 100%"
@@ -106,7 +106,7 @@
                                                             @endforeach
                                                         </select>
                                                     </div>
-                                                    <div class="col-md-4 form-input">
+                                                    <div class="col-md-4 form-input mt-2">
                                                         <label for="" class="form-label">Unit</label>
                                                         <select class="form-control single-select"
                                                             name="monitoring[1][unit_id]" style="width: 100%"
@@ -115,70 +115,79 @@
 
                                                         </select>
                                                     </div>
-
                                                     <div class="col-md-4 form-input mt-2">
+                                                        <label for="" class="form-label">Department</label>
+                                                        <select class="form-control single-select"
+                                                            name="monitoring[1][department_id]" style="width: 100%"
+                                                            id="department_id_1">
+                                                            <option value="">Select Department</option>
+
+                                                        </select>
+                                                    </div>
+
+                                                    <div class="col-md-4 form-input  mt-2">
                                                         <label class="form-label">Date of Monitoring</label>
                                                         <input type="text" name="monitoring[1][date_of_monitoring]"
                                                             class="form-control" id="date_of_monitoring_1">
                                                     </div>
-                                                    <div class="col-md-4 form-input mt-2">
+                                                    <div class="col-md-4 form-input  mt-2">
                                                         <label class="form-label">Next Due Date of
                                                             Monitoring</label>
                                                         <input type="text"
                                                             name="monitoring[1][next_due_date_of_monitoring]"
                                                             class="form-control" id="next_due_date_of_monitoring_1">
                                                     </div>
-                                                    <div class="col-md-4 form-input mt-2">
+                                                    <div class="col-md-4 form-input  mt-2">
                                                         <label class="form-label">SPM (Session 1)</label>
                                                         <input type="text" name="monitoring[1][spm]"
                                                             class="form-control" id="spm_1">
                                                     </div>
 
-                                                    <div class="col-md-4 form-input mt-2">
+                                                    <div class="col-md-4 form-input  mt-2">
                                                         <label class="form-label">SO2 (Session 1)</label>
                                                         <input type="text" name="monitoring[1][so2]"
                                                             class="form-control" id="so2_1">
                                                     </div>
-                                                    <div class="col-md-4 form-input mt-2">
+                                                    <div class="col-md-4 form-input  mt-2">
                                                         <label class="form-label">NO2 (Session 1)</label>
                                                         <input type="text" name="monitoring[1][no2]"
                                                             class="form-control" id="no2_1">
                                                     </div>
 
-                                                    <div class="col-md-4 form-input mt-2">
+                                                    <div class="col-md-4 form-input  mt-2">
                                                         <label class="form-label">Date of Monitoring</label>
                                                         <input type="text" name="monitoring[1][date_of_monitoring2]"
                                                             class="form-control" id="date_of_monitoring2_1">
                                                     </div>
-                                                    <div class="col-md-4 form-input mt-2">
+                                                    <div class="col-md-4 form-input  mt-2">
                                                         <label class="form-label">Next Due Date of
                                                             Monitoring</label>
                                                         <input type="text"
                                                             name="monitoring[1][next_due_date_of_monitoring2]"
                                                             class="form-control" id="next_due_date_of_monitoring2_1">
                                                     </div>
-                                                    <div class="col-md-4 form-input mt-2">
+                                                    <div class="col-md-4 form-input  mt-2">
                                                         <label class="form-label">SPM (Session 2)</label>
                                                         <input type="text" name="monitoring[1][spm_session2]"
                                                             class="form-control" id="spm_session2_1">
                                                     </div>
 
-                                                    <div class="col-md-4 form-input mt-2">
+                                                    <div class="col-md-4 form-input  mt-2">
                                                         <label class="form-label">SO2 (Session 2)</label>
                                                         <input type="text" name="monitoring[1][so2_session2]"
                                                             class="form-control" id="so2_session2_1">
                                                     </div>
-                                                    <div class="col-md-4 form-input mt-2">
+                                                    <div class="col-md-4 form-input  mt-2">
                                                         <label class="form-label">NO2 (Session 2)</label>
                                                         <input type="text" name="monitoring[1][no2_session2]"
                                                             class="form-control" id="no2_session2_1">
                                                     </div>
-                                                    <div class="col-md-4 form-input mt-2">
+                                                    <div class="col-md-4 form-input  mt-2">
                                                         <label class="form-label">Act/Rule</label>
                                                         <input type="text" name="monitoring[1][act_rule]"
                                                             class="form-control" id="act_rule_1">
                                                     </div>
-                                                    <div class="col-md-4 form-input mt-2">
+                                                    <div class="col-md-4 form-input  mt-2">
                                                         <label class="form-label">Remark</label>
                                                         <textarea name="monitoring[1][remark]" class="form-control" id="remark_1"> </textarea>
                                                     </div>
@@ -231,7 +240,7 @@
                     dateFormat: "d-m-Y",
                     onChange: function(selectedDates, dateStr, instance) {
                         let index = instance.element.id.replace("date_of_monitoring_",
-                        ""); // Extract index
+                            ""); // Extract index
                         let $nextDueDate = $("#next_due_date_of_monitoring_" + index);
 
                         if ($nextDueDate.length) {
@@ -248,7 +257,7 @@
                     dateFormat: "d-m-Y",
                     onChange: function(selectedDates, dateStr, instance) {
                         let index = instance.element.id.replace("date_of_monitoring2_",
-                        ""); // Extract index
+                            ""); // Extract index
                         let $nextDueDate = $("#next_due_date_of_monitoring2_" + index);
 
                         if ($nextDueDate.length) {
@@ -261,7 +270,7 @@
                     }
                 });
 
-  
+
             }
 
             function updateRowIndexes() {
@@ -315,6 +324,34 @@
                 }
             });
 
+            $(document).on("change", "select[id^='unit_id_']", function() {
+                let unitId = $(this).val();
+                let rowId = $(this).attr("id").match(/\d+/)[0];
+                let departmentSelect = $("#department_id_" + rowId);
+
+                if (unitId) {
+                    $.ajax({
+                        url: "{{ admin_url('department/ajax-list') }}/" + unitId + "/0",
+                        type: "GET",
+                        dataType: "json",
+                        success: function(data) {
+                            departmentSelect.empty().append(
+                                '<option value="">Select Department</option>');
+                            $.each(data, function(key, value) {
+                                departmentSelect.append('<option value="' + value.id +
+                                    '">' +
+                                    value.name + '</option>');
+                            });
+                        },
+                        error: function() {
+                            alert("Error fetching Department. Please try again.");
+                        },
+                    });
+                } else {
+                    departmentSelect.empty().append('<option value="">Select Department</option>');
+                }
+            });
+
             $("#dynamic-add-more").on("click", function() {
                 let rowCount = $("#lesson_learned_block .lesson_learned_row").length;
                 if (rowCount >= 200) {
@@ -326,89 +363,159 @@
                     return;
                 }
 
-                let newRow = $(".lesson_learned_row").first().clone();
-                newRow.find("input, select, textarea").each(function() {
+                let firstRow = $(".lesson_learned_row").first();
+
+                firstRow.find(".single-select").select2('destroy');
+
+                let newRow = firstRow.clone();
+                let newRowNumber = rowCount + 1;
+
+                firstRow.find(".single-select").select2();
+
+                newRow.find("input, select, textarea, button").each(function() {
                     let oldName = $(this).attr("name");
                     let oldId = $(this).attr("id");
 
                     if (oldName) {
-                        let newName = oldName.replace(/\[\d+\]/, "[" + (rowCount + 1) + "]");
+                        let newName = oldName.replace(/\[\d+\]/, "[" + newRowNumber + "]");
                         $(this).attr("name", newName);
                     }
                     if (oldId) {
-                        let newId = oldId.replace(/\d+$/, rowCount + 1);
+                        let newId = oldId.replace(/_\d+$/, "_" + newRowNumber);
                         $(this).attr("id", newId);
                     }
-                    if ($(this).is("input[type='text'], textarea")) {
+
+                    if ($(this).is("input[type='text'], textarea, input[type='number']")) {
                         $(this).val("");
                     }
                     if ($(this).is("select")) {
                         $(this).val("").trigger("change");
                     }
                 });
-                newRow.find("input[name*='[sr_no]']").val("WORKZONE-AIR-" + String(rowCount + 1).padStart(4,
+                newRow.find("input[name$='[sr_no]']").val("AMBIENT-" + String(rowCount + 1).padStart(4,
                     '0'));
 
                 newRow.find(".invalid-feedback").remove();
                 newRow.find(".is-invalid").removeClass("is-invalid");
-                newRow.find(".select2-container").remove();
+
                 newRow.find(".single-select").select2();
 
                 $("#lesson_learned_block").append(newRow);
-                newRow.find("input[name*='[spm]']").rules("add", {
+                newRow.find("input[name$='[spm]']").rules("add", {
                     number: true,
+                    required: true,
                     range: [0, 1000],
                     messages: {
                         number: "Only numeric values are allowed.",
-                        range: "Value must be between 0 and 1000 µg/m³."
+                        range: "Value must be between 0 and 1000 µg/m³.",
+                        required: "This Field is required.",
                     }
                 });
 
-                newRow.find("input[name*='[spm_session2]']").rules("add", {
+                newRow.find("input[name$='[spm_session2]']").rules("add", {
                     number: true,
+                    required: true,
                     range: [0, 1000],
                     messages: {
                         number: "Only numeric values are allowed.",
-                        range: "Value must be between 0 and 1000 µg/m³."
+                        range: "Value must be between 0 and 1000 µg/m³.",
+                        required: "This Field is required.",
                     }
                 });
 
-                newRow.find("input[name*='[so2]']").rules("add", {
+                newRow.find("input[name$='[so2]']").rules("add", {
                     number: true,
+                    required: true,
                     range: [0, 500],
                     messages: {
                         number: "Only numeric values are allowed.",
-                        range: "Value must be between 0 and 500 µg/m³."
+                        range: "Value must be between 0 and 500 µg/m³.",
+                        required: "This Field is required.",
                     }
                 });
-                newRow.find("input[name*='[so2_session2]']").rules("add", {
+                newRow.find("input[name$='[so2_session2]']").rules("add", {
                     number: true,
+                    required: true,
                     range: [0, 500],
                     messages: {
                         number: "Only numeric values are allowed.",
-                        range: "Value must be between 0 and 500 µg/m³."
+                        range: "Value must be between 0 and 500 µg/m³.",
+                        required: "This Field is required.",
                     }
                 });
 
-                newRow.find("input[name*='[no2]']").rules("add", {
+                newRow.find("input[name$='[no2]']").rules("add", {
                     number: true,
+                    required: true,
                     range: [0, 500],
                     messages: {
                         number: "Only numeric values are allowed.",
-                        range: "Value must be between 0 and 500 µg/m³."
+                        range: "Value must be between 0 and 500 µg/m³.",
+                        required: "This Field is required.",
                     }
                 });
 
-                newRow.find("input[name*='[no2_session2]']").rules("add", {
+                newRow.find("input[name$='[no2_session2]']").rules("add", {
                     number: true,
+                    required: true,
                     range: [0, 500],
                     messages: {
                         number: "Only numeric values are allowed.",
-                        range: "Value must be between 0 and 500 µg/m³."
+                        range: "Value must be between 0 and 500 µg/m³.",
+                        required: "This Field is required.",
                     }
                 });
+                newRow.find("input[name$='[act_rule]']").rules("add", {
 
+                    required: true,
+                    messages: {
+                        required: "Please Enter the Act Rule."
+                    }
+                });
+                newRow.find("input[name$='[next_due_date_of_monitoring2]']").rules("add", {
+                    required: true,
+                    messages: {
+                        required: "Please Select the date."
+                    }
+                });
+                newRow.find("input[name$='[next_due_date_of_monitoring]']").rules("add", {
+                    required: true,
+                    messages: {
+                        required: "Please Select the date."
+                    }
+                });
+                newRow.find("input[name$='[date_of_monitoring]']").rules("add", {
+                    required: true,
+                    messages: {
+                        required: "Please Select the date."
+                    }
+                });
+                newRow.find("select[name$='[unit_id]']").rules("add", {
 
+                    required: true,
+
+                    messages: {
+
+                        required: "Please select the Unit .",
+
+                    }
+                });
+                newRow.find("select[name$='[location_id]']").rules("add", {
+
+                    required: true,
+                    messages: {
+                        required: "Please select the location.",
+
+                    }
+                });
+                newRow.find("select[name$='[department_id]']").rules("add", {
+
+                    required: true,
+                    messages: {
+                        required: "Please select the department.",
+
+                    }
+                });
                 initializeFlatpickr();
                 $('.single-select').select2();
             });
@@ -430,71 +537,282 @@
             initializeFlatpickr();
         });
 
+        function addValidationRules(row) {
+            newRow.find("input[name$='[spm]']").rules("add", {
+                number: true,
+                required: true,
+                range: [0, 1000],
+                messages: {
+                    number: "Only numeric values are allowed.",
+                    range: "Value must be between 0 and 1000 µg/m³.",
+                    required: "This Field is required.",
+                }
+            });
 
-        $('#addambient').validate({
-            rules: {
-                'monitoring[1][spm]': {
-                    number: true,
-                    range: [0, 1000]
-                },
-                'monitoring[1][spm_session2]': {
-                    number: true,
-                    range: [0, 1000]
-                },
-                'monitoring[1][so2]': {
-                    number: true,
-                    range: [0, 500]
-                },
-                'monitoring[1][so2_session2]': {
-                    number: true,
-                    range: [0, 500]
-                },
-                'monitoring[1][no2]': {
-                    number: true,
-                    range: [0, 500]
-                },
-                'monitoring[1][no2_session2]': {
-                    number: true,
-                    range: [0, 500]
-                },
-            },
-            messages: {
-                'monitoring[1][spm]': {
+            newRow.find("input[name$='[spm_session2]']").rules("add", {
+                number: true,
+                required: true,
+                range: [0, 1000],
+                messages: {
                     number: "Only numeric values are allowed.",
-                    range: "Value must be between 0 and 1000 µg/m³."
-                },
-                'monitoring[1][spm_session2]': {
+                    range: "Value must be between 0 and 1000 µg/m³.",
+                    required: "This Field is required.",
+                }
+            });
+
+            newRow.find("input[name$='[so2]']").rules("add", {
+                number: true,
+                required: true,
+                range: [0, 500],
+                messages: {
                     number: "Only numeric values are allowed.",
-                    range: "Value must be between 0 and 1000 µg/m³."
-                },
-                'monitoring[1][so2]': {
+                    range: "Value must be between 0 and 500 µg/m³.",
+                    required: "This Field is required.",
+                }
+            });
+            newRow.find("input[name$='[so2_session2]']").rules("add", {
+                number: true,
+                required: true,
+                range: [0, 500],
+                messages: {
                     number: "Only numeric values are allowed.",
-                    range: "Value must be between 0 and 500 µg/m³."
-                },
-                'monitoring[1][so2_session2]': {
+                    range: "Value must be between 0 and 500 µg/m³.",
+                    required: "This Field is required.",
+                }
+            });
+
+            newRow.find("input[name$='[no2]']").rules("add", {
+                number: true,
+                required: true,
+                range: [0, 500],
+                messages: {
                     number: "Only numeric values are allowed.",
-                    range: "Value must be between 0 and 500 µg/m³."
-                },
-                'monitoring[1][no2]': {
+                    range: "Value must be between 0 and 500 µg/m³.",
+                    required: "This Field is required.",
+                }
+            });
+
+            newRow.find("input[name$='[no2_session2]']").rules("add", {
+                number: true,
+                required: true,
+                range: [0, 500],
+                messages: {
                     number: "Only numeric values are allowed.",
-                    range: "Value must be between 0 and 500 µg/m³."
+                    range: "Value must be between 0 and 500 µg/m³.",
+                    required: "This Field is required.",
+                }
+            });
+            newRow.find("input[name$='[act_rule]']").rules("add", {
+
+                required: true,
+                messages: {
+                    required: "Please Enter the Act Rule."
+                }
+            });
+            newRow.find("input[name$='[next_due_date_of_monitoring2]']").rules("add", {
+                required: true,
+                messages: {
+                    required: "Please Select the date."
+                }
+            });
+            newRow.find("input[name$='[next_due_date_of_monitoring]']").rules("add", {
+                required: true,
+                messages: {
+                    required: "Please Select the date."
+                }
+            });
+            newRow.find("input[name$='[date_of_monitoring]']").rules("add", {
+                required: true,
+                messages: {
+                    required: "Please Select the date."
+                }
+            });
+            newRow.find("select[name$='[unit_id]']").rules("add", {
+
+                required: true,
+
+                messages: {
+
+                    required: "Please select the Unit .",
+
+                }
+            });
+            newRow.find("select[name$='[location_id]']").rules("add", {
+
+                required: true,
+                messages: {
+                    required: "Please select the location.",
+
+                }
+            });
+            newRow.find("select[name$='[department_id]']").rules("add", {
+
+                required: true,
+                messages: {
+                    required: "Please select the department.",
+
+                }
+            });
+        }
+
+
+
+        $(function() {
+            $.validator.setDefaults({
+                highlight: function(element) {
+                    $(element).addClass('is-invalid');
+                    if ($(element).hasClass('single-select')) {
+                        $(element).next('.select2-container').find('.select2-selection')
+                            .addClass('is-invalid');
+                    }
                 },
-                'monitoring[1][no2_session2]': {
-                    number: "Only numeric values are allowed.",
-                    range: "Value must be between 0 and 500 µg/m³."
+                unhighlight: function(element) {
+                    $(element).removeClass('is-invalid');
+                    if ($(element).hasClass('single-select')) {
+                        $(element).next('.select2-container').find('.select2-selection')
+                            .removeClass('is-invalid');
+                    }
                 },
-            },
-            errorElement: 'span',
-            errorPlacement: function(error, element) {
-                error.addClass('invalid-feedback');
-                element.closest('.form-input').append(error);
-            },
-            highlight: function(element) {
-                $(element).addClass('is-invalid');
-            },
-            unhighlight: function(element) {
-                $(element).removeClass('is-invalid');
-            }
+                errorPlacement: function(error, element) {
+                    if (element.hasClass('single-select')) {
+                        error.addClass('invalid-feedback').insertAfter(element.next(
+                            '.select2-container'));
+                    } else {
+                        error.addClass('invalid-feedback').insertAfter(element);
+                    }
+                }
+            });
+
+            $('#addambient').validate({
+                rules: {
+                    'monitoring[1][spm]': {
+                        number: true,
+                        required: true,
+                        range: [0, 1000]
+                    },
+                    'monitoring[1][spm_session2]': {
+                        number: true,
+                        required: true,
+                        range: [0, 1000]
+                    },
+                    'monitoring[1][so2]': {
+                        number: true,
+                        required: true,
+                        range: [0, 500]
+                    },
+                    'monitoring[1][so2_session2]': {
+                        number: true,
+                        required: true,
+                        range: [0, 500]
+                    },
+                    'monitoring[1][no2]': {
+                        number: true,
+                        required: true,
+                        range: [0, 500]
+                    },
+                    'monitoring[1][no2_session2]': {
+                        number: true,
+                        required: true,
+                        range: [0, 500]
+                    },
+                    'monitoring[1][location_id]': {
+                        required: true
+                    },
+                    'monitoring[1][unit_id]': {
+                        required: true
+                    },
+                    'monitoring[1][department_id]': {
+                        required: true
+                    },
+                    'monitoring[1][date_of_monitoring2]': {
+                        required: true,
+                        date: true
+                    },
+                    'monitoring[1][next_due_date_of_monitoring2]': {
+                        required: true,
+                        date: true
+                    },
+                    'monitoring[1][date_of_monitoring]': {
+                        required: true,
+                        date: true
+                    },
+                    'monitoring[1][next_due_date_of_monitoring]': {
+                        required: true,
+                        date: true
+                    },
+                    'monitoring[1][act_rule]': {
+                        required: true
+                    },
+                },
+                messages: {
+                    'monitoring[1][spm]': {
+                        required: "Please enter the SPM value.",
+                        number: "Only numeric values are allowed for SPM.",
+                        range: "SPM must be between 0 and 1000 µg/m³."
+                    },
+                    'monitoring[1][spm_session2]': {
+                        number: "Only numeric values are allowed for SPM (Session 2).",
+                        required: "Please enter the SPM (Session 2).",
+                        range: "SPM (Session 2) must be between 0 and 1000 µg/m³."
+                    },
+                    'monitoring[1][so2]': {
+                        required: "Please enter the SO₂ value.",
+                        number: "Only numeric values are allowed for SO₂.",
+                        range: "SO₂ must be between 0 and 500 µg/m³."
+                    },
+                    'monitoring[1][so2_session2]': {
+                        required: "Please enter the SO₂ (Session 2) value.",
+                        number: "Only numeric values are allowed for SO₂ (Session 2).",
+                        range: "SO₂ (Session 2) must be between 0 and 500 µg/m³."
+                    },
+                    'monitoring[1][no2]': {
+                        required: "Please enter the NO₂ value.",
+                        number: "Only numeric values are allowed for NO₂.",
+                        range: "NO₂ must be between 0 and 500 µg/m³."
+                    },
+                    'monitoring[1][no2_session2]': {
+                        required: "Please enter the NO₂ (Session 2) value.",
+                        number: "Only numeric values are allowed for NO₂ (Session 2).",
+                        range: "NO₂ (Session 2) must be between 0 and 500 µg/m³."
+                    },
+                    'monitoring[1][location_id]': {
+                        required: "Please select a location."
+                    },
+                    'monitoring[1][unit_id]': {
+                        required: "Please select a unit."
+                    },
+                    'monitoring[1][department_id]': {
+                        required: "Please select a department."
+                    },
+                    'monitoring[1][next_due_date_of_monitoring2]': {
+                        required: "Please select the next due date of monitoring (date input).",
+                        date: "Please enter a valid date."
+                    },
+                    'monitoring[1][date_of_monitoring2]': {
+                        required: "Please select the date of monitoring (date input).",
+                        date: "Please enter a valid date."
+                    },
+                    'monitoring[1][date_of_monitoring]': {
+                        required: "Please select the date of monitoring.",
+                        date: "Please enter a valid date."
+                    },
+                    'monitoring[1][next_due_date_of_monitoring]': {
+                        required: "Please select the next due date of monitoring.",
+                        date: "Please enter a valid date."
+                    },
+                    'monitoring[1][act_rule]': {
+                        required: "Act/Rule is required."
+                    },
+
+                },
+                submitHandler: function(form) {
+                    form.submit();
+                }
+            });
+
+            $("#lesson_learned_block .lesson_learned_row").each(function() {
+                addValidationRules($(this));
+            });
         });
     </script>
 @endpush

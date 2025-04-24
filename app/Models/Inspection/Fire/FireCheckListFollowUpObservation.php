@@ -258,4 +258,21 @@ class FireCheckListFollowUpObservation extends Model
 
         return  $query->get();
     }
+    public function statuschange($id)
+    {
+        $request = request();
+
+        $type = $request->types;
+        if ($type == 1) {
+            $update_data = array(
+                'status' => 0,
+            );
+        } else {
+            $update_data = array(
+                'status' => 1,
+            );
+        }
+
+        return $this->where('id', $id)->update($update_data);
+    }
 }

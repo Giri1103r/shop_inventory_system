@@ -249,8 +249,8 @@
             <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="2">APPROACH</th>
         </tr>
         <tr>
-            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">FIRE BUCKET</th>
             <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">FIRE BUCKET STAND</th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">FIRE BUCKET</th>
             <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">PAINT</th>
         </tr>
 
@@ -260,6 +260,8 @@
                 <td style="border: 1px solid black; padding: 8px;">{{ getLocationname($details->location) }}</td>
                 <td style="border: 1px solid black; padding: 8px;">{{ $details->fire_bucket_stand_no }}</td>
                 <td style="border: 1px solid black; padding: 8px;">{{ $details->fire_bucket_no }}</td>
+
+                {{-- //fire bucket stand --}}
                 <td style="border: 1px solid black; padding: 8px;">
                     @if ($details->condition == 1)
                         <span style="color: green; font-weight: bold;">&#10004; Good</span>
@@ -340,7 +342,7 @@
     </table>
 
 
-    <div style="width:100%;">
+    {{-- <div style="width:100%;">
         <table style="width:100%;">
             <tr>
                 <td
@@ -357,7 +359,7 @@
             <td width="48%" style="padding:5px;">
                 {{ $forklift_details->observation }}</td>
         </tr>
-    </table>
+    </table> --}}
     <br>
 
 
