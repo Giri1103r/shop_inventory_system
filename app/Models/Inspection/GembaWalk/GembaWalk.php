@@ -103,7 +103,7 @@ class GembaWalk extends Model
     {
         $request = request();
         $capa_needed  = decryptId($request->is_passed);
-      
+
         if ($capa_needed == 2) {
 
             $insert_array = array(
@@ -128,7 +128,7 @@ class GembaWalk extends Model
             );
         }
 
-        
+
         return $this->create($insert_array);
     }
 
@@ -146,7 +146,7 @@ class GembaWalk extends Model
             ->leftJoin('inspection_gemba_walk_checklist', 'inspection_gemba_walk_checklist.gemba_walk_id', '=', 'inspection_gemba_walk.id')
             ->leftJoin('inspection_gemba_walk_checklist_files', function ($join) {
                 $join->on('inspection_gemba_walk_checklist_files.gemba_walk_checklist_id', '=', 'inspection_gemba_walk_checklist.id')
-                     ->where('inspection_gemba_walk_checklist_files.file_type', '=', 3); 
+                     ->where('inspection_gemba_walk_checklist_files.file_type', '=', 3);
             })
             ->where('inspection_gemba_walk.id', $id)
             ->get();
@@ -210,7 +210,7 @@ class GembaWalk extends Model
     {
         $request = request();
         $search = '';
-      
+
         $query = $this->select(
             'inspection_gemba_walk.*',
             'inspection_gemba_walk.id as inspection_id',
@@ -227,7 +227,7 @@ class GembaWalk extends Model
         ->leftJoin('inspection_gemba_walk_checklist', 'inspection_gemba_walk_checklist.gemba_walk_id', '=', 'inspection_gemba_walk.id')
         ->leftJoin('inspection_gemba_walk_checklist_files', function ($join) {
             $join->on('inspection_gemba_walk_checklist_files.gemba_walk_checklist_id', '=', 'inspection_gemba_walk_checklist.id')
-                 ->where('inspection_gemba_walk_checklist_files.file_type', '=', 3); 
+                 ->where('inspection_gemba_walk_checklist_files.file_type', '=', 3);
         })
         ->leftJoin('inspection_shift_option', 'inspection_shift_option.id', '=', 'inspection_gemba_walk.shift_id')
         ->leftJoin('inspection_gemba_walk_status', 'inspection_gemba_walk_status.id', '=', 'inspection_gemba_walk.gemba_walk_status')

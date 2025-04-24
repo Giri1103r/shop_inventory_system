@@ -225,37 +225,46 @@
                     return;
                 }
 
-                let newRow = $(".lesson_learned_row").first().clone();
-                newRow.find("input, select, textarea").each(function() {
+                let firstRow = $(".lesson_learned_row").first();
+
+                firstRow.find(".single-select").select2('destroy');
+
+                let newRow = firstRow.clone();
+                let newRowNumber = rowCount + 1;
+
+                firstRow.find(".single-select").select2();
+
+                newRow.find("input, select, textarea, button").each(function() {
                     let oldName = $(this).attr("name");
                     let oldId = $(this).attr("id");
 
                     if (oldName) {
-                        let newName = oldName.replace(/\[\d+\]/, "[" + (rowCount + 1) + "]");
+                        let newName = oldName.replace(/\[\d+\]/, "[" + newRowNumber + "]");
                         $(this).attr("name", newName);
                     }
                     if (oldId) {
-                        let newId = oldId.replace(/\d+$/, rowCount + 1);
+                        let newId = oldId.replace(/_\d+$/, "_" + newRowNumber);
                         $(this).attr("id", newId);
                     }
-                    if ($(this).is("input[type='text'], textarea")) {
+
+                    if ($(this).is("input[type='text'], textarea, input[type='number']")) {
                         $(this).val("");
                     }
                     if ($(this).is("select")) {
                         $(this).val("").trigger("change");
                     }
                 });
-                newRow.find("input[name*='[sr_no]']").val("SNO-" + String(rowCount + 1).padStart(4,
+                newRow.find("input[name$='[sr_no]']").val("AMBIENT-" + String(rowCount + 1).padStart(4,
                     '0'));
 
                 newRow.find(".invalid-feedback").remove();
                 newRow.find(".is-invalid").removeClass("is-invalid");
-                newRow.find(".select2-container").remove();
+
                 newRow.find(".single-select").select2();
 
                 $("#lesson_learned_block").append(newRow);
 
-                newRow.find("input[name*='[name_of_fire_safety]']").rules("add", {
+                newRow.find("input[name$='[name_of_fire_safety]']").rules("add", {
                     required: true,
                     minlength: 3,
                     maxlength: 200,
@@ -268,7 +277,7 @@
                     }
                 });
 
-                newRow.find("input[name*='[resource_code]']").rules("add", {
+                newRow.find("input[name$='[resource_code]']").rules("add", {
                     required: true,
                     minlength: 3,
                     maxlength: 100,
@@ -278,7 +287,7 @@
                         maxlength: "Resource code must be exactly 100 digits."
                     }
                 });
-                newRow.find("input[name*='[series_code]']").rules("add", {
+                newRow.find("input[name$='[series_code]']").rules("add", {
                     required: true,
                     minlength: 3,
                     maxlength: 100,
@@ -288,7 +297,7 @@
                         maxlength: "Series code must be exactly 100 digits."
                     }
                 });
-                newRow.find("input[name*='[allotted_series_code]']").rules("add", {
+                newRow.find("input[name$='[allotted_series_code]']").rules("add", {
                     required: true,
                     minlength: 3,
                     maxlength: 100,
@@ -298,7 +307,7 @@
                         maxlength: "Allotted Series code must be exactly 100 digits."
                     }
                 });
-                newRow.find("input[name*='[total_allotted_code]']").rules("add", {
+                newRow.find("input[name$='[total_allotted_code]']").rules("add", {
                     required: true,
                     minlength: 3,
                     maxlength: 100,
@@ -308,13 +317,13 @@
                         maxlength: "Total Allotted Code must be exactly 100 digits."
                     }
                 });
-                newRow.find("select[name*='[unit_id]']").rules("add", {
+                newRow.find("select[name$='[unit_id]']").rules("add", {
                     required: true,
                     messages: {
                         required: "Total Allotted Code is required",
                     }
                 });
-                newRow.find("textarea[name*='[remark]']").rules("add", {
+                newRow.find("textarea[name$='[remark]']").rules("add", {
                     required: true,
                     messages: {
                         required: "Remark is required",
@@ -340,8 +349,104 @@
             });
 
         });
-        $('#addfire').validate({
-            rules: {
+
+
+        function addValidationRules(row) {
+            newRow.find("input[name$='[name_of_fire_safety]']").rules("add", {
+                required: true,
+                minlength: 3,
+                maxlength: 200,
+                pattern: /^[a-zA-Z0-9\s\-_'"()]*$/,
+                messages: {
+                    required: "The name is required",
+                    minlength: "The name must be at least 3 characters long.",
+                    maxlength: "The name cannot exceed 200 characters.",
+                    pattern: "Only letters, numbers, spaces, and special characters (-, _, ', \", ()) are allowed."
+                }
+            });
+
+            newRow.find("input[name$='[resource_code]']").rules("add", {
+                required: true,
+                minlength: 3,
+                maxlength: 100,
+                messages: {
+                    required: "Resource code is required",
+                    minlength: "Resource code must be exactly 3 digits.",
+                    maxlength: "Resource code must be exactly 100 digits."
+                }
+            });
+            newRow.find("input[name$='[series_code]']").rules("add", {
+                required: true,
+                minlength: 3,
+                maxlength: 100,
+                messages: {
+                    required: "Series code is required",
+                    minlength: "Series code must be exactly 3 digits.",
+                    maxlength: "Series code must be exactly 100 digits."
+                }
+            });
+            newRow.find("input[name$='[allotted_series_code]']").rules("add", {
+                required: true,
+                minlength: 3,
+                maxlength: 100,
+                messages: {
+                    required: "Allotted Series code is required",
+                    minlength: "Allotted Series code must be exactly 3 digits.",
+                    maxlength: "Allotted Series code must be exactly 100 digits."
+                }
+            });
+            newRow.find("input[name$='[total_allotted_code]']").rules("add", {
+                required: true,
+                minlength: 3,
+                maxlength: 100,
+                messages: {
+                    required: "Total Allotted Code is required",
+                    minlength: "Total Allotted Code must be exactly 3 digits.",
+                    maxlength: "Total Allotted Code must be exactly 100 digits."
+                }
+            });
+            newRow.find("select[name$='[unit_id]']").rules("add", {
+                required: true,
+                messages: {
+                    required: "Total Allotted Code is required",
+                }
+            });
+            newRow.find("textarea[name$='[remark]']").rules("add", {
+                required: true,
+                messages: {
+                    required: "Remark is required",
+                }
+            });
+        }
+
+        $(function() {
+            $.validator.setDefaults({
+                highlight: function(element) {
+                    $(element).addClass('is-invalid');
+                    if ($(element).hasClass('single-select')) {
+                        $(element).next('.select2-container').find('.select2-selection')
+                            .addClass('is-invalid');
+                    }
+                },
+                unhighlight: function(element) {
+                    $(element).removeClass('is-invalid');
+                    if ($(element).hasClass('single-select')) {
+                        $(element).next('.select2-container').find('.select2-selection')
+                            .removeClass('is-invalid');
+                    }
+                },
+                errorPlacement: function(error, element) {
+                    if (element.hasClass('single-select')) {
+                        error.addClass('invalid-feedback').insertAfter(element.next(
+                            '.select2-container'));
+                    } else {
+                        error.addClass('invalid-feedback').insertAfter(element);
+                    }
+                }
+            });
+
+            $('#addfire').validate({
+                rules: {
                 'fire[1][name_of_fire_safety]': {
                     required: true,
                     minlength: 3,
@@ -409,17 +514,15 @@
                     required: "Unit is required",
                 },
             },
-            errorElement: 'span',
-            errorPlacement: function(error, element) {
-                error.addClass('invalid-feedback');
-                element.closest('.form-input').append(error);
-            },
-            highlight: function(element) {
-                $(element).addClass('is-invalid');
-            },
-            unhighlight: function(element) {
-                $(element).removeClass('is-invalid');
-            }
+
+                submitHandler: function(form) {
+                    form.submit();
+                }
+            });
+
+            $("#lesson_learned_block .lesson_learned_row").each(function() {
+                addValidationRules($(this));
+            });
         });
     </script>
 @endpush
