@@ -150,7 +150,7 @@ class MedicalRequisitionSlipController extends Controller
 
                     return $datatables;
                 } catch (Exception $ex) {
-                     report($ex);
+                     dd($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }
@@ -536,7 +536,7 @@ class MedicalRequisitionSlipController extends Controller
                     $mailsubject = 'Medicine Requistion Slip Floor approved';
                     $notificationData = array(
                         'notification_type' => OHC_INSPECTION,
-                        'module_type' => 1,
+                        'module_type' => 3,
                         'notification_message' => $mailsubject,
                         'mobile_notification' => json_encode(array(
                             'title' => $mailsubject,
@@ -571,7 +571,7 @@ class MedicalRequisitionSlipController extends Controller
                     $mailsubject = 'Medicine Requistion Slip Floor  Floor manager Rejected';
                     $notificationData = array(
                         'notification_type' => OHC_INSPECTION,
-                        'module_type' => 1,
+                        'module_type' => 3,
                         'notification_message' => $mailsubject,
                         'mobile_notification' => json_encode(array(
                             'title' => $mailsubject,
@@ -653,7 +653,7 @@ class MedicalRequisitionSlipController extends Controller
                     $mailsubject = 'Medicine Requistion Slip Floor Approved';
                     $notificationData = array(
                         'notification_type' => OHC_INSPECTION,
-                        'module_type' => 1,
+                        'module_type' => 3,
                         'notification_message' => $mailsubject,
                         'mobile_notification' => json_encode(array(
                             'title' => $mailsubject,
@@ -686,7 +686,7 @@ class MedicalRequisitionSlipController extends Controller
                     $mailsubject = 'Medicine Requistion Slip Floor was Rejected';
                     $notificationData = array(
                         'notification_type' => OHC_INSPECTION,
-                        'module_type' => 1,
+                        'module_type' => 3,
                         'notification_message' => $mailsubject,
                         'mobile_notification' => json_encode(array(
                             'title' => $mailsubject,
