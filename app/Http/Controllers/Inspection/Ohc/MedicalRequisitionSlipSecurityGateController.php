@@ -147,7 +147,7 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
 
                     return $datatables;
                 } catch (Exception $ex) {
-                     report($ex);
+                     dd($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }
@@ -255,7 +255,7 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
 
                 $notificationData = array(
                     'notification_type' => OHC_INSPECTION,
-                    'module_type' => 1,
+                    'module_type' => 2,
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(
                         'title' => $mailsubject,
@@ -484,7 +484,7 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
                     $mailsubject = 'Medical Requisition Slip- Fdo & Security Gate Approved';
                     $notificationData = array(
                         'notification_type' => OHC_INSPECTION,
-                        'module_type' => 1,
+                        'module_type' => 2,
                         'notification_message' => $mailsubject,
                         'mobile_notification' => json_encode(array(
                             'title' => $mailsubject,
@@ -519,7 +519,7 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
                     $mailsubject = 'Medical Requisition Slip- Fdo & Security Gate Rejected';
                     $notificationData = array(
                         'notification_type' => OHC_INSPECTION,
-                        'module_type' => 1,
+                        'module_type' => 2,
                         'notification_message' => $mailsubject,
                         'mobile_notification' => json_encode(array(
                             'title' => $mailsubject,
