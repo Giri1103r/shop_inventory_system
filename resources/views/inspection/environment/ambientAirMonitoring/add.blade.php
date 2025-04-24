@@ -281,38 +281,48 @@
                     return;
                 }
 
-                let newRow = $(".lesson_learned_row").first().clone();
-                newRow.find("input, select, textarea").each(function() {
+                let firstRow = $(".lesson_learned_row").first();
+
+                firstRow.find(".single-select").select2('destroy');
+
+                let newRow = firstRow.clone();
+                let newRowNumber = rowCount + 1;
+
+                firstRow.find(".single-select").select2();
+
+                newRow.find("input, select, textarea, button").each(function() {
                     let oldName = $(this).attr("name");
                     let oldId = $(this).attr("id");
 
                     if (oldName) {
-                        let newName = oldName.replace(/\[\d+\]/, "[" + (rowCount + 1) + "]");
+                        let newName = oldName.replace(/\[\d+\]/, "[" + newRowNumber + "]");
                         $(this).attr("name", newName);
                     }
                     if (oldId) {
-                        let newId = oldId.replace(/\d+$/, rowCount + 1);
+                        let newId = oldId.replace(/_\d+$/, "_" + newRowNumber);
                         $(this).attr("id", newId);
                     }
-                    if ($(this).is("input[type='text'], textarea")) {
+
+                    if ($(this).is("input[type='text'], textarea, input[type='number']")) {
                         $(this).val("");
                     }
                     if ($(this).is("select")) {
                         $(this).val("").trigger("change");
                     }
                 });
-                newRow.find("input[name*='[sr_no]']").val("AMBIENT-AIR-" + String(rowCount + 1).padStart(4,
+                newRow.find("input[name$='[sr_no]']").val("AMBIENT-" + String(rowCount + 1).padStart(4,
                     '0'));
 
                 newRow.find(".invalid-feedback").remove();
                 newRow.find(".is-invalid").removeClass("is-invalid");
-                newRow.find(".select2-container").remove();
+
                 newRow.find(".single-select").select2();
 
                 $("#lesson_learned_block").append(newRow);
-                newRow.find("input[name*='[pm10]']").rules("add", {
+
+                newRow.find("input[name$='[pm10]']").rules("add", {
                     number: true,
-                    required:true,
+                    required: true,
                     range: [0, 500],
                     messages: {
                         number: "Only numeric values are allowed.",
@@ -321,9 +331,44 @@
                     }
                 });
 
-                newRow.find("input[name*='[pm25]']").rules("add", {
+                newRow.find("select[name$='[unit_id]']").rules("add", {
+
+                    required: true,
+
+                    messages: {
+
+                        required: "Please select the Unit .",
+
+                    }
+                });
+                newRow.find("select[name$='[location_id]']").rules("add", {
+
+                    required: true,
+                    messages: {
+                        required: "Please select the location.",
+
+                    }
+                });
+                newRow.find("input[name$='[act_rule]']").rules("add", {
+
+                    required: true,
+                    messages: {
+                        required: "Please enter the Act Rule",
+
+                    }
+                });
+                newRow.find("input[name$='[date_of_monitoring]']").rules("add", {
+
+                    required: true,
+                    messages: {
+                        required: "Please enter the Date of Monitoring",
+
+                    }
+                });
+
+                newRow.find("input[name$='[pm25]']").rules("add", {
                     number: true,
-                    required:true,
+                    required: true,
                     range: [0, 500],
                     messages: {
                         number: "Only numeric values are allowed.",
@@ -332,9 +377,9 @@
                     }
                 });
 
-                newRow.find("input[name*='[so2]']").rules("add", {
+                newRow.find("input[name$='[so2]']").rules("add", {
                     number: true,
-                    required:true,
+                    required: true,
                     range: [0, 500],
                     messages: {
                         number: "Only numeric values are allowed.",
@@ -343,9 +388,9 @@
                     }
                 });
 
-                newRow.find("input[name*='[no2]']").rules("add", {
+                newRow.find("input[name$='[no2]']").rules("add", {
                     number: true,
-                    required:true,
+                    required: true,
                     range: [0, 500],
                     messages: {
                         number: "Only numeric values are allowed.",
@@ -354,9 +399,9 @@
                     }
                 });
 
-                newRow.find("input[name*='[co]']").rules("add", {
+                newRow.find("input[name$='[co]']").rules("add", {
                     number: true,
-                    required:true,
+                    required: true,
                     range: [0, 50],
                     messages: {
                         number: "Only numeric values are allowed.",
@@ -365,10 +410,10 @@
                     }
                 });
 
-                newRow.find("input[name*='[next_due_date_of_monitoring]']").rules("add", {
-                    required:true,
+                newRow.find("input[name$='[next_due_date_of_monitoring]']").rules("add", {
+                    required: true,
                     greaterThan: function() {
-                        return newRow.find("input[name*='[date_of_monitoring]']");
+                        return newRow.find("input[name$='[date_of_monitoring]']");
                     },
                     messages: {
                         required: "Please enter the Date of monitoring.",
@@ -397,37 +442,183 @@
             initializeFlatpickr();
         });
 
-        $('#addambient').validate({
-            rules: {
+       
+
+        function addValidationRules(row) {
+            newRow.find("input[name$='[pm10]']").rules("add", {
+                    number: true,
+                    required: true,
+                    range: [0, 500],
+                    messages: {
+                        number: "Only numeric values are allowed.",
+                        required: "Please enter the PM 10.",
+                        range: "Value must be between 0 and 500 µg/m³."
+                    }
+                });
+
+                newRow.find("select[name$='[unit_id]']").rules("add", {
+
+                    required: true,
+
+                    messages: {
+
+                        required: "Please select the Unit .",
+
+                    }
+                });
+                newRow.find("select[name$='[location_id]']").rules("add", {
+
+                    required: true,
+                    messages: {
+                        required: "Please select the location.",
+
+                    }
+                });
+                newRow.find("input[name$='[act_rule]']").rules("add", {
+
+                    required: true,
+                    messages: {
+                        required: "Please enter the Act Rule",
+
+                    }
+                });
+                newRow.find("input[name$='[date_of_monitoring]']").rules("add", {
+
+                    required: true,
+                    messages: {
+                        required: "Please enter the Date of Monitoring",
+
+                    }
+                });
+
+                newRow.find("input[name$='[pm25]']").rules("add", {
+                    number: true,
+                    required: true,
+                    range: [0, 500],
+                    messages: {
+                        number: "Only numeric values are allowed.",
+                        required: "Please enter the PM 25.",
+                        range: "Value must be between 0 and 500 µg/m³."
+                    }
+                });
+
+                newRow.find("input[name$='[so2]']").rules("add", {
+                    number: true,
+                    required: true,
+                    range: [0, 500],
+                    messages: {
+                        number: "Only numeric values are allowed.",
+                        required: "Please enter the so2.",
+                        range: "Value must be between 0 and 500 µg/m³."
+                    }
+                });
+
+                newRow.find("input[name$='[no2]']").rules("add", {
+                    number: true,
+                    required: true,
+                    range: [0, 500],
+                    messages: {
+                        number: "Only numeric values are allowed.",
+                        required: "Please enter the no2.",
+                        range: "Value must be between 0 and 500 µg/m³."
+                    }
+                });
+
+                newRow.find("input[name$='[co]']").rules("add", {
+                    number: true,
+                    required: true,
+                    range: [0, 50],
+                    messages: {
+                        number: "Only numeric values are allowed.",
+                        required: "Please enter the co.",
+                        range: "Value must be between 0 and 50 mg/m³."
+                    }
+                });
+
+                newRow.find("input[name$='[next_due_date_of_monitoring]']").rules("add", {
+                    required: true,
+                    greaterThan: function() {
+                        return newRow.find("input[name$='[date_of_monitoring]']");
+                    },
+                    messages: {
+                        required: "Please enter the Date of monitoring.",
+                        greaterThan: "Next Due Date should be after the Date of Monitoring."
+                    }
+                });
+        }
+
+        $(function() {
+            $.validator.setDefaults({
+                highlight: function(element) {
+                    $(element).addClass('is-invalid');
+                    if ($(element).hasClass('single-select')) {
+                        $(element).next('.select2-container').find('.select2-selection')
+                            .addClass('is-invalid');
+                    }
+                },
+                unhighlight: function(element) {
+                    $(element).removeClass('is-invalid');
+                    if ($(element).hasClass('single-select')) {
+                        $(element).next('.select2-container').find('.select2-selection')
+                            .removeClass('is-invalid');
+                    }
+                },
+                errorPlacement: function(error, element) {
+                    if (element.hasClass('single-select')) {
+                        error.addClass('invalid-feedback').insertAfter(element.next(
+                            '.select2-container'));
+                    } else {
+                        error.addClass('invalid-feedback').insertAfter(element);
+                    }
+                }
+            });
+
+            $('#addambient').validate({
+                rules: {
                 'monitoring[1][pm10]': {
                     number: true,
-                    required:true,
+                    required: true,
                     range: [0, 500]
+                },
+                'monitoring[1][location_id]': {
+                    required: true,
+                },
+                'monitoring[1][unit_id]': {
+                    required: true,
+                },
+                'monitoring[1][date_of_monitoring]': { // Fixed here
+                    required: true,
                 },
                 'monitoring[1][pm25]': {
                     number: true,
-                    required:true,
+                    required: true,
                     range: [0, 500]
                 },
                 'monitoring[1][so2]': {
                     number: true,
-                    required:true,
+                    required: true,
                     range: [0, 500]
                 },
                 'monitoring[1][no2]': {
                     number: true,
-                    required:true,
+                    required: true,
                     range: [0, 500]
                 },
                 'monitoring[1][co]': {
                     number: true,
-                    required:true,
+                    required: true,
                     range: [0, 50]
                 },
                 'monitoring[1][next_due_date_of_monitoring]': {
                     greaterThan: '#date_of_monitoring_1',
-                    required:true,
-                }
+                    required: true,
+                },
+                'monitoring[1][remark]': {
+                    required: true,
+                },
+                'monitoring[1][act_rule]': {
+                    required: true,
+                },
             },
             messages: {
                 'monitoring[1][pm10]': {
@@ -455,23 +646,34 @@
                     required: "Please enter the co.",
                     range: "Value must be between 0 and 50 mg/m³."
                 },
+                'monitoring[1][location_id]': {
+                    required: "Please enter the location.",
+                },
+                'monitoring[1][unit_id]': {
+                    required: "Please enter the unit name.",
+                },
+                'monitoring[1][date_of_monitoring]': { // Fixed here
+                    required: "Please enter the date of monitoring.",
+                },
                 'monitoring[1][next_due_date_of_monitoring]': {
                     required: "Please enter the next due date.",
                     greaterThan: "Next Due Date should be after the Date of Monitoring."
+                },
+                'monitoring[1][remark]': {
+                    required: "Please enter the remarks.",
+                },
+                'monitoring[1][act_rule]': {
+                    required: "Please enter the Act rules.",
+                },
+            },
+                submitHandler: function(form) {
+                    form.submit();
                 }
-            },
-            errorElement: 'span',
-            errorPlacement: function(error, element) {
-                error.addClass('invalid-feedback');
-                element.closest('.form-input').append(error);
-            },
-            highlight: function(element) {
-                $(element).addClass('is-invalid');
-            },
-            unhighlight: function(element) {
-                $(element).removeClass('is-invalid');
-            }
-        });
+            });
 
+            $("#lesson_learned_block .lesson_learned_row").each(function() {
+                addValidationRules($(this));
+            });
+        });
     </script>
 @endpush

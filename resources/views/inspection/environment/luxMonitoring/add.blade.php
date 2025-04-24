@@ -42,9 +42,8 @@
                                             <div class="row">
                                                 <div class="col-md-4 form-input">
                                                     <label class="form-label">Lux No</label>
-                                                    <input type="text" class="form-control" name="lux_no"
-                                                        id="lux_no" value = "{{ getsequence('luxNo') }}"
-                                                        readonly>
+                                                    <input type="text" class="form-control" name="lux_no" id="lux_no"
+                                                        value = "{{ getsequence('luxNo') }}" readonly>
                                                 </div>
                                                 <div class="col-md-4 form-input">
                                                     <label class="form-label">Doc. No</label>
@@ -312,51 +311,106 @@
                     });
                     return;
                 }
+                let firstRow = $(".lesson_learned_row").first();
 
-                let newRow = $(".lesson_learned_row").first().clone();
-                newRow.find("input, select, textarea").each(function() {
+                firstRow.find(".single-select").select2('destroy');
+
+                let newRow = firstRow.clone();
+                let newRowNumber = rowCount + 1;
+
+                firstRow.find(".single-select").select2();
+
+                newRow.find("input, select, textarea, button").each(function() {
                     let oldName = $(this).attr("name");
                     let oldId = $(this).attr("id");
 
                     if (oldName) {
-                        let newName = oldName.replace(/\[\d+\]/, "[" + (rowCount + 1) + "]");
+                        let newName = oldName.replace(/\[\d+\]/, "[" + newRowNumber + "]");
                         $(this).attr("name", newName);
                     }
                     if (oldId) {
-                        let newId = oldId.replace(/\d+$/, rowCount + 1);
+                        let newId = oldId.replace(/_\d+$/, "_" + newRowNumber);
                         $(this).attr("id", newId);
                     }
-                    if ($(this).is("input[type='text'], textarea")) {
+
+                    if ($(this).is("input[type='text'], textarea, input[type='number']")) {
                         $(this).val("");
                     }
                     if ($(this).is("select")) {
                         $(this).val("").trigger("change");
                     }
                 });
-                newRow.find("input[name*='[sr_no]']").val("LUX-" + String(rowCount + 1).padStart(4,
+                newRow.find("input[name$='[sr_no]']").val("AMBIENT-" + String(rowCount + 1).padStart(4,
                     '0'));
 
                 newRow.find(".invalid-feedback").remove();
                 newRow.find(".is-invalid").removeClass("is-invalid");
-                newRow.find(".select2-container").remove();
+
                 newRow.find(".single-select").select2();
 
                 $("#lesson_learned_block").append(newRow);
 
                 newRow.find("input[name*='[lux_level1]']").rules("add", {
                     number: true,
+                    required: true,
                     min: 0,
                     messages: {
                         number: "Only numeric values are allowed.",
-                        min: "Lux Level must be a positive number."
+                        min: "Lux Level must be a positive number.",
+                        required: "Lux Level is required.",
                     }
                 });
                 newRow.find("input[name*='[lux_level2]']").rules("add", {
                     number: true,
+                    required: true,
                     min: 0,
                     messages: {
                         number: "Only numeric values are allowed.",
-                        min: "Lux Level must be a positive number."
+                        min: "Lux Level must be a positive number.",
+                        required: "Lux Level is required.",
+                    }
+                });
+                newRow.find("select[name$='[unit_id]']").rules("add", {
+                    required: true,
+                    messages: {
+                        required: "Please select the Unit .",
+                    }
+                });
+                newRow.find("select[name$='[location_id]']").rules("add", {
+                    required: true,
+                    messages: {
+                        required: "Please select the location.",
+                    }
+                });
+                newRow.find("select[name$='[department_id]']").rules("add", {
+                    required: true,
+                    messages: {
+                        required: "Please select the department.",
+
+                    }
+                });
+                newRow.find("input[name$='[next_due_date_of_monitoring2]']").rules("add", {
+                    required: true,
+                    messages: {
+                        required: "Please Select the date."
+                    }
+                });
+                newRow.find("input[name$='[next_due_date_of_monitoring]']").rules("add", {
+                    required: true,
+                    messages: {
+                        required: "Please Select the date."
+                    }
+                });
+                newRow.find("input[name$='[date_of_monitoring2]']").rules("add", {
+                    required: true,
+                    messages: {
+                        required: "Please Select the date."
+                    }
+                });
+                newRow.find("input[name$='[date_of_monitoring]']").rules("add", {
+                    required: true,
+                    messages: {
+                        required: "Please Select the date."
                     }
                 });
 
@@ -381,39 +435,220 @@
             initializeFlatpickr();
         });
 
+        function addValidationRules(row) {
+            newRow.find("input[name*='[lux_level1]']").rules("add", {
+                number: true,
+                required: true,
+                min: 0,
+                messages: {
+                    number: "Only numeric values are allowed.",
+                    min: "Lux Level must be a positive number.",
+                    required: "Lux Level is required.",
+                }
+            });
+            newRow.find("input[name*='[lux_level2]']").rules("add", {
+                number: true,
+                required: true,
+                min: 0,
+                messages: {
+                    number: "Only numeric values are allowed.",
+                    min: "Lux Level must be a positive number.",
+                    required: "Lux Level is required.",
+                }
+            });
+            newRow.find("select[name$='[unit_id]']").rules("add", {
+                required: true,
+                messages: {
+                    required: "Please select the Unit .",
+                }
+            });
+            newRow.find("select[name$='[location_id]']").rules("add", {
+                required: true,
+                messages: {
+                    required: "Please select the location.",
+                }
+            });
+            newRow.find("select[name$='[department_id]']").rules("add", {
+                required: true,
+                messages: {
+                    required: "Please select the department.",
 
-        $('#addambient').validate({
-            rules: {
-                'monitoring[1][lux_level1]': {
-                    number: true,
-                    min: 0,
+                }
+            });
+            newRow.find("input[name$='[next_due_date_of_monitoring2]']").rules("add", {
+                required: true,
+                messages: {
+                    required: "Please Select the date."
+                }
+            });
+            newRow.find("input[name$='[next_due_date_of_monitoring]']").rules("add", {
+                required: true,
+                messages: {
+                    required: "Please Select the date."
+                }
+            });
+            newRow.find("input[name$='[date_of_monitoring2]']").rules("add", {
+                required: true,
+                messages: {
+                    required: "Please Select the date."
+                }
+            });
+            newRow.find("input[name$='[date_of_monitoring]']").rules("add", {
+                required: true,
+                messages: {
+                    required: "Please Select the date."
+                }
+            });
+        }
+
+        // $('#addambient').validate({
+        //     rules: {
+        //         'monitoring[1][lux_level1]': {
+        //             number: true,
+        //             min: 0,
+        //         },
+        //         'monitoring[1][lux_level2]': {
+        //             number: true,
+        //             min: 0,
+        //         },
+        //     },
+        //     messages: {
+        //         'monitoring[1][lux_level1]': {
+        //             number: "Only numeric values are allowed.",
+        //             min: "Lux Level must be a positive number."
+        //         },
+        //         'monitoring[1][lux_level2]': {
+        //             number: "Only numeric values are allowed.",
+        //             min: "Lux Level must be a positive number."
+        //         },
+        //     },
+        //     errorElement: 'span',
+        //     errorPlacement: function(error, element) {
+        //         error.addClass('invalid-feedback');
+        //         element.closest('.form-input').append(error);
+        //     },
+        //     highlight: function(element) {
+        //         $(element).addClass('is-invalid');
+        //     },
+        //     unhighlight: function(element) {
+        //         $(element).removeClass('is-invalid');
+        //     }
+        // });
+
+
+        $(function() {
+            $.validator.setDefaults({
+                highlight: function(element) {
+                    $(element).addClass('is-invalid');
+                    if ($(element).hasClass('single-select')) {
+                        $(element).next('.select2-container').find('.select2-selection')
+                            .addClass('is-invalid');
+                    }
                 },
-                'monitoring[1][lux_level2]': {
-                    number: true,
-                    min: 0,
+                unhighlight: function(element) {
+                    $(element).removeClass('is-invalid');
+                    if ($(element).hasClass('single-select')) {
+                        $(element).next('.select2-container').find('.select2-selection')
+                            .removeClass('is-invalid');
+                    }
                 },
-            },
-            messages: {
-                'monitoring[1][lux_level1]': {
-                    number: "Only numeric values are allowed.",
-                    min: "Lux Level must be a positive number."
+                errorPlacement: function(error, element) {
+                    if (element.hasClass('single-select')) {
+                        error.addClass('invalid-feedback').insertAfter(element.next(
+                            '.select2-container'));
+                    } else {
+                        error.addClass('invalid-feedback').insertAfter(element);
+                    }
+                }
+            });
+
+            $('#addambient').validate({
+                rules: {
+                    'monitoring[1][lux_level1]': {
+                        number: true,
+                        min: 0,
+                        required: true
+                    },
+                    'monitoring[1][lux_level2]': {
+                        number: true,
+                        min: 0,
+                        required: true
+                    },
+                    'monitoring[1][location_id]': {
+                        required: true
+                    },
+                    'monitoring[1][unit_id]': {
+                        required: true
+                    },
+                    'monitoring[1][department_id]': {
+                        required: true
+                    },
+                    'monitoring[1][date_of_monitoring2]': {
+                        required: true,
+                        date: true
+                    },
+                    'monitoring[1][next_due_date_of_monitoring2]': {
+                        required: true,
+                        date: true
+                    },
+                    'monitoring[1][date_of_monitoring]': {
+                        required: true,
+                        date: true
+                    },
+                    'monitoring[1][next_due_date_of_monitoring]': {
+                        required: true,
+                        date: true
+                    },
+                    'monitoring[1][act_rule]': {
+                        required: true
+                    },
                 },
-                'monitoring[1][lux_level2]': {
-                    number: "Only numeric values are allowed.",
-                   min: "Lux Level must be a positive number."
+                messages: {
+                    'monitoring[1][lux_level1]': {
+                        number: "Only numeric values are allowed.",
+                        min: "Lux Level must be a positive number."
+                    },
+                    'monitoring[1][lux_level2]': {
+                        number: "Only numeric values are allowed.",
+                        min: "Lux Level must be a positive number."
+                    },
+                    'monitoring[1][location_id]': {
+                        required: "Please select a location."
+                    },
+                    'monitoring[1][unit_id]': {
+                        required: "Please select a unit."
+                    },
+                    'monitoring[1][department_id]': {
+                        required: "Please select a department."
+                    },
+                    'monitoring[1][next_due_date_of_monitoring2]': {
+                        required: "Please select the next due date of monitoring (date input).",
+                        date: "Please enter a valid date."
+                    },
+                    'monitoring[1][date_of_monitoring2]': {
+                        required: "Please select the date of monitoring (date input).",
+                        date: "Please enter a valid date."
+                    },
+                    'monitoring[1][date_of_monitoring]': {
+                        required: "Please select the date of monitoring.",
+                        date: "Please enter a valid date."
+                    },
+                    'monitoring[1][next_due_date_of_monitoring]': {
+                        required: "Please select the next due date of monitoring.",
+                        date: "Please enter a valid date."
+                    },
+                    'monitoring[1][act_rule]': {
+                        required: "Act/Rule is required."
+                    },
                 },
-            },
-            errorElement: 'span',
-            errorPlacement: function(error, element) {
-                error.addClass('invalid-feedback');
-                element.closest('.form-input').append(error);
-            },
-            highlight: function(element) {
-                $(element).addClass('is-invalid');
-            },
-            unhighlight: function(element) {
-                $(element).removeClass('is-invalid');
-            }
+                submitHandler: function(form) {
+                    form.submit();
+                }
+            });
+
+            $("#lesson_learned_block .lesson_learned_row").each(function() {
+                addValidationRules($(this));
+            });
         });
     </script>
 @endpush

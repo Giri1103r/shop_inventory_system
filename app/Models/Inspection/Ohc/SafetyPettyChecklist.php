@@ -11,7 +11,7 @@ class SafetyPettyChecklist extends Model
 {
     use  HasFactory;
 
-    protected $table = 'ohc_safety_petty_logbook_checklist';
+    protected $table = 'inspection_ohc_safety_petty_logbook_checklist';
 
     protected $primaryKey = 'id';
 
