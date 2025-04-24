@@ -12,6 +12,7 @@ use App\Models\UploadLogType;
 use App\Models\UserPermission;
 use App\Models\Master\Employee;
 use App\Models\Master\UserRole;
+use App\Models\IMS\Incident\Rcpa;
 use App\Models\Master\Department;
 use App\Models\Master\PpeRequest;
 use Illuminate\Support\Facades\DB;
@@ -52,10 +53,13 @@ use App\Models\Inspection\MSDS\MSDSSignatureUpload;
 use App\Models\Inspection\Ohc\SafetyPettyChecklist;
 use App\Models\Inspection\RRAA\RRAASignatureUpload;
 use App\Models\Inspection\Fire\FireExtinguisherType;
+use App\Models\Inspection\GembaWalk\GembaWalkStatus;
 use App\Models\Inspection\Ohc\FirstAiderListDetails;
 use App\Models\Inspection\Fire\FireCheckListFollowUp;
 use App\Models\Inspection\Master\ChecklistSubTypeData;
 use App\Models\Inspection\Ohc\FirstAidRecordChecklist;
+use App\Models\Inspection\GembaWalk\GembaWalkStatusLog;
+use App\Models\Inspection\Safety\SafetyWalkObservation;
 use App\Models\Inspection\Ohc\DailyDepartmentFirstAidBox;
 use App\Models\Inspection\Master\ChecklistSubTypeDataName;
 use App\Models\Inspection\Ohc\MonthlyFirstAidboxChecklist;
@@ -63,11 +67,9 @@ use App\Models\Inspection\GembaWalk\GembaWalkChecklistFile;
 use App\Models\Inspection\Ohc\MedicineRequisitionSlipFloor;
 use App\Models\Inspection\Ohc\MedicineRequistionFdoChecklist;
 use App\Models\Inspection\Safety\MonthlyPhysicalEquipmentList;
-use App\Models\Inspection\Fire\MonthlyPhysicalInspectionFileUpload;
-use App\Models\IMS\Incident\Rcpa;
 use App\Models\Inspection\Fire\EmergencyLightInspectionDetails;
-use App\Models\Inspection\GembaWalk\GembaWalkStatus;
-use App\Models\Inspection\GembaWalk\GembaWalkStatusLog;
+use App\Models\Inspection\Fire\MonthlyPhysicalInspectionFileUpload;
+use App\Models\Inspection\Safety\SafetyWalkObservationDetails;
 
 if (!function_exists('get_encryptVal')) {
 
@@ -2880,3 +2882,40 @@ if (!function_exists('getValveTypeName')) {
         return null;
     }
 }
+
+
+function GetLastMonthObservation($id)
+{
+    $data = SafetyWalkObservation::where('id', $id)->first();
+    $current_month = $data->month;
+    $current_year = $data->created_at->year;
+
+    $month = Carbon::parse($current_month)->month;
+    $last_month = $month - 1;
+
+    if ($last_month == 0) {
+        $last_month = 12;
+        $current_year -= 1;
+    }
+
+    $last_month_name = Carbon::createFromFormat('m', $last_month)->format('F');
+
+    $last_month_record = SafetyWalkObservation::where('month', $last_month_name)
+        ->whereYear('created_at', $current_year)
+        ->get();
+
+    return $last_month_record;
+}
+
+
+function GetLastMonthDetails($lastMonthObservationDetails)
+{
+    if (count($lastMonthObservationDetails) > 0) {
+        foreach ($lastMonthObservationDetails as $lastMonthObservationDetail) {
+            $lastMonth[] = SafetyWalkObservationDetails::where('safety_walk_observation_id', $lastMonthObservationDetail->id)->get();
+        }
+        return $lastMonth;
+    }
+    return false;
+}
+

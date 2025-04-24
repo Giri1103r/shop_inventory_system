@@ -112,6 +112,10 @@
         .table-container {
             padding: 20px;
         }
+
+        .page-break {
+            page-break-before: always;
+        }
     </style>
 </head>
 
@@ -144,14 +148,19 @@
             </tr>
         </table>
     </htmlpagefooter>
-    @foreach ($content as $details)
+
+    @foreach ($content as $detail => $group)
+        @php
+            $first = $group->first();
+        @endphp
+
         <br>
         <div style="width:100%;">
             <table style="width:100%;">
                 <tr>
                     <td
                         style="width:100%; background-color: #ce0f1f; color: #ffffff; padding: 10px; font-weight: bold;">
-                        SAFETY GALLERY INSPECTION
+                        Safety Walk Observation Sheet
                     </td>
                 </tr>
             </table>
@@ -164,22 +173,23 @@
                     <img src="{{ url('public/assets/images/logo-dark.png') }}" style="width:125px; height:50px;">
                 </th>
                 <th colspan="6" style="border:1px solid black; text-align: center;">
-                    <h3><b>{{ __('title.safety_gallery') }}</b></h3>
+                    <h3><b>Safety Walk Observation Sheet PN International Pvt Ltd</b></h3>
                 </th>
                 <th colspan="3" style="border:1px solid black;">
                     <table style="width:100%; border-collapse: collapse;">
                         <thead>
                             <tr>
                                 <td style="border: 1px solid black; width:70px;">Doc.No</td>
-                                <td style="border: 1px solid black;">{{ $details->doc_no }}</td>
+                                <td style="border: 1px solid black;">{{ $document_no->doc_no }}</td>
                             </tr>
                             <tr>
                                 <td style="border: 1px solid black; width:70px;">Issue Dt.</td>
-                                <td style="border: 1px solid black;">{{ displaydateformat($details->issue_date) }}</td>
+                                <td style="border: 1px solid black;">{{ displaydateformat($document_no->issue_date) }}
+                                </td>
                             </tr>
                             <tr>
                                 <td style="border: 1px solid black; width:70px;">Rev.& Dt.</td>
-                                <td style="border: 1px solid black;">{{ $details->rev_dt }}</td>
+                                <td style="border: 1px solid black;">{{ $document_no->rev_dt }}</td>
                             </tr>
                         </thead>
                     </table>
@@ -187,42 +197,33 @@
             </tr>
 
             <tr>
-                <th colspan="6"
+                <th colspan="4"
                     style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
-                    DATE OF INSPECTION: {{ Displaydateformat($details->date_of_inspection) ?? 'N/A' }}
+                    Date:- {{ Displaydateformat($first->date) ?? 'N/A' }}
                 </th>
 
-                <th colspan="6"
+                <th colspan="4"
                     style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
-                    RESOURCE CODE: {{ $details->resource_code ?? 'N/A' }}
+                    Shift :- {{ getShiftname($first->shift_id) ?? 'N/A' }}
+                </th>
+                <th colspan="4" rowspan="3"
+                    style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
+                    Safety Walk Taken By (Name):-  {{ $first->safety_walk_taken_by ?? 'N/A' }}
                 </th>
             </tr>
 
             <tr>
-                <th colspan="6"
+                <th colspan="4"
                     style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
-                    LOCATION: {{ $details->location_name ?? 'N/A' }}
+                    Month:-  {{ $first->month ?? 'N/A' }}
                 </th>
-                <th colspan="6"
+                <th colspan="4"
                     style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
-                    UNIT: {{ $details->unit_name ?? 'N/A' }}
+                    Unit:- {{ getUnitname($first->unit) ?? 'N/A' }}
                 </th>
-
             </tr>
 
 
-            <tr>
-                <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">Sr. No
-                </th>
-                <th colspan="5"
-                    style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
-                    CHECK ITEMS</th>
-                <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">Status
-                </th>
-                <th colspan="5"
-                    style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">Remarks
-                </th>
-            </tr>
         </table>
         <table style="width: 100%; border-collapse: collapse; text-align: center;">
             <thead>
@@ -256,14 +257,65 @@
                     </th>
                 </tr>
             </thead>
-            <tbody>
 
+            @php
+                $last_month_inspection = GetLastMonthObservation($first->safety_id);
+                $last_month_observation_details = GetLastMonthDetails($last_month_inspection);
+            @endphp
+
+            <tbody>
+                @if ($last_month_observation_details !== false)
+                <tr>
+                    <td colspan="12" style="text-align: center; font-weight: bold; background-color: #d3d3d3;">
+                        Previous
+                        Month Observation</td>
+                </tr>
+                @php
+                    $i = 1;
+                @endphp
+                @foreach ($last_month_observation_details as $details)
+                    @foreach ($details as $details)
+                        <tr>
+                            <td style="border: 2px solid black; padding: 8px;">{{ $i }}</td>
+                            <td style="border: 2px solid black; padding: 8px;">
+                                {{ getLocationName($details->location) }}
+                            </td>
+                            <td style="border: 2px solid black; padding: 8px;">
+                                {{ Displaydateformat($details->observation_date) }}</td>
+                            <td style="border: 2px solid black; padding: 8px;">{{ $details->observation }}</td>
+
+                            <td style="border: 2px solid black; padding: 8px;"><img
+                                    src="{{ admin_url(GetSafetyWalkImage($details->id)) }}" alt=""
+                                    style="width:80px; height:80px" />
+                            </td>
+                            <td style="border: 2px solid black; padding: 8px;">{{ $details->recomended_action }}
+                            </td>
+                            <td style="border: 2px solid black; padding: 8px;">
+                                {{ getUsername($details->responsibility) }}</td>
+                            <td style="border: 2px solid black; padding: 8px;">{{ $details->date_of_compliance }}</td>
+                            <td style="border: 2px solid black; padding: 8px;">
+                                @if ($details->observation_status == 1)
+                                    Active
+                                @elseif($details->observation_status == 0)
+                                    Inactive
+                                @else
+                                    Unknown
+                                @endif
+                            </td>
+                            <td style="border: 2px solid black; padding: 8px;">{{ $details->remarks }}</td>
+                        </tr>
+                        @php
+
+                            $i++;
+                        @endphp
+                    @endforeach
+                @endforeach
+            @endif
                 <tr>
                     <td colspan="12" style="text-align: center; font-weight: bold; background-color: #d3d3d3;">Current
                         Month Observation</td>
                 </tr>
-                @foreach ($details as $detail)
-                    @dd($details);
+                @foreach ($group as $detail)
                     <tr>
                         <td style="border: 2px solid black; padding: 8px;">{{ $loop->iteration }}</td>
                         <td style="border: 2px solid black; padding: 8px;">{{ getLocationName($detail->location) }}
@@ -310,14 +362,14 @@
                         style="border: 2px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
                         <img src="{{ admin_url($prepared_by_signature) }}" alt="Checked By Signature"
                             style="height: 50px; margin-top:2px;">
-                        <div>Checked & Prepared By: {{ getUsername($inspection_details->checked_by) }}</div>
+                        <div>Checked & Prepared By: {{ getUsername($detail->checked_by) }}</div>
                     </td>
                     <td colspan="5"
                         style="border: 2px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
-                        @if ($inspection_details->verified_by != null)
+                        @if ($detail->verified_by != null)
                             <img src="{{ admin_url($verified_by_signature) }}" alt="Verified By Signature"
                                 style="height: 50px;">
-                            <div>Verified By: {{ getUsername($inspection_details->verified_by) }}</div>
+                            <div>Verified By: {{ getUsername($detail->verified_by) }}</div>
                         @else
                             <p>Inspection has not been Verified Yet</p>
                         @endif
@@ -325,6 +377,7 @@
                 </tr>
             </tbody>
         </table>
+        <div class="page-break"></div>
     @endforeach
     <br>
 </body>

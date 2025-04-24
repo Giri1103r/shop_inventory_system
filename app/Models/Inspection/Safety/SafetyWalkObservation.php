@@ -129,7 +129,7 @@ class SafetyWalkObservation extends Model
             'document_reference_id' => decryptId($request->document_reference_id),
             'date' => DBdateformat($request->inspection_date),
             'month' => $request->month,
-            'safety_walk_taken_by' => decryptId($request->shift_id),
+            'safety_walk_taken_by' => $request->safety_walk_taken_by,
             'unit' => decryptId($request->unit),
             'created_by' => Auth::id(),
             'shift_id' => decryptId($request->shift_id),
@@ -178,7 +178,9 @@ class SafetyWalkObservation extends Model
 
         $query->orderBy('inspection_safety_walk_observation.id', 'DESC');
 
-        return  $query->get();
+        $results = $query->get();
+        $query = $results->groupBy('safety_walk_observation_id');
+        return $query;
     }
 
 
