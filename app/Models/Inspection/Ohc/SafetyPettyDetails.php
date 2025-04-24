@@ -11,7 +11,7 @@ class SafetyPettyDetails extends Model
 {
     use  HasFactory;
 
-    protected $table = 'ohc_safety_petty_logbook';
+    protected $table = 'inspection_ohc_safety_petty_logbook';
 
     protected $primaryKey = 'id';
 
@@ -48,15 +48,15 @@ class SafetyPettyDetails extends Model
         $search = '';
 
         $query = $this->select(
-                'ohc_safety_petty_logbook.*',
+                'inspection_ohc_safety_petty_logbook.*',
                 'masters_employee.emp_name',
                 'masters_unit.unit_name',
                 'masters_department.department_name',
-                'ohc_safety_petty_logbook.id as safety_petty_id'
+                'inspection_ohc_safety_petty_logbook.id as safety_petty_id'
             )
-            ->leftJoin('masters_employee', 'masters_employee.login_id', '=', 'ohc_safety_petty_logbook.employee_name')
-            ->leftJoin('masters_unit', 'masters_unit.id', '=', 'ohc_safety_petty_logbook.unit')
-            ->leftJoin('masters_department', 'masters_department.id', '=', 'ohc_safety_petty_logbook.department');
+            ->leftJoin('masters_employee', 'masters_employee.login_id', '=', 'inspection_ohc_safety_petty_logbook.employee_name')
+            ->leftJoin('masters_unit', 'masters_unit.id', '=', 'inspection_ohc_safety_petty_logbook.unit')
+            ->leftJoin('masters_department', 'masters_department.id', '=', 'inspection_ohc_safety_petty_logbook.department');
 
         $org_total =  $query;
         $org_total_counts = $org_total->count();
@@ -70,23 +70,23 @@ class SafetyPettyDetails extends Model
                     ->orWhere('masters_employee.emp_id', 'LIKE', '%' . $search . '%')
                     ->orWhere('masters_unit.unit_name', 'LIKE', '%' . $search . '%')
                     ->orWhere('masters_department.department_name', 'LIKE', '%' . $search . '%')
-                    ->orWhere('ohc_safety_petty_logbook.employee_code', 'LIKE', '%' . $search . '%');
+                    ->orWhere('inspection_ohc_safety_petty_logbook.employee_code', 'LIKE', '%' . $search . '%');
             });
         }
 
         if ($request->has('unit_id') && $request->unit_id) {
-            $query = $query->where('ohc_safety_petty_logbook.unit', 'LIKE', '%' . decryptId($request->unit_id) . '%');
+            $query = $query->where('inspection_ohc_safety_petty_logbook.unit', 'LIKE', '%' . decryptId($request->unit_id) . '%');
         }
         if ($request->has('department_id') && $request->department_id) {
-            $query = $query->where('ohc_safety_petty_logbook.department', 'LIKE', '%' . decryptId($request->department_id) . '%');
+            $query = $query->where('inspection_ohc_safety_petty_logbook.department', 'LIKE', '%' . decryptId($request->department_id) . '%');
         }
 
         if ($request->has('emp_id') && $request->emp_id) {
-            $query = $query->where('ohc_safety_petty_logbook.employee_name', 'LIKE', '%' . $request->emp_id . '%');
+            $query = $query->where('inspection_ohc_safety_petty_logbook.employee_name', 'LIKE', '%' . $request->emp_id . '%');
         }
 
         if ($request->has('employee_code') && $request->employee_code) {
-            $query = $query->where('ohc_safety_petty_logbook.employee_code', 'LIKE', '%' . $request->employee_code . '%');
+            $query = $query->where('inspection_ohc_safety_petty_logbook.employee_code', 'LIKE', '%' . $request->employee_code . '%');
         }
 
         $data_count = $query;
@@ -97,13 +97,13 @@ class SafetyPettyDetails extends Model
             $columnorder = $request->order[0]['dir'];
             switch ($columnName) {
                 case "created_by":
-                    $query = $query->orderBy('ohc_safety_petty_logbook.created_by', $columnorder);
+                    $query = $query->orderBy('inspection_ohc_safety_petty_logbook.created_by', $columnorder);
                     break;
                 case "created_date":
-                    $query = $query->orderBy('ohc_safety_petty_logbook.created_at', $columnorder);
+                    $query = $query->orderBy('inspection_ohc_safety_petty_logbook.created_at', $columnorder);
                     break;
                 default:
-                    $query = $query->orderBy('ohc_safety_petty_logbook.id', 'DESC');
+                    $query = $query->orderBy('inspection_ohc_safety_petty_logbook.id', 'DESC');
                     break;
             }
         }
@@ -185,15 +185,15 @@ class SafetyPettyDetails extends Model
         $request = request();
         $search = '';
         $query = $this->select(
-                    'ohc_safety_petty_logbook.*',
+                    'inspection_ohc_safety_petty_logbook.*',
                     'masters_employee.emp_name',
                     'masters_unit.unit_name',
                     'masters_department.department_name',
-                    'ohc_safety_petty_logbook.id as safety_petty_id'
+                    'inspection_ohc_safety_petty_logbook.id as safety_petty_id'
                 )
-                ->leftJoin('masters_employee', 'masters_employee.login_id', '=', 'ohc_safety_petty_logbook.employee_name')
-                ->leftJoin('masters_unit', 'masters_unit.id', '=', 'ohc_safety_petty_logbook.unit')
-                ->leftJoin('masters_department', 'masters_department.id', '=', 'ohc_safety_petty_logbook.department');
+                ->leftJoin('masters_employee', 'masters_employee.login_id', '=', 'inspection_ohc_safety_petty_logbook.employee_name')
+                ->leftJoin('masters_unit', 'masters_unit.id', '=', 'inspection_ohc_safety_petty_logbook.unit')
+                ->leftJoin('masters_department', 'masters_department.id', '=', 'inspection_ohc_safety_petty_logbook.department');
 
         if ($request->search != null || $request->search != '') {
             $search = $request->search;
@@ -204,26 +204,26 @@ class SafetyPettyDetails extends Model
                     ->orWhere('masters_employee.emp_id', 'LIKE', '%' . $search . '%')
                     ->orWhere('masters_unit.unit_name', 'LIKE', '%' . $search . '%')
                     ->orWhere('masters_department.department_name', 'LIKE', '%' . $search . '%')
-                    ->orWhere('ohc_safety_petty_logbook.employee_code', 'LIKE', '%' . $search . '%');
+                    ->orWhere('inspection_ohc_safety_petty_logbook.employee_code', 'LIKE', '%' . $search . '%');
 
             });
         }
 
         if ($request->has('unit_id') && $request->unit_id) {
-            $query = $query->where('ohc_safety_petty_logbook.unit', 'LIKE', '%' . decryptId($request->unit_id) . '%');
+            $query = $query->where('inspection_ohc_safety_petty_logbook.unit', 'LIKE', '%' . decryptId($request->unit_id) . '%');
         }
         if ($request->has('department_id') && $request->department_id) {
-            $query = $query->where('ohc_safety_petty_logbook.department', 'LIKE', '%' . decryptId($request->department_id) . '%');
+            $query = $query->where('inspection_ohc_safety_petty_logbook.department', 'LIKE', '%' . decryptId($request->department_id) . '%');
         }
 
         if ($request->has('emp_id') && $request->emp_id) {
-            $query = $query->where('ohc_safety_petty_logbook.employee_name', 'LIKE', '%' . $request->emp_id . '%');
+            $query = $query->where('inspection_ohc_safety_petty_logbook.employee_name', 'LIKE', '%' . $request->emp_id . '%');
         }
 
         if ($request->has('employee_code') && $request->employee_code) {
-            $query = $query->where('ohc_safety_petty_logbook.employee_code', 'LIKE', '%' . $request->employee_code . '%');
+            $query = $query->where('inspection_ohc_safety_petty_logbook.employee_code', 'LIKE', '%' . $request->employee_code . '%');
         }
-        $query->orderBy('ohc_safety_petty_logbook.id', 'DESC');
+        $query->orderBy('inspection_ohc_safety_petty_logbook.id', 'DESC');
 
         return $query->get();
     }
@@ -235,7 +235,7 @@ class SafetyPettyDetails extends Model
 
     protected static function booted()
     {
-        static::addGlobalScope(new TrashScope('ohc_safety_petty_logbook'));
+        static::addGlobalScope(new TrashScope('inspection_ohc_safety_petty_logbook'));
     }
 
 }
