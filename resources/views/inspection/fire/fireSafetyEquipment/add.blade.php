@@ -323,12 +323,7 @@
                         required: "Total Allotted Code is required",
                     }
                 });
-                newRow.find("textarea[name$='[remark]']").rules("add", {
-                    required: true,
-                    messages: {
-                        required: "Remark is required",
-                    }
-                });
+
 
 
                 $('.single-select').select2();
@@ -411,12 +406,7 @@
                     required: "Total Allotted Code is required",
                 }
             });
-            newRow.find("textarea[name$='[remark]']").rules("add", {
-                required: true,
-                messages: {
-                    required: "Remark is required",
-                }
-            });
+           
         }
 
         $(function() {

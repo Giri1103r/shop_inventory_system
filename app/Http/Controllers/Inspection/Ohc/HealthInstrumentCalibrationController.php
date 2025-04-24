@@ -126,7 +126,7 @@ class HealthInstrumentCalibrationController extends Controller
             );
             return view('inspection.inspection_ohc.health_instrument.add', $data);
         } catch (Exception $ex) {
-            report($ex);
+            dd($ex);
         }
     }
 
@@ -586,7 +586,7 @@ class HealthInstrumentCalibrationController extends Controller
                         'wrapText' => true,
                     ],
                     'borders' => [
-                        'allBorders' => ['borderStyle' => Border::BORDER_DOUBLE], 
+                        'allBorders' => ['borderStyle' => Border::BORDER_DOUBLE],
                     ],
                 ]);
             }

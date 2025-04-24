@@ -183,8 +183,9 @@
                                                             <td>
                                                                 <div class="form-group form-input">
                                                                     <label for="quantity" class="require">Quantity</label>
-                                                                    <input type="number" min="1" name="quantity[0]"
-                                                                        id="quantity" placeholder="Enter the quantity"
+                                                                    <input type="number" min="1"
+                                                                        name="quantity[0]" id="quantity"
+                                                                        placeholder="Enter the quantity"
                                                                         class="form-control">
                                                                     <span id="quantity-error" style=" display:none;"
                                                                         class="text-danger">Quantity must be less
@@ -224,19 +225,23 @@
                                             </p>
                                         @else
                                             <div class="col-md-4 mb-3">
-                                                <label for="signature_image" class="form-label fw-bold require">Requestor
-                                                    Signature</label>
-                                                <input type="file"
-                                                    class="form-control validate-file-accept validate-file-required"
-                                                    accept="image/png, image/jpeg, image/jpg" name="signature_image"
-                                                    id="signature_image">
-                                                <div class="text-danger"></div>
-                                                <small>Allowed file types: png, jpeg, jpg</small>
+                                                <div class="form-group form-input">
+                                                    <label for="signature_image"
+                                                        class="form-label fw-bold require">Requestor
+                                                        Signature</label>
+                                                    <input type="file"
+                                                        class="form-control validate-file-accept validate-file-required"
+                                                        accept="image/png, image/jpeg, image/jpg" name="signature_image"
+                                                        id="signature_image">
+                                                    <div class="text-danger"></div>
+                                                    <small>Allowed file types: png, jpeg, jpg</small>
 
-                                                <!-- Preview Container -->
-                                                <div id="imagePreviewContainer" class="mt-2" style="display: none;">
-                                                    <img id="imagePreview" src="#" alt="Signature Preview"
-                                                        class="img-thumbnail" width="200">
+                                                    <!-- Preview Container -->
+                                                    <div id="imagePreviewContainer" class="mt-2"
+                                                        style="display: none;">
+                                                        <img id="imagePreview" src="#" alt="Signature Preview"
+                                                            class="img-thumbnail" width="200">
+                                                    </div>
                                                 </div>
                                             </div>
                                         @endif
@@ -465,7 +470,8 @@
                             },
                             error: function(xhr) {
                                 alert(
-                                    'Error fetching freeze quantity. Please try again.');
+                                    'Error fetching freeze quantity. Please try again.'
+                                    );
                             }
                         });
                     } else {
