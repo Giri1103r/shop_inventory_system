@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Hose Reel Hose Inspection| KARAM</title> 
+    <title>Hose Box Inspection| KARAM</title>
 
     <style>
         .badge {
@@ -158,7 +158,7 @@
             <table style="width:100%;">
                 <tr>
                     <td style="background-color: #ce0f1f; color: #ffffff; padding: 10px; font-weight: bold;">
-                        Hose Reel Hose InspectionDetails
+                        Hose Box InspectionDetails
                     </td>
                 </tr>
             </table>
@@ -175,7 +175,7 @@
 
                     <th colspan="6" rowspan="3"
                         style="border: 1px solid black; text-align: center; vertical-align: middle;">
-                        <h3 style="margin: 0;"><b>{{ __('title.hose_reel') }}</b></h3>
+                        <h3 style="margin: 0;"><b>{{ __('title.hose_box') }}</b></h3>
                     </th>
 
                     @foreach ($infoCells as $index => [$label, $value])
@@ -200,8 +200,8 @@
         <th colspan="4" style="border: 1px solid black; text-align: left; padding: 6px;">
             LOCATION: {{ getLocationName($first->location) }}
         </th>
-        <th colspan="5" style="border: 1px solid black; text-align: left; padding: 6px;">
-            SHIFT: {{ $first->shift }}
+        <th colspan="6" style="border: 1px solid black; text-align: left; padding: 6px;">
+            SHIFT: {{ GetShiftName($first->shift) }}
         </th>
     </tr>
 
@@ -217,63 +217,86 @@
         </th>
     </tr>
 
-    <tr>
-        <th rowspan="2" title="sr_no" style="border: 1px solid black; padding: 5px;">SR. NO.</th>
-        <th rowspan="2" title="department" style="border: 1px solid black; padding: 5px;">DEPARTMENT</th>
-        <th rowspan="2" title="location" style="border: 1px solid black; padding: 5px;">LOCATION</th>
-        {{-- <th rowspan="2" title="length" style="border: 1px solid black; padding: 5px;">LENGTH</th> --}}
-        <th colspan="5" style="border: 1px solid black; padding: 5px;">CHECK ITEMS</th>
-        <th rowspan="2" title="approach" style="border: 1px solid black; padding: 5px;">APPROACH</th>
-        <th rowspan="2" title="remarks" style="border: 1px solid black; padding: 5px;">REMARKS</th>
+    <tr style="background-color: #ddd;">
+        <td rowspan="2"
+            style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; text-align: center; font-weight: bold;">
+            SR NO.</td>
+        <td rowspan="2"
+            style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; text-align: center; font-weight: bold;">
+            LOCATION</td>
+        <td rowspan="2"
+            style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; text-align: center; font-weight: bold;">
+            HOSE BOX NO.</td>
+        <td colspan="6"
+            style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; text-align: center; font-weight: bold;">
+            CHECK ITEMS</td>
+        <td rowspan="2"
+            style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; text-align: center; font-weight: bold;">
+            APPROACH</td>
+        <td rowspan="2"
+            style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; text-align: center; font-weight: bold;">
+            REMARK</td>
     </tr>
-    <tr>
-        <th title="length" style="border: 1px solid black; padding: 5px;">LENGTH</th>
-        <th title="nozzle" style="border: 1px solid black; padding: 5px;">NOZZLE CONDITION</th>
-        <th title="hose" style="border: 1px solid black; padding: 5px;">HOSE CONDITION</th>
-        <th title="flow" style="border: 1px solid black; padding: 5px;">FLOW TEST</th>
-        <th title="test_status" style="border: 1px solid black; padding: 5px;">STATUS</th>
+    <tr style="background-color: #ddd;">
+        <td
+            style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2;  text-align: center; font-weight: bold;">
+            TYPE OF HOSE</td>
+        <td
+            style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; text-align: center; font-weight: bold;">
+            QUANTITY</td>
+        <td
+            style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; text-align: center; font-weight: bold;">
+            BRANCH QUANTITY</td>
+        <td
+            style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; text-align: center; font-weight: bold;">
+            HOSE BOX KEY</td>
+        <td colspan="2">
+            <table style="width: 100%; border-collapse: collapse;">
+                <tr>
+                    <td
+                        style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; text-align: center; font-weight: bold; border: none;">
+                        HOSE</td>
+                </tr>
+                <tr>
+                    <td
+                        style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2; text-align: center; font-weight: bold; border: none;">
+                        CONDITION</td>
+                </tr>
+            </table>
+        </td>
     </tr>
 
     @foreach ($group as $detail)
         <tr>
-            <td style="border: 1px solid black; padding: 5px;">{{ $loop->iteration }}</td>
-            <td style="border: 1px solid black; padding: 5px;">{{ getDeptName($detail->department) }}</td>
-            <td style="border: 1px solid black; padding: 5px;">{{ getLocationName($detail->location) }}</td>
-            <td style="border: 1px solid black; padding: 5px;">{{ $detail->length }}</td>
-            <td style="border: 1px solid black; padding: 5px;">
-                @if ($detail->nozzle == GOOD)
+            <td style="border: 1px solid black; padding: 8px; text-align: center;">{{ $loop->iteration }}</td>
+            <td style="border: 1px solid black; padding: 8px;" title="Location">
+                {{ getLocationName($detail->location) }}</td>
+            <td style="border: 1px solid black; padding: 8px;" title="Hose Box Number">
+                {{ $detail->hose_box_no }}
+            </td>
+            <td style="border: 1px solid black; padding: 8px;" title="Type of Hose">
+                {{ getHoseTypeName($detail->hose_types) }}</td>
+            <td style="border: 1px solid black; padding: 8px;" title="Quantity">{{ $detail->quantity }}</td>
+            <td style="border: 1px solid black; padding: 8px;" title="Branch">{{ $detail->branch_quantity }}
+            </td>
+            <td style="border: 1px solid black; padding: 8px;" title="Hose Box Key">
+                @if ($detail->hose_box_key == PRESENT)
                     <p>Present</p>
-                @elseif ($detail->nozzle == FAIR)
+                @else
+                    <p>Missing</p>
+                @endif
+            </td>
+            <td colspan="2" style="border: 1px solid black; padding: 8px;" title="Condition">
+                @if ($detail->condition == GOOD)
+                    <p>Good</p>
+                @elseif ($detail->condition == FAIR)
                     <p>Fair</p>
                 @else
                     <p>Poor</p>
                 @endif
             </td>
-            <td style="border: 1px solid black; padding: 5px;">
-                @if ($detail->hose == GOOD)
-                    <p>Present</p>
-                @elseif ($detail->hose == FAIR)
-                    <p>Fair</p>
-                @else
-                    <p>Poor</p>
-                @endif
-            </td>
-            <td style="border: 1px solid black; padding: 5px;">
-                @if ($detail->flow == PASS)
-                    <p>Pass</p>
-                @else
-                    <p>Fail</p>
-                @endif
-            </td>
-            <td style="border: 1px solid black; padding: 5px;">
-                @if ($detail->status_of_hose == OPERATIONAL)
-                    <p>Operational</p>
-                @else
-                    <p>Non Operational</p>
-                @endif
-            </td>
-            <td style="border: 1px solid black; padding: 5px;">{{ $detail->approach }}</td>
-            <td style="border: 1px solid black; padding: 5px;">{{ $detail->remarks }}</td>
+            <td style="border: 1px solid black; padding: 8px;" title="Approach">{{ $detail->approach }}</td>
+            <td style="border: 1px solid black; padding: 8px;" title="Remarks">{{ $detail->remarks }}</td>
         </tr>
     @endforeach
 
@@ -295,7 +318,7 @@
                 @endif
             </div>
         </td>
-        <td colspan="3" style="border: 1px solid black; padding: 6px; text-align: center;">
+        <td colspan="5" style="border: 1px solid black; padding: 6px; text-align: center;">
             <div class="view_data">
                 @if (!empty($first->verified_by))
                     <img src="{{ admin_url($verified_by) }}" alt=""
