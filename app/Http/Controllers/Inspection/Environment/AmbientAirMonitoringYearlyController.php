@@ -12,8 +12,8 @@ use Illuminate\Support\Facades\Session;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Master\Employee;
-use App\Models\Inspection\environment\AmbientAirMonitoring;
-use App\Models\Inspection\environment\Environment;
+use App\Models\Inspection\Environment\AmbientAirMonitoring;
+use App\Models\Inspection\Environment\Environment;
 use App\Models\Inspection\InspectionStaticDocno;
 use App\Models\Master\Location;
 use App\Models\Master\Unit;
@@ -73,7 +73,7 @@ class AmbientAirMonitoringYearlyController extends Controller
                         })
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            $btn = '<a href="' . admin_url('environment/ambient-air/yearly/view/' . encryptId($row->id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
+                            $btn = '<a href="' . admin_url('environment/ambient-air/yearly/view/' . encryptId($row->id)) . '"   class="view-icon me-1" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
                             $btn .= '<a href="' . admin_url('environment/ambient-air/yearly/generalpdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
                             <i class="fas fa-file-pdf" style="color: #e67265;" aria-hidden="true"></i>
                          </a>';

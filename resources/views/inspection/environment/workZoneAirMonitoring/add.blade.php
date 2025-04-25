@@ -392,7 +392,7 @@
                         $(this).val("").trigger("change");
                     }
                 });
-                newRow.find("input[name$='[sr_no]']").val("AMBIENT-" + String(rowCount + 1).padStart(4,
+                newRow.find("input[name$='[sr_no]']").val("WORKZONE-AIR" + String(rowCount + 1).padStart(4,
                     '0'));
 
                 newRow.find(".invalid-feedback").remove();
@@ -467,9 +467,14 @@
                 });
                 newRow.find("input[name$='[act_rule]']").rules("add", {
 
+                    minlength: 3,
+                    maxlength: 100,
                     required: true,
                     messages: {
-                        required: "Please Enter the Act Rule."
+                        required: "Please Enter the Act Rule.",
+                        minlength: "Act/Rule must be at least 3 characters long.",
+                        maxlength: "Act/Rule must not exceed 100 characters.",
+
                     }
                 });
                 newRow.find("input[name$='[next_due_date_of_monitoring2]']").rules("add", {
@@ -537,127 +542,12 @@
             initializeFlatpickr();
         });
 
-        function addValidationRules(row) {
-            newRow.find("input[name$='[spm]']").rules("add", {
-                number: true,
-                required: true,
-                range: [0, 1000],
-                messages: {
-                    number: "Only numeric values are allowed.",
-                    range: "Value must be between 0 and 1000 µg/m³.",
-                    required: "This Field is required.",
-                }
-            });
 
-            newRow.find("input[name$='[spm_session2]']").rules("add", {
-                number: true,
-                required: true,
-                range: [0, 1000],
-                messages: {
-                    number: "Only numeric values are allowed.",
-                    range: "Value must be between 0 and 1000 µg/m³.",
-                    required: "This Field is required.",
-                }
-            });
-
-            newRow.find("input[name$='[so2]']").rules("add", {
-                number: true,
-                required: true,
-                range: [0, 500],
-                messages: {
-                    number: "Only numeric values are allowed.",
-                    range: "Value must be between 0 and 500 µg/m³.",
-                    required: "This Field is required.",
-                }
-            });
-            newRow.find("input[name$='[so2_session2]']").rules("add", {
-                number: true,
-                required: true,
-                range: [0, 500],
-                messages: {
-                    number: "Only numeric values are allowed.",
-                    range: "Value must be between 0 and 500 µg/m³.",
-                    required: "This Field is required.",
-                }
-            });
-
-            newRow.find("input[name$='[no2]']").rules("add", {
-                number: true,
-                required: true,
-                range: [0, 500],
-                messages: {
-                    number: "Only numeric values are allowed.",
-                    range: "Value must be between 0 and 500 µg/m³.",
-                    required: "This Field is required.",
-                }
-            });
-
-            newRow.find("input[name$='[no2_session2]']").rules("add", {
-                number: true,
-                required: true,
-                range: [0, 500],
-                messages: {
-                    number: "Only numeric values are allowed.",
-                    range: "Value must be between 0 and 500 µg/m³.",
-                    required: "This Field is required.",
-                }
-            });
-            newRow.find("input[name$='[act_rule]']").rules("add", {
-
-                required: true,
-                messages: {
-                    required: "Please Enter the Act Rule."
-                }
-            });
-            newRow.find("input[name$='[next_due_date_of_monitoring2]']").rules("add", {
-                required: true,
-                messages: {
-                    required: "Please Select the date."
-                }
-            });
-            newRow.find("input[name$='[next_due_date_of_monitoring]']").rules("add", {
-                required: true,
-                messages: {
-                    required: "Please Select the date."
-                }
-            });
-            newRow.find("input[name$='[date_of_monitoring]']").rules("add", {
-                required: true,
-                messages: {
-                    required: "Please Select the date."
-                }
-            });
-            newRow.find("select[name$='[unit_id]']").rules("add", {
-
-                required: true,
-
-                messages: {
-
-                    required: "Please select the Unit .",
-
-                }
-            });
-            newRow.find("select[name$='[location_id]']").rules("add", {
-
-                required: true,
-                messages: {
-                    required: "Please select the location.",
-
-                }
-            });
-            newRow.find("select[name$='[department_id]']").rules("add", {
-
-                required: true,
-                messages: {
-                    required: "Please select the department.",
-
-                }
-            });
-        }
 
 
 
         $(function() {
+            // Set global validator defaults
             $.validator.setDefaults({
                 highlight: function(element) {
                     $(element).addClass('is-invalid');
@@ -683,6 +573,7 @@
                 }
             });
 
+            // Initialize validation
             $('#addambient').validate({
                 rules: {
                     'monitoring[1][spm]': {
@@ -726,22 +617,24 @@
                     },
                     'monitoring[1][date_of_monitoring2]': {
                         required: true,
-                        date: true
+
                     },
                     'monitoring[1][next_due_date_of_monitoring2]': {
                         required: true,
-                        date: true
+
                     },
                     'monitoring[1][date_of_monitoring]': {
                         required: true,
-                        date: true
+
                     },
                     'monitoring[1][next_due_date_of_monitoring]': {
                         required: true,
-                        date: true
+
                     },
                     'monitoring[1][act_rule]': {
-                        required: true
+                        required: true,
+                        minlength: 3,
+                        maxlength: 100
                     },
                 },
                 messages: {
@@ -786,33 +679,158 @@
                     },
                     'monitoring[1][next_due_date_of_monitoring2]': {
                         required: "Please select the next due date of monitoring (date input).",
-                        date: "Please enter a valid date."
+
                     },
                     'monitoring[1][date_of_monitoring2]': {
                         required: "Please select the date of monitoring (date input).",
-                        date: "Please enter a valid date."
+
                     },
                     'monitoring[1][date_of_monitoring]': {
                         required: "Please select the date of monitoring.",
-                        date: "Please enter a valid date."
+
                     },
                     'monitoring[1][next_due_date_of_monitoring]': {
                         required: "Please select the next due date of monitoring.",
-                        date: "Please enter a valid date."
+
                     },
                     'monitoring[1][act_rule]': {
-                        required: "Act/Rule is required."
-                    },
-
+                        required: "Act/Rule is required.",
+                        minlength: "Act/Rule must be at least 3 characters long.",
+                        maxlength: "Act/Rule must not exceed 100 characters.",
+                    }
                 },
                 submitHandler: function(form) {
-                    form.submit();
+                    form.submit(); // only submits if valid
                 }
             });
 
+            // Now add dynamic field rules after validation initialized
             $("#lesson_learned_block .lesson_learned_row").each(function() {
                 addValidationRules($(this));
             });
+
+            // Function to add dynamic validation
+            function addValidationRules(row) {
+                row.find("input[name$='[spm]']").rules("add", {
+                    number: true,
+                    required: true,
+                    range: [0, 1000],
+                    messages: {
+                        number: "Only numeric values are allowed.",
+                        range: "Value must be between 0 and 1000 µg/m³.",
+                        required: "This Field is required.",
+                    }
+                });
+
+                row.find("input[name$='[spm_session2]']").rules("add", {
+                    number: true,
+                    required: true,
+                    range: [0, 1000],
+                    messages: {
+                        number: "Only numeric values are allowed.",
+                        range: "Value must be between 0 and 1000 µg/m³.",
+                        required: "This Field is required.",
+                    }
+                });
+
+                row.find("input[name$='[so2]']").rules("add", {
+                    number: true,
+                    required: true,
+                    range: [0, 500],
+                    messages: {
+                        number: "Only numeric values are allowed.",
+                        range: "Value must be between 0 and 500 µg/m³.",
+                        required: "This Field is required.",
+                    }
+                });
+                row.find("input[name$='[so2_session2]']").rules("add", {
+                    number: true,
+                    required: true,
+                    range: [0, 500],
+                    messages: {
+                        number: "Only numeric values are allowed.",
+                        range: "Value must be between 0 and 500 µg/m³.",
+                        required: "This Field is required.",
+                    }
+                });
+
+                row.find("input[name$='[no2]']").rules("add", {
+                    number: true,
+                    required: true,
+                    range: [0, 500],
+                    messages: {
+                        number: "Only numeric values are allowed.",
+                        range: "Value must be between 0 and 500 µg/m³.",
+                        required: "This Field is required.",
+                    }
+                });
+
+                row.find("input[name$='[no2_session2]']").rules("add", {
+                    number: true,
+                    required: true,
+                    range: [0, 500],
+                    messages: {
+                        number: "Only numeric values are allowed.",
+                        range: "Value must be between 0 and 500 µg/m³.",
+                        required: "This Field is required.",
+                    }
+                });
+                row.find("input[name$='[act_rule]']").rules("add", {
+                    minlength: 3,
+                    maxlength: 100,
+                    required: true,
+                    messages: {
+                        required: "Please Enter the Act Rule.",
+                        minlength: "Act/Rule must be at least 3 characters long.",
+                        maxlength: "Act/Rule must not exceed 100 characters.",
+
+                    }
+                });
+                row.find("input[name$='[next_due_date_of_monitoring2]']").rules("add", {
+                    required: true,
+                    messages: {
+                        required: "Please Select the date."
+                    }
+                });
+                row.find("input[name$='[next_due_date_of_monitoring]']").rules("add", {
+                    required: true,
+                    messages: {
+                        required: "Please Select the date."
+                    }
+                });
+                row.find("input[name$='[date_of_monitoring]']").rules("add", {
+                    required: true,
+                    messages: {
+                        required: "Please Select the date."
+                    }
+                });
+                row.find("select[name$='[unit_id]']").rules("add", {
+
+                    required: true,
+
+                    messages: {
+
+                        required: "Please select the Unit .",
+
+                    }
+                });
+                row.find("select[name$='[location_id]']").rules("add", {
+
+                    required: true,
+                    messages: {
+                        required: "Please select the location.",
+
+                    }
+                });
+                row.find("select[name$='[department_id]']").rules("add", {
+
+                    required: true,
+                    messages: {
+                        required: "Please select the department.",
+
+                    }
+                });
+            }
         });
     </script>
 @endpush

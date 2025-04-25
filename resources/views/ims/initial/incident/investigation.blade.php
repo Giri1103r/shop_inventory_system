@@ -385,81 +385,81 @@
                                         </div>
                                     </div>
                                     @if ($incident_report->anyone_injured == 1)
-                                    <div class="row">
-                                        <div class="card-header-inner">
-                                            <h4 class="text-white">Injured Person Details</h4>
+                                        <div class="row">
+                                            <div class="card-header-inner">
+                                                <h4 class="text-white">Injured Person Details</h4>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="row">
-                                        <table class="table">
-                                            <thead>
-                                                <tr>
-                                                    <th>Injury Person Type</th>
-                                                    <th>Injury Person Name</th>
-                                                    <th>Injury Person Employee ID</th>
-                                                    <th>Injury Person Designation</th>
-                                                    <th>Injury Person Department</th>
-                                                    <th>Injury Body Parts</th>
-                                                    <th>Description</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @foreach ($injury_details as $injury)
+                                        <div class="row">
+                                            <table class="table">
+                                                <thead>
                                                     <tr>
-                                                        <td>
-                                                            {{ $injury->injury_person_type == 1 ? 'Employee' : ($injury->injury_person_type == 2 ? 'Worker' : 'Others') }}
-                                                        </td>
-                                                        <td>
-                                                            @if ($injury->injury_person_type == 1 || $injury->injury_person_type == 2)
-                                                                {{ $injury->emp_name }}
-                                                            @else
-                                                                {{ $injury->injury_person_name }}
-                                                            @endif
-                                                        </td>
-                                                        <td>{{ $injury->emp_id }}</td>
-                                                        <td>{{ $injury->injury_person_designation }}</td>
-                                                        <td>
-                                                            {{-- @if ($injury->injury_person_type == 1 || $injury->injury_person_type == 2)
+                                                        <th>Injury Person Type</th>
+                                                        <th>Injury Person Name</th>
+                                                        <th>Injury Person Employee ID</th>
+                                                        <th>Injury Person Designation</th>
+                                                        <th>Injury Person Department</th>
+                                                        <th>Injury Body Parts</th>
+                                                        <th>Description</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach ($injury_details as $injury)
+                                                        <tr>
+                                                            <td>
+                                                                {{ $injury->injury_person_type == 1 ? 'Employee' : ($injury->injury_person_type == 2 ? 'Worker' : 'Others') }}
+                                                            </td>
+                                                            <td>
+                                                                @if ($injury->injury_person_type == 1 || $injury->injury_person_type == 2)
+                                                                    {{ $injury->emp_name }}
+                                                                @else
+                                                                    {{ $injury->injury_person_name }}
+                                                                @endif
+                                                            </td>
+                                                            <td>{{ $injury->emp_id }}</td>
+                                                            <td>{{ $injury->injury_person_designation }}</td>
+                                                            <td>
+                                                                {{-- @if ($injury->injury_person_type == 1 || $injury->injury_person_type == 2)
                                                                 {{ $injury->department_name }}
                                                             @else --}}
-                                                            {{ $injury->injury_person_department_id }}
-                                                            {{-- @endif --}}
-                                                        </td>
-                                                        <td>
-                                                            @if ($injury->body_part_image)
-                                                                <a href="{{ admin_url('storage/app/public/uploads/' . $injury->body_part_image) }}"
-                                                                    target="_blank">
-                                                                    <img src="{{ admin_url('storage/app/public/uploads/' . $injury->body_part_image) }}"
-                                                                        alt="Body Parts Image"
-                                                                        style="max-width: 100px; max-height: 100px; object-fit: contain;">
-                                                                </a>
-                                                            @endif
-                                                        </td>
+                                                                {{ $injury->injury_person_department_id }}
+                                                                {{-- @endif --}}
+                                                            </td>
+                                                            <td>
+                                                                @if ($injury->body_part_image)
+                                                                    <a href="{{ admin_url('storage/app/public/uploads/' . $injury->body_part_image) }}"
+                                                                        target="_blank">
+                                                                        <img src="{{ admin_url('storage/app/public/uploads/' . $injury->body_part_image) }}"
+                                                                            alt="Body Parts Image"
+                                                                            style="max-width: 100px; max-height: 100px; object-fit: contain;">
+                                                                    </a>
+                                                                @endif
+                                                            </td>
 
 
-                                                        <td>
-                                                            @php
-                                                                $imgMapDataDecoded = json_decode(
-                                                                    $injury->imgMapdata,
-                                                                    true,
-                                                                );
-                                                            @endphp
-                                                            @if ($imgMapDataDecoded)
-                                                                <ul>
-                                                                    @foreach ($imgMapDataDecoded['map']['total'] as $key => $value)
-                                                                        <li>{{ ucfirst($key) }}:
-                                                                            {{ $value }}</li>
-                                                                    @endforeach
-                                                                </ul>
-                                                            @endif
-                                                        </td>
-                                                    </tr>
-                                                @endforeach
-                                            </tbody>
-                                        </table>
+                                                            <td>
+                                                                @php
+                                                                    $imgMapDataDecoded = json_decode(
+                                                                        $injury->imgMapdata,
+                                                                        true,
+                                                                    );
+                                                                @endphp
+                                                                @if ($imgMapDataDecoded)
+                                                                    <ul>
+                                                                        @foreach ($imgMapDataDecoded['map']['total'] as $key => $value)
+                                                                            <li>{{ ucfirst($key) }}:
+                                                                                {{ $value }}</li>
+                                                                        @endforeach
+                                                                    </ul>
+                                                                @endif
+                                                            </td>
+                                                        </tr>
+                                                    @endforeach
+                                                </tbody>
+                                            </table>
 
-                                    </div>
-                                @endif
+                                        </div>
+                                    @endif
                                 </div>
                             </div>
                             <div class="card-body">
@@ -488,7 +488,8 @@
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label for="team_id" class="form-label">Incident/Accident Investigation Report Prepared by</label>
+                                        <label for="team_id" class="form-label">Incident/Accident Investigation Report
+                                            Prepared by</label>
                                         <div class="view_data">
                                             {{ getUsername($incident_report->investigation_reported_by) }}
                                         </div>
@@ -554,11 +555,10 @@
 
                                                 </div>
                                                 <a href="{{ admin_url('incident/initial-incident/existingHira/' . encryptId($incidentId)) }}"
-                                                class="btn btn-primary popupwindow"
-                                                data-id="{{ $incidentId }}"
-                                                title="View">
-                                                <i class="fas fa-eye"></i>
-                                             </a>
+                                                    class="btn btn-primary popupwindow" data-id="{{ $incidentId }}"
+                                                    title="View">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
                                             </div>
 
                                             <div class="modal fade" id="hiraModal" tabindex="-1"
@@ -579,10 +579,9 @@
 
                                                 </div>
                                                 <a href="{{ admin_url('incident/initial-incident/existingMOC/' . encryptId($incidentId)) }}"
-                                                class="btn btn-primary popupwindow"
-                                                data-id="{{ $incidentId }}"
-                                                title="View">
-                                                <i class="fas fa-eye"></i>
+                                                    class="btn btn-primary popupwindow" data-id="{{ $incidentId }}"
+                                                    title="View">
+                                                    <i class="fas fa-eye"></i>
                                                 </a>
                                             </div>
 
@@ -975,9 +974,10 @@
                                         <div class="row">
                                             <div class="col-md-12 mt-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Recommended Corrective & Preventive
+                                                    <label class="form-label require">Recommended Corrective &
+                                                        Preventive
                                                         Action</label>
-                                                    <textarea type="text" name="corrective_preventive_action" id="corrective_preventive_action" class="form-control"
+                                                    <textarea name="corrective_preventive_action" id="" class="form-control"
                                                         placeholder="Recommended Corrective & Preventive Action"></textarea>
                                                 </div>
                                             </div>
@@ -1244,23 +1244,23 @@
                 }
                 console.log("Root Cause Selected Value:", $("#root_cause_analysis").val());
                 const newRow = `
-            <tr id="RowwhywhyanalysisView${whywhyanalysisIndex}">
-                <td><input type="text" name="whywhyanalysis[${whywhyanalysisIndex}][whywhyanalysis_first]" class="form-control"></td>
-                <td><i class="fas fa-arrow-right text-primary"></i></td>
-                <td><input type="text" name="whywhyanalysis[${whywhyanalysisIndex}][whywhyanalysis_second]" class="form-control"></td>
-                <td><i class="fas fa-arrow-right text-primary"></i></td>
-                <td><input type="text" name="whywhyanalysis[${whywhyanalysisIndex}][whywhyanalysis_third]" class="form-control"></td>
-                <td><i class="fas fa-arrow-right text-primary"></i></td>
-                <td><input type="text" name="whywhyanalysis[${whywhyanalysisIndex}][whywhyanalysis_forth]" class="form-control"></td>
-                <td><i class="fas fa-arrow-right text-primary"></i></td>
-                <td><input type="text" name="whywhyanalysis[${whywhyanalysisIndex}][whywhyanalysis_fifth]" class="form-control whywhyanalysis_fifth"></td>
-                <td>
-                    <button type="button" class="btn btn-sm  removewhywhyanalysisRow">
-                        <i class="fa-solid fa-trash text-danger"></i>
-                        </button>
-                </td>
-            </tr>
-        `;
+                        <tr id="RowwhywhyanalysisView${whywhyanalysisIndex}">
+                            <td><input type="text" name="whywhyanalysis[${whywhyanalysisIndex}][whywhyanalysis_first]" class="form-control"></td>
+                            <td><i class="fas fa-arrow-right text-primary"></i></td>
+                            <td><input type="text" name="whywhyanalysis[${whywhyanalysisIndex}][whywhyanalysis_second]" class="form-control"></td>
+                            <td><i class="fas fa-arrow-right text-primary"></i></td>
+                            <td><input type="text" name="whywhyanalysis[${whywhyanalysisIndex}][whywhyanalysis_third]" class="form-control"></td>
+                            <td><i class="fas fa-arrow-right text-primary"></i></td>
+                            <td><input type="text" name="whywhyanalysis[${whywhyanalysisIndex}][whywhyanalysis_forth]" class="form-control"></td>
+                            <td><i class="fas fa-arrow-right text-primary"></i></td>
+                            <td><input type="text" name="whywhyanalysis[${whywhyanalysisIndex}][whywhyanalysis_fifth]" class="form-control whywhyanalysis_fifth"></td>
+                            <td>
+                                <button type="button" class="btn btn-sm  removewhywhyanalysisRow">
+                                    <i class="fa-solid fa-trash text-danger"></i>
+                                    </button>
+                            </td>
+                        </tr>
+                    `;
 
                 $("#whywhyanalysisBody").append(newRow);
                 whywhyanalysisIndex++;
@@ -1477,136 +1477,189 @@
                     $('#department_id').prop('disabled', false);
                 }
             });
-            $(function() {
-                // Initialize form validation
-                $('#incidentinvestigation').validate({
-                    rules: {
-                        'anything_damaged[]': {
-                            required: true,
-                        },
-                        corrective_preventive_action: {
-                            required: true,
-                            minlength: 10,
-                            maxlength: 2000,
-                            pattern: /^[a-zA-Z0-9\s\-_'"()\n\r,.”.;]+$/,
-                        },
-                        action_taken: {
-                            minlength: 10,
-                            maxlength: 2000,
-                            pattern: /^[a-zA-Z0-9\s\-_'"()\n\r,.”.;]+$/,
-                        },
-                        root_cause: {
-                            required: true,
-                        },
-                        responsible_person_id: {
-                            required: true,
-                        },
-                        target_date: {
-                            required: true,
-                        },
-                        risk_analysis: {
-                            required: true,
-                        },
-                        risk_analysis_remark: {
-                            required: function(element) {
-                                return $('input[name="risk_analysis"]:checked').val() === '2';
-                            },
-                            minlength: 3,
-                            maxlength: 2000,
-                            pattern: /^[a-zA-Z0-9\s\-_'"()\n\r,.”.;]+$/
-                        },
 
-                        remark: {
-                            minlength: 10,
-                            maxlength: 2000,
-                            pattern: /^[a-zA-Z0-9\s\-_'"()\n\r,.”.;]+$/
-                        },
+        });
+        $(function() {
+            // Initialize form validation
+            $('#incidentinvestigation').validate({
+                rules: {
+                    'anything_damaged[]': {
+                        required: true,
                     },
-                    messages: {
-                        'anything_damaged[]': {
-                            required: "Was anything damaged is required.",
+                    action_taken: {
+                        minlength: 10,
+                        maxlength: 2000,
+                    },
+                    root_cause: {
+                        required: true,
+                    },
+                    responsible_person_id: {
+                        required: true,
+                    },
+                    target_date: {
+                        required: true,
+                    },
+                    risk_analysis: {
+                        required: true,
+                    },
+                    risk_analysis_remark: {
+                        required: function(element) {
+                            return $('input[name="risk_analysis"]:checked').val() === '2';
                         },
-                        corrective_preventive_action: {
-                            required: "Corrective/preventive action is required.",
-                            minlength: "Minimum 10 characters required.",
-                            maxlength: "Maximum 2000 characters allowed.",
-                            pattern: "Only alphanumeric characters and - _ ' \",”.; ( ) are allowed.",
-                        },
-                        action_taken: {
-                            minlength: "Minimum 10 characters required.",
-                            maxlength: "Maximum 2000 characters allowed.",
-                            pattern: "Only alphanumeric characters and - _ ' \",”.; ( ) are allowed.",
-                        },
-                        root_cause: {
-                            required: "Root Cause Analysis is required.",
-                        },
-                        responsible_person_id: {
-                            required: "Responsible Person is required.",
-                        },
-                        target_date: {
-                            required: "Target Date is required.",
-                        },
-                        risk_analysis: {
-                            required: "Risk Analysis is required.",
-                        },
-                        risk_analysis_remark: {
-                            required: "Risk Analysis Remarks is required.",
-                            minlength: "Details must be at least 3 characters long.",
-                            maxlength: "Details cannot exceed 2000 characters.",
-                            pattern: "Only alphanumeric characters and - _ ' \",”.; ( ) are allowed.",
-                        },
-                        remark: {
-                            minlength: "Minimum 10 characters required.",
-                            maxlength: "Maximum 2000 characters allowed.",
-                            pattern: "Only alphanumeric characters and - _ ' \",”.; ( ) are allowed.",
-                        },
+                        minlength: 3,
+                        maxlength: 2000,
+                        pattern: /^[a-zA-Z0-9\s\-_'"()\n\r,.”.;]+$/
+                    },
 
+                    remark: {
+                        minlength: 10,
+                        maxlength: 2000,
+                        pattern: /^[a-zA-Z0-9\s\-_'"()\n\r,.”.;]+$/
                     },
-                    errorElement: 'span',
-                    errorPlacement: function(error, element) {
-                        error.addClass('invalid-feedback');
-                        element.closest('.form-input').append(error);
+                    corrective_preventive_action: {
+                        required: true,
+                        minlength: 10,
+                        maxlength: 2000,
                     },
-                    highlight: function(element) {
-                        $(element).addClass('is-invalid');
+                    main_root_cause: {
+                        required: true,
+                        minlength: 10,
+                        maxlength: 2000,
                     },
-                    unhighlight: function(element) {
-                        $(element).removeClass('is-invalid');
+                    leading_factors: {
+                        required: true,
                     },
-                    submitHandler: function(form) {
-                        // Form is valid, proceed with capturing the fishbone diagram
-                        let fishboneContainer = $(".fishbone-container")[
-                            0]; // Get the fishbone diagram container
+                    ua_uc_yes_no: {
+                        required: true,
+                    },
+                    'ua_or_uc[]': {
+                        required: true,
+                    },
+                    'rcpa[1]': {
+                        required: true,
+                        minlength: 10,
+                        maxlength: 2000,
+                    },
+                    'responsibility[1]': {
+                        required: true,
+                    },
+                    'timeline[1]': {
+                        required: true,
+                    },
+                    'capa_status[1]': {
+                        required: true,
+                    },
+                },
+                messages: {
+                    'anything_damaged[]': {
+                        required: "Was anything damaged is required.",
+                    },
+                    corrective_preventive_action: {
+                        required: "Corrective/preventive action is required.",
+                        minlength: "Minimum 10 characters required.",
+                        maxlength: "Maximum 2000 characters allowed.",
+                    },
+                    main_root_cause: {
+                        required: "Main Root Cause is required.",
+                        minlength: "Minimum 10 characters required.",
+                        maxlength: "Maximum 2000 characters allowed.",
+                    },
+                    action_taken: {
+                        minlength: "Minimum 10 characters required.",
+                        maxlength: "Maximum 2000 characters allowed.",
+                    },
+                    root_cause: {
+                        required: "Root Cause Analysis is required.",
+                    },
+                    responsible_person_id: {
+                        required: "Responsible Person is required.",
+                    },
+                    target_date: {
+                        required: "Target Date is required.",
+                    },
+                    risk_analysis: {
+                        required: "Risk Analysis is required.",
+                    },
+                    risk_analysis_remark: {
+                        required: "Risk Analysis Remarks is required.",
+                        minlength: "Details must be at least 3 characters long.",
+                        maxlength: "Details cannot exceed 2000 characters.",
+                    },
+                    remark: {
+                        minlength: "Minimum 10 characters required.",
+                        maxlength: "Maximum 2000 characters allowed.",
+                    },
+                    remark: {
+                        required: "Leading Factors is required.",
+                    },
+                    ua_uc_yes_no: {
+                        required: "UAUC is required.",
+                    },
+                    leading_factors: {
+                        required: "Leading Factors is required.",
+                    },
+                    'rcpa[1]': {
+                        required: "Recommended Corrective & Preventive Action is required.",
+                        minlength: "Minimum 10 characters required.",
+                        maxlength: "Maximum 2000 characters allowed.",
+                    },
+                    'responsibility[1]': {
+                        required: "Responsibility is required.",
+                    },
+                    'timeline[1]': {
+                        required: "Timeline is required.",
+                    },
+                    'capa_status[1]': {
+                        required: "Status is required.",
+                    },
+                    'ua_or_uc[]': {
+                        required: "This field is required.",
+                    },
 
-                        // Capture the fishbone diagram as an image
-                        html2canvas(fishboneContainer, {
-                            scale: 2
-                        }).then(function(canvas) {
-                            let imageData = canvas.toDataURL(
-                                "image/png"); // Convert canvas to base64
+                },
+                errorElement: 'span',
+                errorPlacement: function(error, element) {
+                    error.addClass('invalid-feedback');
+                    element.closest('.form-input').append(error);
+                },
+                highlight: function(element) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function(element) {
+                    $(element).removeClass('is-invalid');
+                },
+                submitHandler: function(form) {
+                    // Form is valid, proceed with capturing the fishbone diagram
+                    let fishboneContainer = $(".fishbone-container")[
+                        0]; // Get the fishbone diagram container
 
-                            // Set the image data to the hidden input field
-                            $("#fishbone_image").val(imageData);
+                    // Capture the fishbone diagram as an image
+                    html2canvas(fishboneContainer, {
+                        scale: 2
+                    }).then(function(canvas) {
+                        let imageData = canvas.toDataURL(
+                            "image/png"); // Convert canvas to base64
 
-                            // Now submit the form programmatically
-                            form.submit();
+                        // Set the image data to the hidden input field
+                        $("#fishbone_image").val(imageData);
+
+                        // Now submit the form programmatically
+                        form.submit();
+                    });
+                },
+                invalidHandler: function(event, validator) {
+                    var errors = validator.numberOfInvalids();
+                    if (errors) {
+                        console.log(`There are ${errors} validation errors.`);
+                        validator.errorList.forEach(function(error) {
+                            console.log(
+                                `Field: ${error.element.name}, Error: ${error.message}`
+                            );
                         });
-                    },
-                    invalidHandler: function(event, validator) {
-                        var errors = validator.numberOfInvalids();
-                        if (errors) {
-                            console.log(`There are ${errors} validation errors.`);
-                            validator.errorList.forEach(function(error) {
-                                console.log(
-                                    `Field: ${error.element.name}, Error: ${error.message}`
-                                );
-                            });
-                        }
-                    },
-                });
+                    }
+                },
             });
         });
-
         $(document).ready(function() {
             let form_set_count = 2;
             let serial_number = parseInt("{{ getRCPACount() }}", 10) + 1;
@@ -1625,9 +1678,10 @@
                     });
                     return;
                 }
+
                 let newSerialNumber = 'RCPA-' + ('0000' + serial_number).slice(-5);
                 var newFormSet = `
-                <div class="form-set">
+                    <div class="form-set">
                         <div class="card-header-inner">
                             <h4 class="text-white p-1">RCPA</h4>
                         </div>
@@ -1640,8 +1694,7 @@
                             </button>
                         </div>
                         <div class="row">
-
-                             <div class="col-md-4">
+                            <div class="col-md-4">
                             <div class="form-group form-input">
                                 <label class="form-label require">Serial Number</label>
                                 <input type="text" name="serial_number[${form_set_count}]" class="form-control" placeholder="Serial Number" value="${newSerialNumber}" readonly>
@@ -1650,7 +1703,7 @@
                             <div class="col-md-4">
                                 <div class="form-group form-input">
                                     <label class="form-label require">Recommended Corrective & Preventive Action</label>
-                                    <input type="text" name="rcpa[${form_set_count}]" class="form-control" placeholder="Recommended Corrective & Preventive Action" value="">
+                                    <input type="text" name="rcpa[${form_set_count}]" class="form-control rcpa-input" placeholder="Recommended Corrective & Preventive Action" value="">
                                 </div>
                             </div>
                             <div class="col-md-4">
@@ -1668,58 +1721,66 @@
                             <div class="col-md-4 mt-2">
                                 <div class="form-group form-input">
                                     <label class="form-label require">Status</label>
-                                    <select name="capa_status[${form_set_count}]" class="form-control single-select" style="width: 100%">
+                                    <select name="capa_status[${form_set_count}]" class="form-control single-select capa-status" style="width: 100%">
                                         <option value="">Select RCPA Status</option>
                                         <option value="{{ encryptId(YES) }}">Open</option>
                                         <option value="{{ encryptId(NO) }}">In-Progress</option>
                                         <option value="{{ encryptId(NO) }}">Closed</option>
                                     </select>
-                                    
                                 </div>
                             </div>
                             <div class="col-md-12 mt-2 mb-2">
                                 <div class="form-group form-input">
                                     <label class="form-label">Remarks (If Any)</label>
-                                    <textarea name="capa_remark[${form_set_count}]" class="form-control" placeholder="Remark" rows="3"></textarea>
+                                    <textarea name="capa_remark[${form_set_count}]" class="form-control capa-remark" placeholder="Remark" rows="3"></textarea>
                                 </div>
                             </div>
                         </div>
                     </div>`;
 
                 $('#form-wrapper').append(newFormSet);
-                $("input[name='rcpa[" + form_set_count + "]']").rules('add', {
+
+                // Initialize select2 and datepicker
+                let newElement = $('#form-wrapper .form-set').last().find('.responsibility-select');
+                initResponsibilitySelect(newElement);
+                let timelinePicker = $('#form-wrapper .form-set').last().find('.timeline-picker');
+                initDatePickers(timelinePicker);
+
+                // Add validation rules AFTER the element is added to DOM
+                let $form = $("#incidentinvestigation");
+                $form.validate(); // Ensure validator exists
+
+                $form.find('.form-set').last().find('.rcpa-input').rules('add', {
                     required: true,
                     noSpaces: true,
                     messages: {
                         required: 'Recommended Corrective & Preventive Action is required',
                     }
                 });
-                $("input[name='timeline[" + form_set_count + "]']").rules('add', {
+
+                $form.find('.form-set').last().find('.timeline-picker').rules('add', {
                     required: true,
-                    noSpaces: true,
                     messages: {
                         required: 'Timeline is required',
                     }
                 });
-                $("select[name='rcpa_status[" + form_set_count + "]']").rules('add', {
+
+                $form.find('.form-set').last().find('.capa-status').rules('add', {
                     required: true,
                     messages: {
                         required: 'RCPA Status is required',
                     }
                 });
-                $("textarea[name='remark[" + form_set_count + "]']").rules('add', {
+
+                $form.find('.form-set').last().find('.capa-remark').rules('add', {
                     required: true,
                     messages: {
                         required: 'Remark is required',
                     }
                 });
 
-                let newElement = $('#form-wrapper').last().find('.responsibility-select');
-                initResponsibilitySelect(newElement);
-                let timelinePicker = $('#form-wrapper').last().find('.timeline-picker');
-                initDatePickers(timelinePicker);
-
                 form_set_count++;
+                serial_number++;
                 updatePageIndices();
             });
 

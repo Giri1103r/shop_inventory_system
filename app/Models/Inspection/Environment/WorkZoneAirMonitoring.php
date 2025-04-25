@@ -49,7 +49,7 @@ class WorkZoneAirMonitoring extends Model
     {
         $request = request();
         $monitors = $request->input('monitoring');
-        if (!empty($monitors) && is_array($monitors)) {
+
             foreach ($monitors as  $monitorData) {
 
                 $data = [
@@ -74,7 +74,7 @@ class WorkZoneAirMonitoring extends Model
                 ];
                 $this->create($data);
             }
-        }
+        
     }
 
     public function exportdata()

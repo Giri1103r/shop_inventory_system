@@ -380,8 +380,12 @@
                 newRow.find("input[name$='[act_rule]']").rules("add", {
 
                     required: true,
+                    minLength: 3,
+                    maxLength: 100,
                     messages: {
                         required: "Please Enter the Act rules.",
+                        minlength: "Act/Rule must be at least 3 characters long.",
+                        maxlength: "Act/Rule must not exceed 100 characters."
                     }
                 });
                 newRow.find("input[name$='[next_due_date_of_monitoring_date]']").rules("add", {
@@ -607,11 +611,11 @@
                     },
                     'monitoring[1][date_of_monitoring]': {
                         required: true,
-                        date: true
+
                     },
                     'monitoring[1][next_due_date_of_monitoring]': {
                         required: true,
-                        date: true
+
                     },
                     'monitoring[1][noise_level_dba_day]': {
                         required: true,
@@ -626,17 +630,19 @@
                     },
                     'monitoring[1][date_of_monitoring_date]': {
                         required: true,
-                        date: true
+
                     },
                     'monitoring[1][next_due_date_of_monitoring_dropdown]': {
                         required: true
                     },
                     'monitoring[1][next_due_date_of_monitoring_date]': {
                         required: true,
-                        date: true
+
                     },
                     'monitoring[1][act_rule]': {
-                        required: true
+                        required: true,
+                        minlength: 3,
+                        maxlength: 100,
                     },
                     'monitoring[1][remark]': {
                         required: true
@@ -658,11 +664,11 @@
                     },
                     'monitoring[1][date_of_monitoring]': {
                         required: "Please enter a date.",
-                        date: "Enter a valid date."
+
                     },
                     'monitoring[1][next_due_date_of_monitoring]': {
                         required: "Please enter a date.",
-                        date: "Enter a valid date."
+
                     },
                     'monitoring[1][noise_level_dba_day]': {
                         required: "This field is required.",
@@ -677,17 +683,19 @@
                     },
                     'monitoring[1][date_of_monitoring_date]': {
                         required: "Please enter a date.",
-                        date: "Enter a valid date."
+
                     },
                     'monitoring[1][next_due_date_of_monitoring_dropdown]': {
                         required: "Please select an option."
                     },
                     'monitoring[1][next_due_date_of_monitoring_date]': {
                         required: "Please enter a date.",
-                        date: "Enter a valid date."
+
                     },
                     'monitoring[1][act_rule]': {
-                        required: "Act/Rule is required."
+                        required: "Act/Rule is required.",
+                        minlength: "Act/Rule must be at least 3 characters long.",
+                        maxlength: "Act/Rule must not exceed 100 characters."
                     },
                     'monitoring[1][remark]': {
                         required: "Please enter a remark."

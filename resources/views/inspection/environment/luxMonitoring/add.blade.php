@@ -340,7 +340,7 @@
                         $(this).val("").trigger("change");
                     }
                 });
-                newRow.find("input[name$='[sr_no]']").val("AMBIENT-" + String(rowCount + 1).padStart(4,
+                newRow.find("input[name$='[sr_no]']").val("LUX-" + String(rowCount + 1).padStart(4,
                     '0'));
 
                 newRow.find(".invalid-feedback").remove();
@@ -413,7 +413,16 @@
                         required: "Please Select the date."
                     }
                 });
-
+                row.find("input[name$='[act_rule]']").rules("add", {
+                    minlength: 3,
+                    maxlength: 100,
+                    required: true,
+                    messages: {
+                        minlength: "Act/Rule must be at least 3 characters long.",
+                        maxlength: "Act/Rule must not exceed 100 characters.",
+                        required: "Please Enter the Act Rule."
+                    }
+                });
                 initializeFlatpickr();
                 $('.single-select').select2();
             });
@@ -435,105 +444,9 @@
             initializeFlatpickr();
         });
 
-        function addValidationRules(row) {
-            newRow.find("input[name*='[lux_level1]']").rules("add", {
-                number: true,
-                required: true,
-                min: 0,
-                messages: {
-                    number: "Only numeric values are allowed.",
-                    min: "Lux Level must be a positive number.",
-                    required: "Lux Level is required.",
-                }
-            });
-            newRow.find("input[name*='[lux_level2]']").rules("add", {
-                number: true,
-                required: true,
-                min: 0,
-                messages: {
-                    number: "Only numeric values are allowed.",
-                    min: "Lux Level must be a positive number.",
-                    required: "Lux Level is required.",
-                }
-            });
-            newRow.find("select[name$='[unit_id]']").rules("add", {
-                required: true,
-                messages: {
-                    required: "Please select the Unit .",
-                }
-            });
-            newRow.find("select[name$='[location_id]']").rules("add", {
-                required: true,
-                messages: {
-                    required: "Please select the location.",
-                }
-            });
-            newRow.find("select[name$='[department_id]']").rules("add", {
-                required: true,
-                messages: {
-                    required: "Please select the department.",
 
-                }
-            });
-            newRow.find("input[name$='[next_due_date_of_monitoring2]']").rules("add", {
-                required: true,
-                messages: {
-                    required: "Please Select the date."
-                }
-            });
-            newRow.find("input[name$='[next_due_date_of_monitoring]']").rules("add", {
-                required: true,
-                messages: {
-                    required: "Please Select the date."
-                }
-            });
-            newRow.find("input[name$='[date_of_monitoring2]']").rules("add", {
-                required: true,
-                messages: {
-                    required: "Please Select the date."
-                }
-            });
-            newRow.find("input[name$='[date_of_monitoring]']").rules("add", {
-                required: true,
-                messages: {
-                    required: "Please Select the date."
-                }
-            });
-        }
 
-        // $('#addambient').validate({
-        //     rules: {
-        //         'monitoring[1][lux_level1]': {
-        //             number: true,
-        //             min: 0,
-        //         },
-        //         'monitoring[1][lux_level2]': {
-        //             number: true,
-        //             min: 0,
-        //         },
-        //     },
-        //     messages: {
-        //         'monitoring[1][lux_level1]': {
-        //             number: "Only numeric values are allowed.",
-        //             min: "Lux Level must be a positive number."
-        //         },
-        //         'monitoring[1][lux_level2]': {
-        //             number: "Only numeric values are allowed.",
-        //             min: "Lux Level must be a positive number."
-        //         },
-        //     },
-        //     errorElement: 'span',
-        //     errorPlacement: function(error, element) {
-        //         error.addClass('invalid-feedback');
-        //         element.closest('.form-input').append(error);
-        //     },
-        //     highlight: function(element) {
-        //         $(element).addClass('is-invalid');
-        //     },
-        //     unhighlight: function(element) {
-        //         $(element).removeClass('is-invalid');
-        //     }
-        // });
+
 
 
         $(function() {
@@ -585,22 +498,24 @@
                     },
                     'monitoring[1][date_of_monitoring2]': {
                         required: true,
-                        date: true
+
                     },
                     'monitoring[1][next_due_date_of_monitoring2]': {
                         required: true,
-                        date: true
+
                     },
                     'monitoring[1][date_of_monitoring]': {
                         required: true,
-                        date: true
+
                     },
                     'monitoring[1][next_due_date_of_monitoring]': {
                         required: true,
-                        date: true
+
                     },
                     'monitoring[1][act_rule]': {
-                        required: true
+                        required: true,
+                        minlength: 3,
+                        maxlength: 100,
                     },
                 },
                 messages: {
@@ -623,22 +538,24 @@
                     },
                     'monitoring[1][next_due_date_of_monitoring2]': {
                         required: "Please select the next due date of monitoring (date input).",
-                        date: "Please enter a valid date."
+
                     },
                     'monitoring[1][date_of_monitoring2]': {
                         required: "Please select the date of monitoring (date input).",
-                        date: "Please enter a valid date."
+
                     },
                     'monitoring[1][date_of_monitoring]': {
                         required: "Please select the date of monitoring.",
-                        date: "Please enter a valid date."
+
                     },
                     'monitoring[1][next_due_date_of_monitoring]': {
                         required: "Please select the next due date of monitoring.",
-                        date: "Please enter a valid date."
+
                     },
                     'monitoring[1][act_rule]': {
-                        required: "Act/Rule is required."
+                        required: "Act/Rule is required.",
+                        minlength: "Act/Rule must be at least 3 characters long.",
+                        maxlength: "Act/Rule must not exceed 100 characters.",
                     },
                 },
                 submitHandler: function(form) {
@@ -649,6 +566,82 @@
             $("#lesson_learned_block .lesson_learned_row").each(function() {
                 addValidationRules($(this));
             });
+
+            function addValidationRules(row) {
+                row.find("input[name*='[lux_level1]']").rules("add", {
+                    number: true,
+                    required: true,
+                    min: 0,
+                    messages: {
+                        number: "Only numeric values are allowed.",
+                        min: "Lux Level must be a positive number.",
+                        required: "Lux Level is required.",
+                    }
+                });
+                row.find("input[name*='[lux_level2]']").rules("add", {
+                    number: true,
+                    required: true,
+                    min: 0,
+                    messages: {
+                        number: "Only numeric values are allowed.",
+                        min: "Lux Level must be a positive number.",
+                        required: "Lux Level is required.",
+                    }
+                });
+                row.find("select[name$='[unit_id]']").rules("add", {
+                    required: true,
+                    messages: {
+                        required: "Please select the Unit .",
+                    }
+                });
+                row.find("select[name$='[location_id]']").rules("add", {
+                    required: true,
+                    messages: {
+                        required: "Please select the location.",
+                    }
+                });
+                row.find("select[name$='[department_id]']").rules("add", {
+                    required: true,
+                    messages: {
+                        required: "Please select the department.",
+
+                    }
+                });
+                newRow.find("input[name$='[next_due_date_of_monitoring2]']").rules("add", {
+                    required: true,
+                    messages: {
+                        required: "Please Select the date."
+                    }
+                });
+                newRow.find("input[name$='[next_due_date_of_monitoring]']").rules("add", {
+                    required: true,
+                    messages: {
+                        required: "Please Select the date."
+                    }
+                });
+                newRow.find("input[name$='[date_of_monitoring2]']").rules("add", {
+                    required: true,
+                    messages: {
+                        required: "Please Select the date."
+                    }
+                });
+                newRow.find("input[name$='[date_of_monitoring]']").rules("add", {
+                    required: true,
+                    messages: {
+                        required: "Please Select the date."
+                    }
+                });
+                row.find("input[name$='[act_rule]']").rules("add", {
+                    minlength: 3,
+                    maxlength: 100,
+                    required: true,
+                    messages: {
+                        minlength: "Act/Rule must be at least 3 characters long.",
+                        maxlength: "Act/Rule must not exceed 100 characters.",
+                        required: "Please Enter the Act Rule."
+                    }
+                });
+            }
         });
     </script>
 @endpush

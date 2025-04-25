@@ -22,8 +22,6 @@ class RiskAnalysis extends Model
 
     protected $fillable = [
         'incident_id',
-        'accident_id',
-        'fire_id',
         'risk_level',
         'description_ca',
         'status',
@@ -46,8 +44,6 @@ class RiskAnalysis extends Model
 
         $insert_array = array(
             'incident_id' => decryptId($request->incident_id) ?? null,
-            'accident_id' => decryptId($request->accident_id) ?? null ,
-            'fire_id' => decryptId($request->fire_incident_id) ?? null ,
             'risk_level' => $request->risk_level,
             'description_ca' => $request->description_ca,
             'created_by' => Auth::id()

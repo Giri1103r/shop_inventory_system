@@ -12,8 +12,8 @@ use Illuminate\Support\Facades\Session;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Master\Employee;
-use App\Models\Inspection\environment\AmbientNoiseMonitoring;
-use App\Models\Inspection\environment\Environment;
+use App\Models\Inspection\Environment\AmbientNoiseMonitoring;
+use App\Models\Inspection\Environment\Environment;
 use App\Models\Inspection\InspectionStaticDocno;
 use App\Models\Master\Location;
 use App\Models\Master\Unit;
@@ -222,7 +222,7 @@ class AmbientNoiseMonitoringController extends Controller
             $environmentID = $this->environment->statuschange($id, $type);
             $this->ambient_noise_monitoring->statuschange($id);
 
-            return response()->json(['status' => 'success', 'msg' => 'status changed'], 200);
+            return response()->json(['status' => 'success', 'msg' => 'Ambient Noise Monitoring status changed Successfully'], 200);
         } catch (Exception $ex) {
             report($ex);
             return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
@@ -245,6 +245,7 @@ class AmbientNoiseMonitoringController extends Controller
             $currentRow = $row;
             foreach ($allData as $details) {
                 $currentRow = $row;
+                // dd($details);
                 $environmentData =   $this->environment->selectOne($details->id, $type);
                 $ambientNoiseDataList = $this->ambient_noise_monitoring->selectOne($details->id);
                 $document_no  = $this->static_docno->select('id', 'doc_no', 'issue_date', 'rev_dt')->where([

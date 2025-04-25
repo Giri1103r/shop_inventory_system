@@ -873,79 +873,7 @@
                                     @endif
                                 </div>
                             @endif
-                            @if ($rcpa->incident_status == STATUS_ACTION_PENDING)
-                                <div class="card-body ">
-                                    <div class="row">
-                                        <div class="card-header-inner">
-                                            <h4 class="text-white">Action submission</h4>
-                                        </div>
-                                    </div>
-                                    <div class="basic-form">
-                                        <form method="POST" id="action_submission"
-                                            action="{{ admin_url('incident/initial-incident/actiontaken/submit') }}"
-                                            enctype="multipart/form-data">
-                                            @csrf
-                                            <div class="row">
-                                                <input type="hidden" class="form-control" name="incident_id"
-                                                    id="incident_id" value="{{ encryptId($incident_report->id) }}">
-                                                <input type="hidden" class="form-control" name="rcpa_id"
-                                                    id="incident_id" value="{{ encryptId($rcpa->id) }}">
-                                                <div class="col-md-4 mb-3">
-                                                    <div class="form-group form-input">
-                                                        <label for="name" class="form-label">Submission By</label>
-                                                        <input type="text" name="reviewer_name" id="reviewer_name"
-                                                            class="form-control" value="{{ Auth::user()->name ?? '' }}"
-                                                            readonly>
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-md-4 mb-3">
-                                                    <div class="form-group form-input">
-                                                        <label for="date" class="form-label require">Date</label>
-                                                        <input type="text" name ="action_submission_date"
-                                                            id="" class="form-control" placeholder="Date"
-                                                            readonly value="{{ todaydate() }}">
-                                                    </div>
-                                                </div>
-                                                <div id="file-upload-container" class="row mt-3">
-                                                    <div class="col-12 mb-3">
-                                                        <button class="btn btn-primary addmorebutton" type="button"
-                                                            id="dynamic-add-more">
-                                                            Add
-                                                        </button>
-                                                    </div>
-    
-                                                    <div class="col-md-4 mb-3 file-upload-block" id="file-upload-0">
-                                                        <label for="evidence_0" class="form-label require">Evidence</label>
-                                                        <input type="file" class="form-control validate-file-required"
-                                                            name="evidence[0][]" id="evidence_0" multiple>
-                                                        <div class="text-danger"></div>
-                                                        <small>Allowed file types: png, jpeg , jpg</small>
-                                                        <div class="preview-container mt-2 d-flex flex-wrap gap-2"
-                                                            id="preview-container-0"></div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-12 mb-3">
-                                                    <div class="form-group form-input">
-                                                        <label class="form-label require">Action Taken</label>
-                                                        <textarea name="action_submission_description" id="action_submission_description" class="form-control"
-                                                            rows="4" required></textarea>
-                                                    </div>
-                                                </div>
-
-                                            </div>
-                                            <hr>
-                                            <div class="submit-button" style="text-align: right;">
-                                                <x-button-submit class="submit"></x-button-submit>
-                                                <x-button-reset class=""></x-button-reset>
-                                                <x-button-cancel
-                                                    href="{{ admin_url('incident/initial-incident/list') }}"></x-button-cancel>
-                                            </div>
-                                        </form>
-
-                                    </div>
-                                </div>
-                            @elseif($rcpa->incident_status > STATUS_ACTION_PENDING && $rcpa->incident_status != STATUS_EHSAPPROVAL_REJECTED)
+                            @if ($rcpa->incident_status > STATUS_ACTION_PENDING)
                                 <div class="card-body ">
                                     <div class="row">
                                         <div class="card-header-inner">
@@ -993,61 +921,7 @@
                                     </div>
                                 </div>
                             @endif
-                            @if ($rcpa->incident_status == STATUS_EHSAPPROVAL_PENDING)
-                                <div class="card-body ">
-                                    <div class="row">
-                                        <div class="card-header-inner">
-                                            <h4 class="text-white">EHS Approval</h4>
-                                        </div>
-                                    </div>
-                                    <div class="basic-form">
-                                        <form method="POST" id="ehs_approval"
-                                            action="{{ admin_url('incident/initial-incident/ehApproval/submit') }}"
-                                            enctype="multipart/form-data">
-                                            @csrf
-                                            <div class="row">
-                                                <input type="hidden" class="form-control" name="incident_id"
-                                                    id="incident_id" value="{{ encryptId($incident_report->id) }}">
-                                                <input type="hidden" class="form-control" name="rcpa_id" id="rcpa_id"
-                                                    value="{{ encryptId($rcpa->id) }}">
-                                                <div class="col-md-4 mb-3">
-                                                    <div class="form-group form-input">
-                                                        <label for="name" class="form-label">Approval By</label>
-                                                        <input type="text" name="reviewer_name" id="reviewer_name"
-                                                            class="form-control" value="{{ Auth::user()->name ?? '' }}"
-                                                            readonly>
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-md-4 mb-3">
-                                                    <div class="form-group form-input">
-                                                        <label for="date" class="form-label require">Date</label>
-                                                        <input type="text" name ="date" id=""
-                                                            class="form-control" placeholder="Date" readonly
-                                                            value="{{ todaydate() }}">
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-md-12 mb-3">
-                                                    <div class="form-group form-input">
-                                                        <label class="form-label require">Remark</label>
-                                                        <textarea name="remark" id="remark" class="form-control" rows="4" required></textarea>
-                                                    </div>
-                                                </div>
-
-                                            </div>
-                                            <hr>
-                                            <div class="d-flex float-end gap-2 mx-auto">
-                                                <button type="submit" name="approve" value="approve"
-                                                    class="btn btn-success w-100">Approve</button>
-                                                <button type="submit" name="reject" value="reject"
-                                                    class="btn btn-danger w-100">Reject</button>
-                                            </div>
-                                        </form>
-
-                                    </div>
-                                </div>
-                            @elseif($rcpa->incident_status == STATUS_INCIDENT_CLOSED)
+                            @if($rcpa->incident_status == STATUS_INCIDENT_CLOSED || $rcpa->incident_status == STATUS_EHSAPPROVAL_REJECTED )
                                 <div class="card-body ">
                                     <div class="row">
                                         <div class="card-header-inner">

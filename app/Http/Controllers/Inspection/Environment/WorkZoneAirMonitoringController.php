@@ -12,8 +12,8 @@ use Illuminate\Support\Facades\Session;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Master\Employee;
-use App\Models\Inspection\environment\WorkZoneAirMonitoring;
-use App\Models\Inspection\environment\Environment;
+use App\Models\Inspection\Environment\WorkZoneAirMonitoring;
+use App\Models\Inspection\Environment\Environment;
 use App\Models\Inspection\InspectionStaticDocno;
 use App\Models\Master\Location;
 use App\Models\Master\Unit;
@@ -73,7 +73,7 @@ class WorkZoneAirMonitoringController extends Controller
                         })
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            $btn = '<a href="' . admin_url('environment/work-zone/air/view/' . encryptId($row->id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
+                            $btn = '<a href="' . admin_url('environment/work-zone/air/view/' . encryptId($row->id)) . '"   class="view-icon me-1" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
                             // if (CheckUserRole(ROLE_SUPERADMIN)) {
 
                             // $btn .= '<a href="javascript:void(0);"  data-id="' . encryptId($row->id) . '"  class="recordDelete" title="' . __('common.delete') . '"><i class="fa-solid fa-trash text-danger" ></i></i></a> ';
@@ -199,7 +199,7 @@ class WorkZoneAirMonitoringController extends Controller
             $environmentID = $this->environment->statuschange($id, $type);
             $this->workZone_air_monitoring->statuschange($id);
 
-            return response()->json(['status' => 'success', 'msg' => 'status changed'], 200);
+            return response()->json(['status' => 'success', 'msg' => 'Work Zone Air status changed Successfully'], 200);
         } catch (Exception $ex) {
             report($ex);
             return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);

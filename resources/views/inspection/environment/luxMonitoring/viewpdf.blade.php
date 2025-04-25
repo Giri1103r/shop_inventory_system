@@ -210,7 +210,7 @@
                 <td colspan="4" style="border: 1px solid black; padding: 8px;">{{ $list->location_name }}</td>
                 <td colspan="2" style="border: 1px solid black; padding: 8px;">{{ $list->unit_name }}</td>
                 <td colspan="3" style="border: 1px solid black; padding: 8px;">{{ $list->department_name }}</td>
-                <td colspan="3" style="border: 1px solid black; padding: 8px;">{{ $list->lux_level }}</td>
+                <td colspan="3" style="border: 1px solid black; padding: 8px;">{{ $list->lux_level1 }}</td>
                 <td colspan="3" style="border: 1px solid black; padding: 8px;">{{ Displaydateformat($list->date_of_monitoring) }}</td>
                 <td colspan="3" style="border: 1px solid black; padding: 8px;">{{ Displaydateformat($list->next_due_date_of_monitoring) }}</td>
                 <td colspan="3" style="border: 1px solid black; padding: 8px;">{{ $list->lux_level2 }}</td>
