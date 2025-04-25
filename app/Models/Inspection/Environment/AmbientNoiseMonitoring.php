@@ -46,8 +46,10 @@ class AmbientNoiseMonitoring extends Model
     public function store($environmentId)
     {
         $request = request();
+
         $monitors = $request->input('monitoring');
-        if (!empty($monitors) && is_array($monitors)) {
+
+
             foreach ($monitors as  $monitorData) {
 
                 $data = [
@@ -68,9 +70,10 @@ class AmbientNoiseMonitoring extends Model
                     'remark' =>  $monitorData['remark'],
                     'created_by' => Auth::id(),
                 ];
+              
                    $this->create($data);
             }
-        }
+
     }
 
     public function exportdata()

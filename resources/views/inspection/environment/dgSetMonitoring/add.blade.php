@@ -262,7 +262,7 @@
                         $(this).val("").trigger("change");
                     }
                 });
-                newRow.find("input[name$='[sr_no]']").val("AMBIENT-" + String(rowCount + 1).padStart(4,
+                newRow.find("input[name$='[sr_no]']").val("DG-" + String(rowCount + 1).padStart(4,
                     '0'));
 
                 newRow.find(".invalid-feedback").remove();
