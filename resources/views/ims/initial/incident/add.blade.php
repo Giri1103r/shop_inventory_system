@@ -1856,7 +1856,6 @@
                             required: true,
                             minlength: 10,
                             maxlength: 2000,
-                            pattern: /^[a-zA-Z0-9\s\-_'"()\n\r,.”.;]+$/,
                         },
                         details: {
                             required: function(element) {
@@ -1864,13 +1863,11 @@
                             },
                             minlength: 3,
                             maxlength: 2000,
-                            pattern: /^[a-zA-Z0-9\s\-_'"()\n\r,.”.;]+$/,
                         },
                         corrective_preventive_action: {
                             required: true,
                             minlength: 10,
                             maxlength: 2000,
-                            pattern: /^[a-zA-Z0-9\s\-_'"()\n\r,.”.;]+$/,
                         },
                         responsible_person_id: {
                             required: true,
@@ -1887,12 +1884,10 @@
                             },
                             minlength: 3,
                             maxlength: 2000,
-                            pattern: /^[a-zA-Z0-9\s\-_'"()\n\r,.”.;]+$/
                         },
                         remark: {
                             minlength: 10,
                             maxlength: 2000,
-                            pattern: /^[a-zA-Z0-9\s\-_'"()\n\r,.”.;]+$/
                         },
                     },
                     messages: {
@@ -1927,19 +1922,16 @@
                             required: "Action taken is required.",
                             minlength: "Minimum 10 characters required.",
                             maxlength: "Maximum 2000 characters allowed.",
-                            pattern: "Only alphanumeric characters and - _ ' \",”.; ( ) are allowed.",
                         },
                         details: {
                             required: "Please provide details of the treatment.",
                             minlength: "Details must be at least 3 characters long.",
                             maxlength: "Details cannot exceed 2000 characters.",
-                            pattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed."
                         },
                         corrective_preventive_action: {
                             required: "Corrective/preventive action is required.",
                             minlength: "Minimum 10 characters required.",
                             maxlength: "Maximum 2000 characters allowed.",
-                            pattern: "Only alphanumeric characters and - _ ' \",”.; ( ) are allowed.",
                         },
                         responsible_person_id: {
                             required: "Responsible person ID is required.",
@@ -1954,12 +1946,10 @@
                             required: "Risk Analysis Remarks is required.",
                             minlength: "Details must be at least 3 characters long.",
                             maxlength: "Details cannot exceed 2000 characters.",
-                            pattern: "Only alphanumeric characters and - _ ' \",”.; ( ) are allowed.",
                         },
                         remark: {
                             minlength: "Minimum 10 characters required.",
                             maxlength: "Maximum 2000 characters allowed.",
-                            pattern: "Only alphanumeric characters and - _ ' \",”.; ( ) are allowed.",
                         },
                     },
 
@@ -2022,7 +2012,6 @@
                         required: true,
                         minlength: 2,
                         maxlength: 2000,
-                        pattern: /^[a-zA-Z0-9\s\-_'"()]+$/,
                     },
                     location_id: {
                         required: true,
@@ -2031,7 +2020,6 @@
                         required: true,
                         minlength: 2,
                         maxlength: 2000,
-                        pattern: /^[a-zA-Z0-9\s\-_'"()]+$/,
                     },
                     iir_type: {
                         required: true,
@@ -2059,14 +2047,12 @@
                         required: true,
                         minlength: 2,
                         maxlength: 2000,
-                        pattern: /^[a-zA-Z0-9\s\-_'",”%+\/!\\()]+$/
 
                     },
                     immediate_action_taken: {
                         required: true,
                         minlength: 2,
                         maxlength: 2000,
-                        pattern: /^[a-zA-Z0-9\s\-_'",”%+\/!\\()]+$/
 
                     },
                     'evidence[0][]': {
@@ -2089,7 +2075,6 @@
                         required: "Shift is required.",
                         minlength: "Shift Required must be exactly 2 characters.",
                         maxlength: "Shift Required must be exactly 2000 characters.",
-                        pattern: "Only alphanumeric characters and (-, _, ‘, “, ()) are allowed.",
                     },
                     location_id: {
                         required: "Location is required.",
@@ -2098,7 +2083,6 @@
                         required: "Exact Location is required.",
                         minlength: "Exact Location Required must be exactly 2 characters.",
                         maxlength: "Exact Location Required must be exactly 2000 characters.",
-                        pattern: "Only alphanumeric characters and (-, _, ‘, “, ()) are allowed.",
                     },
                     iir_type: {
                         required: "IIR Type is required.",
@@ -2126,14 +2110,12 @@
                         required: "Brief Description is required.",
                         minlength: "Brief Description Required must be exactly 2 characters.",
                         maxlength: "Brief Description Required must be exactly 2000 characters.",
-                        pattern: "Only alphanumeric characters and (”%+-_/!\,-, _, ‘, “, ()) are allowed.",
 
                     },
                     immediate_action_taken: {
                         required: "Immediate Action Taken is required.",
                         minlength: "Immediate Action Taken Required must be exactly 2 characters.",
                         maxlength: "Immediate Action Taken Required must be exactly 2000 characters.",
-                        pattern: "Only alphanumeric characters and (”%+-_/!\,-, _, ‘, “, ()) are allowed.",
 
                     },
                     'evidence[0][]': {

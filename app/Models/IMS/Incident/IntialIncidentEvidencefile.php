@@ -214,16 +214,16 @@ class IntialIncidentEvidencefile extends Model
 
     public function selectOne($id)
     {
-
         $data = $this->select(
             'ims_initial_incident_evidence_upload.*',
         )
             ->where('ims_initial_incident_evidence_upload.incident_id', $id)
+            ->where('ims_initial_incident_evidence_upload.capa_id', null)
             ->get();
 
         return $data;
     }
-    public function SelectcapaEvidence($id,$incident_id)
+    public function SelectcapaEvidence($id, $incident_id)
     {
 
         $data = $this->select(
@@ -232,7 +232,6 @@ class IntialIncidentEvidencefile extends Model
             ->where('ims_initial_incident_evidence_upload.incident_id', $incident_id)
             ->where('ims_initial_incident_evidence_upload.capa_id', $id)
             ->get();
-// dd($data);
         return $data;
     }
     protected static function booted()

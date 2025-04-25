@@ -86,7 +86,7 @@
                     </td>
                     <td border="0"
                         style="width:50%;float:right;text-align:right;font-size: 24px;font-weight:bold;font-family: Georgia, serif;">
-                        Incident
+                        {{ $incident_report->sr_no }}
                     </td>
                 </tr>
             </table>
@@ -454,6 +454,14 @@
                         {{ $getInvestigation->action_taken }}
                     </td>
                 </tr>
+             
+                <tr>
+                    <td width="50%" style="padding:5px;"><b>Remarks (If Any)</b></td>
+                    <td width="2%" style="padding:5px;">:</td>
+                    <td width="48%" style="padding:5px;">
+                        {{ $getInvestigation->remark }}
+                    </td>
+                </tr>
                 <tr>
                     <td width="50%" style="padding:5px;"><b>Recommended Corrective & Preventive
                             Action</b></td>
@@ -462,28 +470,6 @@
                         {{ $getInvestigation->corrective_preventive_action }}
                     </td>
                 </tr>
-                <tr>
-                    <td width="50%" style="padding:5px;"><b>Responsible Person</b></td>
-                    <td width="2%" style="padding:5px;">:</td>
-                    <td width="48%" style="padding:5px;">
-                        {{ $getInvestigation->responsible_person }}
-                    </td>
-                </tr>
-                <tr>
-                    <td width="50%" style="padding:5px;"><b>Target Date</b></td>
-                    <td width="2%" style="padding:5px;">:</td>
-                    <td width="48%" style="padding:5px;">
-                        {{ $getInvestigation->target_date }}
-                    </td>
-                </tr>
-                <tr>
-                    <td width="50%" style="padding:5px;"><b>Remarks (If Any)</b></td>
-                    <td width="2%" style="padding:5px;">:</td>
-                    <td width="48%" style="padding:5px;">
-                        {{ $getInvestigation->remark }}
-                    </td>
-                </tr>
-
                 <tr>
                     <td width="50%" style="padding:5px;"><b>Risk Analysis</b></td>
                     <td width="2%" style="padding:5px;">:</td>
@@ -577,6 +563,12 @@
             </div>
             <table width="100%" style="width:100%;">
                 <tr>
+                    <td width="50%" style="padding:5px;"><b>RCPA ID</b></td>
+                    <td width="2%" style="padding:5px;">:</td>
+                    <td width="48%" style="padding:5px;">
+                        {{ $rcpa->rcpa_id }}</td>
+                </tr>
+                <tr>
                     <td width="50%" style="padding:5px;"><b>Recommended Corrective & Preventive
                             Action</b></td>
                     <td width="2%" style="padding:5px;">:</td>
@@ -602,11 +594,11 @@
                     <td width="2%" style="padding:5px;">:</td>
                     <td width="48%" style="padding:5px;">
                         @if ($rcpa->capa_status == 1)
-                            <span class="badge bg-success">Open</span>
+                            <span class="">Open</span>
                         @elseif($rcpa->capa_status == 2)
-                            <span class="badge bg-warning text-dark">In Progress</span>
+                            <span class="">In Progress</span>
                         @elseif($rcpa->capa_status == 3)
-                            <span class="badge bg-secondary">Closed</span>
+                            <span class="">Closed</span>
                         @endif
                     </td>
                 </tr>
@@ -674,14 +666,6 @@
                         <span>Unsafe Condition: {!! in_array('2', $ua_uc_values) ? '&#10004;' : '&#10008;' !!}</span>
                         <br>
                         <span>Natural Causes: {!! in_array('3', $ua_uc_values) ? '&#10004;' : '&#10008;' !!}</span>
-                    </td>
-                </tr>
-
-                <tr>
-                    <td width="50%" style="padding:5px;"><b>Description of UAUC</b></td>
-                    <td width="2%" style="padding:5px;">:</td>
-                    <td width="48%" style="padding:5px;">
-                        {{ $incident_report->description_uauc }}
                     </td>
                 </tr>
             </table>

@@ -124,8 +124,8 @@ class EmployeeTemp extends Model
                     ]);
                     continue;
                 }
-            
-                $emailExists = $this->where('email', $item['Emp_OfficialMail'])->where('emp_id', '!=', $item['pk_Emp_Code'])->exists();
+
+                $emailExists = $this->where('email', $item['Emp_OfficialMail'])->where('emp_id', '!=', $item['pk_Emp_Code'])->where('status', '=', $item['Emp_Active'] == 1)->exists();
 
                 if ($emailExists) {
                     $errorMessage = "Email already exists.";

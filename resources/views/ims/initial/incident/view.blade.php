@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Initial Incident Review')
+@section('title', 'Initial Incident/Accident Report')
 @section('pageurl', admin_url('incident/initial-incident/list'))
 
 
@@ -404,13 +404,20 @@
                                             </div>
                                         </div>
                                         <div class="mb-3 col-md-4 form-input">
+                                            <label class="form-label view_label">{{ __('Target Date') }}</label>
+                                            <div class="view_data">
+                                                {{ Displaydateformat($incident_report->target_date) }}
+                                            </div>
+                                        </div>
+                                        <div class="mb-3 col-md-4 form-input">
                                             <label for="team_id" class="form-label">I.M Team members</label>
                                             <div class="view_data">
                                                 {{ $getEHSReview->team_member_names }}
                                             </div>
                                         </div>
                                         <div class="mb-3 col-md-4 form-input">
-                                            <label for="team_id" class="form-label">Incident/Accident Investigation Report Prepared by</label>
+                                            <label for="team_id" class="form-label">Incident/Accident Investigation
+                                                Report Prepared by</label>
                                             <div class="view_data">
                                                 {{ getUsername($incident_report->investigation_reported_by) }}
                                             </div>
@@ -735,6 +742,12 @@
                                     <div class="row">
                                         @foreach ($rcpa as $rcpa)
                                             <div class="mb-3 col-md-4 form-input">
+                                                <label class="form-label view_label">RCPA ID</label>
+                                                <div class="view_data">
+                                                    {{ $rcpa->rcpa_id }}
+                                                </div>
+                                            </div>
+                                            <div class="mb-3 col-md-4 form-input">
                                                 <label class="form-label view_label">Recommended Corrective & Preventive
                                                     Action</label>
                                                 <div class="view_data">
@@ -836,12 +849,6 @@
                                                 </div>
 
 
-                                            </div>
-                                            <div class="mb-3 col-md-4 form-input">
-                                                <label class="form-label">Description of UAUC</label>
-                                                <div class="view_data">
-                                                    {{ $incident_report->description_uauc }}
-                                                </div>
                                             </div>
                                         @endif
                                     </div>

@@ -295,6 +295,8 @@
                 'ohs_compliance_index[1]': {
                     required: true,
                     noSpaces: true,
+                    minlength: 3,
+                    maxlength: 30,
                 },
                 'frequency[1]': {
                     required: true,
@@ -302,6 +304,8 @@
                 'scope[1]': {
                     required: true,
                     noSpaces: true,
+                    minlength: 3,
+                    maxlength: 30,
                 },
                 'emp_id[1]': {
                     required: true,
@@ -309,14 +313,20 @@
                 'authority[1]': {
                     required: true,
                     noSpaces: true,
+                    minlength: 3,
+                    maxlength: 30,
                 },
                 'accountability[1]': {
                     required: true,
                     noSpaces: true,
+                    minlength: 3,
+                    maxlength: 30,
                 },
                 'remark[1]': {
                     required: true,
                     noSpaces: true,
+                    minlength: 3,
+                    maxlength: 300,
                 },
             },
             messages: {
@@ -334,24 +344,34 @@
                 },
                 'ohs_compliance_index[1]': {
                     required: "OHS Compliance Index is Required",
+                    minlength: " Minimum 3 characters of OHS Compliance  is Required",
+                    maxlength: "Minimum 30 characters of OHS Compliance  is Required",
                 },
                 'frequency[1]': {
                     required: "Frequency is Required",
                 },
                 'scope[1]': {
                     required: "Scope is Required",
+                    minlength: " Minimum 3 characters of Scope  is Required",
+                    maxlength: "Minimum 30 characters of Scope  is Required",
                 },
                 'emp_id[1]': {
                     required: "Responsibility is Required",
                 },
                 'authority[1]': {
                     required: "Authority is Required",
+                    minlength: " Minimum 3 characters of Authority  is Required",
+                    maxlength: "Minimum 30 characters of Authority  is Required",
                 },
                 'accountability[1]': {
                     required: "Accountability is Required",
+                    minlength: " Minimum 3 characters of Accountability  is Required",
+                    maxlength: "Minimum 30 characters of Accountability  is Required",
                 },
                 'remark[1]': {
                     required: "Remark is Required",
+                    minlength: " Minimum 3 characters ofRemark is Required",
+                    maxlength: "Minimum 300 characters ofRemark is Required",
                 },
             },
             errorElement: 'span',
@@ -542,9 +562,13 @@
             $("input[name='ohs_compliance_index[" + form_set_count + "]']").rules('add', {
                 required: true,
                 noSpaces: true,
+                minlength: 3,
+                maxlength: 30,
                 messages: {
                     required: 'OHS Compliance Index is required',
-                    noSpaces: 'Item Code cannot be empty or only spaces'
+                    noSpaces: 'Item Code cannot be empty or only spaces',
+                    minlength: " Minimum 3 characters of OHS Compliance  is Required",
+                    maxlength: "Minimum 30 characters of OHS Compliance  is Required",
                 }
             });
 
@@ -558,36 +582,51 @@
             $("input[name='scope[" + form_set_count + "]']").rules('add', {
                 required: true,
                 noSpaces: true,
+                minlength: 3,
+                maxlength: 30,
                 messages: {
                     required: 'Scope is required',
-                    noSpaces: 'Item Code cannot be empty or only spaces'
+                    noSpaces: 'Item Code cannot be empty or only spaces',
+                    minlength: " Minimum 3 characters of Scope  is Required",
+                    maxlength: "Minimum 30 characters of Scope  is Required",
                 }
             });
 
             $("input[name='authority[" + form_set_count + "]']").rules('add', {
                 required: true,
                 noSpaces: true,
+                minlength: 3,
+                maxlength: 30,
                 messages: {
                     required: 'Authority is required',
-                    noSpaces: 'Item Code cannot be empty or only spaces'
+                    noSpaces: 'Item Code cannot be empty or only spaces',
+                    minlength: " Minimum 3 characters of Authority  is Required",
+                    maxlength: "Minimum 30 characters of Authority  is Required",
                 }
             });
 
             $("input[name='accountability[" + form_set_count + "]']").rules('add', {
                 required: true,
                 noSpaces: true,
+                minlength: 3,
+                maxlength: 30,
                 messages: {
                     required: 'Accountability is required',
-                    noSpaces: 'Item Code cannot be empty or only spaces'
+                    noSpaces: 'Item Code cannot be empty or only spaces',  minlength: " Minimum 3 characters of Accountability  is Required",
+                    maxlength: "Minimum 30 characters of Accountability  is Required",
                 }
             });
 
             $("textarea[name='remark[" + form_set_count + "]']").rules('add', {
                 required: true,
                 noSpaces: true,
+                minlength: 3,
+                maxlength: 300,
                 messages: {
                     required: 'Remark is required',
-                    noSpaces: 'Remark cannot be empty or only spaces'
+                    noSpaces: 'Remark cannot be empty or only spaces',
+                    minlength: " Minimum 3 characters ofRemark is Required",
+                    maxlength: "Minimum 300 characters ofRemark is Required",
                 }
             });
 

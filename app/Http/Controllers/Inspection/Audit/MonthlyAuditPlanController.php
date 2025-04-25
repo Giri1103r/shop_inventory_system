@@ -143,7 +143,7 @@ class MonthlyAuditPlanController extends Controller
                 'monthly_audit.*.points' => 'required',
                 'monthly_audit.*.remark' => 'required',
             ];
-            
+
             $messages = [
                 'monthly_audit.*.auditee_name.required' => 'Auditee name is required.',
                 'monthly_audit.*.unit_id.required' => 'Unit ID is required.',
@@ -155,9 +155,9 @@ class MonthlyAuditPlanController extends Controller
                 'monthly_audit.*.points.required' => 'Points field is required.',
                 'monthly_audit.*.remark.required' => 'Remark must required',
             ];
-            
+
             $validator = Validator::make($request->all(), $rules, $messages);
-            
+
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator)->withInput();
             }
@@ -174,7 +174,7 @@ class MonthlyAuditPlanController extends Controller
     }
 
 
-    
+
     public function View(Request $request)
     {
         try {
@@ -194,22 +194,22 @@ class MonthlyAuditPlanController extends Controller
         }
     }
 
-   
-    
+
+
 
 
     public function ExportExcel(Request $request)
     {
         try {
             $allData = $this->monthly_audit_plan->exportdata();
-    
+
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
             }
-    
+
             $spreadsheet = new Spreadsheet();
             $sheet = $spreadsheet->getActiveSheet();
-    
+
             $logoPath = public_path('assets/images/logo-dark.png');
             if (file_exists($logoPath)) {
                 $drawing = new Drawing();
@@ -222,7 +222,7 @@ class MonthlyAuditPlanController extends Controller
                 $drawing->setHeight(60);
                 $drawing->setWorksheet($sheet);
             }
-    
+
             $sheet->mergeCells('A1:B3');
             $sheet->getStyle('A1:B3')->applyFromArray([
                 'alignment' => [
@@ -236,7 +236,7 @@ class MonthlyAuditPlanController extends Controller
                     ],
                 ],
             ]);
-    
+
             $sheet->setCellValue('C1', 'Monthly EHS Audit');
             $sheet->mergeCells('C1:G3');
             $sheet->getStyle("C1:G3")->applyFromArray([
@@ -253,23 +253,23 @@ class MonthlyAuditPlanController extends Controller
                     ],
                 ],
             ]);
-    
+
             $columnWidths = [
-                'A' => 8,   
-                'B' => 25,  
-                'C' => 30,  
-                'D' => 25,  
-                'E' => 20,  
-                'F' => 15,  
-                'G' => 20,  
+                'A' => 8,
+                'B' => 25,
+                'C' => 30,
+                'D' => 25,
+                'E' => 20,
+                'F' => 15,
+                'G' => 20,
             ];
-    
+
             foreach ($columnWidths as $col => $width) {
                 $sheet->getColumnDimension($col)->setWidth($width);
             }
-    
+
             $row = 4;
-    
+
             foreach ($allData as $unitName => $records) {
 
                 $sheet->setCellValue("A{$row}", strtoupper($unitName));
@@ -291,11 +291,11 @@ class MonthlyAuditPlanController extends Controller
                 ]);
                 $sheet->getRowDimension($row)->setRowHeight(25);
                 $row++;
-    
+
                 $sheet->fromArray([
                     'S.No', 'Auditee Name', 'Task Name', 'Reference Doc No', 'Category', 'Frequency', 'Created At'
                 ], NULL, "A{$row}");
-    
+
                 $sheet->getStyle("A{$row}:G{$row}")->applyFromArray([
                     'font' => ['bold' => true],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
@@ -303,7 +303,7 @@ class MonthlyAuditPlanController extends Controller
                 ]);
                 $sheet->getRowDimension($row)->setRowHeight(20);
                 $row++;
-    
+
                 $sr = 1;
                 foreach ($records as $item) {
                     $sheet->fromArray([
@@ -315,15 +315,15 @@ class MonthlyAuditPlanController extends Controller
                         getFrequencyname($item->frequency_id),
                         displayDateformat($item->created_at),
                     ], null, "A{$row}");
-    
+
                     $sheet->getStyle("A{$row}:G{$row}")->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN);
                     $row++;
                     $sr++;
                 }
-    
+
                 $row += 1;
             }
-    
+
             $lastRow = $sheet->getHighestRow();
             $sheet->getStyle("A3:G{$lastRow}")->applyFromArray([
                 'borders' => [
@@ -333,21 +333,21 @@ class MonthlyAuditPlanController extends Controller
                     ]
                 ]
             ]);
-    
+
             $fileName = 'Monthly_Audit_Plan.xlsx';
             header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
             header("Content-Disposition: attachment;filename=\"$fileName\"");
             header('Cache-Control: max-age=0');
-    
+
             $writer = new Xlsx($spreadsheet);
             $writer->save('php://output');
-    
+
         } catch (\Exception $e) {
             report($e);
             return redirect()->back()->with('error', 'Something went wrong while exporting.');
         }
     }
-    
+
 
     public function ExportPdf(Request $request)
     {
@@ -363,7 +363,7 @@ class MonthlyAuditPlanController extends Controller
                 return redirect()->back()->with('error',   __('inspection.excess_error'));
             }
 
-         
+
 
             $data = array(
                 'content' => $allData,
@@ -435,7 +435,7 @@ class MonthlyAuditPlanController extends Controller
             $monthly_audit_plan = $this->monthly_audit_plan->Selectone($id);
             $spreadsheet = new Spreadsheet();
             $sheet = $spreadsheet->getActiveSheet();
-    
+
             $logoPath = public_path('assets/images/logo-dark.png');
             if (file_exists($logoPath)) {
                 $drawing = new Drawing();
@@ -467,7 +467,7 @@ class MonthlyAuditPlanController extends Controller
 
             // Merge and style C1:K3
             $sheet->mergeCells('C1:K3');
-            $sheet->setCellValue('C1', "MONTHLY AUDIT PLAN\nKARAM SAFETY PRIVATE LIMITED");
+            $sheet->setCellValue('C1', "Monthly EHS Audit");
             $sheet->getStyle('C1:K3')->applyFromArray([
                 'font' => [
                     'bold' => true,
@@ -484,23 +484,32 @@ class MonthlyAuditPlanController extends Controller
                     ],
                 ],
             ]);
-    
+
             $headers = [
                 'Sr.', 'Auditee Name', 'Unit', 'Task Name', 'Reference Doc No', 'Category',
                 'Frequency', 'Direct/Indirect', 'Status' ,'Points', 'Remarks'
             ];
             $colIndex = 'A';
             foreach ($headers as $header) {
+                $sheet->getRowDimension(4)->setRowHeight(25);
+
                 $sheet->setCellValue("{$colIndex}4", $header);
                 $sheet->getStyle("{$colIndex}4")->applyFromArray([
-                    'font' => ['bold' => true],
-                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
+                    'font' => [
+                        'bold' => true,
+                        'color' => ['rgb' => 'FFFFFF']
+                    ],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER,'vertical' => Alignment::VERTICAL_CENTER],
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                    'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['rgb' => 'FF0000']]
+                    'fill' => [
+                        'fillType' => Fill::FILL_SOLID,
+                        'startColor' => ['rgb' => 'FF0000']
+                    ]
                 ]);
+
                 $colIndex++;
             }
-    
+
             $row = 5;
             $sheet->setCellValue("A{$row}", '1');
             $sheet->setCellValue("B{$row}", $monthly_audit_plan->auditee_name ?? '');
@@ -513,19 +522,19 @@ class MonthlyAuditPlanController extends Controller
             $sheet->setCellValue("I{$row}", $monthly_audit_plan->audit_plan_status == 1 ? 'YES' : 'NO');
             $sheet->setCellValue("J{$row}", $monthly_audit_plan->points ?? '');
             $sheet->setCellValue("K{$row}", $monthly_audit_plan->remarks ?? '');
-    
+
             $sheet->getStyle("A{$row}:K{$row}")->applyFromArray([
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_LEFT],
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
             ]);
-    
+
             foreach (range('A', 'J') as $col) {
                 $sheet->getColumnDimension($col)->setAutoSize(true);
             }
-    
+
             $fileName = 'Monthly_Audit_Plan.xlsx';
             $writer = new Xlsx($spreadsheet);
-    
+
             return response()->streamDownload(function () use ($writer) {
                 $writer->save('php://output');
             }, $fileName, [
@@ -536,6 +545,6 @@ class MonthlyAuditPlanController extends Controller
             return back()->with('error', 'Failed to export Monthly Audit Plan');
         }
     }
-    
+
 }
 
