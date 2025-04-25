@@ -482,6 +482,12 @@
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('Target Date') }}</label>
+                                        <div class="view_data">
+                                            {{ Displaydateformat($incident_report->target_date) }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
                                         <label for="team_id" class="form-label">I.M Team members</label>
                                         <div class="view_data">
                                             {{ $getEHSReview->team_member_names }}
@@ -1024,7 +1030,7 @@
                                                         </div>
                                                     </div>
 
-                                                    <div class="col-md-4">
+                                                    <div class="col-md-4 mt-2">
                                                         <div class="form-group form-input">
                                                             <label class="form-label require">Timeline</label>
                                                             <input type="text" name="timeline[1]"
@@ -1508,13 +1514,11 @@
                         },
                         minlength: 3,
                         maxlength: 2000,
-                        pattern: /^[a-zA-Z0-9\s\-_'"()\n\r,.”.;]+$/
                     },
 
                     remark: {
                         minlength: 10,
                         maxlength: 2000,
-                        pattern: /^[a-zA-Z0-9\s\-_'"()\n\r,.”.;]+$/
                     },
                     corrective_preventive_action: {
                         required: true,

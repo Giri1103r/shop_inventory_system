@@ -128,6 +128,7 @@ class InterUnitAuditController extends Controller
             $unit  = $this->unit->select('id', 'unit_name')->where('status', '1')->get();
             $checklist_details = getCheckListQuestion(INTER_UNIT_AUDIT_CHECKLIST);
             $options =  getoption(INTER_UNIT_AUDIT_CHECKLIST);
+          
             $getoption = string_to_array($options->type);
             $data = array(
                 'checklist_types' => $checklist_types,
@@ -137,7 +138,7 @@ class InterUnitAuditController extends Controller
             );
             return view('inspection.inspection_audit.interUnitAudit.add', $data);
         } catch (Exception $ex) {
-            dd($ex);
+
             report($ex);
         }
     }

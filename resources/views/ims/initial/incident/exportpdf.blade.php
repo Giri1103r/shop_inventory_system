@@ -86,7 +86,7 @@
                     </td>
                     <td border="0"
                         style="width:50%;float:right;text-align:right;font-size: 24px;font-weight:bold;font-family: Georgia, serif;">
-                        Incident
+                        {{ $incident_report->sr_no }}
                     </td>
                 </tr>
             </table>
@@ -374,6 +374,13 @@
                     </td>
                 </tr>
                 <tr>
+                    <td width="50%" style="padding:5px;"><b>Target Date</b></td>
+                    <td width="2%" style="padding:5px;">:</td>
+                    <td width="48%" style="padding:5px;">
+                        {{ Displaydateformat($incident_report->target_date) }}
+                    </td>
+                </tr>
+                <tr>
                     <td width="50%" style="padding:5px;"><b>I.M Team members</b></td>
                     <td width="2%" style="padding:5px;">:</td>
                     <td width="48%" style="padding:5px;">
@@ -381,7 +388,8 @@
                     </td>
                 </tr>
                 <tr>
-                    <td width="50%" style="padding:5px;"><b>Incident/Accident Investigation Report Prepared by</b></td>
+                    <td width="50%" style="padding:5px;"><b>Incident/Accident Investigation Report Prepared by</b>
+                    </td>
                     <td width="2%" style="padding:5px;">:</td>
                     <td width="48%" style="padding:5px;">
                         {{ getUsername($incident_report->investigation_reported_by) }}
@@ -461,6 +469,14 @@
                         {{ $getInvestigation->action_taken }}
                     </td>
                 </tr>
+
+                <tr>
+                    <td width="50%" style="padding:5px;"><b>Remarks (If Any)</b></td>
+                    <td width="2%" style="padding:5px;">:</td>
+                    <td width="48%" style="padding:5px;">
+                        {{ $getInvestigation->remark }}
+                    </td>
+                </tr>
                 <tr>
                     <td width="50%" style="padding:5px;"><b>Recommended Corrective & Preventive
                             Action</b></td>
@@ -469,28 +485,6 @@
                         {{ $getInvestigation->corrective_preventive_action }}
                     </td>
                 </tr>
-                <tr>
-                    <td width="50%" style="padding:5px;"><b>Responsible Person</b></td>
-                    <td width="2%" style="padding:5px;">:</td>
-                    <td width="48%" style="padding:5px;">
-                        {{ $getInvestigation->responsible_person }}
-                    </td>
-                </tr>
-                <tr>
-                    <td width="50%" style="padding:5px;"><b>Target Date</b></td>
-                    <td width="2%" style="padding:5px;">:</td>
-                    <td width="48%" style="padding:5px;">
-                        {{ $getInvestigation->target_date }}
-                    </td>
-                </tr>
-                <tr>
-                    <td width="50%" style="padding:5px;"><b>Remarks (If Any)</b></td>
-                    <td width="2%" style="padding:5px;">:</td>
-                    <td width="48%" style="padding:5px;">
-                        {{ $getInvestigation->remark }}
-                    </td>
-                </tr>
-
                 <tr>
                     <td width="50%" style="padding:5px;"><b>Risk Analysis</b></td>
                     <td width="2%" style="padding:5px;">:</td>
@@ -585,6 +579,12 @@
             <table width="100%" style="width:100%;">
                 @foreach ($rcpa as $rcpa)
                     <tr>
+                        <td width="50%" style="padding:5px;"><b>RCPA ID</b></td>
+                        <td width="2%" style="padding:5px;">:</td>
+                        <td width="48%" style="padding:5px;">
+                            {{ $rcpa->rcpa_id }}</td>
+                    </tr>
+                    <tr>
                         <td width="50%" style="padding:5px;"><b>Recommended Corrective & Preventive
                                 Action</b></td>
                         <td width="2%" style="padding:5px;">:</td>
@@ -610,11 +610,11 @@
                         <td width="2%" style="padding:5px;">:</td>
                         <td width="48%" style="padding:5px;">
                             @if ($rcpa->capa_status == 1)
-                                <span class="badge bg-success">Open</span>
+                                <span class="">Open</span>
                             @elseif($rcpa->capa_status == 2)
-                                <span class="badge bg-warning text-dark">In Progress</span>
+                                <span class="">In Progress</span>
                             @elseif($rcpa->capa_status == 3)
-                                <span class="badge bg-secondary">Closed</span>
+                                <span class="">Closed</span>
                             @endif
                         </td>
                     </tr>
@@ -685,14 +685,6 @@
                         <span>Natural Causes: {!! in_array('3', $ua_uc_values) ? '&#10004;' : '&#10008;' !!}</span>
                     </td>
                 </tr>
-
-                <tr>
-                    <td width="50%" style="padding:5px;"><b>Description of UAUC</b></td>
-                    <td width="2%" style="padding:5px;">:</td>
-                    <td width="48%" style="padding:5px;">
-                        {{ $incident_report->description_uauc }}
-                    </td>
-                </tr>
             </table>
             @if ($getInvestigation->risk_analysis != 2)
                 <div style="width:100%;">
@@ -732,7 +724,7 @@
 
         {{-- @if ($getInvestigation->root_cause_analysis != 3)
 
-            @if ( $rcpa->incident_status >= STATUS_EHSAPPROVAL_PENDING)
+            @if ($rcpa->incident_status >= STATUS_EHSAPPROVAL_PENDING)
                 <div style="width:100%;">
                     <table style="width:100%;">
                         <tr>
