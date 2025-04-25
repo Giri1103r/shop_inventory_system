@@ -199,7 +199,7 @@ class WorkZoneAirMonitoringController extends Controller
             $environmentID = $this->environment->statuschange($id, $type);
             $this->workZone_air_monitoring->statuschange($id);
 
-            return response()->json(['status' => 'success', 'msg' => 'Work Zone Air status changed Successfully'], 200);
+            return response()->json(['status' => 'success', 'msg' => 'Work Zone Air Status Changed Successfully'], 200);
         } catch (Exception $ex) {
             report($ex);
             return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
@@ -274,7 +274,7 @@ class WorkZoneAirMonitoringController extends Controller
                 $sheet->mergeCells("Q" . ($currentRow + 1) . ":S" . ($currentRow + 1))->setCellValue("Q" . ($currentRow + 1), 'Issue Dt.');
                 $sheet->mergeCells("Q" . ($currentRow + 2) . ":S" . ($currentRow + 2))->setCellValue("Q" . ($currentRow + 2), 'Rev. & Dt.');
 
-                $sheet->mergeCells("T$currentRow:V$currentRow")->setCellValue("Q$currentRow", $document_no->doc_no);
+                $sheet->mergeCells("T$currentRow:W$currentRow")->setCellValue("T$currentRow", $document_no->doc_no);
                 $sheet->mergeCells("T" . ($currentRow + 1) . ":W" . ($currentRow + 1))->setCellValue("T" . ($currentRow + 1), Displaydateformat($document_no->issue_date));
                 $sheet->mergeCells("T" . ($currentRow + 2) . ":W" . ($currentRow + 2))->setCellValue("T" . ($currentRow + 2), $document_no->rev_dt);
 
@@ -531,7 +531,7 @@ class WorkZoneAirMonitoringController extends Controller
                 $sheet->mergeCells("Q" . ($currentRow + 1) . ":S" . ($currentRow + 1))->setCellValue("Q" . ($currentRow + 1), 'Issue Dt.');
                 $sheet->mergeCells("Q" . ($currentRow + 2) . ":S" . ($currentRow + 2))->setCellValue("Q" . ($currentRow + 2), 'Rev. & Dt.');
 
-                $sheet->mergeCells("T$currentRow:V$currentRow")->setCellValue("Q$currentRow", $document_no->doc_no);
+                $sheet->mergeCells("T$currentRow:W$currentRow")->setCellValue("T$currentRow", $document_no->doc_no);
                 $sheet->mergeCells("T" . ($currentRow + 1) . ":W" . ($currentRow + 1))->setCellValue("T" . ($currentRow + 1), Displaydateformat($document_no->issue_date));
                 $sheet->mergeCells("T" . ($currentRow + 2) . ":W" . ($currentRow + 2))->setCellValue("T" . ($currentRow + 2), $document_no->rev_dt);
 

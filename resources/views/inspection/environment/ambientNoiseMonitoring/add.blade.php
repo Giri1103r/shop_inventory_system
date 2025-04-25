@@ -75,7 +75,7 @@
                                             <div class="row">
                                                 <div class="card-header-inner d-flex justify-content-between">
                                                     <h4 class="text-white">Ambient Noise Monitoring Details</h4>
-                                                    <button class="btn btn-primary addmorebutton"
+                                                    <button class="btn btn-primary addmorebutton mb-2"
                                                         data-block='lesson_learned_block' data-row='lesson_learned_row'
                                                         type="button" id="dynamic-add-more"
                                                         style="margin-left: 10px; width: 84px;">
@@ -84,7 +84,7 @@
                                                 </div>
                                             </div>
 
-                                            <div id="lesson_learned_block">
+                                            <div id="lesson_learned_block" class="mb-2">
                                                 <div class="row lesson_learned_row" style="margin-top: 20px;">
 
                                                     <div class="col-md-4 form-input">
@@ -195,15 +195,15 @@
                                                         <textarea name="monitoring[1][remark]" class="form-control" id="remark_1"> </textarea>
                                                     </div>
 
-                                                    <div class="col-md-2 text-right mt-2">
+                                                    <div class="col-md-2 text-right mt-2 ">
                                                         <button class="btn btn-danger removerowdata" type="button"
                                                             style="margin:10px;"><i class="fa fa-trash"></i></button>
 
                                                     </div>
 
-                                                    <hr>
-                                                </div>
 
+                                                </div>
+                                                <hr>
                                             </div>
 
                                         </div>
@@ -380,8 +380,8 @@
                 newRow.find("input[name$='[act_rule]']").rules("add", {
 
                     required: true,
-                    minLength: 3,
-                    maxLength: 100,
+                    minlength: 3,
+                    maxlength: 100,
                     messages: {
                         required: "Please Enter the Act rules.",
                         minlength: "Act/Rule must be at least 3 characters long.",
@@ -472,101 +472,7 @@
             initializeFlatpickr();
         });
 
-        function addValidationRules(row) {
-            newRow.find("input[name$='[noise_level_dba]']").rules("add", {
-                number: true,
-                required: true,
-                messages: {
-                    number: "Only numeric values are allowed.",
-                    required: "Please enter the Noise level."
-                }
-            });
-            newRow.find("input[name$='[noise_level_dba_day]']").rules("add", {
-                number: true,
-                required: true,
-                messages: {
-                    number: "Only numeric values are allowed.",
-                    required: "Please enter the Noise level."
-                }
-            });
-            newRow.find("input[name$='[noise_level_dba_night]']").rules("add", {
-                number: true,
-                required: true,
-                messages: {
-                    number: "Only numeric values are allowed.",
-                    required: "Please enter the Noise level."
-                }
-            });
-            newRow.find("input[name$='[act_rule]']").rules("add", {
 
-                required: true,
-                messages: {
-                    required: "Please Enter the Act rules.",
-                }
-            });
-            newRow.find("input[name$='[next_due_date_of_monitoring_date]']").rules("add", {
-
-                required: true,
-                messages: {
-                    required: "Please Select the date."
-                }
-            });
-            newRow.find("select[name$='[next_due_date_of_monitoring_dropdown]']").rules("add", {
-
-                required: true,
-                messages: {
-                    required: "Please Select the option"
-                }
-            });
-            newRow.find("select[name$='[date_of_monitoring_dropdown]']").rules("add", {
-
-                required: true,
-                messages: {
-                    required: "Please Select the option"
-                }
-            });
-
-            newRow.find("input[name$='[next_due_date_of_monitoring]']").rules("add", {
-
-                required: true,
-                messages: {
-                    required: "Please Select the date"
-                }
-            });
-            newRow.find("input[name$='[date_of_monitoring_date]']").rules("add", {
-
-                required: true,
-                messages: {
-                    required: "Please Select the date"
-                }
-            });
-            newRow.find("input[name$='[date_of_monitoring]']").rules("add", {
-
-                required: true,
-                messages: {
-                    required: "Please Select the date"
-                }
-            });
-            newRow.find("select[name$='[unit_id]']").rules("add", {
-
-                required: true,
-
-                messages: {
-
-                    required: "Please select the Unit .",
-
-                }
-            });
-            newRow.find("select[name$='[location_id]']").rules("add", {
-
-                required: true,
-                messages: {
-                    required: "Please select the location.",
-
-                }
-            });
-
-        }
 
         $(function() {
             $.validator.setDefaults({
@@ -709,6 +615,106 @@
             $("#lesson_learned_block .lesson_learned_row").each(function() {
                 addValidationRules($(this));
             });
+
+            function addValidationRules(row) {
+                row.find("input[name$='[noise_level_dba]']").rules("add", {
+                    number: true,
+                    required: true,
+                    messages: {
+                        number: "Only numeric values are allowed.",
+                        required: "Please enter the Noise level."
+                    }
+                });
+                row.find("input[name$='[noise_level_dba_day]']").rules("add", {
+                    number: true,
+                    required: true,
+                    messages: {
+                        number: "Only numeric values are allowed.",
+                        required: "Please enter the Noise level."
+                    }
+                });
+                row.find("input[name$='[noise_level_dba_night]']").rules("add", {
+                    number: true,
+                    required: true,
+                    messages: {
+                        number: "Only numeric values are allowed.",
+                        required: "Please enter the Noise level."
+                    }
+                });
+                row.find("input[name$='[act_rule]']").rules("add", {
+
+                    required: true,
+                    minlength: 3,
+                    maxlength: 100,
+                    messages: {
+                        required: "Please Enter the Act rules.",
+                        minlength: "Act/Rule must be at least 3 characters long.",
+                        maxlength: "Act/Rule must not exceed 100 characters."
+                    }
+                });
+                row.find("input[name$='[next_due_date_of_monitoring_date]']").rules("add", {
+
+                    required: true,
+                    messages: {
+                        required: "Please Select the date."
+                    }
+                });
+                row.find("select[name$='[next_due_date_of_monitoring_dropdown]']").rules("add", {
+
+                    required: true,
+                    messages: {
+                        required: "Please Select the option"
+                    }
+                });
+                row.find("select[name$='[date_of_monitoring_dropdown]']").rules("add", {
+
+                    required: true,
+                    messages: {
+                        required: "Please Select the option"
+                    }
+                });
+
+                row.find("input[name$='[next_due_date_of_monitoring]']").rules("add", {
+
+                    required: true,
+                    messages: {
+                        required: "Please Select the date"
+                    }
+                });
+                row.find("input[name$='[date_of_monitoring_date]']").rules("add", {
+
+                    required: true,
+                    messages: {
+                        required: "Please Select the date"
+                    }
+                });
+                row.find("input[name$='[date_of_monitoring]']").rules("add", {
+
+                    required: true,
+                    messages: {
+                        required: "Please Select the date"
+                    }
+                });
+                row.find("select[name$='[unit_id]']").rules("add", {
+
+                    required: true,
+
+                    messages: {
+
+                        required: "Please select the Unit .",
+
+                    }
+                });
+                row.find("select[name$='[location_id]']").rules("add", {
+
+                    required: true,
+                    messages: {
+                        required: "Please select the location.",
+
+                    }
+                });
+
+            }
         });
     </script>
 @endpush

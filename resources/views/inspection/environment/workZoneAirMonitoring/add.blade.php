@@ -75,7 +75,7 @@
                                             <div class="row">
                                                 <div class="card-header-inner d-flex justify-content-between">
                                                     <h4 class="text-white">Work Zone Air Monitoring Details</h4>
-                                                    <button class="btn btn-primary addmorebutton"
+                                                    <button class="btn btn-primary addmorebutton mb-2"
                                                         data-block='lesson_learned_block' data-row='lesson_learned_row'
                                                         type="button" id="dynamic-add-more"
                                                         style="margin-left: 10px; width: 84px;">
@@ -198,8 +198,8 @@
 
                                                     </div>
 
-                                                    <hr>
                                                 </div>
+                                                <hr>
 
                                             </div>
 
