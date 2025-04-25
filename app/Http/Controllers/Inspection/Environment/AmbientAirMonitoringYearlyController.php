@@ -12,8 +12,8 @@ use Illuminate\Support\Facades\Session;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Master\Employee;
-use App\Models\Inspection\environment\AmbientAirMonitoring;
-use App\Models\Inspection\environment\Environment;
+use App\Models\Inspection\Environment\AmbientAirMonitoring;
+use App\Models\Inspection\Environment\Environment;
 use App\Models\Inspection\InspectionStaticDocno;
 use App\Models\Master\Location;
 use App\Models\Master\Unit;
@@ -73,7 +73,7 @@ class AmbientAirMonitoringYearlyController extends Controller
                         })
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            $btn = '<a href="' . admin_url('environment/ambient-air/yearly/view/' . encryptId($row->id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
+                            $btn = '<a href="' . admin_url('environment/ambient-air/yearly/view/' . encryptId($row->id)) . '"   class="view-icon me-1" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
                             $btn .= '<a href="' . admin_url('environment/ambient-air/yearly/generalpdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
                             <i class="fas fa-file-pdf" style="color: #e67265;" aria-hidden="true"></i>
                          </a>';
@@ -90,7 +90,7 @@ class AmbientAirMonitoringYearlyController extends Controller
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
-                    dd($ex);
+                    report($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }
@@ -118,7 +118,7 @@ class AmbientAirMonitoringYearlyController extends Controller
             );
             return view('inspection.environment.ambientAirMonitoring.add', $data);
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
         }
     }
 
@@ -145,13 +145,13 @@ class AmbientAirMonitoringYearlyController extends Controller
 
                 Session::flash('success', __('Your data has been created successfully'));
             } catch (Exception $ex) {
-                dd($ex);
+                report($ex);
                 Session::flash('error', __('common.message_error'));
             }
 
             return redirect(admin_url('environment/ambient-air/yearly/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('environment/ambient-air/yearly/list'));
         }
@@ -195,7 +195,7 @@ class AmbientAirMonitoringYearlyController extends Controller
             $environmentID = $this->environment->statuschange($id, $type);
             $this->ambient_air_monitoring->statuschange($id);
 
-            return response()->json(['status' => 'success', 'msg' => 'status changed'], 200);
+            return response()->json(['status' => 'success', 'msg' => 'Ambient Air Monitoring Status Changed Successfully'], 200);
         } catch (Exception $ex) {
             report($ex);
             return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
@@ -387,7 +387,7 @@ class AmbientAirMonitoringYearlyController extends Controller
             $filename = "Ambient Air Monitoring Yearly Details.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
         }
     }
 
@@ -400,7 +400,9 @@ class AmbientAirMonitoringYearlyController extends Controller
             if (Auth::check()) {
                 $type = AMBIENT_AIR;
                 $environmentData =   $this->environment->selectOne($id, $type);
+                
                 $ambientAirDataList = $this->ambient_air_monitoring->selectOne($id);
+
                 $document_no  = $this->static_docno->select('id', 'doc_no', 'issue_date', 'rev_dt')->where([
                     ['type', "AmbientAir"],
                     ['status', '1']
@@ -563,7 +565,7 @@ class AmbientAirMonitoringYearlyController extends Controller
                 'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
             ]);
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
         }
     }

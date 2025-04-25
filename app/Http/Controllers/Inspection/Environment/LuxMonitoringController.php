@@ -12,8 +12,8 @@ use Illuminate\Support\Facades\Session;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Master\Employee;
-use App\Models\Inspection\environment\LuxMonitoring;
-use App\Models\Inspection\environment\Environment;
+use App\Models\Inspection\Environment\LuxMonitoring;
+use App\Models\Inspection\Environment\Environment;
 use App\Models\Inspection\InspectionStaticDocno;
 use App\Models\Master\Location;
 use App\Models\Master\Unit;
@@ -94,7 +94,7 @@ class LuxMonitoringController extends Controller
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
-                    dd($ex);
+                    report($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }
@@ -124,7 +124,7 @@ class LuxMonitoringController extends Controller
             );
             return view('inspection.environment.luxMonitoring.add', $data);
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
         }
     }
 
@@ -151,13 +151,13 @@ class LuxMonitoringController extends Controller
 
                 Session::flash('success', __('Your data has been created successfully'));
             } catch (Exception $ex) {
-                dd($ex);
+                report($ex);
                 Session::flash('error', __('common.message_error'));
             }
 
             return redirect(admin_url('environment/lux/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('environment/lux/list'));
         }
@@ -201,7 +201,7 @@ class LuxMonitoringController extends Controller
             $environmentID = $this->environment->statuschange($id, $type);
             $this->lux_monitoring->statuschange($id);
 
-            return response()->json(['status' => 'success', 'msg' => 'status changed'], 200);
+            return response()->json(['status' => 'success', 'msg' => 'Lux Monitoring Status Changed Successfully'], 200);
         } catch (Exception $ex) {
             report($ex);
             return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);

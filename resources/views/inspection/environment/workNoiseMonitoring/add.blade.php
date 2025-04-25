@@ -75,7 +75,7 @@
                                             <div class="row">
                                                 <div class="card-header-inner d-flex justify-content-between">
                                                     <h4 class="text-white">Work Noise Monitoring Details</h4>
-                                                    <button class="btn btn-primary addmorebutton"
+                                                    <button class="btn btn-primary addmorebutton mb-2"
                                                         data-block='lesson_learned_block' data-row='lesson_learned_row'
                                                         type="button" id="dynamic-add-more"
                                                         style="margin-left: 10px; width: 84px;">
@@ -181,9 +181,9 @@
 
                                                     </div>
 
-                                                    <hr>
                                                 </div>
 
+                                                <hr>
                                             </div>
 
                                         </div>
@@ -322,7 +322,7 @@
                         $(this).val("").trigger("change");
                     }
                 });
-                newRow.find("input[name$='[sr_no]']").val("AMBIENT-" + String(rowCount + 1).padStart(4,
+                newRow.find("input[name$='[sr_no]']").val("WORK-" + String(rowCount + 1).padStart(4,
                     '0'));
 
                 newRow.find(".invalid-feedback").remove();
@@ -348,9 +348,12 @@
                     }
                 });
                 newRow.find("input[name$='[act_rule]']").rules("add", {
-
+                    minlength: 3,
+                    maxlength: 100,
                     required: true,
                     messages: {
+                        minlength: "Act/Rule must be at least 3 characters long.",
+                        maxlength: "Act/Rule must not exceed 100 characters.",
                         required: "Please Enter the Act Rule."
                     }
                 });
@@ -426,80 +429,7 @@
             initializeFlatpickr();
         });
 
-        function addValidationRules(row) {
-            newRow.find("input[name$='[noise_level_dba]']").rules("add", {
-                number: true,
-                required: true,
-                messages: {
-                    number: "Only numeric values are allowed.",
-                    required: "Please enter the Noise level."
-                }
-            });
-            newRow.find("input[name$='[noise_level_dba_no]']").rules("add", {
-                number: true,
-                required: true,
-                messages: {
-                    number: "Only numeric values are allowed.",
-                    required: "Please Enter the Noise Level."
-                }
-            });
-            newRow.find("input[name$='[act_rule]']").rules("add", {
 
-                required: true,
-                messages: {
-                    required: "Please Enter the Act Rule."
-                }
-            });
-            newRow.find("input[name$='[next_due_date_of_monitoring_date]']").rules("add", {
-                required: true,
-                messages: {
-                    required: "Please Select the date."
-                }
-            });
-            newRow.find("input[name$='[date_of_monitoring_date]']").rules("add", {
-                required: true,
-                messages: {
-                    required: "Please Select the date."
-                }
-            });
-            newRow.find("select[select$='[noise_level_dba_dropdown]']").rules("add", {
-
-                required: true,
-                messages: {
-                    number: "Please Select the option."
-                }
-            });
-            newRow.find("input[name$='[date_of_monitoring]']").rules("add", {
-                required: true,
-                messages: {
-                    required: "Please Select the date."
-                }
-            });
-            newRow.find("input[name$='[next_due_date_of_monitoring]']").rules("add", {
-                    required: true,
-                    messages: {
-                        required: "Please Select the date."
-                    }
-                });
-                newRow.find("select[name$='[unit_id]']").rules("add", {
-
-                    required: true,
-
-                    messages: {
-
-                        required: "Please select the Unit .",
-
-                    }
-                });
-                newRow.find("select[name$='[location_id]']").rules("add", {
-
-                    required: true,
-                    messages: {
-                        required: "Please select the location.",
-
-                    }
-                });
-        }
 
         $(function() {
             $.validator.setDefaults({
@@ -540,11 +470,11 @@
                     },
                     'monitoring[1][date_of_monitoring]': {
                         required: true,
-                        date: true
+
                     },
                     'monitoring[1][next_due_date_of_monitoring]': {
                         required: true,
-                        date: true
+
                     },
                     'monitoring[1][location_id]': {
                         required: true
@@ -555,7 +485,7 @@
 
                     'monitoring[1][date_of_monitoring_date]': {
                         required: true,
-                        date: true
+
                     },
                     'monitoring[1][noise_level_dba_dropdown]': {
                         required: true,
@@ -564,10 +494,12 @@
 
                     'monitoring[1][next_due_date_of_monitoring_date]': {
                         required: true,
-                        date: true
+
                     },
                     'monitoring[1][act_rule]': {
-                        required: true
+                        required: true,
+                        minlength: 3,
+                        maxlength: 100,
                     },
 
                 },
@@ -589,11 +521,11 @@
                     },
                     'monitoring[1][date_of_monitoring]': {
                         required: "Please enter a date.",
-                        date: "Enter a valid date."
+
                     },
                     'monitoring[1][next_due_date_of_monitoring]': {
                         required: "Please enter a date.",
-                        date: "Enter a valid date."
+
                     },
                     'monitoring[1][noise_level_dba_dropdown]': {
                         required: "Please select the option .",
@@ -602,16 +534,18 @@
 
                     'monitoring[1][date_of_monitoring_date]': {
                         required: "Please enter a date.",
-                        date: "Enter a valid date."
+
                     },
 
                     'monitoring[1][next_due_date_of_monitoring_date]': {
                         required: "Please enter a date.",
-                        date: "Enter a valid date."
+
                     },
                     'monitoring[1][act_rule]': {
-                        required: "Act/Rule is required."
-                    },
+                        required: "Act/Rule is required.",
+                        minlength: "Act/Rule must be at least 3 characters long.",
+                        maxlength: "Act/Rule must not exceed 100 characters."
+                    }
 
                 },
                 submitHandler: function(form) {
@@ -622,6 +556,77 @@
             $("#lesson_learned_block .lesson_learned_row").each(function() {
                 addValidationRules($(this));
             });
+
+            function addValidationRules(row) {
+                row.find("input[name$='[noise_level_dba]']").rules("add", {
+                    number: true,
+                    required: true,
+                    messages: {
+                        number: "Only numeric values are allowed.",
+                        required: "Please enter the Noise level."
+                    }
+                });
+                row.find("input[name$='[noise_level_dba_no]']").rules("add", {
+                    number: true,
+                    required: true,
+                    messages: {
+                        number: "Only numeric values are allowed.",
+                        required: "Please Enter the Noise Level."
+                    }
+                });
+                row.find("input[name$='[act_rule]']").rules("add", {
+                    minlength: 3,
+                    maxlength: 100,
+                    required: true,
+                    messages: {
+                        minlength: "Act/Rule must be at least 3 characters long.",
+                        maxlength: "Act/Rule must not exceed 100 characters.",
+                        required: "Please Enter the Act Rule."
+                    }
+                });
+                row.find("input[name$='[next_due_date_of_monitoring_date]']").rules("add", {
+                    required: true,
+                    messages: {
+                        required: "Please Select the date."
+                    }
+                });
+                row.find("input[name$='[date_of_monitoring_date]']").rules("add", {
+                    required: true,
+                    messages: {
+                        required: "Please Select the date."
+                    }
+                });
+                row.find("select[name$='[noise_level_dba_dropdown]']").rules("add", {
+                    required: true,
+                    messages: {
+                        required: "Please Select the option."
+                    }
+                });
+                row.find("input[name$='[date_of_monitoring]']").rules("add", {
+                    required: true,
+                    messages: {
+                        required: "Please Select the date."
+                    }
+                });
+                row.find("input[name$='[next_due_date_of_monitoring]']").rules("add", {
+                    required: true,
+                    messages: {
+                        required: "Please Select the date."
+                    }
+                });
+                row.find("select[name$='[unit_id]']").rules("add", {
+                    required: true,
+                    messages: {
+                        required: "Please select the Unit."
+                    }
+                });
+                row.find("select[name$='[location_id]']").rules("add", {
+                    required: true,
+                    messages: {
+                        required: "Please select the location."
+                    }
+                });
+            }
         });
     </script>
 @endpush

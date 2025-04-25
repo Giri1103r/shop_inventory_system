@@ -51,7 +51,7 @@ class ChecklistSubTypeDataController extends Controller
                             // }
                             return $text;
                         })
-                        ->addColumn('created_date', function ($row) {
+                        ->addColumn('created_at', function ($row) {
                             return Displaydateformat($row->created_at);
                         })
                         ->addColumn('created_by', function ($row) {
@@ -152,7 +152,7 @@ class ChecklistSubTypeDataController extends Controller
             return Response::json(true);
         }
     }
-    
+
     public function View($id)
     {
         try {
@@ -217,7 +217,7 @@ class ChecklistSubTypeDataController extends Controller
             Session::flash('success', 'Checklist Category updated successfully!');
             return redirect(admin_url('inspection/master/checklist-sub-type-data/list'));
         } catch (Exception $ex) {
-            dd($ex);
+             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('inspection/master/checklist-sub-type-data/list'));
         }
@@ -249,7 +249,7 @@ class ChecklistSubTypeDataController extends Controller
 
             $this->checklist_subtype_data->statuschange($id);
 
-            return response()->json(['status' => 'success', 'msg' => 'status changed'], 200);
+            return response()->json(['status' => 'success', 'msg' => 'Checklist Sub Type Data Status Changed Successfully!'], 200);
         } catch (Exception $ex) {
             report($ex);
             return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
@@ -341,11 +341,11 @@ class ChecklistSubTypeDataController extends Controller
             $filename = "Checklist Sub Type Data Details.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            dd($ex);
+             report($ex);
         }
     }
 
-   
+
     public function DownloadSample()
     {
 

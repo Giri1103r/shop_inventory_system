@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Inspection\Master;
 
 use Exception;
-use Response;
+// use Response;
 use Illuminate\Http\Request;
 use Spatie\SimpleExcel\SimpleExcelWriter;
 use App\Http\Controllers\Controller;
@@ -15,6 +15,7 @@ use App\Models\Inspection\Master\ChecklistFile;
 use App\Models\Inspection\Master\ChecklistType;
 use App\Models\Inspection\Master\ChecklistSubType;
 use App\Models\Inspection\Master\ChecklistOptionType;
+use Illuminate\Support\Facades\Response;
 
 class ChecklistSubTypeController extends Controller
 {
@@ -63,7 +64,7 @@ class ChecklistSubTypeController extends Controller
                             $btn = '<a href="' . admin_url('inspection/master/checklist-sub-type/view/' . encryptId($row->id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
                             if (CheckUserRole(ROLE_SUPERADMIN)) {
                                 $btn .= '<a href="' . admin_url('inspection/master/checklist-sub-type/edit/' . encryptId($row->id)) . '" class="edit-icon " title="' . __('common.edit') . '"><i class="fa-solid fa-pen-to-square"></i> ';
-                                
+
                             }
                             return $btn;
                         })
@@ -75,7 +76,7 @@ class ChecklistSubTypeController extends Controller
                     return $datatables;
                 } catch (Exception $ex) {
 
-                    
+
                     report($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
@@ -121,7 +122,7 @@ class ChecklistSubTypeController extends Controller
                 Session::flash('success', __('Your data has been created successfully'));
             } catch (Exception $ex) {
 
-                
+
                 report($ex);
                 Session::flash('error', __('common.message_error'));
             }
@@ -240,7 +241,7 @@ class ChecklistSubTypeController extends Controller
             $id = decryptId($request->id);
             $this->checklist_subtype->statuschange($id);
 
-            return response()->json(['status' => 'success', 'msg' => 'Checklist Category status changed'], 200);
+            return response()->json(['status' => 'success', 'msg' => 'Checklist Category Status Changed Successfully!'], 200);
         } catch (Exception $ex) {
 
             return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);

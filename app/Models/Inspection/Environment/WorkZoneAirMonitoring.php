@@ -49,7 +49,7 @@ class WorkZoneAirMonitoring extends Model
     {
         $request = request();
         $monitors = $request->input('monitoring');
-        if (!empty($monitors) && is_array($monitors)) {
+
             foreach ($monitors as  $monitorData) {
 
                 $data = [
@@ -74,7 +74,7 @@ class WorkZoneAirMonitoring extends Model
                 ];
                 $this->create($data);
             }
-        }
+
     }
 
     public function exportdata()
@@ -94,7 +94,7 @@ class WorkZoneAirMonitoring extends Model
     {
         $data = $this->select('inspection_environment_workzone_air_monitoring.*', 'masters_location.location_name', 'masters_unit.unit_name', 'inspection_environment_table.environment_no')
             ->leftJoin('masters_location', 'inspection_environment_workzone_air_monitoring.location_id', '=', 'masters_location.id')->leftJoin('inspection_environment_table', 'inspection_environment_workzone_air_monitoring.environment_id', '=', 'inspection_environment_table.id')
-            ->leftJoin('masters_unit', 'inspection_environment_workzone_air_monitoring.unit_id', '=', 'masters_unit.id')->where('inspection_environment_workzone_air_monitoring.environment_id', $envId)->where('inspection_environment_workzone_air_monitoring.status', 1)
+            ->leftJoin('masters_unit', 'inspection_environment_workzone_air_monitoring.unit_id', '=', 'masters_unit.id')->where('inspection_environment_workzone_air_monitoring.environment_id', $envId)
             ->get();
         return $data;
     }
