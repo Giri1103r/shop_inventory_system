@@ -37,7 +37,7 @@ use App\Models\Inspection\Master\ChecklistSubType;
 use App\Models\Inspection\audit\AuditAssessment;
 use App\Models\Inspection\audit\AuditAnalysis;
 use App\Models\Inspection\audit\Master\Task;
-use App\Models\Inspection\environment\Environment;
+use App\Models\Inspection\Environment\Environment;
 use App\Models\Inspection\Fire\Fire;
 use App\Models\Inspection\Ohc\SafetyPettyChecklist;
 use App\Models\Inspection\Fire\DailyFireHouseInspection;

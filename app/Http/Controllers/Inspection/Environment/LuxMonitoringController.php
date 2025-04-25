@@ -13,7 +13,7 @@ use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Master\Employee;
 use App\Models\Inspection\Environment\LuxMonitoring;
-use App\Models\Inspection\environment\Environment;
+use App\Models\Inspection\Environment\Environment;
 use App\Models\Inspection\InspectionStaticDocno;
 use App\Models\Master\Location;
 use App\Models\Master\Unit;
