@@ -44,6 +44,10 @@ class InterUnitAudit extends Model
             $search = $request->search['value'];
             $query = $query->where(function ($query) use ($search) {
                 $query->orWhereRaw('audit_id LIKE "%' . $search . '%"');
+                $query->orWhereRaw('safety_officer LIKE "%' . $search . '%"');
+                // $query->orWhereRaw('audit_date LIKE "%' . $search . '%"');
+                $query->orWhereRaw("DATE_FORMAT(inspection_audit_inter_unit.audit_date, '%d-%m-%Y') LIKE ?", ["%{$search}%"]);
+                $query->orWhereRaw('masters_unit.unit_name LIKE "%' . $search . '%"');
             });
         }
 

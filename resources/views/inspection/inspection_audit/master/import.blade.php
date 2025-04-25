@@ -45,7 +45,7 @@
 
                                         <div class="">
                                             <x-button-submit></x-button-submit>
-                                            <x-button-cancel></x-button-cancel>
+                                            <x-button-cancel href="{{ admin_url('audit/master/task/list') }}"></x-button-cancel>
 
                                         </div>
 

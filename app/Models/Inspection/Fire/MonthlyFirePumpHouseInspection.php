@@ -54,7 +54,11 @@ class MonthlyFirePumpHouseInspection extends Model
         $query = $this->select('inspection_fire_monthly_fire_pumphouse.*', 'inspection_shift_option.*', 'masters_unit.*', 'inspection_fire_monthly_fire_pumphouse.id as inspection_id')
             ->leftJoin('inspection_shift_option', 'inspection_fire_monthly_fire_pumphouse.shift', '=', 'inspection_shift_option.id')
             ->leftJoin('masters_unit', 'inspection_fire_monthly_fire_pumphouse.unit', '=', 'masters_unit.id');
-            
+
+        if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_OFFICER) || CheckUserRole(ROLE_L1_MANAGER) || CheckUserRole(ROLE_L2_MANAGER)) {
+        } else if (CheckUserRole(ROLE_FIRE_ASSOCIATES)) {
+            $query->where('inspection_fire_monthly_fire_pumphouse.created_by', Auth::id());
+        }
 
         $org_total =  $query;
         $org_total_counts = $org_total->count();
@@ -70,7 +74,7 @@ class MonthlyFirePumpHouseInspection extends Model
             });
         }
 
-    
+
         if (isset($request->unit) && $request->unit) {
             $query = $query->where('inspection_fire_monthly_fire_pumphouse.unit', 'LIKE', '%' . decryptId($request->unit) . '%');
         }
@@ -292,7 +296,7 @@ class MonthlyFirePumpHouseInspection extends Model
             ->leftJoin('inspection_shift_option', 'inspection_fire_monthly_fire_pumphouse.shift', '=', 'inspection_shift_option.id')
             ->leftJoin('inspection_static_docno', 'inspection_fire_monthly_fire_pumphouse.document_reference_id', '=', 'inspection_static_docno.id')
             ->leftJoin('masters_unit', 'inspection_fire_monthly_fire_pumphouse.unit', '=', 'masters_unit.id');
-            
+
         if (isset($request->search) && isset($request->search['value']) && $request->search['value'] != '') {
             $search = $request->search['value'];
             $query = $query->where(function ($query) use ($search) {

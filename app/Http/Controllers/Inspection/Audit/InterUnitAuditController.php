@@ -79,6 +79,9 @@ class InterUnitAuditController extends Controller
                         ->addColumn('created_date', function ($row) {
                             return Displaydateformat($row->created_at);
                         })
+                        ->addColumn('audit_date', function ($row) {
+                            return Displaydateformat($row->created_at);
+                        })
                         ->addColumn('created_by', function ($row) {
                             return getUsername($row->created_by);
                         })
@@ -97,7 +100,7 @@ class InterUnitAuditController extends Controller
                      </a>';
                             return $btn;
                         })
-                        ->rawColumns(['action', 'created_date', 'created_by', 'status'])
+                        ->rawColumns(['action', 'created_date', 'created_by', 'audit_date', 'status'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -393,7 +396,6 @@ class InterUnitAuditController extends Controller
             $filename = "Inter Unit Monthly Audit.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-
             dd($ex);
         }
     }
