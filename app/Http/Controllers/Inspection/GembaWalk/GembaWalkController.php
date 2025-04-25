@@ -385,7 +385,6 @@ class GembaWalkController extends Controller
             }
             
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
         }
@@ -427,7 +426,6 @@ class GembaWalkController extends Controller
             // dd($data);
             return view('inspection.gembaWalk.view', $data);
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
         }
     }
@@ -1131,7 +1129,7 @@ class GembaWalkController extends Controller
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $view = view('inspection.gembawalk.pdf', $data);
+            $view = view('inspection.gembaWalk.pdf', $data);
             $html = $view->render();
 
             $mpdf->WriteHTML($html);
@@ -1139,7 +1137,6 @@ class GembaWalkController extends Controller
             $filename = "Gemba Walk.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('inspection/gemba-walk/list'));

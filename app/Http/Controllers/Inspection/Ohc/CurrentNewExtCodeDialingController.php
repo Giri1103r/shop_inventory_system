@@ -91,7 +91,6 @@ class CurrentNewExtCodeDialingController extends Controller
 
                     return $datatables;
                 } catch (Exception $ex) {
-                    dd($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }
@@ -149,14 +148,12 @@ class CurrentNewExtCodeDialingController extends Controller
 
                 Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
-                dd($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
             return redirect(admin_url('ohc/current-new-ext-code-dialing/list'));
         } catch (Exception $ex) {
 
-            dd($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/current-new-ext-code-dialing/list'));
         }
@@ -175,7 +172,6 @@ class CurrentNewExtCodeDialingController extends Controller
             }
             return view('inspection.inspection_ohc.current_new_ext_code_dialing.view', $data);
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
         }
     }
@@ -391,7 +387,6 @@ class CurrentNewExtCodeDialingController extends Controller
             return response()->download($filePath)->deleteFileAfterSend(true);
            
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
         }
     }
