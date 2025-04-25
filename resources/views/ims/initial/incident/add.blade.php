@@ -277,7 +277,7 @@
                                         action="{{ admin_url('incident/initial-incident/add/submit') }}"
                                         enctype="multipart/form-data">
                                         @csrf
-                                        <input type="hidden" name="random_id" id="" value="{{$randomID}}">
+                                        <input type="hidden" name="random_id" id="" value="{{ $randomID }}">
                                         <input type="hidden" name="acc_prim_add" id="acc_prim_add"
                                             value="{{ 'acc_prim_add' }} ">
                                         <div class="row mt-3">
@@ -659,7 +659,7 @@
                         <input type="hidden" name="body_prim_id" id="body_prim_id" value="">
                         <input type="hidden" name="injury_id" id="injury_id" value="">
                         <input type="hidden" name="bodypartimage" id="bodypartimage">
-                        <input type="hidden" name="random_id" id="random_id" value="{{$randomID}}">
+                        <input type="hidden" name="random_id" id="random_id" value="{{ $randomID }}">
                         <div class="container-fluid1">
 
                             <div class="box-body1 box-group">
@@ -1273,8 +1273,8 @@
                     </form>
                 </div>
                 <!--<div class="modal-footer">
-                                  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                   </div>-->
+                                          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                           </div>-->
             </div>
         </div>
     </div>
@@ -1456,7 +1456,6 @@
             selectionCssClass: 'form-control'
         });
 
-
         $(document).on("change", ".reported_name", function() {
             var emp_id = $(this).val();
             var currentRow = $(this).closest(".row");
@@ -1467,8 +1466,10 @@
                     type: "GET",
                     success: function(data) {
                         if (data.employee) {
-                            currentRow.find('.employee_code').val(data.employee.emp_id);
-                            currentRow.find('.designation').val(data.employee.designation);
+                            currentRow.find('.employee_code').val(data.employee.emp_id).prop("readonly",
+                                true);
+                            currentRow.find('.designation').val(data.employee.designation).prop(
+                                "readonly", true);
 
                             var departmentDropdown = currentRow.find('.department');
                             departmentDropdown.empty();
@@ -1482,6 +1483,25 @@
                                         `<option value="${department.id}" ${selected}>${department.department_name}</option>`
                                     );
                                 });
+                                console.log(data.employee.department);
+                                if (data.employee.department) {
+                                    departmentDropdown.prop("disabled",
+                                    false);
+                                    departmentDropdown.css("pointer-events",
+                                    "none");
+                                    if (!currentRow.find('input.department_hidden').length) {
+                                        currentRow.append(`
+                                            <input type="hidden" class="department_hidden" 
+                                                name="${departmentDropdown.attr('name')}" 
+                                                value="${data.employee.department}">
+                                        `);
+                                    }
+                                } else {
+                                   
+                                    departmentDropdown.css("pointer-events", "auto");
+                                    departmentDropdown.css("background-color", "white");
+                                    currentRow.find('input.department_hidden').remove();
+                                }
                             } else {
                                 departmentDropdown.append(
                                     '<option value="">No departments available</option>');
@@ -1503,11 +1523,12 @@
                     }
                 });
             } else {
-                currentRow.find('.employee_code').val("");
-                currentRow.find('.designation').val("");
+                currentRow.find('.employee_code').val("").prop("readonly", false);
+                currentRow.find('.designation').val("").prop("readonly", false);
                 var departmentDropdown = currentRow.find('.department');
                 departmentDropdown.empty();
                 departmentDropdown.append('<option value="">Select Department</option>');
+                departmentDropdown.prop("readonly", false);
             }
         });
 
@@ -2180,7 +2201,8 @@
             var injuredPerson = '0';
             var injury_person_type = '0';
 
-            if ((injuredPerson_emp == '' ||  injuredPerson_emp == null) && (injuredPerson_empName == '' || injuredPerson_empName == null) ) {
+            if ((injuredPerson_emp == '' || injuredPerson_emp == null) && (injuredPerson_empName == '' ||
+                    injuredPerson_empName == null)) {
                 Swal.fire('Error', 'Please Select Victim Name', 'error');
                 errorcount = '1';
             } else {
@@ -3039,7 +3061,7 @@
                             var formDatas = new URLSearchParams($('#injuryform')
                                 .serialize());
                             formDatas.append('random_id',
-                            random_id); // Append the new key-value pair
+                                random_id); // Append the new key-value pair
                             var data = formDatas.toString()
 
 
