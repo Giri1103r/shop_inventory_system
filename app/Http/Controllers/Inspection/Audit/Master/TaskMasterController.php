@@ -73,8 +73,6 @@ class TaskMasterController extends Controller
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
-
-                    dd($ex);
                     report($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
@@ -184,7 +182,7 @@ class TaskMasterController extends Controller
         }
     }
 
-    
+
 
     public function View(Request $request)
     {
@@ -200,7 +198,6 @@ class TaskMasterController extends Controller
             return view('inspection.inspection_audit.master.view', $data);
 
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
         }
     }
@@ -298,7 +295,6 @@ class TaskMasterController extends Controller
             $filename = "Audit Task.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-
             report($ex);
         }
     }

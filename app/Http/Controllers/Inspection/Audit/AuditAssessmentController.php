@@ -80,6 +80,9 @@ class AuditAssessmentController extends Controller
                         ->addColumn('created_date', function ($row) {
                             return Displaydateformat($row->created_at);
                         })
+                        ->addColumn('audit_date', function ($row) {
+                            return Displaydateformat($row->created_at);
+                        })
                         ->addColumn('created_by', function ($row) {
                             return getUsername($row->created_by);
                         })
@@ -98,7 +101,7 @@ class AuditAssessmentController extends Controller
                      </a>';
                             return $btn;
                         })
-                        ->rawColumns(['action', 'created_date', 'created_by', 'status'])
+                        ->rawColumns(['action', 'created_date', 'audit_date', 'created_by', 'status'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()

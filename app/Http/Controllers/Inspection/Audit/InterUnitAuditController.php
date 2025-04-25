@@ -79,6 +79,9 @@ class InterUnitAuditController extends Controller
                         ->addColumn('created_date', function ($row) {
                             return Displaydateformat($row->created_at);
                         })
+                        ->addColumn('audit_date', function ($row) {
+                            return Displaydateformat($row->created_at);
+                        })
                         ->addColumn('created_by', function ($row) {
                             return getUsername($row->created_by);
                         })
@@ -97,7 +100,7 @@ class InterUnitAuditController extends Controller
                      </a>';
                             return $btn;
                         })
-                        ->rawColumns(['action', 'created_date', 'created_by', 'status'])
+                        ->rawColumns(['action', 'created_date', 'created_by', 'audit_date', 'status'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -125,6 +128,7 @@ class InterUnitAuditController extends Controller
             $unit  = $this->unit->select('id', 'unit_name')->where('status', '1')->get();
             $checklist_details = getCheckListQuestion(INTER_UNIT_AUDIT_CHECKLIST);
             $options =  getoption(INTER_UNIT_AUDIT_CHECKLIST);
+          
             $getoption = string_to_array($options->type);
             $data = array(
                 'checklist_types' => $checklist_types,
@@ -134,7 +138,7 @@ class InterUnitAuditController extends Controller
             );
             return view('inspection.inspection_audit.interUnitAudit.add', $data);
         } catch (Exception $ex) {
-            dd($ex);
+
             report($ex);
         }
     }
@@ -393,7 +397,6 @@ class InterUnitAuditController extends Controller
             $filename = "Inter Unit Monthly Audit.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-
             dd($ex);
         }
     }

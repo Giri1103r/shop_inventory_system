@@ -116,7 +116,7 @@ class ChecklistSubTypeDataName extends Model
             ->where('inspection_master_checklist_sub_type_data_name.name', $subcategory_name)
             ->where('parent.checklist_type_id', $checklist_type_id)
             ->where('parent.checklist_sub_type_id', $checklist_sub_type_id)
-            ->where('inspection_master_checklist_sub_type_data_name.id', '!=', $id)
+            ->where('inspection_master_checklist_sub_type_data_name.checklist_sub_type_data_id', '!=', $id)
             ->get();
     }
 

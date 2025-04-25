@@ -250,7 +250,7 @@ class AmbientAirMonitoringYearlyController extends Controller
                 // Title Section
                 $sheet->mergeCells("G{$currentRow}:M" . ($currentRow + 2));
                 $sheet->setCellValue("G{$currentRow}", "AMBIENT NOISE MONITORING SURVEY REPORT(EXTERNAL) PN INTERNATIONAL PVT. LTD");
-                $sheet->getStyle("G{$currentRow}")->applyFromArray([
+                $sheet->getStyle("G{$currentRow}:M{$currentRow}")->applyFromArray([
                     'font' => ['bold' => true, 'size' => 14],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
@@ -430,7 +430,7 @@ class AmbientAirMonitoringYearlyController extends Controller
                 $mpdf->WriteHTML($html);
 
                 $filename = "ambientAirMonitoring.pdf";
-                return $mpdf->Output($filename, 'I');
+                return $mpdf->Output($filename, 'D');
             }
         } catch (Exception $ex) {
             report($ex);

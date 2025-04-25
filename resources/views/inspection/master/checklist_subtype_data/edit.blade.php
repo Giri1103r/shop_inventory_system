@@ -330,8 +330,31 @@
                         $(element).removeClass('is-invalid');
                     },
                     submitHandler: function(form) {
-                        console.log('test');
-                        form.submit();
+                        let names = [];
+                        let isDuplicate = false;
+
+                        $(".data_name").each(function() {
+                            let val = $(this).val().trim().toLowerCase();
+                            if (val !== "") {
+                                if (names.includes(val)) {
+                                    isDuplicate = true;
+                                    return false; // break loop
+                                }
+                                names.push(val);
+                            }
+                        });
+
+                        if (isDuplicate) {
+                            Swal.fire({
+                                icon: "warning",
+                                title: "Duplicate Entry",
+                                text: "Checklist Sub-Type Data Name should be unique across all rows.",
+                                confirmButtonColor: "#d33"
+                            });
+                            return false; // prevent form submission
+                        }
+
+                        form.submit(); // allow form submission if all good
                     },
                     invalidHandler: function(event, validator) {
                         var errors = validator.numberOfInvalids();
