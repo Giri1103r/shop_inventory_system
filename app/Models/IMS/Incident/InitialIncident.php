@@ -168,9 +168,7 @@ class InitialIncident extends Model
          */
         if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_ADMIN) || CheckUserRole(ROLE_EHS_HEAD)) {
             // $query->where('ims_initial_incident.status', '1');
-        } elseif (CheckUserRole(ROLE_EHS_OFFICER)) {
-            $query->where('ims_initial_incident.created_by', Auth::user()->id);
-        } else {
+        }else {
             // $userId = Auth::id();
             // $userLoginId = Auth::user()->employee_id;
 
