@@ -309,7 +309,7 @@ class MonthlyEyeWashInspectionController extends Controller
             Session::flash('success', 'Monthly Eye Wash Inspection Added Successfully');
             return redirect(admin_url('safety/eye-wash-inspection/monthly/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('safety/eye-wash-inspection/monthly/list'));

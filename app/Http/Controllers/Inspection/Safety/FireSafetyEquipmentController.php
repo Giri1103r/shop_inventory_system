@@ -89,7 +89,7 @@ class FireSafetyEquipmentController extends Controller
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
-                    dd($ex);
+                    report($ex);
                     report($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
@@ -413,7 +413,7 @@ class FireSafetyEquipmentController extends Controller
             $filename = "Safety Equipment List.pdf";
             return $mpdf->Output($filename, 'i');
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('safety/fire-safety-equipment/list'));

@@ -159,7 +159,7 @@ class MonthlyForkLiftInspectionController extends Controller
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
-                    dd($ex);
+                    report($ex);
                     report($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
@@ -881,7 +881,7 @@ class MonthlyForkLiftInspectionController extends Controller
                         'horizontal' => Alignment::HORIZONTAL_CENTER,
 
                         'wrapText' => true,
-                        'indent' => 1, 
+                        'indent' => 1,
                     ],
                 ]);
                 $sheet->getStyle("A{$startRow}:P{$currentRow}")->applyFromArray([
@@ -950,7 +950,7 @@ class MonthlyForkLiftInspectionController extends Controller
             $filename = "Monthly Forklift Inspection.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('safety/forklift-inspection/monthly/list'));
@@ -994,7 +994,7 @@ class MonthlyForkLiftInspectionController extends Controller
             $filename = "ForkLift Inspection.pdf";
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             report($ex);
             return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
         }

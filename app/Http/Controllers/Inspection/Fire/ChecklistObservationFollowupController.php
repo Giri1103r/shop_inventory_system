@@ -188,7 +188,7 @@ class ChecklistObservationFollowupController extends Controller
             );
             return view('inspection.fire.observationFollowup.add', $data);
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             report($ex);
         }
     }
@@ -239,13 +239,13 @@ class ChecklistObservationFollowupController extends Controller
 
                 Session::flash('success', __('Your data has been created successfully'));
             } catch (Exception $ex) {
-                dd($ex);
+                report($ex);
                 report($ex);
                 Session::flash('error', __('common.message_error'));
             }
             return redirect(admin_url('fire/checklist-observation/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('fire/checklist-observation/list'));
         }
@@ -267,7 +267,7 @@ class ChecklistObservationFollowupController extends Controller
             }
             return view('inspection.fire.observationFollowup.view', $data);
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong!');
             return redirect(admin_url('fire/checklist-observation/list'));
         }
@@ -377,7 +377,7 @@ class ChecklistObservationFollowupController extends Controller
             return redirect(admin_url('fire/checklist-observation/list'));
         } catch (Exception $ex) {
 
-            dd($ex);
+            report($ex);
             report($ex);
             Session::flash('error', 'Something Went Wrong!');
             return redirect(admin_url('fire/checklist-observation/list'));
@@ -441,7 +441,7 @@ class ChecklistObservationFollowupController extends Controller
             Session::flash('success', __('common.updated_msg'));
             return redirect(admin_url('fire/checklist-observation/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something Went Wrong!');
             return redirect(admin_url('fire/checklist-observation/list'));
         }
@@ -552,7 +552,7 @@ class ChecklistObservationFollowupController extends Controller
             return redirect(admin_url('fire/checklist-observation/list'));
         } catch (Exception $ex) {
 
-            dd($ex);
+            report($ex);
             report($ex);
             Session::flash('error', 'Something Went Wrong!');
             return redirect(admin_url('fire/checklist-observation/list'));
@@ -667,7 +667,7 @@ class ChecklistObservationFollowupController extends Controller
             return redirect(admin_url('fire/checklist-observation/list'));
         } catch (Exception $ex) {
 
-            dd($ex);
+            report($ex);
             report($ex);
             Session::flash('error', 'Something Went Wrong!');
             return redirect(admin_url('fire/checklist-observation/list'));
@@ -781,7 +781,7 @@ class ChecklistObservationFollowupController extends Controller
             return redirect(admin_url('fire/checklist-observation/list'));
         } catch (Exception $ex) {
 
-            dd($ex);
+            report($ex);
             report($ex);
             Session::flash('error', 'Something Went Wrong!');
             return redirect(admin_url('fire/checklist-observation/list'));
@@ -834,7 +834,7 @@ class ChecklistObservationFollowupController extends Controller
             $filename = "checklist observation follow up sheet.pdf";
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong!');
             return redirect(admin_url('fire/checklist-observation/list'));
         }
@@ -941,7 +941,7 @@ class ChecklistObservationFollowupController extends Controller
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong!');
             return redirect(admin_url('fire/checklist-observation/list'));
         }
