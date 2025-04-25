@@ -77,6 +77,11 @@
 @push('script')
     <script type="text/javascript" nonce="projectcab">
         $(function() {
+
+            $.validator.addMethod("noSpaces", function(value, element) {
+                return this.optional(element) || value.trim().length > 0;
+            }, "This field cannot contain only spaces");
+
             $('#auditTaskAdd').validate({
                 rules: {
 
@@ -85,7 +90,7 @@
                         minlength: 3,
                         maxlength: 200,
                         pattern: /^[a-zA-Z0-9\s\-_'"()]+$/,
-
+                        noSpaces: true,
                     }
 
                 },
@@ -96,7 +101,7 @@
                         maxlength: "Task Name cannot exceed 200 characters.",
                         pattern: "Must be alphanumeric and accept the mentioned special characters: (-, _, ‘, “, ())."
                     }
-                },  
+                },
 
                 errorElement: 'span',
                 errorPlacement: function(error, element) {

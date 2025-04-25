@@ -53,7 +53,7 @@ class ChecklistSubTypeController extends Controller
                             // }
                             return $text;
                         })
-                        ->addColumn('created_at', function ($row) {
+                        ->addColumn('created_date', function ($row) {
                             return Displaydateformat($row->created_at);
                         })
                         ->addColumn('created_by', function ($row) {
