@@ -223,24 +223,19 @@ class WorkNoiseMonitoringController extends Controller
             for ($i = 1; $i <= 200; $i++) {
                 $sheet->getRowDimension($i)->setRowHeight(25);
             }
-
             $row = 1;
             $currentRow = $row;
             foreach ($allData as $details) {
                 $currentRow = $row;
-                $environmentData =   $this->environment->selectOne($details->id, $type);
+
+
                 $workNoiseDataList = $this->work_noise_monitoring->selectOne($details->id);
                 $document_no  = $this->static_docno->select('id', 'doc_no', 'issue_date', 'rev_dt')->where([
                     ['type', "WorkNoise"],
                     ['status', '1']
                 ])->first();
 
-                for ($i = 1; $i <= 200; $i++) {
-                    $sheet->getRowDimension($i)->setRowHeight(25);
-                }
 
-                $row = 1;
-                $currentRow = $row;
                 $logoPath = public_path('assets/images/logo-dark.png');
                 $logoLeftPath = public_path('assets/images/logo-dark.png');
                 if (file_exists($logoLeftPath)) {
@@ -266,7 +261,7 @@ class WorkNoiseMonitoringController extends Controller
                 // Title Section
                 $sheet->mergeCells("G{$currentRow}:M" . ($currentRow + 2));
                 $sheet->setCellValue("G{$currentRow}", "WORK ZONE NOISE MONITORING SURVEY REPORT (EXTERNAL)
-PN INTERNATIONAL PVT. LTD.");
+                 PN INTERNATIONAL PVT. LTD.");
                 $sheet->getStyle("G{$currentRow}")->applyFromArray([
                     'font' => ['bold' => true, 'size' => 14],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
@@ -335,7 +330,7 @@ PN INTERNATIONAL PVT. LTD.");
 
                     $inspectionRow++;
                 }
-                $row =  $inspectionRow + 2;
+                $row = $inspectionRow + 3;
             }
             $fileName = 'workNoise.xlsx';
             $writer = new Xlsx($spreadsheet);
