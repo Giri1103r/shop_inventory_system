@@ -54,7 +54,7 @@
                                         <input type="text" name="scope" id="scope"
                                             class="form-control" placeholder="Scope">
                                     </div>
-                                    <div class="col-md-3 mt-3 me-1">
+                                    <div class="col-md-4  gap-2 mt-3">
                                         <x-button-search></x-button-search>
                                         <x-button-reset></x-button-reset>
                                     </div>

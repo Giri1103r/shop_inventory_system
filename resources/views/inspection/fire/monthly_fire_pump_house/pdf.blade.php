@@ -1,8 +1,9 @@
+
 <!DOCTYPE html>
 <html>
 
 <head>
-    <title>MONTHLY FIRE PUMP HOUSE INSPECTION Checklist | KARAM</title>
+    <title>MONTHLY FIRE PUMP HOUSE INSPECTION CHECKLIST | KARAM</title>
 
     <style>
         .badge {
