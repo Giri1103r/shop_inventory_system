@@ -87,7 +87,9 @@
                                                             <tr id="RowchecklistView0">
                                                                 <td>
                                                                     <div class="form-group form-input">
-                                                                        <input type="text" name="checklist[0][name]" class="form-control" id="sub_type_data_name_0">
+                                                                        <input type="text" name="checklist[0][name]"
+                                                                            class="form-control data_name"
+                                                                            id="sub_type_data_name_0">
                                                                     </div>
                                                                 </td>
                                                                 <td>
@@ -95,7 +97,7 @@
                                                                         <textarea name="checklist[0][description]" class="form-control"></textarea>
                                                                     </div>
                                                                 </td>
-                                                                
+
                                                             </tr>
                                                         </tbody>
                                                     </table>
@@ -245,14 +247,14 @@
                         url: '{{ admin_url('inspection/master/checklist-sub-type-data/unique') }}',
                         type: 'post',
                         data: {
-                            checklist_type_id: function () {
+                            checklist_type_id: function() {
                                 return $('#checklist_type_id').val();
                             },
-                            checklist_sub_type_id: function () {
+                            checklist_sub_type_id: function() {
                                 return $('#checklist_sub_type_id').val();
                             },
-                            subcategory_name: function () {
-                                return dataName.val(); 
+                            subcategory_name: function() {
+                                return dataName.val();
                             }
                         }
                     },
@@ -265,7 +267,7 @@
                     }
                 });
 
-                
+
 
             }
             $(function() {
@@ -306,7 +308,7 @@
                                 }
                             }
                         },
-                       
+
 
                     },
                     messages: {
@@ -323,7 +325,7 @@
                             pattern: "Only alphanumeric characters and -, _, ', \", () are allowed",
                             remote: "Checklist Sub-Type Data Name should be unique"
                         },
-                       
+
 
                     },
                     errorElement: 'span',
@@ -338,10 +340,33 @@
                         $(element).removeClass('is-invalid');
                     },
                     submitHandler: function(form) {
-                        console.log('test');
-                        form.submit();
+                        let names = [];
+                        let isDuplicate = false;
 
+                        $(".data_name").each(function() {
+                            let val = $(this).val().trim().toLowerCase();
+                            if (val !== "") {
+                                if (names.includes(val)) {
+                                    isDuplicate = true;
+                                    return false; // break loop
+                                }
+                                names.push(val);
+                            }
+                        });
+
+                        if (isDuplicate) {
+                            Swal.fire({
+                                icon: "warning",
+                                title: "Duplicate Entry",
+                                text: "Checklist Sub-Type Data Name should be unique across all rows.",
+                                confirmButtonColor: "#d33"
+                            });
+                            return false; // prevent form submission
+                        }
+
+                        form.submit(); // allow form submission if all good
                     },
+
                     invalidHandler: function(event, validator) {
                         var errors = validator.numberOfInvalids();
                         console.log(errors + " field(s) are invalid");

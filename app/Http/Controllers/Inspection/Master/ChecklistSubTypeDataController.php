@@ -152,7 +152,7 @@ class ChecklistSubTypeDataController extends Controller
             return Response::json(true);
         }
     }
-    
+
     public function View($id)
     {
         try {
@@ -345,7 +345,7 @@ class ChecklistSubTypeDataController extends Controller
         }
     }
 
-   
+
     public function DownloadSample()
     {
 
