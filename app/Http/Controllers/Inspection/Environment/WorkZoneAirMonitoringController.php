@@ -260,7 +260,7 @@ class WorkZoneAirMonitoringController extends Controller
                 // Title Section
                 $sheet->mergeCells("G{$currentRow}:P" . ($currentRow + 2));
                 $sheet->setCellValue("G{$currentRow}", " WORK ZONE AIR MONITORING (YEARLY) PN INTERNATIONAL PVT. LTD");
-                $sheet->getStyle("G{$currentRow}")->applyFromArray([
+                $sheet->getStyle("G{$currentRow}:p{$currentRow}")->applyFromArray([
                     'font' => ['bold' => true, 'size' => 14],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
@@ -312,6 +312,17 @@ class WorkZoneAirMonitoringController extends Controller
                 // Other fields
                 $sheet->setCellValue("U$headerRow", "Act/Rule");
                 $sheet->mergeCells("V$headerRow:W$headerRow")->setCellValue("V$headerRow", "Remark");
+
+
+                $borderStyle = [
+                    'borders' => [
+                        'allBorders' => [
+                            'borderStyle' => Border::BORDER_THIN,
+                        ],
+                    ],
+                ];
+                
+                $sheet->getStyle("A$headerRow:W$headerRow")->applyFromArray($borderStyle);
 
                 // Optional styling
                 $sheet->getStyle("A$headerRow:W$headerRow")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
@@ -570,6 +581,18 @@ class WorkZoneAirMonitoringController extends Controller
                 $sheet->setCellValue("U$headerRow", "Act/Rule");
                 $sheet->mergeCells("V$headerRow:W$headerRow")->setCellValue("V$headerRow", "Remark");
 
+                $borderStyle = [
+                    'borders' => [
+                        'allBorders' => [
+                            'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                        ],
+                    ],
+                ];
+                
+                // Apply border to header row A to W
+                $sheet->getStyle("A$headerRow:W$headerRow")->applyFromArray($borderStyle);
+                
+              
                 // Optional styling
                 $sheet->getStyle("A$headerRow:W$headerRow")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
                 $sheet->getStyle("A$headerRow:W$headerRow")->getFont()->setBold(true);
