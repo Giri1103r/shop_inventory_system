@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Inspection\Master;
 
 use Exception;
-use Response;
+// use Response;
 use Illuminate\Http\Request;
 use Spatie\SimpleExcel\SimpleExcelWriter;
 use App\Http\Controllers\Controller;
@@ -15,6 +15,7 @@ use App\Models\Inspection\Master\ChecklistFile;
 use App\Models\Inspection\Master\ChecklistType;
 use App\Models\Inspection\Master\ChecklistSubType;
 use App\Models\Inspection\Master\ChecklistOptionType;
+use Illuminate\Support\Facades\Response;
 
 class ChecklistSubTypeController extends Controller
 {
