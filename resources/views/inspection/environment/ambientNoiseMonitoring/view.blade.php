@@ -70,19 +70,19 @@
                                                 </div>
 
                                             </div>
-                                            <div class="mb-3 col-md-4 form-input">
+                                            <div class="mt-2 col-md-4 form-input">
                                                 <label class="form-label view_label">{{ __('common.created_by') }}</label>
                                                 <div class="view_data">
                                                     {{ getusername($environmentData->created_by) }}
                                                 </div>
                                             </div>
-                                            <div class="mb-3 col-md-4 form-input">
+                                            <div class="mt-2 col-md-4 form-input">
                                                 <label class="form-label view_label">{{ __('common.created_date') }}</label>
                                                 <div class="view_data">
                                                     {{ displayDateformat($environmentData->created_at) }}
                                                 </div>
                                             </div>
-                                            <div class="mb-3 col-md-4 form-input">
+                                            <div class="mt-2 col-md-4 form-input">
                                                 <label class="form-label view_label">{{ __('common.status') }}</label>
                                                 <div class="view_data">
                                                     @if ($environmentData->status == 1)

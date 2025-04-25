@@ -73,7 +73,7 @@ class DgSetStackEmissionMonitoring extends Model
 
     public function selectOne($envId)
     {
-        $data = $this->select('inspection_environment_dgset_monitoring.*', 'inspection_environment_table.environment_no')->leftJoin('inspection_environment_table', 'inspection_environment_dgset_monitoring.environment_id', '=', 'inspection_environment_table.id')->where('inspection_environment_dgset_monitoring.environment_id', $envId)->where('inspection_environment_dgset_monitoring.status', 1)
+        $data = $this->select('inspection_environment_dgset_monitoring.*', 'inspection_environment_table.environment_no')->leftJoin('inspection_environment_table', 'inspection_environment_dgset_monitoring.environment_id', '=', 'inspection_environment_table.id')->where('inspection_environment_dgset_monitoring.environment_id', $envId)
             ->get();
         return $data;
     }

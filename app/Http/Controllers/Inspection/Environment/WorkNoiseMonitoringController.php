@@ -94,7 +94,7 @@ class WorkNoiseMonitoringController extends Controller
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
-                    dd($ex);
+                    report($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }
@@ -149,13 +149,13 @@ class WorkNoiseMonitoringController extends Controller
 
                 Session::flash('success', __('Your data has been created successfully'));
             } catch (Exception $ex) {
-                dd($ex);
+                report($ex);
                 Session::flash('error', __('common.message_error'));
             }
 
             return redirect(admin_url('environment/work-noise/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('environment/work-noise/list'));
         }
