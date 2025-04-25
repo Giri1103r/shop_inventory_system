@@ -217,7 +217,7 @@ class InitialIncidentController extends Controller
                                 $assignedUsers =  $row->investigation_reported_by;
                                 $loggedInUserId = Auth::id();
                                 $assignedLoginIds = Employee::where('id', $assignedUsers)->pluck('login_id')->toArray();
-                                if (($assignedLoginIds == Auth::id()) || (CheckUserRole(ROLE_SUPERADMIN))) {
+                                if (($row->investigation_reported_by == Auth::id()) || (CheckUserRole(ROLE_SUPERADMIN))) {
                                     $btn .= '<a href="' . admin_url('incident/initial-incident/investigation/' . encryptId($row->id)) . '" class=" " title="Investigation">
                                                 <i class="fa fa-search" style="color: #000000;"></i>
                                              </a>';
@@ -296,7 +296,7 @@ class InitialIncidentController extends Controller
                             if ((CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_HEAD)) && ($row->incident_status == 7)) {
                                 $btn .= '<a href="' . admin_url('incident/initial-incident/ehsApproval/' . encryptId($row->id) . '/' . encryptId($row->incident_id)) . '" class=" " title="Review"><i class="fa-solid fa-circle-check" style="color:rgb(0, 37, 132);"></i> ';
                             }
-                            if ($row->incident_status == 6) {
+                            if ($row->incident_status == 6 && (CheckUserRole(ROLE_SUPERADMIN) || $row->responsibility == Auth::id())) {
                                 $btn .= '<a href="' . admin_url('incident/initial-incident/caSubmission/' . encryptId($row->id) . '/' . encryptId($row->incident_id)) . '" 
                                             class="edit-icon" 
                                             title="' . __('Corrective Action') . '">';
@@ -306,7 +306,7 @@ class InitialIncidentController extends Controller
                                 $btn .= '</a>';
                             }
 
-                            $btn .= '<a href="' . admin_url('incident/initial-incident/generalpdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
+                            $btn .= '<a href="' . admin_url('incident/initial-incident/cageneralpdf/' . encryptId($row->id) . '/' . encryptId($row->incident_id)) . '" style="margin-right: 5px;" title="PDF">
                             <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
                              </a>';
 
@@ -340,10 +340,16 @@ class InitialIncidentController extends Controller
             $unitList  = $this->unit->select('id', 'unit_name')->where('status', '1')->get();
             $locationList  = $this->location->select('id', 'location_name')->where('status', '1')->get();
             $incTypeList  = $this->inctype->select('id', 'incident_type_name')->where('status', '1')->get();
+
+            $body_parts = $this->incident_body_parts->delete_temprow();
+
+            $randomID = getsequence('IncidentRandomID');
             $data = array(
                 'unitList' => $unitList,
                 'locationList' => $locationList,
                 'incTypeList' => $incTypeList,
+                'randomID' => $randomID,
+                'body_parts' => $body_parts,
             );
             return view('ims.initial.incident.add', $data);
         } catch (Exception $ex) {
@@ -364,6 +370,37 @@ class InitialIncidentController extends Controller
 
         return response()->json(
             $employees->map(function ($employee) {
+                return [
+                    'id' => encryptId($employee->id),
+                    'text' => $employee->emp_name . ' - ' . $employee->emp_id,
+                ];
+            })
+        );
+    }
+
+    public function getEmployee(Request $request)
+    {
+        $name = $request->input('search');
+
+        $employees  = Employee::select('id', 'emp_id', 'emp_name')->where('status', '1')->get();
+        return response()->json(
+            $employees->map(function ($employee) {
+                return [
+                    'id' => encryptId($employee->id),
+                    'text' => $employee->emp_name . ' - ' . $employee->emp_id,
+                ];
+            })
+        );
+    }
+
+
+    public function getWorkers(Request $request)
+    {
+
+        $workers = Work::select('id', 'emp_id', 'emp_name')->where('status', '1')->get();
+
+        return response()->json(
+            $workers->map(function ($employee) {
                 return [
                     'id' => encryptId($employee->id),
                     'text' => $employee->emp_name . ' - ' . $employee->emp_id,
@@ -412,6 +449,7 @@ class InitialIncidentController extends Controller
             );
         }
     }
+
     public function fetchEmployeeDetails($emp_id)
     {
         $emp_id = decryptId($emp_id);
@@ -496,7 +534,6 @@ class InitialIncidentController extends Controller
             $addInjury = $this->incident_body_parts->addInjury();
             return $addInjury;
         } catch (Exception $ex) {
-dd($ex);
             return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
         }
     }
@@ -550,8 +587,11 @@ dd($ex);
 
 
                 $initialincident =   $this->initialincident->store();
-                $this->initialincidentevidence->store($initialincident);
-                $this->injury_details->store($initialincident);
+                $this->initialincidentevidence->store($initialincident, 1);
+                if ($initialincident->anyone_injured == 1) {
+                    $this->injury_details->store($initialincident->id, $initialincident->random_id);
+                }
+                // $investigation_injury =  $this->incident_body_parts->store($initialincident->random_id, $initialincident->id);
                 $incident_status = STATUS_INCIDENT_REPORT;
                 $user_role = ROLE_EHS_HEAD;
                 $mailsubject = 'Incident has been submitted';
@@ -608,15 +648,12 @@ dd($ex);
 
                 Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
-
-
                 report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
             return redirect(admin_url('incident/initial-incident/list'));
         } catch (Exception $ex) {
-
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('incident/initial-incident/list'));
@@ -638,9 +675,8 @@ dd($ex);
                 $fishboneData = json_decode($getfishbone->first()->fishbone, true);
                 $getrisklevel = $this->initialincident->getrisklevel($id);
                 $getEHSApprovalincident = $this->initialincident->getEHSApprovalincident($id);
-                // dd($getEHSVerify);
                 $initialincidentevidence = $this->initialincidentevidence->selectOne($id);
-
+                $injury_details = $this->injury_details->getBodypartsInjuryPerson($id);
                 $mediaOptions = [
                     1 => 'Phone',
                     2 => 'Walkie Talkie',
@@ -657,7 +693,6 @@ dd($ex);
                 }, $selectedMedia);
 
                 $status_log = $this->Statuslog->selectOne($id, 1);
-
                 $data = array(
                     'incident_report' => $incident_report,
                     'displayMedia' => $displayMedia,
@@ -671,6 +706,7 @@ dd($ex);
                     'getEHSApprovalincident' => $getEHSApprovalincident,
                     'status_log' => $status_log,
                     'rcpa' => $rcpa,
+                    'injury_details' => $injury_details,
                 );
             }
             return view('ims.initial.incident.view', $data);
@@ -684,12 +720,9 @@ dd($ex);
         try {
             $id = decryptId($request->id);
             $incident_id = decryptId($request->incident_id);
-
-            // dd($id, $incident_id);
             if (Auth::check()) {
                 $incident_report = $this->initialincident->selectOne($incident_id);
-                $rcpa = $this->rcpa->selectOne($id,$incident_id);
-                // dd($rcpa);
+                $rcpa = $this->rcpa->selectOne($id, $incident_id);
                 $getEHSVerify = $this->initialincident->getEHSVerifyincident($incident_id);
                 $getEHSReview = $this->initialincident->getEHSReviewincident($incident_id);
                 $getInvestigation = $this->initialincident->getInvestigation($incident_id);
@@ -697,8 +730,8 @@ dd($ex);
                 $getfishbone = $this->initialincident->getfishbone($incident_id);
                 $fishboneData = json_decode($getfishbone->first()->fishbone, true);
                 $getrisklevel = $this->initialincident->getrisklevel($incident_id);
-                // dd($getEHSVerify);
                 $initialincidentevidence = $this->initialincidentevidence->selectOne($incident_id);
+                $getEHSApprovalincident = $this->initialincident->getEHSApprovalincident($incident_id);
 
                 $mediaOptions = [
                     1 => 'Phone',
@@ -714,7 +747,9 @@ dd($ex);
                 $displayMedia = array_map(function ($media) use ($mediaOptions) {
                     return $mediaOptions[$media] ?? $media;
                 }, $selectedMedia);
-
+                $injury_details = $this->injury_details->getBodypartsInjuryPerson($id);
+                $status_log = $this->Statuslog->selectCAPA($incident_id,$id, 1);
+                $capaEvidence = $this->initialincidentevidence->SelectcapaEvidence($id,$incident_id);
                 $data = array(
                     'incident_report' => $incident_report,
                     'displayMedia' => $displayMedia,
@@ -726,11 +761,15 @@ dd($ex);
                     'fishboneData' => $fishboneData,
                     'getrisklevel' => $getrisklevel,
                     'rcpa' => $rcpa,
+                    'injury_details' => $injury_details,
+                    'getEHSApprovalincident' => $getEHSApprovalincident,
+                    'status_log' => $status_log,
+                    'capaEvidence' => $capaEvidence,
                 );
             }
-            return view('ims.initial.incident.ehsApproval', $data);
+            return view('ims.initial.incident.caView', $data);
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
         }
     }
 
@@ -743,21 +782,25 @@ dd($ex);
 
             $initialincident = $this->initialincident->selectOne($id);
             $initialincidentevidence = $this->initialincidentevidence->selectOne($id);
+            $injury_details = $this->injury_details->find_foreignkey($id);
             $unitList  = $this->unit->select('id', 'unit_name')->where('status', '1')->get();
             $locationList  = $this->location->select('id', 'location_name')->where('status', '1')->get();
             $incTypeList  = $this->inctype->select('id', 'incident_type_name')->where('status', '1')->get();
+
+            $body_parts = $this->incident_body_parts->delete_temprow();
             $data = array(
                 'unitList' => $unitList,
                 'locationList' => $locationList,
                 'incTypeList' => $incTypeList,
                 'initialincident' => $initialincident,
                 'initialincidentevidence' => $initialincidentevidence,
+                'injury_details' => $injury_details,
+                'body_parts' => $body_parts,
             );
 
 
             return view('ims.initial.incident.edit', $data);
         } catch (Exception $error) {
-            dd($error);
             report($error->getMessage());
         }
     }
@@ -801,18 +844,17 @@ dd($ex);
             ];
             $validator = Validator::make($request->all(), $rules, $messages);
             if ($validator->fails()) {
-                dd($validator->errors());
                 return redirect()->back()->withErrors($validator)->withInput();
             }
 
 
             $initialincident =   $this->initialincident->updates($id);
             $this->initialincidentevidence->updates($id);
-
+            $initialincident = $this->initialincident->find($id);
+            $this->injury_details->store($id, $initialincident->random_id);
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('incident/initial-incident/list'));
         } catch (Exception $ex) {
-
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('incident/initial-incident/list'));
         }
@@ -825,12 +867,19 @@ dd($ex);
         return response()->json(['success' => true, 'message' => 'Evidence deleted successfully.']);
     }
 
+    public function injuryDelete($incidentId, $injuryId)
+    {
+        $incidentId = $incidentId;
+        $injuryId = $injuryId;
+        $this->injury_details->deleterecord($incidentId, $injuryId);
+        return response()->json(['success' => true, 'message' => 'Injury deleted successfully.']);
+    }
+
+
     public function review(Request $request)
     {
         try {
             $id = decryptId($request->id);
-
-            // dd($id, $incident_id);
             if (Auth::check()) {
                 $incident_report = $this->initialincident->selectOne($id);
                 $rcpa = $this->rcpa->getRCPA($id);
@@ -841,8 +890,9 @@ dd($ex);
                 $getfishbone = $this->initialincident->getfishbone($id);
                 $fishboneData = json_decode($getfishbone->first()->fishbone, true);
                 $getrisklevel = $this->initialincident->getrisklevel($id);
-                // dd($getEHSVerify);
                 $initialincidentevidence = $this->initialincidentevidence->selectOne($id);
+                $injury_details = $this->injury_details->getBodypartsInjuryPerson($id);
+
 
                 $mediaOptions = [
                     1 => 'Phone',
@@ -870,11 +920,12 @@ dd($ex);
                     'fishboneData' => $fishboneData,
                     'getrisklevel' => $getrisklevel,
                     'rcpa' => $rcpa,
+                    'injury_details' => $injury_details,
                 );
             }
             return view('ims.initial.incident.review', $data);
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
         }
     }
 
@@ -883,12 +934,9 @@ dd($ex);
         try {
             $id = decryptId($request->id);
             $incident_id = decryptId($request->incident_id);
-
-            // dd($id, $incident_id);
             if (Auth::check()) {
                 $incident_report = $this->initialincident->selectOne($incident_id);
-                $rcpa = $this->rcpa->selectOne($id,$incident_id);
-                // dd($rcpa);
+                $rcpa = $this->rcpa->selectOne($id, $incident_id);
                 $getEHSVerify = $this->initialincident->getEHSVerifyincident($incident_id);
                 $getEHSReview = $this->initialincident->getEHSReviewincident($incident_id);
                 $getInvestigation = $this->initialincident->getInvestigation($incident_id);
@@ -896,8 +944,8 @@ dd($ex);
                 $getfishbone = $this->initialincident->getfishbone($incident_id);
                 $fishboneData = json_decode($getfishbone->first()->fishbone, true);
                 $getrisklevel = $this->initialincident->getrisklevel($incident_id);
-                // dd($getEHSVerify);
                 $initialincidentevidence = $this->initialincidentevidence->selectOne($incident_id);
+                $injury_details = $this->injury_details->getBodypartsInjuryPerson($incident_id);
 
                 $mediaOptions = [
                     1 => 'Phone',
@@ -913,7 +961,7 @@ dd($ex);
                 $displayMedia = array_map(function ($media) use ($mediaOptions) {
                     return $mediaOptions[$media] ?? $media;
                 }, $selectedMedia);
-
+                $capaEvidence = $this->initialincidentevidence->SelectcapaEvidence($id,$incident_id);
                 $data = array(
                     'incident_report' => $incident_report,
                     'displayMedia' => $displayMedia,
@@ -925,11 +973,13 @@ dd($ex);
                     'fishboneData' => $fishboneData,
                     'getrisklevel' => $getrisklevel,
                     'rcpa' => $rcpa,
+                    'injury_details' => $injury_details,
+                    'capaEvidence' => $capaEvidence,
                 );
             }
             return view('ims.initial.incident.ehsApproval', $data);
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
         }
     }
 
@@ -940,11 +990,9 @@ dd($ex);
             $id = decryptId($request->id);
             $incident_id = decryptId($request->incident_id);
 
-            // dd($id, $incident_id);
             if (Auth::check()) {
                 $incident_report = $this->initialincident->selectOne($incident_id);
-                $rcpa = $this->rcpa->selectOne($id,$incident_id);
-                // dd($rcpa);
+                $rcpa = $this->rcpa->selectOne($id, $incident_id);
                 $getEHSVerify = $this->initialincident->getEHSVerifyincident($incident_id);
                 $getEHSReview = $this->initialincident->getEHSReviewincident($incident_id);
                 $getInvestigation = $this->initialincident->getInvestigation($incident_id);
@@ -952,9 +1000,8 @@ dd($ex);
                 $getfishbone = $this->initialincident->getfishbone($incident_id);
                 $fishboneData = json_decode($getfishbone->first()->fishbone, true);
                 $getrisklevel = $this->initialincident->getrisklevel($incident_id);
-                // dd($getEHSVerify);
                 $initialincidentevidence = $this->initialincidentevidence->selectOne($incident_id);
-
+                $injury_details = $this->injury_details->getBodypartsInjuryPerson($incident_id);
                 $mediaOptions = [
                     1 => 'Phone',
                     2 => 'Walkie Talkie',
@@ -981,11 +1028,12 @@ dd($ex);
                     'fishboneData' => $fishboneData,
                     'getrisklevel' => $getrisklevel,
                     'rcpa' => $rcpa,
+                    'injury_details' => $injury_details,
                 );
             }
             return view('ims.initial.incident.ehsApproval', $data);
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
         }
     }
 
@@ -1006,6 +1054,28 @@ dd($ex);
             $employees->map(function ($employee) {
                 return [
                     'id' => encryptId($employee->id),
+                    'text' => $employee->emp_name . ' - ' . $employee->emp_id,
+                ];
+            })
+        );
+    }
+    public function reportedBy(Request $request)
+    {
+        $name = $request->input('search');
+
+        $employees = Employee::select('id', 'emp_id', 'emp_name', 'login_id')
+            ->where(function ($query) use ($name) {
+                $query->where('emp_name', 'like', '%' . $name . '%')
+                    ->orWhere('emp_id', 'like', '%' . $name . '%');
+            })
+            ->where('status', 1)
+            ->limit(10)
+            ->get();
+
+        return response()->json(
+            $employees->map(function ($employee) {
+                return [
+                    'id' => encryptId($employee->login_id),
                     'text' => $employee->emp_name . ' - ' . $employee->emp_id,
                 ];
             })
@@ -1034,23 +1104,23 @@ dd($ex);
             $incident = $this->initialincident->updateStatus($incident_id, $incident_status);
 
             if ($request->reported_by) {
-
-                $investigated_by = $request->reported_by;
-
-                $employees = Employee::where('id', $investigated_by)->get(['emp_name', 'email', 'login_id']);
-                $loginIds = $employees->pluck('login_id')->toArray();
+                $notifywhere = array(
+                    'id' => decryptId($request->reported_by),
+                );
+                $userids = User::where($notifywhere)->pluck('id')->toArray();
+                $users = User::where($notifywhere)->get();
+                // $employees = Employee::where('id', $investigated_by)->get(['emp_name', 'email', 'login_id']);
+                // $loginIds = $employees->pluck('login_id')->toArray();
 
                 $mailsubject = 'Investigation Assigned';
 
                 $incidentDetails = $this->initialincident->selectOne($incident_id);
                 $incidentarray = $incidentDetails->toArray();
 
-                foreach ($employees as $employee) {
-                    $username = $employee->emp_name;
-                    $email_id = $employee->email;
-
+                foreach ($users as $user) {
+                    $email_id = $user->email;
                     if (!empty($email_id)) { // Corrected email validation
-                        $incidentarray['name'] = $username;
+                        $incidentarray['name'] = $user->name;
                         $incidentarray['email_id'] = $email_id;
                         $incidentarray['mail_subject'] = $mailsubject;
 
@@ -1070,7 +1140,7 @@ dd($ex);
                         'module' => 1,
                     )),
                     'web_link' => admin_url('incident/initial-incident/investigation/' . encryptId($incidentDetails->id)),
-                    'assigned_user' => implode(',', $loginIds),
+                    'assigned_user' => array_to_string($userids),
                     'created_by' => Auth::id(),
                 );
                 notificationSave($notificationData);
@@ -1079,7 +1149,7 @@ dd($ex);
                 $insert_array = array(
                     'ims_type' => 1,
                     'ims_id' => $incidentDetails->id,
-                    'from_status' => $incidentDetails->incident_status,
+                    'from_status' => STATUS_INCIDENT_REPORT,
                     'to_status' => $incident_status,
                     'is_reject' => null,
                     'remarks' => $ehsReview->remark,
@@ -1092,7 +1162,7 @@ dd($ex);
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('incident/initial-incident/list'));
         } catch (Exception $ex) {
-dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('incident/initial-incident/list'));
         }
@@ -1126,10 +1196,7 @@ dd($ex);
             $displayMedia = array_map(function ($media) use ($mediaOptions) {
                 return $mediaOptions[$media] ?? $media;
             }, $selectedMedia);
-
-
-            $hiramoc = $this->hiramoc->delete_temprow($accidentId, $incidentId, $fire_id);
-
+            $injury_details = $this->injury_details->getBodypartsInjuryPerson($incidentId);
             $data = array(
                 'incidentId' => $incidentId,
                 'departmentList' => $departmentList,
@@ -1139,12 +1206,13 @@ dd($ex);
                 'initialincidentevidence' => $initialincidentevidence,
                 'getEHSVerify' => $getEHSVerify,
                 'getEHSReview' => $getEHSReview,
+                'injury_details' => $injury_details,
 
             );
 
             return view('ims.initial.incident.investigation', $data);
         } catch (Exception $error) {
-            dd($error->getMessage());
+            report($error);
         }
     }
 
@@ -1155,10 +1223,6 @@ dd($ex);
             $hiraList = $this->hira->select('id', 'services', 'likelihood', 'risk_levels')->where('status', '1')->get();
             $inc_id = decryptId($incident_id);
             $newHiraList = $this->hira->select('id', 'incident_id', 'accident_id', 'fire_id', 'hiramoc_id', 'services', 'likelihood', 'risk_levels')->where('incident_id', $inc_id)->where('hiramoc_id', '1')->first();
-
-
-            // dd($hiraList);
-
             $selectedhira = $this->hiramoc
                 ->select('id', 'hira_id', 'incident_id', 'hiramoc_status')
                 ->where('hiramoc_status', 'T')
@@ -1200,8 +1264,6 @@ dd($ex);
     }
     public function investigationSubmit(Request $request)
     {
-        //  dd($request);
-
         try {
             $incident_id = decryptId($request->incident_id);
             if ($request->root_cause ==  3) {
@@ -1213,6 +1275,7 @@ dd($ex);
 
             $incidentinvestigation = $this->incidentinvestigation->store($incident_id, $incident_status);
             $rcpa =  $this->rcpa->storeRCPA($incident_id, $capaStatus);
+            $this->initialincident->uaucsubmit($incident_id);
             $this->riskanalysis->store($incident_id, $incident_status);
             $incident = $this->initialincident->updateStatus($incident_id, $incident_status);
             if ($incidentinvestigation->root_cause_analysis ==  1) {
@@ -1222,20 +1285,32 @@ dd($ex);
                 $this->fishboneAnalysis->storeFishbone($incident_id, $incidentinvestigation->id);
             }
             $incidentDetails = $this->initialincident->selectOne($incident_id);
+            $responsibilityIds = is_array($rcpa['responsibility']) ? $rcpa['responsibility'] : [$rcpa['responsibility']];
 
-            $employees = Employee::whereIn('id', $rcpa['responsibility'])->get(['emp_name', 'email', 'login_id']);
-            $loginIds = $employees->pluck('login_id')->toArray();
+            // Get users from responsibility IDs
+            $responsibleUsers = User::whereIn('id', $responsibilityIds)->get();
+            
+            // Get users with EHS_HEAD role
+            $ehsHeadUsers = User::where('role', ROLE_EHS_HEAD)->get();
+            
+            // Get users with SUPERADMIN role
+            $superadminUsers = User::where('role', ROLE_SUPERADMIN)->get();
+            
+            // Merge all collections and remove duplicates by ID
+            $users = $responsibleUsers->merge($ehsHeadUsers)->merge($superadminUsers)->unique('id');
+        
+            if ($users->isEmpty()) {
+                return;
+            }
 
             $mailsubject = 'Investigation Submitted CAPA Pending';
             $incidentarray = $incidentDetails->toArray();
-            foreach ($employees as $employee) {
 
-               
-                $username = $employee->emp_name;
-                $email_id = $employee->email;
+            foreach ($users as $user) {
+                $email_id = $user->email;
 
-                if (!empty($email_id)) { // Corrected email validation
-                    $incidentarray['name'] = $username;
+                if ($email_id) { // Better email validation
+                    $incidentarray['name'] = $user->name;
                     $incidentarray['email_id'] = $email_id;
                     $incidentarray['mail_subject'] = $mailsubject;
 
@@ -1243,26 +1318,27 @@ dd($ex);
                 }
             }
 
-            $notificationData = array(
+            $notificationData = [
                 'notification_type' => 5,
                 'module_type' => 1,
                 'notification_message' => $mailsubject,
-                'mobile_notification' => json_encode(array(
+                'mobile_notification' => json_encode([
                     'title' => $mailsubject,
                     'message' => 'Incident ' . $incidentDetails->sr_no . ' submitted by ' . getUsername($incidentinvestigation->created_by),
                     'icon' => admin_url('public/assets/icons/incident.png'),
                     'id' => $incidentDetails->id,
                     'module' => 1,
-                )),
+                ]),
                 'web_link' => admin_url('incident/initial-incident/approvereject/' . encryptId($incidentDetails->id)),
-                'assigned_user' => array_to_string($loginIds),
+                'assigned_user' => implode(',', $users->pluck('id')->toArray()), // Get IDs from the users collection
                 'created_by' => Auth::id(),
-            );
+            ];
+
             notificationSave($notificationData);
             $insert_array = array(
                 'ims_type' => 1,
                 'ims_id' => $incidentDetails->id,
-                'from_status' => $incidentDetails->incident_status,
+                'from_status' => STATUS_INVESTIGATION_PENDING,
                 'to_status' => $incident_status,
                 'is_reject' => null,
                 'remarks' => null,
@@ -1273,7 +1349,7 @@ dd($ex);
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('incident/initial-incident/investigationList'));
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('incident/initial-incident/investigationList'));
         }
@@ -1330,209 +1406,11 @@ dd($ex);
 
             return view('ims.initial.incident.riskanalysis', $data);
         } catch (Exception $error) {
-            dd($error->getMessage());
+            report($error->getMessage());
+
         }
     }
 
-    public function uaucSubmit(Request $request)
-    {
-
-        try {
-            $incident_id = decryptId($request->incident_id);
-            $getInvestigation = $this->initialincident->getInvestigation($incident_id);
-            if ($getInvestigation->risk_analysis == 1) {
-                $incident_status = STATUS_RISKANALYSIS_PENDING;
-            } else {
-                $incident_status = STATUS_EHSVERIFY_PENDING;
-            }
-            $this->initialincident->uaucsubmit($incident_id);
-            $this->initialincident->updateStatus($incident_id, $incident_status);
-            $initialincident = $this->initialincident->selectOne($incident_id);
-
-            if ($getInvestigation->risk_analysis == 1) {
-                $user_role = ROLE_EHS_HEAD;
-                $mailsubject = 'Risk Analysis';
-                $userids = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->pluck('id')->toArray();
-                $users = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->get();
-
-
-                if (count($users) > 0) {
-                    foreach ($users as $user) {
-
-                        $email_id = $user->email;
-
-                        if ($email_id != '' || $email_id != null) {
-                            // $incidentDetails =  $this->initialincident->selectOne($initialincident->id);
-                            $incidentarray  = $initialincident->toArray();
-
-                            $incidentarray['name'] = $user->name;
-                            $incidentarray['email_id'] =  $email_id;
-                            $incidentarray['mail_subject'] = $mailsubject;
-
-                            Mail::to($incidentarray['email_id'])->queue(new IncidentEmail($incidentarray));
-                        }
-                    }
-                }
-
-                $notificationData = array(
-                    'notification_type' => 5,
-                    'module_type' => 1,
-                    'notification_message' => $mailsubject,
-                    'mobile_notification' => json_encode(array(
-                        'title' => $mailsubject,
-                        'message' => 'Incident' . $initialincident->sr_no . ' submitted by ' . getUsername($initialincident->created_by),
-                        'icon' =>  admin_url('public/assets/icons/incident.png'),
-                        'id' => $initialincident->id,
-                        'module' => 1,
-                    )),
-                    'web_link' =>  admin_url('incident/initial-incident/approvereject/' . encryptId($initialincident->id)),
-                    'assigned_user' => array_to_string($userids),
-                    'created_by' => Auth::id(),
-                );
-                notificationSave($notificationData);
-                $insert_array = array(
-                    'ims_type' => 1,
-                    'ims_id' => $initialincident->id,
-                    'from_status' => $initialincident->incident_status,
-                    'to_status' => $incident_status,
-                    'is_reject' => null,
-                    'remarks' => null,
-                    'approved_by' => Auth::id(),
-                );
-
-                $this->Statuslog->create($insert_array);
-            } else {
-                $user_role = ROLE_EHS_HEAD;
-                $mailsubject = 'EHS Verification Pending';
-                $userids = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->pluck('id')->toArray();
-                $users = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->get();
-
-
-                if (count($users) > 0) {
-                    foreach ($users as $user) {
-
-                        $email_id = $user->email;
-
-                        if ($email_id != '' || $email_id != null) {
-                            // $incidentDetails =  $this->initialincident->selectOne($initialincident->id);
-                            $incidentarray  = $initialincident->toArray();
-
-                            $incidentarray['name'] = $user->name;
-                            $incidentarray['email_id'] =  $email_id;
-                            $incidentarray['mail_subject'] = $mailsubject;
-
-                            Mail::to($incidentarray['email_id'])->queue(new IncidentEmail($incidentarray));
-                        }
-                    }
-                }
-
-                $notificationData = array(
-                    'notification_type' => 5,
-                    'module_type' => 1,
-                    'notification_message' => $mailsubject,
-                    'mobile_notification' => json_encode(array(
-                        'title' => $mailsubject,
-                        'message' => 'Incident' . $initialincident->sr_no . ' submitted by ' . getUsername($initialincident->created_by),
-                        'icon' =>  admin_url('public/assets/icons/incident.png'),
-                        'id' => $initialincident->id,
-                        'module' => 1,
-                    )),
-                    'web_link' =>  admin_url('incident/initial-incident/approvereject/' . encryptId($initialincident->id)),
-                    'assigned_user' => array_to_string($userids),
-                    'created_by' => Auth::id(),
-                );
-                notificationSave($notificationData);
-                $insert_array = array(
-                    'ims_type' => 1,
-                    'ims_id' => $initialincident->id,
-                    'from_status' => $initialincident->incident_status,
-                    'to_status' => $incident_status,
-                    'is_reject' => null,
-                    'remarks' => null,
-                    'approved_by' => Auth::id(),
-                );
-
-                $this->Statuslog->create($insert_array);
-            }
-            Session::flash('success', 'Your data has been updated successfully!');
-            return redirect(admin_url('incident/initial-incident/investigationList'));
-        } catch (Exception $ex) {
-
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('incident/initial-incident/investigationList'));
-        }
-    }
-
-
-    public function riskAnalysisSubmit(Request $request)
-    {
-
-        try {
-            $incident_id = decryptId($request->incident_id);
-            $incident_status = STATUS_EHSVERIFY_PENDING;
-            $riskanalysis = $this->riskanalysis->store($incident_id, $incident_status);
-            $incident = $this->initialincident->updateStatus($incident_id, $incident_status);
-            $initialincident = $this->initialincident->selectOne($incident_id);
-            $user_role = ROLE_EHS_HEAD;
-            $mailsubject = 'EHS Verification Pending';
-            $userids = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->pluck('id')->toArray();
-            $users = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->get();
-
-
-            if (count($users) > 0) {
-                foreach ($users as $user) {
-
-                    $email_id = $user->email;
-
-                    if ($email_id != '' || $email_id != null) {
-                        // $incidentDetails =  $this->initialincident->selectOne($initialincident->id);
-                        $incidentarray  = $initialincident->toArray();
-
-                        $incidentarray['name'] = $user->name;
-                        $incidentarray['email_id'] =  $email_id;
-                        $incidentarray['mail_subject'] = $mailsubject;
-
-                        Mail::to($incidentarray['email_id'])->queue(new IncidentEmail($incidentarray));
-                    }
-                }
-            }
-
-            $notificationData = array(
-                'notification_type' => 5,
-                'module_type' => 1,
-                'notification_message' => $mailsubject,
-                'mobile_notification' => json_encode(array(
-                    'title' => $mailsubject,
-                    'message' => 'Incident' . $initialincident->sr_no . ' submitted by ' . getUsername($initialincident->created_by),
-                    'icon' =>  admin_url('public/assets/icons/incident.png'),
-                    'id' => $initialincident->id,
-                    'module' => 1,
-                )),
-                'web_link' =>  admin_url('incident/initial-incident/review/' . encryptId($initialincident->id)),
-                'assigned_user' => array_to_string($userids),
-                'created_by' => Auth::id(),
-            );
-            notificationSave($notificationData);
-            $insert_array = array(
-                'ims_type' => 1,
-                'ims_id' => $initialincident->id,
-                'from_status' => $initialincident->incident_status,
-                'to_status' => $incident_status,
-                'is_reject' => null,
-                'remarks' => null,
-                'approved_by' => Auth::id(),
-            );
-
-            $this->Statuslog->create($insert_array);
-
-            Session::flash('success', 'Your data has been updated successfully!');
-            return redirect(admin_url('incident/initial-incident/investigationList'));
-        } catch (Exception $ex) {
-
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('incident/initial-incident/investigationList'));
-        }
-    }
 
     public function ehsHeadVerifySubmit(Request $request)
     {
@@ -1612,8 +1490,8 @@ dd($ex);
             $rcpa_id = decryptId($request->rcpa_id);
             $initialincident = $this->initialincident->selectOne($incident_id);
             $incident_status = STATUS_EHSAPPROVAL_PENDING;
+            $this->initialincidentevidence->capaEvidence($initialincident,$rcpa_id);
             $this->rcpa->actiontakensubmit($rcpa_id);
-
             $user_role = ROLE_EHS_HEAD;
             $mailsubject = 'Action Submitted';
             $userids = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->pluck('id')->toArray();
@@ -1656,7 +1534,8 @@ dd($ex);
             $insert_array = array(
                 'ims_type' => 1,
                 'ims_id' => $initialincident->id,
-                'from_status' => $initialincident->incident_status,
+                'capa_id' => $rcpa_id,
+                'from_status' => STATUS_INVESTIGATION_PENDING,
                 'to_status' => $incident_status,
                 'is_reject' => null,
                 'remarks' => null,
@@ -1667,7 +1546,7 @@ dd($ex);
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('incident/initial-incident/calist'));
         } catch (Exception $ex) {
-
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('incident/initial-incident/calist'));
         }
@@ -1732,7 +1611,8 @@ dd($ex);
                 $insert_array = array(
                     'ims_type' => 1,
                     'ims_id' => $initialincident->id,
-                    'from_status' => $initialincident->incident_status,
+                    'capa_id' => $rcpa_id,
+                    'from_status' => STATUS_ACTION_PENDING,
                     'to_status' => $incident_status,
                     'is_reject' => null,
                     'remarks' => $ehsApproval->remark,
@@ -1784,7 +1664,8 @@ dd($ex);
                 $insert_array = array(
                     'ims_type' => 1,
                     'ims_id' => $initialincident->id,
-                    'from_status' => $initialincident->incident_status,
+                    'capa_id' => $rcpa_id,
+                    'from_status' => STATUS_ACTION_PENDING,
                     'to_status' => $incident_status,
                     'is_reject' => null,
                     'remarks' => $ehsApproval->remark,
@@ -1888,6 +1769,8 @@ dd($ex);
                     return $mediaOptions[$media] ?? $media;
                 }, $selectedMedia);
             }
+            $injury_details = $this->injury_details->getBodypartsInjuryPerson($id);
+            $rcpa = $this->rcpa->getRCPA($id);
 
             $data = array(
                 'incident_report' => $incident_report,
@@ -1901,6 +1784,8 @@ dd($ex);
                 'getfishbone' => $getfishbone,
                 'getrisklevel' => $getrisklevel,
                 'getEHSApprovalincident' => $getEHSApprovalincident,
+                'injury_details' => $injury_details,
+                'rcpa' => $rcpa,
             );
             $property = [
                 'tempDir' => 'public/pdf/temp/',
@@ -1916,7 +1801,81 @@ dd($ex);
             $html = view('ims.initial.incident.exportpdf', $data)->render();
             $mpdf->WriteHTML($html);
             $filename = "Incident.pdf";
-            return $mpdf->Output($filename, 'D');
+            return $mpdf->Output($filename, 'I');
+        } catch (Exception $ex) {
+            report($ex);
+        }
+    }
+
+
+    public function cageneralpdf(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+            $incident_id = decryptId($request->incident_id);
+            if (Auth::check()) {
+                $incident_report = $this->initialincident->selectOne($incident_id);
+                $getEHSVerify = $this->initialincident->getEHSVerifyincident($incident_id);
+                $getEHSReview = $this->initialincident->getEHSReviewincident($incident_id);
+                $getInvestigation = $this->initialincident->getInvestigation($incident_id);
+                $getwhywhy = $this->initialincident->getwhywhy($incident_id);
+                $getfishbone = $this->initialincident->getfishbone($incident_id);
+                $fishboneData = json_decode($getfishbone->first()->fishbone, true);
+                $getrisklevel = $this->initialincident->getrisklevel($incident_id);
+                $getEHSApprovalincident = $this->initialincident->getEHSApprovalincident($incident_id);
+                $initialincidentevidence = $this->initialincidentevidence->selectOne($incident_id);
+                $capaEvidence = $this->initialincidentevidence->SelectcapaEvidence($id,$incident_id);
+                $mediaOptions = [
+                    1 => 'Phone',
+                    2 => 'Walkie Talkie',
+                    3 => 'Extension',
+                    4 => 'Others',
+                ];
+
+                $selectedMedia = isset($incident_report->reporting_media)
+                    ? explode(',', $incident_report->reporting_media)
+                    : [];
+
+                $displayMedia = array_map(function ($media) use ($mediaOptions) {
+                    return $mediaOptions[$media] ?? $media;
+                }, $selectedMedia);
+            }
+            $injury_details = $this->injury_details->getBodypartsInjuryPerson($incident_id);
+
+            $rcpa = $this->rcpa->selectOne($id, $incident_id);
+            $status_log = $this->Statuslog->selectCAPA($incident_id,$id, 1);
+            $data = array(
+                'incident_report' => $incident_report,
+                'displayMedia' => $displayMedia,
+                'initialincidentevidence' => $initialincidentevidence,
+                'getEHSVerify' => $getEHSVerify,
+                'getInvestigation' => $getInvestigation,
+                'getEHSReview' => $getEHSReview,
+                'getwhywhy' => $getwhywhy,
+                'fishboneData' => $fishboneData,
+                'getfishbone' => $getfishbone,
+                'getrisklevel' => $getrisklevel,
+                'getEHSApprovalincident' => $getEHSApprovalincident,
+                'injury_details' => $injury_details,
+                'rcpa' => $rcpa,
+                'status_log' => $status_log,
+                'capaEvidence' => $capaEvidence,
+            );
+            $property = [
+                'tempDir' => 'public/pdf/temp/',
+                'mode' => 'c',
+                'margin_left' => 10,
+                'margin_right' => 10,
+                'margin_top' => 10,
+
+            ];
+
+            $mpdf = new \Mpdf\Mpdf($property);
+            $mpdf->setAutoTopMargin = 'stretch';
+            $html = view('ims.initial.incident.capdf', $data)->render();
+            $mpdf->WriteHTML($html);
+            $filename = "Incident.pdf";
+            return $mpdf->Output($filename, 'I');
         } catch (Exception $ex) {
             report($ex);
         }

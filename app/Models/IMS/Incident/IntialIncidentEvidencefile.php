@@ -25,6 +25,7 @@ class IntialIncidentEvidencefile extends Model
     protected $fillable = [
         'id',
         'incident_id',
+        'capa_id',
         'file_type',
         'file_name',
         'file_orgname',
@@ -93,23 +94,69 @@ class IntialIncidentEvidencefile extends Model
         }
     }
 
+    public function capaEvidence($initialincident, $capa_id)
+    {
+        $request = request();
+        $initialIncidentEvidence = $request->file('evidence');
+        if (!empty($initialIncidentEvidence)) {
+            foreach ($initialIncidentEvidence as $groupIndex => $siteImageGroup) {
+                foreach ($siteImageGroup as $index => $siteImage) {
+                    if ($siteImage) {
+                        $uploadPath = 'public/uploads/initial/incident/' . $capa_id;
+                        $folderPath = 'public/uploads/initial/incident/' . $capa_id;
 
+                        if (!File::exists($folderPath)) {
+                            File::makeDirectory($folderPath, 0755, true);
+                        }
+
+                        $filenewname = time() . Str::random(10) . '.' . $siteImage->getClientOriginalExtension();
+                        $fileName = $siteImage->getClientOriginalName();
+                        // dd($siteImage,$fileName);
+                        $fileSize = $siteImage->getSize();
+                        $fileExt = $siteImage->getClientOriginalExtension();
+
+                        $siteImage->move($folderPath, $filenewname);
+
+                        $path = 'public/uploads/initial/incident/' . $capa_id . "/" . $filenewname;
+                        $userId = Auth::id();
+
+                        $insertData = [
+                            'incident_id' => $initialincident->id,
+                            'capa_id' => $capa_id,
+                            'file_name' => $filenewname,
+                            'file_orgname' => $fileName,
+                            'file_path' => $path,
+                            'file_size' => $fileSize,
+                            'file_extension' => $fileExt,
+                            'created_by' => $userId,
+                        ];
+
+                        $this->create($insertData);
+
+                        \Log::info("File saved: " . $filenewname);
+                    } else {
+                        \Log::warning("Uploaded data is not a valid file: " . json_encode($siteImage));
+                    }
+                }
+            }
+        }
+    }
     public function updates($id)
     {
         $request = request();
         $initialIncidentEvidence = $request->file('evidence');
-    // dd($id);
+        // dd($id);
         \Log::info('Uploaded Files:', ['files' => $initialIncidentEvidence]);
-    
+
         if (!empty($initialIncidentEvidence)) {
             foreach ($initialIncidentEvidence as $siteImage) {
                 if ($siteImage) {
                     $folderPath = 'public/uploads/initial/incident/' . $id;
-    
+
                     if (!File::exists($folderPath)) {
                         File::makeDirectory($folderPath, 0755, true);
                     }
-    
+
                     $filenewname = time() . Str::random(10) . '.' . $siteImage->getClientOriginalExtension();
                     $fileName = $siteImage->getClientOriginalName();
                     $fileSize = $siteImage->getSize();
@@ -119,11 +166,11 @@ class IntialIncidentEvidencefile extends Model
 
                     $filePath = 'public/uploads/initial/incident/' . $id . "/" . $filenewname;
                     $userId = Auth::id();
-    
+
                     $existingEvidence = $this->where('incident_id', $id)
                         ->where('file_orgname', $fileName)
                         ->first();
-    
+
                     if ($existingEvidence) {
                         $existingEvidence->update([
                             'file_name' => $filenewname,
@@ -151,7 +198,7 @@ class IntialIncidentEvidencefile extends Model
             }
         }
     }
-    
+
 
     public function deleterecord($id)
     {
@@ -176,9 +223,18 @@ class IntialIncidentEvidencefile extends Model
 
         return $data;
     }
+    public function SelectcapaEvidence($id,$incident_id)
+    {
 
-
-
+        $data = $this->select(
+            'ims_initial_incident_evidence_upload.*',
+        )
+            ->where('ims_initial_incident_evidence_upload.incident_id', $incident_id)
+            ->where('ims_initial_incident_evidence_upload.capa_id', $id)
+            ->get();
+// dd($data);
+        return $data;
+    }
     protected static function booted()
     {
         static::addGlobalScope(new TrashScope('ims_initial_incident_evidence_upload'));

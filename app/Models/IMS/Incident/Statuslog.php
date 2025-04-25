@@ -13,6 +13,7 @@ class Statuslog extends Model
     protected $fillable = [
         'ims_type',
         'ims_id',
+        'capa_id',
         'from_status',
         'to_status',
         'remarks',
@@ -32,6 +33,16 @@ class Statuslog extends Model
 
         $data =  $this->select('ims_incident_status_log.*','ims_incident_status.to_status','ims_incident_status.status_name')->leftjoin('ims_incident_status', 'ims_incident_status.id', '=', 'ims_incident_status_log.to_status')
             ->where('ims_incident_status_log.ims_id', $id)->where('ims_incident_status_log.ims_type', $type)
+            ->get();
+
+        return $data;
+    }
+
+    public function selectCAPA($incident_id, $id,$type)
+    {
+
+        $data =  $this->select('ims_incident_status_log.*','ims_incident_status.to_status','ims_incident_status.status_name')->leftjoin('ims_incident_status', 'ims_incident_status.id', '=', 'ims_incident_status_log.to_status')
+            ->where('ims_incident_status_log.ims_id', $incident_id) ->where('ims_incident_status_log.capa_id', $id)->where('ims_incident_status_log.ims_type', $type)
             ->get();
 
         return $data;

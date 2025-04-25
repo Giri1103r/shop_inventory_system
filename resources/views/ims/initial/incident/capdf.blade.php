@@ -123,50 +123,6 @@
                 </tr>
             </table>
         </div>
-
-        <table width="100%" style="width:100%;">
-            <tr>
-                <td width="50%" style="padding:5px;"><b>Sr. No</b></td>
-                <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;">
-                    {{ $incident_report->sr_no }}</td>
-            </tr>
-            <tr>
-                <td width="50%" style="padding:5px;"><b>Date and Time</b></td>
-                <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;">
-                    {{ Displaydatetimeformat($incident_report->incident_date_time) }}
-                </td>
-            </tr>
-            <tr>
-                <td width="50%" style="padding:5px;"><b>Unit</b></td>
-                <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;">
-                    {{ getUnitname($incident_report->unit_id) }}
-                </td>
-            </tr>
-            <tr>
-                <td width="50%" style="padding:5px;"><b>Shift</b></td>
-                <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;">
-                    {{ $incident_report->shift }}
-                </td>
-            </tr>
-            <tr>
-                <td width="50%" style="padding:5px;"><b>Location</b></td>
-                <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;">
-                    {{ $incident_report->location_name }}
-                </td>
-            </tr>
-            <tr>
-                <td width="50%" style="padding:5px;"><b>IIR Type</b></td>
-                <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;">
-                    {{ $incident_report->incident_type_name }}
-                </td>
-            </tr>
-        </table>
         <div style="width:100%;">
             <table style="width:100%;">
                 <tr>
@@ -231,11 +187,10 @@
                 <td style="padding:5px;"><b>Existing Evidence</b></td>
                 <td style="padding:5px;">:</td>
                 <td style="padding:5px;">
-                    @if (!$initialfireincidentevidence->isEmpty())
-                        @foreach ($initialfireincidentevidence as $key => $evidence)
+                    @if (!$initialincidentevidence->isEmpty())
+                        @foreach ($initialincidentevidence as $key => $evidence)
                             <a href="{{ asset($evidence->file_path) }}" target="_blank">
-                                <img src="{{ asset($evidence->file_path) }}" alt="Signature"
-                                    style="max-width: 10%;">
+                                <img src="{{ asset($evidence->file_path) }}" alt="Signature" style="max-width: 10%;">
                             </a>
                         @endforeach
                     @else
@@ -244,6 +199,154 @@
                 </td>
             </tr>
         </table>
+        <div style="width:100%;">
+            <table style="width:100%;">
+                <tr>
+                    <td
+                        style="width:100%;background-color: #6c757d;color:#FFF;font-weight:bold;padding: 10px 10px 10px;">
+                        Incident Reported By
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <table width="100%" style="width:100%;">
+            <tr>
+                <td width="50%" style="padding:5px;"><b>Sr. No</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;">
+                    {{ $incident_report->sr_no }}</td>
+            </tr>
+            <tr>
+                <td width="50%" style="padding:5px;"><b>Date and Time</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;">
+                    {{ Displaydatetimeformat($incident_report->incident_date_time) }}
+                </td>
+            </tr>
+            <tr>
+                <td width="50%" style="padding:5px;"><b>Unit</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;">
+                    {{ getUnitname($incident_report->unit_id) }}
+                </td>
+            </tr>
+            <tr>
+                <td width="50%" style="padding:5px;"><b>Shift</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;">
+                    {{ $incident_report->shift }}
+                </td>
+            </tr>
+            <tr>
+                <td width="50%" style="padding:5px;"><b>Location</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;">
+                    {{ $incident_report->location_name }}
+                </td>
+            </tr>
+            <tr>
+                <td width="50%" style="padding:5px;"><b>IIR Type</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;">
+                    {{ $incident_report->incident_type_name }}
+                </td>
+            </tr>
+
+            <tr>
+                <td width="50%" style="padding:5px;"><b>Immediate Action Taken</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;">
+                    {{ $incident_report->immediate_action_taken }}
+                </td>
+            </tr>
+            <tr>
+                <td width="50%" style="padding:5px;"><b>If any person has injured?</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;">
+                    @if ($incident_report->anyone_injured == 1)
+                        <span style="color: #28a745; font-size: 1.2em;">✓</span> Yes
+                    @else
+                        <span style="color: #dc3545; font-size: 1.2em;">✗</span> No
+                    @endif
+                </td>
+            </tr>
+        </table>
+        @if ($incident_report->anyone_injured == 1)
+            <div style="width:100%;">
+                <table style="width:100%;">
+                    <tr>
+                        <td
+                            style="width:100%;background-color: #6c757d;color:#FFF;font-weight:bold;padding: 10px 10px 10px;">
+                            Injured Person Details
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <table class="table_card" style="margin-top: 20px;">
+                <thead>
+                    <tr>
+                        <th class="form-label required">Injury Person Type</th>
+                        <th class="form-label required">Injury Person Name</th>
+                        <th class="form-label required">Injury Person Employee ID</th>
+                        <th class="form-label required">Injury Person Designation</th>
+                        <th class="form-label required">Injury Person Department</th>
+                        <th class="form-label required">Injury Body Parts</th>
+                        <th class="form-label required">Description</th>
+                    </tr>
+                </thead>
+                <tbody id="lesson_learned_block">
+                    @foreach ($injury_details as $injury)
+                        <tr class="lesson_learned_row">
+
+                            <td>
+                                {{ $injury->injury_person_type == 1 ? 'Employee' : ($injury->injury_person_type == 2 ? 'Worker' : 'Others') }}
+                            </td>
+                            <td>
+                                @if ($injury->injury_person_type == 1 || $injury->injury_person_type == 2)
+                                    {{ $injury->emp_name }}
+                                @else
+                                    {{ $injury->injury_person_name }}
+                                @endif
+                            </td>
+                            <td>
+                                {{ $injury->emp_id }} </td>
+                            <td>{{ $injury->injury_person_designation }}</td>
+                            <td>
+                                {{-- @if ($injury->injury_person_type == 1 || $injury->injury_person_type == 2)
+                                    {{ $injury->department_name }}
+                                @else --}}
+                                {{ $injury->injury_person_department_id }}
+                                {{-- @endif --}}
+                            </td>
+                            <td>
+                                @if ($injury->body_part_image)
+                                    <a href="{{ admin_url('storage/app/public/uploads/' . $injury->body_part_image) }}"
+                                        target="_blank">
+                                        <img src="{{ admin_url('storage/app/public/uploads/' . $injury->body_part_image) }}"
+                                            alt="Body Parts Image"
+                                            style="max-width: 100px; max-height: 100px; object-fit: contain;">
+                                    </a>
+                                @endif
+                            </td>
+
+
+                            <td>
+                                @php
+                                    $imgMapDataDecoded = json_decode($injury->imgMapdata, true);
+                                @endphp
+                                @if ($imgMapDataDecoded)
+                                    <ul>
+                                        @foreach ($imgMapDataDecoded['map']['total'] as $key => $value)
+                                            <li>{{ ucfirst($key) }}: {{ $value }}</li>
+                                        @endforeach
+                                    </ul>
+                                @endif
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        @endif
         @if ($incident_report->incident_status >= STATUS_INVESTIGATION_PENDING)
             <div style="width:100%;">
                 <table style="width:100%;">
@@ -271,7 +374,7 @@
                     </td>
                 </tr>
                 <tr>
-                    <td width="50%" style="padding:5px;"><b>Assign Team members</b></td>
+                    <td width="50%" style="padding:5px;"><b>I.M Team members</b></td>
                     <td width="2%" style="padding:5px;">:</td>
                     <td width="48%" style="padding:5px;">
                         {{ $getEHSReview->team_member_names }}
@@ -286,7 +389,7 @@
                 </tr>
             </table>
         @endif
-        @if ($incident_report->incident_status >= STATUS_UAUC_PENDING)
+        @if ($incident_report->incident_status > STATUS_INVESTIGATION_PENDING)
             <div style="width:100%;">
                 <table style="width:100%;">
                     <tr>
@@ -326,51 +429,6 @@
                         @endphp
 
                         {{ implode(', ', $damagedLabels) }}
-                    </td>
-                </tr>
-                <tr>
-                    <td width="50%" style="padding:5px;"><b>What factors caused the Fire
-                            Incident?</b></td>
-                    <td width="2%" style="padding:5px;">:</td>
-                    <td width="48%" style="padding:5px;">
-                        @php
-
-                            $damageTypes = [
-                                1 => 'Physical',
-                                2 => 'System',
-                                3 => 'Human',
-                            ];
-
-                            $damagedItems = explode(',', $getInvestigation->damaged_cause);
-                            $damagedLabels = array_map(function ($item) use ($damageTypes) {
-                                return $damageTypes[$item] ?? 'NA';
-                            }, $damagedItems);
-                        @endphp
-
-
-                        {{ implode(', ', $damagedLabels) }}
-                    </td>
-                </tr>
-                <tr>
-                    <td width="50%" style="padding:5px;"><b>HIRA</b></td>
-                    <td width="2%" style="padding:5px;">:</td>
-                    <td width="48%" style="padding:5px;">
-                        @if (!empty($getInvestigation->hira_moc[0]['hira_name']))
-                            {{ $getInvestigation->hira_moc[0]['hira_name'] }}
-                        @else
-                            N/A
-                        @endif
-                    </td>
-                </tr>
-                <tr>
-                    <td width="50%" style="padding:5px;"><b>MOC</b></td>
-                    <td width="2%" style="padding:5px;">:</td>
-                    <td width="48%" style="padding:5px;">
-                        @if (!empty($getInvestigation->hira_moc[0]['moc_name']))
-                            {{ $getInvestigation->hira_moc[0]['moc_name'] }}
-                        @else
-                            N/A
-                        @endif
                     </td>
                 </tr>
                 <tr>
@@ -425,6 +483,7 @@
                         {{ $getInvestigation->remark }}
                     </td>
                 </tr>
+
                 <tr>
                     <td width="50%" style="padding:5px;"><b>Risk Analysis</b></td>
                     <td width="2%" style="padding:5px;">:</td>
@@ -442,7 +501,6 @@
                     </tr>
                 @endif
             </table>
-
             @if ($getInvestigation->root_cause_analysis == 1 && !empty($getwhywhy))
                 <h4 style="margin-top: 20px; border-bottom: 2px solid black; padding-bottom: 5px;">Why Why Analysis
                 </h4>
@@ -497,58 +555,137 @@
                     </tr>
                 </table>
             @endif
+            <table width="100%">
+                <tr>
+                    <td width="50%" style="padding:5px;"><b>Recommended Corrective & Preventive Action</b></td>
+                    <td width="2%" style="padding:5px;">:</td>
+                    <td width="48%" style="padding:5px;">
+                        {{ $getInvestigation->corrective_preventive_action }}
+                    </td>
+                </tr>
+            </table>
 
-
-        @endif
-        @if ($getInvestigation->root_cause_analysis != 3)
-            @if ($incident_report->incident_status >= STATUS_RISKANALYSIS_PENDING)
-                <div style="width:100%;">
-                    <table style="width:100%;">
-                        <tr>
-                            <td
-                                style="width:100%;background-color: #6c757d;color:#FFF;font-weight:bold;padding: 10px 10px 10px;">
-                                UAUC
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-                <table width="100%" style="width:100%;">
+            <div style="width:100%;">
+                <table style="width:100%;">
                     <tr>
-                        <td width="50%" style="padding:5px;"><b>UAUC</b></td>
-                        <td width="2%" style="padding:5px;">:</td>
-                        <td width="48%" style="padding:5px;">
-                            @if ($incident_report->ua_uc_yes_no == 1)
-                                Yes
-                            @else
-                                No
-                            @endif
-                        </td>
-                    </tr>
-                    <tr>
-                        <td width="50%" style="padding:5px;"><b>UA/UC</b></td>
-                        <td width="2%" style="padding:5px;">:</td>
-                        <td width="48%" style="padding:5px;">
-                            @php
-                                $ua_uc_values = explode(',', $incident_report->ua_or_uc);
-                            @endphp
-
-                            <span>UA: {!! in_array('1', $ua_uc_values) ? '&#10004;' : '&#10008;' !!}</span>
-                            <br>
-                            <span>UC: {!! in_array('2', $ua_uc_values) ? '&#10004;' : '&#10008;' !!}</span>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td width="50%" style="padding:5px;"><b>Description of UAUC</b></td>
-                        <td width="2%" style="padding:5px;">:</td>
-                        <td width="48%" style="padding:5px;">
-                            {{ $incident_report->description_uauc }}
+                        <td
+                            style="width:100%;background-color: #6c757d;color:#FFF;font-weight:bold;padding: 10px 10px 10px;">
+                            RCPA
                         </td>
                     </tr>
                 </table>
+            </div>
+            <table width="100%" style="width:100%;">
+                <tr>
+                    <td width="50%" style="padding:5px;"><b>Recommended Corrective & Preventive
+                            Action</b></td>
+                    <td width="2%" style="padding:5px;">:</td>
+                    <td width="48%" style="padding:5px;">
+                        {{ $rcpa->rcpa }}</td>
+                </tr>
+                <tr>
+                    <td width="50%" style="padding:5px;"><b>Responsibility</b></td>
+                    <td width="2%" style="padding:5px;">:</td>
+                    <td width="48%" style="padding:5px;">
+                        {{ $rcpa->responsibility }}
+                    </td>
+                </tr>
+                <tr>
+                    <td width="50%" style="padding:5px;"><b>Timeline</b></td>
+                    <td width="2%" style="padding:5px;">:</td>
+                    <td width="48%" style="padding:5px;">
+                        {{ DisplayDateformat($rcpa->timeline) }}
+                    </td>
+                </tr>
+                <tr>
+                    <td width="50%" style="padding:5px;"><b>Status</b></td>
+                    <td width="2%" style="padding:5px;">:</td>
+                    <td width="48%" style="padding:5px;">
+                        @if ($rcpa->capa_status == 1)
+                            <span class="badge bg-success">Open</span>
+                        @elseif($rcpa->capa_status == 2)
+                            <span class="badge bg-warning text-dark">In Progress</span>
+                        @elseif($rcpa->capa_status == 3)
+                            <span class="badge bg-secondary">Closed</span>
+                        @endif
+                    </td>
+                </tr>
+                <tr>
+                    <td width="50%" style="padding:5px;"><b>Remark if any</b></td>
+                    <td width="2%" style="padding:5px;">:</td>
+                    <td width="48%" style="padding:5px;">
+                        {{ $rcpa->remark }}
+                    </td>
+                </tr>
+                <tr>
+                    <td width="50%" style="padding:5px;"><b>Main Root Cause</b></td>
+                    <td width="2%" style="padding:5px;">:</td>
+                    <td width="48%" style="padding:5px;">
+                        {{ $getInvestigation->main_root_cause }}
+                    </td>
+                </tr>
+                <tr>
+                    <td width="50%" style="padding:5px;"><b>Leading Factors</b></td>
+                    <td width="2%" style="padding:5px;">:</td>
+                    <td width="48%" style="padding:5px;">
+                        @if ($getInvestigation->leading_factors == 1)
+                            <span style="color: #28a745; font-size: 1.2em;">✓</span> Human Factor
+                            <span style="color: #dc3545; font-size: 1.2em;">✗</span> System Factor
+                        @else
+                            <span style="color: #dc3545; font-size: 1.2em;">✓</span> Human Factor
+                            <span style="color: #28a745; font-size: 1.2em;">✗</span> System Factor
+                        @endif
+                    </td>
+                </tr>
+            </table>
 
-            @endif
-            @if ($getInvestigation->risk_analysis != 2 && $incident_report->incident_status >= STATUS_EHSVERIFY_PENDING)
+            <div style="width:100%;">
+                <table style="width:100%;">
+                    <tr>
+                        <td
+                            style="width:100%;background-color: #6c757d;color:#FFF;font-weight:bold;padding: 10px 10px 10px;">
+                            Recommended Causes
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <table width="100%" style="width:100%;">
+                <tr>
+                    <td width="50%" style="padding:5px;"><b>UAUC</b></td>
+                    <td width="2%" style="padding:5px;">:</td>
+                    <td width="48%" style="padding:5px;">
+                        @if ($incident_report->ua_uc_yes_no == 1)
+                            Yes
+                        @else
+                            No
+                        @endif
+                    </td>
+                </tr>
+                <tr>
+                    <td width="50%" style="padding:5px;"><b>UA/UC</b></td>
+                    <td width="2%" style="padding:5px;">:</td>
+                    <td width="48%" style="padding:5px;">
+                        @php
+                            $ua_uc_values = explode(',', $incident_report->ua_or_uc);
+                        @endphp
+
+                        <span>Unsafe Act: {!! in_array('1', $ua_uc_values) ? '&#10004;' : '&#10008;' !!}</span>
+                        <br>
+                        <span>Unsafe Condition: {!! in_array('2', $ua_uc_values) ? '&#10004;' : '&#10008;' !!}</span>
+                        <br>
+                        <span>Natural Causes: {!! in_array('3', $ua_uc_values) ? '&#10004;' : '&#10008;' !!}</span>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td width="50%" style="padding:5px;"><b>Description of UAUC</b></td>
+                    <td width="2%" style="padding:5px;">:</td>
+                    <td width="48%" style="padding:5px;">
+                        {{ $incident_report->description_uauc }}
+                    </td>
+                </tr>
+            </table>
+            @if ($getInvestigation->risk_analysis != 2)
                 <div style="width:100%;">
                     <table style="width:100%;">
                         <tr>
@@ -581,62 +718,12 @@
                         </td>
                     </tr>
                 </table>
+            @endif
+        @endif
 
-            @endif
-            @if (
-                $incident_report->incident_status >= STATUS_ACTION_PENDING &&
-                    $incident_report->incident_status != STATUS_EHSAPPROVAL_REJECTED)
-                <div style="width:100%;">
-                    <table style="width:100%;">
-                        <tr>
-                            <td
-                                style="width:100%;background-color: #6c757d;color:#FFF;font-weight:bold;padding: 10px 10px 10px;">
-                                EHS Head Verify
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-                <table width="100%" style="width:100%;">
-                    <tr>
-                        <td width="50%" style="padding:5px;"><b>Verifier Name</b></td>
-                        <td width="2%" style="padding:5px;">:</td>
-                        <td width="48%" style="padding:5px;">
-                            {{ $getEHSVerify->reviewer_name }}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td width="50%" style="padding:5px;"><b>Date</b></td>
-                        <td width="2%" style="padding:5px;">:</td>
-                        <td width="48%" style="padding:5px;">
-                            {{ Displaydateformat($getEHSVerify->date) }}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td width="50%" style="padding:5px;"><b>Choose Assignee</b></td>
-                        <td width="2%" style="padding:5px;">:</td>
-                        <td width="48%" style="padding:5px;">
-                            {{ $getEHSVerify->team_member_names }}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td width="50%" style="padding:5px;"><b>Target Date</b></td>
-                        <td width="2%" style="padding:5px;">:</td>
-                        <td width="48%" style="padding:5px;">
-                            {{ Displaydateformat($getEHSVerify->target_date) }}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td width="50%" style="padding:5px;"><b>Remark</b></td>
-                        <td width="2%" style="padding:5px;">:</td>
-                        <td width="48%" style="padding:5px;">
-                            {{ $getEHSVerify->remark }}
-                        </td>
-                    </tr>
-                </table>
-            @endif
-            @if (
-                $incident_report->incident_status >= STATUS_EHSAPPROVAL_PENDING &&
-                    $incident_report->incident_status != STATUS_EHSAPPROVAL_REJECTED)
+        @if ($getInvestigation->root_cause_analysis != 3)
+
+            @if ($rcpa->incident_status >= STATUS_EHSAPPROVAL_PENDING)
                 <div style="width:100%;">
                     <table style="width:100%;">
                         <tr>
@@ -652,27 +739,42 @@
                         <td width="50%" style="padding:5px;"><b>Submission By</b></td>
                         <td width="2%" style="padding:5px;">:</td>
                         <td width="48%" style="padding:5px;">
-                            {{ getUsername($incident_report->action_submission_by) }}
+                            {{ getUsername($rcpa->action_submission_by) }}
                         </td>
                     </tr>
                     <tr>
                         <td width="50%" style="padding:5px;"><b>Date</b></td>
                         <td width="2%" style="padding:5px;">:</td>
                         <td width="48%" style="padding:5px;">
-                            {{ Displaydateformat($getEHSVerify->date) }}
+                            {{ Displaydateformat($rcpa->action_submission_date) }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding:5px;"><b>Evidence</b></td>
+                        <td style="padding:5px;">:</td>
+                        <td style="padding:5px;">
+                            @if (!$capaEvidence->isEmpty())
+                                @foreach ($capaEvidence as $key => $capaEvidence)
+                                    <a href="{{ asset($capaEvidence->file_path) }}" target="_blank">
+                                        <img src="{{ asset($capaEvidence->file_path) }}" alt="Signature" style="max-width: 10%;">
+                                    </a>
+                                @endforeach
+                            @else
+                                <p>No files available</p>
+                            @endif
                         </td>
                     </tr>
                     <tr>
                         <td width="50%" style="padding:5px;"><b>Action Taken</b></td>
                         <td width="2%" style="padding:5px;">:</td>
                         <td width="48%" style="padding:5px;">
-                            {{ $incident_report->action_submission_description }}
+                            {{ $rcpa->action_submission_description }}
                         </td>
                     </tr>
                 </table>
             @endif
 
-            @if ($incident_report->incident_status >= STATUS_INCIDENT_CLOSED)
+            @if($rcpa->incident_status == STATUS_INCIDENT_CLOSED || $rcpa->incident_status == STATUS_EHSAPPROVAL_REJECTED )
                 <div style="width:100%;">
                     <table style="width:100%;">
                         <tr>

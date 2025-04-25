@@ -277,6 +277,9 @@
                                         action="{{ admin_url('incident/initial-incident/add/submit') }}"
                                         enctype="multipart/form-data">
                                         @csrf
+                                        <input type="hidden" name="random_id" id="" value="{{$randomID}}">
+                                        <input type="hidden" name="acc_prim_add" id="acc_prim_add"
+                                            value="{{ 'acc_prim_add' }} ">
                                         <div class="row mt-3">
                                             <div class="card-header-inner">
                                                 <h4 class="text-white">Incident Reported By</h4>
@@ -656,184 +659,596 @@
                         <input type="hidden" name="body_prim_id" id="body_prim_id" value="">
                         <input type="hidden" name="injury_id" id="injury_id" value="">
                         <input type="hidden" name="bodypartimage" id="bodypartimage">
+                        <input type="hidden" name="random_id" id="random_id" value="{{$randomID}}">
                         <div class="container-fluid1">
 
                             <div class="box-body1 box-group">
 
-                                <svg id="bodyparts" xmlns="http://www.w3.org/2000/svg" height="500" width="400"
-                                    viewBox="0 0 68.587668 92.604164">
-                                    <path id="head" alt="Head" data-name="Head" style="opacity:1"
-                                        fill=""
-                                        d="m 11.671635,6.3585449 -0.0482,-2.59085 4.20648,-2.46806 4.42769,2.95361 -0.0405,1.94408 0.24197,-3.34467 -2.03129,-2.31103004 -2.84508,-0.51629 -2.20423,0.52915 -1.9363,2.63077004 z" />
-                                    <path id="face" alt="Face" data-name="Face" style="opacity:1"
-                                        fill=""
-                                        d="m 19.748825,6.7034949 0.0203,-2.20747 -3.96689,-2.7637 -3.74099,2.23559 -0.006,2.63528 -0.60741,0.0403 0.27408,1.82447 0.97635,0.33932 0.44244,2.1802901 1.82222,2.06556 2.03518,-0.0607 1.79223,-1.94408 0.35957,-2.2406601 0.97616,-0.33932 0.25159,-1.78416 z" />
-                                    <path id="neck" alt="Neck" data-name="Neck" style="opacity:1"
-                                        fill=""
-                                        d="m 13.304665,11.910505 1.64975,2.35202 0.74426,2.62159 -1.73486,-1.38354 -0.86649,-2.97104 z m 5.08047,0 -1.64975,2.35202 -0.74538,2.62234 1.73486,-1.38354 0.86649,-2.97104 z" />
+                                <div class="box">
 
-                                    <path id="left_shoulder" alt="Left Shoulder" data-name="Left Shoulder"
-                                        style="opacity:1" fill=""
-                                        d="m 19.047795,13.248365 3.55748,1.97916 0.72653,-0.35074 z m -0.107,0.43288 -0.37119,1.73073 2.1846,0.53561 1.40116,-0.49436 z m 3.98151,1.97595 0.75814,-0.41 2.40806,1.66799 1.17364,1.50707 0.62662,1.5626 -0.0464,3.70194 -1.3284,-1.72153 0.0407,-2.59376 -0.48842,-0.50049 c 0,0 -3.09778,-3.19058 -3.14371,-3.21401 z m -0.2409,0.10873 c -0.001,0.0525 3.32987,3.54733 3.32987,3.54733 l 0.10067,3.10396 -1.15426,-1.97782 -2.22547,-0.94804 -1.56576,-2.88481 z" />
-                                    <path id="right_shoulder" alt="Right Shoulder" data-name="Right Shoulder"
-                                        style="opacity:1" fill=""
-                                        d="m 12.624785,13.248365 -3.5574599,1.97916 -0.72653,-0.35074 z m 0.107,0.43288 0.37119,1.73073 -2.18459,0.53561 -1.4011499,-0.49436 z m -3.9814899,1.97595 -0.75814,-0.41 -2.40806,1.66799 -1.17364,1.50707 -0.62662,1.56259 0.0464,3.70195 1.3284,-1.72153 -0.0407,-2.59376 0.48843,-0.5005 c 0,0 3.09777,-3.19057 3.1437,-3.214 z m 0.2409,0.10873 c 0.002,0.0525 -3.32987,3.54733 -3.32987,3.54733 l -0.10067,3.10396 1.15426,-1.97782 2.22547,-0.94804 1.5657499,-2.88481 z" />
+                                    <!-- /.box-header -->
+                                    <div class="box-body">
 
-                                    <path id="left_arm" alt="Left Arm" data-name="Left Arm" style="opacity:1"
-                                        fill=""
-                                        d="m 27.621665,30.814715 -0.33838,1.70499 -1.81932,-2.54418 -0.6629,-1.26895 z m -2.85271,-2.6096 c -0.0259,-0.0144 -0.0536,-0.0254 -0.0824,-0.0324 l -1.48333,-4.95503 1.00456,-2.08428 1.65511,1.74532 2.23034,6.67667 0.0415,0.93739 c -1.06528,-0.84215 -2.18962,-1.60679 -3.36434,-2.28803 z m 1.6945,-5.75654 1.64893,6.43421 -0.36469,-4.92266 z" />
-                                    <path id="left_elbow" alt="Left Elbow" data-name="Left Elbow" style="opacity:1"
-                                        fill=""
-                                        d="m 28.325215,27.370125 -0.005,3.09419 0.57959,1.91184 0.54538,-2.41185 z" />
-                                    <path id="left_forearm" alt="Left Forearm" data-name="Left Forearm"
-                                        style="opacity:1" fill=""
-                                        d="m 26.955425,32.969125 1.30083,10.28927 -1.10778,0.01 -1.89387,-7.99609 0.19174,-4.53719 z m 1.21978,-1.94971 -0.58729,2.58635 1.11876,9.15614 0.55849,-0.21663 0.2304,-6.77018 z" />
-                                    <path id="left_hands" alt="Left Hands" data-name="Left Hands" style="opacity:1"
-                                        fill=""
-                                        d="m 27.140245,43.563145 1.5198,0.0506 0.76631,-0.67111 1.21262,2.15766 0.86245,3.32873 -0.49386,0.22113 -0.59815,-2.20238 -0.50016,0.25356 0.35639,2.49422 -0.62382,0.24345 -0.41402,-2.49194 -0.55839,0.17851 0.2262,2.76603 -0.76938,0.32268 -0.25788,-2.86764 -0.4578,-0.0181 -0.16611,2.6524 -0.65997,0.26329 -0.0712,-4.56643 -0.34158,-0.19428 -1.35316,1.68368 -0.32832,-0.34355 0.72644,-2.0551 z" />
+                                        <div class="bodyparts">
+                                            <div class="row"
+                                                style="{{ $is_ready_only == 1 ? 'pointer-events: none;' : '' }}">
+
+                                                <div class="col-lg-12 col-md-12 col-sm-12">
+                                                    <input type="hidden" name="imgMapdata" id="imgMapdata1">
+
+                                                    <div class="img-content col-lg-4 col-md-4 col-sm-4"
+                                                        data-type='img-full'>
+                                                        <div class="img-map">
 
 
-                                    <path id="right_arm" alt="Right Arm" data-name="Right Arm" style="opacity:1"
-                                        fill=""
-                                        d="m 4.0746451,30.814715 0.33838,1.70499 1.81931,-2.54418 0.66289,-1.26895 z m 2.8527,-2.6096 c 0.0259,-0.0144 0.0536,-0.0254 0.0824,-0.0324 l 1.48332,-4.95503 -1.00455,-2.08428 -1.65509,1.74532 -2.23034,6.67667 -0.0415,0.93739 c 1.06528,-0.84215 2.18961,-1.60679 3.36433,-2.28803 z m -1.6945,-5.75654 -1.64891,6.43421 0.36468,-4.92266 z" />
-                                    <path id="right_elbow" alt="Right Elbow" data-name="Right Elbow" style="opacity:1"
-                                        fill=""
-                                        d="m 3.2054751,27.370125 0.005,3.09419 -0.57959,1.91184 -0.54539,-2.41185 z" />
-                                    <path id="right_forearm" alt="Right Forearm" data-name="Right Forearm"
-                                        style="opacity:1" fill=""
-                                        d="m 4.5752651,32.969125 -1.30083,10.28927 1.10778,0.01 1.89387,-7.99609 -0.19174,-4.53719 z m -1.21978,-1.94971 0.58728,2.58635 -1.11875,9.15614 -0.55849,-0.21663 -0.2304,-6.77018 z" />
-                                    <path id="right_hand" alt="Right Hand" data-name="Right Hand" style="opacity:1"
-                                        fill=""
-                                        d="m 4.3904451,43.563145 -1.5198,0.0506 -0.76631,-0.67112 -1.21261996,2.15767 -0.86245,3.32873 0.49386,0.22113 0.59814996,-2.20238 0.50016,0.25356 -0.35639,2.49422 0.62382,0.24345 0.41402,-2.49194 0.55839,0.17851 -0.2262,2.76603 0.76938,0.32268 0.25788,-2.86764 0.4578,-0.0181 0.16611,2.65239 0.65997,0.2633 0.0712,-4.56643 0.34158,-0.19428 1.35316,1.68367 0.32832,-0.34354 -0.72644,-2.0551 z" />
+                                                        </div>
+                                                        <!--Male total parts-->
+                                                        <script type="text/template" id="tmp-male">
+                                                             
+                                                                <div class="img-wrap male">
+                                                <div class="canvas">
+                                                <canvas id='image1_canvas'></canvas>
+                                                <canvas id='image1_canvas_marked'></canvas>
+                                                </div>
+                                                <img src="{{ admin_url('public/assets/images/human_body_parts/male/full.png') }}"  usemap='#imgmap_1' class='imgmap_1' title='imgmap1' alt='imgmap1' id='img-imgmap1' />
+                                                <map id='imgmap1' name='imgmap_1' data-type='total' data-map="total">
+                                                <area alt="" data-parentid = "0" data-isparent="1"  onclick="changeImage('.male-face')"  title="1. Head" data-map="one"  shape="poly" coords="63,45,72,43,80,43,85,47,88,51,88,57,88,61,90,63,90,67,87,70,85,71,85,74,85,77,82,79,80,81,76,81,64,81,62,80,61,74,60,72,58,70,57,67,57,62,57,58,57,54,59,50,59,48" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()"  title="2. Neck" data-map="Two" shape="poly" coords="62,82,82,81,81,91,63,90" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="3. Left Shoulder Front" data-map="three"  shape="poly" coords="62,88,73,91,72,107,28,108,34,99,42,96,49,96,57,94,59,93" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="4. Right shoulder Front" data-map="four"   shape="poly" coords="72,90,82,90,85,93,91,96,95,96,100,96,107,99,112,101,115,104,116,108,72,108" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="5. Left Arm Front" data-map="five"  shape="poly" coords="28,108,48,107,46,110,43,118,43,129,41,150,26,146,27,129" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="6. Right Arm Front" data-map="six"  shape="poly" coords="100,107,116,108,119,114,119,120,120,125,120,131,121,138,122,146,105,150,103,125,102,117,102,113" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="7. Left Elbow Front" data-map="seven"  shape="poly" coords="26,145,40,150,40,157,39,164,22,156,24,151" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="8. Right Elbow Front " data-map="eight"  shape="poly" coords="104,149,122,146,122,150,125,156,125,159,106,161" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="9. Left Forearm Front" data-map="nine"  shape="poly" coords="21,155,39,163,36,172,33,179,28,192,25,195,17,190,18,181,19,174,19,167" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="10. Right Forearm Front" data-map="ten"  shape="poly" coords="107,161,124,158,126,164,126,169,126,174,127,184,128,191,121,195,111,178" />
+                                                <area alt="" data-parentid = "0" data-isparent="1"  onclick="changeImage('.male-hand-right')" title="11. Right Hand " data-map="eleven"  shape="poly" coords="16,193,25,196,27,205,24,212,24,220,20,223,18,224,15,226,12,225,9,222,10,212,9,207,6,207,5,203,11,196" />
+                                                <area alt="" data-parentid = "0" data-isparent="1"  onclick="changeImage('.male-hand-left')" title="12. Left Hand" data-map="twelve"  shape="poly" coords="119,194,129,190,132,193,136,196,140,201,141,204,140,206,136,204,136,209,136,215,135,221,132,224,126,224,122,219,120,210" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="13. Left Chest" data-map="thirteen"  shape="poly" coords="46,108,44,115,43,125,43,135,72,135,71,108" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="14. Right Chest" data-map="fourteen"  shape="poly" coords="72,107,102,109,101,135,72,137" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="15. Stomach" data-map="fifteen"  shape="poly" coords="43,135,102,135,101,143,99,145,98,150,98,155,97,160,97,166,73,166,49,166,48,150" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="16. Left Hip" data-map="sixteen"  shape="poly" coords="48,166,72,166,72,189,45,189,48,173" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="17. Right Hip" data-map="seventeen"  shape="poly" coords="72,166,97,166,97,173,101,180,101,189,72,190" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="18. Pubis" data-map="eighteen"  shape="poly" coords="43,189,101,189,103,210,75,213,70,214,42,210,43,198" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="19. Left Thigh" data-map="nineteen"  shape="poly" coords="74,214,103,210,103,226,103,237,102,243,100,248,96,257,78,259,75,239" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="20. Right Thigh" data-map="twenty"  shape="poly" coords="49,259,66,259,69,253,69,247,69,239,69,230,71,215,42,211,42,235" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="21. Left Knee" data-map="twentyone"  shape="poly" coords="79,258,97,258,94,268,92,274,86,276,81,276" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="22. Right Knee" data-map="twentytwo"  shape="poly" coords="49,259,67,259,66,265,64,269,62,273,60,275,57,277,52,265" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="23. Left Leg "  data-map="twentythree"  shape="poly" coords="81,267,87,277,91,277,93,271,96,277,99,284,99,292,96,302,93,314,90,326,81,326,77,302,77,292" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="24. Right Leg " data-map="twentyfour"  shape="poly" coords="59,276,67,264,68,277,68,284,69,291,69,297,69,305,69,314,68,321,67,326,57,326,53,314,50,300,48,286,49,278,52,274,51,266,51,262" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="25. Left Ankle" data-map="twentyfive"  shape="poly" coords="56,326,67,326,67,343,55,341,58,334" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="26. Right Ankle" data-map="twentysix"  shape="poly" coords="80,327,89,327,92,345,80,343,78,345" />
+                                                <area alt="" data-parentid = "0" data-isparent="1"  onclick="changeImage('.male-foot-left')" title="27. Left foot" data-map="twentyseven"  shape="poly" coords="79,342,91,342,98,350,100,354,99,357,85,357,78,357,78,353,76,350" />
+                                                <area alt="" data-parentid = "0" data-isparent="1"  onclick="changeImage('.male-foot-right')" title="28. Right Foot" data-map="twentyeight"  shape="poly" coords="54,342,66,342,69,353,69,356,58,356,47,356" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="29. Back Skull" data-map="twentynine"  shape="poly" coords="199,77,196,77,196,73,196,70,198,67,197,63,199,57,201,54,205,51,209,50,214,50,219,51,224,54,227,59,227,64,227,67,229,71,228,75,225,79,223,84,218,86,210,86,202,86" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="30. Back Neck" data-map="thirty"  shape="poly" coords="201,85,209,87,219,87,221,97,202,97" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="31. Left Shoulder Back" data-map="thirtyone"  shape="poly" coords="201,96,212,96,212,121,167,122,166,118,170,110,176,106,183,102,193,102" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="32. Right Shoulder Back" data-map="thirtytwo"  shape="poly" coords="211,96,222,96,226,100,234,102,240,103,246,105,253,109,256,115,256,121,212,121" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="33. Left Arm Back" data-map="thirtythree"  shape="poly" coords="167,120,184,121,182,128,184,143,179,163,163,156,168,136" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="34. Right Arm back" data-map="thirtyfour"  shape="poly" coords="241,121,257,122,261,156,245,163,239,145" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="35. Left Elbow back" data-map="thirtyfive"  shape="poly" coords="164,156,181,162,177,174,161,166" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="36. Right Elbow back" data-map="thirtysix"  shape="poly" coords="244,161,261,155,264,162,264,166,248,171,245,168" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="37. Left Arm Back " data-map="thirtyseven"  shape="poly" coords="161,164,177,174,167,198,157,194,160,185,159,174" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="38. Right Arm Back" data-map="thirtyeight"  shape="poly" coords="247,170,263,164,265,185,267,192,267,195,257,198,251,182,247,174" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="39. Upper Back " data-map="thirtynine"  shape="poly" coords="183,122,242,121,242,128,241,136,241,143,239,147,238,153,237,155,187,156,184,148,181,129" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="40. Lower Back"   data-map="forty"  shape="poly" coords="187,154,237,154,237,175,240,188,186,187,187,176" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="41. Left Buttock"  data-map="fortyone"  shape="poly" coords="185,188,211,188,213,212,209,215,208,218,181,217,183,202,184,199,184,195" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="42. Right Buttock"  data-map="fortytwo" shape="poly" coords="211,213,211,188,239,188,241,194,241,198,242,202,243,208,241,215,242,218,216,219" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="43. Left Arm String"  data-map="fortythree" shape="poly" coords="182,217,208,217,209,254,208,258,189,257,184,247,183,234,182,228" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="44. Right Arm String"  data-map="fortyfour" shape="poly" coords="213,218,242,218,241,230,241,243,236,256,217,256" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="45. Left Knee Back"  data-map="forty-five" shape="poly" coords="189,257,207,257,206,268,206,276,208,282,189,282,191,274,192,265" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="46. Right Knee Back"  data-map="fortysix" shape="poly" coords="215,257,237,257,233,263,232,270,232,277,234,282,218,281,218,275,219,264" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="47. Left Calf"  shape="poly" data-map="fortyseven" coords="189,282,207,282,208,288,209,295,209,304,207,312,206,325,195,326,193,316,189,301,188,293,187,286" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="48. Right Calf"  shape="poly"  data-map="fortyeight" coords="217,282,235,282,237,291,235,301,232,313,228,326,218,325,215,304,215,295" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="49. Left Ankle"  shape="poly"  data-map="fortynine" coords="195,324,206,323,207,336,198,336,196,335" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="50. Right Ankle"  shape="poly" data-map="fifty" coords="195,324,206,323,207,336,198,336,196,335" />
+                                                </map>
+                                                </div></script>
+                                                        <!--male total parts -->
+
+                                                        <!--female total parts -->
+                                                        <script type="text/template" id="tmp-female">
+                                                                <div class="img-wrap female" >
+                                                <div class="canvas">
+                                                <canvas id='image1_canvas'></canvas>
+                                                <canvas id='image1_canvas_marked'></canvas>
+                                                </div>
+                                                <img src="{{ admin_url('public/assets/images/human_body_parts/female/full.png') }}"  usemap='#imgmap_1' class='imgmap_1' title='imgmap1' alt='imgmap1' id='img-imgmap1' />
+                                                <map id='imgmap1' name='imgmap_1' data-type='total' data-map="total">
+                                                <area alt="" onclick="changeImage('.female-face')" title="1. Head"  data-map="one" shape="poly" coords="56,43,55,32,59,25,61,23,66,21,74,21,80,23,86,30,87,34,88,41,87,45,88,47,86,53,85,55,82,60,78,64,74,68,69,69,68,70,61,65,59,57,56,54,54,50,53,46" />
+                                                <area alt="" onclick="changeImage()" title="2. Neck"  data-map="two" shape="poly" coords="48,81,87,82,82,72,82,58,71,69,72,70,59,62,57,57,58,67,59,74,56,77" />
+                                                <area alt="" onclick="changeImage()" title="3. Left Shoulder Front" data-map="three"  shape="poly" coords="69,83,87,81,103,86,110,92,113,103,83,104,69,102,70,102" />
+                                                <area alt="" onclick="changeImage()" title="4. Right Shoulder Front" data-map="four"  shape="poly" coords="70,103,23,104,25,94,30,87,36,85,47,82,59,82,69,83" />
+                                                <area alt="" onclick="changeImage()" title="5. Left Arm Front"  data-map="five" shape="poly" coords="99,103,113,104,114,113,119,140,103,149,100,130" />
+                                                <area alt="" onclick="changeImage()" title="6. Right Arm Front"  data-map="six" shape="poly" coords="25,104,25,124,23,142,39,147,42,129,41,107,40,103" />
+                                                <area alt="" onclick="changeImage()" title="7. Left Elbow Front"  data-map="seven" shape="poly" coords="106,163,123,157,120,142,102,150" />
+                                                <area alt="" onclick="changeImage()" title="8. Right Elbow Front"  data-map="eight" shape="poly" coords="39,148,37,162,21,155,23,142" />
+                                                <area alt="" onclick="changeImage()" title="9. Left Forearm Front"  data-map="nine" shape="poly" coords="107,164,123,157,125,170,125,182,125,189,127,195,127,195,118,199" />
+                                                <area alt="" onclick="changeImage()" title="10. Right Forearm Front"  data-map="ten" shape="poly" coords="20,156,36,161,26,197,18,196,20,181" />
+                                                <area alt="" onclick="changeImage('.female-hand-right')" title="12. Right Hand"  shape="poly" data-map="eleven" coords="18,195,25,196,26,197,27,212,26,220,23,220,25,215,23,223,22,223,21,225,22,215,21,218,18,226,17,224,17,216,15,220,13,222,13,221,16,207,15,207,13,205,12,206,9,207,7,207,7,206,7,206,6,206" />
+                                                <area alt="" onclick="changeImage('.female-hand-left')" title="11. Left Hand"  shape="poly" data-map="twelve" coords="126,193,118,199,118,205,118,213,118,221,122,222,122,215,121,215,124,225,125,218,128,226,130,224,130,215,129,214,134,224,131,209,133,206,137,209,140,209,140,209,140,208" />
+                                                <area alt="" onclick="changeImage()" title="13. Left Brest"  shape="poly" data-map="thirteen" coords="69,104,88,103,99,104,100,118,98,132,72,133,69,132" />
+                                                <area alt="" onclick="changeImage()" title="14. Right Brest"  shape="poly" data-map="fourteen" coords="41,103,62,103,69,104,70,127,70,131,44,133" />
+                                                <area alt="" onclick="changeImage()" title="15. Stomach"  shape="poly" data-map="fifteen" coords="41,134,70,133,98,133,97,145,97,155,97,158,71,159,48,158" />
+                                                <area alt="" onclick="changeImage()" title="16. Left Hip"  shape="poly" data-map="sixteen" coords="73,176,107,175,103,164,99,158,77,158,73,158" />
+                                                <area alt="" onclick="changeImage()" title="17. Right Hip"  shape="poly" data-map="seventeen" coords="47,159,72,159,71,175,50,175,38,175,41,165" />
+                                                <area alt="" onclick="changeImage()" title="18. Pubis"  shape="poly" data-map="eighteen" coords="38,175,62,176,86,176,105,176,106,176,108,192,108,213,107,222,77,222,46,222,37,221,34,202" />
+                                                <area alt="" onclick="changeImage()" title="19. Left Thigh"  shape="poly" data-map="ninteen" coords="70,224,106,223,96,270,72,266,76,242" />
+                                                <area alt="" onclick="changeImage()" title="20. Right Thigh"  shape="poly" data-map="twenty" coords="38,224,71,223,69,266,46,269" />
+                                                <area alt="" onclick="changeImage()" title="21. Left Knee"  shape="poly" data-map="twentyone" coords="72,267,97,272,94,287,74,284" />
+                                                <area alt="" onclick="changeImage()" title="22. Right Knee"  shape="poly" data-map="twentytwo"coords="46,269,70,267,69,285,47,289" />
+                                                <area alt="" onclick="changeImage()" title="23. Left Leg"  shape="poly" data-map="twentythree" coords="72,284,93,286,98,304,94,321,84,348,73,352" />
+                                                <area alt="" onclick="changeImage()" title="24. Right Leg"  shape="poly" data-map="twentyfour" coords="69,284,70,309,68,329,67,339,70,354,58,351,53,328,48,308,46,294,46,288" />
+                                                <area alt="" onclick="changeImage()" title="25. Left Ankle"  shape="poly" data-map="twentyfive" coords="74,352,84,350,84,361,72,362" />
+                                                <area alt="" onclick="changeImage()" title="26. Right Ankle"  shape="poly" data-map="twentysix" coords="59,353,69,356,71,366,57,364" />
+                                                <area alt="" onclick="changeImage('.female-foot-left')" title="27. Left Foot"  shape="poly" data-map="twentyseven" coords="72,363,79,361,84,360,89,365,94,373,93,373,91,372,91,374,92,376,89,375,87,377,83,372,84,376,82,378" />
+                                                <area alt="" onclick="changeImage('.female-foot-right')" title="28. Right Foot"  shape="poly" data-map="twentyeight" coords="53,371,57,363,64,364,68,366,70,367,71,372,69,377,65,379,64,375,63,377,61,376,61,376,60,377,60,375,58,377,57,375,55,376,55,374" />
+                                                <area alt="" onclick="changeImage()" title="29. Back Skull"  shape="poly" data-map="twentynine" coords="210,62,225,57,228,50,228,44,226,44,226,34,223,27,219,23,214,21,207,21,200,23,196,29,194,40,194,44,194,46,195,52,199,56,199,61,201,58" />
+                                                <area alt="" onclick="changeImage()" title="30. Neck Back"  shape="poly" data-map="thirty" coords="198,57,209,62,222,59,222,65,222,72,223,75,218,75,212,75,205,75,198,75,200,68" />
+                                                <area alt="" onclick="changeImage()" title="31. Left Shoulder Back"  shape="poly" data-map="thirtyone" coords="169,99,188,99,207,99,209,100,210,89,210,76,198,75,186,82,177,85,171,91" />
+                                                <area alt="" onclick="changeImage()" title="32. Right Shoulder Back"  shape="poly" data-map="thirtytwo" coords="211,76,222,76,226,77,232,80,240,82,246,83,254,88,256,96,254,98,242,98,229,98,217,98,210,98" />
+                                                <area alt="" onclick="changeImage()" title="33. Left Arm Back"  shape="poly" data-map="thirtythree" coords="180,111,175,98,169,98,167,110,167,124,166,135,172,139,179,143,181,144,183,126" />
+                                                <area alt="" onclick="changeImage()" title="34. Right Arm Back"  shape="poly" data-map="thirtyfour" coords="242,98,247,98,255,98,256,108,257,125,258,142,250,146,244,146,241,121,244,108" />
+                                                <area alt="" onclick="changeImage()" title="35. Left Elbow Back"  shape="poly" data-map="thirtyfive" coords="168,136,180,143,180,152,177,163,175,166,171,164,166,160,163,158" />
+                                                <area alt="" onclick="changeImage()" title="36. Right Elbow Back"  shape="poly" data-map="thirtysix" coords="243,148,252,147,257,145,260,153,261,161,256,165,248,168" />
+                                                <area alt="" onclick="changeImage()" title="37. Left Forearm Back"  shape="poly" data-map="thirtyseven" coords="164,157,175,167,168,199,161,194,161,174,161,162,161,158" />
+                                                <area alt="" onclick="changeImage()" title="38. Right Forearm Back"  shape="poly" data-map="thirtyeight" coords="248,169,261,161,265,174,263,186,263,197,253,202" />
+                                                <area alt="" onclick="changeImage()" title="39. Upper Back"  shape="poly" data-map="thirtynine" coords="177,99,179,108,183,121,184,127,187,145,200,145,210,145,222,144,230,145,237,145,240,131,241,122,241,113,242,101,241,99" />
+                                                <area alt="" onclick="changeImage()" title="40. Lower Back"  shape="poly" data-map="fourty" coords="186,144,238,144,237,150,235,156,237,159,239,163,242,167,244,171,246,177,237,177,178,177,188,154" />
+                                                <area alt="" onclick="changeImage()" title="41. Left Buttock "  shape="poly" data-map="fourtyone" coords="176,179,209,179,209,216,173,217,172,199" />
+                                                <area alt="" onclick="changeImage()" title="42. Right Buttock "  shape="poly" data-map="fourtytwo" coords="209,178,246,178,248,189,249,199,249,205,248,216,235,217,220,217,209,216" />
+                                                <area alt="" onclick="changeImage()" title="43. Left Hamstring"  shape="poly" data-map="fourtythree" coords="207,215,174,216,175,228,177,236,179,242,182,251,184,255,184,261,199,262,208,261,209,243,207,259,209,237" />
+                                                <area alt="" onclick="changeImage()" title="44. Right Hamstring"  shape="poly" data-map="fourtyfour" coords="209,216,209,243,212,252,211,262,230,262,239,263,242,253,246,242,247,229,248,216" />
+                                                <area alt="" onclick="changeImage()" title="45. Left Knee Back"  shape="poly" data-map="fourtyfive" coords="184,262,206,262,208,269,208,279,208,284,207,288,207,290,197,290,184,290" />
+                                                <area alt="" onclick="changeImage()" title="46. Right Knee Back"  shape="poly" data-map="fourtysix" coords="212,264,212,262,239,262,236,272,235,277,235,282,235,287,237,290,228,290,221,290,216,289,213,289,211,282,212,274" />
+                                                <area alt="" onclick="changeImage()" title="47. Left Calf"  shape="poly" data-map="fourtyseven" coords="185,291,206,291,208,301,210,307,210,321,209,333,207,340,193,340,186,323,183,304" />
+                                                <area alt="" onclick="changeImage()" title="48. Right Calf"  shape="poly" data-map="fourtyeight" coords="214,291,232,291,234,292,236,300,237,305,236,311,234,321,232,332,229,339,221,339,214,339,210,320" />
+                                                <area alt="" onclick="changeImage()" title="49. Left Ankle"  shape="poly" data-map="fourtynine" coords="193,340,208,338,208,348,208,354,209,360,210,365,208,368,198,356" />
+                                                <area alt="" onclick="changeImage()" title="50. Right Ankle"  shape="poly" data-map="fifty" coords="213,367,226,359,227,352,229,345,231,340,223,339,219,339,215,341,215,339" />
+                                                <area alt="" onclick="changeImage()" title="51. Left Toe"  shape="poly" data-map="fiftyone" coords="192,365,194,365,197,363,198,360,199,358,203,363,208,367,210,373,208,377,204,380,196,369" />
+                                                <area alt="" onclick="changeImage()" title="52. Right Toe"  shape="poly" data-map="fiftytwo" coords="214,366,223,359,226,363,230,364,231,366,231,369,226,373,222,376,218,377,214,376,212,371" />
+                                                </map>
+                                                </div></script>
+                                                        <!--female total parts -->
+
+                                                    </div>
+                                                    <div class="img-sgl-content col-lg-4 col-md-4 col-sm-4"
+                                                        data-type='img-full'>
+
+                                                        <div class="image-container">
+                                                            <div class="img-map-parts">
+                                                                <!--male otheer parts -->
+                                                                <div class="parts male-foot-right">
+                                                                    <h4>Foot Right</h4>
+                                                                    <img src="{{ admin_url('public/assets/images/human_body_parts/male/front/Right-Foot.png') }}"
+                                                                        usemap='#imgmap_css_container_imgmap201293016112'
+                                                                        class='imgmap_css_container'
+                                                                        title='imgmap201293016112'
+                                                                        alt='imgmap201293016112'
+                                                                        id='img-imgmap201293016112' />
+                                                                    <map id='imgmap201293016112' data-map="foot-right"
+                                                                        name='imgmap_css_container_imgmap201293016112'>
+                                                                        <area alt="" title="A. Right Finger 1"
+                                                                            data-map='foot-right-finger1' shape="poly"
+                                                                            coords="599,779,604,796,591,823,586,844,592,868,605,883,616,890,631,897,648,898,667,895,678,886,692,878,701,861,701,845,700,814,701,789,702,764,705,747,703,737" />
+                                                                        <area alt="" title="B. Right Finger 2"
+                                                                            data-map='foot-right-finger2' shape="poly"
+                                                                            coords="506,779,503,808,496,835,487,868,486,885,493,898,505,904,525,902,549,892,565,860,568,845,573,818,590,784,593,779" />
+                                                                        <area alt="" title="C. Right Finger 3"
+                                                                            data-map='foot-right-finger3' shape="poly"
+                                                                            coords="444,757,430,793,415,832,410,859,417,874,444,877,466,867,478,829,491,796,502,779" />
+                                                                        <area alt="" title="D. Right Finger 4"
+                                                                            data-map='foot-right-finger4' shape="poly"
+                                                                            coords="403,731,416,740,440,756,434,776,426,794,416,812,407,835,390,846,374,843,362,833,359,816,367,792" />
+                                                                        <area alt="" title="E. Right Finger 5"
+                                                                            data-map='foot-right-finger5' shape="poly"
+                                                                            coords="373,687,404,730,378,765,361,780,344,777,333,756,339,732" />
+                                                                    </map>
+                                                                </div>
+
+                                                                <div class="parts male-foot-left">
+                                                                    <h4>Foot Left</h4>
+                                                                    <img src="{{ admin_url('public/assets/images/human_body_parts/male/front/left-foot-01.png') }}"
+                                                                        usemap='#imgmap_css_container_imgmap201293016112'
+                                                                        class='imgmap_css_container'
+                                                                        title='imgmap201293016112'
+                                                                        alt='imgmap201293016112'
+                                                                        id='img-imgmap201293016112' />
+                                                                    <map id='imgmap201293016112' data-map="foot-left"
+                                                                        name='imgmap_css_container_imgmap201293016112'>
+                                                                        <area alt="" title="A. Left Finger 1"
+                                                                            data-map='foot-left-finger1' shape="poly"
+                                                                            coords="336,737,442,777,438,787,441,796,447,810,456,835,447,868,432,887,396,897,369,892,358,881,347,866,343,850" />
+                                                                        <area alt="" title="B. Left Finger 2"
+                                                                            data-map='foot-left-finger2' shape="poly"
+                                                                            coords="443,780,459,788,466,813,471,834,478,861,488,887,501,896,526,903,540,903,549,894,558,877,554,857,545,831,541,811,537,799,537,777" />
+                                                                        <area alt="" title="C. Left Finger 3"
+                                                                            data-map='foot-left-finger3' shape="poly"
+                                                                            coords="540,779,598,756,618,798,627,835,637,861,622,874,596,876,582,872,574,868,553,801" />
+                                                                        <area alt="" title="D. Left Finger 4"
+                                                                            data-map='foot-left-finger4' shape="poly"
+                                                                            coords="598,760,636,730,660,766,674,788,684,808,683,821,680,836,666,844,645,847,632,830" />
+                                                                        <area alt="" title="E. Left Finger 5"
+                                                                            data-map='foot-left-finger5' shape="poly"
+                                                                            coords="642,730,667,686,689,718,704,739,708,759,703,776,688,779,674,779,657,756" />
+                                                                    </map>
+                                                                </div>
+
+                                                                <div class="parts male-face">
+                                                                    <h4>Head</h4>
+                                                                    <img src="{{ admin_url('public/assets/images/human_body_parts/male/front/male-face.png') }}"
+                                                                        usemap='#imgmap_css_container_imgmap201293016112'
+                                                                        class='imgmap_css_container'
+                                                                        title='imgmap201293016112'
+                                                                        alt='imgmap201293016112'
+                                                                        id='img-imgmap201293016112' />
+                                                                    <map id='imgmap201293016112' data-map="head"
+                                                                        name='imgmap_css_container_imgmap201293016112'>
+                                                                        <area alt="" title="A. Right skull"
+                                                                            shape="poly" data-map="A"
+                                                                            coords="408,120,306,121,279,119,258,120,249,121,250,78,249,25,282,26,302,32,323,37,352,49,375,66,394,84,403,106" />
+                                                                        <area alt="" title="B. Left Skull"
+                                                                            shape="poly" data-map="B"
+                                                                            coords="250,29,251,118,88,121,95,106,105,89,113,76,127,63,137,54,154,46,171,38,194,32,215,27,243,26" />
+                                                                        <area alt="" title="C. Right Forehead"
+                                                                            shape="poly" data-map="C"
+                                                                            coords="250,121,406,122,417,151,417,172,415,198,409,206,310,206,250,208" />
+                                                                        <area alt="" title="D. Left Forehead"
+                                                                            shape="poly" data-map="D"
+                                                                            coords="250,121,250,208,89,207,82,176,82,156,88,130,89,121" />
+                                                                        <area alt="" title="E. Bridge of Nose"
+                                                                            shape="poly" data-map="E"
+                                                                            coords="250,239,210,309,287,310" />
+                                                                        <area alt="" title="F. Left Eyebrow"
+                                                                            shape="poly" data-map="F"
+                                                                            coords="102,243,248,242,250,206,127,207,89,207,90,214,97,217,103,225" />
+                                                                        <area alt="" title="G. Right Eyebrow"
+                                                                            shape="poly" data-map="G"
+                                                                            coords="386,243,250,242,250,206,410,206,406,218,398,233,390,243" />
+                                                                        <area alt="" id="test"
+                                                                            title="H. Left Eye" shape="poly"
+                                                                            data-map="H"
+                                                                            coords="216,297,102,297,104,244,246,244" />
+                                                                        <area alt="" title="I. Right Eye"
+                                                                            shape="poly" data-map="I"
+                                                                            coords="250,245,278,296,385,295,384,245" />
+                                                                        <area alt="" title="J. Nose"
+                                                                            shape="poly" data-map="J"
+                                                                            coords="210,312,286,311,322,381,173,382" />
+                                                                        <area alt="" title="K. Mouth"
+                                                                            shape="poly" data-map="K"
+                                                                            coords="173,382,322,381,338,411,158,413" />
+                                                                        <area alt="" title="L. Left Cheeks"
+                                                                            shape="poly" data-map="L"
+                                                                            coords="145,435,217,296,104,296,102,330,108,352,113,365,115,380,115,398,118,412,134,429" />
+                                                                        <area alt="" title="M. Right Cheeks"
+                                                                            shape="poly" data-map="M"
+                                                                            coords="349,429,311,362,280,297,385,297,386,335,381,354,381,366,373,387,368,400,362,412" />
+                                                                        <area alt="" title="N. Left Ear"
+                                                                            shape="poly" data-map="N"
+                                                                            coords="103,225,104,333,96,331,86,327,77,314,70,289,67,269,66,246,70,230,80,216,86,211,101,222" />
+                                                                        <area alt="" title="O. Right Ear"
+                                                                            shape="poly" data-map="O"
+                                                                            coords="385,245,385,334,404,326,414,314,419,298,428,282,433,266,434,255,431,234,422,221,407,212,399,230,393,238,388,244" />
+                                                                        <area alt="" title="P. Left Jaw"
+                                                                            shape="poly" data-map="P"
+                                                                            coords="154,443,249,442,250,410,159,411,151,421,144,434,151,440" />
+                                                                        <area alt="" title="Q. Right Jaw"
+                                                                            shape="poly" data-map="Q"
+                                                                            coords="330,444,248,444,250,411,338,411,352,427,341,437,334,442" />
+                                                                        <area alt="" title="R. Chin"
+                                                                            shape="poly" data-map="R"
+                                                                            coords="159,443,249,442,333,442,318,454,302,466,287,471,258,474,237,474,205,474,196,472,177,462,164,451,158,446" />
+                                                                    </map>
+                                                                </div>
+
+                                                                <div class="parts male-hand-right">
+                                                                    <h4>Right Hand</h4>
+                                                                    <img src="{{ admin_url('public/assets/images/human_body_parts/male/front/male-right-hand.png') }}"
+                                                                        usemap='#imgmap_css_container_imgmap201293016112'
+                                                                        class='imgmap_css_container'
+                                                                        title='imgmap201293016112'
+                                                                        alt='imgmap201293016112'
+                                                                        id='img-imgmap201293016112' />
+                                                                    <map id='imgmap201293016112' data-map="hand-right"
+                                                                        name='imgmap_css_container_imgmap201293016112'>
+                                                                        <area alt="" title="A. Right Palm"
+                                                                            data-map='hand-right-palm' shape="poly"
+                                                                            coords="383,283,384,269,384,256,384,250,382,235,382,221,379,209,376,197,374,187,371,178,368,170,365,164,364,160,243,135,231,140,225,144,218,149,212,155,205,160,198,169,196,171,191,230,201,236,206,243,212,255,212,268,210,278,207,289,207,298,196,312,194,314,240,322,253,325,275,325,293,324,332,312,347,307,336,308,347,306" />
+                                                                        <area alt="" title="B. Right Thumb Finger"
+                                                                            data-map='hand-right-thumb' shape="poly"
+                                                                            coords="136,203,145,199,153,195,161,193,169,189,171,189,175,185,179,180,184,179,186,176,191,173,197,171,191,233,183,236,173,239,164,242,157,245,151,249,138,252,129,252,117,253,105,255,97,254,91,250,87,244,83,238,83,230,90,222,102,216,112,211,120,208,124,206" />
+                                                                        <area alt="" title="C. Right Index Finger"
+                                                                            data-map='hand-right-index' shape="poly"
+                                                                            coords="197,426,195,434,192,439,188,442,183,444,178,445,168,443,162,437,159,430,159,426,159,421,161,412,162,404,165,396,167,389,170,379,172,373,176,358,182,347,183,343,187,331,189,325,194,316,194,315,241,323,218,375,207,397,205,405,203,405" />
+                                                                        <area alt=""
+                                                                            title="D. Right Middle Finger"
+                                                                            data-map='hand-right-middle' shape="poly"
+                                                                            coords="249,324,293,325,289,333,287,342,288,351,289,361,285,379,281,389,279,394,280,403,278,416,278,426,278,437,278,452,278,464,276,473,271,479,264,480,258,480,251,480,243,473,240,465,237,447,237,423,237,408,236,390,240,376,241,357" />
+                                                                        <area alt="" title="E. Right Ring Finger"
+                                                                            data-map='hand-right-ring' shape="poly"
+                                                                            coords="295,324,331,313,334,327,334,339,334,351,335,359,334,366,333,371,333,381,333,391,331,400,331,407,331,413,330,423,329,429,327,436,325,444,322,450,315,451,305,453,296,447,291,439,291,410,294,404,294,393,293,377,291,362,291,352,291,347" />
+                                                                        <area alt=""
+                                                                            title="F. Right Little Finger"
+                                                                            data-map='hand-right-little' shape="poly"
+                                                                            coords="347,306,382,284,394,306,399,321,406,340,411,352,412,359,415,370,416,384,415,392,408,397,397,397,385,393,377,368,369,354,366,339,359,334" />
+
+                                                                    </map>
+                                                                </div>
+
+                                                                <div class="parts male-hand-left">
+                                                                    <h4>Left Hand</h4>
+                                                                    <img src="{{ admin_url('public/assets/images/human_body_parts/male/front/malelefthand-01.png') }}"
+                                                                        usemap='#imgmap_css_container_imgmap201293016112'
+                                                                        class='imgmap_css_container'
+                                                                        title='imgmap201293016112'
+                                                                        alt='imgmap201293016112'
+                                                                        id='img-imgmap201293016112' />
+                                                                    <map id='imgmap201293016112' data-map="hand-left"
+                                                                        name='imgmap_css_container_imgmap201293016112'>
+                                                                        <area alt="" title="A. Left Palm"
+                                                                            data-map='hand-left-palm' shape="poly"
+                                                                            coords="130,158,258,132,269,135,277,141,284,146,291,152,297,158,304,166,305,168,312,232,301,234,297,240,291,252,290,257,293,280,296,298,309,317,260,326,251,326,205,327,165,314,150,308,112,285,110,260,112,231,115,209" />
+                                                                        <area alt="" title="B. Left Thumb Finger"
+                                                                            data-map='hand-left-thumb' shape="poly"
+                                                                            coords="311,233,304,168,318,174,327,181,331,186,346,191,361,197,367,201,380,205,392,210,405,216,413,219,419,224,422,228,423,235,421,241,415,249,411,253,397,255,371,253,345,243" />
+                                                                        <area alt="" title="C. Left Index Finger"
+                                                                            data-map='hand-left-index' shape="poly"
+                                                                            coords="261,325,309,318,317,333,319,343,321,348,324,353,328,364,337,393,339,404,343,416,345,430,343,440,340,446,333,450,319,452,309,444,307,434,299,413,293,399,279,368,274,362,261,330" />
+                                                                        <area alt="" title="D. Left Middle Finger"
+                                                                            data-map='hand-left-middle' shape="poly"
+                                                                            coords="252,325,256,342,257,351,259,361,261,372,261,381,264,391,264,400,264,408,264,418,264,426,264,438,262,454,262,465,257,480,249,488,235,490,225,483,221,474,220,454,220,432,219,416,219,401,220,397,216,390,213,382,211,368,211,358,211,349,211,342,210,334,208,328" />
+                                                                        <area alt="" title="E. Left Ring Finger"
+                                                                            data-map='hand-left-ring' shape="poly"
+                                                                            coords="203,327,205,336,207,343,208,354,208,364,206,372,206,385,206,394,205,403,205,411,206,422,207,434,207,444,206,452,203,455,199,458,193,460,187,461,181,461,174,457,171,450,169,438,169,431,166,425,166,416,166,408,163,396,164,387,165,379,163,371,164,367,163,364,162,356,162,349,163,339,163,331,164,320,167,315" />
+                                                                        <area alt="" title="F. Left Little Finger"
+                                                                            data-map='hand-left-little' shape="poly"
+                                                                            coords="113,284,151,309,143,322,137,336,132,342,129,345,129,351,126,360,120,369,118,378,114,386,109,396,105,401,98,404,91,404,82,402,78,395,76,385,82,358,95,323" />
+
+                                                                    </map>
+                                                                </div>
+                                                                <!--male other parts -->
 
 
-                                    <path id="left_chest" alt="Left Chest" data-name="Left Chest" style="opacity:1"
-                                        fill=""
-                                        d="m 20.337455,17.085495 1.72942,3.09103 1.89346,0.94785 -1.15295,0.90662 -0.90604,2.63773 -2.09968,0.86537 -3.34524,-1.655 0.83425,-6.50527 z" />
-                                    <path id="right_chest" alt="Right Chest" data-name="Right Chest" style="opacity:1"
-                                        fill=""
-                                        d="m 11.351215,17.085495 -1.7294199,3.09103 -1.89346,0.94785 1.15295,0.90662 0.90586,2.63773 2.0996699,0.86537 3.34636,-1.655 -0.83462,-6.50527 z" />
+                                                                <!--Female parts-->
 
-                                    <path id="left_ribs" alt="Left Ribs" data-name="Left Ribs" style="opacity:1"
-                                        fill=""
-                                        d="m 19.288925,26.151995 -3.11202,-1.40604 0.0937,2.27965 2.80119,1.43603 z m 1.93471,1.66849 -1.29355,0.7212 0.14997,-1.70898 z m -1.05303,-1.63718 2.47968,-1.03241 -0.9336,2.52093 z m 1.53164,1.73729 -1.69005,1.03372 -0.28871,2.0678 1.64975,-1.07533 z m -2.91143,1.10421 -0.0622,1.62387 -2.30308,-0.49961 -0.12448,-2.21722 z m -0.1556,2.4045 0.0311,1.99844 -2.20953,0.59391 -0.0311,-3.1227 z m 2.65459,-0.98535 -1.48383,1.03372 -0.20622,2.10905 1.64862,-1.32355 z" />
-                                    <path id="left_belly" alt="Left Belly" data-name="Left Belly" style="opacity:1"
-                                        fill=""
-                                        d="m 19.641935,34.707615 1.81341,-1.36479 0.15748,1.83347 1.28642,2.37338 -1.98044,2.73652 -1.03109,0.16554 -0.37026,-3.88816 z" />
+                                                                <div class="parts female-foot-right">
+                                                                    <h4>Foot Right</h4>
+                                                                    <img src="{{ admin_url('public/assets/images/human_body_parts/female/front/rightfoot-01.png') }}"
+                                                                        usemap='#imgmap_css_container_imgmap201293016112'
+                                                                        class='imgmap_css_container'
+                                                                        title='imgmap201293016112'
+                                                                        alt='imgmap201293016112'
+                                                                        id='img-imgmap201293016112' />
+                                                                    <map id='imgmap201293016112' data-map="foot-right"
+                                                                        name='imgmap_css_container_imgmap201293016112'>
+                                                                        <area alt="" title="A. Right Finger 1"
+                                                                            data-map='foot-right-finger1' shape="poly"
+                                                                            coords="573,764,629,760,626,781,625,796,627,802,629,836,629,857,621,885,603,903,590,906,566,896,552,884,547,855,552,826" />
+                                                                        <area alt="" title="B. Right Finger 2"
+                                                                            data-map='foot-right-finger2' shape="poly"
+                                                                            coords="514,778,569,763,555,817,546,844,536,874,523,885,508,886,497,879,496,852" />
+                                                                        <area alt="" title="C. Right Finger 3"
+                                                                            data-map='foot-right-finger3' shape="poly"
+                                                                            coords="507,796,508,775,494,767,475,758,469,788,461,814,458,843,462,857,475,860,487,856,498,843" />
+                                                                        <area alt="" title="D. Right Finger 4"
+                                                                            data-map='foot-right-finger4' shape="poly"
+                                                                            coords="439,703,458,732,472,754,469,775,462,810,453,829,436,829,427,816,422,797" />
+                                                                        <area alt="" title="E. Right Finger 5"
+                                                                            data-map='foot-right-finger5' shape="poly"
+                                                                            coords="430,697,431,744,424,773,420,781,406,781,400,763,399,708,397,674,399,674" />
+                                                                    </map>
+                                                                </div>
+                                                                <div class="parts female-foot-left">
+                                                                    <h4>Foot Left</h4>
+                                                                    <img src="{{ admin_url('public/assets/images/human_body_parts/female/front/left-foot-01.png') }}"
+                                                                        usemap='#imgmap_css_container_imgmap201293016112'
+                                                                        class='imgmap_css_container'
+                                                                        title='imgmap201293016112'
+                                                                        alt='imgmap201293016112'
+                                                                        id='img-imgmap201293016112' />
+                                                                    <map id='imgmap201293016112' data-map="foot-left"
+                                                                        name='imgmap_css_container_imgmap201293016112'>
+                                                                        <area alt="" title="A. Left Finger 1"
+                                                                            data-map='foot-left-finger1' shape="poly"
+                                                                            coords="413,761,468,764,483,801,495,833,499,863,489,883,481,897,462,904,444,907,431,898,422,883,411,850,415,790" />
+                                                                        <area alt="" title="B. Left Finger 2"
+                                                                            data-map='foot-left-finger2' shape="poly"
+                                                                            coords="469,765,523,777,527,795,533,808,540,830,543,845,545,851,546,858,546,870,543,885,529,887,517,885,503,869,488,820" />
+                                                                        <area alt="" title="C. Left Finger 3"
+                                                                            data-map='foot-left-finger3' shape="poly"
+                                                                            coords="532,777,534,799,538,825,546,853,561,862,571,858,582,849,582,823,580,797,567,756" />
+                                                                        <area alt="" title="D. Left Finger 4"
+                                                                            data-map='foot-left-finger4' shape="poly"
+                                                                            coords="569,754,599,706,613,770,617,802,610,823,600,829,583,828" />
+                                                                        <area alt="" title="E. Left Finger 5"
+                                                                            data-map='foot-left-finger5' shape="poly"
+                                                                            coords="611,701,612,744,619,780,637,777,643,763,644,720,645,669" />
+                                                                    </map>
+                                                                </div>
+                                                                <div class="parts female-hand-right">
+                                                                    <h4>Right Hand</h4>
+                                                                    <img src="{{ admin_url('public/assets/images/human_body_parts/female/front/female-right-hand-01.png') }}"
+                                                                        usemap='#imgmap_css_container_imgmap201293016112'
+                                                                        class='imgmap_css_container'
+                                                                        title='imgmap201293016112'
+                                                                        alt='imgmap201293016112'
+                                                                        id='img-imgmap201293016112' />
+                                                                    <map id='imgmap201293016112' data-map="hand-right"
+                                                                        name='imgmap_css_container_imgmap201293016112'>
+                                                                        <area alt="" title="A. Right Palm"
+                                                                            data-map='hand-right-palm' shape="poly"
+                                                                            coords="348,136,348,92,349,29,347,21,291,14,231,18,235,52,232,91,225,116,210,141,189,160,175,175,196,232,203,239,214,250,222,275,226,299,224,317,249,319,285,325,308,326,351,305,374,292,370,228,362,174" />
+                                                                        <area alt="" title="B. Right Thumb Finger"
+                                                                            data-map='hand-right-thumb' shape="poly"
+                                                                            coords="177,175,193,231,181,243,170,254,155,273,127,287,111,285,107,277,124,260" />
+                                                                        <area alt="" title="C. Right Index Finger"
+                                                                            data-map='hand-right-index' shape="poly"
+                                                                            coords="246,456,251,419,257,379,256,348,260,324,224,318,220,380,221,425,221,439,219,453,233,461" />
+                                                                        <area alt=""
+                                                                            title="D. Right Middle Finger"
+                                                                            data-map='hand-right-middle' shape="poly"
+                                                                            coords="264,322,272,412,271,433,272,456,272,473,277,482,284,485,295,482,300,471,303,439,303,363,303,331,305,325" />
+                                                                        <area alt="" title="E. Right Ring Finger"
+                                                                            data-map='hand-right-ring' shape="poly"
+                                                                            coords="308,324,344,310,347,345,348,395,348,433,346,453,342,461,330,463,320,449,321,410" />
+                                                                        <area alt=""
+                                                                            title="F. Right Little Finger"
+                                                                            data-map='hand-right-little' shape="poly"
+                                                                            coords="364,365,370,395,381,404,389,406,392,395,394,377,392,363,388,341,384,315,376,289,347,308" />
 
-                                    <path id="right_ribs" alt="Right Ribs" data-name="Right Ribs" style="opacity:1"
-                                        fill=""
-                                        d="m 12.399365,26.152365 3.11202,-1.40603 -0.0937,2.27965 -2.80138,1.4364 z m -1.93508,1.6685 1.29355,0.72139 -0.14997,-1.70899 z m 1.05303,-1.637 -2.4793099,-1.03259 0.93361,2.52148 z m -1.5316399,1.73729 1.6900499,1.03372 0.28871,2.06743 -1.64881,-1.07515 z m 2.9114199,1.10421 0.0623,1.62387 2.30327,-0.49961 0.12448,-2.21703 z m 0.15561,2.40432 -0.0309,1.99844 2.20973,0.59353 0.0311,-3.1227 z m -2.6546,-0.98516 1.48384,1.0339 0.20622,2.10905 -1.64975,-1.32355 z" />
-                                    <path id="Right Belly" alt="Right Belly" data-name="Right Belly" style="opacity:1"
-                                        fill=""
-                                        d="m 12.045985,34.707615 -1.81341,-1.36479 -0.15748,1.83347 -1.2856799,2.37432 1.9804499,2.73595 1.03109,0.16554 0.37119,-3.88721 z" />
+                                                                    </map>
+                                                                </div>
+                                                                <div class="parts female-hand-left">
+                                                                    <h4>Left Hand</h4>
+                                                                    <img src="{{ admin_url('public/assets/images/human_body_parts/female/front/female-left-hand-01.png') }}"
+                                                                        usemap='#imgmap_css_container_imgmap201293016112'
+                                                                        class='imgmap_css_container'
+                                                                        title='imgmap201293016112'
+                                                                        alt='imgmap201293016112'
+                                                                        id='img-imgmap201293016112' />
+                                                                    <map id='imgmap201293016112' data-map="hand-left"
+                                                                        name='imgmap_css_container_imgmap201293016112'>
+                                                                        <area alt="" title="A. Left Palm"
+                                                                            data-map='hand-left-palm' shape="poly"
+                                                                            coords="152,20,177,14,209,13,230,13,250,16,268,18,267,36,266,54,267,68,267,79,269,94,274,106,278,120,284,133,294,144,305,152,314,162,322,173,316,198,309,221,304,235,291,243,283,258,280,272,277,286,276,295,277,315,267,318,239,326,221,326,201,326,194,325,173,317,159,310,148,302,124,289,126,262,128,242,132,210,138,187,142,158,146,151,150,134,153,106" />
+                                                                        <area alt="" title="B. Left Thumb Finger"
+                                                                            data-map='hand-left-thumb' shape="poly"
+                                                                            coords="364,237,372,253,378,261,388,269,394,275,391,283,384,287,366,283,350,275,335,263,319,243,312,236,304,234,311,211,320,185,325,174" />
+                                                                        <area alt="" title="C. Left Index Finger"
+                                                                            data-map='hand-left-index' shape="poly"
+                                                                            coords="269,461,277,455,280,450,282,421,279,364,275,316,262,320,249,323,240,324,243,360,245,398,251,440,258,459" />
+                                                                        <area alt="" title="D. Left Middle Finger"
+                                                                            data-map='hand-left-middle' shape="poly"
+                                                                            coords="193,325,214,326,236,324,235,327,234,340,233,361,232,388,231,409,228,422,228,448,226,478,218,488,204,484,197,461,198,335" />
+                                                                        <area alt="" title="E. Left Ring Finger"
+                                                                            data-map='hand-left-ring' shape="poly"
+                                                                            coords="155,308,172,317,189,324,190,339,186,371,181,400,180,423,176,451,171,462,164,463,153,456,151,422,151,374" />
+                                                                        <area alt="" title="F. Left Little Finger"
+                                                                            data-map='hand-left-little' shape="poly"
+                                                                            coords="105,389,106,398,111,407,120,406,123,401,130,392,133,379,138,356,143,339,146,324,149,317,151,307,144,302,137,295,125,289,117,312" />
 
-                                    <path id="belly" alt="Belly" data-name="Belly" style="opacity:1"
-                                        fill=""
-                                        d="m 15.636055,44.919735 -0.60647,-5.91209 -0.015,-3.84879 -2.18479,-1.07533 -0.24746,7.03017 z m 0.41581,-5.7e-4 0.60628,-5.91209 0.0154,-3.84915 2.18404,-1.07515 0.24746,7.03017 z" />
+                                                                    </map>
+                                                                </div>
+                                                                <div class="parts female-face">
+                                                                    <h4>Head</h4>
+                                                                    <img src="{{ admin_url('public/assets/images/human_body_parts/female/front/female-face.png') }}"
+                                                                        usemap='#imgmap_css_container_imgmap201293016112'
+                                                                        class='imgmap_css_container'
+                                                                        title='imgmap201293016112'
+                                                                        alt='imgmap201293016112'
+                                                                        id='img-imgmap201293016112' />
+                                                                    <map id='imgmap201293016112' data-map="head"
+                                                                        name='imgmap_css_container_imgmap201293016112'>
+                                                                        <area alt="" title="A. Right skull"
+                                                                            data-map='A' shape="poly"
+                                                                            coords="250,16,250,82,124,82,130,67,137,60,149,49,159,41,171,36,177,29,193,24,216,18" />
 
-                                    <path id="genitalia" alt="Genitalia" data-name="Genitalia" style="opacity:1"
-                                        fill=""
-                                        d="m 14.404465,45.040075 0.0221,-0.0277 -0.14866,-0.37945 -3.10172,-3.40449 -0.23283,-0.0825 2.05918,5.32009 z m -1.17263,2.01833 1.27705,3.29948 0.42631,-4.04862 -0.25196,-0.64303 z m 4.05219,-2.01795 -0.0221,-0.0281 0.14867,-0.37926 3.10171,-3.40449 0.23246,-0.0825 -2.05843,5.3199 z m 1.17263,2.01795 -1.27706,3.29948 -0.42631,-4.04843 0.25197,-0.64303 z" />
+                                                                        <area alt="" title="B. Left Skull"
+                                                                            data-map='B' shape="poly"
+                                                                            coords="379,82,249,83,249,16,264,16,284,20,301,24,313,29,325,33,342,40,354,51,365,61,376,73" />
 
-                                    <path id="left_thigh" alt="Left Thigh" data-name="Left Thigh" style="opacity:1"
-                                        fill=""
-                                        d="m 23.419015,50.399125 -0.15504,4.75091 -2.40263,6.60949 0.7362,1.90021 2.36401,-8.34435 z m -0.58154,-11.60825 -0.15485,4.00722 1.31793,7.93154 0.61977,-6.40308 z m -0.38731,5.12268 -2.75152,6.07258 -0.62015,4.87425 1.16232,6.85771 2.51886,-6.98144 0.15504,-7.18764 z" />
-                                    <path id="left_innerthigh" alt="Left Innerthigh" data-name="Left Innerthigh"
-                                        style="opacity:1" fill=""
-                                        d="m 22.063225,39.369605 v 4.21363 l -2.94574,5.82511 -1.86027,5.78349 0.19365,-4.0072 z m -3.24944,13.42596 -0.0649,0.15467 -1.21294,2.90207 0.78325,7.18803 1.23619,-0.66122 -1.0714,-6.69272 z" />
-                                    <path id="left_knee" alt="Left Knee" data-name="Left Knee" style="opacity:1"
-                                        fill=""
-                                        d="m 21.404635,64.784375 0.1243,1.12295 -0.87118,1.08171 -0.29058,1.70599 -0.58116,0.24933 -0.49774,-2.57866 -0.33182,-0.91486 0.29058,-0.58247 z m -3.85853,0.0832 0.6224,1.74685 1.3273,2.57867 -0.33182,2.37095 -0.95423,-2.66209 -0.78738,-1.49734 z m 4.97811,-2.37039 -0.95423,5.11609 0.62241,-0.33295 0.49773,1.66381 z" />
-                                    <path id="left_calf" alt="Left Calf" data-name="Left Calf" style="opacity:1"
-                                        fill=""
-                                        d="m 18.251375,70.441125 0.29058,0.91486 0.6224,3.8681 0.0829,5.15733 -0.87136,5.03304 0.0412,-6.44714 -0.91242,-2.57848 -0.12561,-2.82837 z m 1.9915,2.32915 -0.20753,7.73637 -1.65949,6.23904 1.80478,-0.853 3.00816,-10.83583 -1.03727,-6.82095 z" />
-                                    <path id="left_feet" alt="Left Feet" data-name="Left Feet" style="opacity:1"
-                                        fill=""
-                                        d="m 17.255895,87.868445 0.1243,3.45228 0.28983,1.20638 h 0.87136 l 0.24897,-0.83181 0.29058,-0.0416 -0.0624,0.83181 1.09914,-0.33332 0.29058,-0.16629 1.24444,-0.27033 0.0416,-0.97748 -1.20319,-2.03743 -0.82974,-1.0399 -2.03294,-0.83181 z" />
+                                                                        <area alt="" title="C. Right Forehead"
+                                                                            data-map='C' shape="poly"
+                                                                            coords="107,134,249,132,250,83,121,82,115,97,109,112,105,124" />
+
+                                                                        <area alt="" title="D. Left Forehead"
+                                                                            data-map='D' shape="poly"
+                                                                            coords="397,133,250,133,251,82,380,81,387,91,393,111,395,123" />
+
+                                                                        <area alt="" title="E. Bridge of Nose"
+                                                                            data-map='E' shape="poly"
+                                                                            coords="250,191,198,306,306,305" />
+
+                                                                        <area alt="" title="F. Left Eyebrow"
+                                                                            data-map='F' shape="poly"
+                                                                            coords="250,194,395,193,396,181,398,162,398,146,397,133,250,133" />
+
+                                                                        <area alt="" title="G. Right Eyebrow"
+                                                                            data-map='G' shape="poly"
+                                                                            coords="105,193,249,194,250,134,106,135,104,152,105,163,106,174,106,187" />
+
+                                                                        <area alt="" id="test"
+                                                                            title="H. Left Eye" data-map='H'
+                                                                            shape="poly"
+                                                                            coords="250,193,295,283,398,283,401,274,402,252,400,231,399,213,396,192" />
+
+                                                                        <area alt="" title="I. Right Eye"
+                                                                            data-map='I' shape="poly"
+                                                                            coords="102,285,209,282,251,195,250,192,104,192,104,203,102,218,101,229,99,240,99,254,102,276" />
+
+                                                                        <area alt="" title="J. Nose"
+                                                                            data-map='J' shape="poly"
+                                                                            coords="199,305,304,306,326,351,175,351" />
+
+                                                                        <area alt="" title="K. Mouth"
+                                                                            data-map='K' shape="poly"
+                                                                            coords="174,353,174,429,327,427,327,354" />
+
+                                                                        <area alt="" title="L. Left Cheeks"
+                                                                            data-map='L' shape="poly"
+                                                                            coords="397,286,294,285,326,353,327,382,326,430,347,431,358,416,372,396,380,377,383,359,387,341" />
+
+                                                                        <area alt="" title="M. Right Cheeks"
+                                                                            data-map='M' shape="poly"
+                                                                            coords="102,285,210,283,175,352,174,429,156,429,146,419,137,407,126,390,122,372,118,356,118,338,112,320" />
+
+                                                                        <area alt="" title="N. Left Ear"
+                                                                            data-map='N' shape="poly"
+                                                                            coords="398,208,400,223,402,237,402,255,400,274,395,295,393,310,393,313,398,317,405,320,414,321,418,313,419,306,420,297,421,287,420,276,420,265,424,253,424,243,426,235,428,220,426,207,422,201,418,196,413,195,405,199,399,205" />
+
+                                                                        <area alt="" title="O. Right Ear"
+                                                                            data-map='O' shape="poly"
+                                                                            coords="106,206,100,235,99,250,101,263,102,277,103,288,107,298,109,308,112,314,104,316,95,322,87,320,83,314,78,305,79,293,81,282,80,273,79,266,79,258,78,251,76,245,73,235,72,225,74,214,75,206,78,198,86,194,94,198" />
+
+                                                                        <area alt="" title="P. Left Jaw"
+                                                                            data-map='P' shape="poly"
+                                                                            coords="320,452,252,450,254,427,347,430,334,441,327,450" />
+
+                                                                        <area alt="" title="Q. Right Jaw"
+                                                                            data-map='Q' shape="poly"
+                                                                            coords="182,452,254,453,254,430,158,429,161,439,174,447,181,452" />
+
+                                                                        <area alt="" title="R. Chin"
+                                                                            data-map='R' shape="poly"
+                                                                            coords="181,451,320,452,302,465,290,475,277,483,252,480,240,483,222,479,200,469" />
+
+                                                                    </map>
+                                                                </div>
+
+                                                                <!--/Female other parts-->
+                                                            </div>
+                                                        </div>
+                                                        <canvas id='image2_canvas'></canvas><!-- green-->
+                                                        <canvas id='image2_canvas_marked'></canvas><!-- red-->
+                                                    </div>
+                                                    @if ($is_ready_only != 1)
+                                                        <div class="img-desc_new">
+                                                            <b>{{ 'Description' }}:
+                                                                <span class="float-right">
+                                                                    <div class="btn btn-warning btn-sm addbodyparts">
+                                                                        {{ 'Add' }}</div>
+                                                                </span>
+                                                            </b> <label id='des_injury1_label'></label>
+
+                                                        </div>
+                                                    @endif
+                                                    <div class="img-desc col-lg-4 col-md-4 col-sm-4"
+                                                        style="float: right;">
+                                                    </div>
 
 
-                                    <path id="right_thigh" alt="Right Thigh" data-name="Right Thigh" style="opacity:1"
-                                        fill=""
-                                        d="m 8.2694651,50.399125 0.15504,4.75053 2.4026299,6.60968 -0.73638,1.90021 -2.3640099,-8.34435 z m 0.58117,-11.60768 0.15503,4.00684 -1.31754,7.93154 -0.61978,-6.40308 z m 0.38769,5.1223 2.7515099,6.07239 0.61997,4.87425 -1.16232,6.85771 -2.5190499,-6.98163 -0.15504,-7.18801 z" />
-                                    <path id="right_innerthigh" alt="Right Innerthigh" data-name="Right Innerthigh"
-                                        style="opacity:1" fill=""
-                                        d="m 9.6258251,39.369415 v 4.21363 l 2.9451699,5.8253 1.86028,5.78349 -0.19366,-4.0072 z m 3.2488699,13.42559 0.0647,0.15485 1.21294,2.90207 -0.78307,7.18803 -1.23618,-0.66102 1.0714,-6.69273 z" />
-                                    <path id="right_knee" alt="Right Knee" data-name="Right Knee" style="opacity:1"
-                                        fill=""
-                                        d="m 10.284405,64.784375 -0.12448,1.12295 0.87118,1.08171 0.29058,1.70599 0.58116,0.24933 0.49774,-2.57866 0.33182,-0.91486 -0.29058,-0.58247 z m 3.85854,0.0832 -0.62241,1.74685 -1.32767,2.57867 0.33182,2.37095 0.95423,-2.66209 0.78832,-1.4964 z m -4.9786799,-2.37058 0.9542299,5.11609 -0.6223999,-0.33313 -0.49793,1.6638 z" />
-                                    <path id="right_calf" alt="Right Calf" data-name="Right Calf" style="opacity:1"
-                                        fill=""
-                                        d="m 13.437675,70.440945 -0.29058,0.91486 -0.62241,3.86828 -0.0829,5.15733 0.87174,5.03304 -0.0418,-6.44714 0.91298,-2.57848 0.1243,-2.82837 z m -1.99151,2.32914 0.20735,7.73637 1.65968,6.23904 -1.80497,-0.85299 -3.0079799,-10.83584 1.03728,-6.82095 z" />
-                                    <path id="feet_right" alt='Feet Right' data-name="Feet Right" style="opacity:1"
-                                        fill=""
-                                        d="m 14.433335,87.868265 -0.12448,3.45228 -0.29058,1.20637 h -0.87118 l -0.24877,-0.83181 -0.29059,-0.0416 0.0623,0.83181 -1.09934,-0.33333 -0.29058,-0.16629 -1.2448,-0.27033 -0.0412,-0.97747 1.2031899,-2.03781 0.82975,-1.04009 2.03294,-0.83181 z" />
+                                                </div>
+
+                                            </div>
+                                        </div>
 
 
-
-                                    <path id="back_head" alt="Back Head" data-name="Back Head" style="opacity:1"
-                                        fill=""
-                                        d="m 48.157455,6.3585449 0.44208,-0.14964 0.16111,0.16427 1.48163,4.0475101 2.32401,1.45118 2.39971,-1.52387 0.97577,-3.6896901 0.52752,-0.55908 0.23367,0.0981 0.24198,-3.34467 -2.03129,-2.31103004 -2.84509,-0.51629 -2.20422,0.52915 -1.93631,2.63077004 z" />
-                                    <path id="nape" alt="Nape" data-name="Nape" style="opacity:1"
-                                        fill=""
-                                        d="m 52.369695,12.105075 -2.35767,-1.55045 -1.47119,-3.9514301 -0.60741,0.0403 0.27409,1.82447 0.97635,0.33932 0.7613,2.2157201 0.33017,1.06849 0.0895,2.14894 1.16448,0.008 0.10563,-0.70833 0.54716,-0.0606 z m 1.01793,1.47595 0.23768,0.64982 1.38107,-0.004 0.01,-2.38784 0.25971,-0.79061 0.57215,-2.1698001 0.76359,-0.41018 0.25158,-1.78416 -0.62859,0.0193 -1.08488,3.8998101 -2.39725,1.46684 0.2768,1.48507 z" />
-
-
-                                    <path id="left_clavicule" alt="Left Clavicule" data-name="Left Clavicule"
-                                        style="opacity:1" fill=""
-                                        d="m 49.625175,14.629325 0.063,-2.62462 -0.71441,1.15181 -4.37994,1.49796 4.97857,8.36746 1.83043,5.08188 -0.21949,-13.55362 z" />
-                                    <path id="left_back" alt="Left Back" data-name="Left Back" style="opacity:1"
-                                        fill=""
-                                        d="m 42.200945,16.586495 -1.57473,1.56517 -0.81404,2.06905 -0.38603,2.52859 1.83679,-1.23927 2.76223,-1.15538 1.84691,3.4342 1.13679,5.49715 0.0767,5.8593 4.07066,1.10938 -0.10355,-7.94098 -1.94107,-4.90022 -5.04395,-8.19334 z" />
-                                    <path id="left_armback" alt="Left Armback" data-name="Left Armback"
-                                        style="opacity:1" fill=""
-                                        d="m 43.185645,27.069445 0.4297,-1.4164 1.30458,-1.68577 -1.39393,-2.96155 -2.28367,0.92162 -1.83567,1.7467 -0.53524,1.78673 0.27068,4.30806 z m -2.46869,15.35539 -1.5182,0.0863 -0.78184,-0.65295 -1.16168,2.1855 -0.78414,3.34805 0.49892,0.20949 0.54632,-2.2158 0.50597,0.24175 -0.29779,2.5019 0.62936,0.22875 0.35546,-2.50096 0.56242,0.16536 -0.16126,2.77057 0.77674,0.30455 0.19056,-2.87291 0.45724,-0.0289 0.22827,2.64778 0.66597,0.24774 -0.0359,-4.56685 0.33693,-0.20224 1.39227,1.65147 0.32017,-0.35115 -0.77444,-2.03749 z m -0.97726,-0.17765 -1.43509,-0.746 -0.30622,-7.00985 c 0,0 0.64359,-2.77938 0.63694,-3.06274 l 0.6093,-1.21924 3.62552,-2.56583 -0.68276,1.9919 0.41561,4.74788 -1.80402,7.69727 z" />
-
-
-                                    <path id="right_clavicule" alt="Right Clavicule" data-name="Right Clavicule"
-                                        style="opacity:1" fill=""
-                                        d="m 55.439085,14.728535 -0.063,-2.62463 0.71441,1.15181 4.37994,1.49796 -4.97857,8.36746 -1.83043,5.08189 0.21949,-13.55362 z" />
-                                    <path id="right_back" alt="Right Back" data-name="Right Back" style="opacity:1"
-                                        fill=""
-                                        d="m 62.863315,16.685695 1.57473,1.56518 0.81404,2.06904 0.0384,2.52859 -1.48921,-1.23926 -2.76223,-1.15539 -1.84691,3.4342 -1.13679,5.49715 -0.0767,5.8593 -4.07066,1.10938 0.10355,-7.94098 1.94107,-4.90021 5.04395,-8.19335 z" />
-                                    <path id="right_armback" alt="Right Armback" data-name="Right Armback"
-                                        style="opacity:1" fill=""
-                                        d="m 61.657445,27.250625 -0.32785,-1.05121 -1.27383,-2.05489 1.38708,-2.96476 2.28579,0.91634 1.83971,1.74245 0.53937,1.78549 -0.26073,4.30868 z m 2.64394,15.3417 1.51839,0.0828 0.78033,-0.65476 1.16673,2.18281 0.79187,3.34623 -0.49843,0.21064 -0.55144,-2.21453 -0.50541,0.24292 0.30356,2.5012 -0.62882,0.23021 -0.36124,-2.50014 -0.56203,0.16666 0.16765,2.77019 -0.77603,0.30634 -0.19719,-2.87245 -0.45732,-0.0278 -0.22215,2.64829 -0.66539,0.24928 0.0254,-4.56692 -0.3374,-0.20146 -1.38845,1.65469 -0.32098,-0.35041 0.76973,-2.03928 z m 0.97685,-0.1799 1.43335,-0.74932 0.29002,-7.01054 c 0,0 -0.65,-2.77789 -0.64401,-3.06126 l -0.61212,-1.21783 -3.98124,-2.57566 1.0222,1.93525 -0.38967,4.82212 1.8218,7.69308 z" />
-
-                                    <path id="column" alt="Column" data-name="Column" style="opacity:1"
-                                        fill=""
-                                        d="m 51.733705,14.788555 0.53876,25.33066 0.48967,-0.0297 0.65658,-25.3387 -0.28147,-0.84188 -1.25059,-4.9e-4 z" />
-                                    <path id="loin" alt="Loin" data-name="Loin" style="opacity:1"
-                                        fill=""
-                                        d="m 51.818445,37.309575 0.14418,2.97292 1.15984,-0.0241 0.048,-2.96488 2.80867,-0.81981 2.34029,-0.7541 1.34121,3.73319 -4.77886,1.36455 -2.33301,1.2158 -2.37536,-1.2333 -5.45663,-1.37716 1.51961,-3.95743 z" />
-                                    <path id="buttock" alt="Buttock" data-name="Buttock" style="opacity:1"
-                                        fill=""
-                                        d="m 44.742845,39.689035 5.48374,1.86457 2.27386,1.3378 2.74195,-1.74412 4.51804,-1.28077 0.90009,2.29721 0.675,3.4346 -0.81272,5.02838 -2.82636,0.16819 -4.11256,-1.67581 -1.00814,0.39118 -0.95849,-0.39888 -4.44053,1.94411 -2.77023,-0.51478 -0.95181,-6.15325 0.36754,-2.7864 z" />
-
-                                    <path id="left_leg" alt="Left Leg" data-name="Left Leg" style="opacity:1"
-                                        fill=""
-                                        d="m 51.176145,64.073985 -1.20605,3.01461 0.70738,0.26558 0.89754,3.51771 -0.55801,-4.01191 z m -5.08496,-3.15003 0.63355,1.8609 0.16813,2.03261 0.61314,1.93117 -0.90585,-0.0851 -0.28534,2.15982 z m 4.3014,6.58834 1.27664,4.99697 -0.28984,3.02284 -0.67869,10.06546 -1.66325,0.63506 -3.50399,-11.96959 1.24985,-7.17525 z m 0.54053,20.8287 0.85194,1.3581 0.37189,0.79238 -0.15588,1.21774 -0.76984,0.74446 -1.51185,0.12543 -1.1299,-0.29192 -0.24225,-0.95894 0.80765,-1.30405 -0.22562,-0.85987 0.29679,-0.84153 -0.0194,-1.81524 1.53568,-0.54817 z m -1.19598,0.4675 0.15943,1.25776 -0.6023,0.97431 m -0.54436,0.29544 1.06474,0.40084 1.55326,-0.65137 m -4.19331,-39.53466 4.55099,-2.03879 0.63802,0.23079 0.0353,1.80672 0.075,4.64669 -1.97837,6.04282 0.47612,1.41403 -1.42812,3.29446 -1.76611,-0.30111 -0.50079,-2.11605 -0.1695,-1.75674 -2.42102,-8.15763 -0.34279,-3.64687 z" />
-                                    <path id="right_reg" alt="Right Reg" data-name="Right Reg" style="opacity:1"
-                                        fill=""
-                                        d="m 54.019305,64.073985 1.20605,3.01461 -0.70737,0.26558 -0.89755,3.51771 0.55802,-4.01191 z m 5.08496,-3.15003 -0.63355,1.8609 -0.16813,2.03261 -0.61313,1.93117 0.90584,-0.0851 0.28534,2.15982 z m -4.3014,6.58834 -1.27664,4.99697 0.28984,3.02284 0.67869,10.06546 1.66325,0.63506 3.504,-11.96959 -1.24986,-7.17525 z m -0.54053,20.8287 -0.85194,1.3581 -0.37189,0.79238 0.15589,1.21774 0.76983,0.74446 1.51186,0.12543 1.12989,-0.29192 0.24225,-0.95894 -0.80765,-1.30405 0.22563,-0.85987 -0.29679,-0.84153 0.0194,-1.81524 -1.53568,-0.54817 z m 1.19598,0.4675 -0.15943,1.25776 0.6023,0.97431 m 0.54436,0.29544 -1.06474,0.40084 -1.55326,-0.65137 m 3.56525,-39.90247 -3.97962,-1.70224 -0.56389,0.27131 -0.0528,1.79746 -0.075,4.64669 1.97837,6.04282 -0.47612,1.41403 1.42813,3.29446 1.7661,-0.30111 0.50079,-2.11605 0.1695,-1.75674 2.42102,-8.15763 0.009,-3.68308 z" />
-                                </svg>
-                                <div class="row mt-3">
-                                    <div class="col">
-                                        <table id="selected-areas" class="table">
-                                            <thead>
-                                                <tr>
-                                                    <th>Selected Areas</th>
-                                                    <th>Color Input</th>
-                                                    <th>Action</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <!-- Selected areas will be added here -->
-                                            </tbody>
-                                        </table>
                                     </div>
+                                    <!-- /.box-body -->
                                 </div>
                                 <input type="hidden" name="injuredPerson" id="injuredPerson" value="">
+                                <input type="hidden" name="injury_person_type" id="injury_person_type" value="">
 
                                 @if ($is_ready_only != 1)
                                     <div class="savesubmit text-center">
@@ -847,7 +1262,6 @@
                                                 style="background-color: #fd3550;border-color: #fd3550;"
                                                 class="btn btn-secondary btn-warnings injcancel center"
                                                 data-bs-dismiss="modal">{{ 'Cancel' }}</button>
-                                            <!--<button type="button" style="background-color: #ffc107;border-color: #ffc107;" class="btn btn-secondary btn-warnings clearbodyparts" data-bs-dismiss="modal">Clear</button> -->
 
                                         </div>
                                     </div>
@@ -859,8 +1273,8 @@
                     </form>
                 </div>
                 <!--<div class="modal-footer">
-                                                                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                                            </div>-->
+                                  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                   </div>-->
             </div>
         </div>
     </div>
@@ -868,285 +1282,6 @@
 @stop
 
 @push('script')
-    <script>
-        $("#injury_model").on("shown.bs.modal", function() {
-
-            $('.injury-box').removeClass('hide');
-        });
-        $(document).on('click', '.injury-btn', function() {
-
-            var getid = $(this).data('id');
-            var inj_id = $(this).data('injid');
-            var injuredPerson_type = $('#RowInjTypedata_' + getid).val();
-            var injuredPerson_emp = $('#RowInjEmpdata_' + getid).val();
-            var injuredPerson_others = $('#RowInjothersdata_' + getid).val();
-            var injuredPerson_empName = $('#RowInjothersdata_' + getid).val();
-
-            var errorcount = '0';
-            var injuredPerson = '0';
-
-            if (injuredPerson_emp == '' && injuredPerson_empName == '') {
-                Swal.fire('Error', 'Please Select Victim Name', 'error');
-                errorcount = '1';
-            } else {
-                errorcount = '0';
-                if (injuredPerson_emp != '') {
-                    injuredPerson = injuredPerson_emp;
-                } else {
-                    injuredPerson = injuredPerson_empName;
-                }
-            }
-
-            if (errorcount == '1') {
-
-                return false;
-            } else {
-
-                $('#injuredPerson').val(injuredPerson);
-                var accident_id = $('#accident_id').val();
-                var acc_prim_add = $('#acc_prim_add').val();
-
-                var emp_details = get_emp_details_by_id(injuredPerson, accident_id, acc_prim_add, inj_id,
-                    injuredPerson_type);
-
-
-                $("#injury_model [name='injperson']").val(injuredPerson);
-                $("#injury_model").modal("show");
-            }
-
-        });
-
-        function get_emp_details_by_id(injuredPerson, accident_id, acc_prim_add, inj_id, injuredPerson_type) {
-            var url = "{{ admin_url('incident/initial-incident/investigation/getbodyEmpdetails') }}";
-            var data = {
-                partyname: injuredPerson,
-                accident_id: accident_id,
-                acc_prim_add: acc_prim_add,
-                injuredPerson_type: injuredPerson_type,
-            };
-
-            $.ajax({
-                type: 'POST',
-                url: url,
-                data: data,
-                success: function(data) {
-                    console.log(data); // Inspect the response
-                    if (data['empdata'] && data['empdata'].length > 0) {
-                        $.each(data['empdata'], function(i, emp) {
-                            $("#imgMapdata1").val(emp['imgMapdata']);
-                            $("#body_prim_id").val(emp['id']);
-                            $("#injury_id").val(inj_id);
-                        });
-                    } else {
-                        $("#body_prim_id").val(0);
-                        $("#injury_id").val(inj_id);
-                    }
-                },
-                error: function(xhr, status, error) {
-                    console.error("Error:", error);
-                }
-            });
-        }
-
-        $("path").on("click", function() {
-            var dataname = $(this).data("name");
-            var dataid = $(this).data("name");
-
-            if (!$(this).attr("partclicked")) {
-                $(this).attr("partclicked", "true").css("fill", "orange");
-
-                $('#selected-areas tbody').append('<tr data-area="' + dataid + '"><td>' + dataname +
-                    '</td><td><input type="text" class="color-input form-control"></td><td><button class="delete-btn btn btn-danger">Delete</button></td></tr>'
-                );
-            } else {
-                $('tr[data-area="' + dataid + '"]').remove();
-                $(this).removeAttr("partclicked");
-
-            }
-        });
-
-        $("path").on("mouseenter", function() {
-            if (!$(this).attr("partclicked")) {
-                $(this).css("fill", "blue"); // Change to any hover color
-            }
-        });
-
-        $("path").on("mouseleave", function() {
-            if (!$(this).attr("partclicked")) {
-                $(this).css("fill", ""); // Reset or change to default color
-            }
-        });
-
-        $(document).on('input', '.color-input', updateColor);
-
-
-        function updateColor() {
-            const $input = $(this);
-            const $row = $input.closest('tr');
-            const areaId = $row.data('area');
-
-            const $path = $('path[data-name="' + areaId + '"]');
-
-            if ($input.val().trim() !== '') {
-                $path.css('fill', 'red');
-            } else {
-                $path.css('fill', 'orange');
-            }
-        }
-
-
-        $(document).on('click', '.delete-btn', function() {
-            const areaName = $(this).closest('tr').data('area');
-
-            const $path = $('path[data-name="' + areaName + '"]');
-            $path.removeAttr('partclicked').css('fill', '');
-
-            $(this).closest('tr').remove();
-        });
-
-        $("#injuryform").validate({
-
-            // rules: {
-            //     "inci_event_related": {
-            //         required: true,
-            //         maxlength: 100,
-            //         //programming_char:true,
-            //         minlength: 3
-            //     },
-
-            // },
-            // messages: {
-
-            //     "inci_event_related": {
-            //         required: "Incident Event Related Name is required"
-            //     },
-
-            // },
-            submitHandler: function(form) {
-                var formDatas = $('#injuryform').serialize();
-
-                var imgdata = $('#injuryform').serializeArray();
-console.log(imgdata);
-                if (imgdata[1]['name'] == "imgMapdata" && imgdata[1]['value'] ==
-                    '{"map":{}}') {
-                    Swal.fire('Error', 'Please Select Body Parts', 'error');
-
-                } else {
-
-                    var allFilleddesc = true;
-                    $(".img-desc .des_injury1_img").each(function(i, ele) {
-                        if ($(ele).val() == '') {
-                            allFilleddesc = false;
-                            return false; // Exit the loop early
-                        }
-                    });
-
-
-                    var url =
-                        "{{ admin_url('incident/initial-incident/addInjury') }}";
-
-                    $("#bodypartimage").val("");
-                    // const image = document.getElementById('img-imgmap1');
-                    // const canvas = document.getElementById('image1_canvas_marked');
-
-                    // const tempCanvas = document.createElement('canvas');
-
-                    // const tempCtx = tempCanvas.getContext('2d');
-                    // tempCanvas.width = canvas.width;
-                    // tempCanvas.height = canvas.height;
-
-                    // tempCtx.drawImage(image, 0, 0);
-                    // tempCtx.drawImage(canvas, 0, 0);
-
-                    // const combinedImageUrl = tempCanvas.toDataURL('image/png');
-                    // $("#bodypartimage").val(combinedImageUrl);
-                    // console.log(combinedImageUrl);
-
-                    // var accident_id = $("#accident_id").val();
-                    var formDatas = new URLSearchParams($('#injuryform')
-                        .serialize());
-                    // formDatas.append('accident_id',
-                    //     accident_id); // Append the new key-value pair
-                    var data = formDatas.toString()
-
-
-                    $.ajax({
-                        type: 'ajax',
-                        dataType: 'json',
-                        method: 'post',
-                        data: data,
-                        url: url,
-                        success: function(data) {
-                            $('.alert-msg').html(
-                                '<span style="color:green;">Body Part Saved Successfully!</span>'
-                            );
-                            $(".alert-msg").show().delay(3000)
-                                .fadeOut();
-                            setTimeout(function() {
-                                $("#injury_model").modal(
-                                    'hide');
-                                setTimeout(function() {}, 500);
-                            }, 1000);
-
-                            var myModal = $('#injury_model').on('shown',
-                                function() {
-                                    clearTimeout(myModal.data(
-                                        'hideInteval'))
-                                    var id = setTimeout(function() {
-                                        myModal.modal(
-                                            'hide');
-                                    });
-                                })
-
-                        }
-                    });
-                }
-            }
-        });
-        $('#download-btn').on('click', function() {
-            const svgElement = document.getElementById("bodyparts");
-            const svgData = new XMLSerializer().serializeToString(svgElement);
-
-            const svgBlob = new Blob([svgData], {
-                type: "image/svg+xml;charset=utf-8"
-            });
-            const url = URL.createObjectURL(svgBlob);
-
-            const img = new Image();
-            img.onload = function() {
-                const padding = 20; // Padding in pixels (top and bottom)
-
-                const canvas = document.createElement("canvas");
-                canvas.width = svgElement.clientWidth;
-                canvas.height = svgElement.clientHeight + (padding * 2);
-                const context = canvas.getContext("2d");
-                context.fillStyle = "#ffffff";
-                context.fillRect(0, 0, canvas.width, canvas.height);
-                // Draw SVG image with padding at top
-                context.drawImage(img, 0, padding);
-
-
-                URL.revokeObjectURL(url);
-
-                // Get base64 PNG
-                const base64Data = canvas.toDataURL("image/png");
-
-                // Set it in textarea
-                $('#base64-textarea').val(base64Data);
-
-
-                // Download the image
-                const pngUrl = canvas.toDataURL("image/png");
-
-                const downloadLink = document.createElement("a");
-                downloadLink.href = pngUrl;
-                downloadLink.download = "svg_image.png";
-                downloadLink.click();
-            };
-
-            img.src = url;
-        });
-    </script>
     <script type="text/javascript" nonce="projectcab">
         $(document).ready(function() {
             $('#resetform').on('click', function(e) {
@@ -2042,5 +2177,927 @@ console.log(imgdata);
             });
 
         });
+
+
+        //injury script
+        $("#injury_model").on("shown.bs.modal", function() {
+
+            $('.injury-box').removeClass('hide');
+        });
+
+        $(document).on('click', '.injury-btn', function() {
+
+            var getid = $(this).data('id');
+            var inj_id = $(this).data('injid');
+            var injuredPerson_type = $('#RowInjTypedata_' + getid).val();
+            var injuredPerson_emp = $('#RowInjEmpdata_' + getid).val();
+            var injuredPerson_others = $('#RowInjothersdata_' + getid).val();
+            var injuredPerson_empName = $('#RowInjothersdata_' + getid).val();
+
+            var errorcount = '0';
+            var injuredPerson = '0';
+            var injury_person_type = '0';
+
+            if ((injuredPerson_emp == '' ||  injuredPerson_emp == null) && (injuredPerson_empName == '' || injuredPerson_empName == null) ) {
+                Swal.fire('Error', 'Please Select Victim Name', 'error');
+                errorcount = '1';
+            } else {
+                errorcount = '0';
+                if (injuredPerson_emp != '') {
+                    injuredPerson = injuredPerson_emp;
+                    injury_person_type = injuredPerson_type;
+                } else {
+                    injuredPerson = injuredPerson_empName;
+                    injury_person_type = injuredPerson_type;
+                }
+            }
+
+            if (errorcount == '1') {
+
+                return false;
+            } else {
+
+                $('#injuredPerson').val(injuredPerson);
+                $('#injury_person_type').val(injury_person_type);
+                var random_id = $('#random_id').val();
+                var acc_prim_add = $('#acc_prim_add').val();
+
+                var emp_details = get_emp_details_by_id(injuredPerson, random_id, acc_prim_add, inj_id,
+                    injuredPerson_type);
+
+
+                $("#injury_model [name='injperson']").val(injuredPerson);
+                $("#injury_model").modal("show");
+            }
+
+        });
+
+        function get_emp_details_by_id(injuredPerson, random_id, acc_prim_add, inj_id, injuredPerson_type) {
+            var url = "{{ admin_url('incident/initial-incident/investigation/getbodyEmpdetails') }}";
+            var data = {
+                partyname: injuredPerson,
+                random_id: random_id,
+                acc_prim_add: acc_prim_add,
+                injuredPerson_type: injuredPerson_type,
+            };
+
+            $.ajax({
+                type: 'POST',
+                url: url,
+                data: data,
+                success: function(data) {
+                    console.log(data); // Inspect the response
+                    if (data['empdata'] && data['empdata'].length > 0) {
+                        $.each(data['empdata'], function(i, emp) {
+                            $("#imgMapdata1").val(emp['imgMapdata']);
+                            $("#body_prim_id").val(emp['id']);
+                            $("#injury_id").val(inj_id);
+                        });
+                    } else {
+                        $("#body_prim_id").val(0);
+                        $("#injury_id").val(inj_id);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error:", error);
+                }
+            });
+        }
+
+
+        function clearInjuryBasicDetails() {
+
+            var modalsrc = $("#injury_model");
+
+            $(modalsrc).find("[name='imgMapdata1']").val('');
+            $(modalsrc).find(':input[name="save_inj"]').prop('disabled', false);
+            $('.others').addClass('hide');
+
+        }
+
+
+        $("#injury_model").on("shown.bs.modal", function() {
+            $(window).resize();
+        });
+
+
+        $(document).on('click', '.addbodyparts', function() {
+            var allFilled = true;
+            $(".img-desc .des_injury1_img").each(function(i, ele) {
+                if ($(ele).val() == '') {
+                    allFilled = false;
+                    return false; // Exit the loop early
+                }
+            });
+
+            if (!allFilled) {
+                Swal.fire('Alert', 'Please Enter The Body Parts Descriptions', 'Alert');
+            } else {
+                Swal.fire('Alert', 'Please Select Body Parts', 'Alert');
+            }
+
+
+
+        });
+
+        $('img[usemap]').rwdImageMaps();
+        window.mapEdit = false;
+        window.canvas_obj = {};
+        $("#injury_model").on("shown.bs.modal", function() {
+            setTimeout(function() {
+                $(".img-map").css("opacity", "0");
+                $(".img-map").html($("#tmp-male").html())
+
+                editInjuryDetails();
+                setTimeout(function() {
+                    $('div.img-content div.img-map img[usemap]').rwdImageMaps();
+                    myInit1($("div.img-content div.img-map img"), 1);
+
+                    triggerMapClick1();
+                }, 200);
+                setTimeout(function() {
+                    $(".img-map").css("opacity", "1");
+                }, 290);
+
+
+            }, 300);
+
+            $.each(window.canvas_obj, function(canvas, canvasObj) {
+                canvasClear($("#" + canvas)[0]);
+            });
+            $("div.image-container .parts").hide();
+
+        }).on("hidden.bs.modal", function() {
+
+            $("area[desc]").each(function(i, ele) {
+
+                $(ele).removeAttr("desc");
+            });
+            $(".img-desc").html('');
+            $("div.image-container .parts").hide();
+            for (i = 0; i < 10; i++) {
+                window.clearTimeout(i);
+            }
+            $('#imgMapdata1').val('');
+            $(".img-map").css("opacity", "0");
+
+        });
+
+        $('.gender').change(function() {
+
+
+        });
+
+        function editInjuryDetails() {
+
+            var json = $('#imgMapdata1').val();
+            if (json != undefined && json != '') {
+                json = JSON.parse(json);
+                $.each(json, function(name, value) {
+                    switch (name) {
+                        case 'map':
+                            mapTrigger(value);
+
+                            break;
+                        default:
+
+                            break;
+                    }
+                });
+            }
+        }
+
+        $("div.image-container .parts").hide();
+
+        //assign iage map json to hidden input
+
+
+        $('#injuryform').submit(function(e) {
+
+            var data = getAllValues();
+            data['map'] = getMapValues();
+            var data1 = JSON.stringify(data);
+
+            $('#imgMapdata1').val(data1);
+
+
+        });
+
+
+        function getAllValues(data) {
+
+            var data = {};
+            return data;
+        }
+
+        function getMapValues() {
+
+            var data1 = {},
+                cmap, pmap;
+            $('body .des_injury1_img').each(function(i, ele) {
+
+                pmap = $(ele).attr('data-point1');
+                cmap = $(ele).attr('data-point2');
+                if (!(pmap in data1)) {
+                    data1[pmap] = {};
+                }
+                if (!(cmap in data1[pmap])) {
+                    data1[pmap][cmap] = {};
+                }
+                data1[pmap][cmap] = $(ele).val();
+            });
+            //console.log(data1);
+            return data1;
+        }
+
+
+
+        function triggerMapClick1() {
+
+            $("div.image-container .img-map-parts map area,div.img-content div.img-map map area").unbind(
+                'click');
+            $("div.image-container .img-map-parts map area,div.img-content div.img-map map area").click(
+                function() {
+                    var canvas = $(this).closest("div").find("canvas")[0],
+                        txtarea, addtxt;
+                    canvas = $("#image2_canvas")[0];
+                    var i = 1;
+                    if ($(this).parent().attr("data-type") === 'total') {
+
+                        canvas = $("#image1_canvas")[0];
+                        myLeave(canvas, 1);
+                    }
+
+                    myLeave(canvas);
+                    descBox(this, i);
+                    initDescriptionJs();
+                    var coordStr = $(this).attr('coords');
+                    var areaType = $(this).attr('shape');
+                    switch (areaType) {
+                        case 'polygon':
+                        case 'poly':
+                            drawPoly1(coordStr, canvas);
+                            break;
+                        case 'rect':
+                            drawRect1(coordStr, canvas);
+                    }
+
+                    i++;
+
+                });
+        }
+
+        function descBox1(point1, point2, desc) {
+            var is_ready_only = '{{ $is_ready_only }}';
+            var div, label, point1, point2;
+            var j = 0;
+            div = $("<div/>");
+            label = $("<label/>").text("" + $('[data-map~="' + point1 + '"] [data-map~="' + point2 + '"]').attr(
+                    "title"))
+                .addClass("desc-label").attr('id', "desc-label" + j);
+            var tit = $(label).text();
+
+            //console.log('gfdgf:')
+            //console.log($('[data-map~="'+point1+'"]'))
+
+            if (is_ready_only != 1) {
+                txtarea = $("<textarea/>", {
+                    'data-point1': point1,
+                    'data-point2': point2,
+                    "class": 'form-control des_injury1_img',
+                    "id": 'des_img' + j,
+                    "alt": j,
+
+                });
+            } else {
+                txtarea = $("<textarea/>", {
+                    'data-point1': point1,
+                    'data-point2': point2,
+                    "class": 'form-control des_injury1_img',
+                    "id": 'des_img' + j,
+                    "alt": j,
+                    "style": 'pointer-events: none;',
+                });
+            }
+
+            if (is_ready_only != 1) {
+                buttons = $(
+                    '<div><button type="button" class="fa fa-trash-o deletes" style="color:red;" alt="' +
+                    j +
+                    '" id="deletes' + j + '" title="' + tit + '"></button></div>');
+            } else {
+                buttons = '';
+            }
+
+            addtxt = true;
+            if (j == 0) {
+                j = 1;
+            }
+            $(".img-desc .des_injury1_img").each(function(i, ele) {
+                if ($(ele).val() == '') {
+                    addtxt = false;
+                    $(ele).attr("data-point1", point1).attr("data-point2", point2);
+                }
+
+                label = $("<label/>").text("" + $('[data-map~="' + point1 + '"] [data-map~="' + point2 +
+                        '"]').attr(
+                        "title"))
+                    .addClass("desc-label" + j).attr('id', "desc-label" + j);
+
+                if (is_ready_only != 1) {
+                    txtarea = $("<textarea/>", {
+                        'data-point1': point1,
+                        'data-point2': point2,
+                        "class": 'form-control des_injury1_img',
+                        "id": 'des_img' + j,
+                        "alt": j,
+
+                    });
+                } else {
+                    txtarea = $("<textarea/>", {
+                        'data-point1': point1,
+                        'data-point2': point2,
+                        "class": 'form-control des_injury1_img',
+                        "id": 'des_img' + j,
+                        "alt": j,
+                        "style": 'pointer-events: none;',
+                    });
+                }
+
+
+                if (is_ready_only != 1) {
+                    buttons = $(
+                        '<div><button type="button" class="fa fa-trash-o deletes" style="color:red;" alt="' +
+                        j + '" id="deletes' + j + '" title="' + tit + '"></button></div>');
+                    j++;
+                } else {
+                    buttons = '';
+                }
+
+            });
+
+            if (addtxt) {
+                $(div).append(label).append(buttons)
+                $(div).append(label).append(txtarea)
+                $(".img-desc").append(div);
+            } else {
+                $(".img-desc div:last-child .desc-label")
+                    .text("" + $(area).attr("title"));
+            }
+            if (desc != undefined) {
+                $(txtarea).text(desc).val(desc);
+            }
+
+        }
+
+        function descBox(area, k, desc) {
+
+
+            var div, label, point1, point2, buttons, txtarea;
+            var j = 0;
+            var tit = $(area).attr("title");
+            div = $("<div/>");
+            label = $("<label/>").text("" + $(area).attr("title"))
+                .addClass("desc-label").attr('id', "desc-label" + j);
+
+            point2 = $(area).attr("data-map");
+            point1 = $(area).parent().attr("data-map");
+            txtarea = $("<textarea/>", {
+                'data-point1': point1,
+                'data-point2': point2,
+                "class": 'form-control des_injury1_img',
+                "id": 'des_img' + j,
+                "alt": j,
+
+            });
+
+            buttons = $('<div><button type="button" class="fa fa-trash-o deletes" style="color:red;" alt="' +
+                j +
+                '" id="deletes' + j + '" title="' + tit + '"></button></div>');
+
+
+            addtxt = true;
+            if (j == 0) {
+                j = 1;
+            }
+            $(".img-desc .des_injury1_img").each(function(i, ele) {
+                if ($(ele).val() == '') {
+                    addtxt = false;
+                    $(ele).attr("data-point1", point1).attr("data-point2", point2);
+
+                }
+
+                label = $("<label/>").text("" + $(area).attr("title"))
+                    .addClass("desc-label").attr('id', "desc-label" + j);
+
+
+                txtarea = $("<textarea/>", {
+                    'data-point1': point1,
+                    'data-point2': point2,
+                    "class": 'form-control des_injury1_img',
+                    "id": 'des_img' + j,
+                    "alt": j,
+
+                });
+                buttons = $(
+                    '<div><button type="button" class="fa fa-trash-o deletes" style="color:red;" alt="' +
+                    j + '" id="deletes' + j + '" title="' + tit + '"></button></div>');
+                j++;
+            });
+            if ($(area).attr("ref") == undefined) {
+                if (addtxt) {
+
+                    $(div).append(label).append(txtarea)
+                    $(".img-desc").append(div);
+                    $(div).append(txtarea).append(buttons)
+
+                } else {
+                    $(".img-desc div:last-child .desc-label").text("" + $(area).attr("title"));
+                }
+            }
+
+            if (desc != undefined) {
+                $(txtarea).text(desc).val(desc);
+            }
+
+        }
+
+        $(document).on('click', '.deletes', function() {
+            var photoimgDivss = $('.deletes');
+            if (photoimgDivss.length > 1) {
+                var alt = $(this).attr('alt');
+                $('#des_img' + alt).val('');
+
+                if ($('#des_img' + alt).attr("data-point1") != undefined) {
+                    //map
+                    var point1 = $("[data-map='" + $('#des_img' + alt).attr("data-point1") + "']");
+                    if (point1.length == 0) {
+
+                        return;
+                    }
+
+                    //area
+                    var point2 = $(point1).find("[data-map='" + $('#des_img' + alt).attr(
+                        "data-point2") + "']");
+                    //console.log(point2);
+                    if (point2.length == 0) {
+                        return;
+                    }
+
+                    var canvas = $(point2).closest("div").find("canvas")[1];
+                    //  canvas = $("#image2_canvas_marked")[0];
+                    if ($(point1).attr("data-map") == "total") {
+                        canvas = $("#image1_canvas_marked")[0];
+                    }
+
+                    if ($(point1).attr("data-map") == "head") {
+                        canvas = $("#image1_canvas_marked")[0];
+                        $("[data-map~='total'] [data-map~='one']").attr("desc", "abc");
+                        myLeave(canvas);
+                        canvasMark($("map[data-map='total']"));
+                    } else if ($(point1).attr("data-map") == "hand-right") {
+                        canvas = $("#image1_canvas_marked")[0];
+                        $("[data-map~='total'] [data-map~='eleven']").attr("desc", "abc");
+                        myLeave(canvas);
+                        canvasMark($("map[data-map='total']"));
+                    } else if ($(point1).attr("data-map") == "hand-left") {
+                        canvas = $("#image1_canvas_marked")[0];
+                        $("[data-map~='total'] [data-map~='twelve']").attr("desc", "abc");
+                        myLeave(canvas);
+                        canvasMark($("map[data-map='total']"));
+                    } else if ($(point1).attr("data-map") == "foot-left") {
+                        canvas = $("#image1_canvas_marked")[0];
+                        $("[data-map~='total'] [data-map~='twentyseven']").attr("desc", "abc");
+                        myLeave(canvas);
+                        canvasMark($("map[data-map='total']"));
+                    } else if ($(point1).attr("data-map") == "foot-right") {
+                        canvas = $("#image1_canvas_marked")[0];
+                        $("[data-map~='total'] [data-map~='twentyeight']").attr("desc", "abc");
+                        myLeave(canvas);
+                        canvasMark($("map[data-map='total']"));
+                    }
+
+                    // console.log(point1);
+                    $(point2).attr("desc", $('#des_img' + alt).val());
+                    if ($('#des_img' + alt).val() == '') {
+                        $(point2).removeAttr("desc");
+                    }
+
+                    var parentClass = $(point2).parent().parent().attr('class').split(' ');
+                    //changeImage('.' + parentClass[1]);
+                    if (parentClass[0] == 'parts') {
+                        $('#des_img' + alt).blur(function() {
+                            changeImage('.' + parentClass[1]);
+                        });
+                    } else {
+                        //   console.log(canvas);
+                        //   console.log(point1);
+                        mapRebuilt(canvas, point1);
+                    }
+                }
+
+                $('#desc-label' + alt).remove();
+                $('#desc-label' + alt).hide();
+
+                $('#des_img' + alt).remove();
+                $('#des_img' + alt).hide();
+
+                $('#deletes' + alt).remove();
+                $('#deletes' + alt).hide();
+            } else {
+                Swal.fire('Sorry', 'Image cannot be empty', 'warning');
+            }
+
+
+
+
+        })
+
+        function initDescriptionJs() {
+
+            $(".des_injury1_img").change(function() {
+
+                if ($(this).attr("data-point1") != undefined) {
+                    //map
+                    var point1 = $("[data-map='" + $(this).attr("data-point1") + "']");
+                    if (point1.length == 0) {
+
+                        return;
+                    }
+
+                    //area
+                    var point2 = $(point1).find("[data-map='" + $(this).attr("data-point2") + "']");
+                    //console.log(point2);
+                    if (point2.length == 0) {
+                        return;
+                    }
+
+                    var canvas = $(point2).closest("div").find("canvas")[1];
+                    //  canvas = $("#image2_canvas_marked")[0];
+                    if ($(point1).attr("data-map") == "total") {
+                        canvas = $("#image1_canvas_marked")[0];
+                    }
+
+                    if ($(point1).attr("data-map") == "head") {
+                        canvas = $("#image1_canvas_marked")[0];
+                        $("[data-map~='total'] [data-map~='one']").attr("desc", "abc");
+                        myLeave(canvas);
+                        canvasMark($("map[data-map='total']"));
+                    } else if ($(point1).attr("data-map") == "hand-right") {
+                        canvas = $("#image1_canvas_marked")[0];
+                        $("[data-map~='total'] [data-map~='eleven']").attr("desc", "abc");
+                        myLeave(canvas);
+                        canvasMark($("map[data-map='total']"));
+                    } else if ($(point1).attr("data-map") == "hand-left") {
+                        canvas = $("#image1_canvas_marked")[0];
+                        $("[data-map~='total'] [data-map~='twelve']").attr("desc", "abc");
+                        myLeave(canvas);
+                        canvasMark($("map[data-map='total']"));
+                    } else if ($(point1).attr("data-map") == "foot-left") {
+                        canvas = $("#image1_canvas_marked")[0];
+                        $("[data-map~='total'] [data-map~='twentyseven']").attr("desc", "abc");
+                        myLeave(canvas);
+                        canvasMark($("map[data-map='total']"));
+                    } else if ($(point1).attr("data-map") == "foot-right") {
+                        canvas = $("#image1_canvas_marked")[0];
+                        $("[data-map~='total'] [data-map~='twentyeight']").attr("desc", "abc");
+                        myLeave(canvas);
+                        canvasMark($("map[data-map='total']"));
+                    }
+
+                    // console.log(point1);
+                    $(point2).attr("desc", $(this).val());
+                    if ($(this).val() == '') {
+                        $(point2).removeAttr("desc");
+                    }
+
+                    var parentClass = $(point2).parent().parent().attr('class').split(' ');
+                    //changeImage('.' + parentClass[1]);
+                    if (parentClass[0] == 'parts') {
+                        $(this).blur(function() {
+                            changeImage('.' + parentClass[1]);
+                        });
+                    } else {
+                        mapRebuilt(canvas, point1);
+                    }
+                }
+            });
+        }
+
+        function mapTrigger(json, isString = false) {
+
+            if (isString) {
+                json = JSON.parse(json);
+            }
+
+            myInit1($("div.img-content div.img-map img"), 1);
+            var map, flag = 0;
+            // console.log(json);
+            $.each(json, function(key, area) {
+                map = $('[data-map~=' + key + ']');
+                switch (key) {
+                    case 'head':
+                        $("[data-map~='total'] [data-map~='one']").attr("desc", "abc");
+                        break;
+                    case 'hand-right':
+                        $("[data-map~='total'] [data-map~='eleven']").attr("desc", "abc");
+                        break;
+                    case 'hand-left':
+                        $("[data-map~='total'] [data-map~='twelve']").attr("desc", "abc");
+                        break;
+                    case 'foot-right':
+                        $("[data-map~='total'] [data-map~='twentyeight']").attr("desc", "abc");
+                        break;
+                    case 'foot-left':
+                        $("[data-map~='total'] [data-map~='twentyseven']").attr("desc", "abc");
+                        break;
+                }
+
+
+                $.each(area, function(akey, desc) {
+
+                    //console.log("akey: "+akey);
+                    $(map).find('[data-map~=' + akey + ']').attr("desc", desc);
+                    descBox1(key, akey, desc);
+                });
+                $(map).find('area[desc]').each(function(i, area) {
+                    //console.log(area);
+                    // descBox(area, $(area).attr('desc'));
+                });
+            });
+            setTimeout(function() {
+                $(".des_injury1_img").change();
+            }, 300);
+            initDescriptionJs();
+
+            window.mapEdit = true;
+            canvasMark($("map[data-map='total']"));
+        }
+
+        function changeImage(part) {
+            $("div.image-container .img-map-parts .parts").hide();
+            if (part != undefined) {
+                $("div.image-container .img-map-parts .parts" + part).show();
+                $('div.image-container .img-map-parts').prepend($("div.image-container .img-map-parts .parts" +
+                    part));
+            }
+
+            var img = $("div.image-container .img-map-parts .parts:visible img");
+
+            $('.image-container .img-map-parts .parts' + part + ':visible img[usemap]').rwdImageMaps();
+            if (img.length != 0) {
+                myInit1(img);
+                setTimeout(function() {
+                    triggerMapClick1();
+                }, 500);
+
+            }
+
+            if ('image2_canvas' in window.canvas_obj) {
+                canvasClear($("#image2_canvas")[0]);
+                canvasClear($("#image2_canvas_marked")[0]);
+            }
+
+
+            var map = $(img).closest("div").find("map");
+
+            if (part != '') {
+
+                if ('image2_canvas' in window.canvas_obj) {
+
+                    setTimeout(function() {
+
+                        mapRebuilt($("#image2_canvas")[0], map);
+                    }, 1);
+                }
+                return;
+            }
+
+        }
+
+
+        function myInit1(image, type = 2, callback) {
+            // get the target image
+            var img = $(image)[0];
+            var x, y, w, h;
+            // get it's position and width+height
+            x = img.offsetLeft;
+            y = img.offsetTop;
+            w = img.clientWidth;
+            h = img.clientHeight;
+            // move the canvas, so it's contained by the same parent as the image
+            //var can = $('#myCanvas')[0];
+            //$(img).parent().append(can);
+
+            var color, canvas_name, canvas_count;
+            canvas_count = 2;
+            for (i = 0; i < canvas_count; i++) {
+                color = 'rgba(255, 165, 0, 0.69)';
+                canvas_name = "#image" + type + "_canvas";
+                //alert(canvas_name);
+                if (i == 1) {
+                    color = 'rgba(255, 0, 0, 0.65)';
+                    canvas_name = "#image" + type + "_canvas_marked";
+                    //alert(canvas_name);
+                }
+                //can = $(img).parent().find("canvas")[i];
+                can = $(canvas_name)[0];
+                // place the canvas in front of the image
+                can.style.zIndex = 1;
+                // position it over the image
+                can.style.left = x + 'px';
+                can.style.top = y + 'px';
+                // make same size as the image
+                can.setAttribute('width', w + 'px');
+                can.setAttribute('height', h + 'px');
+                // get it's context
+                window.canvas_obj[$(can).attr("id")] = can.getContext('2d');
+                // console.log(window.canvas_obj[$(can).attr("id")]);
+                // set the 'default' values for the colour/width of fill/stroke operations
+                window.canvas_obj[$(can).attr("id")].fillStyle = color;
+                window.canvas_obj[$(can).attr("id")].strokeStyle = color;
+                window.canvas_obj[$(can).attr("id")].lineWidth = 2;
+                $(window).resize();
+                if (callback != undefined) {
+                    eval(callback);
+                }
+            }
+
+        }
+
+        function canvasClear(canvas) {
+
+            return window.canvas_obj[$(canvas).attr("id")].clearRect(0, 0, canvas.width, canvas.height);
+        }
+
+        function mapRebuilt(canvas, map) {
+            window.canvas_obj[$(canvas).attr("id")].clearRect(0, 0, canvas.width, canvas.height);
+            canvasMark(map)
+        }
+
+        function canvasMark(map) {
+            var type = 2;
+            if ($(map).attr("data-map") == "total") {
+                type = 1;
+            }
+
+            $(map).find("area[desc]").each(function(i, area) {
+                var coordStr = $(area).attr('coords');
+                var canvas = $("#image" + type + "_canvas_marked")[0];
+                drawPoly1(coordStr, canvas);
+            });
+        }
+
+        function myLeave(src, type = 0) {
+            var canvas;
+            var canvas_name = "#image1_canvas";
+            if (type == 1) {
+                canvas_name = "#image2_canvas";
+            }
+            canvas = $(canvas_name)[0];
+            //canvas = $(src).closest("div").find("canvas");
+            canvas = src;
+            window.canvas_obj[$(canvas).attr("id")].clearRect(0, 0, canvas.width, canvas.height);
+        }
+
+        function drawPoly1(coOrdStr, canvas) {
+            var mCoords = coOrdStr.split(',');
+            var i, n;
+            n = mCoords.length;
+            window.canvas_obj[$(canvas).attr("id")].beginPath();
+            window.canvas_obj[$(canvas).attr("id")].moveTo(mCoords[0], mCoords[1]);
+            for (i = 2; i < n; i += 2) {
+                window.canvas_obj[$(canvas).attr("id")].lineTo(mCoords[i], mCoords[i + 1]);
+            }
+            window.canvas_obj[$(canvas).attr("id")].lineTo(mCoords[0], mCoords[1]);
+            window.canvas_obj[$(canvas).attr("id")].closePath();
+            window.canvas_obj[$(canvas).attr("id")].fill();
+        }
+
+        function drawRect1(coOrdStr, canvas) {
+            var mCoords = coOrdStr.split(',');
+            var top, left, bot, right;
+            left = mCoords[0];
+            top = mCoords[1];
+            right = mCoords[2];
+            bot = mCoords[3];
+            window.canvas_obj[$(canvas).attr("id")].strokeRect(left, top, right - left, bot - top);
+        }
+
+        $(document).ready(function() {
+
+            $.validator.addMethod('alpha_dash_space', function(value) {
+                    return /^[A-Z%()a-z/,.]*$/.test(value);
+                },
+                "Please Enter valid Alphabetic characters with allowed special charters are /,.%()");
+
+            $("#injuryform").validate({
+
+                // rules: {
+                //     "inci_event_related": {
+                //         required: true,
+                //         maxlength: 100,
+                //         //programming_char:true,
+                //         minlength: 3
+                //     },
+
+                // },
+                // messages: {
+
+                //     "inci_event_related": {
+                //         required: "Incident Event Related Name is required"
+                //     },
+
+                // },
+                submitHandler: function(form) {
+                    var formDatas = $('#injuryform').serialize();
+
+                    var imgdata = $('#injuryform').serializeArray();
+
+                    if (imgdata[1]['name'] == "imgMapdata" && imgdata[1]['value'] ==
+                        '{"map":{}}') {
+                        Swal.fire('Error', 'Please Select Body Parts', 'error');
+
+                    } else {
+
+                        var allFilleddesc = true;
+                        $(".img-desc .des_injury1_img").each(function(i, ele) {
+                            if ($(ele).val() == '') {
+                                allFilleddesc = false;
+                                return false; // Exit the loop early
+                            }
+                        });
+
+                        if (!allFilleddesc) {
+                            Swal.fire('Error', 'Please Enter The Body Parts Descriptions',
+                                'error');
+                        } else {
+
+                            var url =
+                                "{{ admin_url('incident/initial-incident/addInjury') }}";
+
+                            $("#bodypartimage").val("");
+                            const image = document.getElementById('img-imgmap1');
+                            const canvas = document.getElementById('image1_canvas_marked');
+
+                            const tempCanvas = document.createElement('canvas');
+
+                            const tempCtx = tempCanvas.getContext('2d');
+                            tempCanvas.width = canvas.width;
+                            tempCanvas.height = canvas.height;
+
+                            tempCtx.drawImage(image, 0, 0);
+                            tempCtx.drawImage(canvas, 0, 0);
+
+                            const combinedImageUrl = tempCanvas.toDataURL('image/png');
+                            $("#bodypartimage").val(combinedImageUrl);
+                            console.log(combinedImageUrl);
+
+                            var random_id = $("#random_id").val();
+                            var formDatas = new URLSearchParams($('#injuryform')
+                                .serialize());
+                            formDatas.append('random_id',
+                            random_id); // Append the new key-value pair
+                            var data = formDatas.toString()
+
+
+                            $.ajax({
+                                type: 'ajax',
+                                dataType: 'json',
+                                method: 'post',
+                                data: data,
+                                url: url,
+                                success: function(data) {
+                                    $('.alert-msg').html(
+                                        '<span style="color:green;">Body Part Saved Successfully!</span>'
+                                    );
+                                    $(".alert-msg").show().delay(3000)
+                                        .fadeOut();
+                                    setTimeout(function() {
+                                        $("#injury_model").modal(
+                                            'hide');
+                                        setTimeout(function() {}, 500);
+                                    }, 1000);
+
+                                    var myModal = $('#injury_model').on('shown',
+                                        function() {
+                                            clearTimeout(myModal.data(
+                                                'hideInteval'))
+                                            var id = setTimeout(function() {
+                                                myModal.modal(
+                                                    'hide');
+                                            });
+                                        })
+
+                                }
+                            });
+                        }
+                    }
+                }
+
+            });
+        });
+
+        // injury script
     </script>
 @endpush
