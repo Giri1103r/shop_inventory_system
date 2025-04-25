@@ -164,7 +164,7 @@ class InitialIncidentController extends Controller
             }
         }
         $unitList  = $this->unit->select('id', 'unit_name')->where('status', '1')->get();
-        $status = $this->status->get();
+        $status = Incidentstatus::select('id', 'status_name')->where('status', '1')->get();
         $data = array(
             'unitList' => $unitList,
             'status' => $status,
@@ -180,7 +180,7 @@ class InitialIncidentController extends Controller
 
                 try {
 
-                    $data =  $this->initialincident->list();
+                    $data =  $this->initialincident->investigationlist();
 
 
                     $datatables = Datatables::of($data['data'])
@@ -243,7 +243,7 @@ class InitialIncidentController extends Controller
             }
         }
         $unitList  = $this->unit->select('id', 'unit_name')->where('status', '1')->get();
-        $status = $this->status->get();
+        $status = Incidentstatus::select('id', 'status_name')->where('status', '1')->get();
         $data = array(
             'unitList' => $unitList,
             'status' => $status,
@@ -319,13 +319,12 @@ class InitialIncidentController extends Controller
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
-
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }
         }
         $unitList  = $this->unit->select('id', 'unit_name')->where('status', '1')->get();
-        $status = $this->status->get();
+        $status = Incidentstatus::select('id', 'status_name')->where('status', '1')->get();
         $data = array(
             'unitList' => $unitList,
             'status' => $status,
@@ -1268,6 +1267,7 @@ class InitialIncidentController extends Controller
             $incident_id = decryptId($request->incident_id);
             if ($request->root_cause ==  3) {
                 $incident_status = STATUS_INCIDENT_CLOSED;
+                $capaStatus = STATUS_INCIDENT_CLOSED;
             } else {
                 $incident_status = STATUS_INVESTIGATION_CLOSED;
                 $capaStatus = STATUS_ACTION_PENDING;
@@ -1801,7 +1801,7 @@ class InitialIncidentController extends Controller
             $html = view('ims.initial.incident.exportpdf', $data)->render();
             $mpdf->WriteHTML($html);
             $filename = "Incident.pdf";
-            return $mpdf->Output($filename, 'I');
+           return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);
         }
@@ -1875,7 +1875,7 @@ class InitialIncidentController extends Controller
             $html = view('ims.initial.incident.capdf', $data)->render();
             $mpdf->WriteHTML($html);
             $filename = "Incident.pdf";
-            return $mpdf->Output($filename, 'I');
+           return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);
         }

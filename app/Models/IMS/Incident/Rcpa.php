@@ -64,20 +64,22 @@ class Rcpa extends Model
          * Role Based list view condition start
          */
         if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_ADMIN) || CheckUserRole(ROLE_EHS_HEAD)) {
-            $query->where('ims_initial_incident.status', '1');
+            
         } elseif (CheckUserRole(ROLE_EHS_OFFICER)) {
             $query->where('ims_initial_incident.created_by', Auth::user()->id)->where('ims_initial_incident.status', '1');
         } else {
-            $userId = Auth::id();
-            $userLoginId = Auth::user()->employee_id;
+            // $userId = Auth::id();
+            // $userLoginId = Auth::user()->employee_id;
 
-            $employeeId = Employee::where('emp_id', $userLoginId)->value('id');
+            // $employeeId = Employee::where('emp_id', $userLoginId)->value('id');
 
-            $query->where(function ($q) use ($userId, $employeeId) {
-                $q->where('ims_initial_incident.created_by', $userId)
-                    ->orWhereRaw("FIND_IN_SET(?, investigation_assigned)", [$employeeId])
-                    ->orWhereRaw("FIND_IN_SET(?, choose_assignee)", [$employeeId]);
-            })->where('ims_initial_incident.status', '1');
+            // $query->where(function ($q) use ($userId, $employeeId) {
+            //     $q->where('ims_initial_incident.created_by', $userId)
+            //         ->orWhereRaw("FIND_IN_SET(?, investigation_assigned)", [$employeeId])
+            //         ->orWhereRaw("FIND_IN_SET(?, choose_assignee)", [$employeeId]);
+            // })->where('ims_initial_incident.status', '1');
+
+            $query->where('ims_rcpa_responsible.responsibility', Auth::user()->id);
         }
 
 
@@ -103,17 +105,17 @@ class Rcpa extends Model
         if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
             $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
-            $query->whereBetween('ims_initial_incident.created_at', [$startDate, $endDate]);
-        } elseif ($request->has('ims_initial_incident.') && !empty($request->from_date)) {
+            $query->whereBetween('ims_rcpa_responsible.created_at', [$startDate, $endDate]);
+        } elseif ($request->has('from_date') && !empty($request->from_date)) {
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
-            $query->where('ims_initial_incident.created_at', '>=', $startDate);
+            $query->where('ims_rcpa_responsible.created_at', '>=', $startDate);
         } elseif ($request->has('to_date') && !empty($request->to_date)) {
             $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
-            $query->where('ims_initial_incident.created_at', '<=', $endDate);
+            $query->where('ims_rcpa_responsible.created_at', '<=', $endDate);
         }
         if ($request->has('incident_status') && $request->incident_status) {
 
-            $query = $query->where('incident_status', decryptId($request->incident_status));
+            $query = $query->where('ims_rcpa_responsible.incident_status', decryptId($request->incident_status));
         }
 
         if ($request->has('status') && $request->status) {

@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Initial Incident Review')
+@section('title', 'Initial Incident/Accident Report')
 @section('pageurl', admin_url('incident/initial-incident/list'))
 
 
@@ -490,9 +490,22 @@
                                             </div>
                                         </div>
                                         <div class="mb-3 col-md-4 form-input">
+                                            <label class="form-label view_label">{{ __('Target Date') }}</label>
+                                            <div class="view_data">
+                                                {{ Displaydateformat($incident_report->target_date) }}
+                                            </div>
+                                        </div>
+                                        <div class="mb-3 col-md-4 form-input">
                                             <label for="team_id" class="form-label">I.M Team members</label>
                                             <div class="view_data">
                                                 {{ $getEHSReview->team_member_names }}
+                                            </div>
+                                        </div>
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <label for="team_id" class="form-label">Incident/Accident Investigation Report
+                                                Prepared by</label>
+                                            <div class="view_data">
+                                                {{ getUsername($incident_report->investigation_reported_by) }}
                                             </div>
                                         </div>
                                     </div>
@@ -1213,7 +1226,6 @@
                         required: true,
                         minlength: 10,
                         maxlength: 2000,
-                        pattern: /^[a-zA-Z0-9\s\-_'"()\n\r,.”.;]+$/
                     }
                 },
                 messages: {
@@ -1230,7 +1242,6 @@
                         required: "Please provide a remark.",
                         minlength: "Minimum 10 characters required.",
                         maxlength: "Maximum 2000 characters allowed.",
-                        pattern: "Only alphanumeric characters and - _ ' \",”.; ( ) are allowed.",
                     }
                 },
                 errorElement: 'span',
@@ -1270,7 +1281,6 @@
                         required: true,
                         minlength: 10,
                         maxlength: 2000,
-                        pattern: /^[a-zA-Z0-9\s\-_'"()\n\r,.”.;]+$/
                     }
                 },
                 messages: {
@@ -1285,7 +1295,6 @@
                         required: "Please provide a remark.",
                         minlength: "Minimum 10 characters required.",
                         maxlength: "Maximum 2000 characters allowed.",
-                        pattern: "Only alphanumeric characters and - _ ' \",”.; ( ) are allowed.",
                     }
                 },
                 errorElement: 'span',
@@ -1320,7 +1329,6 @@
                         required: true,
                         minlength: 10,
                         maxlength: 2000,
-                        pattern: /^[a-zA-Z0-9\s\-_'"()\n\r,.”.;]+$/,
                     }
                 },
                 messages: {
@@ -1329,7 +1337,6 @@
                         required: "Please provide Action Taken.",
                         minlength: "Minimum 10 characters required.",
                         maxlength: "Maximum 2000 characters allowed.",
-                        pattern: "Only alphanumeric characters and - _ ' \",”.; ( ) are allowed.",
                     }
                 },
                 errorElement: 'span',
@@ -1364,7 +1371,6 @@
                         required: true,
                         minlength: 10,
                         maxlength: 2000,
-                        pattern: /^[a-zA-Z0-9\s\-_'"()\n\r,.”.;]+$/
                     }
                 },
                 messages: {
@@ -1373,7 +1379,6 @@
                         required: "Please provide remark.",
                         minlength: "Minimum 10 characters required.",
                         maxlength: "Maximum 2000 characters allowed.",
-                        pattern: "Only alphanumeric characters and - _ ' \",”.; ( ) are allowed.",
                     }
                 },
                 errorElement: 'span',
