@@ -524,8 +524,6 @@ class InitialIncidentController extends Controller
             $getEmpdetails = $this->incident_body_parts->getEmpdetails();
             return $getEmpdetails;
         } catch (Exception $ex) {
-
-            dd($ex);
             return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
         }
     }
@@ -536,7 +534,6 @@ class InitialIncidentController extends Controller
             $addInjury = $this->incident_body_parts->addInjury();
             return $addInjury;
         } catch (Exception $ex) {
-            dd($ex);
             return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
         }
     }
@@ -651,15 +648,12 @@ class InitialIncidentController extends Controller
 
                 Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
-                dd($ex);
-
                 report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
             return redirect(admin_url('incident/initial-incident/list'));
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('incident/initial-incident/list'));
@@ -699,7 +693,6 @@ class InitialIncidentController extends Controller
                 }, $selectedMedia);
 
                 $status_log = $this->Statuslog->selectOne($id, 1);
-                // dd($rcpa);
                 $data = array(
                     'incident_report' => $incident_report,
                     'displayMedia' => $displayMedia,
@@ -718,7 +711,6 @@ class InitialIncidentController extends Controller
             }
             return view('ims.initial.incident.view', $data);
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
         }
     }
@@ -777,7 +769,7 @@ class InitialIncidentController extends Controller
             }
             return view('ims.initial.incident.caView', $data);
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
         }
     }
 
@@ -809,7 +801,6 @@ class InitialIncidentController extends Controller
 
             return view('ims.initial.incident.edit', $data);
         } catch (Exception $error) {
-            dd($error);
             report($error->getMessage());
         }
     }
@@ -853,7 +844,6 @@ class InitialIncidentController extends Controller
             ];
             $validator = Validator::make($request->all(), $rules, $messages);
             if ($validator->fails()) {
-                dd($validator->errors());
                 return redirect()->back()->withErrors($validator)->withInput();
             }
 
@@ -890,8 +880,6 @@ class InitialIncidentController extends Controller
     {
         try {
             $id = decryptId($request->id);
-
-            // dd($id, $incident_id);
             if (Auth::check()) {
                 $incident_report = $this->initialincident->selectOne($id);
                 $rcpa = $this->rcpa->getRCPA($id);
@@ -902,7 +890,6 @@ class InitialIncidentController extends Controller
                 $getfishbone = $this->initialincident->getfishbone($id);
                 $fishboneData = json_decode($getfishbone->first()->fishbone, true);
                 $getrisklevel = $this->initialincident->getrisklevel($id);
-                // dd($getEHSVerify);
                 $initialincidentevidence = $this->initialincidentevidence->selectOne($id);
                 $injury_details = $this->injury_details->getBodypartsInjuryPerson($id);
 
@@ -938,7 +925,7 @@ class InitialIncidentController extends Controller
             }
             return view('ims.initial.incident.review', $data);
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
         }
     }
 
@@ -947,12 +934,9 @@ class InitialIncidentController extends Controller
         try {
             $id = decryptId($request->id);
             $incident_id = decryptId($request->incident_id);
-
-            // dd($id, $incident_id);
             if (Auth::check()) {
                 $incident_report = $this->initialincident->selectOne($incident_id);
                 $rcpa = $this->rcpa->selectOne($id, $incident_id);
-                // dd($rcpa);
                 $getEHSVerify = $this->initialincident->getEHSVerifyincident($incident_id);
                 $getEHSReview = $this->initialincident->getEHSReviewincident($incident_id);
                 $getInvestigation = $this->initialincident->getInvestigation($incident_id);
@@ -960,7 +944,6 @@ class InitialIncidentController extends Controller
                 $getfishbone = $this->initialincident->getfishbone($incident_id);
                 $fishboneData = json_decode($getfishbone->first()->fishbone, true);
                 $getrisklevel = $this->initialincident->getrisklevel($incident_id);
-                // dd($getEHSVerify);
                 $initialincidentevidence = $this->initialincidentevidence->selectOne($incident_id);
                 $injury_details = $this->injury_details->getBodypartsInjuryPerson($incident_id);
 
@@ -996,7 +979,7 @@ class InitialIncidentController extends Controller
             }
             return view('ims.initial.incident.ehsApproval', $data);
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
         }
     }
 
@@ -1007,11 +990,9 @@ class InitialIncidentController extends Controller
             $id = decryptId($request->id);
             $incident_id = decryptId($request->incident_id);
 
-            // dd($id, $incident_id);
             if (Auth::check()) {
                 $incident_report = $this->initialincident->selectOne($incident_id);
                 $rcpa = $this->rcpa->selectOne($id, $incident_id);
-                // dd($rcpa);
                 $getEHSVerify = $this->initialincident->getEHSVerifyincident($incident_id);
                 $getEHSReview = $this->initialincident->getEHSReviewincident($incident_id);
                 $getInvestigation = $this->initialincident->getInvestigation($incident_id);
@@ -1019,7 +1000,6 @@ class InitialIncidentController extends Controller
                 $getfishbone = $this->initialincident->getfishbone($incident_id);
                 $fishboneData = json_decode($getfishbone->first()->fishbone, true);
                 $getrisklevel = $this->initialincident->getrisklevel($incident_id);
-                // dd($getEHSVerify);
                 $initialincidentevidence = $this->initialincidentevidence->selectOne($incident_id);
                 $injury_details = $this->injury_details->getBodypartsInjuryPerson($incident_id);
                 $mediaOptions = [
@@ -1053,7 +1033,7 @@ class InitialIncidentController extends Controller
             }
             return view('ims.initial.incident.ehsApproval', $data);
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
         }
     }
 
@@ -1182,7 +1162,7 @@ class InitialIncidentController extends Controller
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('incident/initial-incident/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('incident/initial-incident/list'));
         }
@@ -1243,10 +1223,6 @@ class InitialIncidentController extends Controller
             $hiraList = $this->hira->select('id', 'services', 'likelihood', 'risk_levels')->where('status', '1')->get();
             $inc_id = decryptId($incident_id);
             $newHiraList = $this->hira->select('id', 'incident_id', 'accident_id', 'fire_id', 'hiramoc_id', 'services', 'likelihood', 'risk_levels')->where('incident_id', $inc_id)->where('hiramoc_id', '1')->first();
-
-
-            // dd($hiraList);
-
             $selectedhira = $this->hiramoc
                 ->select('id', 'hira_id', 'incident_id', 'hiramoc_status')
                 ->where('hiramoc_status', 'T')
@@ -1288,8 +1264,6 @@ class InitialIncidentController extends Controller
     }
     public function investigationSubmit(Request $request)
     {
-        //  dd($request);
-
         try {
             $incident_id = decryptId($request->incident_id);
             if ($request->root_cause ==  3) {
@@ -1375,7 +1349,7 @@ class InitialIncidentController extends Controller
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('incident/initial-incident/investigationList'));
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('incident/initial-incident/investigationList'));
         }
@@ -1572,7 +1546,7 @@ class InitialIncidentController extends Controller
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('incident/initial-incident/calist'));
         } catch (Exception $ex) {
-dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('incident/initial-incident/calist'));
         }
@@ -1829,7 +1803,6 @@ dd($ex);
             $filename = "Incident.pdf";
             return $mpdf->Output($filename, 'I');
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
         }
     }
@@ -1904,7 +1877,6 @@ dd($ex);
             $filename = "Incident.pdf";
             return $mpdf->Output($filename, 'I');
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
         }
     }
