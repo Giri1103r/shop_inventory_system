@@ -1516,8 +1516,8 @@
                     </form>
                 </div>
                 <!--<div class="modal-footer">
-                                                                                                                  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                                                                                   </div>-->
+                                                                                                                      <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                                                                                       </div>-->
             </div>
         </div>
     </div>
@@ -1715,8 +1715,10 @@
                     type: "GET",
                     success: function(data) {
                         if (data.employee) {
-                            currentRow.find('.employee_code').val(data.employee.emp_id);
-                            currentRow.find('.designation').val(data.employee.designation);
+                            currentRow.find('.employee_code').val(data.employee.emp_id).prop("readonly",
+                                true);
+                            currentRow.find('.designation').val(data.employee.designation).prop(
+                                "readonly", true);
 
                             var departmentDropdown = currentRow.find('.department');
                             departmentDropdown.empty();
@@ -1730,6 +1732,25 @@
                                         `<option value="${department.id}" ${selected}>${department.department_name}</option>`
                                     );
                                 });
+                                console.log(data.employee.department);
+                                if (data.employee.department) {
+                                    departmentDropdown.prop("disabled",
+                                        false);
+                                    departmentDropdown.css("pointer-events",
+                                        "none");
+                                    if (!currentRow.find('input.department_hidden').length) {
+                                        currentRow.append(`
+                                            <input type="hidden" class="department_hidden" 
+                                                name="${departmentDropdown.attr('name')}" 
+                                                value="${data.employee.department}">
+                                        `);
+                                    }
+                                } else {
+
+                                    departmentDropdown.css("pointer-events", "auto");
+                                    departmentDropdown.css("background-color", "white");
+                                    currentRow.find('input.department_hidden').remove();
+                                }
                             } else {
                                 departmentDropdown.append(
                                     '<option value="">No departments available</option>');
@@ -1751,11 +1772,12 @@
                     }
                 });
             } else {
-                currentRow.find('.employee_code').val("");
-                currentRow.find('.designation').val("");
+                currentRow.find('.employee_code').val("").prop("readonly", false);
+                currentRow.find('.designation').val("").prop("readonly", false);
                 var departmentDropdown = currentRow.find('.department');
                 departmentDropdown.empty();
                 departmentDropdown.append('<option value="">Select Department</option>');
+                departmentDropdown.prop("readonly", false);
             }
         });
         $(document).ready(function() {

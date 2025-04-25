@@ -313,12 +313,12 @@ class RRAAController extends Controller
                 $sheet->getStyle("O{$currentRow}:Q" . ($currentRow + 2))->applyFromArray([
                     'borders' => [
                         'allBorders' => [
-                            'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_DOUBLE
+                            'borderStyle' => Border::BORDER_DOUBLE
                         ]
                     ],
                     'alignment' => [
-                        'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
-                        'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+                        'horizontal' => Alignment::HORIZONTAL_CENTER,
+                        'vertical' => Alignment::VERTICAL_CENTER,
                         'wrapText' => true,
                     ],
                     'font' => ['bold' => true],
@@ -327,12 +327,12 @@ class RRAAController extends Controller
                 $sheet->getStyle("R{$currentRow}:T" . ($currentRow + 2))->applyFromArray([
                     'borders' => [
                         'allBorders' => [
-                            'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_DOUBLE
+                            'borderStyle' => Border::BORDER_DOUBLE
                         ]
                     ],
                     'alignment' => [
-                        'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
-                        'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+                        'horizontal' => Alignment::HORIZONTAL_CENTER,
+                        'vertical' => Alignment::VERTICAL_CENTER,
                     ],
                     'font' => ['bold' => true],
                 ]);
@@ -550,7 +550,7 @@ class RRAAController extends Controller
             $sheet->mergeCells("C{$row}:E{$row}")->setCellValue("C{$row}", getCategoryname($rraa_details->category) ?? '');
             $sheet->mergeCells("F{$row}:H{$row}")->setCellValue("F{$row}", $rraa_details->ohs_compliance_index ?? '');
             $sheet->mergeCells("I{$row}:K{$row}")->setCellValue("I{$row}", $rraa_details->scope ?? '');
-            $sheet->mergeCells("L{$row}:N{$row}")->setCellValue("N{$row}", getUsername($rraa_details->responsibility) ?? '');
+            $sheet->mergeCells("L{$row}:N{$row}")->setCellValue("L{$row}", getUsername($rraa_details->responsibility) ?? '');
             $sheet->mergeCells("O{$row}:P{$row}")->setCellValue("O{$row}", $rraa_details->authority ?? '');
             $sheet->mergeCells("Q{$row}:R{$row}")->setCellValue("Q{$row}", $rraa_details->accountability ?? '');
             $sheet->mergeCells("S{$row}:T{$row}")->setCellValue("S{$row}", $rraa_details->remark ?? '');

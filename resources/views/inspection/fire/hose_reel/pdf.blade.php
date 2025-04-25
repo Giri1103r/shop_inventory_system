@@ -1,8 +1,9 @@
+
 <!DOCTYPE html>
 <html>
 
 <head>
-    <title>Hose Reel Hose Inspection| KARAM</title> 
+    <title>Hose Reel Hose Inspection| KARAM</title>
 
     <style>
         .badge {

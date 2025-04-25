@@ -63,17 +63,18 @@ class RRAADetails extends Model
             });
         }
 
-        if ($request->has('category') && $request->category) {
-            $query = $query->where('inspection_rraa.category', 'LIKE', '%' . decryptId($request->category) . '%');
+        if (isset($request->category) && $request->category) {
+            dd($request->category);
+            $query = $query->where('inspection_rraa.category',  decryptId($request->category) );
         }
         if (isset($request->ohs_compliance_index) && $request->ohs_compliance_index) {
-            $query = $query->where('inspection_rraa.ohs_compliance_index', 'LIKE', '%' . $request->ohs_compliance_index . '%');
+            $query = $query->where('inspection_rraa.ohs_compliance_index',  $request->ohs_compliance_index );
         }
         if ($request->has('frequency') && $request->frequency) {
-            $query = $query->where('inspection_rraa.frequency', 'LIKE', '%' . decryptId($request->frequency) . '%');
+            $query = $query->where('inspection_rraa.frequency',  decryptId($request->frequency) );
         }
         if (isset($request->scope) && $request->scope) {
-            $query = $query->where('inspection_rraa.scope', 'LIKE', '%' . $request->scope . '%');
+            $query = $query->where('inspection_rraa.scope',  $request->scope );
         }
 
         $data_count = $query;
@@ -147,16 +148,16 @@ class RRAADetails extends Model
             });
         }
         if ($request->has('category') && $request->category) {
-            $query = $query->where('inspection_rraa.category', 'LIKE', '%' . decryptId($request->category) . '%');
+            $query = $query->where('inspection_rraa.category',  decryptId($request->category) );
         }
         if (isset($request->ohs_compliance_index) && $request->ohs_compliance_index) {
-            $query = $query->where('inspection_rraa.ohs_compliance_index', 'LIKE', '%' . $request->ohs_compliance_index . '%');
+            $query = $query->where('inspection_rraa.ohs_compliance_index',  $request->ohs_compliance_index );
         }
         if ($request->has('frequency') && $request->frequency) {
-            $query = $query->where('inspection_rraa.frequency', 'LIKE', '%' . decryptId($request->frequency) . '%');
+            $query = $query->where('inspection_rraa.frequency',  decryptId($request->frequency) );
         }
         if (isset($request->scope) && $request->scope) {
-            $query = $query->where('inspection_rraa.scope', 'LIKE', '%' . $request->scope . '%');
+            $query = $query->where('inspection_rraa.scope',  $request->scope );
         }
 
          $query->orderBy('inspection_rraa.id', 'DESC');
