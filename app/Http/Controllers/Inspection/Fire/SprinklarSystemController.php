@@ -337,7 +337,7 @@ class SprinklarSystemController extends Controller
                 return redirect(admin_url('fire/sprinkler-inspection/list'));
             }
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('fire/sprinkler-inspection/list'));
@@ -464,7 +464,7 @@ class SprinklarSystemController extends Controller
             Session::flash('success', __('common.updated_msg'));
             return redirect(admin_url('fire/sprinkler-inspection/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             report($ex);
             Session::flash('error', 'Something Went Wrong!');
             return redirect(admin_url('fire/sprinkler-inspection/list'));
@@ -1037,7 +1037,7 @@ class SprinklarSystemController extends Controller
             $filename = "Sprinklar System Inspection Inspection.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('fire/sprinkler-inspection/list'));
@@ -1298,7 +1298,7 @@ class SprinklarSystemController extends Controller
 
             return response()->download($filePath)->deleteFileAfterSend(true);
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('fire/sprinkler-inspection/list'));

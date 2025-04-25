@@ -337,7 +337,7 @@ class SandBucketInspectionController extends Controller
                 return redirect(admin_url('fire/fire-sand-bucket-inspection/list'));
             }
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('fire/fire-sand-bucket-inspection/list'));
@@ -365,7 +365,7 @@ class SandBucketInspectionController extends Controller
             );
             return view('inspection.fire.sand_bucket_inspection.view', $data);
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('fire/fire-sand-bucket-inspection/list'));
@@ -465,7 +465,7 @@ class SandBucketInspectionController extends Controller
             Session::flash('success', __('common.updated_msg'));
             return redirect(admin_url('fire/fire-sand-bucket-inspection/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             report($ex);
             Session::flash('error', 'Something Went Wrong!');
             return redirect(admin_url('fire/fire-sand-bucket-inspection/list'));

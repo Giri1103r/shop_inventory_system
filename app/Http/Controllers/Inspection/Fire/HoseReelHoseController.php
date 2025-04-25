@@ -465,7 +465,7 @@ class HoseReelHoseController extends Controller
             Session::flash('success', __('common.updated_msg'));
             return redirect(admin_url('fire/hose-reel-hose-inspection/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             report($ex);
             Session::flash('error', 'Something Went Wrong!');
             return redirect(admin_url('fire/hose-reel-hose-inspection/list'));
