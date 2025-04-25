@@ -750,6 +750,21 @@
                         </td>
                     </tr>
                     <tr>
+                        <td style="padding:5px;"><b>Evidence</b></td>
+                        <td style="padding:5px;">:</td>
+                        <td style="padding:5px;">
+                            @if (!$capaEvidence->isEmpty())
+                                @foreach ($capaEvidence as $key => $capaEvidence)
+                                    <a href="{{ asset($capaEvidence->file_path) }}" target="_blank">
+                                        <img src="{{ asset($capaEvidence->file_path) }}" alt="Signature" style="max-width: 10%;">
+                                    </a>
+                                @endforeach
+                            @else
+                                <p>No files available</p>
+                            @endif
+                        </td>
+                    </tr>
+                    <tr>
                         <td width="50%" style="padding:5px;"><b>Action Taken</b></td>
                         <td width="2%" style="padding:5px;">:</td>
                         <td width="48%" style="padding:5px;">
@@ -759,7 +774,7 @@
                 </table>
             @endif
 
-            @if ($rcpa->incident_status >= STATUS_INCIDENT_CLOSED)
+            @if($rcpa->incident_status == STATUS_INCIDENT_CLOSED || $rcpa->incident_status == STATUS_EHSAPPROVAL_REJECTED )
                 <div style="width:100%;">
                     <table style="width:100%;">
                         <tr>
