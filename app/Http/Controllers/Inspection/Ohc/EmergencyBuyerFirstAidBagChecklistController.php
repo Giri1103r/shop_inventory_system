@@ -99,7 +99,7 @@ class EmergencyBuyerFirstAidBagChecklistController extends Controller
 
                     return $datatables;
                 } catch (Exception $ex) {
-                    dd($ex);
+                    report($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }
@@ -184,7 +184,7 @@ class EmergencyBuyerFirstAidBagChecklistController extends Controller
                 Session::flash('success', 'Your data has been created successfully!');
                 return redirect(admin_url('ohc/emergency-buyer-first-aid-bag/checklist/list'));
             } catch (Exception $ex) {
-                dd($ex);
+                report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
         } catch (Exception $ex) {
@@ -252,7 +252,6 @@ class EmergencyBuyerFirstAidBagChecklistController extends Controller
             $filename = "Emergency Buyer Bag Inspection Details.pdf";
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
             return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
         }

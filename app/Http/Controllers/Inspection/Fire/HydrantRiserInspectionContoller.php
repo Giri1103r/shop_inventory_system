@@ -360,7 +360,6 @@ class HydrantRiserInspectionContoller extends Controller
                 return redirect(admin_url('fire/hydrant-riser-inspection/list'));
             }
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('fire/hydrant-riser-inspection/list'));
@@ -389,7 +388,6 @@ class HydrantRiserInspectionContoller extends Controller
             );
             return view('inspection.fire.hydrant_riser.view', $data);
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('fire/hydrant-riser-inspection/list'));
@@ -489,7 +487,6 @@ class HydrantRiserInspectionContoller extends Controller
             Session::flash('success', __('common.updated_msg'));
             return redirect(admin_url('fire/hydrant-riser-inspection/list'));
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
             Session::flash('error', 'Something Went Wrong!');
             return redirect(admin_url('fire/hydrant-riser-inspection/list'));
@@ -1091,7 +1088,6 @@ class HydrantRiserInspectionContoller extends Controller
             $filename = "Hydrant And Riser Inspection.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('fire/hydrant-riser-inspection/list'));
@@ -1136,7 +1132,6 @@ class HydrantRiserInspectionContoller extends Controller
             $filename = "Hydrant And Riser Inspection.pdf";
             return $mpdf->Output($filename, 'i');
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('fire/hydrant-riser-inspection/list'));

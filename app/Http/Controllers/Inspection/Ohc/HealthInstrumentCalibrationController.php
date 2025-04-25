@@ -96,7 +96,7 @@ class HealthInstrumentCalibrationController extends Controller
 
                     return $datatables;
                 } catch (Exception $ex) {
-                    dd($ex);
+                    report($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }
@@ -126,7 +126,7 @@ class HealthInstrumentCalibrationController extends Controller
             );
             return view('inspection.inspection_ohc.health_instrument.add', $data);
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
         }
     }
 
@@ -187,7 +187,7 @@ class HealthInstrumentCalibrationController extends Controller
                 Session::flash('success', 'Your data has been created successfully!');
                 return redirect(admin_url('ohc/health-instrument/calibration-track-sheet/list'));
             } catch (Exception $ex) {
-                dd($ex);
+                report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
         } catch (Exception $ex) {
@@ -212,7 +212,6 @@ class HealthInstrumentCalibrationController extends Controller
             }
             return view('inspection.inspection_ohc.health_instrument.view', $data);
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
         }
     }
@@ -252,7 +251,6 @@ class HealthInstrumentCalibrationController extends Controller
             $filename = "Heakth Instrument Calibration.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/health-instrument/calibration-track-sheet/list'));
@@ -425,7 +423,6 @@ class HealthInstrumentCalibrationController extends Controller
 
             return response()->download($filePath)->deleteFileAfterSend(true);
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after some time!');
             return redirect(admin_url('ohc/health-instrument/calibration-track-sheet/list'));

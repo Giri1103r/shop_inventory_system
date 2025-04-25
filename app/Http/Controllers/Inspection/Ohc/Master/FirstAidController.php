@@ -76,7 +76,7 @@ class FirstAidController extends Controller
 
                     return $datatables;
                 } catch (Exception $ex) {
-                    dd($ex);
+                    report($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }
@@ -135,6 +135,7 @@ class FirstAidController extends Controller
             }
             return redirect(admin_url('ohc/master/first-aid-stock/list'));
         } catch (Exception $ex) {
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/master/first-aid-stock/list'));
         }
@@ -223,7 +224,6 @@ class FirstAidController extends Controller
             }
             return view('inspection.inspection_ohc.master.first_aid_equipment.view', $data);
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
         }
     }
@@ -434,6 +434,7 @@ class FirstAidController extends Controller
             Session::flash('success', __('Medicine name Uploaded sucessfully'));
             return redirect(admin_url('ohc/master/first-aid-stock/list'));
         } catch (Exception $ex) {
+            report($ex);
             Session::flash('error', __('Medicine to be taken upload failed'));
             return redirect(admin_url('ohc/master/first-aid-stock/list'));
         }

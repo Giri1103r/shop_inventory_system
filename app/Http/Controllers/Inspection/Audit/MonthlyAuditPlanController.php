@@ -92,7 +92,6 @@ class MonthlyAuditPlanController extends Controller
                     return $datatables;
                 } catch (Exception $ex) {
 
-                    dd($ex);
                     report($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
@@ -124,7 +123,6 @@ class MonthlyAuditPlanController extends Controller
                 'frequency' => $frequency,
 
             );
-            // dd($data);
             return view('inspection.inspection_audit.monthlyAudit.add',$data);
         } catch (Exception $ex) {
             report($ex);
@@ -188,12 +186,10 @@ class MonthlyAuditPlanController extends Controller
                     'monthly_audit_plan' => $monthly_audit_plan,
                 );
             }
-            // dd($data);
             return view('inspection.inspection_audit.monthlyAudit.view',$data);
 
 
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
         }
     }
@@ -392,7 +388,6 @@ class MonthlyAuditPlanController extends Controller
             $filename = "Monthly Audit Plan Details.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-         dd($ex);
             report($ex);
         }
     }
@@ -409,7 +404,6 @@ class MonthlyAuditPlanController extends Controller
                     'monthly_audit_plan' => $monthly_audit_plan,
                 );
             }
-            // dd($data);
 
             $property = [
                 'tempDir' => 'public/pdf/temp/',

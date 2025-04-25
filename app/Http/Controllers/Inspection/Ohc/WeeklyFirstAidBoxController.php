@@ -105,7 +105,7 @@ class WeeklyFirstAidBoxController extends Controller
 
                     return $datatables;
                 } catch (Exception $ex) {
-                    dd($ex);
+                    report($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }
@@ -155,7 +155,6 @@ class WeeklyFirstAidBoxController extends Controller
 
     public function Store(Request $request)
     {
-        // dd($request->all());
         try {
 
             try {
@@ -170,7 +169,7 @@ class WeeklyFirstAidBoxController extends Controller
                 Session::flash('success', 'Your data has been created successfully!');
                 return redirect(admin_url('ohc/first-aid-box/weekly-inspection/list'));
             } catch (Exception $ex) {
-                dd($ex);
+                report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
         } catch (Exception $ex) {
@@ -248,7 +247,7 @@ class WeeklyFirstAidBoxController extends Controller
             $filename = "Weekly First Aid Details.pdf";
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            dd($ex);
+            
             report($ex);
             return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
         }
@@ -670,7 +669,6 @@ class WeeklyFirstAidBoxController extends Controller
             $filename = "Weekly First Aid.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
         }
     }
