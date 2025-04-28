@@ -158,6 +158,15 @@
                 firstTh.removeClass('sorting_asc');
             });
 
+            flatpickr("#inspection_date", {
+                dateFormat: "d-m-Y",
+            });
+            
+            flatpickr("#next_due", {
+                dateFormat: "d-m-Y",
+                minDate: new Date(),
+            });
+
             $(function() {
                 /* Datatable */
                 var table = $('.datatable-list').DataTable({
