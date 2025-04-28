@@ -307,7 +307,7 @@
                                                     </div>
                                                 </div>
                                             @endif
-                                            @if (isset($inspection->approved_by))
+                                            {{-- @if (isset($inspection->approved_by))
                                                 @if ($inspection->verified_by == $inspection->approved_by)
                                                     <div class="col-md-4 mb-2">
                                                         <div class="form-group form-input">
@@ -336,7 +336,8 @@
                                                             style="width: 150px; margin-top: -10px;" />
                                                     </div>
                                                 </div>
-                                            @endif
+                                            @endif --}}
+
                                             @if (isset($inspection->capa_recomendation))
                                                 <div class="col-md-12 mb-2">
                                                     <div class="form-group form-input">
@@ -514,6 +515,8 @@
                                         </div>
                                     </div>
                                 @endif
+
+
                                 @if (isset($inspection->level_two_manager_remarks))
                                     <div class="row">
                                         <div class="card-header-inner">
@@ -523,7 +526,7 @@
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
                                                 <label
-                                                    class="form-label ">{{ __('inspection.level_one_manager') }}</label>
+                                                    class="form-label ">{{ __('inspection.level_two_manager') }}</label>
                                                 <div class="view_data">
                                                     {{ getUserName($inspection->l2_manager_verified_by) }}
                                                 </div>
@@ -554,7 +557,7 @@
                                                 </div>
                                             </div>
                                         @endif
-                                        @if ($inspection->approved_by)
+                                        {{-- @if ($inspection->approved_by)
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label ">{{ __('inspection.approved_by') }}</label>
@@ -580,7 +583,7 @@
                                                         style="width: 150px; margin-top: -10px;" />
                                                 </div>
                                             </div>
-                                        @endif
+                                        @endif --}}
                                         <div class="col-md-12 mb-2">
                                             <div class="form-group form-input">
                                                 <label
@@ -592,6 +595,7 @@
                                         </div>
                                     </div>
                                 @endif
+
                                 <div class="row">
                                     <div class="card-header-inner">
                                         <h4 class="text-white">{{ __('inspection.status_log') }}</h4>

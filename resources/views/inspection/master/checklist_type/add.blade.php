@@ -85,7 +85,7 @@
 
                                             <div class="mb-3 col-md-4 form-input">
                                                 <label for="work_station_id"
-                                                    class="col-sm-5 form-label  required">Questionary</label>
+                                                    class="col-sm-5 form-label  require">Questionary</label>
                                                 <select name="questionary_id" id="questionary_id"
                                                     class=" form-control single-select" style="width: 100%">
                                                     <option value="">Select Questionary</option>
@@ -134,7 +134,7 @@
                 return this.optional(element) || value.trim().length > 0;
             }, "This field cannot contain only spaces");
 
-            
+
 
             $.validator.addMethod("filesize", function(value, element, param) {
                 if (this.optional(element)) {
@@ -162,9 +162,9 @@
                             }
                         }
                     },
-                    // questionary_id: {
-                    //     required: true,
-                    // },
+                    questionary_id: {
+                        required: true,
+                    },
                     checklist_file: {
                         extension: "jpg",
                         filesize: [50, 5120],
@@ -177,9 +177,9 @@
                         maxlength: "Maximum Characters should not exceed 100",
                         remote: "Name should be unique",
                     },
-                    // questionary_id: {
-                    //     required: "{{ __('inspection.questionary_required') }}",
-                    // },
+                    questionary_id: {
+                        required: "{{ __('inspection.questionary_required') }}",
+                    },
                     checklist_file: {
                         extension: "Only .jpg files are allowed. Please upload a valid image file.",
                     }
