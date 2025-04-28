@@ -711,11 +711,12 @@ class CoTypeFireExtinguisherController extends Controller
                 $message = 'CO2 Type Fire Inspeciton Approved Successfully!';
                 $web_link =   admin_url('fire/fire-extinguisher/co2/view/' . encryptId($inspection_details->id));
                 $to_status = INSPECTION_APPROVED;
-                $users = array_merge([$inspection_details->created_by], [$inspection_details->verified_by], [$inspection_details->l1_manager_verified_by], [$inspection_details->l2_manager_verified_by]);
+                $users = array_merge([$inspection_details->created_by], [$inspection_details->verified_by], [$inspection_details->l1_manager_verified_by]);
             } else {
                 $message = 'Level Two Manager Rejected the CAPA Action';
                 $web_link =   admin_url('fire/fire-extinguisher/co2/verification/' . encryptId($inspection_details->id) . '/capa');
                 $to_status = L2_MANAGER_REJECTED;
+                $users = array_merge([$inspection_details->created_by], [$inspection_details->verified_by], [$inspection_details->l1_manager_verified_by]);
             }
 
             $mailsubject = 'CO2 TYPE FIRE INSPECTION';
@@ -1099,7 +1100,6 @@ class CoTypeFireExtinguisherController extends Controller
                 'margin_left' => 10,
                 'margin_right' => 10,
                 'margin_top' => 10,
-
             ];
 
             $mpdf = new \Mpdf\Mpdf($property);
