@@ -19,6 +19,16 @@ use App\Models\Inspection\Master\ChecklistSubTypeDataName;
 use App\Models\Inspection\Master\ChecklistSubTypeData;
 use App\Models\Inspection\Master\ChecklistOptionType;
 use App\Models\Inspection\Master\Shift;
+use App\Models\Inspection\InspectionStaticDocno;
+
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Border;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
+use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
+use PhpOffice\PhpSpreadsheet\RichText\RichText;
 
 class AuditAssessmentController extends Controller
 {
@@ -31,6 +41,8 @@ class AuditAssessmentController extends Controller
     private $upload_log;
     private $checklist_option;
     private $shift;
+    private $document_reference;
+
 
     public function __construct()
     {
@@ -42,6 +54,7 @@ class AuditAssessmentController extends Controller
         $this->checklist_subtypename = new ChecklistSubTypeDataName();
         $this->checklist_subtypedata = new ChecklistSubTypeData();
         $this->shift = new Shift();
+        $this->document_reference = new InspectionStaticDocno();
     }
 
     public function index(Request $request)
@@ -67,6 +80,9 @@ class AuditAssessmentController extends Controller
                         ->addColumn('created_date', function ($row) {
                             return Displaydateformat($row->created_at);
                         })
+                        ->addColumn('audit_date', function ($row) {
+                            return Displaydateformat($row->created_at);
+                        })
                         ->addColumn('created_by', function ($row) {
                             return getUsername($row->created_by);
                         })
@@ -74,15 +90,18 @@ class AuditAssessmentController extends Controller
                             $btn = '';
                             $btn = '<a href="' . admin_url('audit/assessment/view/' . encryptId($row->id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
                             // if (CheckUserRole(ROLE_SUPERADMIN)) {
-                                // $btn .= '<a href="' . admin_url('inspection/master/checklist-sub-type/edit/' . encryptId($row->id)) . '" class="edit-icon " title="' . __('common.edit') . '"><i class="fa-solid fa-pen-to-square"></i> ';
+                            // $btn .= '<a href="' . admin_url('inspection/master/checklist-sub-type/edit/' . encryptId($row->id)) . '" class="edit-icon " title="' . __('common.edit') . '"><i class="fa-solid fa-pen-to-square"></i> ';
                             // }
 
                             $btn .= '<a href="' . admin_url('audit/assessment/generalpdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
                             <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
                         </a>';
+                            $btn .= '<a href="' . admin_url('audit/assessment/generalExcel/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
+                        <i class="fas fa-file-excel" style="color: #1D6F42;" aria-hidden="true"></i>
+                     </a>';
                             return $btn;
                         })
-                        ->rawColumns(['action', 'created_date', 'created_by', 'status'])
+                        ->rawColumns(['action', 'created_date', 'audit_date', 'created_by', 'status'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -205,39 +224,185 @@ class AuditAssessmentController extends Controller
     {
         try {
 
-            $allData =   $this->checklist_subtype->exportdata();
-            $header = [
-                __("common.sno"),
-                __("Checklist Sub-Type ID"),
-                __("Checklist Type Name"),
-                __("Checklist Sub-Type Name"),
-                __("common.status"),
-                __("common.created_by"),
-                __("common.created_date"),
-            ];
-
-            $i = 1;
-            foreach ($allData as $data) {
-
-                $export = [];
-                $export[] =  $i;
-                $export[] = $data->subcategory_id;
-                $export[] =  $data->category_name;
-                $export[] =  $data->subcategory_name;
-                $export[] =  $data->status == 1 ? 'Active' : 'In-Active';
-                $export[] =  getusername($data->created_by);
-                $export[] =  Displaydateformat($data->created_at);
-
-                $exportData[] = $export;
-
-                $i++;
+            $allData =   $this->audit_assessment->exportdata();
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            } elseif (count($allData) > 20) {
+                return redirect()->back()->with('error',   __('inspection.excess_error'));
             }
+            $spreadsheet = new Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
+            for ($i = 1; $i <= 200; $i++) {
+                $sheet->getRowDimension($i)->setRowHeight(25);
+            }
+            $row = 1;
+            $currentRow = $row;
+            foreach ($allData as $details) {
+                $currentRow = $row;
+                $audit_assessment =   $this->audit_assessment->selectOne($details->id);
+                $audit_assessmentCkeclist = json_decode($audit_assessment);
+                $document_no = $this->document_reference->selectUsingName('6SAuditAssessment');
 
-            $writer = SimpleExcelWriter::streamDownload('Checklist Sub Type Category.xlsx')
-                ->addHeader($header)
-                ->addRows(
-                    $exportData
-                );
+
+
+                // Logo Section
+                $logoLeftPath = public_path('assets/images/logo-dark.png');
+                if (file_exists($logoLeftPath)) {
+                    $sheet->mergeCells("A$currentRow:F" . ($currentRow + 2));
+
+                    $drawing = new Drawing();
+                    $drawing->setName('Left Logo');
+                    $drawing->setPath($logoLeftPath);
+                    $drawing->setCoordinates("B$currentRow");
+                    $drawing->setOffsetX(100);
+                    $drawing->setOffsetY(15);
+                    $drawing->setWidth(70);
+                    $drawing->setHeight(70);
+                    $drawing->setWorksheet($sheet);
+
+                    $range = "A$currentRow:F" . ($currentRow + 2);
+                    $sheet->getStyle($range)->applyFromArray([
+                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                    ]);
+                }
+
+                // Title Section
+                $sheet->mergeCells("G{$currentRow}:M" . ($currentRow + 2));
+                $sheet->setCellValue("G{$currentRow}", "6S AUDIT ASSESSMENT");
+                $sheet->getStyle("G{$currentRow}")->applyFromArray([
+                    'font' => ['bold' => true, 'size' => 14],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                ]);
+
+
+                if ($document_no) {
+                    $sheet->mergeCells("N$currentRow:S" . ($currentRow + 2));
+                    $sheet->setCellValue("N$currentRow", $document_no->doc_no);
+                    $sheet->getStyle("N$currentRow:S" . ($currentRow + 2))->applyFromArray([
+                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
+                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                        'font' => ['bold' => true],
+                    ]);
+                }
+
+                $sheet->mergeCells("A" . ($currentRow + 3) . ":S" . ($currentRow + 3));
+                $richText1 = new RichText();
+                $richText1->createTextRun('Name Of The Shop Floor:- ')->getFont()->setBold(true);
+                $richText1->createText(($audit_assessment->floor_name));
+                $sheet->getCell("A" . ($currentRow + 3))->setValue($richText1);
+
+                $range = "A$currentRow:s" . ($currentRow + 3);
+                $sheet->getStyle($range)->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+
+                ]);
+
+                $sheet->mergeCells("A" . ($currentRow + 4) . ":S" . ($currentRow + 4));
+                $richText1 = new RichText();
+                $richText1->createTextRun(' Date Of Audit:- ')->getFont()->setBold(true);
+                $richText1->createText(Displaydateformat($audit_assessment->audit_date));
+                $sheet->getCell("A" . ($currentRow + 4))->setValue($richText1);
+
+                $range = "A$currentRow:S" . ($currentRow + 4);
+                $sheet->getStyle($range)->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+
+                ]);
+                $sheet->mergeCells("A" . ($currentRow + 5) . ":S" . ($currentRow + 5));
+                $richText1 = new RichText();
+                $richText1->createTextRun('Shift:- ')->getFont()->setBold(true);
+                $richText1->createText(getShift($audit_assessment->shift_id));
+                $sheet->getCell("A" . ($currentRow + 5))->setValue($richText1);
+
+                $range = "A$currentRow:S" . ($currentRow + 5);
+                $sheet->getStyle($range)->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+
+                ]);
+
+                $sheet->mergeCells("A" . ($currentRow + 6) . ":S" . ($currentRow + 6));
+                $richText1 = new RichText();
+                $richText1->createTextRun('Floor Executive On Duty:- ')->getFont()->setBold(true);
+                $richText1->createText(getEmployeename($audit_assessment->floor_executive));
+                $sheet->getCell("A" . ($currentRow + 6))->setValue($richText1);
+
+                $range = "A$currentRow:S" . ($currentRow + 6);
+                $sheet->getStyle($range)->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+
+                ]);
+                $headerRow = $currentRow + 7;
+                $sheet->mergeCells("A$headerRow:J$headerRow")->setCellValue("A$headerRow", "CHECK POINTS");
+                $sheet->mergeCells("K$headerRow:S$headerRow")->setCellValue("K$headerRow", "YES/NO/N/A");
+                $sheet->getStyle("A$headerRow:S$headerRow")->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                    'font' => ['bold' => true],
+                ]);
+
+                $inspectionRow = $headerRow + 1;
+                $srNo = 1;
+                $user_response = json_decode($audit_assessment->checklist, true);
+
+
+                foreach ($user_response as $subcategory => $questions) {
+                    if (!is_array($questions)) {
+                        continue; // skip if not a valid sub-array
+                    }
+
+                    $rowCount = count($questions);
+                    $firstRow = true;
+
+                    foreach ($questions as $questionId => $answer) {
+                        if ($firstRow) {
+                            $sheet->mergeCells("A$inspectionRow:C" . ($inspectionRow + $rowCount - 1))
+                                ->setCellValue("A$inspectionRow", getSubcategoryname($subcategory));
+                            $firstRow = false;
+                        }
+
+                        $sheet->mergeCells("D$inspectionRow:J$inspectionRow")
+                            ->setCellValue("D$inspectionRow", getSubcategoryDataname($questionId));
+
+                        $statusIcon = '-';
+                        if (!empty($answer) && strtoupper($answer) == 'YES') {
+                            $statusIcon = '✓';
+                        } elseif (in_array(strtoupper($answer), ['NO', 'N/A'])) {
+                            $statusIcon = 'X';
+                        }
+
+                        $sheet->mergeCells("K$inspectionRow:S$inspectionRow")
+                            ->setCellValue("K$inspectionRow", $statusIcon);
+
+                        $sheet->getStyle("A$inspectionRow:S$inspectionRow")->applyFromArray([
+                            'alignment' => [
+                                'horizontal' => Alignment::HORIZONTAL_CENTER,
+                                'vertical' => Alignment::VERTICAL_CENTER,
+                            ],
+                            'borders' => [
+                                'allBorders' => [
+                                    'borderStyle' => Border::BORDER_THIN,
+                                ],
+                            ],
+                        ]);
+
+                        $inspectionRow++;
+                        $srNo++;
+                    }
+                }
+
+
+                $row =  $inspectionRow + 2;
+            }
+            $filename = 'Audit_Assesment.xlsx';
+            header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            header("Content-Disposition: attachment; filename=\"$filename\"");
+            header('Cache-Control: max-age=0');
+
+            $writer = new Xlsx($spreadsheet);
+            $writer->save('php://output');
+            exit;
         } catch (Exception $ex) {
             report($ex);
         }
@@ -247,22 +412,20 @@ class AuditAssessmentController extends Controller
     {
         try {
 
-            ini_set("pcre.backtrack_limit", "5000000");
 
-            $allData =   $this->checklist_subtype->exportdata();
-            $header = [
-                __("common.sno"),
-                __("Checklist Sub-Type ID"),
-                __("Checklist Type Name"),
-                __("Checklist Sub-Type Name"),
-                __("common.status"),
-                __("common.created_by"),
-                __("common.created_date"),
-            ];
+            $allData =   $this->audit_assessment->exportdata();
+            $document_no = $this->document_reference->selectUsingName('6SAuditAssessment');
+
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            } elseif (count($allData) > 20) {
+                return redirect()->back()->with('error',   __('inspection.excess_error'));
+            }
             $data = array(
-                'header' => $header,
+
                 'content' => $allData,
-                'pagetitle' => "Checklist Sub Type Category",
+                'document_no' => $document_no,
+                'pagetitle' => "6S Audit Assessment",
             );
 
             $property = [
@@ -284,7 +447,7 @@ class AuditAssessmentController extends Controller
 
             $mpdf->WriteHTML($html);
 
-            $filename = "Checklist Sub Type Category.pdf";
+            $filename = "6S Audit Assessment.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 
@@ -304,7 +467,7 @@ class AuditAssessmentController extends Controller
         try {
             $audit_id = decryptId($id);
             if (Auth::check()) {
-            
+                $document_no = $this->document_reference->selectUsingName('6SAuditAssessment');
                 $audit_assessment =   $this->audit_assessment->selectOne($audit_id);
                 $audit_assessmentCkeclist = json_decode($audit_assessment);
                 $checklist_details = getCheckListQuestion(CHECKLIST_AUDIT_ASSESSMENT);
@@ -314,6 +477,7 @@ class AuditAssessmentController extends Controller
             $data = [
                 'audit_assessment' => $audit_assessment,
                 'getoption' => $getoption,
+                'document_no' => $document_no,
                 'pagetitle' => "6S Audit Assessment",
             ];
 
@@ -340,4 +504,179 @@ class AuditAssessmentController extends Controller
         }
     }
 
+
+    public function generalExcel($id, Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+            $spreadsheet = new Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
+            $audit_assessment =   $this->audit_assessment->selectOne($id);
+            $audit_assessmentCkeclist = json_decode($audit_assessment);
+            $document_no = $this->document_reference->selectUsingName('6SAuditAssessment');
+
+            for ($i = 1; $i <= 200; $i++) {
+                $sheet->getRowDimension($i)->setRowHeight(25);
+            }
+            $row = 1;
+            $currentRow = $row;
+
+            // Logo Section
+            $logoLeftPath = public_path('assets/images/logo-dark.png');
+            if (file_exists($logoLeftPath)) {
+                $sheet->mergeCells("A$currentRow:F" . ($currentRow + 2));
+
+                $drawing = new Drawing();
+                $drawing->setName('Left Logo');
+                $drawing->setPath($logoLeftPath);
+                $drawing->setCoordinates("B$currentRow");
+                $drawing->setOffsetX(100);
+                $drawing->setOffsetY(15);
+                $drawing->setWidth(70);
+                $drawing->setHeight(70);
+                $drawing->setWorksheet($sheet);
+
+                $range = "A$currentRow:F" . ($currentRow + 2);
+                $sheet->getStyle($range)->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                ]);
+            }
+
+            // Title Section
+            $sheet->mergeCells("G{$currentRow}:M" . ($currentRow + 2));
+            $sheet->setCellValue("G{$currentRow}", "6S AUDIT ASSESSMENT");
+            $sheet->getStyle("G{$currentRow}")->applyFromArray([
+                'font' => ['bold' => true, 'size' => 14],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+            ]);
+
+
+            if ($document_no) {
+                $sheet->mergeCells("N$currentRow:S" . ($currentRow + 2));
+                $sheet->setCellValue("N$currentRow", $document_no->doc_no);
+                $sheet->getStyle("N$currentRow:S" . ($currentRow + 2))->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                    'font' => ['bold' => true],
+                ]);
+            }
+
+            $sheet->mergeCells("A" . ($currentRow + 3) . ":S" . ($currentRow + 3));
+            $richText1 = new RichText();
+            $richText1->createTextRun('Name Of The Shop Floor:- ')->getFont()->setBold(true);
+            $richText1->createText(($audit_assessment->floor_name));
+            $sheet->getCell("A" . ($currentRow + 3))->setValue($richText1);
+
+            $range = "A$currentRow:s" . ($currentRow + 3);
+            $sheet->getStyle($range)->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+
+            ]);
+
+            $sheet->mergeCells("A" . ($currentRow + 4) . ":S" . ($currentRow + 4));
+            $richText1 = new RichText();
+            $richText1->createTextRun(' Date Of Audit:- ')->getFont()->setBold(true);
+            $richText1->createText(Displaydateformat($audit_assessment->audit_date));
+            $sheet->getCell("A" . ($currentRow + 4))->setValue($richText1);
+
+            $range = "A$currentRow:S" . ($currentRow + 4);
+            $sheet->getStyle($range)->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+
+            ]);
+            $sheet->mergeCells("A" . ($currentRow + 5) . ":S" . ($currentRow + 5));
+            $richText1 = new RichText();
+            $richText1->createTextRun('Shift:- ')->getFont()->setBold(true);
+            $richText1->createText(getShift($audit_assessment->shift_id));
+            $sheet->getCell("A" . ($currentRow + 5))->setValue($richText1);
+
+            $range = "A$currentRow:S" . ($currentRow + 5);
+            $sheet->getStyle($range)->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+
+            ]);
+
+            $sheet->mergeCells("A" . ($currentRow + 6) . ":S" . ($currentRow + 6));
+            $richText1 = new RichText();
+            $richText1->createTextRun('Floor Executive On Duty:- ')->getFont()->setBold(true);
+            $richText1->createText(getEmployeename($audit_assessment->floor_executive));
+            $sheet->getCell("A" . ($currentRow + 6))->setValue($richText1);
+
+            $range = "A$currentRow:S" . ($currentRow + 6);
+            $sheet->getStyle($range)->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+
+            ]);
+            $headerRow = $currentRow + 7;
+            $sheet->mergeCells("A$headerRow:J$headerRow")->setCellValue("A$headerRow", "CHECK POINTS");
+            $sheet->mergeCells("K$headerRow:S$headerRow")->setCellValue("K$headerRow", "YES/NO/N/A");
+            $sheet->getStyle("A$headerRow:S$headerRow")->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                'font' => ['bold' => true],
+            ]);
+
+            $inspectionRow = $headerRow + 1;
+            $srNo = 1;
+            $user_response = json_decode($audit_assessment->checklist, true);
+
+            foreach ($user_response as $subcategory => $questions) {
+                $rowCount = count($questions);
+                $firstRow = true;
+                foreach ($questions as $questionId => $answer) {
+                    if ($firstRow) {
+                        // Merge and set subcategory only once per group
+                        $sheet->mergeCells("A$inspectionRow:C" . ($inspectionRow + $rowCount - 1))
+                            ->setCellValue("A$inspectionRow", getSubcategoryname($subcategory));
+                        $firstRow = false;
+                    }
+
+                    // Write the question text
+                    $sheet->mergeCells("D$inspectionRow:J$inspectionRow")
+                        ->setCellValue("D$inspectionRow", getSubcategoryDataname($questionId));
+
+                    // Handle status icon
+                    $statusIcon = '-';
+                    if (!empty($answer) && strtoupper($answer) == 'YES') {
+                        $statusIcon = '✓';
+                    } elseif (in_array(strtoupper($answer), ['NO', 'N/A'])) {
+                        $statusIcon = 'X';
+                    }
+
+                    // Write the status icon
+                    $sheet->mergeCells("K$inspectionRow:S$inspectionRow")
+                        ->setCellValue("K$inspectionRow", $statusIcon);
+
+                    $sheet->getStyle("A$inspectionRow:S$inspectionRow")->applyFromArray([
+                        'alignment' => [
+                            'horizontal' => Alignment::HORIZONTAL_CENTER,
+                            'vertical' => Alignment::VERTICAL_CENTER,
+                        ],
+                        'borders' => [
+                            'allBorders' => [
+                                'borderStyle' => Border::BORDER_THIN,
+                            ],
+                        ],
+                    ]);
+
+                    $inspectionRow++;
+                    $srNo++;
+                }
+            }
+
+            $filename = 'Audit_Assesment.xlsx';
+            header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            header("Content-Disposition: attachment; filename=\"$filename\"");
+            header('Cache-Control: max-age=0');
+
+            $writer = new Xlsx($spreadsheet);
+            $writer->save('php://output');
+            exit;
+        } catch (Exception $ex) {
+            dd($ex);
+            return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
+        }
+    }
 }

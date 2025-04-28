@@ -76,6 +76,7 @@ class ChecklistTypeController extends Controller
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
+                    dd($ex);
                     report($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
@@ -233,7 +234,7 @@ class ChecklistTypeController extends Controller
             $this->checklist_type->statuschange($id);
             // $this->checklist_sub_type->statuschange_all($id);
 
-            return response()->json(['status' => 'success', 'msg' => 'Checklist type status changed'], 200);
+            return response()->json(['status' => 'success', 'msg' => 'Checklist type Status Changed Successfully!'], 200);
         } catch (Exception $ex) {
 
             return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);

@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Initial Incident Review')
+@section('title', 'Initial Incident/Accident Report')
 @section('pageurl', admin_url('incident/initial-incident/list'))
 
 
@@ -280,7 +280,104 @@
                                             </div>
                                         @endif
                                     </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label">Immediate Action Taken</label>
+                                        <div class="view_data">
+                                            {{ $incident_report->immediate_action_taken }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label">If any person has injured?</label>
+                                        <div class="view_data">
+                                            @if ($incident_report->anyone_injured == 1)
+                                                <i class="fas fa-check-circle text-success" style="font-size: 1.5rem;"></i>
+                                                Yes
+                                                <i class="fas fa-times-circle text-danger" style="font-size: 1.5rem;"></i>
+                                                No
+                                            @else
+                                                <i class="fas fa-times-circle text-danger" style="font-size: 1.5rem;"></i>
+                                                Yes
+                                                <i class="fas fa-check-circle text-success" style="font-size: 1.5rem;"></i>
+                                                No
+                                            @endif
+                                        </div>
+                                    </div>
+                                    @if ($incident_report->anyone_injured == 1)
+                                        <div class="row">
+                                            <div class="card-header-inner">
+                                                <h4 class="text-white">Injured Person Details</h4>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <table class="table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Injury Person Type</th>
+                                                        <th>Injury Person Name</th>
+                                                        <th>Injury Person Employee ID</th>
+                                                        <th>Injury Person Designation</th>
+                                                        <th>Injury Person Department</th>
+                                                        <th>Injury Body Parts</th>
+                                                        <th>Description</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach ($injury_details as $injury)
+                                                        <tr>
+                                                            <td>
+                                                                {{ $injury->injury_person_type == 1 ? 'Employee' : ($injury->injury_person_type == 2 ? 'Worker' : 'Others') }}
+                                                            </td>
+                                                            <td>
+                                                                @if ($injury->injury_person_type == 1 || $injury->injury_person_type == 2)
+                                                                    {{ $injury->emp_name }}
+                                                                @else
+                                                                    {{ $injury->injury_person_name }}
+                                                                @endif
+                                                            </td>
+                                                            <td>{{ $injury->emp_id }}</td>
+                                                            <td>{{ $injury->injury_person_designation }}</td>
+                                                            <td>
+                                                                {{-- @if ($injury->injury_person_type == 1 || $injury->injury_person_type == 2)
+                                                                {{ $injury->department_name }}
+                                                            @else --}}
+                                                                {{ $injury->injury_person_department_id }}
+                                                                {{-- @endif --}}
+                                                            </td>
+                                                            <td>
+                                                                @if ($injury->body_part_image)
+                                                                    <a href="{{ admin_url('storage/app/public/uploads/' . $injury->body_part_image) }}"
+                                                                        target="_blank">
+                                                                        <img src="{{ admin_url('storage/app/public/uploads/' . $injury->body_part_image) }}"
+                                                                            alt="Body Parts Image"
+                                                                            style="max-width: 100px; max-height: 100px; object-fit: contain;">
+                                                                    </a>
+                                                                @endif
+                                                            </td>
 
+
+                                                            <td>
+                                                                @php
+                                                                    $imgMapDataDecoded = json_decode(
+                                                                        $injury->imgMapdata,
+                                                                        true,
+                                                                    );
+                                                                @endphp
+                                                                @if ($imgMapDataDecoded)
+                                                                    <ul>
+                                                                        @foreach ($imgMapDataDecoded['map']['total'] as $key => $value)
+                                                                            <li>{{ ucfirst($key) }}:
+                                                                                {{ $value }}</li>
+                                                                        @endforeach
+                                                                    </ul>
+                                                                @endif
+                                                            </td>
+                                                        </tr>
+                                                    @endforeach
+                                                </tbody>
+                                            </table>
+
+                                        </div>
+                                    @endif
                                 </div>
                             </div>
 
@@ -288,7 +385,7 @@
                                 <div class="card-body ">
                                     <div class="row">
                                         <div class="card-header-inner">
-                                            <h4 class="text-white">EHS Head Review</h4>
+                                            <h4 class="text-white">Accelerating Incident Investigations</h4>
                                         </div>
                                     </div>
                                     <div class="row">
@@ -305,9 +402,22 @@
                                             </div>
                                         </div>
                                         <div class="mb-3 col-md-4 form-input">
+                                            <label class="form-label view_label">{{ __('Target Date') }}</label>
+                                            <div class="view_data">
+                                                {{ Displaydateformat($incident_report->target_date) }}
+                                            </div>
+                                        </div>
+                                        <div class="mb-3 col-md-4 form-input">
                                             <label for="team_id" class="form-label">I.M Team members</label>
                                             <div class="view_data">
                                                 {{ $getEHSReview->team_member_names }}
+                                            </div>
+                                        </div>
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <label for="team_id" class="form-label">Incident/Accident Investigation
+                                                Report Prepared by</label>
+                                            <div class="view_data">
+                                                {{ getUsername($incident_report->investigation_reported_by) }}
                                             </div>
                                         </div>
                                     </div>
@@ -628,7 +738,12 @@
                                         </div>
                                     </div>
                                     <div class="row">
-
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <label class="form-label view_label">RCPA ID</label>
+                                            <div class="view_data">
+                                                {{ $rcpa->rcpa_id }}
+                                            </div>
+                                        </div>
                                         <div class="mb-3 col-md-4 form-input">
                                             <label class="form-label view_label">Recommended Corrective & Preventive
                                                 Action</label>
@@ -803,7 +918,24 @@
                                                             readonly value="{{ todaydate() }}">
                                                     </div>
                                                 </div>
-
+                                                <div id="file-upload-container" class="row mt-3">
+                                                    <div class="col-12 mb-3">
+                                                        <button class="btn btn-primary addmorebutton" type="button"
+                                                            id="dynamic-add-more">
+                                                            Add
+                                                        </button>
+                                                    </div>
+    
+                                                    <div class="col-md-4 mb-3 file-upload-block" id="file-upload-0">
+                                                        <label for="evidence_0" class="form-label require">Evidence</label>
+                                                        <input type="file" class="form-control validate-file-required"
+                                                            name="evidence[0][]" id="evidence_0" multiple>
+                                                        <div class="text-danger"></div>
+                                                        <small>Allowed file types: png, jpeg , jpg</small>
+                                                        <div class="preview-container mt-2 d-flex flex-wrap gap-2"
+                                                            id="preview-container-0"></div>
+                                                    </div>
+                                                </div>
                                                 <div class="col-md-12 mb-3">
                                                     <div class="form-group form-input">
                                                         <label class="form-label require">Action Taken</label>
@@ -824,9 +956,7 @@
 
                                     </div>
                                 </div>
-                            @elseif(
-                                $rcpa->incident_status > STATUS_ACTION_PENDING &&
-                                    $rcpa->incident_status != STATUS_EHSAPPROVAL_REJECTED)
+                            @elseif($rcpa->incident_status > STATUS_ACTION_PENDING && $rcpa->incident_status != STATUS_EHSAPPROVAL_REJECTED)
                                 <div class="card-body ">
                                     <div class="row">
                                         <div class="card-header-inner">
@@ -846,7 +976,24 @@
                                                 {{ Displaydateformat($rcpa->action_submission_date) }}
                                             </div>
                                         </div>
-
+                                        <div class="col-md-12 mb-3">
+                                            <label class="form-label">Evidence</label>
+                                            @if (!$capaEvidence->isEmpty())
+                                                <div class="row">
+                                                    @foreach ($capaEvidence as $key => $capaEvidence)
+                                                        <div class="col-md-3 col-sm-6 mb-2">
+                                                            <div class="existing-evidence text-center">
+                                                                <a href="{{ asset($capaEvidence->file_path) }}" target="_blank">
+                                                                    <img src="{{ asset($capaEvidence->file_path) }}" alt="Evidence"
+                                                                        class="img-fluid rounded shadow"
+                                                                        style="max-width: 20%; height: auto;">
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                    @endforeach
+                                                </div>
+                                            @endif
+                                        </div>
                                         <div class="mb-3 col-md-4 form-input">
                                             <label class="form-label">Action Taken</label>
                                             <div class="view_data">
@@ -872,8 +1019,8 @@
                                             <div class="row">
                                                 <input type="hidden" class="form-control" name="incident_id"
                                                     id="incident_id" value="{{ encryptId($incident_report->id) }}">
-                                                    <input type="hidden" class="form-control" name="rcpa_id"
-                                                    id="rcpa_id" value="{{ encryptId($rcpa->id) }}">
+                                                <input type="hidden" class="form-control" name="rcpa_id" id="rcpa_id"
+                                                    value="{{ encryptId($rcpa->id) }}">
                                                 <div class="col-md-4 mb-3">
                                                     <div class="form-group form-input">
                                                         <label for="name" class="form-label">Approval By</label>
@@ -911,6 +1058,37 @@
 
                                     </div>
                                 </div>
+                            @elseif($rcpa->incident_status == STATUS_INCIDENT_CLOSED)
+                                <div class="card-body ">
+                                    <div class="row">
+                                        <div class="card-header-inner">
+                                            <h4 class="text-white">EHS Approval</h4>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <label for="name" class="form-label">Approval By</label>
+                                            <div class="view_data">
+                                                {{ $getEHSApprovalincident->reviewer_name }}
+                                            </div>
+                                        </div>
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <label class="form-label view_label">{{ __('Date') }}</label>
+                                            <div class="view_data">
+                                                {{ Displaydateformat($getEHSApprovalincident->date) }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="mb-3 col-md-12 form-input">
+                                            <label class="form-label">Remark</label>
+                                            <div class="view_data">
+                                                {{ $getEHSApprovalincident->remark }}
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
                             @endif
                         </div>
                     </div>
@@ -933,6 +1111,86 @@
                 dateFormat: "d-m-Y",
                 minDate: "today" // Allows only future dates
             });
+            const maxUploads = 5;
+
+        $('#dynamic-add-more').on('click', function() {
+            let currentFileUploads = $('.file-upload-block').length;
+
+            if (currentFileUploads >= maxUploads) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Sorry!',
+                    text: 'Maximum 5 records only.',
+                });
+                return;
+            }
+
+            // Create the new file upload block
+            let newFileUploadBlock = `
+                <div class="col-md-4 mb-3 file-upload-block" id="file-upload-${currentFileUploads}">
+                    <label for="evidence_${currentFileUploads}" class="form-label require">Evidence</label>
+                    <input type="file" class="form-control  validate-file-required"
+                        name="evidence[${currentFileUploads}][]" id="evidence_${currentFileUploads}" multiple>
+                    <div class="text-danger"></div>
+                    <small>Allowed file types: png, jpeg , jpg</small>
+                    <button type="button" class="btn btn-danger btn-sm remove-upload-block">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                    <div class="preview-container mt-2 d-flex flex-wrap gap-2" id="preview-container-${currentFileUploads}"></div>
+                </div>
+            `;
+
+            // Append new block
+            $('#file-upload-container').append(newFileUploadBlock);
+
+            $('#evidence_' + currentFileUploads).rules("add", {
+                required: true,
+                extension: "png|jpeg|jpg|pdf|doc|docx|mp4",
+                messages: {
+                    required: "This field is required.",
+                    extension: "Allowed file types: png, jpeg, jpg",
+                }
+            });
+
+
+        });
+
+        // Handling file input validation for dynamic removal of blocks (if applicable)
+        $(document).on('click', '.remove-upload-block', function() {
+            $(this).closest('.file-upload-block').remove();
+        });
+
+
+
+        $(document).on('change', 'input[type="file"]', function(event) {
+            let input = $(this);
+            let fileInputId = input.attr('id').split('_')[2];
+            let previewContainer = $('#preview-container-' + fileInputId);
+
+            previewContainer.html("");
+
+            let files = event.target.files;
+            if (files.length > 0) {
+                Array.from(files).forEach(file => {
+                    if (file.type.startsWith("image/")) {
+                        let reader = new FileReader();
+                        reader.onload = function(e) {
+                            let img = $("<img>").attr("src", e.target.result)
+                                .addClass("img-thumbnail")
+                                .css({
+                                    width: "100px",
+                                    height: "100px",
+                                    objectFit: "cover",
+                                    marginRight: "5px"
+                                });
+
+                            previewContainer.append(img);
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+            }
+        });
 
 
             $('#team_id,#reported_by').select2({
@@ -991,7 +1249,6 @@
                         required: true,
                         minlength: 10,
                         maxlength: 2000,
-                        pattern: /^[a-zA-Z0-9\s\-_'"()\n\r,.”.;]+$/
                     }
                 },
                 messages: {
@@ -1008,7 +1265,6 @@
                         required: "Please provide a remark.",
                         minlength: "Minimum 10 characters required.",
                         maxlength: "Maximum 2000 characters allowed.",
-                        pattern: "Only alphanumeric characters and - _ ' \",”.; ( ) are allowed.",
                     }
                 },
                 errorElement: 'span',
@@ -1048,7 +1304,6 @@
                         required: true,
                         minlength: 10,
                         maxlength: 2000,
-                        pattern: /^[a-zA-Z0-9\s\-_'"()\n\r,.”.;]+$/
                     }
                 },
                 messages: {
@@ -1063,7 +1318,6 @@
                         required: "Please provide a remark.",
                         minlength: "Minimum 10 characters required.",
                         maxlength: "Maximum 2000 characters allowed.",
-                        pattern: "Only alphanumeric characters and - _ ' \",”.; ( ) are allowed.",
                     }
                 },
                 errorElement: 'span',
@@ -1098,7 +1352,6 @@
                         required: true,
                         minlength: 10,
                         maxlength: 2000,
-                        pattern: /^[a-zA-Z0-9\s\-_'"()\n\r,.”.;]+$/,
                     }
                 },
                 messages: {
@@ -1107,7 +1360,6 @@
                         required: "Please provide Action Taken.",
                         minlength: "Minimum 10 characters required.",
                         maxlength: "Maximum 2000 characters allowed.",
-                        pattern: "Only alphanumeric characters and - _ ' \",”.; ( ) are allowed.",
                     }
                 },
                 errorElement: 'span',
@@ -1142,7 +1394,6 @@
                         required: true,
                         minlength: 10,
                         maxlength: 2000,
-                        pattern: /^[a-zA-Z0-9\s\-_'"()\n\r,.”.;]+$/
                     }
                 },
                 messages: {
@@ -1151,7 +1402,6 @@
                         required: "Please provide remark.",
                         minlength: "Minimum 10 characters required.",
                         maxlength: "Maximum 2000 characters allowed.",
-                        pattern: "Only alphanumeric characters and - _ ' \",”.; ( ) are allowed.",
                     }
                 },
                 errorElement: 'span',

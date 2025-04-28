@@ -86,8 +86,7 @@ class AppServiceProvider extends ServiceProvider
         defined('ROLE_SAFETY_OFFICER') or define('ROLE_SAFETY_OFFICER', 23);
         defined('ROLE_MEDICAL_ASSISTANT') or define('ROLE_MEDICAL_ASSISTANT', 24);
         defined('ROLE_NURSING_OFFICER') or define('ROLE_NURSING_OFFICER', 25);
-
-
+        defined('ROLE_CLEANER') or define('ROLE_CLEANER', 26);
 
         defined('NEW_TRAINING_SCHEDULE') or define('NEW_TRAINING_SCHEDULE', 1);
         defined('VP_APPROVE') or define('VP_APPROVE', 2);
@@ -97,9 +96,6 @@ class AppServiceProvider extends ServiceProvider
         defined('TRAINING_START') or define('TRAINING_START', 6);
         defined('TRAINING_FEEDBACK_ADMIN_APPROVE') or define('TRAINING_FEEDBACK_ADMIN_APPROVE', 7);
         defined('TRAINING_COMPLETED') or define('TRAINING_COMPLETED', 8);
-
-
-
 
         defined('STATUS_HOD_APPROVAL_PENDING') or define('STATUS_HOD_APPROVAL_PENDING', 1);
         defined('STATUS_HOD_APPROVED') or define('STATUS_HOD_APPROVED', 2);
@@ -307,11 +303,11 @@ class AppServiceProvider extends ServiceProvider
 
 
         // Gemba Walk
-        defined('GEMBA_WALK_INSPECTION_WAITING_FOR_CAPA_ACTION') or define('GEMBA_WALK_INSPECTION_WAITING_FOR_CAPA_ACTION', 1);
+        defined('GEMBA_WALK_INSPECTION_START') or define('GEMBA_WALK_INSPECTION_START', 1);
         defined('GEMBA_WALK_INSPECTION_WAITING_FOR_FLOOR_MANAGER_VERIFICATION') or define('GEMBA_WALK_INSPECTION_WAITING_FOR_FLOOR_MANAGER_VERIFICATION', 2);
         defined('GEMBA_WALK_INSPECTION_WAITING_FOR_EHS_OFFICER_VERIFICATION') or define('GEMBA_WALK_INSPECTION_WAITING_FOR_EHS_OFFICER_VERIFICATION', 3);
-        defined('GEMBA_WALK_INSPECTION_CLOSED') or define('GEMBA_WALK_INSPECTION_CLOSED', 4);
-        defined('GEMBA_WALK_INSPECTION_REJECTED') or define('GEMBA_WALK_INSPECTION_REJECTED', 5);
+        defined('GEMBA_WALK_INSPECTION_REJECTED') or define('GEMBA_WALK_INSPECTION_REJECTED', 4);
+        defined('GEMBA_WALK_INSPECTION_CLOSED') or define('GEMBA_WALK_INSPECTION_CLOSED', 5);
 
 
         defined('GEMBA_WALK_INSPECTION_EHS_FILE_TYPE_1') or define('GEMBA_WALK_INSPECTION_EHS_FILE_TYPE_1', 1);
@@ -320,7 +316,6 @@ class AppServiceProvider extends ServiceProvider
         defined('GEMBA_WALK_INSPECTION_PASS_L2') or define('GEMBA_WALK_INSPECTION_PASS_L2', 2);
         defined('GEMBA_WALK_INSPECTION_FAIL') or define('GEMBA_WALK_INSPECTION_FAIL', 3);
         defined('GEMBA_WALK_INSPECTION_PASS') or define('GEMBA_WALK_INSPECTION_PASS', 4);
-        defined('GEMBA_WALK_INSPECTION_START') or define('GEMBA_WALK_INSPECTION_START', 0);
 
 
         defined('GEMBA_WALK') or define('GEMBA_WALK', 16);

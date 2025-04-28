@@ -87,7 +87,7 @@ class LuxMonitoring extends Model
     {
         $data = $this->select('inspection_environment_lux_monitoring.*', 'masters_location.location_name', 'masters_unit.unit_name', 'inspection_environment_table.environment_no','masters_department.department_name')
             ->leftJoin('masters_location', 'inspection_environment_lux_monitoring.location_id', '=', 'masters_location.id')->leftJoin('inspection_environment_table', 'inspection_environment_lux_monitoring.environment_id', '=', 'inspection_environment_table.id')->leftJoin('masters_department', 'inspection_environment_lux_monitoring.department_id', '=', 'masters_department.id')
-            ->leftJoin('masters_unit', 'inspection_environment_lux_monitoring.unit_id', '=', 'masters_unit.id')->where('inspection_environment_lux_monitoring.environment_id', $envId)->where('inspection_environment_lux_monitoring.status', 1)
+            ->leftJoin('masters_unit', 'inspection_environment_lux_monitoring.unit_id', '=', 'masters_unit.id')->where('inspection_environment_lux_monitoring.environment_id', $envId)
             ->get();
         return $data;
     }

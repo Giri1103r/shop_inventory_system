@@ -230,7 +230,7 @@ class MSDSController extends Controller
             $i = 1;
 
             foreach ($allData as $data) {
-                
+
                 $logoPath = public_path('assets/images/logo-dark.png');
                 if (file_exists($logoPath)) {
                     $drawing = new Drawing();
@@ -341,7 +341,7 @@ class MSDSController extends Controller
                 $sheet->getColumnDimension($col)->setAutoSize(true);
             }
 
-            $fileName = 'MSDS_Multi_Report.xlsx';
+            $fileName = 'MSDS.xlsx';
             $writer = new Xlsx($spreadsheet);
 
             return response()->streamDownload(function () use ($writer) {

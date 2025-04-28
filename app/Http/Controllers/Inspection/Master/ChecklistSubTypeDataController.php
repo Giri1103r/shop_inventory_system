@@ -13,6 +13,8 @@ use App\Models\Inspection\Master\ChecklistType;
 use App\Models\Inspection\Master\ChecklistSubType;
 use App\Models\Inspection\Master\ChecklistSubTypeData;
 use App\Models\Inspection\Master\ChecklistSubTypeDataName;
+use Illuminate\Support\Facades\Response;
+use Spatie\SimpleExcel\SimpleExcelWriter;
 
 class ChecklistSubTypeDataController extends Controller
 {
@@ -49,7 +51,7 @@ class ChecklistSubTypeDataController extends Controller
                             // }
                             return $text;
                         })
-                        ->addColumn('created_date', function ($row) {
+                        ->addColumn('created_at', function ($row) {
                             return Displaydateformat($row->created_at);
                         })
                         ->addColumn('created_by', function ($row) {
@@ -136,18 +138,21 @@ class ChecklistSubTypeDataController extends Controller
             $checklist_type_id = decryptId($request->checklist_type_id);
             $checklist_sub_type_id = decryptId($request->checklist_sub_type_id);
             $id = $request->id;
+
             if ($id == '') {
-                $record = $this->checklist_subtype_dataName->uniqueCheck($subcategory_name,$checklist_sub_type_id,$checklist_type_id);
+                $record = $this->checklist_subtype_dataName->uniqueCheck($subcategory_name, $checklist_sub_type_id, $checklist_type_id);
             } else {
                 $id = decryptId($id);
-                $record = $this->checklist_subtype_dataName->ExistuniqueCheck($subcategory_name,$checklist_sub_type_id,$checklist_type_id, $id);
+                $record = $this->checklist_subtype_dataName->existUniqueCheck($subcategory_name, $checklist_sub_type_id, $checklist_type_id, $id);
             }
-            if ($record->count()) {
+
+            if (count($record) > 0) {
                 return Response::json(false);
             }
             return Response::json(true);
         }
     }
+
     public function View($id)
     {
         try {
@@ -212,7 +217,7 @@ class ChecklistSubTypeDataController extends Controller
             Session::flash('success', 'Checklist Category updated successfully!');
             return redirect(admin_url('inspection/master/checklist-sub-type-data/list'));
         } catch (Exception $ex) {
-            dd($ex);
+             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('inspection/master/checklist-sub-type-data/list'));
         }
@@ -244,7 +249,7 @@ class ChecklistSubTypeDataController extends Controller
 
             $this->checklist_subtype_data->statuschange($id);
 
-            return response()->json(['status' => 'success', 'msg' => 'status changed'], 200);
+            return response()->json(['status' => 'success', 'msg' => 'Checklist Sub Type Data Status Changed Successfully!'], 200);
         } catch (Exception $ex) {
             report($ex);
             return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
@@ -336,11 +341,11 @@ class ChecklistSubTypeDataController extends Controller
             $filename = "Checklist Sub Type Data Details.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            dd($ex);
+             report($ex);
         }
     }
 
-   
+
     public function DownloadSample()
     {
 

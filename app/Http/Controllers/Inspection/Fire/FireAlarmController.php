@@ -329,13 +329,13 @@ class FireAlarmController extends Controller
             ];
             $this->statusLog->create($insert_array);
             Session::flash('success', 'Your data added successfully');
-            if ($inspection->observation_needed == 1) {
+            if ($inspection->observation == 1) {
                 return redirect(admin_url('fire/checklist-observation/add/' . encryptId($inspection_type) . '/' . encryptId($id)));
             } else {
                 return redirect(admin_url('fire/fire-alarm-inspection/list'));
             }
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('fire/fire-alarm-inspection/list'));
@@ -394,7 +394,7 @@ class FireAlarmController extends Controller
             );
             return view('inspection.fire.fire_alarm.approve', $data);
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('fire/fire-alarm-inspection/list'));
@@ -465,7 +465,7 @@ class FireAlarmController extends Controller
             Session::flash('success', __('common.updated_msg'));
             return redirect(admin_url('fire/fire-alarm-inspection/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             report($ex);
             Session::flash('error', 'Something Went Wrong!');
             return redirect(admin_url('fire/fire-alarm-inspection/list'));
@@ -1043,7 +1043,7 @@ class FireAlarmController extends Controller
             $filename = "Fire Alarm Inspection.pdf";
             $mpdf->Output($filename, 'I');
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('fire/fire-alarm-inspection/list'));

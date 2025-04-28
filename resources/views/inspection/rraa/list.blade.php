@@ -25,7 +25,7 @@
                                 <div class="row">
                                     <div class="col-md-4 mb-3 form-input">
                                         <label class="form-label require">Category</label>
-                                        <select name="category" class="form-control single-select" style="width: 100%">
+                                        <select name="category" class="form-control single-select" id="category" style="width: 100%">
                                             <option value="">Select Category</option>
                                             @foreach ($category as $item)
                                                 <option value="{{ encryptId($item->id) }}">
@@ -54,7 +54,7 @@
                                         <input type="text" name="scope" id="scope"
                                             class="form-control" placeholder="Scope">
                                     </div>
-                                    <div class="col-md-3 mt-3">
+                                    <div class="col-md-4  gap-2 mt-3">
                                         <x-button-search></x-button-search>
                                         <x-button-reset></x-button-reset>
                                     </div>

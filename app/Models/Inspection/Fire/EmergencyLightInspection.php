@@ -143,7 +143,7 @@ class EmergencyLightInspection extends Model
             'location' => decryptId($request->location_id),
             'shift' => decryptId($request->shift_id),
             'next_due' => $request->next_due,
-            'observation' => $request->observation,
+            'observation' => decryptId($request->observation_needed),
             'unit' => decryptId($request->unit_id),
             'frequency' => decryptId($request->frequency_id),
             'inspection_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,
@@ -161,23 +161,7 @@ class EmergencyLightInspection extends Model
         $query =
 
         $this->select(
-            'inspection_fire_emergency_light_inspection.*',
-            'inspection_shift_option.*',
-            'masters_unit.*',
-            'masters_location.*',
-            'inspection_fire_emergency_light_inspection_details.*',
-            'inspection_frequency_option.*',
-            'inspection_fire_files.*',
-            'inspection_fire_emergency_light_inspection.id as inspection_id'
-        )
-        ->join('inspection_fire_emergency_light_inspection_details', 'inspection_fire_emergency_light_inspection_details.inspection_id', '=', 'inspection_fire_emergency_light_inspection.id')
-        ->join('inspection_fire_files', 'inspection_fire_files.inspection_id', '=', 'inspection_fire_emergency_light_inspection.id')
-        ->leftJoin('masters_location', 'inspection_fire_emergency_light_inspection.location', '=', 'masters_location.id')
-        ->leftJoin('inspection_shift_option', 'inspection_fire_emergency_light_inspection.shift', '=', 'inspection_shift_option.id')
-        ->leftJoin('masters_unit', 'inspection_fire_emergency_light_inspection.unit', '=', 'masters_unit.id')
-        ->leftJoin('inspection_frequency_option', 'inspection_fire_emergency_light_inspection.frequency', '=', 'inspection_frequency_option.id')
-        ->where('inspection_fire_emergency_light_inspection.trash', 'NO')
-        ->orderBy('inspection_fire_emergency_light_inspection.id', 'desc');
+            'inspection_fire_emergency_light_inspection.*');
 
 
         if (isset($request->search) && isset($request->search['value']) && $request->search['value'] != '') {

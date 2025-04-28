@@ -38,6 +38,7 @@ use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
+use PhpOffice\PhpSpreadsheet\RichText\RichText;
 
 class EmergencyLightInspectionController extends Controller
 {
@@ -160,9 +161,9 @@ class EmergencyLightInspectionController extends Controller
                             $btn .= '<a href="' . admin_url('fire/emergency-light-inspection/exportViewPdf/' . encryptId($row->inspection_id)) . '" style="margin-right: 5px;" title="PDF">
                         <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
                     </a>';
-                //             $btn .= '<a href="' . admin_url('fire/emergency-light-inspection/exportViewExcel/' . encryptId($row->inspection_id)) . '" style="margin-right: 5px;" title="PDF">
-                //    <i class="fas fa-file-excel" style="color: #1D6F42;" aria-hidden="true"></i>
-                // </a>';
+                            $btn .= '<a href="' . admin_url('fire/emergency-light-inspection/exportViewExcel/' . encryptId($row->inspection_id)) . '" style="margin-right: 5px;" title="PDF">
+                               <i class="fas fa-file-excel" style="color: #1D6F42;" aria-hidden="true"></i>
+                            </a>';
                             return $btn;
                         })
                         ->rawColumns(['action', 'created_date', 'created_by', 'status', 'inspection_status', 'issue_date'])
@@ -216,7 +217,7 @@ class EmergencyLightInspectionController extends Controller
 
             return view('inspection.fire.emergency_light_inspection.add', $data);
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('fire/emergency-light-inspection/list'));
         }
@@ -299,11 +300,18 @@ class EmergencyLightInspectionController extends Controller
                 'to_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,
                 'created_by' => Auth::id(),
             ];
+
             $this->statusLog->create($insert_array);
-            Session::flash('flash', 'Your data added successfully');
+
+            if ($inspection->observation == 1) {
+                return redirect(admin_url('fire/checklist-observation/add/' . encryptId($inspection_type) . '/' . encryptId($id)));
+            } else {
+                return redirect(admin_url('fire/emergency-light-inspection/list'));
+            }
+            Session::flash('success', 'Your data added successfully');
             return redirect(admin_url('fire/emergency-light-inspection/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('fire/emergency-light-inspection/list'));
         }
@@ -330,7 +338,7 @@ class EmergencyLightInspectionController extends Controller
             );
             return view('inspection.fire.emergency_light_inspection.view', $data);
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('fire/emergency-light-inspection/list'));
         }
@@ -357,7 +365,7 @@ class EmergencyLightInspectionController extends Controller
             );
             return view('inspection.fire.emergency_light_inspection.approve', $data);
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('fire/emergency-light-inspection/list'));
         }
@@ -427,7 +435,7 @@ class EmergencyLightInspectionController extends Controller
             Session::flash('success', __('common.updated_msg'));
             return redirect(admin_url('fire/emergency-light-inspection/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             report($ex);
             Session::flash('error', 'Something Went Wrong!');
             return redirect(admin_url('fire/emergency-light-inspection/list'));
@@ -636,7 +644,7 @@ class EmergencyLightInspectionController extends Controller
             Session::flash('success', __('common.updated_msg'));
             return redirect(admin_url('fire/emergency-light-inspection/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something Went wrong!');
             return redirect(admin_url('fire/emergency-light-inspection/list'));
         }
@@ -714,7 +722,7 @@ class EmergencyLightInspectionController extends Controller
 
 
 
-    public function ExportExcel(Request $request)
+    public function generalExcel(Request $request)
     {
         try {
             $id = decryptId($request->id);
@@ -725,231 +733,258 @@ class EmergencyLightInspectionController extends Controller
             $emergency_light_details = $this->emergency_light_details->selectOne($id);
             $document_no = $this->document_reference->selectUsingName('EmergencyLightInspection');
             $inspection_image = $this->files->GetFile($inspection_type, $id);
-            $logoPath = public_path('assets/images/logo-dark.png');
-            if (file_exists($logoPath)) {
-                $drawing = new Drawing();
-                $drawing->setName('Logo');
-                $drawing->setDescription('Company Logo');
-                $drawing->setPath($logoPath);
-                $drawing->setCoordinates('A1');
-                $drawing->setOffsetX(5);
-                $drawing->setOffsetY(5);
-                $drawing->setWidth(60);
-                $drawing->setHeight(60);
-                $drawing->setWorksheet($sheet);
+            for ($i = 1; $i <= 200; $i++) {
+                $sheet->getRowDimension($i)->setRowHeight(25);
             }
 
-            // Title
-            $sheet->mergeCells("C1:J3");
-            $sheet->setCellValue("C1", "EMERGENCY LIGHT INSPECTION CHECKLIST\nPN INTERNATIONAL PVT. LTD.");
-            $sheet->getStyle("C1")->applyFromArray([
+            $row = 1;
+            $currentRow = $row;
+            $logoPath = public_path('assets/images/logo-dark.png');
+            $logoLeftPath = public_path('assets/images/logo-dark.png');
+            if (file_exists($logoLeftPath)) {
+                $sheet->mergeCells("A$currentRow:F" . ($currentRow + 2));
+
+                $drawing = new Drawing();
+                $drawing->setName('Left Logo');
+                $drawing->setPath($logoLeftPath);
+                $drawing->setCoordinates("B$currentRow");
+                $drawing->setOffsetX(100);
+                $drawing->setOffsetY(15);
+                $drawing->setWidth(70);
+                $drawing->setHeight(70);
+                $drawing->setWorksheet($sheet);
+
+                $range = "A$currentRow:F" . ($currentRow + 2);
+                $sheet->getStyle($range)->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                ]);
+            }
+            $sheet->mergeCells("G{$currentRow}:M" . ($currentRow + 2));
+            $sheet->setCellValue("G{$currentRow}", "EMERGENCY LIGHT INSPECTION CHECKLIST PN INTERNATIONAL PVT LTD");
+            $sheet->getStyle("G{$currentRow}")->applyFromArray([
                 'font' => ['bold' => true, 'size' => 14],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
-                'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['rgb' => 'FF0000']]
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
             ]);
 
-            // Document metadata
-            $sheet->mergeCells("K1:L1")->setCellValue("K1", "Doc. No.");
-            $sheet->mergeCells("K2:L2")->setCellValue("K2", "Issue Dt.");
-            $sheet->mergeCells("K3:L3")->setCellValue("K3", "Rev. & Dt.");
+            $sheet->mergeCells("N$currentRow:P$currentRow")->setCellValue("N$currentRow", 'Doc. No.');
+            $sheet->mergeCells("N" . ($currentRow + 1) . ":P" . ($currentRow + 1))->setCellValue("N" . ($currentRow + 1), 'Issue Dt.');
+            $sheet->mergeCells("N" . ($currentRow + 2) . ":P" . ($currentRow + 2))->setCellValue("N" . ($currentRow + 2), 'Rev. & Dt.');
 
-            $sheet->setCellValue("M1", $document_no->doc_no);
-            $sheet->setCellValue("M2", $document_no->issue_date);
-            $sheet->setCellValue("M3", $document_no->rev_dt);
+            $sheet->mergeCells("Q$currentRow:U$currentRow")->setCellValue("Q$currentRow", $document_no->doc_no);
+            $sheet->mergeCells("Q" . ($currentRow + 1) . ":U" . ($currentRow + 1))->setCellValue("Q" . ($currentRow + 1), Displaydateformat($document_no->issue_date));
+            $sheet->mergeCells("Q" . ($currentRow + 2) . ":U" . ($currentRow + 2))->setCellValue("Q" . ($currentRow + 2), $document_no->rev_dt);
 
-            $sheet->getStyle("C1:M3")->applyFromArray([
-                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['argb' => '000000']]],
-                'alignment' => ['horizontal' => Alignment::HORIZONTAL_LEFT, 'vertical' => Alignment::VERTICAL_CENTER],
+            $sheet->getStyle("N$currentRow:U" . ($currentRow + 2))->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                'font' => ['bold' => true],
             ]);
 
-            $sheet->getColumnDimension('K')->setWidth(15);
-            $sheet->getColumnDimension('M')->setWidth(20);
+            $sheet->mergeCells("A" . ($currentRow + 3) . ":G" . ($currentRow + 3));
+            $richText1 = new RichText();
+            $richText1->createTextRun(' DATE OF INSPECTION:- ')->getFont()->setBold(true);
+            $richText1->createText(Displaydateformat($data->date_of_inspection));
+            $sheet->getCell("A" . ($currentRow + 3))->setValue($richText1);
 
-            // Inspection info row
+            $sheet->mergeCells("H" . ($currentRow + 3) . ":N" . ($currentRow + 3));
+            $richText2 = new RichText();
+            $richText2->createTextRun('LOCATION :-  ')->getFont()->setBold(true);
+            $richText2->createText(getLocationname($data->location));
+            $sheet->getCell("H" . ($currentRow + 3))->setValue($richText2);
 
-            $date_of_inspection = Displaydateformat($data->date_of_inspection);
-            $location = getLocationname($data->location);
-            $shift = getShift($data->shift);
+            $sheet->mergeCells("O" . ($currentRow + 3) . ":U" . ($currentRow + 3));
+            $richText2 = new RichText();
+            $richText2->createTextRun('SHIFT :-  ')->getFont()->setBold(true);
+            $richText2->createText(getShift($data->shift));
+            $sheet->getCell("O" . ($currentRow + 3))->setValue($richText2);
+
+            $sheet->getStyle("A" . ($currentRow + 3) . ":U" . ($currentRow + 3))->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+            ]);
+
+            $sheet->mergeCells("A" . ($currentRow + 4) . ":G" . ($currentRow + 4));
+            $richText1 = new RichText();
+            $richText1->createTextRun(' NEXT DUE ON :- ')->getFont()->setBold(true);
+            $richText1->createText(Displaydateformat($data->next_due));
+            $sheet->getCell("A" . ($currentRow + 4))->setValue($richText1);
+
+            $sheet->mergeCells("H" . ($currentRow + 4) . ":N" . ($currentRow + 4));
+            $richText2 = new RichText();
+            $richText2->createTextRun('UNIT :-  ')->getFont()->setBold(true);
+            $richText2->createText(getUnitname($data->unit));
+            $sheet->getCell("H" . ($currentRow + 4))->setValue($richText2);
+
+            $sheet->mergeCells("O" . ($currentRow + 4) . ":U" . ($currentRow + 4));
+            $richText2 = new RichText();
+            $richText2->createTextRun('FREQUENCY :  ')->getFont()->setBold(true);
+            $richText2->createText(getFrequencyname($data->frequency));
+            $sheet->getCell("O" . ($currentRow + 4))->setValue($richText2);
+
+            $sheet->getStyle("A" . ($currentRow + 4) . ":U" . ($currentRow + 4))->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+            ]);
+
+            $headerRow = $currentRow + 5;
+            $secondRow = $headerRow + 1;
+            $thirdRow = $headerRow + 2;
+
+            // First-level vertical headers
+            $sheet->mergeCells("A$headerRow:A$thirdRow")->setCellValue("A$headerRow", "SERIAL NO");
+            $sheet->mergeCells("B$headerRow:B$thirdRow")->setCellValue("B$headerRow", "DEPARTMENT");
+            $sheet->mergeCells("C$headerRow:C$thirdRow")->setCellValue("C$headerRow", "LOCATION");
+            $sheet->mergeCells("D$headerRow:D$thirdRow")->setCellValue("D$headerRow", "EMERGENCY LIGHT NUMBER");
+
+            // First-level group header
+            $sheet->mergeCells("E$headerRow:R$headerRow")->setCellValue("E$headerRow", "CHECK ITEMS");
+
+            // Second-level group headers
+            $sheet->mergeCells("E$secondRow:J$secondRow")->setCellValue("E$secondRow", "DESCRIPTION");
+            $sheet->mergeCells("K$secondRow:R$secondRow")->setCellValue("K$secondRow", "CONDITION OF LIGHT");
+
+            // Third-level leaf headers (each spanning 2 columns horizontally)
+            $sheet->mergeCells("E$thirdRow:F$thirdRow")->setCellValue("E$thirdRow", "TYPE");
+            $sheet->mergeCells("G$thirdRow:H$thirdRow")->setCellValue("G$thirdRow", "CAPACITY (VOLTS)");
+            $sheet->mergeCells("I$thirdRow:J$thirdRow")->setCellValue("I$thirdRow", "QUANTITY");
+            $sheet->mergeCells("K$thirdRow:L$thirdRow")->setCellValue("K$thirdRow", "LIGHT CONDITION");
+            $sheet->mergeCells("M$thirdRow:N$thirdRow")->setCellValue("M$thirdRow", "SWITCH CONDITION");
+            $sheet->mergeCells("O$thirdRow:P$thirdRow")->setCellValue("O$thirdRow", "POWER SUPPLY");
+
+            // Final vertical column
+            $sheet->mergeCells("Q$headerRow:R$thirdRow")->setCellValue("Q$thirdRow", "STATUS");
+            $sheet->mergeCells("S$headerRow:U$thirdRow")->setCellValue("S$headerRow", "REMARKS");
 
 
-            $sheet->mergeCells("A4:C4")->setCellValue("A4", "DATE OF INSPECTION :-");
-            $sheet->setCellValue("D4", $date_of_inspection);
-
-            $sheet->mergeCells("F4:H4")->setCellValue("F4", "LOCATION :-");
-            $sheet->setCellValue("I4", $location);
-
-            $sheet->mergeCells("K4:L4")->setCellValue("K4", "SHIFT :-");
-            $sheet->setCellValue("M4", $shift);
-
-            $sheet->getStyle("A4:M4")->applyFromArray([
-                'borders' => [
-                    'top' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['argb' => '000000']],
-                    'bottom' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['argb' => '000000']],
-                ],
+            $sheet->getStyle("A$headerRow:U$thirdRow")->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                 'alignment' => [
-                    'horizontal' => Alignment::HORIZONTAL_LEFT,
+                    'horizontal' => Alignment::HORIZONTAL_CENTER,
+                    'vertical' => Alignment::VERTICAL_CENTER,
+                    'wrapText' => true
+                ],
+                'font' => ['bold' => true],
+            ]);
+
+
+            // Apply border and alignment styling
+            $sheet->getStyle("A$headerRow:S" . ($headerRow + 2))->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_CENTER,
                     'vertical' => Alignment::VERTICAL_CENTER,
                 ],
+                'font' => ['bold' => true],
             ]);
 
-            $nextDue = Displaydateformat($data->next_due);
-            $unitName = getUnitname($data->unit);
-            $frequency = getFrequency($data->frequency);
-
-            // Now set them to the cells
-            // NEXT DUE
-            $sheet->mergeCells("A5:C5")->setCellValue("A5", "NEXT DUE ON :-");
-            $sheet->mergeCells("D5:D5")->setCellValue("D5", $nextDue);
-
-            // UNIT
-            $sheet->mergeCells("E5:F5")->setCellValue("E5", "UNIT :-");
-            $sheet->mergeCells("G5:I5")->setCellValue("G5", $unitName);
-
-            // FREQUENCY
-            $sheet->mergeCells("J5:K5")->setCellValue("J5", "FREQUENCY :-");
-            $sheet->mergeCells("L5:M5")->setCellValue("L5", $frequency);
-            $sheet->getStyle("A5:M5")->applyFromArray([
-                'borders' => [
-                    'top' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['argb' => '000000']],
-                    'bottom' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['argb' => '000000']],
-                ],
-                'alignment' => [
-                    'horizontal' => Alignment::HORIZONTAL_LEFT,
-                    'vertical' => Alignment::VERTICAL_CENTER,
-                ],
-            ]);
-
-            // Table headers
-            $sheet->mergeCells("A6:A8")->setCellValue("A6", "SERIAL NO");
-
-            $sheet->mergeCells("B6:B8")->setCellValue("B6", "DEPARTMENT");
-            $sheet->mergeCells("C6:C8")->setCellValue("C6", "LOCATION");
-            $sheet->mergeCells("D6:D8")->setCellValue("D6", "EMERGENCY LIGHT NUMBER");
-
-            $sheet->mergeCells("E6:K6")->setCellValue("E6", "CHECK ITEMS");
-            $sheet->mergeCells("E7:G7")->setCellValue("E7", "DESCRIPTION");
-            $sheet->mergeCells("H7:K7")->setCellValue("H7", "CONDITION OF LIGHT");
-
-            $sheet->setCellValue("E8", "TYPE");
-            $sheet->setCellValue("F8", "CAPACITY (VOLTS)");
-            $sheet->setCellValue("G8", "QUANTITY");
-            $sheet->setCellValue("H8", "LIGHT CONDITION");
-            $sheet->setCellValue("I8", "SWITCH CONDITION");
-            $sheet->setCellValue("J8", "POWER SUPPLY");
-            $sheet->setCellValue("K8", "STATUS");
-
-            $sheet->mergeCells("L6:M8")->setCellValue("L6", "REMARKS");
-
-            $row = 9;
+            $dataStartRow = $thirdRow + 1;
 
             foreach ($emergency_light_details as $index => $detail) {
+                $row = $dataStartRow + $index;
+
                 $sheet->setCellValue("A$row", $detail->sr_no ?? '');
                 $sheet->setCellValue("B$row", getDepartment($detail->department) ?? '');
                 $sheet->setCellValue("C$row", $detail->location ?? '');
                 $sheet->setCellValue("D$row", $detail->emergency_of_light ?? '');
 
-                // Description
-                $sheet->setCellValue("E$row", GetTypeofLight($detail->type_of_light) ?? '');
-                $sheet->setCellValue("F$row", $detail->capacity ?? '');
-                $sheet->setCellValue("G$row", $detail->quantity ?? '');
+                // Merge cells for consistency with header and set value in the first column
+                $sheet->mergeCells("E$row:F$row")->setCellValue("E$row", GetTypeofLight($detail->type_of_light) ?? '');
+                $sheet->mergeCells("G$row:H$row")->setCellValue("G$row", $detail->capacity ?? '');
+                $sheet->mergeCells("I$row:J$row")->setCellValue("I$row", $detail->quantity ?? '');
+                $sheet->mergeCells("K$row:L$row")->setCellValue("K$row", getLightCondition($detail->light_condition ?? ''));
+                $sheet->mergeCells("M$row:N$row")->setCellValue("M$row", getLightCondition($detail->switch_condition));
+                $sheet->mergeCells("O$row:P$row")->setCellValue("O$row", GetPowerSuply($detail->power_supply) ?? '');
+                $sheet->mergeCells("Q$row:R$row")->setCellValue("Q$row", getFireLightInspectionStatus($detail->fire_status) ?? '');
+                $sheet->mergeCells("S$row:U$row")->setCellValue("S$row", $detail->remarks ?? '');
 
-                // Condition of light
-                $sheet->setCellValue("H$row", $detail->light_condition ?? '');
-                switch ($detail->light_condition) {
-                    case 1:
-                        $lightConditionText = 'Good';
-                        break;
-                    case 2:
-                        $lightConditionText = 'Fair';
-                        break;
-                    case 3:
-                        $lightConditionText = 'Poor';
-                        break;
-                    default:
-                        $lightConditionText = '';
-                }
-
-                $sheet->setCellValue("H$row", $lightConditionText);
-                switch ($detail->switch_condition) {
-                    case 1:
-                        $switchConditionText = 'Good';
-                        break;
-                    case 2:
-                        $switchConditionText = 'Fair';
-                        break;
-                    case 3:
-                        $switchConditionText = 'Poor';
-                        break;
-                    default:
-                        $switchConditionText = '';
-                }
-
-                $sheet->setCellValue("I$row", $switchConditionText);
-                $sheet->setCellValue("J$row", GetPowerSuply($detail->power_supply) ?? '');
-                $sheet->setCellValue("K$row", getFireLightInspectionStatus($detail->fire_status) ?? '');
-
-                $sheet->setCellValue("L$row", $detail->remarks ?? '');
-
-                // Optionally merge L and M columns if needed
-                $sheet->mergeCells("L$row:M$row");
-
-                // Optional: Apply border or alignment styling to each row
-                $sheet->getStyle("A$row:M$row")->applyFromArray([
+                // Apply alignment and borders if needed
+                $sheet->getStyle("A$row:U$row")->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                     'alignment' => [
-                        'horizontal' =>Alignment::HORIZONTAL_LEFT,
-                        'vertical' =>Alignment::VERTICAL_CENTER,
-                    ],
-                    'borders' => [
-                        'top' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['argb' => '000000']],
-                        'bottom' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['argb' => '000000']],
-                    ],
+                        'horizontal' => Alignment::HORIZONTAL_CENTER,
+                        'vertical' => Alignment::VERTICAL_CENTER,
+                        'wrapText' => true,
+                    ]
                 ]);
-
-                $row++;
+                $dataStartRow++;
             }
+            $row = $dataStartRow;
 
+            $CreatorSignature = GetSignature($data->created_by, $id, EMERGENCY_LIGHT_INSPECTION);
+            $VerifiedSignature = GetSignature($data->verified_by, $id, EMERGENCY_LIGHT_INSPECTION);
+            $ApprovedSignature = GetSignature($data->approved_by, $id, EMERGENCY_LIGHT_INSPECTION);
 
-            foreach (["A6:D8", "E6:K6", "E7:K7", "E8:K8", "L6:M8"] as $range) {
-                $sheet->getStyle($range)->applyFromArray([
-                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['argb' => '000000']]],
-                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_LEFT, 'vertical' => Alignment::VERTICAL_CENTER],
-                ]);
-            }
+            if (file_exists($CreatorSignature)) {
+                $sheet->mergeCells("A$row:H" . ($row + 2));
 
-
-
-            $sheet->setCellValue("A$row", "Observation");
-
-
-            $sheet->mergeCells("A{$row}:M{$row}");
-
-
-            $sheet->getStyle("A{$row}:M{$row}")->applyFromArray([
-                'font' => [
-                    'bold' => true,
-                ],
-                'alignment' => [
-                    'horizontal' => Alignment::HORIZONTAL_CENTER,
-                    'vertical'   => Alignment::VERTICAL_CENTER,
-                ],
-            ]);
-
-            $sheet->setCellValue("A11$row", $data->observation);
-            $sheet->mergeCells("A12{$row}:J12{$row}");
-
-            if (file_exists($inspection_image)) {
                 $drawing = new Drawing();
-                $drawing->setName('Logo');
-                $drawing->setDescription('Company Logo');
-                $drawing->setPath($inspection_image);
-                $drawing->setCoordinates('K12');
-                $drawing->setOffsetX(5);
+                $drawing->setName('Creator Signature');
+                $drawing->setPath($CreatorSignature);
+                $drawing->setCoordinates("A$row");
+                $drawing->setOffsetX(100);
                 $drawing->setOffsetY(5);
-                $drawing->setWidth(60);
-                $drawing->setHeight(60);
+                $drawing->setWidth(70);
+                $drawing->setHeight(70);
                 $drawing->setWorksheet($sheet);
+                $sheet->getRowDimension($row + 2)->setRowHeight(40);
+                // Label + Name
+                $sheet->setCellValue("A" . ($row + 3), "Checked By: " . getUserName($data->created_by));
+                $sheet->mergeCells("A" . ($row + 3) . ":H" . ($row + 3));
+
+                $sheet->getStyle("A$row:H" . ($row + 3))->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                ]);
             }
-            $fileName = 'emergency_light_inspection_' . date('Ymd_His') . '.xlsx';
+
+            if (file_exists($VerifiedSignature)) {
+                $sheet->mergeCells("I$row:N" . ($row + 2));
+
+                $drawing = new Drawing();
+                $drawing->setName('Verified Signature');
+                $drawing->setPath($VerifiedSignature);
+                $drawing->setCoordinates("K$row");
+                $drawing->setOffsetX(100);
+                $drawing->setOffsetY(5);
+                $drawing->setWidth(70);
+                $drawing->setHeight(70);
+                $drawing->setWorksheet($sheet);
+                $sheet->getRowDimension($row + 2)->setRowHeight(40);
+                // Label + Name
+                $sheet->setCellValue("I" . ($row + 3), "Verified By: " . getUserName($data->verified_by));
+                $sheet->mergeCells("I" . ($row + 3) . ":N" . ($row + 3));
+
+                $sheet->getStyle("I$row:N" . ($row + 3))->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                ]);
+            }
+
+            if (file_exists($ApprovedSignature)) {
+                $sheet->mergeCells("O$row:U" . ($row + 2));
+
+                $drawing = new Drawing();
+                $drawing->setName('Approved Signature');
+                $drawing->setPath($ApprovedSignature);
+                $drawing->setCoordinates("O$row");
+                $drawing->setOffsetX(100);
+                $drawing->setOffsetY(5);
+                $drawing->setWidth(70);
+                $drawing->setHeight(70);
+                $drawing->setWorksheet($sheet);
+                $sheet->getRowDimension($row + 2)->setRowHeight(60);
+                // Label + Name
+                $sheet->setCellValue("O" . ($row + 3), "Approved By: " . getUserName($data->approved_by));
+                $sheet->mergeCells("O" . ($row + 3) . ":U" . ($row + 3));
+
+                $sheet->getStyle("O$row:U" . ($row + 3))->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                ]);
+            }
+            $fileName = 'emergency_light_inspection.xlsx';
             $writer = new Xlsx($spreadsheet);
 
             return response()->streamDownload(function () use ($writer) {
@@ -973,25 +1008,18 @@ class EmergencyLightInspectionController extends Controller
 
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
+            } elseif (count($allData) > 20) {
+                return redirect()->back()->with('error',   __('inspection.excess_error'));
+            }
+            foreach ($allData as $details) {
+                $document_no = $this->document_reference->SelectOne($details->document_reference_id);
             }
 
 
-            $document_no = $this->document_reference->selectUsingName('EmergencyLightInspection');
-            $header = [
-                __("common.sno"),
-                'Document Number',
-                'Issue Date',
-                'Revision Date',
-                __("inspection.inspection_status"),
-                __("common.created_by"),
-                __("common.created_date"),
-            ];
-
             $data = array(
-                'header' => $header,
+
                 'content' => $allData,
                 'document_no' => $document_no,
-
                 'pagetitle' => "Emergency Light Inspection",
             );
 
@@ -1015,11 +1043,303 @@ class EmergencyLightInspectionController extends Controller
             $filename = "Emergency Light Inspection.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('fire/emergency-light-inspection/list'));
         }
     }
+
+    public function ExportExcel(Request $request)
+    {
+        try {
+
+            $allData = $this->emergency_light->exportdata();
+
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            } elseif (count($allData) > 20) {
+                return redirect()->back()->with('error',   __('inspection.excess_error'));
+            }
+            $spreadsheet = new Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
+            for ($i = 1; $i <= 200; $i++) {
+                $sheet->getRowDimension($i)->setRowHeight(25);
+            }
+
+            $row = 1;
+            $currentRow = $row;
+            foreach ($allData as $details) {
+                $currentRow = $row;
+                $document_no = $this->document_reference->SelectOne($details->document_reference_id);
+                $data = $this->emergency_light->selectOne($details->id);
+                $inspection_type =  EMERGENCY_LIGHT_INSPECTION;
+                $emergency_light_details = $this->emergency_light_details->selectOne($details->id);
+
+                $inspection_image = $this->files->GetFile($inspection_type, $details->id);
+
+                $logoPath = public_path('assets/images/logo-dark.png');
+                $logoLeftPath = public_path('assets/images/logo-dark.png');
+                if (file_exists($logoLeftPath)) {
+                    $sheet->mergeCells("A$currentRow:F" . ($currentRow + 2));
+
+                    $drawing = new Drawing();
+                    $drawing->setName('Left Logo');
+                    $drawing->setPath($logoLeftPath);
+                    $drawing->setCoordinates("B$currentRow");
+                    $drawing->setOffsetX(100);
+                    $drawing->setOffsetY(15);
+                    $drawing->setWidth(70);
+                    $drawing->setHeight(70);
+                    $drawing->setWorksheet($sheet);
+
+                    $range = "A$currentRow:F" . ($currentRow + 2);
+                    $sheet->getStyle($range)->applyFromArray([
+                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                    ]);
+                }
+                $sheet->mergeCells("G{$currentRow}:M" . ($currentRow + 2));
+                $sheet->setCellValue("G{$currentRow}", "EMERGENCY LIGHT INSPECTION CHECKLIST PN INTERNATIONAL PVT LTD");
+                $sheet->getStyle("G{$currentRow}")->applyFromArray([
+                    'font' => ['bold' => true, 'size' => 14],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                ]);
+
+                $sheet->mergeCells("N$currentRow:P$currentRow")->setCellValue("N$currentRow", 'Doc. No.');
+                $sheet->mergeCells("N" . ($currentRow + 1) . ":P" . ($currentRow + 1))->setCellValue("N" . ($currentRow + 1), 'Issue Dt.');
+                $sheet->mergeCells("N" . ($currentRow + 2) . ":P" . ($currentRow + 2))->setCellValue("N" . ($currentRow + 2), 'Rev. & Dt.');
+
+                $sheet->mergeCells("Q$currentRow:U$currentRow")->setCellValue("Q$currentRow", $document_no->doc_no);
+                $sheet->mergeCells("Q" . ($currentRow + 1) . ":U" . ($currentRow + 1))->setCellValue("Q" . ($currentRow + 1), Displaydateformat($document_no->issue_date));
+                $sheet->mergeCells("Q" . ($currentRow + 2) . ":U" . ($currentRow + 2))->setCellValue("Q" . ($currentRow + 2), $document_no->rev_dt);
+
+                $sheet->getStyle("N$currentRow:U" . ($currentRow + 2))->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                    'font' => ['bold' => true],
+                ]);
+
+                $sheet->mergeCells("A" . ($currentRow + 3) . ":G" . ($currentRow + 3));
+                $richText1 = new RichText();
+                $richText1->createTextRun(' DATE OF INSPECTION:- ')->getFont()->setBold(true);
+                $richText1->createText(Displaydateformat($data->date_of_inspection));
+                $sheet->getCell("A" . ($currentRow + 3))->setValue($richText1);
+
+                $sheet->mergeCells("H" . ($currentRow + 3) . ":N" . ($currentRow + 3));
+                $richText2 = new RichText();
+                $richText2->createTextRun('LOCATION :-  ')->getFont()->setBold(true);
+                $richText2->createText(getLocationname($data->location));
+                $sheet->getCell("H" . ($currentRow + 3))->setValue($richText2);
+
+                $sheet->mergeCells("O" . ($currentRow + 3) . ":U" . ($currentRow + 3));
+                $richText2 = new RichText();
+                $richText2->createTextRun('SHIFT :-  ')->getFont()->setBold(true);
+                $richText2->createText(getShift($data->shift));
+                $sheet->getCell("O" . ($currentRow + 3))->setValue($richText2);
+
+                $sheet->getStyle("A" . ($currentRow + 3) . ":U" . ($currentRow + 3))->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                ]);
+
+                $sheet->mergeCells("A" . ($currentRow + 4) . ":G" . ($currentRow + 4));
+                $richText1 = new RichText();
+                $richText1->createTextRun(' NEXT DUE ON :- ')->getFont()->setBold(true);
+                $richText1->createText(Displaydateformat($data->next_due));
+                $sheet->getCell("A" . ($currentRow + 4))->setValue($richText1);
+
+                $sheet->mergeCells("H" . ($currentRow + 4) . ":N" . ($currentRow + 4));
+                $richText2 = new RichText();
+                $richText2->createTextRun('UNIT :-  ')->getFont()->setBold(true);
+                $richText2->createText(getUnitname($data->unit));
+                $sheet->getCell("H" . ($currentRow + 4))->setValue($richText2);
+
+                $sheet->mergeCells("O" . ($currentRow + 4) . ":U" . ($currentRow + 4));
+                $richText2 = new RichText();
+                $richText2->createTextRun('FREQUENCY :  ')->getFont()->setBold(true);
+                $richText2->createText(getFrequencyname($data->frequency));
+                $sheet->getCell("O" . ($currentRow + 4))->setValue($richText2);
+
+                $sheet->getStyle("A" . ($currentRow + 4) . ":U" . ($currentRow + 4))->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                ]);
+
+                $headerRow = $currentRow + 5;
+                $secondRow = $headerRow + 1;
+                $thirdRow = $headerRow + 2;
+
+                // First-level vertical headers
+                $sheet->mergeCells("A$headerRow:A$thirdRow")->setCellValue("A$headerRow", "SERIAL NO");
+                $sheet->mergeCells("B$headerRow:B$thirdRow")->setCellValue("B$headerRow", "DEPARTMENT");
+                $sheet->mergeCells("C$headerRow:C$thirdRow")->setCellValue("C$headerRow", "LOCATION");
+                $sheet->mergeCells("D$headerRow:D$thirdRow")->setCellValue("D$headerRow", "EMERGENCY LIGHT NUMBER");
+
+                // First-level group header
+                $sheet->mergeCells("E$headerRow:R$headerRow")->setCellValue("E$headerRow", "CHECK ITEMS");
+
+                // Second-level group headers
+                $sheet->mergeCells("E$secondRow:J$secondRow")->setCellValue("E$secondRow", "DESCRIPTION");
+                $sheet->mergeCells("K$secondRow:R$secondRow")->setCellValue("K$secondRow", "CONDITION OF LIGHT");
+
+                // Third-level leaf headers (each spanning 2 columns horizontally)
+                $sheet->mergeCells("E$thirdRow:F$thirdRow")->setCellValue("E$thirdRow", "TYPE");
+                $sheet->mergeCells("G$thirdRow:H$thirdRow")->setCellValue("G$thirdRow", "CAPACITY (VOLTS)");
+                $sheet->mergeCells("I$thirdRow:J$thirdRow")->setCellValue("I$thirdRow", "QUANTITY");
+                $sheet->mergeCells("K$thirdRow:L$thirdRow")->setCellValue("K$thirdRow", "LIGHT CONDITION");
+                $sheet->mergeCells("M$thirdRow:N$thirdRow")->setCellValue("M$thirdRow", "SWITCH CONDITION");
+                $sheet->mergeCells("O$thirdRow:P$thirdRow")->setCellValue("O$thirdRow", "POWER SUPPLY");
+
+                // Final vertical column
+                $sheet->mergeCells("Q$headerRow:R$thirdRow")->setCellValue("Q$thirdRow", "STATUS");
+                $sheet->mergeCells("S$headerRow:U$thirdRow")->setCellValue("S$headerRow", "REMARKS");
+
+
+                $sheet->getStyle("A$headerRow:U$thirdRow")->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => [
+                        'horizontal' => Alignment::HORIZONTAL_CENTER,
+                        'vertical' => Alignment::VERTICAL_CENTER,
+                        'wrapText' => true
+                    ],
+                    'font' => ['bold' => true],
+                ]);
+
+
+                // Apply border and alignment styling
+                $sheet->getStyle("A$headerRow:S" . ($headerRow + 2))->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => [
+                        'horizontal' => Alignment::HORIZONTAL_CENTER,
+                        'vertical' => Alignment::VERTICAL_CENTER,
+                    ],
+                    'font' => ['bold' => true],
+                ]);
+
+                $dataStartRow = $thirdRow + 1;
+
+                foreach ($emergency_light_details as $index => $detail) {
+                    $row = $dataStartRow + $index;
+
+                    $sheet->setCellValue("A$row", $detail->sr_no ?? '');
+                    $sheet->setCellValue("B$row", getDepartment($detail->department) ?? '');
+                    $sheet->setCellValue("C$row", $detail->location ?? '');
+                    $sheet->setCellValue("D$row", $detail->emergency_of_light ?? '');
+
+                    // Merge cells for consistency with header and set value in the first column
+                    $sheet->mergeCells("E$row:F$row")->setCellValue("E$row", GetTypeofLight($detail->type_of_light) ?? '');
+                    $sheet->mergeCells("G$row:H$row")->setCellValue("G$row", $detail->capacity ?? '');
+                    $sheet->mergeCells("I$row:J$row")->setCellValue("I$row", $detail->quantity ?? '');
+                    $sheet->mergeCells("K$row:L$row")->setCellValue("K$row", getLightCondition($detail->light_condition ?? ''));
+                    $sheet->mergeCells("M$row:N$row")->setCellValue("M$row", getLightCondition($detail->switch_condition));
+                    $sheet->mergeCells("O$row:P$row")->setCellValue("O$row", GetPowerSuply($detail->power_supply) ?? '');
+                    $sheet->mergeCells("Q$row:R$row")->setCellValue("Q$row", getFireLightInspectionStatus($detail->fire_status) ?? '');
+                    $sheet->mergeCells("S$row:U$row")->setCellValue("S$row", $detail->remarks ?? '');
+
+                    // Apply alignment and borders if needed
+                    $sheet->getStyle("A$row:U$row")->applyFromArray([
+                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                        'alignment' => [
+                            'horizontal' => Alignment::HORIZONTAL_CENTER,
+                            'vertical' => Alignment::VERTICAL_CENTER,
+                            'wrapText' => true,
+                        ]
+                    ]);
+                    $dataStartRow++;
+                }
+                $row = $dataStartRow;
+
+                $CreatorSignature = GetSignature($data->created_by, $details->id, EMERGENCY_LIGHT_INSPECTION);
+                $VerifiedSignature = GetSignature($data->verified_by,  $details->id, EMERGENCY_LIGHT_INSPECTION);
+                $ApprovedSignature = GetSignature($data->approved_by,  $details->id, EMERGENCY_LIGHT_INSPECTION);
+
+                if (file_exists($CreatorSignature)) {
+                    $sheet->mergeCells("A$row:H" . ($row + 2));
+
+                    $drawing = new Drawing();
+                    $drawing->setName('Creator Signature');
+                    $drawing->setPath($CreatorSignature);
+                    $drawing->setCoordinates("A$row");
+                    $drawing->setOffsetX(100);
+                    $drawing->setOffsetY(5);
+                    $drawing->setWidth(70);
+                    $drawing->setHeight(70);
+                    $drawing->setWorksheet($sheet);
+                    $sheet->getRowDimension($row + 2)->setRowHeight(40);
+                    // Label + Name
+                    $sheet->setCellValue("A" . ($row + 3), "Checked By: " . getUserName($data->created_by));
+                    $sheet->mergeCells("A" . ($row + 3) . ":H" . ($row + 3));
+
+                    $sheet->getStyle("A$row:H" . ($row + 3))->applyFromArray([
+                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                    ]);
+                }
+
+                if (file_exists($VerifiedSignature)) {
+                    $sheet->mergeCells("I$row:N" . ($row + 2));
+
+                    $drawing = new Drawing();
+                    $drawing->setName('Verified Signature');
+                    $drawing->setPath($VerifiedSignature);
+                    $drawing->setCoordinates("K$row");
+                    $drawing->setOffsetX(100);
+                    $drawing->setOffsetY(5);
+                    $drawing->setWidth(70);
+                    $drawing->setHeight(70);
+                    $drawing->setWorksheet($sheet);
+                    $sheet->getRowDimension($row + 2)->setRowHeight(40);
+                    // Label + Name
+                    $sheet->setCellValue("I" . ($row + 3), "Verified By: " . getUserName($data->verified_by));
+                    $sheet->mergeCells("I" . ($row + 3) . ":N" . ($row + 3));
+
+                    $sheet->getStyle("I$row:N" . ($row + 3))->applyFromArray([
+                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                    ]);
+                }
+
+                if (file_exists($ApprovedSignature)) {
+                    $sheet->mergeCells("O$row:U" . ($row + 2));
+
+                    $drawing = new Drawing();
+                    $drawing->setName('Approved Signature');
+                    $drawing->setPath($ApprovedSignature);
+                    $drawing->setCoordinates("O$row");
+                    $drawing->setOffsetX(100);
+                    $drawing->setOffsetY(5);
+                    $drawing->setWidth(70);
+                    $drawing->setHeight(70);
+                    $drawing->setWorksheet($sheet);
+                    $sheet->getRowDimension($row + 2)->setRowHeight(60);
+                    // Label + Name
+                    $sheet->setCellValue("O" . ($row + 3), "Approved By: " . getUserName($data->approved_by));
+                    $sheet->mergeCells("O" . ($row + 3) . ":U" . ($row + 3));
+
+                    $sheet->getStyle("O$row:U" . ($row + 3))->applyFromArray([
+                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                    ]);
+                }
+                $row = $row + 5;
+            }
+
+            $fileName = 'emergency_light_inspection.xlsx';
+            $writer = new Xlsx($spreadsheet);
+
+            return response()->streamDownload(function () use ($writer) {
+                $writer->save('php://output');
+            }, $fileName, [
+                'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            ]);
+        } catch (Exception $ex) {
+            report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('fire/emergency-light-inspection/list'));
+        }
+    }
+
 
     public function ExportViewPDF(Request $request)
     {
@@ -1060,7 +1380,7 @@ class EmergencyLightInspectionController extends Controller
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('fire/emergency-light-inspection/list'));
         }

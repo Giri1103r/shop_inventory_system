@@ -23,6 +23,15 @@ use App\Models\Inspection\InspectionStaticDocno;
 use App\Models\Master\Unit;
 use App\Models\Inspection\Fire\FireSignatureUpload;
 
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Border;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
+use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
+use PhpOffice\PhpSpreadsheet\RichText\RichText;
+
 class FirePreNocController extends Controller
 {
 
@@ -89,6 +98,9 @@ class FirePreNocController extends Controller
                             $btn .= '<a href="' . admin_url('fire/pre-noc/checklist/generalpdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
                             <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
                         </a>';
+                            $btn .= '<a href="' . admin_url('fire/pre-noc/checklist/generalExcel/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="Excel">
+                        <i class="fas fa-file-excel" style="color: #1D6F42;" aria-hidden="true"></i>
+                     </a>';
                             return $btn;
                         })
                         ->rawColumns(['action', 'created_date', 'created_by', 'status'])
@@ -132,7 +144,7 @@ class FirePreNocController extends Controller
             );
             return view('inspection.fire.firePreNoc.add', $data);
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             report($ex);
         }
     }
@@ -193,41 +205,176 @@ class FirePreNocController extends Controller
     {
         try {
 
-            $allData =   $this->checklist_subtype->exportdata();
-            $header = [
-                __("common.sno"),
-                __("Checklist Sub-Type ID"),
-                __("Checklist Type Name"),
-                __("Checklist Sub-Type Name"),
-                __("common.status"),
-                __("common.created_by"),
-                __("common.created_date"),
-            ];
-
-            $i = 1;
-            foreach ($allData as $data) {
-
-                $export = [];
-                $export[] =  $i;
-                $export[] = $data->subcategory_id;
-                $export[] =  $data->category_name;
-                $export[] =  $data->subcategory_name;
-                $export[] =  $data->status == 1 ? 'Active' : 'In-Active';
-                $export[] =  getusername($data->created_by);
-                $export[] =  Displaydateformat($data->created_at);
-
-                $exportData[] = $export;
-
-                $i++;
+            $allData =   $this->fireNoc->exportdata();
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            } elseif (count($allData) > 20) {
+                return redirect()->back()->with('error',   __('inspection.excess_error'));
             }
+            $spreadsheet = new Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
+            for ($i = 1; $i <= 200; $i++) {
+                $sheet->getRowDimension($i)->setRowHeight(25);
+            }
+            $row = 1;
+            $currentRow = $row;
+            foreach ($allData as $details) {
+                $currentRow = $row;
+                $document_no =   $this->static_docno->selectOne($details->document_reference_id);
+                $checklist_details = getCheckListQuestion(FIRE_PRE_NOC_CHECKLIST);
+                $logoLeftPath = public_path('assets/images/logo-dark.png');
+                if (file_exists($logoLeftPath)) {
+                    $sheet->mergeCells("A$currentRow:F" . ($currentRow + 2));
 
-            $writer = SimpleExcelWriter::streamDownload('Checklist Sub Type Category.xlsx')
-                ->addHeader($header)
-                ->addRows(
-                    $exportData
-                );
+                    $drawing = new Drawing();
+                    $drawing->setName('Left Logo');
+                    $drawing->setPath($logoLeftPath);
+                    $drawing->setCoordinates("B$currentRow");
+                    $drawing->setOffsetX(100);
+                    $drawing->setOffsetY(15);
+                    $drawing->setWidth(70);
+                    $drawing->setHeight(70);
+                    $drawing->setWorksheet($sheet);
+
+                    $range = "A$currentRow:F" . ($currentRow + 2);
+                    $sheet->getStyle($range)->applyFromArray([
+                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                    ]);
+                }
+
+                // Title Section
+                $sheet->mergeCells("G{$currentRow}:M" . ($currentRow + 2));
+                $sheet->setCellValue("G{$currentRow}", "अग्नि अनापत्ति प्रमाण पत्र जांच-सूची(Fire Pre-Noc Checklist) PN INTERNATIONAL PVT LTD");
+                $sheet->getStyle("G{$currentRow}")->applyFromArray([
+                    'font' => ['bold' => true, 'size' => 14],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                ]);
+
+
+                // document number
+
+
+                $sheet->mergeCells("N$currentRow:P$currentRow")->setCellValue("N$currentRow", 'Doc. No.');
+                $sheet->mergeCells("N" . ($currentRow + 1) . ":P" . ($currentRow + 1))->setCellValue("N" . ($currentRow + 1), 'Issue Dt.');
+                $sheet->mergeCells("N" . ($currentRow + 2) . ":P" . ($currentRow + 2))->setCellValue("N" . ($currentRow + 2), 'Rev. & Dt.');
+
+                $sheet->mergeCells("Q$currentRow:S$currentRow")->setCellValue("Q$currentRow", $document_no->doc_no);
+                $sheet->mergeCells("Q" . ($currentRow + 1) . ":S" . ($currentRow + 1))->setCellValue("Q" . ($currentRow + 1), Displaydateformat($document_no->issue_date));
+                $sheet->mergeCells("Q" . ($currentRow + 2) . ":S" . ($currentRow + 2))->setCellValue("Q" . ($currentRow + 2), $document_no->rev_dt);
+
+                $sheet->getStyle("N$currentRow:S" . ($currentRow + 2))->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                    'font' => ['bold' => true],
+                ]);
+
+                // Review Dates
+                $sheet->mergeCells("A" . ($currentRow + 3) . ":S" . ($currentRow + 3));
+                $richText1 = new RichText();
+                $richText1->createTextRun('ब्लाक आधारित विवरण (Block based statement):- ')->getFont()->setBold(true);
+                $richText1->createText(($details->block_based_statement));
+                $sheet->getCell("A" . ($currentRow + 3))->setValue($richText1);
+
+                $sheet->mergeCells("A" . ($currentRow + 4) . ":S" . ($currentRow + 4));
+                $richText2 = new RichText();
+                $richText2->createTextRun('ब्लाक(Block) :- :-  ')->getFont()->setBold(true);
+                $richText2->createText(($details->block));
+                $sheet->getCell("A" . ($currentRow + 4))->setValue($richText2);
+
+
+
+                $sheet->getStyle("A" . ($currentRow + 3) . ":S" . ($currentRow + 3))->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                ]);
+                $sheet->getStyle("A" . ($currentRow + 4) . ":S" . ($currentRow + 4))->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                ]);
+
+
+
+
+                $headerRow = $currentRow + 5;
+
+                $sheet->mergeCells("A{$headerRow}:C{$headerRow}")->setCellValue("A{$headerRow}", "क्रमांक (Serial Number)");
+                $sheet->mergeCells("D{$headerRow}:J{$headerRow}")->setCellValue("D{$headerRow}", "जाँच बिंदु (Check Point)");
+                $sheet->mergeCells("K{$headerRow}:S{$headerRow}")->setCellValue("K{$headerRow}", "विवरण (Detail)");
+                $sheet->getStyle("A$headerRow:S$headerRow")->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                    'font' => ['bold' => true],
+                ]);
+
+                $inspectionRow = $headerRow + 1;
+                $srNo = 1;
+                $displayedSections = [];
+
+                $user_response = json_decode($details->checklist, true);
+
+                foreach ($user_response as $checklistId => $data) {
+                    $sectionName = GetSubChecklistTypeName($data['sub_type_id']);
+
+                    // Section header (merged row across all 18 columns)
+                    if (!in_array($sectionName, $displayedSections)) {
+                        $sheet->mergeCells("A{$inspectionRow}:S{$inspectionRow}")
+                            ->setCellValue("A{$inspectionRow}", $sectionName);
+                        $sheet->getStyle("A{$inspectionRow}")->applyFromArray([
+                            'font' => ['bold' => true],
+                            'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
+                            'fill' => [
+                                'fillType' => Fill::FILL_SOLID,
+                                'startColor' => ['argb' => 'FFF5F5F5']
+                            ],
+                            'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]]
+                        ]);
+                        $inspectionRow++;
+                        $displayedSections[] = $sectionName;
+                    }
+
+                    // Data Row
+                    $sheet->mergeCells("A{$inspectionRow}:C{$inspectionRow}")->setCellValue("A{$inspectionRow}", $srNo);
+                    $sheet->mergeCells("D{$inspectionRow}:J{$inspectionRow}")->setCellValue("D{$inspectionRow}", GetChecklistTypeDate($checklistId));
+                    $sheet->mergeCells("K{$inspectionRow}:S{$inspectionRow}")->setCellValue("K{$inspectionRow}", $data['remarks'] ?? '-');
+
+                    // Style borders
+                    $sheet->getStyle("A{$inspectionRow}:R{$inspectionRow}")->applyFromArray([
+                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                        'alignment' => ['vertical' => Alignment::VERTICAL_CENTER],
+                    ]);
+
+                    $srNo++;
+                    $sheet->getStyle("A$inspectionRow:S$inspectionRow")->applyFromArray([
+                        'alignment' => [
+                            'horizontal' => Alignment::HORIZONTAL_CENTER,
+                            'vertical' => Alignment::VERTICAL_CENTER,
+                        ],
+                        'borders' => [
+                            'allBorders' => [
+                                'borderStyle' => Border::BORDER_THIN,
+                            ],
+                        ],
+                    ]);
+
+                    $inspectionRow++;
+                }
+
+                $row =  $inspectionRow + 2;
+            }
+            $fileName = 'Fire Pre-Noc Checklist.xlsx';
+            $writer = new Xlsx($spreadsheet);
+
+            return response()->streamDownload(function () use ($writer) {
+                $writer->save('php://output');
+            }, $fileName, [
+                'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            ]);
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error', 'Something went wrong!');
+            return redirect(admin_url('fire/pre-noc/checklist/list'));
         }
     }
 
@@ -237,28 +384,38 @@ class FirePreNocController extends Controller
 
             ini_set("pcre.backtrack_limit", "5000000");
 
-            $allData =   $this->checklist_subtype->exportdata();
-            $header = [
-                __("common.sno"),
-                __("Checklist Sub-Type ID"),
-                __("Checklist Type Name"),
-                __("Checklist Sub-Type Name"),
-                __("common.status"),
-                __("common.created_by"),
-                __("common.created_date"),
-            ];
+            $allData =   $this->fireNoc->exportdata();
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            } elseif (count($allData) > 20) {
+                return redirect()->back()->with('error',   __('inspection.excess_error'));
+            }
+            foreach ($allData as $details) {
+                $document_no = $this->static_docno->SelectOne($details->document_reference_id);
+            }
             $data = array(
-                'header' => $header,
+
                 'content' => $allData,
-                'pagetitle' => "Checklist Sub Type Category",
+                'document_no' => $document_no,
+                'pagetitle' => "Fire Pre Noc Checklist",
             );
 
             $property = [
                 'tempDir' => 'public/pdf/temp/',
-                'mode' => 'c',
+                // 'mode' => 'c',
                 'margin_left' => 10,
                 'margin_right' => 10,
                 'margin_top' => 10,
+                'fontDir' => array_merge((new \Mpdf\Config\ConfigVariables())->getDefaults()['fontDir'], [
+                    public_path('assets/fonts/Noto_Sans_Devanagari'),
+                ]),
+                'fontdata' => array_merge((new \Mpdf\Config\FontVariables())->getDefaults()['fontdata'], [
+                    'NotoSansDevanagari' => [
+                        'R' => 'NotoSansDevanagari-Regular.ttf',
+                        'B' => 'NotoSansDevanagari-Bold.ttf',
+                    ],
+                ]),
+                'default_font' => 'NotoSansDevanagari',
 
             ];
 
@@ -272,93 +429,18 @@ class FirePreNocController extends Controller
 
             $mpdf->WriteHTML($html);
 
-            $filename = "Checklist Sub Type Category.pdf";
+            $filename = "Fire Pre Noc Checklist.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 
             report($ex);
+            Session::flash('error', 'Something went wrong!');
+            return redirect(admin_url('fire/pre-noc/checklist/list'));
         }
     }
 
-    public function import(Request $request)
-    {
-        $data = array();
 
-        return view('master.checklist_subtype.import', $data);
-    }
 
-    public function downloadSample()
-    {
-
-        $filedetails =  exportsamplefile('checklist_type');
-        $filePath = $filedetails->sample_file;
-        $customFileName = $filedetails->file_name;
-
-        return redirect(url($filePath));
-    }
-
-    public function importSubmit(Request $request)
-    {
-        try {
-            $file = $request->file('checklist_type_file_upload');
-            $rules = [
-                'checklist_type_file_upload' => 'required',
-            ];
-            $messages = [
-                'checklist_type_file_upload.required' => 'Please upload a file',
-            ];
-            $validator = Validator::make($request->all(), $rules, $messages);
-            if ($validator->fails()) {
-                return redirect()->back()->withErrors($validator)->withInput();
-            }
-            if ($file != null) {
-
-                $uploadpath = 'uploads/checklist_type';
-
-                $filenewname = time() . Str::random('16') . '.' . $file->getClientOriginalExtension();
-
-                $fileName = $file->getClientOriginalName();
-                $fileSize = $file->getSize();
-
-                $fileExt = $file->getClientOriginalExtension();
-
-                uploadFile($file, $uploadpath, $filenewname);
-
-                $path = $uploadpath . "/" . $filenewname;
-                $user_id = Auth::id();
-
-                $insert_data = array(
-                    'upload_type' => checklist_type_UPLOAD,
-                    'upload_status' => 0,
-                    'file_name' => $filenewname,
-                    'file_orgname' => $fileName,
-                    'file_path' => $path,
-                    'file_size' => $fileSize,
-                    'file_extension' => $fileExt,
-                    'created_by' => $user_id,
-                );
-
-                $insert_id =  $this->upload_log->create($insert_data)->id;
-
-                $details = [
-                    "user_id" => $user_id,
-                    "log_id" => $insert_id,
-                    "path" => $path,
-                ];
-
-                dispatch(new ImportChecklistCategoryJob($details));
-            }
-            $insert_data['log_id'] = $insert_id;
-            $insert_data['Uploded_by'] = Auth::user()->toArray();
-
-            Session::flash('success', 'Permit Checklist Category Upload Successfull');
-            return redirect(admin_url('inspection/checklist-type/list'));
-        } catch (Exception $ex) {
-            report($ex);
-            Session::flash('error', 'Permit Checklist Category failed!');
-            return redirect(admin_url('inspection/checklist-type/list'));
-        }
-    }
     public function generalpdf($id)
     {
         try {
@@ -368,11 +450,13 @@ class FirePreNocController extends Controller
             if (Auth::check()) {
 
                 $fireNoc =   $this->fireNoc->selectOne($id);
+                $document_no =   $this->static_docno->selectOne($fireNoc->document_reference_id);
                 $checklist_details = getCheckListQuestion(FIRE_PRE_NOC_CHECKLIST);
             }
             $data = [
                 'fireNoc' => $fireNoc,
-                'pagetitle' => "Daily Fire Pump House Inspection",
+                'document_no' => $document_no,
+                'pagetitle' => "Fire Pre-Noc Checklist",
             ];
 
             $property = [
@@ -400,11 +484,183 @@ class FirePreNocController extends Controller
             $html = view('inspection.fire.firePreNoc.viewpdf', $data)->render();
             $mpdf->WriteHTML($html);
 
-            $filename = "Daily Fire Pump House Inspection.pdf";
+            $filename = "Fire Pre-Noc Checklist.pdf";
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            dd($ex);
-            return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
+            report($ex);
+            Session::flash('error', 'Something went wrong!');
+            return redirect(admin_url('fire/pre-noc/checklist/list'));
+        }
+    }
+
+    public function generalExcel(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+            $spreadsheet = new Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
+            $fireNoc =   $this->fireNoc->selectOne($id);
+            $document_no =   $this->static_docno->selectOne($fireNoc->document_reference_id);
+            $checklist_details = getCheckListQuestion(FIRE_PRE_NOC_CHECKLIST);
+
+            for ($i = 1; $i <= 200; $i++) {
+                $sheet->getRowDimension($i)->setRowHeight(25);
+            }
+
+            $row = 1;
+            $currentRow = $row;
+            $logoPath = public_path('assets/images/logo-dark.png');
+            $logoLeftPath = public_path('assets/images/logo-dark.png');
+            if (file_exists($logoLeftPath)) {
+                $sheet->mergeCells("A$currentRow:F" . ($currentRow + 2));
+
+                $drawing = new Drawing();
+                $drawing->setName('Left Logo');
+                $drawing->setPath($logoLeftPath);
+                $drawing->setCoordinates("B$currentRow");
+                $drawing->setOffsetX(100);
+                $drawing->setOffsetY(15);
+                $drawing->setWidth(70);
+                $drawing->setHeight(70);
+                $drawing->setWorksheet($sheet);
+
+                $range = "A$currentRow:F" . ($currentRow + 2);
+                $sheet->getStyle($range)->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                ]);
+            }
+
+            // Title Section
+            $sheet->mergeCells("G{$currentRow}:M" . ($currentRow + 2));
+            $sheet->setCellValue("G{$currentRow}", "अग्नि अनापत्ति प्रमाण पत्र जांच-सूची(Fire Pre-Noc Checklist) PN INTERNATIONAL PVT LTD");
+            $sheet->getStyle("G{$currentRow}")->applyFromArray([
+                'font' => ['bold' => true, 'size' => 14],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+            ]);
+
+
+            // document number
+
+
+            $sheet->mergeCells("N$currentRow:P$currentRow")->setCellValue("N$currentRow", 'Doc. No.');
+            $sheet->mergeCells("N" . ($currentRow + 1) . ":P" . ($currentRow + 1))->setCellValue("N" . ($currentRow + 1), 'Issue Dt.');
+            $sheet->mergeCells("N" . ($currentRow + 2) . ":P" . ($currentRow + 2))->setCellValue("N" . ($currentRow + 2), 'Rev. & Dt.');
+
+            $sheet->mergeCells("Q$currentRow:S$currentRow")->setCellValue("Q$currentRow", $document_no->doc_no);
+            $sheet->mergeCells("Q" . ($currentRow + 1) . ":S" . ($currentRow + 1))->setCellValue("Q" . ($currentRow + 1), Displaydateformat($document_no->issue_date));
+            $sheet->mergeCells("Q" . ($currentRow + 2) . ":S" . ($currentRow + 2))->setCellValue("Q" . ($currentRow + 2), $document_no->rev_dt);
+
+            $sheet->getStyle("N$currentRow:S" . ($currentRow + 2))->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                'font' => ['bold' => true],
+            ]);
+
+            // Review Dates
+            $sheet->mergeCells("A" . ($currentRow + 3) . ":S" . ($currentRow + 3));
+            $richText1 = new RichText();
+            $richText1->createTextRun('ब्लाक आधारित विवरण (Block based statement):- ')->getFont()->setBold(true);
+            $richText1->createText(($fireNoc->block_based_statement));
+            $sheet->getCell("A" . ($currentRow + 3))->setValue($richText1);
+
+            $sheet->mergeCells("A" . ($currentRow + 4) . ":S" . ($currentRow + 4));
+            $richText2 = new RichText();
+            $richText2->createTextRun('ब्लाक(Block) :-  ')->getFont()->setBold(true);
+            $richText2->createText(($fireNoc->block));
+            $sheet->getCell("A" . ($currentRow + 4))->setValue($richText2);
+
+
+
+            $sheet->getStyle("A" . ($currentRow + 3) . ":S" . ($currentRow + 3))->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+            ]);
+            $sheet->getStyle("A" . ($currentRow + 4) . ":S" . ($currentRow + 4))->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+            ]);
+
+
+
+
+            $headerRow = $currentRow + 5;
+
+            $sheet->mergeCells("A{$headerRow}:C{$headerRow}")->setCellValue("A{$headerRow}", "क्रमांक (Serial Number)");
+            $sheet->mergeCells("D{$headerRow}:J{$headerRow}")->setCellValue("D{$headerRow}", "जाँच बिंदु (Check Point)");
+            $sheet->mergeCells("K{$headerRow}:S{$headerRow}")->setCellValue("K{$headerRow}", "विवरण (Detail)");
+            $sheet->getStyle("A$headerRow:S$headerRow")->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                'font' => ['bold' => true],
+            ]);
+
+            $inspectionRow = $headerRow + 1;
+            $srNo = 1;
+            $displayedSections = [];
+
+            $user_response = json_decode($fireNoc->checklist, true);
+
+            foreach ($user_response as $checklistId => $data) {
+                $sectionName = GetSubChecklistTypeName($data['sub_type_id']);
+
+                // Section header (merged row across all 18 columns)
+                if (!in_array($sectionName, $displayedSections)) {
+                    $sheet->mergeCells("A{$inspectionRow}:S{$inspectionRow}")
+                        ->setCellValue("A{$inspectionRow}", $sectionName);
+                    $sheet->getStyle("A{$inspectionRow}")->applyFromArray([
+                        'font' => ['bold' => true],
+                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
+                        'fill' => [
+                            'fillType' => Fill::FILL_SOLID,
+                            'startColor' => ['argb' => 'FFF5F5F5']
+                        ],
+                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]]
+                    ]);
+                    $inspectionRow++;
+                    $displayedSections[] = $sectionName;
+                }
+
+                // Data Row
+                $sheet->mergeCells("A{$inspectionRow}:C{$inspectionRow}")->setCellValue("A{$inspectionRow}", $srNo);
+                $sheet->mergeCells("D{$inspectionRow}:J{$inspectionRow}")->setCellValue("D{$inspectionRow}", GetChecklistTypeDate($checklistId));
+                $sheet->mergeCells("K{$inspectionRow}:S{$inspectionRow}")->setCellValue("K{$inspectionRow}", $data['remarks'] ?? '-');
+
+                // Style borders
+                $sheet->getStyle("A{$inspectionRow}:R{$inspectionRow}")->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['vertical' => Alignment::VERTICAL_CENTER],
+                ]);
+
+                $srNo++;
+                $sheet->getStyle("A$inspectionRow:S$inspectionRow")->applyFromArray([
+                    'alignment' => [
+                        'horizontal' => Alignment::HORIZONTAL_CENTER,
+                        'vertical' => Alignment::VERTICAL_CENTER,
+                    ],
+                    'borders' => [
+                        'allBorders' => [
+                            'borderStyle' => Border::BORDER_THIN,
+                        ],
+                    ],
+                ]);
+
+                $inspectionRow++;
+            }
+
+            $fileName = 'Fire Pre-Noc Checklist.xlsx';
+            $writer = new Xlsx($spreadsheet);
+
+            return response()->streamDownload(function () use ($writer) {
+                $writer->save('php://output');
+            }, $fileName, [
+                'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            ]);
+        } catch (Exception $ex) {
+            report($ex);
+            Session::flash('error',  __('common.message_error'));
+            return redirect(admin_url('fire/pre-noc/checklist/list'));
         }
     }
 }

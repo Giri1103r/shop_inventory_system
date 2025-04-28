@@ -57,6 +57,11 @@ class FireAlarmInspection extends Model
             ->leftJoin('inspection_frequency_option', 'inspection_fire_fire_alarm.frequency', '=', 'inspection_frequency_option.id');
 
 
+        if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_OFFICER) || CheckUserRole(ROLE_L1_MANAGER) || CheckUserRole(ROLE_L2_MANAGER)) {
+        } else if (CheckUserRole(ROLE_FIRE_ASSOCIATES)) {
+            $query->where('inspection_fire_fire_alarm.created_by', Auth::id());
+        }
+
         $org_total =  $query;
         $org_total_counts = $org_total->count();
 
@@ -149,7 +154,7 @@ class FireAlarmInspection extends Model
             'location' => decryptId($request->location_id),
             'shift' => decryptId($request->shift_id),
             'next_due' => DBdateformat($request->next_due),
-            // 'observation' => $request->observation,
+            'observation' => $request->observation,
             'unit' => decryptId($request->unit_id),
             'frequency' => decryptId($request->frequency_id),
             'inspection_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,

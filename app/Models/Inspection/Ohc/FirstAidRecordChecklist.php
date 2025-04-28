@@ -11,13 +11,13 @@ class FirstAidRecordChecklist extends Model
 {
     use  HasFactory;
 
-    protected $table = 'ohc_first_aid_record_checklist';
+    protected $table = 'inspection_ohc_first_aid_record_checklist';
 
     protected $primaryKey = 'id';
 
     protected $fillable = [
         'id',
-        'ohc_first_aid_record_details_id',
+        'inspection_ohc_first_aid_record_details_id',
         'serial_number',
         'department',
         'unit',
@@ -46,7 +46,7 @@ class FirstAidRecordChecklist extends Model
 
         foreach ($request->serial_number as $index => $serial_number) {
             $insert_array = array(
-                'ohc_first_aid_record_details_id' => $first_aid_detail_id,
+                'inspection_ohc_first_aid_record_details_id' => $first_aid_detail_id,
                 'serial_number' =>$serial_number,
                 'department' =>decryptId($request->department_id[$index]),
                 'unit' =>decryptId($request->unit_id[$index]),
@@ -78,16 +78,16 @@ class FirstAidRecordChecklist extends Model
                 'status' => 1,
             );
         }
-        return $this->where('ohc_first_aid_record_details_id', $id)->update($update_data);
+        return $this->where('inspection_ohc_first_aid_record_details_id', $id)->update($update_data);
     }
 
     public function selectOne($id)
     {
-        return $this->where('ohc_first_aid_record_details_id', $id)->get();
+        return $this->where('inspection_ohc_first_aid_record_details_id', $id)->get();
     }
 
     protected static function booted()
     {
-        static::addGlobalScope(new TrashScope('ohc_first_aid_record_checklist'));
+        static::addGlobalScope(new TrashScope('inspection_ohc_first_aid_record_checklist'));
     }
 }

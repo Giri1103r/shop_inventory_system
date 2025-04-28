@@ -149,7 +149,7 @@ class FirePumpHouseController extends Controller
             );
             return view('inspection.fire.firePumpHouse.add', $data);
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             report($ex);
         }
     }
@@ -528,7 +528,7 @@ class FirePumpHouseController extends Controller
             $filename = "Daily Fire Pump House Inspection.pdf";
             return $mpdf->Output($filename, 'i');
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
         }
     }

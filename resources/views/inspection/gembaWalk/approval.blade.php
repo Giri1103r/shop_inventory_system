@@ -91,9 +91,9 @@
                                             <div class="col-md-4 form-group form-input mb-2">
                                                 <label class="form-label"
                                                     style="display: block; ">{{ __('inspection.signature') }}</label>
-                                                    <img src="{{ admin_url($gembaWalk_approved_singnature) }}"
+                                                <img src="{{ admin_url($gembaWalk_approved_singnature) }}"
                                                     alt="Signature Upload" style="width: 100px; margin-top:-10px">
-                                               
+
                                             </div>
                                         </div>
 
@@ -209,8 +209,7 @@
 
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
-                                                <label
-                                                    class="form-label require">Observation</label>
+                                                <label class="form-label require">Observation</label>
                                                 <div class="view_data">
                                                     {{ $gembaWalk->observation_needed == '1' ? 'YES' : 'NO' }}
                                                 </div>
@@ -263,7 +262,7 @@
                                     <hr />
                                 @endforeach
 
-                                @if ($gembaWalk->gemba_walk_status == GEMBA_WALK_INSPECTION_WAITING_FOR_CAPA_ACTION)
+                                {{-- @if ($gembaWalk->gemba_walk_status == GEMBA_WALK_INSPECTION_WAITING_FOR_CAPA_ACTION)
                                     <div class="row mt-3">
                                         <div class="card-header-inner">
                                             <h4 class="text-white">{{ __('inspection.capa_action') }}</h4>
@@ -345,7 +344,7 @@
                                             </div>
                                         </div>
                                     </form>
-                                @endif
+                                @endif --}}
 
 
                                 @if (
@@ -388,7 +387,7 @@
 
 
 
-                                            <div class="col-md-4 mb-2">
+                                            {{-- <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label">Uploaded File</label>
                                                     <div class="view_data">
@@ -405,14 +404,14 @@
 
                                                     </div>
                                                 </div>
-                                            </div>
+                                            </div> --}}
 
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label">CAPA Action</label>
                                                     <div class="view_data">
                                                         @if (isset($gembaWalk_ehs_capa_details->capa))
-                                                            {{ $gembaWalk_ehs_capa_details->capa == 1 ? 'YES' : 'NO' }}
+                                                            {{ $gembaWalk_ehs_capa_details->capa == 1 ? 'NO' : 'YES' }}
                                                         @endif
                                                     </div>
                                                 </div>
@@ -454,7 +453,8 @@
                                                         <div class="form-group form-input">
                                                             <label class="form-label">Date</label>
                                                             <input type="text" name="capa_date" id="capa_date"
-                                                                class="form-control" placeholder="Select Date">
+                                                                value="{{ todaydate() }}" readonly class="form-control"
+                                                                placeholder="Select Date">
 
                                                         </div>
                                                     </div>
@@ -560,7 +560,7 @@
 
 
                                             <div class="row mt-3">
-                                                
+
                                                 <div class="card-header-inner">
                                                     <h4 class="text-white">Floor Manager Verification</h4>
                                                 </div>
@@ -644,6 +644,7 @@
                                                                 <div class="form-group form-input">
                                                                     <label class="form-label">Date</label>
                                                                     <input type="text" name="capa_date" id="capa_date"
+                                                                        value="{{ todaydate() }}" readonly
                                                                         class="form-control" placeholder="Select Date">
 
                                                                 </div>
@@ -656,7 +657,7 @@
                                                                 </div>
                                                             </div>
 
-                                   
+
 
                                                             <div class="col-md-4 form-group form-input mb-2">
                                                                 @if (isset(Auth::user()->signature_upload))
@@ -664,21 +665,26 @@
                                                                         style="display: block; ">{{ __('inspection.signature') }}</label>
                                                                     {{-- <img src="{{ admin_url('public/' . Auth::user()->signature_upload) }}"
                                                                         alt="Signature Upload" style="width: 150px; margin-top:-10px"> --}}
-                                                                        <img src="{{ admin_url(Auth::user()->signature_upload) }}"
-                                                                        alt="Signature Upload" style="width: 150px; margin-top:-10px">
+                                                                    <img src="{{ admin_url(Auth::user()->signature_upload) }}"
+                                                                        alt="Signature Upload"
+                                                                        style="width: 150px; margin-top:-10px">
                                                                 @else
                                                                     <div class="form-input col-md-12 mb-2">
                                                                         <label class="form-label require">Signature</label>
-                                                                        <input type="file" name="gemba_walk_verified_by" id="gemba_walk_verified_by"
-                                                                            class="form-control form-control-sm" accept="image/*"
+                                                                        <input type="file"
+                                                                            name="gemba_walk_verified_by"
+                                                                            id="gemba_walk_verified_by"
+                                                                            class="form-control form-control-sm"
+                                                                            accept="image/*"
                                                                             placeholder="Enter the image">
                                                                         <small>Allowed file types: jpg, jpeg, png</small>
-                                                                        <div id="gemba_walk_verified_by" class="text-danger"></div>
+                                                                        <div id="gemba_walk_verified_by"
+                                                                            class="text-danger"></div>
                                                                     </div>
                                                                 @endif
                                                             </div>
 
-                                                            
+
 
 
                                                             <div class="col-12 text-end mt-3">
@@ -716,10 +722,10 @@
 @push('script')
     <script type="text/javascript" nonce="projectcab">
         $(document).ready(function() {
-            flatpickr("#capa_date", {
-                dateFormat: "d-m-Y",
-                minDate: "today"
-            });
+            // flatpickr("#capa_date", {
+            //     dateFormat: "d-m-Y",
+            //     minDate: "today"
+            // });
 
 
             $('input[name="is_passed"]').change(function() {
@@ -740,229 +746,227 @@
 
 
 @push('script')
-<script type="text/javascript" nonce="projectcab">
-    $(document).ready(function () {
+    <script type="text/javascript" nonce="projectcab">
+        $(document).ready(function() {
 
-        // Initialize datepicker
-        flatpickr("#capa_date", {
-            dateFormat: "d-m-Y",
-            minDate: "today"
-        });
+            // Initialize datepicker
+            // flatpickr("#capa_date", {
+            //     dateFormat: "d-m-Y",
+            //     minDate: "today"
+            // });
 
-        $('input[name="is_passed"]').change(function () {
-            if ($('#yes').is(':checked')) {
-                $('#capa_recomendation').show();
-                $('#verified_by').hide();
-            } else {
-                $('#capa_recomendation').hide();
-                $('#verified_by').show();
-            }
-        });
+            $('input[name="is_passed"]').change(function() {
+                if ($('#yes').is(':checked')) {
+                    $('#capa_recomendation').show();
+                    $('#verified_by').hide();
+                } else {
+                    $('#capa_recomendation').hide();
+                    $('#verified_by').show();
+                }
+            });
 
-        $.validator.addMethod("filesize", function (value, element, param) {
-            return this.optional(element) || (element.files[0] && element.files[0].size <= param);
-        }, "File size should not exceed 2MB.");
+            $.validator.addMethod("filesize", function(value, element, param) {
+                return this.optional(element) || (element.files[0] && element.files[0].size <= param);
+            }, "File size should not exceed 2MB.");
 
-        $.validator.addMethod("fileExtension", function (value, element, param) {
-            return this.optional(element) || new RegExp("\\.(" + param + ")$", "i").test(value);
-        }, "Invalid file type.");
+            $.validator.addMethod("fileExtension", function(value, element, param) {
+                return this.optional(element) || new RegExp("\\.(" + param + ")$", "i").test(value);
+            }, "Invalid file type.");
 
-        $.validator.addMethod("customPattern", function (value, element, pattern) {
-            return this.optional(element) || pattern.test(value);
-        }, "Invalid format.");
+            $.validator.addMethod("customPattern", function(value, element, pattern) {
+                return this.optional(element) || pattern.test(value);
+            }, "Invalid format.");
 
-        $('#capaAction').validate({
-            rules: {
-                capa_date: {
-                    required: true
-                },
-                capa_remark: {
-                    required: true,
-                    minlength: 3,
-                    maxlength: 100,
-                    customPattern: /^[a-zA-Z0-9\s\-_'"()]+$/
-                },
-                is_passed: {
-                    required: true
-                },
-                capa_image: {
-                    required: function () {
-                        return $('input[name="is_passed"]:checked').val() === '1';
+            $('#capaAction').validate({
+                rules: {
+                    capa_date: {
+                        required: true
                     },
-                    filesize: 2097152, // 2MB
-                    fileExtension: "jpg|jpeg|png|gif"
-                },
-                gemba_walk_verified_by: {
-                    required: function () {
-                        return $('input[name="is_passed"]:checked').val() === '1';
+                    capa_remark: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 100,
+                        customPattern: /^[a-zA-Z0-9\s\-_'"()]+$/
                     },
-                    filesize: 2097152, // 2MB
-                    fileExtension: "jpg|jpeg|png|gif"
+                    is_passed: {
+                        required: true
+                    },
+                    capa_image: {
+                        required: function() {
+                            return $('input[name="is_passed"]:checked').val() === '1';
+                        },
+                        filesize: 2097152, // 2MB
+                        fileExtension: "jpg|jpeg|png|gif"
+                    },
+                    gemba_walk_verified_by: {
+                        required: function() {
+                            return $('input[name="is_passed"]:checked').val() === '1';
+                        },
+                        filesize: 2097152, // 2MB
+                        fileExtension: "jpg|jpeg|png|gif"
+                    }
+                },
+                messages: {
+                    capa_date: {
+                        required: "Date is required"
+                    },
+                    capa_remark: {
+                        required: "Remark is required",
+                        minlength: "Minimum 3 characters",
+                        maxlength: "Maximum 100 characters",
+                        customPattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed."
+                    },
+                    is_passed: {
+                        required: "Please select an option"
+                    },
+                    capa_image: {
+                        required: "Image is required when passed is YES",
+                        filesize: "File size should not exceed 2MB.",
+                        fileExtension: "Only JPG, JPEG, PNG, and GIF files are allowed."
+                    },
+                    gemba_walk_verified_by: {
+                        required: "Signature is required when passed is YES",
+                        filesize: "File size should not exceed 2MB.",
+                        fileExtension: "Only JPG, JPEG, PNG, and GIF files are allowed."
+                    }
+                },
+                errorElement: 'div',
+                errorPlacement: function(error, element) {
+                    error.addClass('invalid-feedback');
+                    let wrapper = element.closest('.form-input');
+                    if (wrapper.length) {
+                        wrapper.append(error);
+                    } else {
+                        error.insertAfter(element);
+                    }
+                },
+                highlight: function(element) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function(element) {
+                    $(element).removeClass('is-invalid');
+                    $(element).closest('.form-input').find('.invalid-feedback').remove();
+                },
+                submitHandler: function(form) {
+                    form.submit();
                 }
-            },
-            messages: {
-                capa_date: {
-                    required: "Date is required"
+            });
+
+
+            $('#floorManagerVerification').validate({
+                rules: {
+                    capa_date: {
+                        required: true
+                    },
+                    capa_remark: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 100,
+                        customPattern: /^[a-zA-Z0-9\s\-_'"()]+$/
+                    },
+                    capa_image: {
+                        required: true,
+                        filesize: 2097152, // 2MB
+                        fileExtension: "jpg|jpeg|png|gif"
+                    }
                 },
-                capa_remark: {
-                    required: "Remark is required",
-                    minlength: "Minimum 3 characters",
-                    maxlength: "Maximum 100 characters",
-                    customPattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed."
+                messages: {
+                    capa_date: {
+                        required: "Date is required"
+                    },
+                    capa_remark: {
+                        required: "Remark is required",
+                        minlength: "Minimum 3 characters",
+                        maxlength: "Maximum 100 characters",
+                        customPattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed."
+                    },
+                    capa_image: {
+                        required: "Image is required",
+                        filesize: "File size should not exceed 2MB.",
+                        fileExtension: "Only JPG, JPEG, PNG, and GIF files are allowed."
+                    }
                 },
-                is_passed: {
-                    required: "Please select an option"
+                errorElement: 'div',
+                errorPlacement: function(error, element) {
+                    error.addClass('invalid-feedback');
+                    let wrapper = element.closest('.form-input');
+                    if (wrapper.length) {
+                        wrapper.append(error);
+                    } else {
+                        error.insertAfter(element);
+                    }
                 },
-                capa_image: {
-                    required: "Image is required when passed is YES",
-                    filesize: "File size should not exceed 2MB.",
-                    fileExtension: "Only JPG, JPEG, PNG, and GIF files are allowed."
+                highlight: function(element) {
+                    $(element).addClass('is-invalid');
                 },
-                gemba_walk_verified_by: {
-                    required: "Signature is required when passed is YES",
-                    filesize: "File size should not exceed 2MB.",
-                    fileExtension: "Only JPG, JPEG, PNG, and GIF files are allowed."
+                unhighlight: function(element) {
+                    $(element).removeClass('is-invalid');
+                    $(element).closest('.form-input').find('.invalid-feedback').remove();
+                },
+                submitHandler: function(form) {
+                    form.submit();
                 }
-            },
-            errorElement: 'div',
-            errorPlacement: function (error, element) {
-                error.addClass('invalid-feedback');
-                let wrapper = element.closest('.form-input');
-                if (wrapper.length) {
-                    wrapper.append(error);
-                } else {
-                    error.insertAfter(element);
+            });
+
+            // EHS Officer Verification Form Validation
+            $('#ehsOfficerVerification').validate({
+                rules: {
+                    capa_date: {
+                        required: true
+                    },
+                    capa_remark: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 100,
+                        customPattern: /^[a-zA-Z0-9\s\-_'"()]+$/
+                    },
+                    gemba_walk_verified_by: {
+                        required: true,
+
+                        filesize: 2097152, // 2MB
+                        fileExtension: "jpg|jpeg|png|gif"
+                    }
+                },
+                messages: {
+                    capa_date: {
+                        required: "Date is required"
+                    },
+                    capa_remark: {
+                        required: "Remark is required",
+                        minlength: "Minimum 3 characters",
+                        maxlength: "Maximum 100 characters",
+                        customPattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed."
+                    },
+                    gemba_walk_verified_by: {
+                        required: "Signature is required",
+                        filesize: "File size should not exceed 2MB.",
+                        fileExtension: "Only JPG, JPEG, PNG, and GIF files are allowed."
+                    }
+                },
+                errorElement: 'div',
+                errorPlacement: function(error, element) {
+                    error.addClass('invalid-feedback');
+                    let wrapper = element.closest('.form-input');
+                    if (wrapper.length) {
+                        wrapper.append(error);
+                    } else {
+                        error.insertAfter(element);
+                    }
+                },
+                highlight: function(element) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function(element) {
+                    $(element).removeClass('is-invalid');
+                    $(element).closest('.form-input').find('.invalid-feedback').remove();
+                },
+                submitHandler: function(form) {
+                    form.submit();
                 }
-            },
-            highlight: function (element) {
-                $(element).addClass('is-invalid');
-            },
-            unhighlight: function (element) {
-                $(element).removeClass('is-invalid');
-                $(element).closest('.form-input').find('.invalid-feedback').remove();
-            },
-            submitHandler: function (form) {
-                form.submit();
-            }
+            });
+
+
+
         });
-
-
-        $('#floorManagerVerification').validate({
-            rules: {
-                capa_date: {
-                    required: true
-                },
-                capa_remark: {
-                    required: true,
-                    minlength: 3,
-                    maxlength: 100,
-                    customPattern: /^[a-zA-Z0-9\s\-_'"()]+$/
-                },
-                capa_image: {
-                    required: true,
-                    filesize: 2097152, // 2MB
-                    fileExtension: "jpg|jpeg|png|gif"
-                }
-            },
-            messages: {
-                capa_date: {
-                    required: "Date is required"
-                },
-                capa_remark: {
-                    required: "Remark is required",
-                    minlength: "Minimum 3 characters",
-                    maxlength: "Maximum 100 characters",
-                    customPattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed."
-                },
-                capa_image: {
-                    required: "Image is required",
-                    filesize: "File size should not exceed 2MB.",
-                    fileExtension: "Only JPG, JPEG, PNG, and GIF files are allowed."
-                }
-            },
-            errorElement: 'div',
-            errorPlacement: function (error, element) {
-                error.addClass('invalid-feedback');
-                let wrapper = element.closest('.form-input');
-                if (wrapper.length) {
-                    wrapper.append(error);
-                } else {
-                    error.insertAfter(element);
-                }
-            },
-            highlight: function (element) {
-                $(element).addClass('is-invalid');
-            },
-            unhighlight: function (element) {
-                $(element).removeClass('is-invalid');
-                $(element).closest('.form-input').find('.invalid-feedback').remove();
-            },
-            submitHandler: function (form) {
-                form.submit();
-            }
-        });
-
-         // EHS Officer Verification Form Validation
-         $('#ehsOfficerVerification').validate({
-            rules: {
-                capa_date: {
-                    required: true
-                },
-                capa_remark: {
-                    required: true,
-                    minlength: 3,
-                    maxlength: 100,
-                    customPattern: /^[a-zA-Z0-9\s\-_'"()]+$/
-                },
-                gemba_walk_verified_by: {
-                    required: true,
-
-                    filesize: 2097152, // 2MB
-                    fileExtension: "jpg|jpeg|png|gif"
-                }
-            },
-            messages: {
-                capa_date: {
-                    required: "Date is required"
-                },
-                capa_remark: {
-                    required: "Remark is required",
-                    minlength: "Minimum 3 characters",
-                    maxlength: "Maximum 100 characters",
-                    customPattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed."
-                },
-                gemba_walk_verified_by: {
-                    required: "Signature is required",
-                    filesize: "File size should not exceed 2MB.",
-                    fileExtension: "Only JPG, JPEG, PNG, and GIF files are allowed."
-                }
-            },
-            errorElement: 'div',
-            errorPlacement: function (error, element) {
-                error.addClass('invalid-feedback');
-                let wrapper = element.closest('.form-input');
-                if (wrapper.length) {
-                    wrapper.append(error);
-                } else {
-                    error.insertAfter(element);
-                }
-            },
-            highlight: function (element) {
-                $(element).addClass('is-invalid');
-            },
-            unhighlight: function (element) {
-                $(element).removeClass('is-invalid');
-                $(element).closest('.form-input').find('.invalid-feedback').remove();
-            },
-            submitHandler: function (form) {
-                form.submit();
-            }
-        });
-
-
-
-    });
-</script>
+    </script>
 @endpush
-
-

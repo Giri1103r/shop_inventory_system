@@ -156,85 +156,88 @@
     </div>
 
     <table
-    style="width: 100%; border-collapse: collapse; font-family: Arial, sans-serif; text-align: center; border: 1px solid black;">
+        style="width: 100%; border-collapse: collapse; font-family: Arial, sans-serif; text-align: center; border: 1px solid black;">
 
-    <tr>
-        <th  colspan="8" style="border:1px solid black;height:50;width:40">
-            <img src="{{ url('public/assets/images/logo-dark.png') }}" style="width:125px;height:50px;">
-        </th>
-        <th colspan="8" style="border:1px solid black;">
-            <h3>
-                <span><b> FIRST AIDER LIST</b></span>
-                <br>
-                <span><b> PN INTERNATIONAL PVT. LTD.</b></span>
-            </h3>
-        </th>
-
-        <th colspan="8" style="border:1px solid black;">
-            <table class="table table-bordered scrolldown">
-                <thead>
-                    <tr>
-                        <td style="border: 1px solid black;width:70;">Doc.No</td>
-                        <td style="border: 1px solid black;">{{$document_no->doc_no}}</td>
-                    </tr>
-                    <tr>
-                        <td style="border: 1px solid black;width:70;">Issue Dt.</td>
-                        <td style="border: 1px solid black;">{{$document_no->issue_date}}</td>
-                    </tr>
-                    <tr>
-                        <td style="border: 1px solid black;width:70;">Rev.& Dt.</td>
-                        <td style="border: 1px solid black;">{{$document_no->rev_dt}}</td>
-                    </tr>
-                </thead>
-            </table>
-
-        </th>
-    </tr>
-    <tr>
-        <th colspan="12"
-            style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
-            NEXT REVIEW DATE: {{ Displaydateformat($first_aider->last_updated_date) ?? 'N/A' }}
-        </th>
-        <th colspan="12"
-            style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
-            LAST UPDATED DATE: {{ Displaydateformat($first_aider->next_review_date) ?? 'N/A' }}
-        </th>
-
-    </tr>
-
-    <tr>
-        <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="2">SR. NO</th>
-        <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">NAME OF THE
-            EMPLOYEE</th>
-        <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">
-            DESIGNATION</th>
-        <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="5">DEPARTMENT
-        </th>
-        <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="5">UNIT
-        </th>
-        <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">MOBILE NUMBER
-        </th>
-
-    </tr>
-    @php
-        $medicineRequisitionDetails = GetFirstAiderList($first_aider->id);
-    @endphp
-
-    @foreach ($medicineRequisitionDetails as $details)
         <tr>
-            <td style="border: 1px solid black; padding: 8px;" colspan="2">{{ $loop->iteration }}</td>
-            <td style="border: 1px solid black; padding: 8px;" colspan="4">{{ getEmployeename($details->emp_id) }}
-            </td>
-            <td style="border: 1px solid black; padding: 8px;" colspan="4">{{ $details->designation_id }}</td>
-            <td style="border: 1px solid black; padding: 8px;"colspan="5">{{ getDepartment($details->department_id) }}</td>
-            <td style="border: 1px solid black; padding: 8px;"colspan="5">{{getUnitname ($details->unit_id) }}</td>
-            <td style="border: 1px solid black; padding: 8px;"colspan="4">{{ $details->mobile_no }}</td>
+            <th colspan="8" style="border:1px solid black;height:50;width:40">
+                <img src="{{ url('public/assets/images/logo-dark.png') }}" style="width:125px;height:50px;">
+            </th>
+            <th colspan="8" style="border:1px solid black;">
+                <h3>
+                    <span><b> FIRST AIDER LIST</b></span>
+                    <br>
+                    <span><b> PN INTERNATIONAL PVT. LTD.</b></span>
+                </h3>
+            </th>
+
+            <th colspan="8" style="border:1px solid black;">
+                <table class="table table-bordered scrolldown">
+                    <thead>
+                        <tr>
+                            <td style="border: 1px solid black;width:70;">Doc.No</td>
+                            <td style="border: 1px solid black;">{{ $document_no->doc_no }}</td>
+                        </tr>
+                        <tr>
+                            <td style="border: 1px solid black;width:70;">Issue Dt.</td>
+                            <td style="border: 1px solid black;">{{ $document_no->issue_date }}</td>
+                        </tr>
+                        <tr>
+                            <td style="border: 1px solid black;width:70;">Rev.& Dt.</td>
+                            <td style="border: 1px solid black;">{{ $document_no->rev_dt }}</td>
+                        </tr>
+                    </thead>
+                </table>
+
+            </th>
+        </tr>
+        <tr>
+            <th colspan="12"
+                style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
+                NEXT REVIEW DATE: {{ Displaydateformat($first_aider->last_updated_date) ?? 'N/A' }}
+            </th>
+            <th colspan="12"
+                style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
+                LAST UPDATED DATE: {{ Displaydateformat($first_aider->next_review_date) ?? 'N/A' }}
+            </th>
 
         </tr>
-    @endforeach
+
+        <tr>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="2">SR. NO</th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">NAME OF THE
+                EMPLOYEE</th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">
+                DESIGNATION</th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="5">DEPARTMENT
+            </th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="5">UNIT
+            </th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">MOBILE NUMBER
+            </th>
+
+        </tr>
+        @php
+            $medicineRequisitionDetails = GetFirstAiderList($first_aider->id);
+        @endphp
+
+        @foreach ($medicineRequisitionDetails as $details)
+            <tr>
+                <td style="border: 1px solid black; padding: 8px;" colspan="2">{{ $loop->iteration }}</td>
+                <td style="border: 1px solid black; padding: 8px;" colspan="4">
+                    {{ getEmployeename($details->emp_id) }}
+                </td>
+                <td style="border: 1px solid black; padding: 8px;" colspan="4">{{ $details->designation_id }}</td>
+                <td style="border: 1px solid black; padding: 8px;"colspan="5">
+                    {{ getDepartment($details->department_id) }}</td>
+                <td style="border: 1px solid black; padding: 8px;"colspan="5">{{ getUnitname($details->unit_id) }}
+                </td>
+                <td style="border: 1px solid black; padding: 8px;"colspan="4">{{ $details->mobile_no }}</td>
+
+            </tr>
+        @endforeach
 
 
-</table>
+    </table>
 
 
 

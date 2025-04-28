@@ -77,7 +77,7 @@ class RRAAController extends Controller
                         })
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            $btn = '<a href="' . admin_url('rraa/ohc_fire_environment_compliance/view/' . encryptId($row->id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
+                            $btn = '<a href="' . admin_url('rraa/ohc_fire_environment_compliance/view/' . encryptId($row->id)) . '"   class="view-icon me-1" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
                             $btn .= '<a href="' . admin_url('rraa/ohc_fire_environment_compliance/generalpdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
                                         <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
                                      </a>';
@@ -158,14 +158,12 @@ class RRAAController extends Controller
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator)->withInput();
             }
-            try {
+
 
                 $this->rraa_details->store();
 
                 Session::flash('success', __('Your data has been created successfully'));
-            } catch (Exception $ex) {
-                Session::flash('error', __('common.message_error'));
-            }
+
             return redirect(admin_url('rraa/ohc_fire_environment_compliance/list'));
         } catch (Exception $ex) {
             report($ex);
@@ -271,7 +269,7 @@ class RRAAController extends Controller
             $currentRow = 1;
 
             foreach ($allData as $recordIndex => $data) {
-               
+
                 $logoPath = public_path('assets/images/logo-dark.png');
                 if (file_exists($logoPath)) {
                     $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
@@ -315,12 +313,12 @@ class RRAAController extends Controller
                 $sheet->getStyle("O{$currentRow}:Q" . ($currentRow + 2))->applyFromArray([
                     'borders' => [
                         'allBorders' => [
-                            'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_DOUBLE
+                            'borderStyle' => Border::BORDER_DOUBLE
                         ]
                     ],
                     'alignment' => [
-                        'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
-                        'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+                        'horizontal' => Alignment::HORIZONTAL_CENTER,
+                        'vertical' => Alignment::VERTICAL_CENTER,
                         'wrapText' => true,
                     ],
                     'font' => ['bold' => true],
@@ -329,12 +327,12 @@ class RRAAController extends Controller
                 $sheet->getStyle("R{$currentRow}:T" . ($currentRow + 2))->applyFromArray([
                     'borders' => [
                         'allBorders' => [
-                            'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_DOUBLE
+                            'borderStyle' => Border::BORDER_DOUBLE
                         ]
                     ],
                     'alignment' => [
-                        'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
-                        'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+                        'horizontal' => Alignment::HORIZONTAL_CENTER,
+                        'vertical' => Alignment::VERTICAL_CENTER,
                     ],
                     'font' => ['bold' => true],
                 ]);
@@ -442,7 +440,7 @@ class RRAAController extends Controller
             $html = view('inspection.rraa.generalpdf', $data)->render();
             $mpdf->WriteHTML($html);
 
-            $filename = "RRAA Details.pdf";
+            $filename = "RRAA.pdf";
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);
@@ -552,7 +550,7 @@ class RRAAController extends Controller
             $sheet->mergeCells("C{$row}:E{$row}")->setCellValue("C{$row}", getCategoryname($rraa_details->category) ?? '');
             $sheet->mergeCells("F{$row}:H{$row}")->setCellValue("F{$row}", $rraa_details->ohs_compliance_index ?? '');
             $sheet->mergeCells("I{$row}:K{$row}")->setCellValue("I{$row}", $rraa_details->scope ?? '');
-            $sheet->mergeCells("L{$row}:N{$row}")->setCellValue("N{$row}", getUsername($rraa_details->responsibility) ?? '');
+            $sheet->mergeCells("L{$row}:N{$row}")->setCellValue("L{$row}", getUsername($rraa_details->responsibility) ?? '');
             $sheet->mergeCells("O{$row}:P{$row}")->setCellValue("O{$row}", $rraa_details->authority ?? '');
             $sheet->mergeCells("Q{$row}:R{$row}")->setCellValue("Q{$row}", $rraa_details->accountability ?? '');
             $sheet->mergeCells("S{$row}:T{$row}")->setCellValue("S{$row}", $rraa_details->remark ?? '');

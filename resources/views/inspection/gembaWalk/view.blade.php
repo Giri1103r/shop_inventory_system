@@ -325,7 +325,7 @@
                                         </div>
 
 
-                                        <div class="col-md-4 mb-2">
+                                        {{-- <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
                                                 <label class="form-label">Uploaded File</label>
                                                 <div class="view_data">
@@ -342,18 +342,9 @@
 
                                                 </div>
                                             </div>
-                                        </div>
+                                        </div> --}}
 
-                                        <div class="col-md-4 mb-2">
-                                            <div class="form-group form-input">
-                                                <label class="form-label">CAPA Action</label>
-                                                <div class="view_data">
-                                                    @if (isset($gembaWalk_ehs_capa_details->capa))
-                                                        {{ $gembaWalk_ehs_capa_details->capa == 1 ? 'YES' : 'NO' }}
-                                                    @endif
-                                                </div>
-                                            </div>
-                                        </div>
+                                     
 
 
 
@@ -699,21 +690,16 @@
                                                 @else
                                                     @foreach ($status_log as $status)
                                                         <tr>
-                                                            <td>{{ isset($status['to_status']) ? $status['to_status'] : '-' }}
-                                                            </td>
-                                                            <td>{{ isset($status['status_name']) ? $status['status_name'] : '-' }}
-                                                            </td>
-                                                            <td>{{ isset($status['approved_by']) ? getUsername($status['approved_by']) : '-' }}
-                                                            </td>
-                                                            <td>{{ isset($status['remarks']) ? $status['remarks'] : '-' }}
-                                                            </td>
-                                                            <td>{{ null !== Displaydateformat($status['created_at']) ? Displaydateformat($status['created_at']) : '-' }}
-                                                            </td>
+                                                            <td>{{ getGembaWalkLogStatus($status['from_status'] ?? null) }}</td>
+                                                            <td>{{ getGembaWalkLogStatus($status['to_status'] ?? null) }}</td>
+                                                            <td>{{ isset($status['approved_by']) ? getUsername($status['approved_by']) : '-' }}</td>
+                                                            <td>{{ $status['remarks'] ?? '-' }}</td>
+                                                            <td>{{ Displaydateformat($status['created_at'] ?? null) ?? '-' }}</td>
                                                         </tr>
                                                     @endforeach
-
                                                 @endif
                                             </tbody>
+                                            
                                         </table>
 
                                     </div>

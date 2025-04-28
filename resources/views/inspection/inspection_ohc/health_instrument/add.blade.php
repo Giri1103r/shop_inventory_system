@@ -47,7 +47,8 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label">Document No </label>
                                                     <input type="text" name="document_no" id="document_no"
-                                                        class="form-control"  value="{{ $document_no->doc_no }}" readonly placeholder=" Enter Document Number ">
+                                                        class="form-control" value="{{ $document_no->doc_no }}" readonly
+                                                        placeholder=" Enter Document Number ">
                                                 </div>
                                             </div>
 
@@ -56,8 +57,9 @@
                                                     <label for="rate" class="form-label">Issued
                                                         Date</label>
                                                     <div class="input-group date form-input custom-height">
-                                                        <input type="text" name="issue_date" id="issue_date" value="{{ displaydateformat($document_no->issue_date) }}" readonly
-                                                            class="form-control"autocomplete="off">
+                                                        <input type="text" name="issue_date" id="issue_date"
+                                                            value="{{ displaydateformat($document_no->issue_date) }}"
+                                                            readonly class="form-control"autocomplete="off">
                                                         <div class="input-group-addon input-group-text">
                                                             <span class="fa fa-calendar"></span>
                                                         </div>
@@ -70,9 +72,9 @@
                                                     <label for="rate" class="form-label require ">Review
                                                         Date</label>
                                                     <div class="input-group date form-input custom-height">
-                                                        <input type="text" 
-                                                            name="review_date" id="review_date" class="form-control"  value="{{ $document_no->rev_dt }}" readonly
-                                                            autocomplete="off" >
+                                                        <input type="text" name="review_date" id="review_date"
+                                                            class="form-control" value="{{ $document_no->rev_dt }}" readonly
+                                                            autocomplete="off">
 
                                                         <div class="input-group-addon input-group-text">
                                                             <span class="fa fa-calendar"></span>
@@ -97,7 +99,7 @@
                                             </div>
 
                                             <input type="hidden" name="document_reference_id"
-                                            value="{{ encryptId($document_no->id) }}">
+                                                value="{{ encryptId($document_no->id) }}">
 
                                         </div>
                                     </div>
@@ -144,7 +146,7 @@
                                                     </div>
                                                 </div>
 
-                                               
+
 
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
@@ -187,8 +189,9 @@
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label class="form-label require">Frequency</label>
-                                                        <select name="health_instrument[1][frequency_id]" id="frequency_id[1]"
-                                                            class="form-control single-select" style="width: 100%">
+                                                        <select name="health_instrument[1][frequency_id]"
+                                                            id="frequency_id[1]" class="form-control single-select"
+                                                            style="width: 100%">
                                                             <option value="">Select the Frequency</option>
                                                             @foreach ($frequency as $freq)
                                                                 <option value="{{ encryptId($freq->id) }}">
@@ -319,58 +322,153 @@
                     return;
                 }
 
-                let newRow = $(".lesson_learned_row").first().clone();
-                newRow.find("input, select, textarea").each(function() {
+                let firstRow = $(".lesson_learned_row").first();
+
+                firstRow.find(".single-select").select2('destroy');
+
+                let newRow = firstRow.clone();
+                let newRowNumber = rowCount + 1;
+
+                firstRow.find(".single-select").select2();
+
+                newRow.find("input, select, textarea, button").each(function() {
                     let oldName = $(this).attr("name");
                     let oldId = $(this).attr("id");
 
                     if (oldName) {
-                        let newName = oldName.replace(/\[\d+\]/, "[" + (rowCount + 1) + "]");
+                        let newName = oldName.replace(/\[\d+\]/, "[" + newRowNumber + "]");
                         $(this).attr("name", newName);
                     }
                     if (oldId) {
-                        let newId = oldId.replace(/\d+$/, rowCount + 1);
+                        let newId = oldId.replace(/_\d+$/, "_" + newRowNumber);
                         $(this).attr("id", newId);
                     }
-                    if ($(this).is("input[type='text'], textarea")) {
+
+                    if ($(this).is("input[type='text'], textarea, input[type='number']")) {
                         $(this).val("");
                     }
                     if ($(this).is("select")) {
                         $(this).val("").trigger("change");
                     }
                 });
-                
+                newRow.find("input[name$='[sr_no]']").val("AMBIENT-" + String(rowCount + 1).padStart(4,
+                    '0'));
 
                 newRow.find(".invalid-feedback").remove();
                 newRow.find(".is-invalid").removeClass("is-invalid");
-                newRow.find(".select2-container").remove();
-                newRow.find(".single-select").select2();
 
+                newRow.find(".single-select").select2();
                 $("#lesson_learned_block").append(newRow);
 
-                newRow.find("input[name*='[instrument_name]']").rules("add", {
+                newRow.find("input[name$='[instrument_name]']").rules("add", {
                     minlength: 3,
                     maxlength: 2000,
+                    required: true,
                     pattern: /^[a-zA-Z0-9\s\-_"'()]+$/,
                     messages: {
                         minlength: "Instrument name must be at least 3 characters.",
                         maxlength: "Instrument name must not exceed 200 characters.",
+                        maxlength: "Instrument name is required.",
                         pattern: "Only letters, numbers, spaces, and -_'() are allowed."
                     }
                 });
 
-                newRow.find("input[name*='[resource_code]']").rules("add", {
+                newRow.find("input[name$='[resource_code]']").rules("add", {
                     minlength: 3,
                     maxlength: 2000,
+                    required: true,
                     pattern: /^[a-zA-Z0-9\s\-_"'()]+$/,
                     messages: {
-                        minlength: "Instrument name must be at least 3 characters.",
-                        maxlength: "Instrument name must not exceed 200 characters.",
+                        minlength: "resource code must be at least 3 characters.",
+                        maxlength: "resource code must not exceed 200 characters.",
+                        required: "resource code is required.",
+                        pattern: "Only letters, numbers, spaces, and -_'() are allowed."
+                    }
+                });
+                newRow.find("input[name$='[exact_location]']").rules("add", {
+                    minlength: 3,
+                    maxlength: 200,
+                    required: true,
+                    pattern: /^[a-zA-Z0-9\s\-_"'()]+$/,
+                    messages: {
+                        minlength: "Excat Location must be at least 3 characters.",
+                        maxlength: "Excat Location must not exceed 200 characters.",
+                        required: "Excat Location is required.",
+                        pattern: "Only letters, numbers, spaces, and -_'() are allowed."
+                    }
+                });
+
+                newRow.find("input[name$='[instrument_serial_no]']").rules("add", {
+                    minlength: 3,
+                    required: true,
+                    maxlength: 200,
+                    pattern: /^[a-zA-Z0-9\s\-_"'()]+$/,
+                    messages: {
+                        minlength: "Instrument Serial Number must be at least 3 characters.",
+                        maxlength: "Instrument Serial Number must not exceed 200 characters.",
+                        required: "Instrument Serial Number is required.",
                         pattern: "Only letters, numbers, spaces, and -_'() are allowed."
                     }
                 });
 
 
+                newRow.find("input[name$='[make]']").rules("add", {
+                    minlength: 3,
+                    required: true,
+                    maxlength: 200,
+                    pattern: /^[a-zA-Z0-9\s\-_"'()]+$/,
+                    messages: {
+                        minlength: "Make must be at least 3 characters.",
+                        maxlength: "Make must not exceed 200 characters.",
+                        required: "Make is required.",
+                        pattern: "Only letters, numbers, spaces, and -_'() are allowed."
+                    }
+                });
+                newRow.find("input[name$='[model]']").rules("add", {
+                    minlength: 3,
+                    maxlength: 200,
+                    required: true,
+                    pattern: /^[a-zA-Z0-9\s\-_"'()]+$/,
+                    messages: {
+                        minlength: "Model must be at least 3 characters.",
+                        maxlength: "Model must not exceed 200 characters.",
+                        required: "Model is required.",
+                        pattern: "Only letters, numbers, spaces, and -_'() are allowed."
+                    }
+                });
+                newRow.find("input[name$='[instrument_range]']").rules("add", {
+                    minlength: 3,
+                    required: true,
+                    maxlength: 200,
+                    pattern: /^[a-zA-Z0-9\s\-_"'()]+$/,
+                    messages: {
+                        minlength: "Instrument range must be at least 3 characters.",
+                        maxlength: "Instrument range must not exceed 200 characters.",
+                        required: "Instrument range is required.",
+                        pattern: "Only letters, numbers, spaces, and -_'() are allowed."
+                    }
+                });
+                newRow.find("select[name$='[frequency_id]']").rules("add", {
+                    required: true,
+                    messages: {
+                        minlength: "Frequency is required.",
+
+                    }
+                });
+                newRow.find("input[name$='[date_of_calibration]']").rules("add", {
+                    required: true,
+                    messages: {
+                        minlength: "Date of calibration is required.",
+
+                    }
+                });
+                newRow.find("input[name$='[due_date_of_calibration]']").rules("add", {
+                    required: true,
+                    messages: {
+                        minlength: "Date of calibration is required.",
+
+                    }
+                });
                 initializeFlatpickr();
                 $('.single-select').select2();
             });
@@ -381,7 +479,7 @@
                     $(this).closest(".lesson_learned_row").remove();
                     updateRowIndexes();
 
-                 
+
                 } else {
                     Swal.fire({
                         icon: "error",
@@ -394,133 +492,297 @@
             initializeFlatpickr();
         });
 
-        $(document).ready(function() {
+        function addValidationRules(row) {
+            newRow.find("input[name$='[instrument_name]']").rules("add", {
+                minlength: 3,
+                maxlength: 2000,
+                required: true,
+                pattern: /^[a-zA-Z0-9\s\-_"'()]+$/,
+                messages: {
+                    minlength: "Instrument name must be at least 3 characters.",
+                    maxlength: "Instrument name must not exceed 200 characters.",
+                    maxlength: "Instrument name is required.",
+                    pattern: "Only letters, numbers, spaces, and -_'() are allowed."
+                }
+            });
+
+            newRow.find("input[name$='[resource_code]']").rules("add", {
+                minlength: 3,
+                maxlength: 2000,
+                required: true,
+                pattern: /^[a-zA-Z0-9\s\-_"'()]+$/,
+                messages: {
+                    minlength: "resource code must be at least 3 characters.",
+                    maxlength: "resource code must not exceed 200 characters.",
+                    required: "resource code is required.",
+                    pattern: "Only letters, numbers, spaces, and -_'() are allowed."
+                }
+            });
+            newRow.find("input[name$='[exact_location]']").rules("add", {
+                minlength: 3,
+                maxlength: 200,
+                required: true,
+                pattern: /^[a-zA-Z0-9\s\-_"'()]+$/,
+                messages: {
+                    minlength: "Excat Location must be at least 3 characters.",
+                    maxlength: "Excat Location must not exceed 200 characters.",
+                    required: "Excat Location is required.",
+                    pattern: "Only letters, numbers, spaces, and -_'() are allowed."
+                }
+            });
+
+            newRow.find("input[name$='[instrument_serial_no]']").rules("add", {
+                minlength: 3,
+                required: true,
+                maxlength: 200,
+                pattern: /^[a-zA-Z0-9\s\-_"'()]+$/,
+                messages: {
+                    minlength: "Instrument Serial Number must be at least 3 characters.",
+                    maxlength: "Instrument Serial Number must not exceed 200 characters.",
+                    required: "Instrument Serial Number is required.",
+                    pattern: "Only letters, numbers, spaces, and -_'() are allowed."
+                }
+            });
+
+
+            newRow.find("input[name$='[make]']").rules("add", {
+                minlength: 3,
+                required: true,
+                maxlength: 200,
+                pattern: /^[a-zA-Z0-9\s\-_"'()]+$/,
+                messages: {
+                    minlength: "Make must be at least 3 characters.",
+                    maxlength: "Make must not exceed 200 characters.",
+                    required: "Make is required.",
+                    pattern: "Only letters, numbers, spaces, and -_'() are allowed."
+                }
+            });
+            newRow.find("input[name$='[model]']").rules("add", {
+                minlength: 3,
+                maxlength: 200,
+                required: true,
+                pattern: /^[a-zA-Z0-9\s\-_"'()]+$/,
+                messages: {
+                    minlength: "Model must be at least 3 characters.",
+                    maxlength: "Model must not exceed 200 characters.",
+                    required: "Model is required.",
+                    pattern: "Only letters, numbers, spaces, and -_'() are allowed."
+                }
+            });
+            newRow.find("input[name$='[instrument_range]']").rules("add", {
+                minlength: 3,
+                required: true,
+                maxlength: 200,
+                pattern: /^[a-zA-Z0-9\s\-_"'()]+$/,
+                messages: {
+                    minlength: "Instrument range must be at least 3 characters.",
+                    maxlength: "Instrument range must not exceed 200 characters.",
+                    required: "Instrument range is required.",
+                    pattern: "Only letters, numbers, spaces, and -_'() are allowed."
+                }
+            });
+            newRow.find("select[name$='[frequency_id]']").rules("add", {
+                required: true,
+                messages: {
+                    minlength: "Frequency name is required.",
+
+                }
+            });
+            newRow.find("input[name$='[date_of_calibration]']").rules("add", {
+                required: true,
+                messages: {
+                    minlength: "Date of calibration is required.",
+
+                }
+            });
+            newRow.find("input[name$='[due_date_of_calibration]']").rules("add", {
+                required: true,
+                messages: {
+                    minlength: "Date of calibration is required.",
+
+                }
+            });
+        }
+
+        $(function() {
+            $.validator.setDefaults({
+                highlight: function(element) {
+                    $(element).addClass('is-invalid');
+                    if ($(element).hasClass('single-select')) {
+                        $(element).next('.select2-container').find('.select2-selection')
+                            .addClass('is-invalid');
+                    }
+                },
+                unhighlight: function(element) {
+                    $(element).removeClass('is-invalid');
+                    if ($(element).hasClass('single-select')) {
+                        $(element).next('.select2-container').find('.select2-selection')
+                            .removeClass('is-invalid');
+                    }
+                },
+                errorPlacement: function(error, element) {
+                    if (element.hasClass('single-select')) {
+                        error.addClass('invalid-feedback').insertAfter(element.next(
+                            '.select2-container'));
+                    } else {
+                        error.addClass('invalid-feedback').insertAfter(element);
+                    }
+                }
+            });
+
             $("#HealthInstrumentAdd").validate({
                 rules: {
+                    unit_id: {
+                        required: true,
+                    },
                     "document_no": {
+                        required: true,
                         minlength: 3,
                         maxlength: 200,
                         pattern: /^[a-zA-Z0-9\s\-_"'()/]+$/
                     },
                     "health_instrument[1][instrument_name]": {
+                        required: true,
                         minlength: 3,
                         maxlength: 200,
                         pattern: /^[a-zA-Z0-9\s\-_"'()]+$/
                     },
                     "health_instrument[1][resource_code]": {
+                        required: true,
                         minlength: 3,
                         maxlength: 200,
                         pattern: /^[a-zA-Z0-9\s\-_"'()/]+$/
                     },
                     "health_instrument[1][exact_location]": {
+                        required: true,
                         minlength: 3,
                         maxlength: 200,
                         pattern: /^[a-zA-Z0-9\s\-_"'()]+$/
                     },
                     "health_instrument[1][instrument_serial_no]": {
+                        required: true,
                         minlength: 3,
                         maxlength: 200,
                         pattern: /^[a-zA-Z0-9\s\-_"'()/]+$/
                     },
                     "health_instrument[1][make]": {
+                        required: true,
                         minlength: 3,
                         maxlength: 200,
                         pattern: /^[a-zA-Z0-9\s\-_"'()]+$/
                     },
                     "health_instrument[1][model]": {
+                        required: true,
                         minlength: 3,
                         maxlength: 200,
                         pattern: /^[a-zA-Z0-9\s\-_"'()]+$/
                     },
                     "health_instrument[1][instrument_range]": {
+                        required: true,
                         minlength: 3,
                         maxlength: 200,
                         pattern: /^[a-zA-Z0-9\s\-_"'*()/]+$/
                     },
                     "health_instrument[1][calibration_frequency]": {
+                        required: true,
                         minlength: 3,
                         maxlength: 200,
                         pattern: /^[a-zA-Z0-9\s\-_"'()]+$/
                     },
-                    "health_instrument[1][instrument_remarks]": {
-                        minlength: 3,
-                        maxlength: 2000,
-                        pattern: /^[a-zA-Z0-9\s\-_"'()]+$/
-                    }
+                    "health_instrument[1][frequency_id]": {
+                        required: true,
+
+                    },
+                    "health_instrument[1][date_of_calibration]": {
+                        required: true,
+
+                    },
+                    "health_instrument[1][due_date_of_calibration]": {
+                        required: true,
+
+                    },
+
                 },
                 messages: {
+                    unit_id: {
+                        required: "Please select the unit",
+                    },
                     "document_no": {
+                        required: "Document number is required.",
                         minlength: "Document number must be at least 3 characters long.",
                         maxlength: "Document number must not exceed 200 characters.",
                         pattern: "Only letters, numbers, spaces, and -_'()/ are allowed."
                     },
                     "health_instrument[1][instrument_name]": {
+                        required: "Instrument name is required.",
                         minlength: "Instrument name must be at least 3 characters.",
                         maxlength: "Instrument name must not exceed 200 characters.",
                         pattern: "Only letters, numbers, spaces, and -_'() are allowed."
                     },
                     "health_instrument[1][resource_code]": {
+                        required: "Resource code is required.",
                         minlength: "Resource code must be at least 3 characters.",
                         maxlength: "Resource code must not exceed 200 characters.",
                         pattern: "Only letters, numbers, spaces, and -_'()/ are allowed."
                     },
                     "health_instrument[1][exact_location]": {
+                        required: "Exact location is required.",
                         minlength: "Exact location must be at least 3 characters.",
                         maxlength: "Exact location must not exceed 200 characters.",
                         pattern: "Only letters, numbers, spaces, and -_'() are allowed."
                     },
                     "health_instrument[1][instrument_serial_no]": {
+                        required: "Serial number is required.",
                         minlength: "Serial number must be at least 3 characters.",
                         maxlength: "Serial number must not exceed 200 characters.",
                         pattern: "Only letters, numbers, spaces, and -_'()/ are allowed."
                     },
                     "health_instrument[1][make]": {
+                        required: "Make is required.",
                         minlength: "Make must be at least 3 characters.",
                         maxlength: "Make must not exceed 200 characters.",
                         pattern: "Only letters, numbers, spaces, and -_'() are allowed."
                     },
                     "health_instrument[1][model]": {
+                        required: "Model is required.",
                         minlength: "Model must be at least 3 characters.",
                         maxlength: "Model must not exceed 200 characters.",
                         pattern: "Only letters, numbers, spaces, and -_'() are allowed."
                     },
                     "health_instrument[1][instrument_range]": {
+                        required: "Instrument range is required.",
                         minlength: "Instrument range must be at least 3 characters.",
                         maxlength: "Instrument range must not exceed 200 characters.",
                         pattern: "Only letters, numbers, spaces, and -_'*/() are allowed."
                     },
                     "health_instrument[1][calibration_frequency]": {
+                        required: "Calibration frequency is required.",
                         minlength: "Calibration frequency must be at least 3 characters.",
                         maxlength: "Calibration frequency must not exceed 200 characters.",
                         pattern: "Only letters, numbers, spaces, and -_'() are allowed."
                     },
-                    "health_instrument[1][instrument_remarks]": {
-                        minlength: "Remarks must be at least 3 characters.",
-                        maxlength: "Remarks must not exceed 200 characters.",
-                        pattern: "Only letters, numbers, spaces, and -_'() are allowed."
-                    }
-                },
-                errorElement: 'span',
-                errorPlacement: function(error, element) {
-                    error.addClass('invalid-feedback');
-                    element.closest('.form-input').append(error);
-                },
-                highlight: function(element, errorClass, validClass) {
-                    $(element).addClass('is-invalid');
-                },
-                unhighlight: function(element, errorClass, validClass) {
-                    $(element).removeClass('is-invalid');
+                    "health_instrument[1][frequency_id]": {
+                        required: "Please Select the option.",
+
+                    },
+                    "health_instrument[1][date_of_calibration]": {
+                        required: "Please Select the date.",
+
+                    },
+                    "health_instrument[1][due_date_of_calibration]": {
+                        required: "Please Select the date.",
+
+                    },
+
                 },
                 submitHandler: function(form) {
                     form.submit();
-                },
-                invalidHandler: function(event, validator) {
-                    var errors = validator.numberOfInvalids();
-                    console.log("Form has " + errors + " invalid fields.");
-                },
+                }
+            });
+
+            $("#lesson_learned_block .lesson_learned_row").each(function() {
+                addValidationRules($(this));
             });
         });
-
-        
     </script>
 @endpush

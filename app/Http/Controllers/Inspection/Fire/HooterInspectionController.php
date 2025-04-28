@@ -325,7 +325,7 @@ class HooterInspectionController extends Controller
             $this->statusLog->create($insert_array);
             Session::flash('success', 'Your data added successfully');
 
-            if ($inspection->observation_needed == 1) {
+            if ($inspection->observation == 1) {
                 return redirect(admin_url('fire/checklist-observation/add/' . encryptId($inspection_type) . '/' . encryptId($id)));
             } else {
                 return redirect(admin_url('fire/hooter-inspection/list'));
@@ -359,7 +359,7 @@ class HooterInspectionController extends Controller
             );
             return view('inspection.fire.hooter_inspection.view', $data);
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('fire/hooter-inspection/list'));
@@ -458,7 +458,7 @@ class HooterInspectionController extends Controller
             Session::flash('success', __('common.updated_msg'));
             return redirect(admin_url('fire/hooter-inspection/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             report($ex);
             Session::flash('error', 'Something Went Wrong!');
             return redirect(admin_url('fire/hooter-inspection/list'));
@@ -668,7 +668,7 @@ class HooterInspectionController extends Controller
             return redirect(admin_url('fire/hooter-inspection/list'));
         } catch (Exception $ex) {
             report($ex);
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something Went wrong!');
             return redirect(admin_url('fire/hooter-inspection/list'));
         }
@@ -1239,7 +1239,7 @@ class HooterInspectionController extends Controller
             $filename = "Hooter Inspection.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('fire/hooter-inspection/list'));

@@ -784,7 +784,7 @@ class CoTypeFireExtinguisherController extends Controller
             foreach ($allData as $detail) {
 
                     $inspection_detail = $detail->first();
-
+                    $tableStartRow = $row;
                     $document_no = $this->document_reference->selectOne($inspection_detail->document_reference_id);
 
                     $prepared_by_signature = GetFireSignature($inspection_detail->checked_by, $inspection_detail->fire_id, CO_TYPE_FIRE_EXTINGUISHER_INSPECTION);
@@ -844,6 +844,8 @@ class CoTypeFireExtinguisherController extends Controller
                     }
 
                     $row += 3;
+
+
 
                     $sheet->mergeCells("A{$row}:E{$row}")->setCellValue("A{$row}", "Date of Inspection:- " . Displaydateformat($inspection_detail->inspection_date));
                     $sheet->mergeCells("F{$row}:L{$row}")->setCellValue("F{$row}", "Location :- " . getLocationname($inspection_detail->location));
@@ -974,7 +976,7 @@ class CoTypeFireExtinguisherController extends Controller
                     $drawing = new Drawing();
                     $drawing->setName('Verified Signature');
                     $drawing->setPath($verified_by_signature);
-                    $drawing->setCoordinates("H{$signatureRow}");
+                    $drawing->setCoordinates("I{$signatureRow}");
                     $drawing->setHeight(40);
                     $drawing->setOffsetY(5);
                     $drawing->setWorksheet($sheet);
@@ -997,6 +999,16 @@ class CoTypeFireExtinguisherController extends Controller
                 }
 
                 $row += 5;
+
+                $sheet->getStyle("A{$tableStartRow}:O{$signatureRow}")->applyFromArray([
+                    'borders' => [
+                        'outline' => [
+                            'borderStyle' => Border::BORDER_THICK,
+                            'color' => ['argb' => '000000'],
+                        ],
+                    ],
+                ]);
+
             }
 
             $writer = new Xlsx($spreadsheet);
@@ -1314,7 +1326,7 @@ class CoTypeFireExtinguisherController extends Controller
                 $drawing->setName('Verified Signature');
                 $drawing->setDescription('Verified By');
                 $drawing->setPath($verified_by_signature);
-                $drawing->setCoordinates("H{$signatureRow}");
+                $drawing->setCoordinates("I{$signatureRow}");
                 $drawing->setOffsetX(5);
                 $drawing->setOffsetY(5);
                 $drawing->setHeight(40);

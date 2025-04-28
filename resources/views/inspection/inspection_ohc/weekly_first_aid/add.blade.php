@@ -315,7 +315,10 @@
                     },
                     signature_image: {
                         required: true,
-                    }
+                    },
+                    remark_by: {
+                            required: true,
+                        },
                 },
                 messages: {
                     document_no: {
@@ -351,6 +354,9 @@
                     },
                     signature_image: {
                         required: "Signature is required",
+                    },
+                    remark_by: {
+                        required: "Please add remarks",
                     }
                 },
                 errorElement: 'span',

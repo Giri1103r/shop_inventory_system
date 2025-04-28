@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Initial Incident Review')
+@section('title', 'Initial Incident/Accident Report')
 @section('pageurl', admin_url('incident/initial-incident/list'))
 
 
@@ -256,7 +256,7 @@
                                     </div>
 
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label require">Brief Description</label>
+                                        <label class="form-label">Brief Description</label>
                                         <div class="view_data">
                                             {{ $incident_report->brief_description }}
                                         </div>
@@ -280,7 +280,105 @@
                                             </div>
                                         @endif
                                     </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label">Immediate Action Taken</label>
+                                        <div class="view_data">
+                                            {{ $incident_report->immediate_action_taken }}
+                                        </div>
+                                    </div>
 
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label">If any person has injured?</label>
+                                        <div class="view_data">
+                                            @if ($incident_report->anyone_injured == 1)
+                                                <i class="fas fa-check-circle text-success" style="font-size: 1.5rem;"></i>
+                                                Yes
+                                                <i class="fas fa-times-circle text-danger" style="font-size: 1.5rem;"></i>
+                                                No
+                                            @else
+                                                <i class="fas fa-times-circle text-danger" style="font-size: 1.5rem;"></i>
+                                                Yes
+                                                <i class="fas fa-check-circle text-success" style="font-size: 1.5rem;"></i>
+                                                No
+                                            @endif
+                                        </div>
+                                    </div>
+                                    @if ($incident_report->anyone_injured == 1)
+                                        <div class="row">
+                                            <div class="card-header-inner">
+                                                <h4 class="text-white">Injured Person Details</h4>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <table class="table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Injury Person Type</th>
+                                                        <th>Injury Person Name</th>
+                                                        <th>Injury Person Employee ID</th>
+                                                        <th>Injury Person Designation</th>
+                                                        <th>Injury Person Department</th>
+                                                        <th>Injury Body Parts</th>
+                                                        <th>Description</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach ($injury_details as $injury)
+                                                        <tr>
+                                                            <td>
+                                                                {{ $injury->injury_person_type == 1 ? 'Employee' : ($injury->injury_person_type == 2 ? 'Worker' : 'Others') }}
+                                                            </td>
+                                                            <td>
+                                                                @if ($injury->injury_person_type == 1 || $injury->injury_person_type == 2)
+                                                                    {{ $injury->emp_name }}
+                                                                @else
+                                                                    {{ $injury->injury_person_name }}
+                                                                @endif
+                                                            </td>
+                                                            <td>{{ $injury->emp_id }}</td>
+                                                            <td>{{ $injury->injury_person_designation }}</td>
+                                                            <td>
+                                                                {{-- @if ($injury->injury_person_type == 1 || $injury->injury_person_type == 2)
+                                                                    {{ $injury->department_name }}
+                                                                @else --}}
+                                                                {{ $injury->injury_person_department_id }}
+                                                                {{-- @endif --}}
+                                                            </td>
+                                                            <td>
+                                                                @if ($injury->body_part_image)
+                                                                    <a href="{{ admin_url('storage/app/public/uploads/' . $injury->body_part_image) }}"
+                                                                        target="_blank">
+                                                                        <img src="{{ admin_url('storage/app/public/uploads/' . $injury->body_part_image) }}"
+                                                                            alt="Body Parts Image"
+                                                                            style="max-width: 100px; max-height: 100px; object-fit: contain;">
+                                                                    </a>
+                                                                @endif
+                                                            </td>
+
+
+                                                            <td>
+                                                                @php
+                                                                    $imgMapDataDecoded = json_decode(
+                                                                        $injury->imgMapdata,
+                                                                        true,
+                                                                    );
+                                                                @endphp
+                                                                @if ($imgMapDataDecoded)
+                                                                    <ul>
+                                                                        @foreach ($imgMapDataDecoded['map']['total'] as $key => $value)
+                                                                            <li>{{ ucfirst($key) }}:
+                                                                                {{ $value }}</li>
+                                                                        @endforeach
+                                                                    </ul>
+                                                                @endif
+                                                            </td>
+                                                        </tr>
+                                                    @endforeach
+                                                </tbody>
+                                            </table>
+
+                                        </div>
+                                    @endif
                                 </div>
                             </div>
 
@@ -289,7 +387,7 @@
 
                                     <div class="row">
                                         <div class="card-header-inner">
-                                            <h4 class="text-white">EHS Head Review</h4>
+                                            <h4 class="text-white">Accelerating Incident Investigations</h4>
                                         </div>
                                     </div>
                                     <div class="basic-form">
@@ -375,7 +473,7 @@
                                 <div class="card-body ">
                                     <div class="row">
                                         <div class="card-header-inner">
-                                            <h4 class="text-white">EHS Head Review</h4>
+                                            <h4 class="text-white">Accelerating Incident Investigations</h4>
                                         </div>
                                     </div>
                                     <div class="row">
@@ -392,9 +490,22 @@
                                             </div>
                                         </div>
                                         <div class="mb-3 col-md-4 form-input">
+                                            <label class="form-label view_label">{{ __('Target Date') }}</label>
+                                            <div class="view_data">
+                                                {{ Displaydateformat($incident_report->target_date) }}
+                                            </div>
+                                        </div>
+                                        <div class="mb-3 col-md-4 form-input">
                                             <label for="team_id" class="form-label">I.M Team members</label>
                                             <div class="view_data">
                                                 {{ $getEHSReview->team_member_names }}
+                                            </div>
+                                        </div>
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <label for="team_id" class="form-label">Incident/Accident Investigation Report
+                                                Prepared by</label>
+                                            <div class="view_data">
+                                                {{ getUsername($incident_report->investigation_reported_by) }}
                                             </div>
                                         </div>
                                     </div>
@@ -1024,7 +1135,7 @@
             });
 
 
-            $('#team_id,#reported_by').select2({
+            $('#team_id').select2({
                 placeholder: "Select Team Members",
                 allowClear: true,
                 closeOnSelect: true,
@@ -1058,6 +1169,41 @@
                 selectionCssClass: 'form-control'
             });
 
+            $('#reported_by').select2({
+                placeholder: "Select Reported By",
+                allowClear: true,
+                closeOnSelect: true,
+                ajax: {
+                    url: "{{ admin_url('incident/initial-incident/reportedBy') }}",
+                    type: "GET",
+                    dataType: "json",
+                    delay: 250,
+                    data: function(params) {
+                        return {
+                            search: params.term // Search query
+                        };
+                    },
+                    processResults: function(data) {
+                        return {
+                            results: $.map(data, function(item) {
+                                return {
+                                    id: item.id,
+                                    text: item.text
+                                };
+                            })
+                        };
+                    },
+                    error: function(xhr, textStatus, errorThrown) {
+                        console.log("Error in AJAX request:", textStatus, errorThrown);
+                    }
+                },
+                minimumInputLength: 3,
+                width: '100%',
+                dropdownCssClass: 'form-control',
+                selectionCssClass: 'form-control'
+            });
+
+
 
             // $('#team_id').select2({
             //     placeholder: "Select Team members",
@@ -1080,7 +1226,6 @@
                         required: true,
                         minlength: 10,
                         maxlength: 2000,
-                        pattern: /^[a-zA-Z0-9\s\-_'"()\n\r,.”.;]+$/
                     }
                 },
                 messages: {
@@ -1097,7 +1242,6 @@
                         required: "Please provide a remark.",
                         minlength: "Minimum 10 characters required.",
                         maxlength: "Maximum 2000 characters allowed.",
-                        pattern: "Only alphanumeric characters and - _ ' \",”.; ( ) are allowed.",
                     }
                 },
                 errorElement: 'span',
@@ -1137,7 +1281,6 @@
                         required: true,
                         minlength: 10,
                         maxlength: 2000,
-                        pattern: /^[a-zA-Z0-9\s\-_'"()\n\r,.”.;]+$/
                     }
                 },
                 messages: {
@@ -1152,7 +1295,6 @@
                         required: "Please provide a remark.",
                         minlength: "Minimum 10 characters required.",
                         maxlength: "Maximum 2000 characters allowed.",
-                        pattern: "Only alphanumeric characters and - _ ' \",”.; ( ) are allowed.",
                     }
                 },
                 errorElement: 'span',
@@ -1187,7 +1329,6 @@
                         required: true,
                         minlength: 10,
                         maxlength: 2000,
-                        pattern: /^[a-zA-Z0-9\s\-_'"()\n\r,.”.;]+$/,
                     }
                 },
                 messages: {
@@ -1196,7 +1337,6 @@
                         required: "Please provide Action Taken.",
                         minlength: "Minimum 10 characters required.",
                         maxlength: "Maximum 2000 characters allowed.",
-                        pattern: "Only alphanumeric characters and - _ ' \",”.; ( ) are allowed.",
                     }
                 },
                 errorElement: 'span',
@@ -1231,7 +1371,6 @@
                         required: true,
                         minlength: 10,
                         maxlength: 2000,
-                        pattern: /^[a-zA-Z0-9\s\-_'"()\n\r,.”.;]+$/
                     }
                 },
                 messages: {
@@ -1240,7 +1379,6 @@
                         required: "Please provide remark.",
                         minlength: "Minimum 10 characters required.",
                         maxlength: "Maximum 2000 characters allowed.",
-                        pattern: "Only alphanumeric characters and - _ ' \",”.; ( ) are allowed.",
                     }
                 },
                 errorElement: 'span',

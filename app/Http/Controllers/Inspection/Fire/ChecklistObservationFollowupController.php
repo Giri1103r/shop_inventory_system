@@ -131,14 +131,19 @@ class ChecklistObservationFollowupController extends Controller
                         })
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            $btn = '<a href="' . admin_url('fire/checklist-observation/view/'. encryptId($row->inspectionid) . '/' . encryptId($row->observationid)) .  '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
+                            $btn = '<a href="' . admin_url('fire/checklist-observation/view/' . encryptId($row->inspectionid) . '/' . encryptId($row->observationid)) .  '"   class="view-icon me-1" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
                             // if (CheckUserRole(ROLE_SUPERADMIN)) {
                             // $btn .= '<a href="' . admin_url('inspection/master/checklist-sub-type/edit/' . encryptId($row->id)) . '" class="edit-icon " title="' . __('common.edit') . '"><i class="fa-solid fa-pen-to-square"></i> ';
                             // }
                             if (($row->observation_status == WAITING_FOR_EHS_OFFICER_VERIFICATION && ((CheckUserRole(ROLE_EHS_OFFICER)) || isAdmin())) || ($row->observation_status == WAITING_FOR_CAPA_ACTION && ((CheckUserRole(ROLE_EHS_OFFICER)) || isAdmin())) || ($row->observation_status == WAITING_FOR_CAPA_VERIFICATION && ((CheckUserRole(ROLE_EHS_OFFICER)) || isAdmin())) || ($row->observation_status == WAITING_FOR_L1_VERIFICATION && ((CheckUserRole(ROLE_EHS_OFFICER)) || isAdmin()))  || ($row->observation_status == WAITING_FOR_L2_VERIFICATION && ((CheckUserRole(ROLE_EHS_OFFICER)) || isAdmin()))  || ($row->observation_status == EHS_OFFICER_REJECTED && ($row->ehs_verify_by == Auth::id() || isAdmin())) || ($row->observation_status == L1_MANAGER_REJECTED && ($row->ehs_verify_by == Auth::id() || isAdmin())) || ($row->observation_status == L2_MANAGER_REJECTED && ($row->ehs_verify_by == Auth::id() || isAdmin()))) {
-                                $btn .= '<a href="' . admin_url('fire/checklist-observation/verification/' . encryptId($row->inspectionid) . '/' . encryptId($row->observationid)) . '" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('fire/checklist-observation/verification/' . encryptId($row->inspectionid) . '/' . encryptId($row->observationid)) . '" class="me-1" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
-
+                            $btn .= '<a href="' . admin_url('fire/checklist-observation/generalpdf/' . encryptId($row->inspectionid) . '/' . encryptId($row->observationid)) . '" style="margin-right: 5px;" title="PDF">
+                            <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
+                        </a>';
+                            $btn .= '<a href="' . admin_url('fire/checklist-observation/generalExcel/' . encryptId($row->inspectionid) . '/' . encryptId($row->observationid)) . '" style="margin-right: 5px;" title="PDF">
+                                   <i class="fas fa-file-excel" style="color: #1D6F42;" aria-hidden="true"></i>
+                                </a>';
                             return $btn;
                         })
                         ->rawColumns(['action', 'created_date', 'created_by', 'status', 'observation_status'])
@@ -173,6 +178,7 @@ class ChecklistObservationFollowupController extends Controller
                 ['type', "ChecklistObservationFollowup"],
                 ['status', '1']
             ])->first();
+
             $data = array(
                 'staticDocno' => $staticDocno,
                 'inspection_type' => $inspection_type,
@@ -182,7 +188,7 @@ class ChecklistObservationFollowupController extends Controller
             );
             return view('inspection.fire.observationFollowup.add', $data);
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             report($ex);
         }
     }
@@ -233,32 +239,37 @@ class ChecklistObservationFollowupController extends Controller
 
                 Session::flash('success', __('Your data has been created successfully'));
             } catch (Exception $ex) {
-                dd($ex);
+                report($ex);
                 report($ex);
                 Session::flash('error', __('common.message_error'));
             }
             return redirect(admin_url('fire/checklist-observation/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('fire/checklist-observation/list'));
         }
     }
-    public function view($id,$observationid)
+    public function view($id, $observationid, Request $request)
     {
         try {
             if (Auth::check()) {
+
                 $observation = $this->followup->selectOne(decryptId($id), decryptId($observationid));
+
+                $document_no = $this->static_docno->selectOne($observation->documnet_reference_id);
 
                 $data = array(
                     'observation' => $observation,
+                    'document_no' => $document_no,
                 );
+                // dd($data);
             }
             return view('inspection.fire.observationFollowup.view', $data);
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong!');
-            return redirect(admin_url('fire/pre-noc/checklist/list'));
+            return redirect(admin_url('fire/checklist-observation/list'));
         }
     }
 
@@ -366,7 +377,7 @@ class ChecklistObservationFollowupController extends Controller
             return redirect(admin_url('fire/checklist-observation/list'));
         } catch (Exception $ex) {
 
-            dd($ex);
+            report($ex);
             report($ex);
             Session::flash('error', 'Something Went Wrong!');
             return redirect(admin_url('fire/checklist-observation/list'));
@@ -541,7 +552,7 @@ class ChecklistObservationFollowupController extends Controller
             return redirect(admin_url('fire/checklist-observation/list'));
         } catch (Exception $ex) {
 
-            dd($ex);
+            report($ex);
             report($ex);
             Session::flash('error', 'Something Went Wrong!');
             return redirect(admin_url('fire/checklist-observation/list'));
@@ -656,7 +667,7 @@ class ChecklistObservationFollowupController extends Controller
             return redirect(admin_url('fire/checklist-observation/list'));
         } catch (Exception $ex) {
 
-            dd($ex);
+            report($ex);
             report($ex);
             Session::flash('error', 'Something Went Wrong!');
             return redirect(admin_url('fire/checklist-observation/list'));
@@ -770,7 +781,7 @@ class ChecklistObservationFollowupController extends Controller
             return redirect(admin_url('fire/checklist-observation/list'));
         } catch (Exception $ex) {
 
-            dd($ex);
+            report($ex);
             report($ex);
             Session::flash('error', 'Something Went Wrong!');
             return redirect(admin_url('fire/checklist-observation/list'));
@@ -780,25 +791,70 @@ class ChecklistObservationFollowupController extends Controller
     {
         try {
             $id = decryptId($request->id);
-            $this->fireNoc->statuschange($id);
+            $this->followup->statuschange($id);
 
-            return response()->json(['status' => 'success', 'msg' => 'Fire Pre Noc Checklist checklist status changed'], 200);
+            return response()->json(['status' => 'success', 'msg' => 'checklist Observation status changed'], 200);
         } catch (Exception $ex) {
 
             return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
         }
     }
 
-    public function exportExcel()
+
+    public function generalpdf(Request $request)
     {
         try {
+            $id = decryptId($request->id);
+            $observationid = decryptId($request->observationid);
+            if (Auth::check()) {
+                $observation = $this->followup->selectOne(($id), ($observationid));
+                $status_log = $this->statusLog->selectOne($observationid, OBSERVATION_FOLLOWUP);
+            }
+            $data = [
+                'observation' => $observation,
+                'status_log' => $status_log,
+                'pagetitle' => "checklist observation follow up sheet.",
+            ];
 
-            $allData =   $this->checklist_subtype->exportdata();
+            $property = [
+                'tempDir' => 'public/pdf/temp/',
+                'mode' => 'c',
+                'margin_left' => 10,
+                'margin_right' => 10,
+                'margin_top' => 10,
+
+            ];
+
+            $mpdf = new \Mpdf\Mpdf($property);
+            $mpdf->setAutoTopMargin = 'stretch';
+
+            $html = view('inspection.fire.observationFollowup.viewpdf', $data)->render();
+            $mpdf->WriteHTML($html);
+
+            $filename = "checklist observation follow up sheet.pdf";
+            return $mpdf->Output($filename, 'D');
+        } catch (Exception $ex) {
+            report($ex);
+            Session::flash('error', 'Something went wrong!');
+            return redirect(admin_url('fire/checklist-observation/list'));
+        }
+    }
+
+    public function ExportExcel(Request $request)
+    {
+
+        try {
+            $allData = $this->followup->exportdata();
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            }
+
             $header = [
                 __("common.sno"),
-                __("Checklist Sub-Type ID"),
-                __("Checklist Type Name"),
-                __("Checklist Sub-Type Name"),
+                'Observation Id',
+                'Serial Number',
+                'Date of Inspection',
+                'Approve Status',
                 __("common.status"),
                 __("common.created_by"),
                 __("common.created_date"),
@@ -806,51 +862,60 @@ class ChecklistObservationFollowupController extends Controller
 
             $i = 1;
             foreach ($allData as $data) {
-
                 $export = [];
                 $export[] =  $i;
-                $export[] = $data->subcategory_id;
-                $export[] =  $data->category_name;
-                $export[] =  $data->subcategory_name;
+                $export[] =  $data->observation_id;
+                $export[] =  $data->sr_no;
+                $export[] = Displaydateformat( $data->date_of_inspection);
+                $export[] =  getInspectionstatus($data->observation_status);
                 $export[] =  $data->status == 1 ? 'Active' : 'In-Active';
                 $export[] =  getusername($data->created_by);
                 $export[] =  Displaydateformat($data->created_at);
-
                 $exportData[] = $export;
 
                 $i++;
             }
 
-            $writer = SimpleExcelWriter::streamDownload('Checklist Sub Type Category.xlsx')
+            $writer = SimpleExcelWriter::streamDownload('Checklist observation.xlsx')
                 ->addHeader($header)
                 ->addRows(
                     $exportData
                 );
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error', 'Something went wrong!');
+            return redirect(admin_url('fire/checklist-observation/list'));
         }
     }
 
-    public function exportPDF()
+    public function ExportPdf(Request $request)
     {
+
         try {
 
             ini_set("pcre.backtrack_limit", "5000000");
 
-            $allData =   $this->checklist_subtype->exportdata();
+            $allData = $this->followup->exportdata();
+
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            }
+
             $header = [
                 __("common.sno"),
-                __("Checklist Sub-Type ID"),
-                __("Checklist Type Name"),
-                __("Checklist Sub-Type Name"),
+                'Observation Id',
+                'Serial Number',
+                'Date of Inspection',
+                'Approve Status',
                 __("common.status"),
                 __("common.created_by"),
                 __("common.created_date"),
             ];
+
             $data = array(
                 'header' => $header,
                 'content' => $allData,
-                'pagetitle' => "Checklist Sub Type Category",
+                'pagetitle' => "Checklist observation",
             );
 
             $property = [
@@ -872,91 +937,13 @@ class ChecklistObservationFollowupController extends Controller
 
             $mpdf->WriteHTML($html);
 
-            $filename = "Checklist Sub Type Category.pdf";
+            $filename = "Checklist observation.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 
             report($ex);
-        }
-    }
-
-    public function import(Request $request)
-    {
-        $data = array();
-
-        return view('master.checklist_subtype.import', $data);
-    }
-
-    public function downloadSample()
-    {
-
-        $filedetails =  exportsamplefile('checklist_type');
-        $filePath = $filedetails->sample_file;
-        $customFileName = $filedetails->file_name;
-
-        return redirect(url($filePath));
-    }
-
-    public function importSubmit(Request $request)
-    {
-        try {
-            $file = $request->file('checklist_type_file_upload');
-            $rules = [
-                'checklist_type_file_upload' => 'required',
-            ];
-            $messages = [
-                'checklist_type_file_upload.required' => 'Please upload a file',
-            ];
-            $validator = Validator::make($request->all(), $rules, $messages);
-            if ($validator->fails()) {
-                return redirect()->back()->withErrors($validator)->withInput();
-            }
-            if ($file != null) {
-
-                $uploadpath = 'uploads/checklist_type';
-
-                $filenewname = time() . Str::random('16') . '.' . $file->getClientOriginalExtension();
-
-                $fileName = $file->getClientOriginalName();
-                $fileSize = $file->getSize();
-
-                $fileExt = $file->getClientOriginalExtension();
-
-                uploadFile($file, $uploadpath, $filenewname);
-
-                $path = $uploadpath . "/" . $filenewname;
-                $user_id = Auth::id();
-
-                $insert_data = array(
-                    'upload_type' => checklist_type_UPLOAD,
-                    'upload_status' => 0,
-                    'file_name' => $filenewname,
-                    'file_orgname' => $fileName,
-                    'file_path' => $path,
-                    'file_size' => $fileSize,
-                    'file_extension' => $fileExt,
-                    'created_by' => $user_id,
-                );
-
-                $insert_id =  $this->upload_log->create($insert_data)->id;
-
-                $details = [
-                    "user_id" => $user_id,
-                    "log_id" => $insert_id,
-                    "path" => $path,
-                ];
-
-                dispatch(new ImportChecklistCategoryJob($details));
-            }
-            $insert_data['log_id'] = $insert_id;
-            $insert_data['Uploded_by'] = Auth::user()->toArray();
-
-            Session::flash('success', 'Permit Checklist Category Upload Successfull');
-            return redirect(admin_url('inspection/checklist-type/list'));
-        } catch (Exception $ex) {
-            report($ex);
-            Session::flash('error', 'Permit Checklist Category failed!');
-            return redirect(admin_url('inspection/checklist-type/list'));
+            Session::flash('error', 'Something went wrong!');
+            return redirect(admin_url('fire/checklist-observation/list'));
         }
     }
 }

@@ -75,7 +75,7 @@
                                             <div class="row">
                                                 <div class="card-header-inner d-flex justify-content-between">
                                                     <h4 class="text-white">Ambient Noise Monitoring Details</h4>
-                                                    <button class="btn btn-primary addmorebutton"
+                                                    <button class="btn btn-primary addmorebutton mb-2"
                                                         data-block='lesson_learned_block' data-row='lesson_learned_row'
                                                         type="button" id="dynamic-add-more"
                                                         style="margin-left: 10px; width: 84px;">
@@ -84,7 +84,7 @@
                                                 </div>
                                             </div>
 
-                                            <div id="lesson_learned_block">
+                                            <div id="lesson_learned_block" class="mb-2">
                                                 <div class="row lesson_learned_row" style="margin-top: 20px;">
 
                                                     <div class="col-md-4 form-input">
@@ -195,15 +195,15 @@
                                                         <textarea name="monitoring[1][remark]" class="form-control" id="remark_1"> </textarea>
                                                     </div>
 
-                                                    <div class="col-md-2 text-right mt-2">
+                                                    <div class="col-md-2 text-right mt-2 ">
                                                         <button class="btn btn-danger removerowdata" type="button"
                                                             style="margin:10px;"><i class="fa fa-trash"></i></button>
 
                                                     </div>
 
-                                                    <hr>
-                                                </div>
 
+                                                </div>
+                                                <hr>
                                             </div>
 
                                         </div>
@@ -313,54 +313,143 @@
                     return;
                 }
 
-                let newRow = $(".lesson_learned_row").first().clone();
-                newRow.find("input, select, textarea").each(function() {
+                let firstRow = $(".lesson_learned_row").first();
+
+                firstRow.find(".single-select").select2('destroy');
+
+                let newRow = firstRow.clone();
+                let newRowNumber = rowCount + 1;
+
+                firstRow.find(".single-select").select2();
+
+                newRow.find("input, select, textarea, button").each(function() {
                     let oldName = $(this).attr("name");
                     let oldId = $(this).attr("id");
 
                     if (oldName) {
-                        let newName = oldName.replace(/\[\d+\]/, "[" + (rowCount + 1) + "]");
+                        let newName = oldName.replace(/\[\d+\]/, "[" + newRowNumber + "]");
                         $(this).attr("name", newName);
                     }
                     if (oldId) {
-                        let newId = oldId.replace(/\d+$/, rowCount + 1);
+                        let newId = oldId.replace(/_\d+$/, "_" + newRowNumber);
                         $(this).attr("id", newId);
                     }
-                    if ($(this).is("input[type='text'], textarea")) {
+
+                    if ($(this).is("input[type='text'], textarea, input[type='number']")) {
                         $(this).val("");
                     }
                     if ($(this).is("select")) {
                         $(this).val("").trigger("change");
                     }
                 });
-                newRow.find("input[name*='[sr_no]']").val("AMBIENT-" + String(rowCount + 1).padStart(4,
+                newRow.find("input[name$='[sr_no]']").val("AMBIENT-" + String(rowCount + 1).padStart(4,
                     '0'));
 
                 newRow.find(".invalid-feedback").remove();
                 newRow.find(".is-invalid").removeClass("is-invalid");
-                newRow.find(".select2-container").remove();
+
                 newRow.find(".single-select").select2();
 
                 $("#lesson_learned_block").append(newRow);
 
-                newRow.find("input[name*='[noise_level_dba]']").rules("add", {
+
+                newRow.find("input[name$='[noise_level_dba]']").rules("add", {
                     number: true,
+                    required: true,
                     messages: {
-                        number: "Only numeric values are allowed."
+                        number: "Only numeric values are allowed.",
+                        required: "Please enter the Noise level."
                     }
                 });
-                newRow.find("input[name*='[noise_level_dba_day]']").rules("add", {
+                newRow.find("input[name$='[noise_level_dba_day]']").rules("add", {
                     number: true,
+                    required: true,
                     messages: {
-                        number: "Only numeric values are allowed."
+                        number: "Only numeric values are allowed.",
+                        required: "Please enter the Noise level."
                     }
                 });
-                newRow.find("input[name*='[noise_level_dba_night]']").rules("add", {
+                newRow.find("input[name$='[noise_level_dba_night]']").rules("add", {
                     number: true,
+                    required: true,
                     messages: {
-                        number: "Only numeric values are allowed."
+                        number: "Only numeric values are allowed.",
+                        required: "Please enter the Noise level."
                     }
                 });
+                newRow.find("input[name$='[act_rule]']").rules("add", {
+
+                    required: true,
+                    minlength: 3,
+                    maxlength: 100,
+                    messages: {
+                        required: "Please Enter the Act rules.",
+                        minlength: "Act/Rule must be at least 3 characters long.",
+                        maxlength: "Act/Rule must not exceed 100 characters."
+                    }
+                });
+                newRow.find("input[name$='[next_due_date_of_monitoring_date]']").rules("add", {
+
+                    required: true,
+                    messages: {
+                        required: "Please Select the date."
+                    }
+                });
+                newRow.find("select[name$='[next_due_date_of_monitoring_dropdown]']").rules("add", {
+
+                    required: true,
+                    messages: {
+                        required: "Please Select the option"
+                    }
+                });
+                newRow.find("select[name$='[date_of_monitoring_dropdown]']").rules("add", {
+
+                    required: true,
+                    messages: {
+                        required: "Please Select the option"
+                    }
+                });
+
+                newRow.find("input[name$='[next_due_date_of_monitoring]']").rules("add", {
+
+                    required: true,
+                    messages: {
+                        required: "Please Select the date"
+                    }
+                });
+                newRow.find("input[name$='[date_of_monitoring_date]']").rules("add", {
+
+                    required: true,
+                    messages: {
+                        required: "Please Select the date"
+                    }
+                });
+                newRow.find("input[name$='[date_of_monitoring]']").rules("add", {
+
+                    required: true,
+                    messages: {
+                        required: "Please Select the date"
+                    }
+                });
+                newRow.find("select[name$='[unit_id]']").rules("add", {
+
+                    required: true,
+
+                    messages: {
+
+                        required: "Please select the Unit .",
+
+                    }
+                });
+                newRow.find("select[name$='[location_id]']").rules("add", {
+
+                    required: true,
+                    messages: {
+                        required: "Please select the location.",
+
+                    }
+                });
+
 
                 initializeFlatpickr();
                 $('.single-select').select2();
@@ -382,41 +471,249 @@
 
             initializeFlatpickr();
         });
-        $('#addambient').validate({
 
-            rules: {
-                'monitoring[1][noise_level_dba]': {
-                    number: true,
+
+
+        $(function() {
+            $.validator.setDefaults({
+                highlight: function(element) {
+                    $(element).addClass('is-invalid');
+                    if ($(element).hasClass('single-select')) {
+                        $(element).next('.select2-container').find('.select2-selection')
+                            .addClass('is-invalid');
+                    }
                 },
-                'monitoring[1][noise_level_dba_day]': {
-                    number: true,
+                unhighlight: function(element) {
+                    $(element).removeClass('is-invalid');
+                    if ($(element).hasClass('single-select')) {
+                        $(element).next('.select2-container').find('.select2-selection')
+                            .removeClass('is-invalid');
+                    }
                 },
-                'monitoring[1][noise_level_dba_night]': {
-                    number: true,
+                errorPlacement: function(error, element) {
+                    if (element.hasClass('single-select')) {
+                        error.addClass('invalid-feedback').insertAfter(element.next(
+                            '.select2-container'));
+                    } else {
+                        error.addClass('invalid-feedback').insertAfter(element);
+                    }
                 }
-            },
-            messages: {
-                'monitoring[1][noise_level_dba]': {
-                    number: "Only numeric values are allowed."
+            });
 
+            $('#addambient').validate({
+                rules: {
+                    'monitoring[1][sr_no]': {
+                        required: true
+                    },
+                    'monitoring[1][location_id]': {
+                        required: true
+                    },
+                    'monitoring[1][unit_id]': {
+                        required: true
+                    },
+                    'monitoring[1][noise_level_dba]': {
+                        required: true,
+                        number: true
+                    },
+                    'monitoring[1][date_of_monitoring]': {
+                        required: true,
+
+                    },
+                    'monitoring[1][next_due_date_of_monitoring]': {
+                        required: true,
+
+                    },
+                    'monitoring[1][noise_level_dba_day]': {
+                        required: true,
+                        number: true
+                    },
+                    'monitoring[1][noise_level_dba_night]': {
+                        required: true,
+                        number: true
+                    },
+                    'monitoring[1][date_of_monitoring_dropdown]': {
+                        required: true
+                    },
+                    'monitoring[1][date_of_monitoring_date]': {
+                        required: true,
+
+                    },
+                    'monitoring[1][next_due_date_of_monitoring_dropdown]': {
+                        required: true
+                    },
+                    'monitoring[1][next_due_date_of_monitoring_date]': {
+                        required: true,
+
+                    },
+                    'monitoring[1][act_rule]': {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 100,
+                    },
+                    'monitoring[1][remark]': {
+                        required: true
+                    }
                 },
-                'monitoring[1][noise_level_dba_day]': {
-                    number: "Only numeric values are allowed."
+                messages: {
+                    'monitoring[1][sr_no]': {
+                        required: "SR NO is required."
+                    },
+                    'monitoring[1][location_id]': {
+                        required: "Please select a location."
+                    },
+                    'monitoring[1][unit_id]': {
+                        required: "Please select a unit."
+                    },
+                    'monitoring[1][noise_level_dba]': {
+                        required: "This field is required.",
+                        number: "Only numeric values are allowed."
+                    },
+                    'monitoring[1][date_of_monitoring]': {
+                        required: "Please enter a date.",
+
+                    },
+                    'monitoring[1][next_due_date_of_monitoring]': {
+                        required: "Please enter a date.",
+
+                    },
+                    'monitoring[1][noise_level_dba_day]': {
+                        required: "This field is required.",
+                        number: "Only numeric values are allowed."
+                    },
+                    'monitoring[1][noise_level_dba_night]': {
+                        required: "This field is required.",
+                        number: "Only numeric values are allowed."
+                    },
+                    'monitoring[1][date_of_monitoring_dropdown]': {
+                        required: "Please select an option."
+                    },
+                    'monitoring[1][date_of_monitoring_date]': {
+                        required: "Please enter a date.",
+
+                    },
+                    'monitoring[1][next_due_date_of_monitoring_dropdown]': {
+                        required: "Please select an option."
+                    },
+                    'monitoring[1][next_due_date_of_monitoring_date]': {
+                        required: "Please enter a date.",
+
+                    },
+                    'monitoring[1][act_rule]': {
+                        required: "Act/Rule is required.",
+                        minlength: "Act/Rule must be at least 3 characters long.",
+                        maxlength: "Act/Rule must not exceed 100 characters."
+                    },
+                    'monitoring[1][remark]': {
+                        required: "Please enter a remark."
+                    }
                 },
-                'monitoring[1][noise_level_dba_night]': {
-                    number: "Only numeric values are allowed."
-                },
-            },
-            errorElement: 'span',
-            errorPlacement: function(error, element) {
-                error.addClass('invalid-feedback');
-                element.closest('.form-input').append(error);
-            },
-            highlight: function(element) {
-                $(element).addClass('is-invalid');
-            },
-            unhighlight: function(element) {
-                $(element).removeClass('is-invalid');
+                submitHandler: function(form) {
+                    form.submit();
+                }
+            });
+
+            $("#lesson_learned_block .lesson_learned_row").each(function() {
+                addValidationRules($(this));
+            });
+
+            function addValidationRules(row) {
+                row.find("input[name$='[noise_level_dba]']").rules("add", {
+                    number: true,
+                    required: true,
+                    messages: {
+                        number: "Only numeric values are allowed.",
+                        required: "Please enter the Noise level."
+                    }
+                });
+                row.find("input[name$='[noise_level_dba_day]']").rules("add", {
+                    number: true,
+                    required: true,
+                    messages: {
+                        number: "Only numeric values are allowed.",
+                        required: "Please enter the Noise level."
+                    }
+                });
+                row.find("input[name$='[noise_level_dba_night]']").rules("add", {
+                    number: true,
+                    required: true,
+                    messages: {
+                        number: "Only numeric values are allowed.",
+                        required: "Please enter the Noise level."
+                    }
+                });
+                row.find("input[name$='[act_rule]']").rules("add", {
+
+                    required: true,
+                    minlength: 3,
+                    maxlength: 100,
+                    messages: {
+                        required: "Please Enter the Act rules.",
+                        minlength: "Act/Rule must be at least 3 characters long.",
+                        maxlength: "Act/Rule must not exceed 100 characters."
+                    }
+                });
+                row.find("input[name$='[next_due_date_of_monitoring_date]']").rules("add", {
+
+                    required: true,
+                    messages: {
+                        required: "Please Select the date."
+                    }
+                });
+                row.find("select[name$='[next_due_date_of_monitoring_dropdown]']").rules("add", {
+
+                    required: true,
+                    messages: {
+                        required: "Please Select the option"
+                    }
+                });
+                row.find("select[name$='[date_of_monitoring_dropdown]']").rules("add", {
+
+                    required: true,
+                    messages: {
+                        required: "Please Select the option"
+                    }
+                });
+
+                row.find("input[name$='[next_due_date_of_monitoring]']").rules("add", {
+
+                    required: true,
+                    messages: {
+                        required: "Please Select the date"
+                    }
+                });
+                row.find("input[name$='[date_of_monitoring_date]']").rules("add", {
+
+                    required: true,
+                    messages: {
+                        required: "Please Select the date"
+                    }
+                });
+                row.find("input[name$='[date_of_monitoring]']").rules("add", {
+
+                    required: true,
+                    messages: {
+                        required: "Please Select the date"
+                    }
+                });
+                row.find("select[name$='[unit_id]']").rules("add", {
+
+                    required: true,
+
+                    messages: {
+
+                        required: "Please select the Unit .",
+
+                    }
+                });
+                row.find("select[name$='[location_id]']").rules("add", {
+
+                    required: true,
+                    messages: {
+                        required: "Please select the location.",
+
+                    }
+                });
+
             }
         });
     </script>

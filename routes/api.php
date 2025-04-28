@@ -33,6 +33,9 @@ Route::middleware('api')->prefix('v1')->group(function () {
         Route::get('dashboard', [LoginController::class, 'index']);
         Route::post('logout', [LoginController::class, 'logout']);
 
+        Route::post('notification', [NotificationController::class, 'notification']);
+        Route::post('notification/update', [NotificationController::class, 'notificationUpdate']);
+
         /**
          * Master Routes
          */
@@ -79,6 +82,7 @@ Route::middleware('api')->prefix('v1')->group(function () {
             Route::post('/view', [SafetyPermitController::class, 'view']);
             Route::post('/approval', [SafetyPermitController::class, 'ehsapproval']);
             Route::post('/qrcode', [SafetyPermitController::class, 'qrcode']);
+            Route::post('/reassignEmployeeList', [SafetyPermitController::class, 'getReassignEmployee']);
 
 
         });
@@ -90,6 +94,8 @@ Route::middleware('api')->prefix('v1')->group(function () {
         Route::group(['prefix' => 'trainng/training-schedule'], function () {
             Route::post('/list', [TrainingSheducleController::class, 'list']);
             Route::post('/view', [TrainingSheducleController::class, 'view']);
+            Route::post('/attendance-recoder', [TrainingSheducleController::class, 'storeAttendance']);
+            Route::post('/post-assessment', [TrainingSheducleController::class, 'endTrainingStore']);
 
         });
     });

@@ -49,7 +49,7 @@ class TrainingAttendance extends Model
         'updated_at' => 'datetime',
     ];
 
-   
+
     public function storeOrUpdate()
     {
         $request = request();
@@ -59,7 +59,7 @@ class TrainingAttendance extends Model
                 'training_schedule_id' => decryptId($request->training_schedule_id),
                 'nomination_id' => $nominationId,
                 'attendance_date' => DBdateformat($request->attendance_date),
-                'attendance_status' => $request->attendance_status[$index], // Always defined now
+                'attendance_status' => $request->attendance_status[$index],
                 'emp_id' => $request->emp_id[$index],
                 'emp_name' => $request->emp_name[$index],
                 'email' => $request->email[$index],
@@ -75,6 +75,32 @@ class TrainingAttendance extends Model
 
         return $this->insert($attendanceData);
     }
+
+    public function storeOrUpdate_api()
+    {
+        $request = request();
+        $attendanceData = [];
+
+        foreach ($request->data as $record) {
+            $attendanceData[] = [
+                'training_schedule_id' => ($record['training_schedule_id']),
+                'nomination_id' => $record['nomination_id'],
+                'attendance_date' => ($record['attendance_date']),
+                'attendance_status' => $record['attendance_status'],
+                'emp_id' => $record['emp_id'],
+                'emp_name' => $record['emp_name'],
+                'email' => $record['email'],
+                'from_date' => ($record['from_date']),
+                'to_date' => ($record['to_date']),
+                'topic_id' => $record['topic_id'],
+                'status' => 1,
+                'created_by' => Auth::id(),
+            ];
+        }
+   
+        return $this->insert($attendanceData);
+    }
+
 
 
     public function getAttendanceList($training_schedule)

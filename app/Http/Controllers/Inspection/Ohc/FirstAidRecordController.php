@@ -261,25 +261,52 @@ class FirstAidRecordController extends Controller
                 }
 
                 $sheet->mergeCells("C{$row}:F" . ($row + 2))->setCellValue("C{$row}", "OCCUPATIONAL HEALTH CENTER FIRST AID RECORD\nPN INTERNATIONAL PVT LTD");
-                $sheet->getStyle("C{$row}")->applyFromArray([
+                $sheet->getStyle("C{$row}:F" . ($row + 2))->applyFromArray([
                     'font' => ['bold' => true, 'size' => 14],
+                    'borders' => [
+                        'allBorders' => ['borderStyle' => Border::BORDER_THIN],
+                    ],
                     'alignment' => ['horizontal' => 'center', 'vertical' => 'center', 'wrapText' => true],
                 ]);
 
-                $sheet->mergeCells("G{$row}:H{$row}")->setCellValue("G{$row}", "Doc. No.");
+                $sheet->mergeCells("G{$row}:G" . ($row + 2));
+
+                $logoRightPath = public_path('assets/images/plus-image.webp');
+                if (file_exists($logoRightPath)) {
+                    $drawing = new Drawing();
+                    $drawing->setName('Right Logo');
+                    $drawing->setPath($logoRightPath);
+                    $drawing->setCoordinates("G{$row}");
+
+                    $drawing->setOffsetX(50);
+                    $drawing->setOffsetY(15);
+                    $drawing->setWidth(60);
+                    $drawing->setHeight(60);
+                    $drawing->setWorksheet($sheet);
+
+                    $sheet->getStyle("G{$row}:G" . ($row + 2))->applyFromArray([
+                        'alignment' => [
+                            'horizontal' => Alignment::HORIZONTAL_CENTER,
+                            'vertical' => Alignment::VERTICAL_CENTER,
+                        ],
+                    ]);
+                }
+
+                $sheet->mergeCells("H{$row}:H{$row}")->setCellValue("H{$row}", "Doc. No.");
                 $sheet->setCellValue("I{$row}", $document_no->doc_no ?? '-');
 
-                $sheet->mergeCells("G" . ($row + 1) . ":H" . ($row + 1))->setCellValue("G" . ($row + 1), "Issue Dt.");
+                $sheet->mergeCells("H" . ($row + 1) . ":H" . ($row + 1))->setCellValue("H" . ($row + 1), "Issue Dt.");
                 $sheet->setCellValue("I" . ($row + 1), Displaydateformat($document_no->issue_date ?? ''));
 
-                $sheet->mergeCells("G" . ($row + 2) . ":H" . ($row + 2))->setCellValue("G" . ($row + 2), "Rev. & Dt.");
+                $sheet->mergeCells("H" . ($row + 2) . ":H" . ($row + 2))->setCellValue("H" . ($row + 2), "Rev. & Dt.");
                 $sheet->setCellValue("I" . ($row + 2), $document_no->rev_dt ?? '-');
 
-                $sheet->getStyle("G{$row}:I" . ($row + 2))->applyFromArray([
+                $sheet->getStyle("H{$row}:I" . ($row + 2))->applyFromArray([
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
                     'alignment' => ['horizontal' => 'center', 'vertical' => 'center'],
                 ]);
-                $sheet->getStyle("G{$row}:G" . ($row + 2))->getFont()->setBold(true);
+
+                $sheet->getStyle("H{$row}:H" . ($row + 2))->getFont()->setBold(true);
 
                 $sheet->getStyle("A{$row}:I" . ($row + 2))->applyFromArray([
                     'borders' => [
@@ -482,6 +509,8 @@ class FirstAidRecordController extends Controller
                 $sheet->getRowDimension($i)->setRowHeight(22);
             }
 
+            $row = 1;
+
             $sheet->mergeCells("A1:B3");
             $logoPath = public_path('assets/images/logo-dark.png');
             if (file_exists($logoPath)) {
@@ -497,22 +526,51 @@ class FirstAidRecordController extends Controller
             }
 
             $sheet->mergeCells("C1:F3")->setCellValue("C1", "OCCUPATIONAL HEALTH CENTER FIRST AID RECORD\nPN INTERNATIONAL PVT LTD");
-            $sheet->getStyle("C1")->applyFromArray([
+            $sheet->getStyle("C1:F3")->applyFromArray([
                 'font' => ['bold' => true, 'size' => 14],
-                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+                'borders' => [
+                    'allBorders' => ['borderStyle' => Border::BORDER_THIN],
+                ],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER,
+                'vertical' => Alignment::VERTICAL_CENTER,
+                'wrapText' => true,
+            ],
             ]);
 
-            $sheet->mergeCells("G1:H1")->setCellValue("G1", "Doc. No.");
+            $sheet->mergeCells("G{$row}:G" . ($row + 2));
+
+            $logoRightPath = public_path('assets/images/plus-image.webp');
+            if (file_exists($logoRightPath)) {
+                $drawing = new Drawing();
+                $drawing->setName('Right Logo');
+                $drawing->setPath($logoRightPath);
+                $drawing->setCoordinates("G{$row}");
+
+                $drawing->setOffsetX(50);
+                $drawing->setOffsetY(15);
+                $drawing->setWidth(60);
+                $drawing->setHeight(60);
+                $drawing->setWorksheet($sheet);
+
+                $sheet->getStyle("G{$row}:G" . ($row + 2))->applyFromArray([
+                    'alignment' => [
+                        'horizontal' => Alignment::HORIZONTAL_CENTER,
+                        'vertical' => Alignment::VERTICAL_CENTER,
+                    ],
+                ]);
+            }
+
+            $sheet->mergeCells("H1")->setCellValue("H1", "Doc. No.");
             $sheet->setCellValue("I1", $document_no->doc_no);
 
-            $sheet->mergeCells("G2:H2")->setCellValue("G2", "Issue Dt.");
+            $sheet->mergeCells("H2")->setCellValue("H2", "Issue Dt.");
             $sheet->setCellValue("I2", Displaydateformat($document_no->issue_date));
 
-            $sheet->mergeCells("G3:H3")->setCellValue("G3", "Rev. & Dt.");
+            $sheet->mergeCells("H3")->setCellValue("H3", "Rev. & Dt.");
             $sheet->setCellValue("I3", $document_no->rev_dt);
 
-            $sheet->getStyle("G1:I3")->applyFromArray([
-                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+            $sheet->getStyle("H1:I3")->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
             ]);
             $sheet->getStyle("G1:G3")->getFont()->setBold(true);
@@ -561,6 +619,10 @@ class FirstAidRecordController extends Controller
             $sheet->mergeCells("G{$row}:I{$row}");
             $sheet->setCellValue("G{$row}", $first_aid_details->overall_total_number_of_first_aid ?? '0');
 
+            $sheet->getStyle("G{$row}:I{$row}")
+                  ->getAlignment()
+                  ->setHorizontal(Alignment::HORIZONTAL_LEFT);
+
             $sheet->getStyle("A{$row}:I{$row}")->applyFromArray([
                 'font' => ['bold' => true],
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
@@ -588,8 +650,6 @@ class FirstAidRecordController extends Controller
             return redirect(admin_url('ohc/first-aid-record/list'));
         }
     }
-
-
 
 
 

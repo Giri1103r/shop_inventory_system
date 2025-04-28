@@ -77,7 +77,7 @@ class WorkNoiseMonitoring extends Model
         $query = $query->leftJoin('inspection_environment_table', 'inspection_environment_work_noise_monitoring.environment_id', '=', 'inspection_environment_table.id');
         $query = $query->leftJoin('masters_location', 'inspection_environment_work_noise_monitoring.location_id', '=', 'masters_location.id');
         $query = $query->leftJoin('masters_unit', 'inspection_environment_work_noise_monitoring.unit_id', '=', 'masters_unit.id');
-     
+
         $query->orderBy('id', 'DESC');
         return  $query->get();
     }
@@ -86,8 +86,9 @@ class WorkNoiseMonitoring extends Model
     {
         $data = $this->select('inspection_environment_work_noise_monitoring.*', 'masters_location.location_name', 'masters_unit.unit_name', 'inspection_environment_table.environment_no')
             ->leftJoin('masters_location', 'inspection_environment_work_noise_monitoring.location_id', '=', 'masters_location.id')->leftJoin('inspection_environment_table', 'inspection_environment_work_noise_monitoring.environment_id', '=', 'inspection_environment_table.id')
-            ->leftJoin('masters_unit', 'inspection_environment_work_noise_monitoring.unit_id', '=', 'masters_unit.id')->where('inspection_environment_work_noise_monitoring.environment_id', $envId)->where('inspection_environment_work_noise_monitoring.status', 1)
+            ->leftJoin('masters_unit', 'inspection_environment_work_noise_monitoring.unit_id', '=', 'masters_unit.id')->where('inspection_environment_work_noise_monitoring.environment_id', $envId)
             ->get();
+            
         return $data;
     }
 

@@ -83,7 +83,7 @@ class AuditAnalysis extends Model
 
         return $this->create($insert_array);
     }
-  
+
 
     public function selectOne($id)
     {
@@ -94,19 +94,25 @@ class AuditAnalysis extends Model
     public function exportdata()
     {
         $request = request();
-        $search = '';
 
-        $query = $this->select('inspection_audit_analysis.*');
+        $query = $this->select('inspection_audit_analysis.*', 'inspection_audit_analysis_checklist.*','masters_unit.*','masters_department.*')
+                      ->leftJoin('inspection_audit_analysis_checklist', 'inspection_audit_analysis.id', '=', 'inspection_audit_analysis_checklist.audit_analysis_id')
+                      ->leftJoin('masters_unit', 'inspection_audit_analysis_checklist.unit_id', '=', 'masters_unit.id')
+                      ->leftJoin('masters_department', 'inspection_audit_analysis_checklist.department_id', '=', 'masters_department.id');
 
         if ($request->has('audit_analysis_id') && $request->audit_analysis_id) {
-            $query = $query->where('id', decryptId($request->audit_analysis_id));
-        }
-        if ($request->has('status') && $request->status) {
-            $query = $query->where('status', decryptId($request->status));
+            $query->where('inspection_audit_analysis.id', decryptId($request->audit_analysis_id));
         }
 
-        return $query->orderBy('id', 'desc')->get();
+        if ($request->has('status') && $request->status) {
+            $query->where('inspection_audit_analysis.status', decryptId($request->status));
+        }
+
+        $data = $query->orderBy('inspection_audit_analysis.id', 'desc')->get();
+
+        return $data->groupBy('audit_analysis_id');
     }
+
 
 
 

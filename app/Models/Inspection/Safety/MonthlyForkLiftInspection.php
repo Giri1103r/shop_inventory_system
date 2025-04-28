@@ -63,6 +63,12 @@ class MonthlyForkLiftInspection extends Model
             ->leftJoin('inspection_frequency_option', 'inspection_forklift_inpsection_monthly.frequency', '=', 'inspection_frequency_option.id')
             ->leftJoin('inspection_static_docno', 'inspection_forklift_inpsection_monthly.document_reference_id', '=', 'inspection_static_docno.id');
 
+
+        if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_OFFICER) || CheckUserRole(ROLE_L1_MANAGER) || CheckUserRole(ROLE_L2_MANAGER)) {
+        } else if (CheckUserRole(ROLE_FIRE_ASSOCIATES)) {
+            $query->where('inspection_forklift_inpsection_monthly.created_by', Auth::id());
+        }
+
         $org_total =  $query;
         $org_total_counts = $org_total->count();
 
@@ -75,9 +81,6 @@ class MonthlyForkLiftInspection extends Model
                 $query->orWhereRaw('inspection_frequency_option.frequency_name LIKE "%' . $search . '%"');
             });
         }
-
-
-
 
         if (isset($request->location) && $request->location) {
             $query = $query->where('inspection_forklift_inpsection_monthly.location', 'LIKE', '%' . decryptId($request->location) . '%');

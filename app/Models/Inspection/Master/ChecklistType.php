@@ -53,6 +53,10 @@ class ChecklistType extends Model
             $query = $query->where('inspection_master_checklist_type.category_id', 'LIKE', '%' . $request->category_id . '%');
         }
 
+        if ($request->has('status') && $request->status) {
+            $query = $query->where('inspection_master_checklist_type.status', decryptId($request->status));
+        }
+
         if (isset($request->order) && count($request->order) > 0) {
             $columnName = $request->order[0]['column'];
             $columnorder = $request->order[0]['dir'];
@@ -146,6 +150,10 @@ class ChecklistType extends Model
         }
         if (isset($request->category_id) && $request->category_id) {
             $query = $query->where('inspection_master_checklist_type.category_id', 'LIKE', '%' . $request->category_id . '%');
+        }
+
+        if ($request->has('status') && $request->status) {
+            $query = $query->where('inspection_master_checklist_type.status', decryptId($request->status));
         }
 
         if (isset($request->order) && count($request->order) > 0) {

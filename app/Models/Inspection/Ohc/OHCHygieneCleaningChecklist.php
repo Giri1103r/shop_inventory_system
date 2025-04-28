@@ -39,6 +39,11 @@ class OHCHygieneCleaningChecklist extends Model
             ->leftjoin('inspection_shift_option', 'inspection_shift_option.id', '=', 'inspection_ohc_hygiene_checklist.shift_id');
 
 
+        if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_NURSING_OFFICER)) {
+        } else if (CheckUserRole(ROLE_CLEANER)) {
+            $query->where('inspection_ohc_hygiene_checklist.created_by', Auth::id());
+        }
+
         $org_total =  $query;
         $org_total_counts = $org_total->count();
 
