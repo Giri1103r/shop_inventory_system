@@ -72,11 +72,24 @@ class HooterInspection extends Model
             $search = $request->search['value'];
 
             $query = $query->where(function ($query) use ($search) {
+
                 $query->orWhereRaw('masters_location.location_name LIKE "%' . $search . '%"');
                 $query->orWhereRaw('masters_unit.unit_name LIKE "%' . $search . '%"');
                 $query->orWhereRaw('inspection_shift_option.shift LIKE "%' . $search . '%"');
                 $query->orWhereRaw('inspection_frequency_option.frequency_name LIKE "%' . $search . '%"');
             });
+        }
+
+        if ($request->has('inspection_date') && $request->inspection_date) {
+
+            $formattedDate = DBdateformat($request->inspection_date);
+            $query = $query->whereDate('inspection_fire_hooter.date_of_inspection', $formattedDate);
+        }
+
+        if ($request->has('next_due') && $request->next_due) {
+
+            $formattedDate = DBdateformat($request->next_due);
+            $query = $query->whereDate('inspection_fire_hooter.next_due', $formattedDate);
         }
 
         if (isset($request->location) && $request->location) {
@@ -186,6 +199,18 @@ class HooterInspection extends Model
                 $query->orWhereRaw('inspection_shift_option.shift LIKE "%' . $search . '%"');
                 $query->orWhereRaw('inspection_frequency_option.frequency_name LIKE "%' . $search . '%"');
             });
+        }
+
+        if ($request->has('inspection_date') && $request->inspection_date) {
+
+            $formattedDate = DBdateformat($request->inspection_date);
+            $query = $query->whereDate('inspection_fire_hooter.date_of_inspection', $formattedDate);
+        }
+
+        if ($request->has('next_due') && $request->next_due) {
+
+            $formattedDate = DBdateformat($request->next_due);
+            $query = $query->whereDate('inspection_fire_hooter.next_due', $formattedDate);
         }
 
         if (isset($request->location) && $request->location) {
