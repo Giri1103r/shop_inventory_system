@@ -217,7 +217,7 @@ class EmergencyLightInspectionController extends Controller
 
             return view('inspection.fire.emergency_light_inspection.add', $data);
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('fire/emergency-light-inspection/list'));
         }
@@ -311,7 +311,7 @@ class EmergencyLightInspectionController extends Controller
             Session::flash('success', 'Your data added successfully');
             return redirect(admin_url('fire/emergency-light-inspection/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('fire/emergency-light-inspection/list'));
         }
@@ -338,7 +338,7 @@ class EmergencyLightInspectionController extends Controller
             );
             return view('inspection.fire.emergency_light_inspection.view', $data);
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('fire/emergency-light-inspection/list'));
         }
@@ -365,7 +365,7 @@ class EmergencyLightInspectionController extends Controller
             );
             return view('inspection.fire.emergency_light_inspection.approve', $data);
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('fire/emergency-light-inspection/list'));
         }
@@ -435,7 +435,7 @@ class EmergencyLightInspectionController extends Controller
             Session::flash('success', __('common.updated_msg'));
             return redirect(admin_url('fire/emergency-light-inspection/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             report($ex);
             Session::flash('error', 'Something Went Wrong!');
             return redirect(admin_url('fire/emergency-light-inspection/list'));
@@ -644,7 +644,7 @@ class EmergencyLightInspectionController extends Controller
             Session::flash('success', __('common.updated_msg'));
             return redirect(admin_url('fire/emergency-light-inspection/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something Went wrong!');
             return redirect(admin_url('fire/emergency-light-inspection/list'));
         }
@@ -1043,7 +1043,7 @@ class EmergencyLightInspectionController extends Controller
             $filename = "Emergency Light Inspection.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('fire/emergency-light-inspection/list'));
         }
@@ -1334,7 +1334,7 @@ class EmergencyLightInspectionController extends Controller
                 'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
             ]);
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('fire/emergency-light-inspection/list'));
         }
@@ -1380,7 +1380,7 @@ class EmergencyLightInspectionController extends Controller
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('fire/emergency-light-inspection/list'));
         }

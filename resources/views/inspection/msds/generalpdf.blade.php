@@ -237,7 +237,7 @@
                     <td style="border: 2px solid black; padding: 8px;">
                         {{ isset($msdsDetails->name_of_chemical) ? $msdsDetails->name_of_chemical : '' }}
                     </td>
-                    <td style="border: 1px solid black; padding: 8px; text-align: center;">
+                    <td style="border: 2px solid black; padding: 8px; text-align: center;">
                         @if ($msdsDetails->msds_availability_status == YES)
                             <span style="color: green; font-size: 20px;">✓</span>
                         @elseif ($msdsDetails->msds_availability_status == NO)

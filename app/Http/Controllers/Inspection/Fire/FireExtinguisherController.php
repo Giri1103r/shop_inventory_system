@@ -344,7 +344,7 @@ class FireExtinguisherController extends Controller
                 return redirect(admin_url('fire/fire_extinguisher-inspection/list'));
             }
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('fire/fire_extinguisher-inspection/list'));
@@ -472,7 +472,7 @@ class FireExtinguisherController extends Controller
             Session::flash('success', __('common.updated_msg'));
             return redirect(admin_url('fire/fire_extinguisher-inspection/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             report($ex);
             Session::flash('error', 'Something Went Wrong!');
             return redirect(admin_url('fire/fire_extinguisher-inspection/list'));

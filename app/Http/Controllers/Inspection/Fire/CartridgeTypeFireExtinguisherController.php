@@ -211,7 +211,7 @@ class CartridgeTypeFireExtinguisherController extends Controller
 
             return view('inspection.fire.cartridge_type_fire_extinguisher.add', $data);
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('fire/fire-extinguisher/cartridge/list'));
