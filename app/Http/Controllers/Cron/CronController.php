@@ -379,11 +379,12 @@ class CronController extends Controller
             return response()->json(['message' => 'An error occurred.', 'error' => $ex->getMessage()]);
         }
     }
-    public function employeeMasterTempAllDetails(Request $request)
+    public function employeeMasterTempCustom(Request $request)
     {
         try {
-            $fromDate = '2001-01-01';
-            $toDate = todayDbdate();
+
+            $fromDate = $request->fromdate;
+            $toDate = $request->todate;
             $apiKeyTokens = $this->company->getApiKeyToken();
 
             $responses = [];
@@ -396,6 +397,52 @@ class CronController extends Controller
                 if ($response->successful()) {
                     $data = $response->json();
 
+                    if (!empty($data['Result'])) {
+                        $this->emp_temp->store($data);
+                        $responses[] = [
+                            'message' => 'Data saved successfully.',
+                            'token' => $token->api_token_key
+                        ];
+                    } else {
+                        $responses[] = [
+                            'message' => 'No data found in API response.',
+                            'token' => $token->api_token_key
+                        ];
+                    }
+                } else {
+                    $responses[] = [
+                        'message' => 'Failed to fetch data from API.',
+                        'status' => $response->status(),
+                        'token' => $token->api_token_key
+                    ];
+                }
+            }
+
+
+            return response()->json($responses);
+
+
+
+        } catch (Exception $ex) {
+            report($ex);
+            return response()->json(['message' => 'An error occurred.', 'error' => $ex->getMessage()]);
+        }
+    }
+    public function employeeMasterTempAllDetails(Request $request)
+    {
+        try {
+            $fromDate = '2001-01-01';
+            $toDate = todayDbdate();
+            $apiKeyTokens = $this->company->getApiKeyToken();
+            $responses = [];
+
+            foreach ($apiKeyTokens as $token) {
+                $apiUrl = "https://hrms.esparsh.in/PunchesAPI/api/Attendance/GetEmployeeDetails?token={$token->api_token_key}&fromDate={$fromDate}&toDate={$toDate}";
+
+                $response = Http::get($apiUrl);
+                
+                if ($response->successful()) {
+                    $data = $response->json();
                     if (!empty($data['Result'])) {
                         $this->emp_temp->store($data);
                         $responses[] = [
