@@ -362,6 +362,7 @@ class HooterInspectionController extends Controller
                 'status_log' => $status_log,
                 'document_no' => $document_no,
             );
+            // dd($data);
             return view('inspection.fire.hooter_inspection.view', $data);
         } catch (Exception $ex) {
             report($ex);
