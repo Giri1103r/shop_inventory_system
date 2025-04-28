@@ -155,133 +155,156 @@
         </table>
     </div>
 
-    <table width="100%" style="width:100%;">
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Inspection ID</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ isset($dailyFire->inspection_id) ? $dailyFire->inspection_id : '' }}</td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Doc. No</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ isset($dailyFire->document_no) ? $dailyFire->document_no : '' }}</td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Issue Dt.</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ displayDateformat($dailyFire->issuedate) }}
-            </td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Rev. & Dt.</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ $dailyFire->rev_date }}
-            </td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Date of Inspection</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ displayDateformat($dailyFire->date_of_inspection) }}
-            </td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Unit</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ getUnitname(isset($dailyFire->unit_id) ? $dailyFire->unit_id : '') }}</td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Shift</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ getShiftname(isset($dailyFire->shift_id) ? $dailyFire->shift_id : '') }}</td>
-        </tr>
+   
 
-    </table>
 
-    <br>
-    @php
-        $user_response = json_decode($dailyFire->checklist, true);
-    @endphp
-    <div class="table-responsive">
-        <div class="col-md-12">
-            <table class="table table-bordered table-hover tblborder">
-                <thead>
-                    <tr>
+    <table
+        style="width: 100%; border-collapse: collapse; font-family: Arial, sans-serif; text-align: center; border: 1px solid black;">
 
-                        <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
-                            Sr. No</th>
-                        <th colspan="2"
-                            style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
-                            Check Points</th>
-                        <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
-                            Pump No</th>
-                        <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
-                            YES/NO</th>
-                        <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
-                            Remarks</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @php $srNo = 1; @endphp
-                    @foreach ($user_response as $checklistId => $data)
+        <tr>
+            <th colspan="6" style="border:1px solid black;height:50;width:40">
+                <img src="{{ url('public/assets/images/logo-dark.png') }}" style="width:125px;height:50px;">
+            </th>
+            <th colspan="6" style="border:1px solid black;">
+                <h3>
+                    <span><b>DAILY FIRE PUMP HOUSE INSPECTION CHECKLIST</b></span>
+                    <br>
+                    <span><b>PN International Pvt Ltd. </b></span>
+                </h3>
+            </th>
+
+            <th colspan="6" style="border:1px solid black;">
+                <table class="table table-bordered scrolldown">
+                    <thead>
                         <tr>
-                            <td style="border: 1px solid black; padding: 8px; font-weight: bold; text-align: center;">
-                                {{ $srNo }}
-                            </td>
-                            <td colspan="2" style="border: 1px solid black; padding: 8px;">
-                                {{ GetChecklistTypeDate($checklistId) }}
-                            </td>
-                            <td style="border: 1px solid black; padding: 8px; text-align: center;">
-                                {{ $data['pump_no'] ?? 'N/A' }}
-                            </td>
-                            <td style="border: 1px solid black; padding: 8px; text-align: center;">
-                                @if ($data['response'] == 'YES')
-                                    <span style="color: green; font-size: 20px;">✓</span>
-                                @elseif ($data['response'] == 'NO')
-                                    <span style="color: red; font-size: 20px;">X</span>
-                                @endif
-                            </td>
-                            <td style="border: 1px solid black; padding: 8px; text-align: center;">
-                                {{ $data['remarks'] ?? '-' }}
-                            </td>
+                            <td style="border: 1px solid black;width:70;">Doc.No</td>
+                            <td style="border: 1px solid black;">{{ $document_no->doc_no }}</td>
                         </tr>
-                        @php $srNo++; @endphp
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
-    </div>
+                        <tr>
+                            <td style="border: 1px solid black;width:70;">Issue Dt.</td>
+                            <td style="border: 1px solid black;">{{ $document_no->issue_date }}</td>
+                        </tr>
+                        <tr>
+                            <td style="border: 1px solid black;width:70;">Rev.& Dt.</td>
+                            <td style="border: 1px solid black;">{{ $document_no->rev_dt }}</td>
+                        </tr>
+                    </thead>
+                </table>
 
-    <table width="100%" style="width:100%;">
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Signature</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                <a href="{{ asset($dailyFire->file_path) }}" target="_blank">
-                    <img src="{{ asset($dailyFire->file_path) }}" alt="Signature" style="max-width: 10%;">
-                </a>
-            </td>
+            </th>
         </tr>
         <tr>
-            <td width="50%" style="padding:5px;"><b>Date</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ displayDateformat($dailyFire->date) }}</td>
+            <th colspan="6"
+                style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
+                DATE OF INSPECTION: {{ Displaydateformat($dailyFire->date_of_inspection) ?? 'N/A' }}
+            </th>
+            <th colspan="6"
+                style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
+                UNIT : {{ getUnitname($dailyFire->unit_id ?? 'N/A') }}
+            </th>
+            <th colspan="6"
+                style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
+                SHIFT: {{ getShift($dailyFire->shift_id) ?? 'N/A' }}
+            </th>
         </tr>
+        </tr>
+
         <tr>
-            <td width="50%" style="padding:5px;"><b>Note</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ $dailyFire->note }}
-            </td>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="2">SR. NO</th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">CHECK POINTS
+            </th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">PUMP NO
+            </th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">STATUS
+            </th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">REMARK
+            </th>
+
         </tr>
+        @php
+            $user_response = json_decode($dailyFire->checklist, true);
+            $groupedBySubtype = [];
+            $srNo = 1;
+
+            // Group checkpoints by sub_type_id
+            foreach ($user_response as $checkpointId => $data) {
+                $subTypeId = $data['sub_type_id'] ?? 'Unknown';
+                $groupedBySubtype[$subTypeId][$checkpointId] = $data;
+            }
+        @endphp
+
+        @foreach ($groupedBySubtype as $subTypeId => $checkpoints)
+            @php
+                $rowCount = count($checkpoints);
+                $firstRow = true;
+            @endphp
+
+            @foreach ($checkpoints as $checkpointId => $checkpoint)
+                @php
+                    $status = $checkpoint['response'] ?? '';
+                    $pump_no = $checkpoint['pump_no'] ?? '';
+                    $remark = $checkpoint['remarks'] ?? 'No Remarks';
+                @endphp
+
+                <tr>
+                    @if ($firstRow)
+                        {{-- Serial Number (for each sub_type_id) --}}
+                        <td rowspan="{{ $rowCount }}" colspan="2"
+                            style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
+                            {{ $srNo++ }}
+                        </td>
+                        @php $firstRow = false; @endphp
+                    @endif
+
+                    {{-- CHECK ITEM: show checkpoint id or name --}}
+                    <td colspan="4" style="border: 1px solid black; padding: 8px;">
+                        {{ getSubcategoryDataname($checkpointId) }}
+                    </td>
+
+                    {{-- PUMP NO --}}
+                    <td colspan="4" style="border: 1px solid black; padding: 8px;">
+                        {{ $pump_no }}
+                    </td>
+
+                    {{-- STATUS --}}
+                    <td colspan="4"
+                        style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
+                        @if ($status === 'YES')
+                            <span style="color: green; font-size: 20px;">✓</span>
+                        @elseif ($status === 'NO' || $status === 'N/A')
+                            <span style="color: red; font-size: 20px;">X</span>
+                        @else
+                            <i class="fa-solid fa-minus" style="color: #808080;"></i>
+                        @endif
+                    </td>
+
+                    {{-- REMARK --}}
+                    <td colspan="4" style="border: 1px solid black; padding: 8px;">
+                        {{ $remark }}
+                    </td>
+                </tr>
+            @endforeach
+        @endforeach
+
+
+        @php
+            $signature = GetSignature($dailyFire->created_by, $dailyFire->id, DAILY_FIRE_PUMP);
+
+        @endphp
+        <tr>
+            <th colspan="18" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">
+                <img src="{{ admin_url($signature) }}" alt="Signature Upload"
+                    style="width: 150px; margin-top: -10px;" />
+                <div style="margin-top: 5px;">Requestor Signature</div>
+            </th>
+        </tr>
+
+
     </table>
+
+
+
+
 </body>
 
 </html>

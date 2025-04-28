@@ -155,51 +155,9 @@
         </table>
     </div>
 
-    <table width="100%" style="width:100%;">
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Inspection ID</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ isset($fireNoc->inspection_id) ? $fireNoc->inspection_id : '' }}</td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Doc. No</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ isset($fireNoc->document_no) ? $fireNoc->document_no : '' }}</td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Issue Dt.</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ displayDateformat($fireNoc->issuedate) }}
-            </td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Rev. & Dt.</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ $fireNoc->rev_date }}
-            </td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>ब्लाक आधारित विवरण (Block based
-                    statement)</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ $fireNoc->block_based_statement }}
-            </td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>ब्लाब्लाक(Block)</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ $fireNoc->block }}</td>
-        </tr>
-    </table>
 
     <br>
-    @php
+    {{-- @php
         $user_response = json_decode($fireNoc->checklist, true);
     @endphp
     <div class="table-responsive">
@@ -264,7 +222,114 @@
                 </tbody>
             </table>
         </div>
-    </div>
+    </div> --}}
+
+    <table
+        style="width: 100%; border-collapse: collapse; font-family: Arial, sans-serif; text-align: center; border: 1px solid black;">
+
+        <tr>
+            <th colspan="6" style="border:1px solid black;height:50;width:40">
+                <img src="{{ url('public/assets/images/logo-dark.png') }}" style="width:125px;height:50px;">
+            </th>
+            <th colspan="6" style="border:1px solid black;">
+                <h3>
+                    <span><b>DAILY FIRE PUMP HOUSE INSPECTION CHECKLIST</b></span>
+                    <br>
+                    <span><b>PN International Pvt Ltd. </b></span>
+                </h3>
+            </th>
+
+            <th colspan="6" style="border:1px solid black;">
+                <table class="table table-bordered scrolldown">
+                    <thead>
+                        <tr>
+                            <td style="border: 1px solid black;width:70;">Doc.No</td>
+                            <td style="border: 1px solid black;">{{ $document_no->doc_no }}</td>
+                        </tr>
+                        <tr>
+                            <td style="border: 1px solid black;width:70;">Issue Dt.</td>
+                            <td style="border: 1px solid black;">{{ $document_no->issue_date }}</td>
+                        </tr>
+                        <tr>
+                            <td style="border: 1px solid black;width:70;">Rev.& Dt.</td>
+                            <td style="border: 1px solid black;">{{ $document_no->rev_dt }}</td>
+                        </tr>
+                    </thead>
+                </table>
+
+            </th>
+        </tr>
+        <tr>
+            <th colspan="18"
+                style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
+                ब्लाक आधारित विवरण (Block based statement): {{ $fireNoc->block_based_statement ?? 'N/A' }}
+            </th>
+
+        </tr>
+        <tr>
+            <th colspan="18"
+                style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
+                ब्लाक(Block) :- {{ $fireNoc->block ?? 'N/A' }}
+            </th>
+
+        </tr>
+
+        <tr>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="2">SR. NO</th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">CHECK POINTS
+            </th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">PUMP NO
+            </th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">STATUS
+            </th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">REMARK
+            </th>
+
+        </tr>
+        @php
+            $srNo = 1;
+            $displayedSections = [];
+        @endphp
+
+        @foreach ($user_response as $checklistId => $data)
+            @php
+                $sectionName = GetSubChecklistTypeName($data['sub_type_id']);
+            @endphp
+
+            <tr>
+                @if (!in_array($sectionName, $displayedSections))
+                    <td colspan="5"
+                        style="border: 1px solid black; padding: 8px; background-color: #f5f5f5; font-weight: bold; text-align: center;">
+                        {{ $sectionName }}
+                    </td>
+                    @php $displayedSections[] = $sectionName; @endphp
+                @endif
+            </tr>
+
+            <tr>
+                <td style="border: 1px solid black; padding: 8px; font-weight: bold; text-align: center;">
+                    {{ $srNo }}
+                </td>
+
+                <td colspan="2" style="border: 1px solid black; padding: 8px;">
+                    {{ GetChecklistTypeDate($checklistId) }}
+                </td>
+
+                <td style="border: 1px solid black; padding: 8px; text-align: center;">
+                    {{ $data['remarks'] ?? '-' }}
+                </td>
+            </tr>
+
+            @php
+                $srNo++;
+            @endphp
+        @endforeach
+
+
+
+
+
+    </table>
 </body>
 
 </html>
