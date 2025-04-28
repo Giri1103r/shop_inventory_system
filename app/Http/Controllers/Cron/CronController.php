@@ -213,6 +213,7 @@ class CronController extends Controller
         try {
             $fromDate = '2001-01-01';
             $toDate = todayDbdate();
+            
             $office_id = $this->company->getcompany();
 
             $responses = [];
@@ -257,8 +258,8 @@ class CronController extends Controller
     public function workMasterTemp()
     {
         try {
-            $fromDate = todayDbdate();
-            $toDate = todayDbdate();
+            $fromDate = now()->subDay()->format('Y-m-d');
+            $toDate = now()->subDay()->format('Y-m-d');
 
             $office_id = $this->company->getcompany();
             foreach ($office_id as $company) {
@@ -292,7 +293,7 @@ class CronController extends Controller
             if (!empty($worktemp)) {
 
                 $work = $this->work->store($worktemp);
-                if (!empty($work))  {
+                if (!empty($work)) {
                     foreach ($work as $item) {
                         $emp_id = $item['emp_id'];
 
@@ -334,8 +335,11 @@ class CronController extends Controller
     {
         try {
 
-            $fromDate = todayDbdate();
-            $toDate = todayDbdate();
+            // $fromDate = todayDbdate();
+            // $toDate = todayDbdate();
+            $fromDate = now()->subDay()->format('Y-m-d');
+            $toDate = now()->subDay()->format('Y-m-d');
+
             $apiKeyTokens = $this->company->getApiKeyToken();
 
             $responses = [];
@@ -371,9 +375,6 @@ class CronController extends Controller
 
 
             return response()->json($responses);
-
-
-
         } catch (Exception $ex) {
             report($ex);
             return response()->json(['message' => 'An error occurred.', 'error' => $ex->getMessage()]);
@@ -420,9 +421,6 @@ class CronController extends Controller
 
 
             return response()->json($responses);
-
-
-
         } catch (Exception $ex) {
             report($ex);
             return response()->json(['message' => 'An error occurred.', 'error' => $ex->getMessage()]);
@@ -440,7 +438,7 @@ class CronController extends Controller
                 $apiUrl = "https://hrms.esparsh.in/PunchesAPI/api/Attendance/GetEmployeeDetails?token={$token->api_token_key}&fromDate={$fromDate}&toDate={$toDate}";
 
                 $response = Http::get($apiUrl);
-                
+
                 if ($response->successful()) {
                     $data = $response->json();
                     if (!empty($data['Result'])) {
@@ -466,7 +464,6 @@ class CronController extends Controller
 
 
             return response()->json($responses);
-
         } catch (Exception $ex) {
             report($ex);
             return response()->json(['message' => 'An error occurred.', 'error' => $ex->getMessage()]);
