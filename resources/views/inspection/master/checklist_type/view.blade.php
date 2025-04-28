@@ -84,16 +84,17 @@
                                     @if ($checklist_images)
                                         <div class="mb-3 col-md-4 form-input custom-image-container">
                                             <label class="form-label view_label">{{ __('inspection.image') }}</label>
-                                            @if (count($checklist_images) > 0)
-                                                @foreach ($checklist_images as $checklist_image)
-                                                    <div class="image-wrapper">
-                                                        <img src="{{ admin_url($checklist_image->file_path) }}"
-                                                            alt="Checklist Type" class="img-fluid custom-image" />
-                                                    </div>
-                                                @endforeach
-                                            @else
+                                            <div class="image-wrapper">
+                                                <img src="{{ admin_url($checklist_images->file_path) }}"
+                                                    alt="Checklist Type" class="img-fluid custom-image"
+                                                    style=" height:80px; width:130px" />
+                                            </div>
+                                        @else
+                                        <div class="mb-3 col-md-4 form-input custom-image-container">
+                                            <label class="form-label view_label">{{ __('inspection.image') }}</label>
+                                            <div class="image-wrapper">
                                                 <div class="view_data">No Image Uploaded</div>
-                                            @endif
+                                            </div>
                                     @endif
                                 </div>
                                 <div class="mb-3 col-md-4 form-input">
