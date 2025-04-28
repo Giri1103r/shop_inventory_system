@@ -23,6 +23,16 @@ use App\Models\Inspection\InspectionStaticDocno;
 use App\Models\Master\Unit;
 use App\Models\Inspection\Fire\FireSignatureUpload;
 
+
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Border;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
+use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
+use PhpOffice\PhpSpreadsheet\RichText\RichText;
+
 class FirePumpHouseController extends Controller
 {
 
@@ -89,6 +99,9 @@ class FirePumpHouseController extends Controller
                             $btn .= '<a href="' . admin_url('fire/daily-fire-pump-house-inspection/generalpdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
                             <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
                         </a>';
+                            $btn .= '<a href="' . admin_url('fire/daily-fire-pump-house-inspection/generalExcel/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="Excel">
+                        <i class="fas fa-file-excel" style="color: #1D6F42;" aria-hidden="true"></i>
+                     </a>';
                             return $btn;
                         })
                         ->rawColumns(['action', 'created_date', 'created_by', 'status'])
@@ -206,41 +219,220 @@ class FirePumpHouseController extends Controller
     {
         try {
 
-            $allData =   $this->checklist_subtype->exportdata();
-            $header = [
-                __("common.sno"),
-                __("Checklist Sub-Type ID"),
-                __("Checklist Type Name"),
-                __("Checklist Sub-Type Name"),
-                __("common.status"),
-                __("common.created_by"),
-                __("common.created_date"),
-            ];
-
-            $i = 1;
-            foreach ($allData as $data) {
-
-                $export = [];
-                $export[] =  $i;
-                $export[] = $data->subcategory_id;
-                $export[] =  $data->category_name;
-                $export[] =  $data->subcategory_name;
-                $export[] =  $data->status == 1 ? 'Active' : 'In-Active';
-                $export[] =  getusername($data->created_by);
-                $export[] =  Displaydateformat($data->created_at);
-
-                $exportData[] = $export;
-
-                $i++;
+            $allData =   $this->dailyFire->exportdata();
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            } elseif (count($allData) > 20) {
+                return redirect()->back()->with('error',   __('inspection.excess_error'));
             }
 
-            $writer = SimpleExcelWriter::streamDownload('Checklist Sub Type Category.xlsx')
-                ->addHeader($header)
-                ->addRows(
-                    $exportData
-                );
+            $spreadsheet = new Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
+            for ($i = 1; $i <= 200; $i++) {
+                $sheet->getRowDimension($i)->setRowHeight(25);
+            }
+
+            $row = 1;
+            $currentRow = $row;
+            foreach ($allData as $details) {
+                $currentRow = $row;
+                $document_no = $this->static_docno->SelectOne($details->document_reference_id);
+                $dailyFire =   $this->dailyFire->selectOne($details->id);
+                $CreatorSignature = GetSignature($details->created_by, $details->id, DAILY_FIRE_PUMP);
+
+                $logoLeftPath = public_path('assets/images/logo-dark.png');
+                if (file_exists($logoLeftPath)) {
+                    $sheet->mergeCells("A$currentRow:F" . ($currentRow + 2));
+
+                    $drawing = new Drawing();
+                    $drawing->setName('Left Logo');
+                    $drawing->setPath($logoLeftPath);
+                    $drawing->setCoordinates("B$currentRow");
+                    $drawing->setOffsetX(100);
+                    $drawing->setOffsetY(15);
+                    $drawing->setWidth(70);
+                    $drawing->setHeight(70);
+                    $drawing->setWorksheet($sheet);
+
+                    $range = "A$currentRow:F" . ($currentRow + 2);
+                    $sheet->getStyle($range)->applyFromArray([
+                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                    ]);
+                }
+
+                // Title Section
+                $sheet->mergeCells("G{$currentRow}:M" . ($currentRow + 2));
+                $sheet->setCellValue("G{$currentRow}", "DAILY FIRE PUMP HOUSE INSPECTION CHECKLIST PN INTERNATIONAL PVT LTD");
+                $sheet->getStyle("G{$currentRow}")->applyFromArray([
+                    'font' => ['bold' => true, 'size' => 14],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                ]);
+
+
+                // document number
+
+
+                $sheet->mergeCells("N$currentRow:P$currentRow")->setCellValue("N$currentRow", 'Doc. No.');
+                $sheet->mergeCells("N" . ($currentRow + 1) . ":P" . ($currentRow + 1))->setCellValue("N" . ($currentRow + 1), 'Issue Dt.');
+                $sheet->mergeCells("N" . ($currentRow + 2) . ":P" . ($currentRow + 2))->setCellValue("N" . ($currentRow + 2), 'Rev. & Dt.');
+
+                $sheet->mergeCells("Q$currentRow:S$currentRow")->setCellValue("Q$currentRow", $document_no->doc_no);
+                $sheet->mergeCells("Q" . ($currentRow + 1) . ":S" . ($currentRow + 1))->setCellValue("Q" . ($currentRow + 1), Displaydateformat($document_no->issue_date));
+                $sheet->mergeCells("Q" . ($currentRow + 2) . ":S" . ($currentRow + 2))->setCellValue("Q" . ($currentRow + 2), $document_no->rev_dt);
+
+                $sheet->getStyle("N$currentRow:S" . ($currentRow + 2))->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                    'font' => ['bold' => true],
+                ]);
+
+                // Review Dates
+                $sheet->mergeCells("A" . ($currentRow + 3) . ":G" . ($currentRow + 3));
+                $richText1 = new RichText();
+                $richText1->createTextRun(' DATE OF INSPECTION:- ')->getFont()->setBold(true);
+                $richText1->createText(Displaydateformat($details->date_of_inspection));
+                $sheet->getCell("A" . ($currentRow + 3))->setValue($richText1);
+
+                $sheet->mergeCells("H" . ($currentRow + 3) . ":N" . ($currentRow + 3));
+                $richText2 = new RichText();
+                $richText2->createTextRun('UNIT :-  ')->getFont()->setBold(true);
+                $richText2->createText(getUnitname($details->unit_id));
+                $sheet->getCell("H" . ($currentRow + 3))->setValue($richText2);
+
+                $sheet->mergeCells("O" . ($currentRow + 3) . ":S" . ($currentRow + 3));
+                $richText2 = new RichText();
+                $richText2->createTextRun('SHIFT :-  ')->getFont()->setBold(true);
+                $richText2->createText(getShift($details->shift_id));
+                $sheet->getCell("O" . ($currentRow + 3))->setValue($richText2);
+
+                $sheet->getStyle("A" . ($currentRow + 3) . ":S" . ($currentRow + 3))->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                ]);
+
+
+                $headerRow = $currentRow + 4;
+
+                $sheet->mergeCells("A$headerRow:C$headerRow")->setCellValue("A$headerRow", "SERIAL NO");
+                $sheet->mergeCells("D$headerRow:I$headerRow")->setCellValue("D$headerRow", "CHECK POINTS");
+                $sheet->mergeCells("J$headerRow:L$headerRow")->setCellValue("J$headerRow", "PUMP NO");
+                $sheet->mergeCells("M$headerRow:O$headerRow")->setCellValue("M$headerRow", "STATUS");
+                $sheet->mergeCells("P$headerRow:S$headerRow")->setCellValue("P$headerRow", "REMARKS");
+
+                $sheet->getStyle("A$headerRow:S$headerRow")->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                    'font' => ['bold' => true],
+                ]);
+
+                // Data Start Row
+                $row = $headerRow + 1;
+                $srNo = 1;
+
+                $user_response = json_decode($details->checklist, true);
+                $groupedBySubtype = [];
+
+                // Group by sub_type_id
+                foreach ($user_response as $checkpointId => $data) {
+                    $subTypeId = $data['sub_type_id'] ?? 'Unknown';
+                    $groupedBySubtype[$subTypeId][$checkpointId] = $data;
+                }
+
+                // Write data
+                foreach ($groupedBySubtype as $subTypeId => $checkpoints) {
+                    $rowCount = count($checkpoints);
+                    $firstRow = true;
+
+                    foreach ($checkpoints as $checkpointId => $checkpoint) {
+                        $checkItem = getSubcategoryDataname($checkpointId);
+                        $pump = $checkpoint['pump_no'] ?? '';
+                        $status = $checkpoint['response'] ?? '';
+                        $remark = $checkpoint['remarks'] ?? '';
+
+                        if ($firstRow) {
+                            // Merge cells vertically for Serial No
+                            $sheet->mergeCells("A$row:C" . ($row + $rowCount - 1))
+                                ->setCellValue("A$row", $srNo++);
+                            $sheet->getStyle("A$row:C" . ($row + $rowCount - 1))->applyFromArray([
+                                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                                'font' => ['bold' => true],
+                            ]);
+                            $firstRow = false;
+                        }
+
+                        // Check Item
+                        $sheet->mergeCells("D$row:I$row")->setCellValue("D$row", $checkItem);
+
+                        // Pump No
+                        $sheet->mergeCells("J$row:L$row")->setCellValue("J$row", $pump);
+
+                        // Status (✓ or X)
+                        $statusSymbol = $status === 'YES' ? '✓' : ($status === 'NO' || $status === 'N/A' ? 'X' : '-');
+                        $sheet->mergeCells("M$row:O$row")->setCellValue("M$row", $statusSymbol);
+
+                        // Remarks
+                        $sheet->mergeCells("P$row:S$row")->setCellValue("P$row", $remark);
+
+                        // Style for all cells in row
+                        $sheet->getStyle("D$row:S$row")->applyFromArray([
+                            'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                            'alignment' => ['vertical' => Alignment::VERTICAL_CENTER],
+                        ]);
+
+                        $row++;
+                    }
+                }
+                $signatureStartRow = $row;
+                $signatureEndRow = $signatureStartRow + 3;
+
+                if (file_exists($CreatorSignature)) {
+                    // Merge cells for image display
+                    $sheet->mergeCells("A$signatureStartRow:S" . ($signatureStartRow + 2));
+
+                    // Create Drawing instance
+                    $drawing = new Drawing();
+                    $drawing->setName('Creator Signature');
+                    $drawing->setDescription('Creator Signature');
+                    $drawing->setPath($CreatorSignature); // Absolute path to the image
+                    $drawing->setCoordinates("I$signatureStartRow"); // Cell coordinate to place image
+                    $drawing->setOffsetX(5); // Optional: Horizontal offset
+                    $drawing->setOffsetY(5); // Optional: Vertical offset
+                    $drawing->setWidthAndHeight(150, 70);
+                    $drawing->setWorksheet($sheet);
+
+                    // Set row height for image rows
+                    for ($i = $signatureStartRow; $i <= $signatureStartRow + 2; $i++) {
+                        $sheet->getRowDimension($i)->setRowHeight(70);
+                    }
+
+                    // Signature label
+                    $sheet->setCellValue("A" . ($signatureStartRow + 2), "Creator Signature: " . getUserName($details->created_by));
+                    $sheet->mergeCells("A" . ($signatureStartRow + 2) . ":S" . ($signatureStartRow + 2));
+
+                    // Apply border and alignment styles
+                    $sheet->getStyle("A$signatureStartRow:S" . ($signatureStartRow + 2))->applyFromArray([
+                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                    ]);
+                }
+
+                $row =   $signatureStartRow + 6;
+            }
+            $fileName = 'Daily Fire Pump House Inspection.xlsx';
+            $writer = new Xlsx($spreadsheet);
+
+            return response()->streamDownload(function () use ($writer) {
+                $writer->save('php://output');
+            }, $fileName, [
+                'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            ]);
         } catch (Exception $ex) {
-            report($ex);
+            dd($ex);
+            Session::flash('error', 'Something went wrong!');
+            return redirect(admin_url('fire/daily-fire-pump-house-inspection/list'));
         }
     }
 
@@ -250,20 +442,22 @@ class FirePumpHouseController extends Controller
 
             ini_set("pcre.backtrack_limit", "5000000");
 
-            $allData =   $this->checklist_subtype->exportdata();
-            $header = [
-                __("common.sno"),
-                __("Checklist Sub-Type ID"),
-                __("Checklist Type Name"),
-                __("Checklist Sub-Type Name"),
-                __("common.status"),
-                __("common.created_by"),
-                __("common.created_date"),
-            ];
+            $allData =   $this->dailyFire->exportdata();
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            } elseif (count($allData) > 20) {
+                return redirect()->back()->with('error',   __('inspection.excess_error'));
+            }
+            foreach ($allData as $details) {
+                $document_no = $this->static_docno->SelectOne($details->document_reference_id);
+            }
+
+
             $data = array(
-                'header' => $header,
+
                 'content' => $allData,
-                'pagetitle' => "Checklist Sub Type Category",
+                'document_no' => $document_no,
+                'pagetitle' => "Daily Fire Pump House Inspection",
             );
 
             $property = [
@@ -285,11 +479,13 @@ class FirePumpHouseController extends Controller
 
             $mpdf->WriteHTML($html);
 
-            $filename = "Checklist Sub Type Category.pdf";
+            $filename = "Daily Fire Pump House Inspectiony.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 
-            report($ex);
+            dd($ex);
+            Session::flash('error', 'Something went wrong!');
+            return redirect(admin_url('fire/daily-fire-pump-house-inspection/list'));
         }
     }
 
@@ -300,6 +496,8 @@ class FirePumpHouseController extends Controller
             if (Auth::check()) {
 
                 $dailyFire =   $this->dailyFire->selectOne($id);
+                $document_no = $this->static_docno->selectOne($dailyFire->document_reference_id);
+
                 $audit_assessmentCkeclist = json_decode($dailyFire);
                 $checklist_details = getCheckListQuestion(CHECKLIST_FIRE_PUMP_HOUSE_INSECTION_CHECKLIST);
                 $options =  getoption(CHECKLIST_FIRE_PUMP_HOUSE_INSECTION_CHECKLIST);
@@ -307,6 +505,7 @@ class FirePumpHouseController extends Controller
             }
             $data = [
                 'dailyFire' => $dailyFire,
+                'document_no' => $document_no,
                 'getoption' => $getoption,
                 'pagetitle' => "Daily Fire Pump House Inspection",
             ];
@@ -327,11 +526,233 @@ class FirePumpHouseController extends Controller
             $mpdf->WriteHTML($html);
 
             $filename = "Daily Fire Pump House Inspection.pdf";
-            return $mpdf->Output($filename, 'D');
+            return $mpdf->Output($filename, 'i');
         } catch (Exception $ex) {
             report($ex);
             return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
         }
     }
 
+
+    public function generalExcel(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+            $spreadsheet = new Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
+            $dailyFire =   $this->dailyFire->selectOne($id);
+            $document_no = $this->static_docno->selectOne($dailyFire->document_reference_id);
+
+
+
+            $CreatorSignature = GetSignature($dailyFire->created_by, $id, DAILY_FIRE_PUMP);
+
+
+            for ($i = 1; $i <= 200; $i++) {
+                $sheet->getRowDimension($i)->setRowHeight(25);
+            }
+
+            $row = 1;
+            $currentRow = $row;
+            $logoPath = public_path('assets/images/logo-dark.png');
+            $logoLeftPath = public_path('assets/images/logo-dark.png');
+            if (file_exists($logoLeftPath)) {
+                $sheet->mergeCells("A$currentRow:F" . ($currentRow + 2));
+
+                $drawing = new Drawing();
+                $drawing->setName('Left Logo');
+                $drawing->setPath($logoLeftPath);
+                $drawing->setCoordinates("B$currentRow");
+                $drawing->setOffsetX(100);
+                $drawing->setOffsetY(15);
+                $drawing->setWidth(70);
+                $drawing->setHeight(70);
+                $drawing->setWorksheet($sheet);
+
+                $range = "A$currentRow:F" . ($currentRow + 2);
+                $sheet->getStyle($range)->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                ]);
+            }
+
+            // Title Section
+            $sheet->mergeCells("G{$currentRow}:M" . ($currentRow + 2));
+            $sheet->setCellValue("G{$currentRow}", "DAILY FIRE PUMP HOUSE INSPECTION CHECKLIST PN INTERNATIONAL PVT LTD");
+            $sheet->getStyle("G{$currentRow}")->applyFromArray([
+                'font' => ['bold' => true, 'size' => 14],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+            ]);
+
+
+            // document number
+
+
+            $sheet->mergeCells("N$currentRow:P$currentRow")->setCellValue("N$currentRow", 'Doc. No.');
+            $sheet->mergeCells("N" . ($currentRow + 1) . ":P" . ($currentRow + 1))->setCellValue("N" . ($currentRow + 1), 'Issue Dt.');
+            $sheet->mergeCells("N" . ($currentRow + 2) . ":P" . ($currentRow + 2))->setCellValue("N" . ($currentRow + 2), 'Rev. & Dt.');
+
+            $sheet->mergeCells("Q$currentRow:S$currentRow")->setCellValue("Q$currentRow", $document_no->doc_no);
+            $sheet->mergeCells("Q" . ($currentRow + 1) . ":S" . ($currentRow + 1))->setCellValue("Q" . ($currentRow + 1), Displaydateformat($document_no->issue_date));
+            $sheet->mergeCells("Q" . ($currentRow + 2) . ":S" . ($currentRow + 2))->setCellValue("Q" . ($currentRow + 2), $document_no->rev_dt);
+
+            $sheet->getStyle("N$currentRow:S" . ($currentRow + 2))->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                'font' => ['bold' => true],
+            ]);
+
+            // Review Dates
+            $sheet->mergeCells("A" . ($currentRow + 3) . ":G" . ($currentRow + 3));
+            $richText1 = new RichText();
+            $richText1->createTextRun(' DATE OF INSPECTION:- ')->getFont()->setBold(true);
+            $richText1->createText(Displaydateformat($dailyFire->date_of_inspection));
+            $sheet->getCell("A" . ($currentRow + 3))->setValue($richText1);
+
+            $sheet->mergeCells("H" . ($currentRow + 3) . ":N" . ($currentRow + 3));
+            $richText2 = new RichText();
+            $richText2->createTextRun('UNIT :-  ')->getFont()->setBold(true);
+            $richText2->createText(getUnitname($dailyFire->unit_id));
+            $sheet->getCell("H" . ($currentRow + 3))->setValue($richText2);
+
+            $sheet->mergeCells("O" . ($currentRow + 3) . ":S" . ($currentRow + 3));
+            $richText2 = new RichText();
+            $richText2->createTextRun('SHIFT :-  ')->getFont()->setBold(true);
+            $richText2->createText(getShift($dailyFire->shift_id));
+            $sheet->getCell("O" . ($currentRow + 3))->setValue($richText2);
+
+            $sheet->getStyle("A" . ($currentRow + 3) . ":S" . ($currentRow + 3))->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+            ]);
+
+
+            $headerRow = $currentRow + 4;
+
+            $sheet->mergeCells("A$headerRow:C$headerRow")->setCellValue("A$headerRow", "SERIAL NO");
+            $sheet->mergeCells("D$headerRow:I$headerRow")->setCellValue("D$headerRow", "CHECK POINTS");
+            $sheet->mergeCells("J$headerRow:L$headerRow")->setCellValue("J$headerRow", "PUMP NO");
+            $sheet->mergeCells("M$headerRow:O$headerRow")->setCellValue("M$headerRow", "STATUS");
+            $sheet->mergeCells("P$headerRow:S$headerRow")->setCellValue("P$headerRow", "REMARKS");
+
+            $sheet->getStyle("A$headerRow:S$headerRow")->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                'font' => ['bold' => true],
+            ]);
+
+            // Data Start Row
+            $row = $headerRow + 1;
+            $srNo = 1;
+
+            $user_response = json_decode($dailyFire->checklist, true);
+            $groupedBySubtype = [];
+
+            // Group by sub_type_id
+            foreach ($user_response as $checkpointId => $data) {
+                $subTypeId = $data['sub_type_id'] ?? 'Unknown';
+                $groupedBySubtype[$subTypeId][$checkpointId] = $data;
+            }
+
+            // Write data
+            foreach ($groupedBySubtype as $subTypeId => $checkpoints) {
+                $rowCount = count($checkpoints);
+                $firstRow = true;
+
+                foreach ($checkpoints as $checkpointId => $checkpoint) {
+                    $checkItem = getSubcategoryDataname($checkpointId);
+                    $pump = $checkpoint['pump_no'] ?? '';
+                    $status = $checkpoint['response'] ?? '';
+                    $remark = $checkpoint['remarks'] ?? '';
+
+                    if ($firstRow) {
+                        // Merge cells vertically for Serial No
+                        $sheet->mergeCells("A$row:C" . ($row + $rowCount - 1))
+                            ->setCellValue("A$row", $srNo++);
+                        $sheet->getStyle("A$row:C" . ($row + $rowCount - 1))->applyFromArray([
+                            'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                            'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                            'font' => ['bold' => true],
+                        ]);
+                        $firstRow = false;
+                    }
+
+                    // Check Item
+                    $sheet->mergeCells("D$row:I$row")->setCellValue("D$row", $checkItem);
+
+                    // Pump No
+                    $sheet->mergeCells("J$row:L$row")->setCellValue("J$row", $pump);
+
+                    // Status (✓ or X)
+                    $statusSymbol = $status === 'YES' ? '✓' : ($status === 'NO' || $status === 'N/A' ? 'X' : '-');
+                    $sheet->mergeCells("M$row:O$row")->setCellValue("M$row", $statusSymbol);
+
+                    // Remarks
+                    $sheet->mergeCells("P$row:S$row")->setCellValue("P$row", $remark);
+
+                    // Style for all cells in row
+                    $sheet->getStyle("D$row:S$row")->applyFromArray([
+                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                        'alignment' => ['vertical' => Alignment::VERTICAL_CENTER],
+                    ]);
+
+                    $row++;
+                }
+            }
+            $signatureStartRow = $row;
+            $signatureEndRow = $signatureStartRow + 3;
+
+            if (file_exists($CreatorSignature)) {
+                // Merge cells for image display
+                $sheet->mergeCells("A$signatureStartRow:S" . ($signatureStartRow + 2));
+
+                // Create Drawing instance
+                $drawing = new Drawing();
+                $drawing->setName('Creator Signature');
+                $drawing->setDescription('Creator Signature');
+                $drawing->setPath($CreatorSignature); // Absolute path to the image
+                $drawing->setCoordinates("I$signatureStartRow"); // Cell coordinate to place image
+                $drawing->setOffsetX(5); // Optional: Horizontal offset
+                $drawing->setOffsetY(5); // Optional: Vertical offset
+                $drawing->setWidthAndHeight(150, 70);
+                $drawing->setWorksheet($sheet);
+
+                // Set row height for image rows
+                for ($i = $signatureStartRow; $i <= $signatureStartRow + 2; $i++) {
+                    $sheet->getRowDimension($i)->setRowHeight(70);
+                }
+
+                // Signature label
+                $sheet->setCellValue("A" . ($signatureStartRow + 2), "Creator Signature: " . getUserName($dailyFire->created_by));
+                $sheet->mergeCells("A" . ($signatureStartRow + 2) . ":S" . ($signatureStartRow + 2));
+
+                // Apply border and alignment styles
+                $sheet->getStyle("A$signatureStartRow:S" . ($signatureStartRow + 2))->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                ]);
+            }
+
+
+
+
+
+
+
+
+            $fileName = 'Daily Fire Pump House Inspection.xlsx';
+            $writer = new Xlsx($spreadsheet);
+
+            return response()->streamDownload(function () use ($writer) {
+                $writer->save('php://output');
+            }, $fileName, [
+                'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            ]);
+        } catch (Exception $ex) {
+            report($ex);
+            Session::flash('error', 'Something went wrong!');
+            return redirect(admin_url('ohc/first-aid-box/daily-departmental/list'));
+        }
+    }
 }

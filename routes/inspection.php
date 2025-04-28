@@ -742,6 +742,7 @@ Route::group(['prefix' => 'fire/'], function () {
         Route::post('unique', [FirePumpHouseController::class, 'Uniquecheck']);
         Route::get('employeeName', [FirePumpHouseController::class, 'employeename']);
         Route::get('generalpdf/{id}', [FirePumpHouseController::class, 'generalpdf']);
+        Route::get('generalExcel/{id}', [FirePumpHouseController::class, 'generalExcel']);
     });
 
     Route::group(['prefix' => 'pre-noc/checklist/'], function () {

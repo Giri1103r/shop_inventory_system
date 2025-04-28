@@ -190,7 +190,7 @@
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('audit/assessment/export/pdf') }}" +
+                                            "{{ admin_url('fire/daily-fire-pump-house-inspection/export/pdf') }}" +
                                             '?search=' + searchValue +
                                             '&checklist=' + checklist +
                                             '&status=' + status
@@ -206,7 +206,7 @@
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('audit/assessment/export/excel') }}" +
+                                            "{{ admin_url('fire/daily-fire-pump-house-inspection/export/excel') }}" +
                                             '?search=' + searchValue +
                                             '&checklist=' + checklist +
                                             '&status=' + status
@@ -338,7 +338,7 @@
 
                         if (result.value) {
                             $.ajax({
-                                url: "{{ admin_url('audit/assessment/delete') }}",
+                                url: "{{ admin_url('fire/daily-fire-pump-house-inspection/delete') }}",
                                 type: 'post',
                                 headers: {
                                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
