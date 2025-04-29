@@ -118,7 +118,7 @@ class MonthlyEyeWashInspection extends Model
             $query->offset($request->start)->limit($request->length);
         }
 
-        $data = $query->get();
+        $data = $query->orderBy('inspection_monthly_eyewash.id', 'DESC')->get();
         $datas = array(
             'data' => $data,
             'total_records' => $org_total_counts,

@@ -91,7 +91,7 @@ class HooterInspectionController extends Controller
                         ->addColumn('next_due', function ($row) {
                             return Displaydateformat($row->next_due);
                         })
-
+ 
                         ->addColumn('created_by', function ($row) {
                             return getUsername($row->created_by);
                         })
@@ -335,6 +335,7 @@ class HooterInspectionController extends Controller
                 return redirect(admin_url('fire/hooter-inspection/list'));
             }
         } catch (Exception $ex) {
+            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('fire/hooter-inspection/list'));
@@ -1246,6 +1247,7 @@ class HooterInspectionController extends Controller
             $filename = "Hooter Inspection.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
+            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('fire/hooter-inspection/list'));

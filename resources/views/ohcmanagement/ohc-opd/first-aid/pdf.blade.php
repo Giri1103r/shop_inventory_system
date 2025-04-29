@@ -31,22 +31,38 @@
                             {{ $value->emp_name }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ displaydateformat($value->date_of_incident )}}
+                            {{ displaydateformat($value->date_of_incident) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ $value->time_of_incident }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
+                            @php
+                                $SelectedMedicineIds = explode(',', $value->medicine_id ?? '');
+                                $SelectedMedicineNames = [];
+                            @endphp
+
+                            @foreach ($medicine as $list)
+                                @if (in_array($list->id, $SelectedMedicineIds))
+                                    @php
+                                        $SelectedMedicineNames[] = $list->medicine;
+                                    @endphp
+                                @endif
+                            @endforeach
+
+                            {{ implode(', ', $SelectedMedicineNames) }}
+                        </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
                             {{ $value->treatment_provided }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ ($value->treatment_start_time) }}
+                            {{ $value->treatment_start_time }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ ($value->treatment_end_time) }}
+                            {{ $value->treatment_end_time }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ ($value->first_aider_name) }}
+                            {{ $value->first_aider_name }}
                         </td>
 
 
@@ -56,9 +72,7 @@
                             @endphp
                             {{ $follow_up_required }}
                         </td>
-                        <td style='padding: 7px;border: 0.5px solid'>
-                            {{ ($value->referred_to) }}
-                        </td>
+
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ $value->remarks }}
                         </td>

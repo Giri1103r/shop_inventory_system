@@ -22,28 +22,60 @@
                         </tr>
 
                         <tr>
-                            <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
-                                <b>Document Number</b>
-                            </td>
-                            <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
-                                valign="top"> {{ $details['data']->doc_no }}</td>
+                            @if (isset($details['data']->frequency))
+                                <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
+                                    <b>Frequency</b>
+                                </td>
+                                <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
+                                    valign="top"> {{ getfrequencyname($details['data']->frequency) }}</td>
+                            @endif
                         </tr>
 
 
                         <tr>
-                            <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
-                                <b>Issue Date</b>
-                            </td>
-                            <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
-                                valign="top"> {{ displaydateformat($details['data']->issue_date) }}</td>
+                            @if (isset($details['data']->unit))
+                                <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
+                                    <b>Unit</b>
+                                </td>
+                                <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
+                                    valign="top"> {{ getUnitname($details['data']->unit) }}</td>
+                            @endif
                         </tr>
-
                         <tr>
-                            <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
-                                <b>Revision & Date</b>
-                            </td>
-                            <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
-                                valign="top"> {{ $details['data']->rev_dt }}</td>
+                            @if (isset($details['data']->location))
+                                <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
+                                    <b>Location Name</b>
+                                </td>
+                                <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
+                                    valign="top"> {{ getLocationname($details['data']->location) }}</td>
+                            @endif
+                        </tr>
+                        <tr>
+                            @if (isset($details['data']->next_due))
+                                <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
+                                    <b>Next Due Date</b>
+                                </td>
+                                <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
+                                    valign="top"> {{ displayDateformat($details['data']->next_due) }}</td>
+                            @endif
+                        </tr>
+                        <tr>
+                            @if (isset($details['data']->date_of_inspection))
+                                <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
+                                    <b>Date Of Inspection</b>
+                                </td>
+                                <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
+                                    valign="top"> {{ displayDateformat($details['data']->date_of_inspection) }}</td>
+                            @endif
+                        </tr>
+                        <tr>
+                            @if (isset($details['data']->shift))
+                                <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
+                                    <b>Shift</b>
+                                </td>
+                                <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
+                                    valign="top"> {{ getShift($details['data']->shift) }}</td>
+                            @endif
                         </tr>
                         <tr>
                             <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">

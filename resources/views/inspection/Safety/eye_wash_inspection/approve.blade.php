@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Monthly Eye Wash Inspection Add')
+@section('title', 'Monthly Eye Wash Inspection Approval')
 @section('pageurl', admin_url('safety/eye-wash-inspection/monthly/list'))
 @section('content')
     <div class="clearfix"></div>
@@ -844,3 +844,49 @@
 
 
     @stop
+    @push('script')
+        <script>
+            $('#forklistassessmentAdd').validate({
+                rules: {
+                    capa_remarks: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 100,
+                        noSpaces: true,
+                    },
+                    signature_image: {
+                        required: true,
+                    }
+                },
+                messages: {
+                    capa_remarks: {
+                        required: "Remarks is Required",
+                        minlength: "Minimum Characters should be 3",
+                        maxlength: "Maximum Characters should not exceed 100",
+                    },
+                    signature_image: {
+                        required: "Signature is Required",
+                    }
+                },
+                errorElement: 'div',
+                errorPlacement: function(error, element) {
+                    error.addClass('invalid-feedback');
+                    element.closest('.form-input').append(error);
+                },
+                highlight: function(element) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function(element) {
+                    $(element).removeClass('is-invalid');
+                    $(element).closest('.form-input').find('.invalid-feedback').remove();
+                },
+                submitHandler: function(form) {
+                    form.submit();
+                },
+                invalidHandler: function(event, validator) {
+                    var errors = validator.numberOfInvalids();
+                    validator.errorList.forEach(function(error) {});
+                }
+            });
+        </script>
+    @endpush

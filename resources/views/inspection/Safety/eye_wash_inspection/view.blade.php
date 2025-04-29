@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Monthly Eye Wash Inspection Add')
+@section('title', 'Monthly Eye Wash Inspection Show')
 @section('pageurl', admin_url('safety/eye-wash-inspection/monthly/list'))
 @section('content')
     <div class="clearfix"></div>

@@ -81,109 +81,119 @@
                                                     </div>
                                                 </div>
                                             </div>
-
-
-                                            <div class="col-md-12 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label require">Treatment Provided</label>
-                                                    <textarea name="treatment_provided" id="treatment_provided" cols="30" rows="5" class="form-control"></textarea>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-12 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label require">Cheif Complaint</label>
-                                                    <textarea name="cheif_complaint" id="cheif_complaint" cols="30" rows="5" class="form-control"></textarea>
-                                                </div>
-                                            </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Treatment Start Time</label>
-
-                                                    <div class="input-group date form-input custom-height">
-                                                        <input type="text" name="treatment_start_time"
-                                                            id="treatment_start_time" class="form-control">
-                                                        <div class="input-group-addon input-group-text">
-                                                            <span class="fas fa-clock"></span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label require">Treatment End Time</label>
-
-                                                    <div class="input-group date form-input custom-height">
-                                                        <input type="text" name="treatment_end_time"
-                                                            id="treatment_end_time" class="form-control">
-                                                        <div class="input-group-addon input-group-text">
-                                                            <span class="fas fa-clock"></span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label for="hospital_name" class="form-label require">Hospital
-                                                        Name</label>
-
-
-                                                    <select name="hospital_id" id="hospital_id"
-                                                        class="form-control single-select" style="width: 100%">
-                                                        <option value="">select the Hospital Name</option>
-                                                        @foreach ($hospital as $list)
-                                                            <option value="{{ encryptId($list->id) }}">
-                                                                {{ $list->hospital_name }}
-                                                            </option>
+                                                    <label for="medicine_id" class="form-label require">Medicine Name</label>
+                                                    <select name="medicine_id[]" style="width: 100%" id="medicine_id" class="form-control" multiple>
+                                                        <option value="">Select Medicine</option>
+                                                        @foreach ($medicine as $list)
+                                                            <option value="{{ $list->id }}">{{ $list->medicine }}</option>
                                                         @endforeach
                                                     </select>
                                                 </div>
                                             </div>
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label require">First Aider Name</label>
 
-                                                    <select name="first_aider_name" id="first_aider_name"
-                                                        placeholder="First Aider Name" class="form-control "
-                                                        style="width: 100%">
-                                                        <option value="">select the First Aider</option>
-                                                    </select>
-                                                </div>
+
+                                        <div class="col-md-12 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label require">Treatment Provided</label>
+                                                <textarea name="treatment_provided" id="treatment_provided" cols="30" rows="5" class="form-control"></textarea>
                                             </div>
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label require">Follow Up Required</label>
-                                                    <select name="follow_up" id="follow_up"
-                                                        class="form-select single-select" style="width:100%">
-                                                        <option value="">Select the Option</option>
-                                                        <option value="1">Yes</option>
-                                                        <option value="2">NO</option>
-                                                    </select>
-                                                </div>
+                                        </div>
+                                        <div class="col-md-12 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label require">Cheif Complaint</label>
+                                                <textarea name="cheif_complaint" id="cheif_complaint" cols="30" rows="5" class="form-control"></textarea>
                                             </div>
-                                         
-                                            <div class="col-md-12">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label ">Remarks</label>
-                                                    <textarea name="remarks" id="remarks" cols="30" rows="5" class="form-control"></textarea>
+                                        </div>
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label require">Treatment Start Time</label>
+
+                                                <div class="input-group date form-input custom-height">
+                                                    <input type="text" name="treatment_start_time"
+                                                        id="treatment_start_time" class="form-control">
+                                                    <div class="input-group-addon input-group-text">
+                                                        <span class="fas fa-clock"></span>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                        <hr>
-                                        <div class="submit-button" style="text-align: right;">
-                                            <x-button-submit class="submit"></x-button-submit>
-                                            <x-button-reset class=""></x-button-reset>
-                                            <x-button-cancel
-                                                href="{{ admin_url('ohc/first-aid/list') }}"></x-button-cancel>
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label require">Treatment End Time</label>
+
+                                                <div class="input-group date form-input custom-height">
+                                                    <input type="text" name="treatment_end_time" id="treatment_end_time"
+                                                        class="form-control">
+                                                    <div class="input-group-addon input-group-text">
+                                                        <span class="fas fa-clock"></span>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
-                                    </form>
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label for="hospital_name" class="form-label require">Hospital
+                                                    Name</label>
+
+
+                                                <select name="hospital_id" id="hospital_id"
+                                                    class="form-control single-select" style="width: 100%">
+                                                    <option value="">select the Hospital Name</option>
+                                                    @foreach ($hospital as $list)
+                                                        <option value="{{ encryptId($list->id) }}">
+                                                            {{ $list->hospital_name }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label require">First Aider Name</label>
+
+                                                <select name="first_aider_name" id="first_aider_name"
+                                                    placeholder="First Aider Name" class="form-control "
+                                                    style="width: 100%">
+                                                    <option value="">select the First Aider</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label require">Follow Up Required</label>
+                                                <select name="follow_up" id="follow_up" class="form-select single-select"
+                                                    style="width:100%">
+                                                    <option value="">Select the Option</option>
+                                                    <option value="1">Yes</option>
+                                                    <option value="2">NO</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-12">
+                                            <div class="form-group form-input">
+                                                <label class="form-label ">Remarks</label>
+                                                <textarea name="remarks" id="remarks" cols="30" rows="5" class="form-control"></textarea>
+                                            </div>
+                                        </div>
                                 </div>
-
+                                <hr>
+                                <div class="submit-button" style="text-align: right;">
+                                    <x-button-submit class="submit"></x-button-submit>
+                                    <x-button-reset class=""></x-button-reset>
+                                    <x-button-cancel href="{{ admin_url('ohc/first-aid/list') }}"></x-button-cancel>
+                                </div>
+                                </form>
                             </div>
+
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
 
     </div>
 
@@ -194,6 +204,11 @@
 
         $(document).ready(function() {
 
+            $('#medicine_id').select2({
+            placeholder: "Select medicine name ",
+            allowClear: true,
+            closeOnSelect: true,
+        });
             var fromDatepicker = flatpickr("#date_of_incident", {
                 dateFormat: "d-m-Y",
                 maxDate: new Date(),
@@ -344,10 +359,13 @@
                         required: true,
                     },
                     hospital_id: {
-                        required:true,
+                        required: true,
+                    },
+                    'medicine_id[]': {
+                        required: true,
                     },
                     cheif_complaint: {
-                        required:true,
+                        required: true,
                         minlength: 3,
                         maxlength: 100
                     },
@@ -399,10 +417,13 @@
                     hospital_id: {
                         required: "Hospital Name is required.",
                     },
+                    'medicine_id[]': {
+                        required: "Medicine Name is required.",
+                    },
                     cheif_complaint: {
-                        required:"Cheif Complaint is required.",
+                        required: "Cheif Complaint is required.",
                         minlength: "Minimum 3 characters are required",
-                        maxlength:"Maximum 100 characters are required",
+                        maxlength: "Maximum 100 characters are required",
                     },
                     treatment_start_time: {
                         required: "Treatment start time is required.",

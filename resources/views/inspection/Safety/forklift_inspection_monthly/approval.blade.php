@@ -136,7 +136,9 @@
                                             $inspection_details->id,
                                             MONTHLY_FORKLIFT_INSPECTION,
                                         );
+
                                     @endphp
+                                    {{-- @dd( admin_url($signature)) --}}
                                     @if (isset($signature))
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
