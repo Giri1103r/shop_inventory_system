@@ -286,7 +286,7 @@ class HooterInspectionController extends Controller
 
             $ehsOfficer = GetEHSOfficer();
             $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
-            $mailsubject = 'FIRE INSPECTION';
+            $mailsubject = 'FIRE HOOTER INSPECTION';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
                 'module_type' => 3,
@@ -419,7 +419,7 @@ class HooterInspectionController extends Controller
             $userIds = [
                 'users' => $inspection_details->created_by,
             ];
-            $mailsubject = 'FIRE INSPECTION';
+            $mailsubject = 'FIRE HOOTER INSPECTION';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
                 'module_type' => 3,
@@ -481,7 +481,7 @@ class HooterInspectionController extends Controller
             $userIds = [
                 'users' => $ehsOfficers,
             ];
-            $mailsubject = 'Fire Inspection';
+            $mailsubject = 'FIRE HOOTER INSPECTION';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
                 'module_type' => 3,
@@ -503,7 +503,7 @@ class HooterInspectionController extends Controller
             $email_id = getUseremail($user);
             $url = admin_url('fire/hooter-inspection/verification/' . encryptId($id) . '/ehs');
             $details = array(
-                'fire_type' => 'Safety Gallery Inspection',
+                'fire_type' => 'Hooter Inspection',
                 'email' => $email_id,
                 'mail_subject' => $mailsubject,
                 'title' => 'CAPA Action Completed by the Fire Associates',
@@ -553,7 +553,7 @@ class HooterInspectionController extends Controller
                 $to_status = EHS_OFFICER_REJECTED;
             }
 
-            $mailsubject = 'FIRE INSPECTION';
+            $mailsubject = 'FIRE HOOTER INSPECTION';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
                 'module_type' => 3,
@@ -627,7 +627,7 @@ class HooterInspectionController extends Controller
                 $to_status = L1_MANAGER_REJECTED;
             }
 
-            $mailsubject = 'FIRE INSPECTION';
+            $mailsubject = 'FIRE HOOTER INSPECTION';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
                 'module_type' => 3,
@@ -701,7 +701,7 @@ class HooterInspectionController extends Controller
 
             }
 
-            $mailsubject = 'FIRE INSPECTION';
+            $mailsubject = 'FIRE HOOTER INSPECTION';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
                 'module_type' => 3,
