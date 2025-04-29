@@ -312,7 +312,7 @@ class MonthlyForkLiftInspectionController extends Controller
             Session::flash('success', __('common.created_msg'));
             return redirect(admin_url('safety/forklift-inspection/monthly/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong!');
             return redirect(admin_url('safety/forklift-inspection/monthly/list'));
         }
