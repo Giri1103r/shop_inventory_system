@@ -65,20 +65,35 @@ class FirstAidController extends Controller
                             return $row->unit_name;
                         })
                         ->editColumn('medicine_id', function ($row) {
-                            return getMedicinename($row->medicine_id);
+                            if (empty($row->medicine_id)) {
+                                return '-';
+                            }
+
+                            $medicineIds = explode(',', $row->medicine_id);
+                            $medicineNames = [];
+
+                            foreach ($medicineIds as $id) {
+                                $medicineName = getMedicinename(trim($id));
+                                if (!empty($medicineName)) {
+                                    $medicineNames[] = $medicineName;
+                                }
+                            }
+
+                            return implode(', ', $medicineNames);
                         })
+
                         ->addColumn('created_by', function ($row) {
                             return getUsername($row->created_by);
                         })
 
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            // if (CheckUserPermission('view')) {
-                            $btn = '<a href="' . admin_url('ohc/first-aid/view/' . encryptId($row->id)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
-                            // }
-                            // if (CheckUserPermission('edit')) {
-                            $btn .= '<a href="' . admin_url('ohc/first-aid/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
-                            // }
+                            if (CheckUserPermission('view')) {
+                                $btn = '<a href="' . admin_url('ohc/first-aid/view/' . encryptId($row->id)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
+                            }
+                            if (CheckUserPermission('edit')) {
+                                $btn .= '<a href="' . admin_url('ohc/first-aid/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
+                            }
 
                             return $btn;
                         })
@@ -283,17 +298,18 @@ class FirstAidController extends Controller
             ];
 
             $i = 1;
-             $medicineList = $this->medicine->pluck('id', 'medicine')->toArray();
+            $medicine = $this->medicine->select('id', 'medicine')->where('status', '1')->get();
 
             foreach ($allData as $data) {
                 $medicineIds = explode(',', $data->medicine_id ?? '');
                 $medicineNames = [];
 
-                foreach ($medicineIds as $id) {
-                    if (!empty($id) && isset($medicineList[$id])) {
-                        $medicineNames[] = $medicineList[$id];
+                foreach ($medicine as $list) {
+                    if (in_array($list->id, $medicineIds)){
+                        $medicineNames[] = $list->medicine;
                     }
                 }
+
                 $export = [];
                 $export[] =  $i;
                 $export[] =  $data->emp_id;
