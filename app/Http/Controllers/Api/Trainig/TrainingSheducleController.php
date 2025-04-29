@@ -402,7 +402,7 @@ class TrainingSheducleController extends BaseController
         try {
 
 
-dd(121);
+
             // Save or update attendance
             $success = $this->training_attendance->storeOrUpdate_api($request);
 
@@ -436,7 +436,7 @@ dd(121);
             return $this->sendResponse($success, 'Attendance Stored Successfully');
         } catch (Exception $ex) {
             dd($ex);
-
+            return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
         }
     }
 
