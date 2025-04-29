@@ -574,7 +574,7 @@ class HydrantRiserInspectionContoller extends Controller
             } else {
                 $message = 'EHS Officer Rejected the CAPA Action';
                 $web_link =   admin_url('fire/hydrant-riser-inspection/verification/' . encryptId($inspection_details->id) . '/capa');
-                $users = $inspection_details->created_by;
+                $users = [$inspection_details->created_by];
                 $to_status = EHS_OFFICER_REJECTED;
             }
 
@@ -779,7 +779,7 @@ class HydrantRiserInspectionContoller extends Controller
         }
     }
 
-   
+
 
     public function ExportExcel(Request $request)
     {
@@ -788,24 +788,24 @@ class HydrantRiserInspectionContoller extends Controller
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
             }
-    
+
             $spreadsheet = new Spreadsheet();
             $sheet = $spreadsheet->getActiveSheet();
-    
+
             $row = 1;
-    
+
             foreach ($allData as $groupedDetails) {
-                
+
                 $inspection_detail = $groupedDetails->first();
                 $document_no = $this->document_reference->selectOne($inspection_detail->document_reference_id);
-    
+
                 $prepared_by_signature = GetFireSignature($inspection_detail->created_by, $inspection_detail->hydrant_parent_id, HYDRANT_RISER);
                 $verified_by_signature = GetFireSignature($inspection_detail->hydrant_updated_by, $inspection_detail->hydrant_parent_id, HYDRANT_RISER);
                 $approved_by_signature = GetFireSignature($inspection_detail->approved_by, $inspection_detail->hydrant_parent_id, HYDRANT_RISER);
 
-    
+
                 $titleRow = $row;
-    
+
                 $logoPath = public_path('assets/images/logo-dark.png');
                 if (file_exists($logoPath)) {
                     $drawing = new Drawing();
@@ -818,14 +818,14 @@ class HydrantRiserInspectionContoller extends Controller
                     $drawing->setHeight(60);
                     $drawing->setWorksheet($sheet);
                 }
-    
+
                 $sheet->mergeCells("A{$titleRow}:C" . ($titleRow + 2));
                 $sheet->getStyle("A{$titleRow}:C" . ($titleRow + 2))->applyFromArray([
                     'font' => ['bold' => true, 'size' => 14],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                 ]);
-    
+
                 $sheet->mergeCells("D{$titleRow}:K" . ($titleRow + 2));
                 $sheet->setCellValue("D{$titleRow}", "HYDRANT & RISER INSPECTION CHECKLIST PN INTERNATIONAL PVT. LTD.");
                 $sheet->getStyle("C{$titleRow}:K" . ($titleRow + 2))->applyFromArray([
@@ -833,7 +833,7 @@ class HydrantRiserInspectionContoller extends Controller
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                 ]);
-    
+
                 $sheet->mergeCells("L{$titleRow}:M{$titleRow}")->setCellValue("L{$titleRow}", "Doc. No.");
                 $sheet->mergeCells("L" . ($titleRow + 1) . ":M" . ($titleRow + 1))->setCellValue("L" . ($titleRow + 1), "Issue Dt.");
                 $sheet->mergeCells("L" . ($titleRow + 2) . ":M" . ($titleRow + 2))->setCellValue("L" . ($titleRow + 2), "Rev. & Dt.");
@@ -848,9 +848,9 @@ class HydrantRiserInspectionContoller extends Controller
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
                 ]);
 
-    
+
                 $headerInfoRow = $titleRow + 3;
-    
+
                 $sheet->mergeCells("A{$headerInfoRow}:E{$headerInfoRow}")->setCellValue("A{$headerInfoRow}", "Date of Inspection:- " . Displaydateformat($inspection_detail->date_of_inspection));
                 $sheet->mergeCells("F{$headerInfoRow}:K{$headerInfoRow}")->setCellValue("F{$headerInfoRow}", "Location:- " . getLocationname($inspection_detail->location));
                 $sheet->mergeCells("L{$headerInfoRow}:O{$headerInfoRow}")->setCellValue("L{$headerInfoRow}", "Shift:- " . getShift($inspection_detail->shift_id));
@@ -858,7 +858,7 @@ class HydrantRiserInspectionContoller extends Controller
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                 ]);
                 $headerInfoRow++;
-    
+
                 $sheet->mergeCells("A{$headerInfoRow}:E{$headerInfoRow}")->setCellValue("A{$headerInfoRow}", "Next Due Date:- " . Displaydateformat($inspection_detail->next_due));
                 $sheet->mergeCells("F{$headerInfoRow}:K{$headerInfoRow}")->setCellValue("F{$headerInfoRow}", "Unit:- " . getUnitname($inspection_detail->unit));
                 $sheet->mergeCells("L{$headerInfoRow}:O{$headerInfoRow}")->setCellValue("L{$headerInfoRow}", "Frequency:- " . getFrequencyname($inspection_detail->frequency));
@@ -866,7 +866,7 @@ class HydrantRiserInspectionContoller extends Controller
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                 ]);
                 $headerInfoRow++;
-    
+
                 $columnWidths = [
                     'A' => 5,
                     'B' => 15,
@@ -884,19 +884,19 @@ class HydrantRiserInspectionContoller extends Controller
                     'N' => 10,
                     'O' => 10,
                 ];
-    
+
                 foreach ($columnWidths as $col => $width) {
                     $sheet->getColumnDimension($col)->setWidth($width);
                 }
-    
+
                 $headerStart = $headerInfoRow;
-    
+
                 $sheet->mergeCells("A{$headerStart}:A" . ($headerStart + 2))->setCellValue("A{$headerStart}", "SL");
                 $sheet->mergeCells("B{$headerStart}:B" . ($headerStart + 2))->setCellValue("B{$headerStart}", "LOCATION");
                 $sheet->mergeCells("C{$headerStart}:C" . ($headerStart + 2))->setCellValue("C{$headerStart}", "HYDRANT NO.");
-    
+
                 $sheet->mergeCells("D{$headerStart}:L{$headerStart}")->setCellValue("D{$headerStart}", "CHECK ITEMS");
-    
+
                 $sheet->mergeCells("D" . ($headerStart + 1) . ":I" . ($headerStart + 1))->setCellValue("D" . ($headerStart + 1), "CONDITION OF LANDING VALVE");
                 $sheet->setCellValue("D" . ($headerStart + 2), "LUGS");
                 $sheet->setCellValue("E" . ($headerStart + 2), "RUBBER WASHER");
@@ -904,13 +904,13 @@ class HydrantRiserInspectionContoller extends Controller
                 $sheet->setCellValue("G" . ($headerStart + 2), "SPINDLE WHEEL");
                 $sheet->setCellValue("H" . ($headerStart + 2), "BLANK CAP");
                 $sheet->setCellValue("I" . ($headerStart + 2), "FEMALE COUPLING");
-    
+
                 $sheet->mergeCells("J" . ($headerStart + 1) . ":K" . ($headerStart + 1))->setCellValue("J" . ($headerStart + 1), "CONDITION OF ISV");
 
                 $sheet->setCellValue("J" . ($headerStart + 2), "LEVER");
 
                 $sheet->setCellValue("K" . ($headerStart + 2), "FLOW TEST");
-    
+
                 $sheet->mergeCells("L" . ($headerStart + 1) . ":L" . ($headerStart + 2))->setCellValue("L" . ($headerStart + 1), "APPROACH");
                 $sheet->mergeCells("M{$headerStart}:O" . ($headerStart + 2))->setCellValue("M{$headerStart}", "REMARKS");
 
@@ -919,7 +919,7 @@ class HydrantRiserInspectionContoller extends Controller
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                 ]);
-    
+
                 $dataRow = $headerStart + 3;
                 $sr = 1;
 
@@ -945,11 +945,11 @@ class HydrantRiserInspectionContoller extends Controller
                     $sr++;
                     $dataRow++;
                 }
-    
-                $signatureRowStart = $dataRow; 
+
+                $signatureRowStart = $dataRow;
                 $sheet->getRowDimension($signatureRowStart)->setRowHeight(80);
 
-               
+
                 // Prepared By
                 $sheet->mergeCells("A{$signatureRowStart}:E{$signatureRowStart}");
                 $sheet->getStyle("A{$signatureRowStart}:E{$signatureRowStart}")->applyFromArray([
@@ -960,7 +960,7 @@ class HydrantRiserInspectionContoller extends Controller
                         'wrapText' => true
                     ],
                 ]);
-                
+
                 if (file_exists($prepared_by_signature)) {
                     $drawing = new Drawing();
                     $drawing->setName('Prepared Signature');
@@ -975,7 +975,7 @@ class HydrantRiserInspectionContoller extends Controller
                 } else {
                     $sheet->setCellValue("A{$signatureRowStart}", "Prepared By:\nInspection not yet started");
                 }
-                
+
                 // Verified By
                 $sheet->mergeCells("F{$signatureRowStart}:J{$signatureRowStart}");
                 $sheet->getStyle("F{$signatureRowStart}:J{$signatureRowStart}")->applyFromArray([
@@ -986,7 +986,7 @@ class HydrantRiserInspectionContoller extends Controller
                         'wrapText' => true
                     ],
                 ]);
-                
+
                 if (file_exists($verified_by_signature)) {
                     $drawing = new Drawing();
                     $drawing->setName('Verified Signature');
@@ -1001,7 +1001,7 @@ class HydrantRiserInspectionContoller extends Controller
                 } else {
                     $sheet->setCellValue("F{$signatureRowStart}", "Verified By:\nInspection not yet completed");
                 }
-                
+
                 // Approved By
                 $sheet->mergeCells("K{$signatureRowStart}:O{$signatureRowStart}");
                 $sheet->getStyle("K{$signatureRowStart}:O{$signatureRowStart}")->applyFromArray([
@@ -1012,7 +1012,7 @@ class HydrantRiserInspectionContoller extends Controller
                         'wrapText' => true
                     ],
                 ]);
-                
+
                 if (file_exists($approved_by_signature)) {
                     $drawing = new Drawing();
                     $drawing->setName('Approved Signature');
@@ -1028,16 +1028,16 @@ class HydrantRiserInspectionContoller extends Controller
                     $sheet->setCellValue("K{$signatureRowStart}", "Approved By:\nApproval pending");
                 }
 
-                $row = $signatureRowStart + 7; 
+                $row = $signatureRowStart + 7;
 
                 $sheet->getStyle("A{$titleRow}:O{$signatureRowStart}")->applyFromArray([
                     'borders' => [
                         'outline' => ['borderStyle' => Border::BORDER_THICK, 'color' => ['argb' => '000000']],
                     ],
                 ]);
-                
+
             }
-    
+
             // Output the file as usual
             $writer = new Xlsx($spreadsheet);
             $filename = 'Hydrant_Riser_Inspection.xlsx';
@@ -1049,7 +1049,7 @@ class HydrantRiserInspectionContoller extends Controller
             return redirect()->back()->with('error', 'Export error: ' . $e->getMessage());
         }
     }
-    
+
 
     public function ExportPdf(Request $request)
     {
