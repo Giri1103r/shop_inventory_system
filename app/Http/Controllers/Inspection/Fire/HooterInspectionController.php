@@ -91,7 +91,7 @@ class HooterInspectionController extends Controller
                         ->addColumn('next_due', function ($row) {
                             return Displaydateformat($row->next_due);
                         })
- 
+
                         ->addColumn('created_by', function ($row) {
                             return getUsername($row->created_by);
                         })
@@ -622,11 +622,13 @@ class HooterInspectionController extends Controller
                 $users = array_merge($users, [$inspection_details->created_by], [$inspection_details->verified_by]);
                 $to_status = WAITING_FOR_L2_VERIFICATION;
             } else {
+
                 $message = 'Level One Manager Rejected the CAPA Action';
                 $web_link =   admin_url('fire/hooter-inspection/verification/' . encryptId($inspection_details->id) . '/capa');
-                $users = $inspection_details->created_by;
+                $users = [$inspection_details->created_by];
                 $to_status = L1_MANAGER_REJECTED;
             }
+
 
             $mailsubject = 'FIRE HOOTER INSPECTION';
             $notificationData = array(
@@ -701,6 +703,8 @@ class HooterInspectionController extends Controller
                 $users = array_merge([$inspection_details->created_by], [$inspection_details->verified_by], [$inspection_details->l1_manager_verified_by]);
 
             }
+            // dd($users);
+
 
             $mailsubject = 'FIRE HOOTER INSPECTION';
             $notificationData = array(
