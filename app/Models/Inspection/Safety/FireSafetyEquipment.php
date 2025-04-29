@@ -173,7 +173,7 @@ class FireSafetyEquipment extends Model
 
     public function selectOne($id)
     {
-        return $this->where('id', $id)->where('status', 1)->where('trash', 'NO')->first();
+        return $this->where('id', $id)->where('trash', 'NO')->first();
     }
 
     public function exportdata()

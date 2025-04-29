@@ -266,7 +266,7 @@
                     e.preventDefault();
                     location.reload();
                 });
-              
+
                 flatpickr("#inspection_date", {
                     dateFormat: "d-m-Y",
                 });
@@ -280,7 +280,7 @@
 
                     newRow.find("td:first").text(rowCount);
 
-                    newRow.find("textarea").attr("name", "description[" + rowCount + "]");
+                    newRow.find("textarea").attr("name", "description[" + rowCount + "]").val("");
                     newRow.find("input[type='number']").each(function() {
                         let name = $(this).attr("name");
                         if (name) {
@@ -290,16 +290,41 @@
 
                         $(this).attr("data-row-id", rowCount);
                         $(this).attr("data-index", rowCount);
+                        $(this).val("");
                     });
 
-                    newRow.find("input[readonly]").attr("name", "total_quantity[" + rowCount + "]");
-
-                    newRow.find("input[type='number'], textarea").val("");
+                    newRow.find("input[readonly]").attr("name", "total_quantity[" + rowCount + "]").val("");
 
                     table.append(newRow);
 
+                    // ✅ Re-apply validation rules for newly added fields
+                    $('textarea[name="description[' + rowCount + ']"]').rules("add", {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 255,
+                        messages: {
+                            required: "Description is required",
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 255",
+                        }
+                    });
+
+                    $('input[name^="unit"]').each(function() {
+                        if (!$(this).hasClass('validated')) {
+                            $(this).rules("add", {
+                                required: true,
+                                number: true,
+                                messages: {
+                                    required: "Unit is required"
+                                }
+                            });
+                            $(this).addClass('validated');
+                        }
+                    });
+
                     updateTotalQuantity(rowCount);
                 });
+
 
 
                 $(document).on("click", ".removeRow", function() {
@@ -356,6 +381,25 @@
 
                     newRow.find("input[type='number'], textarea").val("");
                     table.append(newRow);
+
+                    $('textarea[name="fire_pump_details[' + rowCount + ']"]').rules("add", {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 255,
+                        messages: {
+                            required: "Fire Pump Details is required",
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 255",
+                        }
+                    });
+
+                    $('input[name="fire_pump_details_unit[' + rowCount + ']"]').rules("add", {
+                        required: true,
+                        number: true,
+                        messages: {
+                            required: "Unit is required"
+                        }
+                    });
                 });
 
                 $(document).on("click", ".firepump_remove", function() {

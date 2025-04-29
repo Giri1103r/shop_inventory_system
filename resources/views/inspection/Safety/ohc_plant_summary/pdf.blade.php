@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>MONTHLY FORKLIFT INSPECTION Checklist | KARAM</title>
+    <title>OHC Plant Summary | KARAM</title>
 
     <style>
         .badge {

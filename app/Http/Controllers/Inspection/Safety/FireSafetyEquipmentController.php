@@ -72,6 +72,7 @@ class FireSafetyEquipmentController extends Controller
                             return Displaydateformat($row->issue_date);
                         })
                         ->addColumn('standard_norms', function ($row) {
+                            $text = '';
                             if ($row->status == STANDARD) {
                                 $text = "<span  data-id='" . encryptId($row->inspection_id) . "' data-type = '1'>Standard</span>";
                             } else if ($row->status == NORMS) {
@@ -173,7 +174,7 @@ class FireSafetyEquipmentController extends Controller
             Session::flash('success', 'Equipment Name is Added Successfully');
             return redirect(admin_url('safety/fire-safety-equipment/list'));
         } catch (Exception $ex) {
-            report($ex);
+            dd($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('safety/fire-safety-equipment/list'));
         }
