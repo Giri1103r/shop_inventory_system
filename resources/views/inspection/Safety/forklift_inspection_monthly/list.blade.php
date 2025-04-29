@@ -158,7 +158,10 @@
                 firstTh.removeClass('sorting_asc');
             });
 
-            flatpickr("#issue_date", {
+            flatpickr("#next_due", {
+                dateFormat: "d-m-Y",
+            });
+            flatpickr("#inspection_date", {
                 dateFormat: "d-m-Y",
             });
 
