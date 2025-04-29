@@ -335,7 +335,6 @@ class HooterInspectionController extends Controller
                 return redirect(admin_url('fire/hooter-inspection/list'));
             }
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('fire/hooter-inspection/list'));
@@ -362,7 +361,6 @@ class HooterInspectionController extends Controller
                 'status_log' => $status_log,
                 'document_no' => $document_no,
             );
-            // dd($data);
             return view('inspection.fire.hooter_inspection.view', $data);
         } catch (Exception $ex) {
             report($ex);
@@ -1011,7 +1009,7 @@ class HooterInspectionController extends Controller
             $document_no        = $this->document_reference->selectOne($inspection->document_reference_id);
 
             $prepared_by_signature = GetFireSignature($inspection->created_by, $inspection->id, HOOTER_INSPECTION);
-            $verified_by_signature = GetFireSignature($inspection->updated_by, $inspection->id, HOOTER_INSPECTION);
+            $verified_by_signature = GetFireSignature($inspection->verified_by, $inspection->id, HOOTER_INSPECTION);
             $approved_by_signature = GetFireSignature($inspection->approved_by, $inspection->id, HOOTER_INSPECTION);
 
             foreach (range('A', 'L') as $col) {
@@ -1251,7 +1249,6 @@ class HooterInspectionController extends Controller
             $filename = "Hooter Inspection.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('fire/hooter-inspection/list'));
