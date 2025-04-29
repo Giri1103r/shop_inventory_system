@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Safety Walk Observation')
+@section('title', 'OHC Plant Summary')
 @section('pageurl', admin_url('safety/ohc-plant-summary/list'))
 @section('content')
     <div class="clearfix"></div>
@@ -108,13 +108,13 @@
                                                         <tr>
                                                             <td style="border: 1px solid #000;">{{ $index }}</td>
                                                             <td style="border: 1px solid #000;">
-                                                                {{ $quantity_detail['description'] }}</td>
-                                                            @foreach ($units as $index => $unit)
+                                                                {{ $quantity_detail['description'] }}
+                                                            </td>
+                                                            @foreach ($units as $u_index => $unit)
                                                                 <td style="border: 1px solid #000;">
-                                                                    {{ isset($quantity_detail['unit - ' . $index + 1]) ? $quantity_detail['unit - ' . $index + 1] : '' }}
+                                                                    {{ $quantity_detail['unit_' . ($u_index + 1)] ?? '' }}
                                                                 </td>
                                                             @endforeach
-
                                                             <td style="border: 1px solid #000;">
                                                                 {{ $quantity_detail['total_quantity'] }}
                                                             </td>

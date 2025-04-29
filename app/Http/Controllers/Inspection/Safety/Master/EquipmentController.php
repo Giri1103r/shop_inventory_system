@@ -158,7 +158,7 @@ class EquipmentController extends Controller
                 'equipment_name.required' => __('equipment to be taken is required'),
 
             ];
-            dd($request->all());
+           
             $validator = Validator::make($request->all(), $rules, $messages);
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator)->withInput();

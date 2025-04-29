@@ -31,8 +31,8 @@ class MonthlyEyeWashInspection extends Model
         'level_one_manager_remarks',
         'level_two_manager_remarks',
         'capa_ehs_remarks',
-        'l1_manager_verified_by',
-        'l2_manager_verified_by',
+        'l1_manager_verification',
+        'l2_manager_verification',
         'status',
         'trash',
         'created_by',
@@ -215,7 +215,7 @@ class MonthlyEyeWashInspection extends Model
     {
         if ($status == 1) {
             $update_array = [
-                'l1_manager_verified_by' => Auth::id(),
+                'l1_manager_verification' => Auth::id(),
                 'updated_by' => Auth::id(),
                 'inspection_status' => WAITING_FOR_L2_VERIFICATION,
                 'level_one_manager_remarks' => $remarks,
@@ -223,7 +223,7 @@ class MonthlyEyeWashInspection extends Model
             $this->where('id', $id)->update($update_array);
         } else {
             $update_array = [
-                'l1_manager_verified_by' => Auth::id(),
+                'l1_manager_verification' => Auth::id(),
                 'updated_by' => Auth::id(),
                 'inspection_status' => L1_MANAGER_REJECTED,
                 'level_one_manager_remarks' => $remarks,
@@ -236,7 +236,7 @@ class MonthlyEyeWashInspection extends Model
     {
         if ($status == 1) {
             $update_array = [
-                'l2_manager_verified_by' => Auth::id(),
+                'l2_manager_verification' => Auth::id(),
                 'approved_by' => Auth::id(),
                 'updated_by' => Auth::id(),
                 'inspection_status' => INSPECTION_APPROVED,
@@ -245,7 +245,7 @@ class MonthlyEyeWashInspection extends Model
             $this->where('id', $id)->update($update_array);
         } else {
             $update_array = [
-                'l2_manager_verified_by' => Auth::id(),
+                'l2_manager_verification' => Auth::id(),
                 'updated_by' => Auth::id(),
                 'inspection_status' => L2_MANAGER_REJECTED,
                 'level_two_manager_remarks' => $remarks,

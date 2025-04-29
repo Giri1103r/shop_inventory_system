@@ -475,7 +475,7 @@
                                                 <label
                                                     class="form-label ">{{ __('inspection.level_one_manager') }}</label>
                                                 <div class="view_data">
-                                                    {{ getUserName($inspection_details->l1_manager_verified_by) }}
+                                                    {{ getUserName($inspection_details->l1_manager_verification) }}
                                                 </div>
                                             </div>
                                         </div>
@@ -489,7 +489,7 @@
                                         </div>
                                         @php
                                             $signature = GetSafetySignature(
-                                                $inspection_details->l1_manager_verified_by,
+                                                $inspection_details->l1_manager_verification,
                                                 $inspection_details->id,
                                                 EYE_WASH_INSPECTION,
                                             );
@@ -526,7 +526,7 @@
                                                 <label
                                                     class="form-label ">{{ __('inspection.level_one_manager') }}</label>
                                                 <div class="view_data">
-                                                    {{ getUserName($inspection_details->l2_manager_verified_by) }}
+                                                    {{ getUserName($inspection_details->l2_manager_verification) }}
                                                 </div>
                                             </div>
                                         </div>
@@ -540,7 +540,7 @@
                                         </div>
                                         @php
                                             $signature = GetSafetySignature(
-                                                $inspection_details->l2_manager_verified_by,
+                                                $inspection_details->l2_manager_verification,
                                                 $inspection_details->id,
                                                 EYE_WASH_INSPECTION,
                                             );

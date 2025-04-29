@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Safety Walk Observation')
+@section('title', 'OHC Plant Summary')
 @section('pageurl', admin_url('safety/safety-walk-observation/list'))
 @section('content')
     <div class="clearfix"></div>

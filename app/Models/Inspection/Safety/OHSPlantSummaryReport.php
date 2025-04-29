@@ -102,46 +102,61 @@ class OHSPlantSummaryReport extends Model
     }
 
 
-
     public function store()
     {
         $request = request();
-        $description = $request->description;
-        $fire_pump_details = $request->fire_pump_details;
 
-        foreach ($description as $key => $value) {
-            $quantity_details[$key] = [
-                'description' => $request->description[$key],
-                'unit - 1' => $request->unit_1[$key],
-                'unit - 2' => $request->unit_2[$key],
-                'unit - 3' => $request->unit_3[$key],
-                'unit - 4' => $request->unit_4[$key],
-                'total_quantity' => $request->total_quantity[$key],
-            ];
+        $quantity_details = [];
+        $descriptions = $request->description ?? [];
+
+        foreach ($descriptions as $key => $desc) {
+            $item = ['description' => $desc];
+
+            // Dynamically collect all "unit_x" fields
+            foreach ($request->all() as $field => $values) {
+                if (preg_match('/^unit_\d+$/', $field) && isset($values[$key])) {
+                    $item[$field] = $values[$key];
+                }
+            }
+
+            // Include total_quantity if provided
+            if (isset($request->total_quantity[$key])) {
+                $item['total_quantity'] = $request->total_quantity[$key];
+            }
+
+            $quantity_details[$key] = $item;
         }
-        $quantity_details = json_encode($quantity_details);
 
-        foreach ($fire_pump_details as $key => $index) {
-            $fire_water_pump_details[$key] = [
-                'fire_pump_details' => $value,
-                'fire_pump_details_unit_1' => $request->fire_pump_details_unit_1[$key],
-                'fire_pump_details_unit_2' => $request->fire_pump_details_unit_2[$key],
-                'fire_pump_details_unit_3' => $request->fire_pump_details_unit_3[$key],
-                'fire_pump_details_unit_4' => $request->fire_pump_details_unit_4[$key],
-            ];
+        // Handle fire_water_pump_details dynamically
+        $fire_water_pump_details = [];
+        $fire_pump_details = $request->fire_pump_details ?? [];
+
+        foreach ($fire_pump_details as $key => $desc) {
+            $item = ['fire_pump_details' => $desc];
+
+            // Dynamically collect all "fire_pump_details_unit_x" fields
+            foreach ($request->all() as $field => $values) {
+                if (preg_match('/^fire_pump_details_unit_\d+$/', $field) && isset($values[$key])) {
+                    $item[$field] = $values[$key];
+                }
+            }
+
+            $fire_water_pump_details[$key] = $item;
         }
-        $fire_water_pump_details = json_encode($fire_water_pump_details);
 
+        // Final insert array
         $insert_array = [
             'document_reference_id' => decryptId($request->document_reference_id),
             'inspection_date' => DBdateformat($request->inspection_date),
-            'updated_frequency' => ($request->updated_frequency),
-            'quantity_details' => $quantity_details,
-            'fire_water_pump_details' => $fire_water_pump_details,
+            'updated_frequency' => $request->updated_frequency,
+            'quantity_details' => json_encode($quantity_details),
+            'fire_water_pump_details' => json_encode($fire_water_pump_details),
             'created_by' => Auth::id(),
         ];
+
         return $this->create($insert_array);
     }
+
 
     public function selectOne($id)
     {
