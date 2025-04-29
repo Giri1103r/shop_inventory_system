@@ -469,7 +469,7 @@ class MonthlyEyeWashInspectionController extends Controller
             $userIds = [
                 'users' => $ehsOfficers,
             ];
-            
+
             $mailsubject = 'Safety Inspection';
             $notificationData = array(
                 'notification_type' => SAFETY_INSPECTION,
@@ -1019,9 +1019,9 @@ class MonthlyEyeWashInspectionController extends Controller
                 $inspection_details = $this->eye_wash->selectOne($id);
                 $inspection = $this->eye_wash_details->GetDetails($inspection_details->id);
                 $document_no = $this->document_reference->selectOne($inspection_details->document_reference_id);
-                $approved_by = GetSafetySignature($inspection_details->id, $inspection_details->approved_by, EYE_WASH_INSPECTION);
-                $verified_by = GetSafetySignature($inspection_details->id, $inspection_details->verified_by, EYE_WASH_INSPECTION);
-                $checked_by = GetSafetySignature($inspection_details->id, $inspection_details->verified_by, EYE_WASH_INSPECTION);
+                $approved_by = GetSafetySignature( $inspection_details->approved_by, $inspection_details->id, EYE_WASH_INSPECTION);
+                $verified_by = GetSafetySignature( $inspection_details->verified_by, $inspection_details->id,EYE_WASH_INSPECTION);
+                $checked_by = GetSafetySignature( $inspection_details->verified_by,$inspection_details->id, EYE_WASH_INSPECTION);
                 $document_no = $this->document_reference->selectUsingName('MonthlyEyeWashInspection');
 
 
