@@ -189,39 +189,42 @@ class ForkLiftInspectionController extends Controller
             $signature_update = $this->signature->signatureUpload(FORKLIFT_INSPECTION, $forklift_observation->id);
 
             $ehsOfficer = GetEHSHead();
-            $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
-            $mailsubject = 'SAFETY INSPECTION';
-            $notificationData = array(
-                'notification_type' => SAFETY_INSPECTION,
-                'module_type' => 3,
-                'notification_message' => $mailsubject,
-                'mobile_notification' => json_encode(array(
-                    'title' => $mailsubject,
-                    'message' => "FORKLIFT INSPECTION - Observation Has been Created",
-                    'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
-                    'id' => $forklift_observation->id,
-                    'module' => 1,
-                )),
-                'web_link' =>  admin_url('safety/forklift-inspection/view/' . encryptId($forklift_observation->id)),
-                'assigned_user' => array_to_string($ehsOfficers),
-                'created_by' => Auth::id(),
-            );
-            notificationSave($notificationData);
-
-            $title = 'FORKLIFT INSPECTION - Observation has been Created';
-            foreach ($ehsOfficers as $user) {
-                $email_id = getUseremail($user);
-                $url = admin_url('safety/forklift-inspection/approval/' . encryptId($forklift_observation->id) . '/ehs');
-                $details = array(
-                    'safety_type' => 'Forklift Inspection',
-                    'email' => $email_id,
-                    'mail_subject' => $mailsubject,
-                    'title' => $title,
-                    'url' => $url,
-                    'data' => $forklift_observation
+            if (!empty($ehsOfficer)) {
+                $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
+                $mailsubject = 'SAFETY INSPECTION';
+                $notificationData = array(
+                    'notification_type' => SAFETY_INSPECTION,
+                    'module_type' => 3,
+                    'notification_message' => $mailsubject,
+                    'mobile_notification' => json_encode(array(
+                        'title' => $mailsubject,
+                        'message' => "FORKLIFT INSPECTION - Observation Has been Created",
+                        'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
+                        'id' => $forklift_observation->id,
+                        'module' => 1,
+                    )),
+                    'web_link' =>  admin_url('safety/forklift-inspection/view/' . encryptId($forklift_observation->id)),
+                    'assigned_user' => array_to_string($ehsOfficers),
+                    'created_by' => Auth::id(),
                 );
-                Mail::to($email_id)->queue(new SafetyInspection($details));
+                notificationSave($notificationData);
+
+                $title = 'FORKLIFT INSPECTION - Observation has been Created';
+                foreach ($ehsOfficers as $user) {
+                    $email_id = getUseremail($user);
+                    $url = admin_url('safety/forklift-inspection/approval/' . encryptId($forklift_observation->id) . '/ehs');
+                    $details = array(
+                        'safety_type' => 'Forklift Inspection',
+                        'email' => $email_id,
+                        'mail_subject' => $mailsubject,
+                        'title' => $title,
+                        'url' => $url,
+                        'data' => $forklift_observation
+                    );
+                    Mail::to($email_id)->queue(new SafetyInspection($details));
+                }
             }
+
 
             Session::flash('success', 'Forklift Inspection added successfully!');
             return redirect(admin_url('safety/forklift-inspection/list'));
