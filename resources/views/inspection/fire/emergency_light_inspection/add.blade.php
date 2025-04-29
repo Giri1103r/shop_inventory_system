@@ -153,6 +153,24 @@
                                                 </div>
                                             </div>
 
+                                            <div class="col-md-4 form-group form-input mb-2">
+                                                @if (isset(Auth::user()->signature_upload))
+                                                    <label class="form-label"
+                                                        style="display: block; ">{{ __('inspection.signature') }}</label>
+                                                    <img src="{{ admin_url(Auth::user()->signature_upload) }}"
+                                                        alt="Signature Upload" style="width: 150px; margin-top:-10px">
+                                                @else
+                                                    <div class="form-input col-md-12 mb-2">
+                                                        <label class="form-label require">Signature</label>
+                                                        <input type="file" name="signature_image" id="signature_upload"
+                                                            class="form-control form-control-sm" accept="image/*"
+                                                            placeholder="Enter the image">
+                                                        <small>Allowed file types: jpg, jpeg, png</small>
+                                                        <div id="signature_upload" class="text-danger"></div>
+                                                    </div>
+                                                @endif
+                                            </div>
+
                                         </div>
                                         <hr>
                                         <div class="form-wrapper">
@@ -336,7 +354,7 @@
                                                         <label
                                                             class="form-label require">{{ __('inspection.obs') }}</label>
 
-                                                       
+
                                                         <div class="mb-2">
                                                             <label class="me-3">
                                                                 <input type="radio" name="observation_needed"
@@ -354,23 +372,7 @@
 
                                             </div>
                                         </div>
-                                        <div class="col-md-4 form-group form-input mb-2">
-                                            @if (isset(Auth::user()->signature_upload))
-                                                <label class="form-label"
-                                                    style="display: block; ">{{ __('inspection.signature') }}</label>
-                                                <img src="{{ admin_url(Auth::user()->signature_upload) }}"
-                                                    alt="Signature Upload" style="width: 150px; margin-top:-10px">
-                                            @else
-                                                <div class="form-input col-md-12 mb-2">
-                                                    <label class="form-label require">Signature</label>
-                                                    <input type="file" name="signature_image" id="signature_upload"
-                                                        class="form-control form-control-sm" accept="image/*"
-                                                        placeholder="Enter the image">
-                                                    <small>Allowed file types: jpg, jpeg, png</small>
-                                                    <div id="signature_upload" class="text-danger"></div>
-                                                </div>
-                                            @endif
-                                        </div>
+
                                         <div class="submit-button" style="text-align: right;">
                                             <x-button-submit class="submit"></x-button-submit>
                                             <x-button-reset class="submit"></x-button-reset>

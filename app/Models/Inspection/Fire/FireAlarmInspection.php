@@ -154,7 +154,7 @@ class FireAlarmInspection extends Model
             'location' => decryptId($request->location_id),
             'shift' => decryptId($request->shift_id),
             'next_due' => DBdateformat($request->next_due),
-            'observation' => $request->observation,
+            'observation' => decryptId($request->observation),
             'unit' => decryptId($request->unit_id),
             'frequency' => decryptId($request->frequency_id),
             'inspection_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,
