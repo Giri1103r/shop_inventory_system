@@ -213,10 +213,7 @@ class TrainingSheducleController extends BaseController
                 $data['trainer_id'] = getEmployeename($listdata['trainer_id'] ?? '');
                 $status = $listdata['training_status'] ?? null;
                 $data['training_status'] =
-                    in_array($status, [1, 2, 4, 5]) ? 'Training Pending' :
-                    ($status == 8 ? 'Training Completed' :
-                    (in_array($status, [6, 7]) ? 'Training in Progress' :
-                    ($status == 3 ? 'Training Rejected' : 'Unknown Status')));
+                    in_array($status, [1, 2, 4, 5]) ? 'Training Pending' : ($status == 8 ? 'Training Completed' : (in_array($status, [6, 7]) ? 'Training in Progress' : ($status == 3 ? 'Training Rejected' : 'Unknown Status')));
                 $data['status'] = $listdata['status'] == 1 ? 'Active' : 'In-Active';
                 $data['created_by'] = getUsername($listdata['created_by'] ?? '');
                 $data['created_at'] = Displaydateformat($listdata['created_at'] ?? '');
@@ -322,7 +319,7 @@ class TrainingSheducleController extends BaseController
                         'checked' => $assessment->attended_status == 1 ? 'Yes' : 'No',
                         'mark' => $assessment->mark,
                         'assessment' =>   $assessment->assessment == 1 ? 'Pass' : ($assessment->mark == 2 ? 'Fail' : 'Not Attended'),
-                        'feed_back' => !empty($assessment->feedback) ? strip_tags($assessment->feedback) : '-' ,
+                        'feed_back' => !empty($assessment->feedback) ? strip_tags($assessment->feedback) : '-',
                     ];
                 }
 
@@ -397,48 +394,6 @@ class TrainingSheducleController extends BaseController
     }
 
 
-    public function storeAttendance(Request $request)
-    {
-        try {
-
-
-dd(121);
-            // Save or update attendance
-            $success = $this->training_attendance->storeOrUpdate_api($request);
-
-            $attendanceDate = DBdateformat($request->attendance_date);
-            $trainingScheduleId = ($request->id);
-
-            $trainingHrsPerDay = $this->training_schedule
-                ->where('id', $trainingScheduleId)
-                ->value('training_hrs_perday');
-
-
-            $presentCount = $this->training_attendance
-                ->where('training_schedule_id', $trainingScheduleId)
-                ->where('attendance_date', $attendanceDate)
-                ->where('attendance_status', 1)
-                ->count();
-
-            $totalManHoursForDay = $presentCount * $trainingHrsPerDay;
-
-            $existingTrainingSchedule = $this->training_schedule
-                ->select('training_man_hours')
-                ->where('id', $trainingScheduleId)
-                ->first();
-
-            $newTotalManHours = $existingTrainingSchedule && $existingTrainingSchedule->training_man_hours
-                ? $existingTrainingSchedule->training_man_hours + $totalManHoursForDay
-                : $totalManHoursForDay;
-
-            $this->training_schedule->updateTrainingManHours($trainingScheduleId, $newTotalManHours);
-
-            return $this->sendResponse($success, 'Attendance Stored Successfully');
-        } catch (Exception $ex) {
-            dd($ex);
-
-        }
-    }
 
     public function endTrainingStore(Request $request)
     {
@@ -449,8 +404,8 @@ dd(121);
             $AssessmentStore = $this->training_assessment_feedback->store_api();
             $updateStatus = $this->training_schedule->updateStatus($trainingScheduleId, $training_status);
             $statuslog =  $this->training_statuslog->storestatus($trainingScheduleId, $training_status);
-            $success =[
-                'training_schedule'=>  $trainingScheduleId,
+            $success = [
+                'training_schedule' =>  $trainingScheduleId,
             ];
             return $this->sendResponse($success, 'Assessment update Successfully!');
         } catch (Exception $ex) {
