@@ -17,6 +17,7 @@ class FirstAid extends Model
         'date_of_incident',
         'time_of_incident',
         'treatment_provided',
+        'medicine_id',
         'treatment_start_time',
         'treatment_end_time',
         'first_aider_name',
@@ -58,9 +59,9 @@ class FirstAid extends Model
                     ->orWhere('time_of_incident', 'LIKE', '%' . $search . '%')
                     ->orWhere('remarks', 'LIKE', '%' . $search . '%')
                     ->orWhere('emp_name', 'LIKE', '%' . $search . '%');
-                    if ($formattedDate) {
-                        $query->orWhere('date_of_incident', 'LIKE', '%' . $formattedDate . '%');
-                    }
+                if ($formattedDate) {
+                    $query->orWhere('date_of_incident', 'LIKE', '%' . $formattedDate . '%');
+                }
             });
         }
         if (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole) || in_array(ROLE_EHS_HEAD, $userRole)) {
@@ -115,6 +116,13 @@ class FirstAid extends Model
     {
         $request = request();
 
+        if ($request->has('medicine_id')) {
+            $decryptedRoleIds = array_map(function ($encryptedId) {
+                return $encryptedId;
+            }, $request->medicine_id);
+
+            $commaSeparatedRoles = implode(',', $decryptedRoleIds);
+        }
         $insert_array = [
             'emp_id' => $request->emp_id,
             'emp_name' => $request->emp_name,
@@ -122,6 +130,7 @@ class FirstAid extends Model
             'time_of_incident' => $request->time_of_incident,
             'treatment_provided' => $request->treatment_provided,
             'treatment_start_time' => $request->treatment_start_time,
+            'medicine_id' => $commaSeparatedRoles,
             'treatment_end_time' => $request->treatment_end_time,
             'first_aider_name' => $request->first_aider_name,
             'follow_up_required' => $request->follow_up,
@@ -138,7 +147,13 @@ class FirstAid extends Model
     public function updates($id)
     {
         $request = request();
+        if ($request->has('medicine_id')) {
+            $decryptedRoleIds = array_map(function ($encryptedId) {
+                return $encryptedId;
+            }, $request->medicine_id);
 
+            $commaSeparatedRoles = implode(',', $decryptedRoleIds);
+        }
         $update_array = [
             'emp_id' => $request->emp_id,
             'emp_name' => $request->emp_name,
@@ -149,6 +164,7 @@ class FirstAid extends Model
             'treatment_end_time' => $request->treatment_end_time,
             'first_aider_name' => $request->first_aider_name,
             'follow_up_required' => $request->follow_up,
+            'medicine_id' => $commaSeparatedRoles,
             'referred_to' => $request->refered_to,
             'hospital_id' => decryptId($request->hospital_id),
             'cheif_complaint' => $request->cheif_complaint,
@@ -207,9 +223,9 @@ class FirstAid extends Model
                     ->orWhere('time_of_incident', 'LIKE', '%' . $search . '%')
                     ->orWhere('remarks', 'LIKE', '%' . $search . '%')
                     ->orWhere('emp_name', 'LIKE', '%' . $search . '%');
-                    if ($formattedDate) {
-                        $query->orWhere('date_of_incident', 'LIKE', '%' . $formattedDate . '%');
-                    }
+                if ($formattedDate) {
+                    $query->orWhere('date_of_incident', 'LIKE', '%' . $formattedDate . '%');
+                }
             });
         }
         if (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole)) {

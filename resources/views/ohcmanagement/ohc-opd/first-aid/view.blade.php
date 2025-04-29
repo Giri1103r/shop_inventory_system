@@ -64,6 +64,25 @@
                                             {{ (isset($opd_first_aid->time_of_incident) ? $opd_first_aid->time_of_incident : '') }}
                                         </div>
                                     </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('Medicine Name') }}</label>
+                                        <div class="view_data">
+                                            @php
+                                                $SelectedMedicineIds = explode(',', $opd_first_aid->medicine_id ?? '');
+                                                $SelectedMedicineNames = [];
+                                            @endphp
+
+                                            @foreach ($medicine as $list)
+                                                @if (in_array($list->id, $SelectedMedicineIds))
+                                                    @php
+                                                        $SelectedMedicineNames[] = $list->medicine;
+                                                    @endphp
+                                                @endif
+                                            @endforeach
+
+                                            {{ implode(', ', $SelectedMedicineNames) }}
+                                        </div>
+                                    </div>
 
                                     <div class="mb-3 col-md-8 form-input">
                                         <label class="form-label view_label">{{ __('Treatment Provided') }}</label>
@@ -115,7 +134,7 @@
                                         </div>
 
                                     </div>
-                                  
+
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('Status') }}</label>
                                         <div class="view_data">
