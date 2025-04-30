@@ -109,7 +109,7 @@ class CertifiedFireFighterController extends Controller
     {
         try {
             $departmentList  = $this->department->select('id', 'department_name')->where('status', '1')->get();
-            $staticDocno  = $this->static_docno->select('id', 'doc_no','issue_date','rev_dt')->where([
+            $staticDocno  = $this->static_docno->select('id', 'doc_no', 'issue_date', 'rev_dt')->where([
                 ['type', "CertifiedFireFighter"],
                 ['status', '1']
             ])->first();
@@ -165,9 +165,9 @@ class CertifiedFireFighterController extends Controller
             $id = decryptId($id);
             if (Auth::check()) {
                 $type = 2;
-                $fireData =   $this->fire->selectOne($id,$type);
+                $fireData =   $this->fire->selectOne($id, $type);
                 $certifiedFireDataList = $this->certified_fire_fighter->selectOne($id);
-                $staticDocno  = $this->static_docno->select('id', 'doc_no','issue_date','rev_dt')->where([
+                $staticDocno  = $this->static_docno->select('id', 'doc_no', 'issue_date', 'rev_dt')->where([
                     ['type', "CertifiedFireFighter"],
                     ['status', '1']
                 ])->first();
@@ -191,7 +191,7 @@ class CertifiedFireFighterController extends Controller
         try {
             $id = decryptId($request->id);
             $type = 2;
-            $fireID = $this->fire->statuschange($id,$type);
+            $fireID = $this->fire->statuschange($id, $type);
             $this->certified_fire_fighter->statuschange($id);
 
             return response()->json(['status' => 'success', 'msg' => 'status changed'], 200);
@@ -328,6 +328,8 @@ class CertifiedFireFighterController extends Controller
                     $statusColor = $fire_fighter->emp_status == 1 ? '00B050' : 'FF0000';
                     $sheet->getStyle("J{$row}:K{$row}")->getFont()->getColor()->setARGB($statusColor);
 
+                    $sheet->getStyle("A{$row}:K{$row}")->getAlignment()->setWrapText(true);
+
                     $sheet->getStyle("A{$row}:K{$row}")->applyFromArray([
                         'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                         'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
@@ -337,8 +339,8 @@ class CertifiedFireFighterController extends Controller
                     $sr++;
                 }
 
-                $currentRow = $row + 4;
 
+                $currentRow = $row + 4;
             }
 
             $writer = new Xlsx($spreadsheet);
@@ -347,7 +349,6 @@ class CertifiedFireFighterController extends Controller
             $writer->save($filePath);
 
             return response()->download($filePath)->deleteFileAfterSend(true);
-
         } catch (\Exception $e) {
             report($e);
             Session::flash('error', 'Something went wrong!');
@@ -363,10 +364,10 @@ class CertifiedFireFighterController extends Controller
             $allData = $this->fire->exportdata($type);
 
             // $document_no = $this->static_docno->selectUsingName('CertifiedFireFighter');
-            $document_no  = $this->static_docno->select('id', 'doc_no','issue_date','rev_dt')->where([
-                                ['type', "CertifiedFireFighter"],
-                                ['status', '1']
-                            ])->first();
+            $document_no  = $this->static_docno->select('id', 'doc_no', 'issue_date', 'rev_dt')->where([
+                ['type', "CertifiedFireFighter"],
+                ['status', '1']
+            ])->first();
 
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
@@ -400,6 +401,7 @@ class CertifiedFireFighterController extends Controller
             $filename = "Certified Fire Fighter.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
+            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('fire/certified-fire-fighter/list'));
@@ -414,10 +416,10 @@ class CertifiedFireFighterController extends Controller
             if (Auth::check()) {
                 $certified_fire_fighter = $this->certified_fire_fighter->selectOne($id);
 
-                $document_no  = $this->static_docno->select('id', 'doc_no','issue_date','rev_dt')->where([
-                                ['type', "CertifiedFireFighter"],
-                                ['status', '1']
-                            ])->first();
+                $document_no  = $this->static_docno->select('id', 'doc_no', 'issue_date', 'rev_dt')->where([
+                    ['type', "CertifiedFireFighter"],
+                    ['status', '1']
+                ])->first();
                 $data = [
                     'document_no' => $document_no,
                     'certified_fire_fighter' => $certified_fire_fighter,
@@ -458,8 +460,8 @@ class CertifiedFireFighterController extends Controller
             $spreadsheet = new Spreadsheet();
             $sheet = $spreadsheet->getActiveSheet();
 
-            $certified_fire_fighter = $this->certified_fire_fighter->selectFireId($id);
-            $certified_fire_fighter = $certified_fire_fighter->first();
+            $certified_fire_fighters = $this->certified_fire_fighter->selectFireId($id);
+            $certified_fire_fighter = $certified_fire_fighters->first();
 
             $document_no = $this->static_docno->select('id', 'doc_no', 'issue_date', 'rev_dt')
                 ->where([
@@ -556,7 +558,7 @@ class CertifiedFireFighterController extends Controller
             $row = 6;
             $sr = 1;
 
-            if (!empty($certified_fire_fighter)) {
+            foreach ($certified_fire_fighters as $certified_fire_fighter) {
                 $sheet->setCellValue("A{$row}", $sr);
                 $sheet->mergeCells("B{$row}:C{$row}")->setCellValue("B{$row}", $certified_fire_fighter['emp_name'] ?? '');
                 $sheet->mergeCells("D{$row}:E{$row}")->setCellValue("D{$row}", getDepartment($certified_fire_fighter['department_id']) ?? '');
@@ -564,21 +566,24 @@ class CertifiedFireFighterController extends Controller
                 $sheet->mergeCells("H{$row}:I{$row}")->setCellValue("H{$row}", $certified_fire_fighter['emp_phone'] ?? '');
 
                 $sheet->mergeCells("J{$row}:K{$row}")
-                ->setCellValue("J{$row}", ($certified_fire_fighter['emp_status'] == 1 ? 'Active' : 'Not-Active'));
+                    ->setCellValue("J{$row}", ($certified_fire_fighter['emp_status'] == 1 ? 'Active' : 'Not-Active'));
 
                 $statusColor = ($certified_fire_fighter['emp_status'] == 1) ? '00B050' : 'FF0000';
 
                 $sheet->getStyle("J{$row}:K{$row}")->getFont()->getColor()->setARGB($statusColor);
 
                 $sheet->getStyle("J{$row}:K{$row}")
-                ->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER)
-                ->setVertical(Alignment::VERTICAL_CENTER);
+                    ->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER)
+                    ->setVertical(Alignment::VERTICAL_CENTER);
 
 
                 $sheet->getStyle("A{$row}:K{$row}")->applyFromArray([
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                 ]);
+                $sheet->getStyle("A{$row}:K{$row}")->getAlignment()->setWrapText(true);
+                $row++;
+                $sr++;
             }
 
             $writer = new Xlsx($spreadsheet);
@@ -587,13 +592,10 @@ class CertifiedFireFighterController extends Controller
             $writer->save($filePath);
 
             return response()->download($filePath)->deleteFileAfterSend(true);
-
         } catch (Exception $e) {
             report($e);
             Session::flash('error', 'Something went wrong!');
             return redirect(admin_url('fire/certified-fire-fighter/list'));
         }
     }
-
-
 }

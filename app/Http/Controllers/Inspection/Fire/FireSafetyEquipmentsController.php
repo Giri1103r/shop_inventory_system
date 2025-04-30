@@ -110,7 +110,7 @@ class FireSafetyEquipmentsController extends Controller
     {
         try {
             $unitList  = $this->unit->select('id', 'unit_name')->where('status', '1')->get();
-            $staticDocno  = $this->static_docno->select('id', 'doc_no','issue_date','rev_dt')->where([
+            $staticDocno  = $this->static_docno->select('id', 'doc_no', 'issue_date', 'rev_dt')->where([
                 ['type', "FireSafetyEquipment"],
                 ['status', '1']
             ])->first();
@@ -166,9 +166,9 @@ class FireSafetyEquipmentsController extends Controller
             $id = decryptId($id);
             if (Auth::check()) {
                 $type = 3;
-                $fireData =   $this->fire->selectOne($id,$type);
+                $fireData =   $this->fire->selectOne($id, $type);
                 $fireSafetyEquipmentDataList = $this->fire_safety_equipment->selectOne($id);
-                $staticDocno  = $this->static_docno->select('id', 'doc_no','issue_date','rev_dt')->where([
+                $staticDocno  = $this->static_docno->select('id', 'doc_no', 'issue_date', 'rev_dt')->where([
                     ['type', "FireSafetyEquipment"],
                     ['status', '1']
                 ])->first();
@@ -192,7 +192,7 @@ class FireSafetyEquipmentsController extends Controller
         try {
             $id = decryptId($request->id);
             $type = 3;
-            $fireID = $this->fire->statuschange($id,$type);
+            $fireID = $this->fire->statuschange($id, $type);
             $this->fire_safety_equipment->statuschange($id);
 
             return response()->json(['status' => 'success', 'msg' => 'status changed'], 200);
@@ -211,6 +211,8 @@ class FireSafetyEquipmentsController extends Controller
             $sheet = $spreadsheet->getActiveSheet();
 
             $allData = $this->fire->exportdata($type);
+
+
 
             foreach (range('A', 'P') as $col) {
                 $sheet->getColumnDimension($col)->setAutoSize(true);
@@ -357,7 +359,6 @@ class FireSafetyEquipmentsController extends Controller
             $writer->save($filePath);
 
             return response()->download($filePath)->deleteFileAfterSend(true);
-
         } catch (\Exception $e) {
             report($e);
             Session::flash('error', 'Something went wrong!');
@@ -406,7 +407,6 @@ class FireSafetyEquipmentsController extends Controller
 
             $filename = "Fire Safety Equipment.pdf";
             $mpdf->Output($filename, 'D');
-
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
@@ -463,8 +463,9 @@ class FireSafetyEquipmentsController extends Controller
             $spreadsheet = new Spreadsheet();
             $sheet = $spreadsheet->getActiveSheet();
 
-            $fire_safety_equipment = $this->fire_safety_equipment->selectFireId($id);
-            $fire_safety_equipment = $fire_safety_equipment->first();
+            $fire_safety_equipments = $this->fire_safety_equipment->selectFireId($id);
+            $fire_safety_equipment = $fire_safety_equipments->first();
+
 
             $document_no = $this->static_docno->select('id', 'doc_no', 'issue_date', 'rev_dt')
                 ->where([
@@ -566,7 +567,7 @@ class FireSafetyEquipmentsController extends Controller
             $row = 6;
             $sr = 1;
 
-            if (!empty($fire_safety_equipment)) {
+            foreach ($fire_safety_equipments as $fire_safety_equipment) {
 
                 $sheet->setCellValue("A{$row}", $sr);
                 $sheet->mergeCells("B{$row}:C{$row}")->setCellValue("B{$row}", $fire_safety_equipment['name_of_fire_safety'] ?? '');
@@ -581,6 +582,8 @@ class FireSafetyEquipmentsController extends Controller
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                 ]);
+                $row++;
+                $sr++;
             }
 
             $writer = new Xlsx($spreadsheet);
@@ -589,13 +592,11 @@ class FireSafetyEquipmentsController extends Controller
             $writer->save($filePath);
 
             return response()->download($filePath)->deleteFileAfterSend(true);
-
         } catch (\Exception $e) {
+            dd($e);
             report($e);
             Session::flash('error', 'Something went wrong!');
             return redirect(admin_url('fire/fire-safety/equipments/code-sheet/list'));
         }
     }
-
-
 }

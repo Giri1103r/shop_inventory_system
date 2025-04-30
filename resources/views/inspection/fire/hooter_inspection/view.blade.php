@@ -308,7 +308,7 @@
                                                     </div>
                                                 </div>
                                             @endif
-                                            {{-- @if (isset($inspection->approved_by))
+                                            @if (isset($inspection->approved_by))
                                                 @if ($inspection->verified_by == $inspection->approved_by)
                                                     <div class="col-md-4 mb-2">
                                                         <div class="form-group form-input">
@@ -326,18 +326,19 @@
                                                             HOOTER_INSPECTION,
                                                         );
                                                     @endphp
+                                                     @if (isset($signature))
+                                                     <div class="col-md-4 mb-2">
+                                                         <div class="form-group form-input">
+                                                             <label class="form-label"
+                                                                 style="display: block;">{{ __('inspection.signature') }}</label>
+                                                             <img src="{{ admin_url($signature) }}" alt="Signature Upload"
+                                                                 style="width: 150px; margin-top: -10px;" />
+                                                         </div>
+                                                     </div>
+                                                 @endif
                                                 @endif
                                             @endif
-                                            @if (isset($signature))
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label class="form-label"
-                                                            style="display: block;">{{ __('inspection.signature') }}</label>
-                                                        <img src="{{ admin_url($signature) }}" alt="Signature Upload"
-                                                            style="width: 150px; margin-top: -10px;" />
-                                                    </div>
-                                                </div>
-                                            @endif --}}
+
 
                                             @if (isset($inspection->capa_recomendation))
                                                 <div class="col-md-12 mb-2">

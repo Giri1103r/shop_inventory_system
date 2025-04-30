@@ -290,13 +290,13 @@ class FireExtinguisherController extends Controller
             $inspection_details = $this->fire_extinguisher_details->store($id);
             $inspection_file = $this->files->file_upload($inspection_type, $id);
 
-            $checklist_store = $this->checklist_follow->store($inspection_type, $id);
+            // $checklist_store = $this->checklist_follow->store($inspection_type, $id);
 
             $signature_update = $this->signature->CheckedBySignature($id, $inspection_type);
 
             $ehsOfficer = GetEHSOfficer();
             $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
-            $mailsubject = 'FIRE INSPECTION';
+            $mailsubject = 'Fire Extinguisher Inspection';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
                 'module_type' => 3,
@@ -344,7 +344,6 @@ class FireExtinguisherController extends Controller
                 return redirect(admin_url('fire/fire_extinguisher-inspection/list'));
             }
         } catch (Exception $ex) {
-            report($ex);
             report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('fire/fire_extinguisher-inspection/list'));
@@ -428,7 +427,7 @@ class FireExtinguisherController extends Controller
             $userIds = [
                 'users' => $inspection_details->created_by,
             ];
-            $mailsubject = 'FIRE INSPECTION';
+            $mailsubject = 'Fire Extinguisher Inspection';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
                 'module_type' => 3,
@@ -473,7 +472,6 @@ class FireExtinguisherController extends Controller
             return redirect(admin_url('fire/fire_extinguisher-inspection/list'));
         } catch (Exception $ex) {
             report($ex);
-            report($ex);
             Session::flash('error', 'Something Went Wrong!');
             return redirect(admin_url('fire/fire_extinguisher-inspection/list'));
         }
@@ -490,7 +488,7 @@ class FireExtinguisherController extends Controller
             $userIds = [
                 'users' => $ehsOfficers,
             ];
-            $mailsubject = 'Fire Inspection';
+            $mailsubject = 'Fire Extinguisher Inspection';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
                 'module_type' => 3,
@@ -558,11 +556,11 @@ class FireExtinguisherController extends Controller
             } else {
                 $message = 'EHS Officer Rejected the CAPA Action';
                 $web_link =   admin_url('fire/fire_extinguisher-inspection/verification/' . encryptId($inspection_details->id) . '/capa');
-                $users = $inspection_details->created_by;
+                $users = [$inspection_details->created_by];
                 $to_status = EHS_OFFICER_REJECTED;
             }
 
-            $mailsubject = 'FIRE INSPECTION';
+            $mailsubject = 'Fire Extinguisher Inspection';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
                 'module_type' => 3,
@@ -632,11 +630,11 @@ class FireExtinguisherController extends Controller
             } else {
                 $message = 'Level One Manager Rejected the CAPA Action';
                 $web_link =   admin_url('fire/fire_extinguisher-inspection/verification/' . encryptId($inspection_details->id) . '/capa');
-                $users = $inspection_details->created_by;
+                $users = [$inspection_details->created_by];
                 $to_status = L1_MANAGER_REJECTED;
             }
 
-            $mailsubject = 'FIRE INSPECTION';
+            $mailsubject = 'Fire Extinguisher Inspection';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
                 'module_type' => 3,
@@ -709,7 +707,7 @@ class FireExtinguisherController extends Controller
 
             }
 
-            $mailsubject = 'FIRE INSPECTION';
+            $mailsubject = 'Fire Extinguisher Inspection';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
                 'module_type' => 3,
@@ -1004,6 +1002,8 @@ class FireExtinguisherController extends Controller
 
             return response()->download($tempFile)->deleteFileAfterSend(true);
         } catch (\Exception $e) {
+            dd($e);
+
             report($e);
             Session::flash('error', 'Something went wrong!');
             return redirect(admin_url('fire/fire_extinguisher-inspection/list'));
@@ -1047,6 +1047,7 @@ class FireExtinguisherController extends Controller
             $filename = "Fire Exitnguisher Inspection.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
+            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('fire/fire_extinguisher-inspection/list'));

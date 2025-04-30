@@ -311,7 +311,7 @@ class HydrantRiserInspectionContoller extends Controller
 
             $ehsOfficer = GetEHSOfficer();
             $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
-            $mailsubject = 'HYDRANT AND RISER';
+            $mailsubject = 'Fire Hydrant And Riser Inspection';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
                 'module_type' => 3,
@@ -353,12 +353,14 @@ class HydrantRiserInspectionContoller extends Controller
             ];
             $this->statusLog->create($insert_array);
             Session::flash('success', 'Your data added successfully');
+
             // return redirect(admin_url('fire/hydrant-riser-inspection/list'));
             if ($inspection->observation_needed == 1) {
                 return redirect(admin_url('fire/checklist-observation/add/' . encryptId($inspection_type) . '/' . encryptId($id)));
             } else {
                 return redirect(admin_url('fire/hydrant-riser-inspection/list'));
             }
+
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong !');
@@ -442,7 +444,7 @@ class HydrantRiserInspectionContoller extends Controller
             $userIds = [
                 'users' => $inspection_details->created_by,
             ];
-            $mailsubject = 'HYDRANT AND RISER';
+            $mailsubject = 'Fire Hydrant And Riser Inspection';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
                 'module_type' => 3,
@@ -466,7 +468,7 @@ class HydrantRiserInspectionContoller extends Controller
             // dd($email_id);
             $url = admin_url('fire/hydrant-riser-inspection/verification/' . encryptId($id) . '/capa');
             $details = array(
-                'fire_type' => 'HYDRANT AND RISER',
+                'fire_type' => 'Fire Hydrant And Riser Inspection',
                 'email' => $email_id,
                 'mail_subject' => $mailsubject,
                 'title' => $title,
@@ -505,7 +507,7 @@ class HydrantRiserInspectionContoller extends Controller
             $userIds = [
                 'users' => $ehsOfficers,
             ];
-            $mailsubject = 'HYDRANT AND RISER';
+            $mailsubject = 'Fire Hydrant And Riser Inspection';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
                 'module_type' => 3,
@@ -578,7 +580,7 @@ class HydrantRiserInspectionContoller extends Controller
                 $to_status = EHS_OFFICER_REJECTED;
             }
 
-            $mailsubject = 'HYDRANT AND RISER';
+            $mailsubject = 'Fire Hydrant And Riser Inspection';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
                 'module_type' => 3,
@@ -649,11 +651,11 @@ class HydrantRiserInspectionContoller extends Controller
             } else {
                 $message = 'Level One Manager Rejected the CAPA Action';
                 $web_link =   admin_url('fire/hydrant-riser-inspection/verification/' . encryptId($inspection_details->id) . '/capa');
-                $users = $inspection_details->created_by;
+                $users = [$inspection_details->created_by];
                 $to_status = L1_MANAGER_REJECTED;
             }
 
-            $mailsubject = 'HYDRANT AND RISER';
+            $mailsubject = 'Fire Hydrant And Riser Inspection';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
                 'module_type' => 3,
@@ -729,7 +731,7 @@ class HydrantRiserInspectionContoller extends Controller
 
             }
 
-            $mailsubject = 'HYDRANT AND RISER';
+            $mailsubject = 'Fire Hydrant And Riser Inspection';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
                 'module_type' => 3,

@@ -153,6 +153,14 @@
 
     @push('script')
         <script type="text/javascript">
+
+            flatpickr("#next_due", {
+                dateFormat: "d-m-Y",
+            });
+            flatpickr("#inspection_date", {
+                dateFormat: "d-m-Y",
+            });
+
             $(document).ready(function() {
                 var firstTh = $('.datatable-list thead th:first');
                 firstTh.removeClass('sorting_asc');

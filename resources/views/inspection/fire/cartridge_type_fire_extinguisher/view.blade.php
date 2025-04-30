@@ -19,7 +19,8 @@
                         <div class="card">
                             <div class="card-header">
                                 <div class="align-back-btc">
-                                    <x-button-back href="{{ admin_url('fire/fire-extinguisher/cartridge/list') }}"></x-button-back>
+                                    <x-button-back
+                                        href="{{ admin_url('fire/fire-extinguisher/cartridge/list') }}"></x-button-back>
                                 </div>
                             </div>
 
@@ -135,7 +136,8 @@
                                     <div class="form-observation">
                                         <div class="row mt-4 form-obs">
                                             <div class="card-header-inner p-2">
-                                                <h4 class="text-white">Cartridge Type Fire Extinguisher Inspection Observation</h4>
+                                                <h4 class="text-white">Cartridge Type Fire Extinguisher Inspection
+                                                    Observation</h4>
                                             </div>
                                             {{-- <div class="col-md-12 mb-2">
                                                 <div class="form-group form-input">
@@ -148,8 +150,7 @@
                                             </div> --}}
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label
-                                                        class="form-label require">Observation</label>
+                                                    <label class="form-label require">Observation</label>
                                                     <div class="view_data">
                                                         {{ $inspection->observation_needed == '1' ? 'YES' : 'NO' }}
                                                     </div>
@@ -164,7 +165,8 @@
                                         <div class="form-wrapper">
                                             <div class="row mt-4 form-set">
                                                 <div class="card-header-inner p-2 col-12">
-                                                    <h4 class="text-white">Cartridge Type Fire Extinguisher Inspection Checklist</h4>
+                                                    <h4 class="text-white">Cartridge Type Fire Extinguisher Inspection
+                                                        Checklist</h4>
                                                 </div>
 
                                                 <div class="col-md-4 mb-2">
@@ -212,7 +214,7 @@
                                                         <label
                                                             class="form-label require">{{ __('inspection.type') }}</label>
                                                         <div class="view_data">
-                                                           {{ getExtinguisherTypeName($details->type) }}
+                                                            {{ getExtinguisherTypeName($details->type) }}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -222,7 +224,7 @@
                                                         <label
                                                             class="form-label require">{{ __('inspection.capacity') }}</label>
                                                         <div class="view_data">
-                                                           {{ $details->capacity }}
+                                                            {{ $details->capacity }}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -232,7 +234,7 @@
                                                         <label
                                                             class="form-label require">{{ __('inspection.quantity') }}</label>
                                                         <div class="view_data">
-                                                           {{ $details->quantity }}
+                                                            {{ $details->quantity }}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -253,13 +255,12 @@
 
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">Wheel</label>
+                                                        <label class="form-label require">Wheel</label>
                                                         <div class="view_data">
                                                             @if ($details->wheel == FUNCTIONAL)
-                                                            FUNCTIONAL
+                                                                FUNCTIONAL
                                                             @elseif($details->wheel == NON_FUNCTIONAL)
-                                                            NON_FUNCTIONAL
+                                                                NON_FUNCTIONAL
                                                             @endif
                                                         </div>
                                                     </div>
@@ -267,13 +268,12 @@
 
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">Handle</label>
+                                                        <label class="form-label require">Handle</label>
                                                         <div class="view_data">
                                                             @if ($details->handle == GOOD)
-                                                            GOOD
+                                                                GOOD
                                                             @elseif($details->handle == DAMAGED)
-                                                            DAMAGED
+                                                                DAMAGED
                                                             @endif
                                                         </div>
                                                     </div>
@@ -281,10 +281,9 @@
 
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">Weight of Cartridge</label>
+                                                        <label class="form-label require">Weight of Cartridge</label>
                                                         <div class="view_data">
-                                                           {{ $details->weight_of_cartidge }}
+                                                            {{ $details->weight_of_cartidge }}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -305,10 +304,9 @@
 
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">Approach</label>
+                                                        <label class="form-label require">Approach</label>
                                                         <div class="view_data">
-                                                           {{ $details->approach }}
+                                                            {{ $details->approach }}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -392,18 +390,21 @@
                                                             CARTRIDGE_TYPE_FIRE_EXTINGUISHER_INSPECTION,
                                                         );
                                                     @endphp
+
+                                                    @if (isset($signature))
+                                                        <div class="col-md-4 mb-2">
+                                                            <div class="form-group form-input">
+                                                                <label class="form-label"
+                                                                    style="display: block;">{{ __('inspection.signature') }}</label>
+                                                                <img src="{{ admin_url($signature) }}"
+                                                                    alt="Signature Upload"
+                                                                    style="width: 150px; margin-top: -10px;" />
+                                                            </div>
+                                                        </div>
+                                                    @endif
                                                 @endif
                                             @endif
-                                            @if (isset($signature))
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label class="form-label"
-                                                            style="display: block;">{{ __('inspection.signature') }}</label>
-                                                        <img src="{{ admin_url($signature) }}" alt="Signature Upload"
-                                                            style="width: 150px; margin-top: -10px;" />
-                                                    </div>
-                                                </div>
-                                            @endif
+
                                             @if (isset($inspection->capa_recomendation))
                                                 <div class="col-md-12 mb-2">
                                                     <div class="form-group form-input">
@@ -590,7 +591,7 @@
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
                                                 <label
-                                                    class="form-label ">{{ __('inspection.level_one_manager') }}</label>
+                                                    class="form-label ">{{ __('inspection.level_two_manager') }}</label>
                                                 <div class="view_data">
                                                     {{ getUserName($inspection->l2_manager_verified_by) }}
                                                 </div>
@@ -631,23 +632,7 @@
                                                 </div>
                                             </div>
                                         @endif
-                                        @php
-                                            $signature = GetFireSignature(
-                                                $inspection->approved_by,
-                                                $inspection->id,
-                                                CARTRIDGE_TYPE_FIRE_EXTINGUISHER_INSPECTION,
-                                            );
-                                        @endphp
-                                        @if (isset($signature))
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label"
-                                                        style="display: block;">{{ __('inspection.signature') }}</label>
-                                                    <img src="{{ admin_url($signature) }}" alt="Signature Upload"
-                                                        style="width: 150px; margin-top: -10px;" />
-                                                </div>
-                                            </div>
-                                        @endif
+
                                         <div class="col-md-12 mb-2">
                                             <div class="form-group form-input">
                                                 <label
