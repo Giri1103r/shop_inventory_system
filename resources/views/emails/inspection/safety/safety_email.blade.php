@@ -69,6 +69,15 @@
                             @endif
                         </tr>
                         <tr>
+                            @if (isset($details['data']->date_of_inspection))
+                                <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
+                                    <b>Date Of Inspection</b>
+                                </td>
+                                <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
+                                    valign="top"> {{ displayDateformat($details['data']->inspection_date) }}</td>
+                            @endif
+                        </tr>
+                        <tr>
                             @if (isset($details['data']->shift))
                                 <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
                                     <b>Shift</b>

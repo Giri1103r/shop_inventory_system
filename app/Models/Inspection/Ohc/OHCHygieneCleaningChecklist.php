@@ -41,7 +41,7 @@ class OHCHygieneCleaningChecklist extends Model
 
         if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_NURSING_OFFICER)) {
         } else if (CheckUserRole(ROLE_CLEANER)) {
-            $query->where('inspection_ohc_hygiene_checklist.created_by', Auth::id());
+           
         }
 
         $org_total =  $query;
@@ -112,15 +112,10 @@ class OHCHygieneCleaningChecklist extends Model
         $org_total =  $query;
         $org_total_counts = $org_total->count();
 
-        // if ($request->search['value'] != null || $request->search['value'] != '') {
-        //     $search = $request->search['value'];
+        if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_NURSING_OFFICER)) {
+        } else if (CheckUserRole(ROLE_CLEANER)) {
 
-        //     $query->where(function ($query) use ($search) {
-        //         $query
-        //             ->orWhere('issue_date', 'LIKE', '%' . $search . '%')
-        //             ->orWhere('shift', 'LIKE', '%' . $search . '%');
-        //     });
-        // }
+        }
 
         if ($request->has('shift_id') && $request->shift_id) {
             $query = $query->where('shift_id', 'LIKE', '%' . decryptId($request->shift_id) . '%');

@@ -82,10 +82,10 @@ class FirstAidBagChecklistController extends Controller
 
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            $btn = '<a href="' . admin_url('ohc/emergency-floor-first-aid-bag/checklist/view/' . encryptId($row->inspection_id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
+                            $btn = '<a href="' . admin_url('ohc/emergency-floor-first-aid-bag/checklist/view/' . encryptId($row->inspection_id)) . '"   class="view-icon me-1" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
 
                             if ($row->inspection_status == OBSERVATION_PENDING &&  isAdmin()) {
-                                $btn .= '<a href="' . admin_url('ohc/emergency-floor-first-aid-bag/checklist/approval/' . encryptId($row->inspection_id)) . '" class="" title="Action"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('ohc/emergency-floor-first-aid-bag/checklist/approval/' . encryptId($row->inspection_id)) . '" class="me-1" title="Action"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
 
                             $btn .= '<a href="' . admin_url('ohc/emergency-floor-first-aid-bag/checklist/exportViewpdf/' . encryptId($row->inspection_id)) . '" style="margin-right: 5px;" title="PDF">
@@ -561,6 +561,7 @@ class FirstAidBagChecklistController extends Controller
 
             return response()->download($filePath)->deleteFileAfterSend(true);
         } catch (\Exception $e) {
+            dd($e);
             return back()->with('error', $e->getMessage());
         }
     }

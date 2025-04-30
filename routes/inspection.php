@@ -1130,6 +1130,3 @@ Route::group(['prefix' => 'ohc/current-new-ext-code-dialing/'], function () {
 //OPD Medicine Inspection - ohc - Role
 //Emergency Floor First Aid Box Checklist - ohc - Role
 
-
-//PDF Pending
-// Safety Walk Observation - Whole PDF

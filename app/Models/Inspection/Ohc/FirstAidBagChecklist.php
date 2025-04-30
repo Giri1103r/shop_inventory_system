@@ -59,7 +59,6 @@ class FirstAidBagChecklist extends Model
         }
 
 
-
         if ($request->has('inspection_date') && $request->inspection_date) {
             $formattedDate = DBdateformat($request->inspection_date);
             $query = $query->whereDate('inspection_ohc_first_aid_bag_inspection.inspection_date', $formattedDate);
@@ -71,16 +70,16 @@ class FirstAidBagChecklist extends Model
         }
 
         if (isset($request->location) && $request->location) {
-            $query = $query->where('inspection_ohc_first_aid_bag_inspection.location', 'LIKE', '%' . decryptId($request->location) . '%');
+            $query = $query->where('inspection_ohc_first_aid_bag_inspection.location',  decryptId($request->location) );
         }
         if (isset($request->frequency) && $request->frequency) {
-            $query = $query->where('inspection_ohc_first_aid_bag_inspection.frequency', 'LIKE', '%' . decryptId($request->frequency) . '%');
+            $query = $query->where('inspection_ohc_first_aid_bag_inspection.frequency',  decryptId($request->frequency) );
         }
         if (isset($request->unit) && $request->unit) {
-            $query = $query->where('inspection_ohc_first_aid_bag_inspection.unit', 'LIKE', '%' . decryptId($request->unit) . '%');
+            $query = $query->where('inspection_ohc_first_aid_bag_inspection.unit',  decryptId($request->unit) );
         }
         if (isset($request->shift) && $request->shift) {
-            $query = $query->where('inspection_ohc_first_aid_bag_inspection.shift_id', 'LIKE', '%' . decryptId($request->shift) . '%');
+            $query = $query->where('inspection_ohc_first_aid_bag_inspection.shift_id',  decryptId($request->shift) );
         }
 
 

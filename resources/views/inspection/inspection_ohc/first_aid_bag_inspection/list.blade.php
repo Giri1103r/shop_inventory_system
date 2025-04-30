@@ -51,22 +51,7 @@
                                                 </select>
                                             </div>
                                         </div>
-                                        <div class="col-md-4 mb-2">
-                                            <div class="form-group form-input">
-                                                <label class="form-label require">{{ __('inspection.shifts') }}</label>
-                                                <select name="shift_id" id="shift_id" class=" form-control single-select"
-                                                    style="width: 100%">
-                                                    <option value="">Select {{ __('inspection.shifts') }}
-                                                    </option>
-                                                    @foreach ($shifts as $location)
-                                                        <option value="{{ encryptId($location->id) }}"
-                                                            {{ old('shift_id') == encryptId($location->id) ? 'selected' : '' }}>
-                                                            {{ $location->shift }}</option>
-                                                    @endforeach
-                                                </select>
 
-                                            </div>
-                                        </div>
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
                                                 <label class="form-label require">{{ __('inspection.unit') }}</label>
@@ -262,7 +247,7 @@
                                         var searchValue = $('#datatable-list_filter input').val();
                                         inspection_date = $('#inspection_date').val();
                                         next_due = $('#next_due').val();
-                                        location = $('#location').val();
+                                        location_id = $('#location').val();
                                         unit = $('#unit').val();
                                         frequency = $('#frequency').val();
                                         shift = $('#shift_id').val();
@@ -277,7 +262,7 @@
                                             '&next_due=' + next_due +
                                             '&frequency=' + frequency +
                                             '&unit=' + unit +
-                                            '&location=' + location +
+                                            '&location=' + location_id +
                                             '&shift=' + shift
                                     }
                                 },
@@ -288,7 +273,7 @@
                                         var searchValue = $('#datatable-list_filter input').val();
                                         inspection_date = $('#inspection_date').val();
                                         next_due = $('#next_due').val();
-                                        location = $('#location').val();
+                                        location_id = $('#location').val();
                                         unit = $('#unit').val();
                                         frequency = $('#frequency').val();
                                         shift = $('#shift_id').val();
@@ -299,6 +284,7 @@
                                             "{{ admin_url('ohc/emergency-floor-first-aid-bag/checklist/export/excel') }}" +
                                             '?search=' + searchValue +
                                             '&inspection_date=' + inspection_date +
+                                            '&location=' + location_id +
                                             '&next_due=' + next_due +
                                             '&frequency=' + frequency +
                                             '&unit=' + unit +

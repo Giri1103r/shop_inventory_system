@@ -43,8 +43,9 @@
                                             <select name="status" id="status" style="width: 100%"
                                                 class="form-control single-select">
                                                 <option value="">Select Status</option>
-                                                <option value="{{ encryptId(1) }}">Active</option>
-                                                <option value="{{ encryptId(0) }}">In-Active</option>
+                                                <option value="{{ encryptId(1) }}">OBSERVATION PENDING</option>
+                                                <option value="{{ encryptId(3) }}">OBSERVATION APPROVED</option>
+                                                <option value="{{ encryptId(2) }}">OBSERVATION REJECTED</option>
                                             </select>
                                         </div>
                                         <div class="col-md-3 mt-3">
@@ -134,6 +135,7 @@
                         data: function(d) {
                             d.inspection_date = $('#inspection_date').val();
                             d.next_due = $('#next_due').val();
+                            d.status = $('#status').val();
                         },
                         error: function(xhr, error, code) {
                             if (xhr.status === 419) {
@@ -191,6 +193,7 @@
                                         var searchValue = $('#datatable-list_filter input').val();
                                         inspection_date = $('#inspection_date').val();
                                         next_due = $('#next_due').val();
+                                        status = $('#status').val();
 
 
                                         $(".dt-button").removeClass('processing');
@@ -199,6 +202,7 @@
                                             "{{ admin_url('ohc/first-aid/opd-medicine-inspection/export/pdf') }}" +
                                             '?search=' + searchValue +
                                             '&inspection_date=' + inspection_date +
+                                            '&status=' + status +
                                             '&next_due=' + next_due
                                     }
                                 },
@@ -209,12 +213,14 @@
                                         var searchValue = $('#datatable-list_filter input').val();
                                         inspection_date = $('#inspection_date').val();
                                         next_due = $('#next_due').val();
+                                        status = $('#status').val();
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
                                             "{{ admin_url('ohc/first-aid/opd-medicine-inspection/export/excel') }}" +
                                             '?search=' + searchValue +
                                             '&inspection_date=' + inspection_date +
+                                            '&status=' + status +
                                             '&next_due=' + next_due
                                     }
                                 },
@@ -246,7 +252,7 @@
                     }, 150);
                 });
 
-                
+
 
 
                 /* Delete Record */

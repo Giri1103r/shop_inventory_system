@@ -87,6 +87,7 @@ class AppServiceProvider extends ServiceProvider
         defined('ROLE_MEDICAL_ASSISTANT') or define('ROLE_MEDICAL_ASSISTANT', 24);
         defined('ROLE_NURSING_OFFICER') or define('ROLE_NURSING_OFFICER', 25);
         defined('ROLE_CLEANER') or define('ROLE_CLEANER', 26);
+        defined('ROLE_INSPECTION_CREATOR') or define('ROLE_INSPECTION_CREATOR', 27);
 
         defined('NEW_TRAINING_SCHEDULE') or define('NEW_TRAINING_SCHEDULE', 1);
         defined('VP_APPROVE') or define('VP_APPROVE', 2);
@@ -244,12 +245,6 @@ class AppServiceProvider extends ServiceProvider
         //Upload
         defined('CHECKLIST_TYPE_UPLOAD') or define('CHECKLIST_TYPE_UPLOAD', 19);
 
-        //Checklist
-        // defined('FORKLIFT_INSPECTION_MONTHLY_CHECKLIST') or define('FORKLIFT_INSPECTION_MONTHLY_CHECKLIST', getCheckListType('FORKLIFT INSPECTION MONTHLY CHECKLIST'));
-        // defined('SAFETY_GALLERY_INSPECTION_CHECKLIST') or define('SAFETY_GALLERY_INSPECTION_CHECKLIST', getCheckListType('SAFETY_GALLERY_INSPECTION_CHECKLIST'));
-        // defined('CHECKLIST_AUDIT_ASSESSMENT') or define('CHECKLIST_AUDIT_ASSESSMENT',  getCheckListType('6S Audit Assessment'));
-        // defined('EYE_WASH_INSPECTION_CHECKLIST') or define('EYE_WASH_INSPECTION_CHECKLIST', getCheckListType('EYE WASH INSPECTION CHECKLIST'));
-        // defined('WEEKLY_AMBULANCE_INSPECTION_CHECKLIST') or define('WEEKLY_AMBULANCE_INSPECTION_CHECKLIST', getCheckListType('WEEKLY AMBULANCE INSPECTION CHECKLIST'));
 
 
         //Safety
