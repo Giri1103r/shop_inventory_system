@@ -80,59 +80,61 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row card">
-                        <div class="card-header-inner p-2">
-                            <h4 class="text-white">Approval</h4>
-                        </div>
-                        <form method="POST" id="forklistassessmentAdd"
-                            action="{{ admin_url('ohc/monthly-medicine-store/inspection/verify/submit') }}"
-                            autocomplete="off" enctype="multipart/form-data">
-                            @csrf
-                            <input type="hidden" value="{{ encryptId($inspection_details->id) }}" name="id">
-                            <div class="row">
-                                <div class="col-md-4 form-group form-input mb-2">
-                                    <label class="form-label ">{{ __('inspection.name') }}</label>
-                                    <input type="text" name="name" id = "name" class="form-control"
-                                        value="{{ getUserName(Auth::id()) }}" readonly>
-                                </div>
-                                <div class="col-md-4 form-group form-input mb-2">
-                                    <label class="form-label ">{{ __('inspection.date') }}</label>
-                                    <input type="text" name="date" id = "date" class="form-control"
-                                        value="{{ todayDate() }}" readonly>
-                                </div>
 
-                                <div class="col-md-4 form-group form-input mb-2">
-                                    @if (isset(Auth::user()->signature_upload))
-                                        <label class="form-label"
-                                            style="display: block; ">{{ __('inspection.signature') }}</label>
-                                        <img src="{{ admin_url(Auth::user()->signature_upload) }}" alt="Signature Upload"
-                                            style="width: 150px; margin-top:-10px">
-                                    @else
-                                        <div class="form-input col-md-12 mb-2">
-                                            <label class="form-label require">Signature</label>
-                                            <input type="file" name="signature_image" id="signature_upload"
-                                                class="form-control form-control-sm" accept="image/*"
-                                                placeholder="Enter the image">
-                                            <small>Allowed file types: jpg, jpeg, png</small>
-                                            <div id="signature_upload" class="text-danger"></div>
+                                <div class="row card">
+                                    <div class="card-header-inner p-2">
+                                        <h4 class="text-white">Approval</h4>
+                                    </div>
+                                    <form method="POST" id="forklistassessmentAdd"
+                                        action="{{ admin_url('ohc/monthly-medicine-store/inspection/verify/submit') }}"
+                                        autocomplete="off" enctype="multipart/form-data">
+                                        @csrf
+                                        <input type="hidden" value="{{ encryptId($inspection_details->id) }}" name="id">
+                                        <div class="row">
+                                            <div class="col-md-4 form-group form-input mb-2">
+                                                <label class="form-label ">{{ __('inspection.name') }}</label>
+                                                <input type="text" name="name" id = "name" class="form-control"
+                                                    value="{{ getUserName(Auth::id()) }}" readonly>
+                                            </div>
+                                            <div class="col-md-4 form-group form-input mb-2">
+                                                <label class="form-label ">{{ __('inspection.date') }}</label>
+                                                <input type="text" name="date" id = "date" class="form-control"
+                                                    value="{{ todayDate() }}" readonly>
+                                            </div>
+
+                                            <div class="col-md-4 form-group form-input mb-2">
+                                                @if (isset(Auth::user()->signature_upload))
+                                                    <label class="form-label"
+                                                        style="display: block; ">{{ __('inspection.signature') }}</label>
+                                                    <img src="{{ admin_url(Auth::user()->signature_upload) }}" alt="Signature Upload"
+                                                        style="width: 150px; margin-top:-10px">
+                                                @else
+                                                    <div class="form-input col-md-12 mb-2">
+                                                        <label class="form-label require">Signature</label>
+                                                        <input type="file" name="signature_image" id="signature_upload"
+                                                            class="form-control form-control-sm" accept="image/*"
+                                                            placeholder="Enter the image">
+                                                        <small>Allowed file types: jpg, jpeg, png</small>
+                                                        <div id="signature_upload" class="text-danger"></div>
+                                                    </div>
+                                                @endif
+                                            </div>
+                                            <div class="col-md-12 mb-2 form-input" id="capa_remarks">
+                                                <label for="capa_remarks" class="form-label">Remarks</label>
+                                                <textarea id="capa_remarks" class="form-control" rows="3" placeholder="Please provide Remarks..."
+                                                    name="capa_remarks"></textarea>
+                                            </div>
+                                            <div class="submit-button mb-3" style="text-align: right;">
+                                                <x-button-approve></x-button-approve>
+                                                <x-button-reject></x-button-reject>
+                                            </div>
                                         </div>
-                                    @endif
-                                </div>
-                                <div class="col-md-12 mb-2 form-input" id="capa_remarks">
-                                    <label for="capa_remarks" class="form-label">Remarks</label>
-                                    <textarea id="capa_remarks" class="form-control" rows="3" placeholder="Please provide Remarks..."
-                                        name="capa_remarks"></textarea>
-                                </div>
-                                <div class="submit-button" style="text-align: right;">
-                                    <x-button-approve></x-button-approve>
-                                    <x-button-reject></x-button-reject>
+                                    </form>
                                 </div>
                             </div>
-                        </form>
+                        </div>
                     </div>
+
                 </div>
             </div>
         </div>

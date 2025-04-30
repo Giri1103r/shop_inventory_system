@@ -132,7 +132,7 @@ class Notification extends Model
 
                 $query->where(function ($query) use ($assignedUserId) {
                     $query->whereRaw("FIND_IN_SET(?, assigned_user)", [$assignedUserId])
-                        ->whereIn('notification_type', [1,3,4,5,9])
+                        ->whereIn('notification_type', [1,3,4,5,9,12])
                         ->where('template_notification.trash', 'NO');
                 });
             }
