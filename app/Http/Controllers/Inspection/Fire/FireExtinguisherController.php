@@ -290,13 +290,13 @@ class FireExtinguisherController extends Controller
             $inspection_details = $this->fire_extinguisher_details->store($id);
             $inspection_file = $this->files->file_upload($inspection_type, $id);
 
-            $checklist_store = $this->checklist_follow->store($inspection_type, $id);
+            // $checklist_store = $this->checklist_follow->store($inspection_type, $id);
 
             $signature_update = $this->signature->CheckedBySignature($id, $inspection_type);
 
             $ehsOfficer = GetEHSOfficer();
             $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
-            $mailsubject = 'FIRE INSPECTION';
+            $mailsubject = 'Fire Extinguisher Inspection';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
                 'module_type' => 3,
@@ -344,7 +344,7 @@ class FireExtinguisherController extends Controller
                 return redirect(admin_url('fire/fire_extinguisher-inspection/list'));
             }
         } catch (Exception $ex) {
-            report($ex);
+            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('fire/fire_extinguisher-inspection/list'));
