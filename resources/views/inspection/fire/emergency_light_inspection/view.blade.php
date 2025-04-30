@@ -124,8 +124,8 @@
                                             </div>
                                         @endif
                                     </div>
-                                    <hr>
-                                    {{-- <div class="form-observation">
+                                    {{-- <hr>
+                                    <div class="form-observation">
                                         <div class="row mt-4 form-obs">
                                             <div class="card-header-inner p-2">
                                                 <h4 class="text-white">Emergency Light Inspection Observation</h4>
@@ -140,7 +140,26 @@
                                                 </div>
                                             </div>
                                         </div>
-                                    </div> --}}
+                                    </div>
+                                    <hr>--}}
+
+                                    <hr>
+                                    <div class="form-observation">
+                                        <div class="row mt-4 form-obs">
+                                            <div class="card-header-inner p-2">
+                                                <h4 class="text-white">Emeregency Light Inspection Observation</h4>
+                                            </div>
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label
+                                                        class="form-label require">Observation</label>
+                                                    <div class="view_data">
+                                                        {{ $inspection->observation_needed == '1' ? 'YES' : 'NO' }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <hr>
 
                                     @foreach ($inspection_details as $details)
@@ -325,7 +344,7 @@
                                                     </div>
                                                 </div>
                                             @endif
-                                            @if (isset($inspection->approved_by))
+                                            {{-- @if (isset($inspection->approved_by))
                                                 @if ($inspection->verified_by == $inspection->approved_by)
                                                     <div class="col-md-4 mb-2">
                                                         <div class="form-group form-input">
@@ -354,7 +373,7 @@
                                                             style="width: 150px; margin-top: -10px;" />
                                                     </div>
                                                 </div>
-                                            @endif
+                                            @endif --}}
                                             @if (isset($inspection->capa_recomendation))
                                                 <div class="col-md-12 mb-2">
                                                     <div class="form-group form-input">

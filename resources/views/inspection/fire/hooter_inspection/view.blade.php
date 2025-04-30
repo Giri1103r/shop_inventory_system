@@ -130,24 +130,25 @@
                                             </div>
                                         @endif
                                     </div>
+
                                     <hr>
-                                    {{-- <div class="form-observation">
+                                    <div class="form-observation">
                                         <div class="row mt-4 form-obs">
                                             <div class="card-header-inner p-2">
                                                 <h4 class="text-white">Hooter Inspection Observation</h4>
                                             </div>
-                                            <div class="col-md-12 mb-2">
+                                            <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">{{ __('inspection.obs') }}</label>
+                                                    <label
+                                                        class="form-label require">Observation</label>
                                                     <div class="view_data">
-                                                        {{ $inspection->observation }}
+                                                        {{ $inspection->observation_needed == '1' ? 'YES' : 'NO' }}
                                                     </div>
-
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <hr> --}}
+                                    <hr>
 
                                     @foreach ($inspection_details as $details)
                                         <div class="form-wrapper">
