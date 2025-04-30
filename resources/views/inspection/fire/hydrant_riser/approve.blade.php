@@ -178,7 +178,7 @@
                                                     </div>
                                                 </div>
 
-                                               
+
 
                                                 <!-- Hydrant No  -->
                                                 <div class="col-md-4 mb-2">
@@ -334,7 +334,7 @@
                                     <hr>
                                 </div>
 
-                                @if ($inspection->inspection_status == WAITING_FOR_EHS_OFFICER_VERIFICATION && (checkUserRole(ROLE_FIRE_ASSOCIATES) || isAdmin()))
+                                @if ($inspection->inspection_status == WAITING_FOR_EHS_OFFICER_VERIFICATION && (checkUserRole(ROLE_EHS_OFFICER) || isAdmin()))
                                     <div class="row mt-3">
                                         <div class="card-header-inner">
                                             <h4 class="text-white">{{ __('inspection.ehs_officer_verify') }}</h4>
@@ -429,7 +429,7 @@
                                                     );
                                                 @endphp
                                             @endif
-                                                
+
                                             @if (isset($updated_time->created_at))
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
@@ -440,7 +440,7 @@
                                                     </div>
                                                 </div>
                                             @endif
-                                         
+
                                             @if (isset($signature))
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
@@ -556,7 +556,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                
+
                                                 @php
                                                     $signature = GetFireSignature(
                                                         $inspection->verified_by,
@@ -616,7 +616,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                           
+
                                             @php
                                                 $signature = GetFireSignature(
                                                     $inspection->l1_manager_verified_by,
@@ -674,7 +674,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                           
+
                                             @php
                                                 $signature = GetFireSignature(
                                                     $inspection->l2_manager_verified_by,
