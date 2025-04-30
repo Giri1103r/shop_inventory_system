@@ -17,7 +17,7 @@ class ImportCurrentNewExtCodeDailingJob
 {
     // use Queueable;
 
-   
+
     protected $details;
 
     public function __construct($details)
@@ -54,7 +54,7 @@ class ImportCurrentNewExtCodeDailingJob
                         $unitName != 'Unit' ||
                         $departmentName != 'Department' ||
                         $employeeName != 'Employee Name' ||
-                        $number != 'Number' 
+                        $number != 'Number'
                     ) {
                         $error_data_1 = array(
                             'upload_id' => $this->details['log_id'],
@@ -127,7 +127,7 @@ class ImportCurrentNewExtCodeDailingJob
             $departmentExist = Department::where('department_name', $departmentName)->where('unit_id', $unitId)->get();
 
             try {
-                
+
                 if (count($departmentExist) <= 0) {
                     $cond_error_data = array(
                         'upload_id' => $this->details['log_id'],
@@ -195,7 +195,7 @@ class ImportCurrentNewExtCodeDailingJob
                     $cond_error_data = array(
                         'upload_id' => $this->details['log_id'],
                         'line_no' => $i,
-                        'error' => 'Number Already Exist',
+                        'error' => 'Employee Is Already Exist According to the Unit , Department and Number',
                     );
                     Session::flash('error', 'Import unsuccessfull!, Please check the upload logs');
                     $cond_error_datas[] = $cond_error_data;

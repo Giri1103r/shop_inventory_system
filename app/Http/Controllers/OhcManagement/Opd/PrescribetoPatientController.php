@@ -541,8 +541,9 @@ class PrescribetoPatientController extends Controller
             $header = [
                 __("common.sno"),
 
-                'Employee Name',
-                'Problem',
+                'Worker/Employee Name',
+                'Worker/Employee Code',
+                'Cheif Complaint',
                 'Gender',
                 'Unit',
                 'Department',
@@ -563,6 +564,7 @@ class PrescribetoPatientController extends Controller
                 $export = [];
                 $export[] =  $i;
                 $export[] = $data->emp_name;
+                $export[] = $data->emp_id;
                 $export[] = $data->cheif_complaint;
                 $export[] = $data->gender;
                 $export[] =  getUnitname($data->unit_id);
@@ -608,8 +610,9 @@ class PrescribetoPatientController extends Controller
 
             $header = [
                 __("common.sno"),
-                'Employee Name',
-                'Problem',
+                'Worker/Employee Name',
+                'Worker/Employee Code',
+                'Cheif Complaint',
                 'Gender',
                 'Unit',
                 'Department',

@@ -115,6 +115,7 @@ Route::get('cron/safetypermit/equipinvolvemaster/import', [CronController::class
 Route::get('cron/safetypermit/safeworkmaster/import', [CronController::class, 'queueSafeworkmasterImport']);
 Route::get('cron/safetypermit/precautionmaster/import', [CronController::class, 'queuePrecautionmasterImport']);
 Route::get('cron/safetypermit/checklistmaster/import', [CronController::class, 'queueChecklistmasterImport']);
+Route::get('cron/inspection/ohc/current_new_code/import', [CronController::class, 'currentNextCodeImport']);
 
 
 

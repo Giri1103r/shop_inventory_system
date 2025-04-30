@@ -13,10 +13,10 @@
                     <div class="d-flex justify-content-end p-2">
 
                         <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
-                        {{-- @if (CheckUserPermission('add')) --}}
+                        @if (CheckUserPermission('add'))
                         <x-button-add dataId="" class="add btn btn-primary ms-1"
                             href="{{ admin_url('fire/hooter-inspection/add') }}">Add</x-button-add>
-                        {{-- @endif --}}
+                        @endif
                     </div>
                     <div id="search" class="collapse">
                         <form action="" id="formsearch">
@@ -161,7 +161,7 @@
             flatpickr("#inspection_date", {
                 dateFormat: "d-m-Y",
             });
-            
+
             flatpickr("#next_due", {
                 dateFormat: "d-m-Y",
                 minDate: new Date(),

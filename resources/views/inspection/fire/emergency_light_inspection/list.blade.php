@@ -23,6 +23,23 @@
                             <div class="card-body">
                                 <div class="col-md-12">
                                     <div class="row">
+
+                                        <div class="col-md-3 mb-2">
+                                            <div class="form-group form-input">
+                                                <label
+                                                    class="form-label require">{{ __('inspection.location') }}</label>
+                                                <select name="location_id" id="location_id"
+                                                    class=" form-control single-select" style="width: 100%">
+                                                    <option value="">Select {{ __('inspection.location') }}
+                                                    </option>
+                                                    @foreach ($locations as $location)
+                                                        <option value="{{ encryptId($location->id) }}">
+                                                            {{ $location->location_name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+
                                         <div class="col-md-3 mb-3 form-input">
                                                 <label class="form-label require">Shift</label>
                                                 <select name="shift_id" id="shift_id"
@@ -155,6 +172,7 @@
                                 .attr('content')
                         },
                         data: function(d) {
+                            d.location_id = $('#location_id').val();
                             d.shift_id = $('#shift_id').val();
                             d.unit_id = $('#unit_id').val();
                             d.frequency_id = $('#frequency_id').val();
@@ -222,6 +240,7 @@
                                     text: '{{ __('common.pdf') }}',
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
+                                        location_id = $('#location_id').val();
                                         shift_id = $('#shift_id').val();
                                         unit_id = $('#unit_id').val();
                                         frequency_id = $('#frequency_id').val();
@@ -232,6 +251,7 @@
                                         window.location.href =
                                             "{{ admin_url('fire/emergency-light-inspection/export/pdf') }}" +
                                             '?search=' + searchValue +
+                                            '&location_id=' + location_id +
                                             '&shift_id=' + shift_id +
                                             '&unit_id=' + unit_id +
                                             '&frequency_id=' + frequency_id +
@@ -243,6 +263,7 @@
                                     text: '{{ __('common.excel') }}',
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
+                                        location_id = $('#location_id').val();
                                         shift_id = $('#shift_id').val();
                                         unit_id = $('#unit_id').val();
                                         frequency_id = $('#frequency_id').val();
@@ -252,6 +273,7 @@
                                         window.location.href =
                                             "{{ admin_url('fire/emergency-light-inspection/export/excel') }}" +
                                             '?search=' + searchValue +
+                                            '&location_id=' + location_id +
                                             '&shift_id=' + shift_id +
                                             '&unit_id=' + unit_id +
                                             '&frequency_id=' + frequency_id +

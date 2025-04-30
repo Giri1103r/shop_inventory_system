@@ -58,6 +58,10 @@ class EmergencyLightInspection extends Model
             ->leftJoin('masters_unit', 'inspection_fire_emergency_light_inspection.unit', '=', 'masters_unit.id')
             ->leftJoin('inspection_frequency_option', 'inspection_fire_emergency_light_inspection.frequency', '=', 'inspection_frequency_option.id');
 
+        if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_OFFICER) || CheckUserRole(ROLE_L1_MANAGER) || CheckUserRole(ROLE_L2_MANAGER)) {
+        } else if (CheckUserRole(ROLE_FIRE_ASSOCIATES)) {
+            $query->where('inspection_fire_emergency_light_inspection.created_by', Auth::id());
+        }
 
         $org_total =  $query;
         $org_total_counts = $org_total->count();
@@ -72,17 +76,17 @@ class EmergencyLightInspection extends Model
                 $query->orWhereRaw('inspection_frequency_option.frequency_name LIKE "%' . $search . '%"');
             });
         }
-        if (isset($request->location) && $request->location) {
-            $query = $query->where('inspection_fire_emergency_light_inspection.location',  decryptId($request->location));
+        if (isset($request->location_id) && $request->location_id) {
+            $query = $query->where('inspection_fire_emergency_light_inspection.location',  decryptId($request->location_id));
         }
-        if (isset($request->frequency) && $request->frequency) {
-            $query = $query->where('inspection_fire_emergency_light_inspection.frequency',  decryptId($request->frequency));
+        if (isset($request->frequency_id) && $request->frequency_id) {
+            $query = $query->where('inspection_fire_emergency_light_inspection.frequency',  decryptId($request->frequency_id));
         }
-        if (isset($request->unit) && $request->unit) {
-            $query = $query->where('inspection_fire_emergency_light_inspection.unit',  decryptId($request->unit));
+        if (isset($request->unit_id) && $request->unit_id) {
+            $query = $query->where('inspection_fire_emergency_light_inspection.unit',  decryptId($request->unit_id));
         }
-        if (isset($request->shift) && $request->shift) {
-            $query = $query->where('inspection_fire_emergency_light_inspection.shift',  decryptId($request->shift));
+        if (isset($request->shift_id) && $request->shift_id) {
+            $query = $query->where('inspection_fire_emergency_light_inspection.shift',  decryptId($request->shift_id));
         }
         if (isset($request->inspection_status) && $request->inspection_status) {
             $query = $query->where('inspection_fire_emergency_light_inspection.inspection_status', decryptId($request->inspection_status));
@@ -174,17 +178,26 @@ class EmergencyLightInspection extends Model
                 $query->orWhereRaw('inspection_frequency_option.frequency_name LIKE "%' . $search . '%"');
             });
         }
-        if (isset($request->location) && $request->location) {
-            $query = $query->where('inspection_fire_emergency_light_inspection.location',  decryptId($request->location));
+
+
+        if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_OFFICER) || CheckUserRole(ROLE_L1_MANAGER) || CheckUserRole(ROLE_L2_MANAGER)) {
+        } else if (CheckUserRole(ROLE_FIRE_ASSOCIATES)) {
+            $query->where('inspection_fire_emergency_light_inspection.created_by', Auth::id());
         }
-        if (isset($request->frequency) && $request->frequency) {
-            $query = $query->where('inspection_fire_emergency_light_inspection.frequency',  decryptId($request->frequency));
+
+        
+
+        if (isset($request->location_id) && $request->location_id) {
+            $query = $query->where('inspection_fire_emergency_light_inspection.location',  decryptId($request->location_id));
         }
-        if (isset($request->unit) && $request->unit) {
-            $query = $query->where('inspection_fire_emergency_light_inspection.unit',  decryptId($request->unit));
+        if (isset($request->frequency_id) && $request->frequency_id) {
+            $query = $query->where('inspection_fire_emergency_light_inspection.frequency',  decryptId($request->frequency_id));
         }
-        if (isset($request->shift) && $request->shift) {
-            $query = $query->where('inspection_fire_emergency_light_inspection.shift',  decryptId($request->shift));
+        if (isset($request->unit_id) && $request->unit_id) {
+            $query = $query->where('inspection_fire_emergency_light_inspection.unit',  decryptId($request->unit_id));
+        }
+        if (isset($request->shift_id) && $request->shift_id) {
+            $query = $query->where('inspection_fire_emergency_light_inspection.shift',  decryptId($request->shift_id));
         }
         if (isset($request->inspection_status) && $request->inspection_status) {
             $query = $query->where('inspection_fire_emergency_light_inspection.inspection_status', decryptId($request->inspection_status));

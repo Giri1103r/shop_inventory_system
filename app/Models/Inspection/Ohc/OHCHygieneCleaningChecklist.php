@@ -41,7 +41,7 @@ class OHCHygieneCleaningChecklist extends Model
 
         if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_NURSING_OFFICER)) {
         } else if (CheckUserRole(ROLE_CLEANER)) {
-           
+
         }
 
         $org_total =  $query;
@@ -139,14 +139,14 @@ class OHCHygieneCleaningChecklist extends Model
         return $this->where('id', $id)->first();
     }
 
-    public function approvalSubmit()
+    public function approvalSubmit($id, $to_status, $remarks)
     {
         $request = request();
         $update_array = [
-            'nursing_officer_remarks' => $request->capa_remarks,
+            'nursing_officer_remarks' => $remarks,
             'updated_by' => Auth::id(),
-            'checklist_status' => NURSING_OFFICER_SUBMITTED_THE_CHECKLIST,
+            'checklist_status' => $to_status,
         ];
-        $this->where('id', decryptId($request->id))->update($update_array);
+        $this->where('id', $id)->update($update_array);
     }
 }

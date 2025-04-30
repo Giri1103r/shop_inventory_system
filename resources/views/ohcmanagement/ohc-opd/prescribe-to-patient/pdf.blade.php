@@ -28,6 +28,9 @@
                             {{ $value->emp_name }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
+                            {{ $value->emp_id }}
+                        </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
                             {{ $value->cheif_complaint }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
