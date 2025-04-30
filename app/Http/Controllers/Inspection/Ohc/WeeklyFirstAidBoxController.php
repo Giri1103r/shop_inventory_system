@@ -85,14 +85,14 @@ class WeeklyFirstAidBoxController extends Controller
                         })
 
                         ->addColumn('action', function ($row) {
-                            $btn = '<a href="' . admin_url('ohc/first-aid-box/weekly-inspection/view/' . encryptId($row->id)) . '" class="view-icon" title="' . __('common.view') . '">
+                            $btn = '<a href="' . admin_url('ohc/first-aid-box/weekly-inspection/view/' . encryptId($row->id)) . '" class="view-icon me-1" title="' . __('common.view') . '">
                                         <i class="fa-solid fa-eye"></i>
                                     </a>';
 
-                            $btn .= '<a href="' . admin_url('ohc/first-aid-box/weekly-inspection/generalpdf/' . encryptId($row->id)) . '" style="margin-left: 5px;" title="PDF">
+                            $btn .= '<a href="' . admin_url('ohc/first-aid-box/weekly-inspection/generalpdf/' . encryptId($row->id)) . '" class=" me-1" title="PDF">
                                         <i class="fas fa-file-pdf" style="color: #e67265;" aria-hidden="true"></i>
                                     </a>';
-                            $btn .= '<a href="' . admin_url('ohc/first-aid-box/weekly-inspection/generalExcel/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="Excel"> <i class="fas fa-file-excel" style="color: #1D6F42;" aria-hidden="true"></i></a>';
+                            $btn .= '<a href="' . admin_url('ohc/first-aid-box/weekly-inspection/generalExcel/' . encryptId($row->id)) . '"class=" me-1" title="Excel"> <i class="fas fa-file-excel" style="color: #1D6F42;" aria-hidden="true"></i></a>';
 
                             return $btn;
                         })
@@ -169,11 +169,15 @@ class WeeklyFirstAidBoxController extends Controller
                 Session::flash('success', 'Your data has been created successfully!');
                 return redirect(admin_url('ohc/first-aid-box/weekly-inspection/list'));
             } catch (Exception $ex) {
-                report($ex);
+                dd($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/first-aid-box/weekly-inspection/list'));
             }
         } catch (Exception $ex) {
-            report($ex);
+            dd($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/first-aid-box/weekly-inspection/list'));
+
         }
     }
 
@@ -227,7 +231,7 @@ class WeeklyFirstAidBoxController extends Controller
                     'document_no' => $document_no,
 
                 );
-                // dd($data);
+
             }
             $property = [
                 'tempDir' => 'public/pdf/temp/',
@@ -247,7 +251,7 @@ class WeeklyFirstAidBoxController extends Controller
             $filename = "Weekly First Aid Details.pdf";
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            
+
             report($ex);
             return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
         }
@@ -333,31 +337,31 @@ class WeeklyFirstAidBoxController extends Controller
                 'G2' => 'Issue Dt.',
                 'G3' => 'Rev. & Dt.',
             ];
-            
+
             foreach ($headerLabels as $cell => $label) {
                 $sheet->setCellValue($cell, $label);
-            
+
                 $valueCell = 'H' . substr($cell, 1);
-            
+
                 $sheet->getStyle("$cell:$valueCell")->applyFromArray([
                     'font' => ['bold' => true],
                     'alignment' => [
                         'horizontal' => Alignment::HORIZONTAL_CENTER,
                         'vertical' => Alignment::VERTICAL_CENTER,
                     ],
-                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]], 
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
                 ]);
             }
-            
+
             $sheet->setCellValue("H1", $document_no->doc_no);
             $sheet->setCellValue("H2", Displaydateformat($document_no->issue_date));
             $sheet->setCellValue("H3", $document_no->rev_dt);
-            
+
             $sheet->getStyle("G1:H3")->applyFromArray([
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
             ]);
-            
+
 
 
             $sheet->mergeCells("A4:C4")->setCellValue("A4", "Date of Inspection:- " . Displaydateformat($inspection_detail->date_of_inspection));
@@ -465,15 +469,15 @@ class WeeklyFirstAidBoxController extends Controller
             }
 
             $row = 1;
-            
+
             foreach ($allData as $inspection_detail) {
                 $headerRowStart = $row;
-            
+
                 $inspection_type = OHC_TYPE_WEEEKLY_FIRST_AID_MEDICINE_STORE;
                 $inspection_data = json_decode($inspection_detail->inspection_data, true);
-                $inspection_created_by = GetOHCSignature($inspection_detail->created_by, $inspection_detail->id, $inspection_type);
+                $inspection_created_by = GetOHCSignature($inspection_detail->created_by, $inspection_detail->checklist_id, $inspection_type);
                 $document_no = $this->document_reference->selectOne($inspection_detail->document_reference_id);
-            
+
                 // Logo
                 $logoPath = public_path('assets/images/logo-dark.png');
                 if (file_exists($logoPath)) {
@@ -486,14 +490,14 @@ class WeeklyFirstAidBoxController extends Controller
                     $drawing->setHeight(60);
                     $drawing->setWorksheet($sheet);
                 }
-            
+
                 // Title and Document Info
                 $sheet->mergeCells("A{$headerRowStart}:B" . ($headerRowStart + 2));
                 $sheet->getStyle("A{$headerRowStart}:B" . ($headerRowStart + 2))->applyFromArray([
                                     'font' => ['bold' => true, 'size' => 14],
                                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
                                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['argb' => '000000']]],
-                
+
                                 ]);
 
                 $sheet->mergeCells("C{$headerRowStart}:F" . ($headerRowStart + 2));
@@ -511,12 +515,12 @@ class WeeklyFirstAidBoxController extends Controller
                                 $sheet->setCellValue("H{$headerRowStart}", $document_no->doc_no ?? '');
                                 $sheet->setCellValue("H" . ($headerRowStart + 1), Displaydateformat($document_no->issue_date ?? ''));
                                 $sheet->setCellValue("H" . ($headerRowStart + 2), $document_no->rev_dt ?? '');
-                                
+
                                 $sheet->getStyle("G{$headerRowStart}:H" . ($headerRowStart + 2))->applyFromArray([
-                                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE, 'color' => ['argb' => '000000']]], 
+                                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE, 'color' => ['argb' => '000000']]],
                                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                                 ]);
-                                
+
 
                 // Details
                 $detailsRowStart = $headerRowStart + 3;
@@ -524,7 +528,7 @@ class WeeklyFirstAidBoxController extends Controller
                 $sheet->mergeCells("D{$detailsRowStart}:E{$detailsRowStart}")->setCellValue("D{$detailsRowStart}", "First Aid Box No:- " . $inspection_detail->first_aid_box_no);
                 $sheet->mergeCells("F{$detailsRowStart}:H{$detailsRowStart}")->setCellValue("F{$detailsRowStart}", "Shift:-" . getShift($inspection_detail->shift_id));
                 $sheet->getRowDimension($detailsRowStart)->setRowHeight(25);
-            
+
                 $detailsRow2 = $detailsRowStart + 1;
                 $sheet->mergeCells("A{$detailsRow2}:C{$detailsRow2}")->setCellValue("A{$detailsRow2}", "Location:- " . getLocationname($inspection_detail->location));
                 $sheet->mergeCells("D{$detailsRow2}:E{$detailsRow2}")->setCellValue("D{$detailsRow2}", "Unit:- " . getUnitname($inspection_detail->unit));
@@ -562,14 +566,14 @@ class WeeklyFirstAidBoxController extends Controller
                     $sheet->setCellValue("E{$dataRow}", $detail['available_quantity'] ?? '');
                     $sheet->setCellValue("F{$dataRow}", Displaydateformat($detail['expired_date']));
                     $sheet->mergeCells("G{$dataRow}:H{$dataRow}")->setCellValue("G{$dataRow}", $detail['remarks'] ?? '');
-                    
+
                     $sheet->getStyle("A{$dataRow}:H{$dataRow}")->applyFromArray([
                         'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                         'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                     ]);
                     $dataRow++;
                 }
-            
+
                 // Remark
                 $sheet->mergeCells("A{$dataRow}:H{$dataRow}");
                 $sheet->setCellValue("A{$dataRow}", "Remark By:- " . $inspection_detail->remark_by);
@@ -580,7 +584,7 @@ class WeeklyFirstAidBoxController extends Controller
                                     'alignment' => ['vertical' => Alignment::VERTICAL_CENTER],
                                 ]);
                 $dataRow++;
-            
+
                 // Signature Section
                 $signatureRowStart = $dataRow;
                 $sheet->getRowDimension($signatureRowStart)->setRowHeight(80);
@@ -589,7 +593,7 @@ class WeeklyFirstAidBoxController extends Controller
                                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
                                 ]);
-            
+
                 if (file_exists($inspection_created_by)) {
                     $drawing = new Drawing();
                     $drawing->setName('Signature');
@@ -601,11 +605,11 @@ class WeeklyFirstAidBoxController extends Controller
                     $drawing->setHeight(70);
                     $drawing->setWorksheet($sheet);
                 }
-            
+
                 $richText = new RichText();
                 $richText->createTextRun("Inspected and checked By: " . getUsername($inspection_detail->created_by))->getFont()->setBold(true);
                 $sheet->getCell("A{$signatureRowStart}")->setValue($richText);
-            
+
                 // Leave gap between inspections
                 $row = $signatureRowStart + 6;
 
@@ -615,7 +619,7 @@ class WeeklyFirstAidBoxController extends Controller
                     ],
                 ]);
             }
-            
+
             // Output file (optional)
             $writer = new Xlsx($spreadsheet);
             $fileName = 'Weekly_First_Aid_Box_Inspection.xlsx';
@@ -636,6 +640,7 @@ class WeeklyFirstAidBoxController extends Controller
             ini_set("pcre.backtrack_limit", "5000000");
 
             $allData = $this->weekly_first_aid->exportdata();
+
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
             } elseif (count($allData) > 20) {

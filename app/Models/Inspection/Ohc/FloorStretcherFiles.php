@@ -41,6 +41,8 @@ class FloorStretcherFiles extends Model
         try {
 
             $request = Request();
+
+
             $file = $request->file('signature_image');
             if ($request->has('signature_image')) {
                 $image = $request->file('signature_image');
@@ -67,9 +69,11 @@ class FloorStretcherFiles extends Model
                     'created_by' => Auth::id(),
                 ];
                 $this->create($insert_array);
+
             }
         } catch (Exception $ex) {
-            report($ex);
+            dd($ex);
+
         }
     }
 

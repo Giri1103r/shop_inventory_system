@@ -22,31 +22,47 @@
                                 <div class="col-md-12">
                                     <div class="row">
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="document_number"
-                                                class="form-label ">{{ __('inspection.doc_no') }}</label>
-                                            <input type="text" name="document_number" id="document_number"
-                                                class="form-control">
-                                        </div>
-                                        <div class="col-md-3 mb-3 form-input">
                                             <label for="issue_date"
-                                                class="form-label ">{{ __('inspection.issue_date') }}</label>
+                                                class="form-label ">{{ __('inspection.inspection_date') }}</label>
                                             <input type="text" name="issue_date" id="issue_date" class="form-control">
                                         </div>
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="rev_date"
-                                                class="form-label ">{{ __('inspection.rev_date') }}</label>
-                                            <input type="text" name="rev_date" id="rev_date" class="form-control">
-                                        </div>
-
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="status" class="form-label ">{{ __('common.status') }}</label>
-                                            <select name="status" id="status" style="width: 100%"
-                                                class="form-control single-select">
-                                                <option value="">Select Status</option>
-                                                <option value="{{ encryptId(1) }}">Active</option>
-                                                <option value="{{ encryptId(0) }}">In-Active</option>
+                                        <div class="col-md-3 form-input">
+                                            <label for="inspection_status"
+                                                class="form-label ">{{ __('inspection.shifts') }}</label>
+                                            <select name="shift_id" id="shift_id" class="form-control single-select"
+                                                style="width: 100%">
+                                                <option value="">Select Shift</option>
+                                                @foreach ($shifts as $shift)
+                                                    <option value="{{ encryptId($shift->id) }}">
+                                                        {{ $shift->shift }}</option>
+                                                @endforeach
                                             </select>
                                         </div>
+                                        <div class="col-md-3 form-input">
+                                            <label for="inspection_status"
+                                                class="form-label ">{{ __('inspection.frequency') }}</label>
+                                            <select name="frequency" id="frequency" class="form-control single-select"
+                                                style="width: 100%">
+                                                <option value="">Select frequency</option>
+                                                @foreach ($frequency as $list)
+                                                    <option value="{{ encryptId($list->id) }}">
+                                                        {{ $list->frequency_name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="col-md-3 form-input">
+                                            <label for="inspection_status"
+                                                class="form-label ">{{ __('inspection.unit') }}</label>
+                                            <select name="unit" id="unit" class="form-control single-select"
+                                                style="width: 100%">
+                                                <option value="">Select unit</option>
+                                                @foreach ($units as $list)
+                                                    <option value="{{ encryptId($list->id) }}">
+                                                        {{ $list->unit_name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+
                                         <div class="col-md-3 mt-3">
                                             <x-button-search></x-button-search>
                                             <x-button-reset></x-button-reset>
@@ -67,7 +83,7 @@
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
-                                        <th>{{ __('inspection.issue_date') }}</th>
+                                        <th>{{ __('Date Of Inspection') }}</th>
                                         <th>{{ __('inspection.frequency') }}</th>
                                         <th>{{ __('inspection.shifts') }}</th>
                                         <th>{{ __('inspection.unit') }}</th>
@@ -92,6 +108,9 @@
                 firstTh.removeClass('sorting_asc');
             });
 
+            flatpickr("#issue_date", {
+                dateFormat: "d-m-Y",
+            });
             $(function() {
                 /* Datatable */
                 var table = $('.datatable-list').DataTable({
@@ -125,10 +144,10 @@
                                 .attr('content')
                         },
                         data: function(d) {
-                            d.document_number = $('#document_number').val();
+                            d.frequency = $('#frequency').val();
                             d.issue_date = $('#issue_date').val();
-                            d.rev_date = $('#rev_date').val();
-                            d.status = $('#status').val();
+                            d.shift_id = $('#shift_id').val();
+                            d.unit = $('#unit').val();
                         },
                         error: function(xhr, error, code) {
                             if (xhr.status === 419) {
@@ -188,20 +207,20 @@
                                     text: '{{ __('common.pdf') }}',
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
-                                        document_number = $('#document_number').val();
+                                        frequency = $('#frequency').val();
                                         issue_date = $('#issue_date').val();
-                                        rev_date = $('#rev_date').val();
-                                        status = $('#status').val();
+                                        shift_id = $('#shift_id').val();
+                                        unit = $('#unit').val();
 
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
                                             "{{ admin_url('ohc/floor_stretcher/checklist/export/pdf') }}" +
                                             '?search=' + searchValue +
-                                            '&document_number=' + document_number +
+                                            '&frequency=' + frequency +
                                             '&issue_date=' + issue_date +
-                                            '&rev_date=' + rev_date +
-                                            '&status=' + status
+                                            '&shift_id=' + shift_id +
+                                            '&unit=' + unit
                                     }
                                 },
                                 {
@@ -209,19 +228,19 @@
                                     text: '{{ __('common.excel') }}',
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
-                                        document_number = $('#document_number').val();
+                                        frequency = $('#frequency').val();
                                         issue_date = $('#issue_date').val();
-                                        rev_date = $('#rev_date').val();
-                                        status = $('#status').val();
+                                        shift_id = $('#shift_id').val();
+                                        unit = $('#unit').val();
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
                                             "{{ admin_url('ohc/floor_stretcher/checklist/export/excel') }}" +
                                             '?search=' + searchValue +
-                                            '&document_number=' + document_number +
+                                            '&frequency=' + frequency +
                                             '&issue_date=' + issue_date +
-                                            '&rev_date=' + rev_date +
-                                            '&status=' + status
+                                            '&shift_id=' + shift_id +
+                                            '&unit=' + unit
                                     }
                                 },
                             ]

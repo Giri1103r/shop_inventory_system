@@ -507,8 +507,8 @@ class CurrentNewExtCodeDialingController extends Controller
                     "path" => $path,
                 ];
 
-                dispatch(new ImportCurrentNewExtCodeDailingJob($details));
-                // dispatch((new ImportCurrentNewExtCodeDailingJob($details))->onQueue('currentNextCodeImport'));
+                // dispatch(new ImportCurrentNewExtCodeDailingJob($details));
+                dispatch((new ImportCurrentNewExtCodeDailingJob($details))->onQueue('currentNextCodeImport'));
             }
 
             $insert_data['log_id'] = $insert_id;
