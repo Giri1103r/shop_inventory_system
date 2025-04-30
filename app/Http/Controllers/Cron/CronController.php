@@ -213,7 +213,7 @@ class CronController extends Controller
         try {
             $fromDate = '2001-01-01';
             $toDate = todayDbdate();
-            
+
             $office_id = $this->company->getcompany();
 
             $responses = [];
@@ -1184,6 +1184,26 @@ class CronController extends Controller
         } else {
             Session::invalidate();
             return response()->json(['message' => 'No jobs in the Nomination Process Import queue to process', 'exit_code' => 0]);
+        }
+    }
+    public function currentNextCodeImport()
+    {
+        $queueLength = Queue::size('currentNextCodeImport');
+        if ($queueLength > 0) {
+            $options = [
+                '--sleep' => 3,
+                '--tries' => 3,
+                '--queue' => 'currentNextCodeImport',
+                '--timeout' => 600,
+                '--max-jobs' => 10,
+            ];
+
+            $exitCode = Artisan::call('queue:work', $options);
+            Session::invalidate();
+            return response()->json(['message' => 'Queue Current Nxt Code Dailing command executed successfully',  'exit_code' => $exitCode]);
+        } else {
+            Session::invalidate();
+            return response()->json(['message' => 'No jobs in the Current Nxt Code Dailing Import queue to process', 'exit_code' => 0]);
         }
     }
     public function queueChecklistmasterImport()
