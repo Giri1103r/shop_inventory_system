@@ -364,7 +364,6 @@ class HooterInspectionController extends Controller
             return view('inspection.fire.hooter_inspection.view', $data);
         } catch (Exception $ex) {
             report($ex);
-            report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('fire/hooter-inspection/list'));
         }
@@ -462,7 +461,6 @@ class HooterInspectionController extends Controller
             Session::flash('success', __('common.updated_msg'));
             return redirect(admin_url('fire/hooter-inspection/list'));
         } catch (Exception $ex) {
-            report($ex);
             report($ex);
             Session::flash('error', 'Something Went Wrong!');
             return redirect(admin_url('fire/hooter-inspection/list'));
@@ -673,7 +671,6 @@ class HooterInspectionController extends Controller
             Session::flash('success', __('common.updated_msg'));
             return redirect(admin_url('fire/hooter-inspection/list'));
         } catch (Exception $ex) {
-            report($ex);
             report($ex);
             Session::flash('error', 'Something Went wrong!');
             return redirect(admin_url('fire/hooter-inspection/list'));
