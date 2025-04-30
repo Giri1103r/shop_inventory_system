@@ -76,9 +76,9 @@ class FirePumpHouseController extends Controller
                             // if (CheckUserRole(ROLE_SUPERADMIN)) {
 
                             if ($row->status == 1) {
-                                $text = "<span style='color:green;cursor:pointer' class='statusChange' data-id='" . encryptId($row->id) . "' data-type = '1'>Active</span>";
+                                $text = "<span style='color:green;cursor:pointer' class='statusChange' data-id='" . encryptId($row->fire_id) . "' data-type = '1'>Active</span>";
                             } else if ($row->status == 0) {
-                                $text = "<span style='color:red;cursor:pointer' class='statusChange' data-id='" . encryptId($row->id) . "' data-type = '0'>In-Active</span>";
+                                $text = "<span style='color:red;cursor:pointer' class='statusChange' data-id='" . encryptId($row->fire_id) . "' data-type = '0'>In-Active</span>";
                             }
                             // }
                             return $text;
@@ -86,25 +86,28 @@ class FirePumpHouseController extends Controller
                         ->addColumn('created_date', function ($row) {
                             return Displaydateformat($row->created_at);
                         })
+                        ->addColumn('date_of_inspection', function ($row) {
+                            return Displaydateformat($row->date_of_inspection);
+                        })
                         ->addColumn('created_by', function ($row) {
                             return getUsername($row->created_by);
                         })
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            $btn = '<a href="' . admin_url('fire/daily-fire-pump-house-inspection/view/' . encryptId($row->id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
+                            $btn = '<a href="' . admin_url('fire/daily-fire-pump-house-inspection/view/' . encryptId($row->fire_id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
                             // if (CheckUserRole(ROLE_SUPERADMIN)) {
                             // $btn .= '<a href="' . admin_url('inspection/master/checklist-sub-type/edit/' . encryptId($row->id)) . '" class="edit-icon " title="' . __('common.edit') . '"><i class="fa-solid fa-pen-to-square"></i> ';
                             // }
 
-                            $btn .= '<a href="' . admin_url('fire/daily-fire-pump-house-inspection/generalpdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
+                            $btn .= '<a href="' . admin_url('fire/daily-fire-pump-house-inspection/generalpdf/' . encryptId($row->fire_id)) . '" style="margin-right: 5px;" title="PDF">
                             <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
                         </a>';
-                            $btn .= '<a href="' . admin_url('fire/daily-fire-pump-house-inspection/generalExcel/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="Excel">
+                            $btn .= '<a href="' . admin_url('fire/daily-fire-pump-house-inspection/generalExcel/' . encryptId($row->fire_id)) . '" style="margin-right: 5px;" title="Excel">
                         <i class="fas fa-file-excel" style="color: #1D6F42;" aria-hidden="true"></i>
                      </a>';
                             return $btn;
                         })
-                        ->rawColumns(['action', 'created_date', 'created_by', 'status'])
+                        ->rawColumns(['action', 'created_date', 'created_by', 'date_of_inspection'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -118,10 +121,14 @@ class FirePumpHouseController extends Controller
             }
         }
         $checklist_types  = $this->checklist_type->select('id', 'category_name')->where('status', '1')->get();
+        $shift  = $this->shift->select('id', 'shift')->where('status', '1')->get();
+        $unit  = $this->unit->select('id', 'unit_name')->where('status', '1')->get();
         $data = array(
             'checklist_types' => $checklist_types,
-
+            'shift' => $shift,
+            'unit' => $unit,
         );
+
         return view('inspection.fire.firePumpHouse.list', $data);
     }
 
@@ -218,12 +225,11 @@ class FirePumpHouseController extends Controller
     public function exportExcel()
     {
         try {
-
-            $allData =   $this->dailyFire->exportdata();
+            $allData = $this->dailyFire->exportdata();
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
             } elseif (count($allData) > 20) {
-                return redirect()->back()->with('error',   __('inspection.excess_error'));
+                return redirect()->back()->with('error', __('inspection.excess_error'));
             }
 
             $spreadsheet = new Spreadsheet();
@@ -233,17 +239,15 @@ class FirePumpHouseController extends Controller
             }
 
             $row = 1;
-            $currentRow = $row;
             foreach ($allData as $details) {
                 $currentRow = $row;
                 $document_no = $this->static_docno->SelectOne($details->document_reference_id);
-                $dailyFire =   $this->dailyFire->selectOne($details->id);
+                $dailyFire = $this->dailyFire->selectOne($details->id);
                 $CreatorSignature = GetSignature($details->created_by, $details->id, DAILY_FIRE_PUMP);
 
                 $logoLeftPath = public_path('assets/images/logo-dark.png');
                 if (file_exists($logoLeftPath)) {
                     $sheet->mergeCells("A$currentRow:F" . ($currentRow + 2));
-
                     $drawing = new Drawing();
                     $drawing->setName('Left Logo');
                     $drawing->setPath($logoLeftPath);
@@ -253,15 +257,12 @@ class FirePumpHouseController extends Controller
                     $drawing->setWidth(70);
                     $drawing->setHeight(70);
                     $drawing->setWorksheet($sheet);
-
-                    $range = "A$currentRow:F" . ($currentRow + 2);
-                    $sheet->getStyle($range)->applyFromArray([
+                    $sheet->getStyle("A$currentRow:F" . ($currentRow + 2))->applyFromArray([
                         'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                         'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                     ]);
                 }
 
-                // Title Section
                 $sheet->mergeCells("G{$currentRow}:M" . ($currentRow + 2));
                 $sheet->setCellValue("G{$currentRow}", "DAILY FIRE PUMP HOUSE INSPECTION CHECKLIST PN INTERNATIONAL PVT LTD");
                 $sheet->getStyle("G{$currentRow}")->applyFromArray([
@@ -270,25 +271,18 @@ class FirePumpHouseController extends Controller
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                 ]);
 
-
-                // document number
-
-
                 $sheet->mergeCells("N$currentRow:P$currentRow")->setCellValue("N$currentRow", 'Doc. No.');
                 $sheet->mergeCells("N" . ($currentRow + 1) . ":P" . ($currentRow + 1))->setCellValue("N" . ($currentRow + 1), 'Issue Dt.');
                 $sheet->mergeCells("N" . ($currentRow + 2) . ":P" . ($currentRow + 2))->setCellValue("N" . ($currentRow + 2), 'Rev. & Dt.');
-
                 $sheet->mergeCells("Q$currentRow:S$currentRow")->setCellValue("Q$currentRow", $document_no->doc_no);
                 $sheet->mergeCells("Q" . ($currentRow + 1) . ":S" . ($currentRow + 1))->setCellValue("Q" . ($currentRow + 1), Displaydateformat($document_no->issue_date));
                 $sheet->mergeCells("Q" . ($currentRow + 2) . ":S" . ($currentRow + 2))->setCellValue("Q" . ($currentRow + 2), $document_no->rev_dt);
-
                 $sheet->getStyle("N$currentRow:S" . ($currentRow + 2))->applyFromArray([
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                     'font' => ['bold' => true],
                 ]);
 
-                // Review Dates
                 $sheet->mergeCells("A" . ($currentRow + 3) . ":G" . ($currentRow + 3));
                 $richText1 = new RichText();
                 $richText1->createTextRun(' DATE OF INSPECTION:- ')->getFont()->setBold(true);
@@ -312,39 +306,31 @@ class FirePumpHouseController extends Controller
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                 ]);
 
-
                 $headerRow = $currentRow + 4;
-
                 $sheet->mergeCells("A$headerRow:C$headerRow")->setCellValue("A$headerRow", "SERIAL NO");
                 $sheet->mergeCells("D$headerRow:I$headerRow")->setCellValue("D$headerRow", "CHECK POINTS");
                 $sheet->mergeCells("J$headerRow:L$headerRow")->setCellValue("J$headerRow", "PUMP NO");
                 $sheet->mergeCells("M$headerRow:O$headerRow")->setCellValue("M$headerRow", "STATUS");
                 $sheet->mergeCells("P$headerRow:S$headerRow")->setCellValue("P$headerRow", "REMARKS");
-
                 $sheet->getStyle("A$headerRow:S$headerRow")->applyFromArray([
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                     'font' => ['bold' => true],
                 ]);
 
-                // Data Start Row
                 $row = $headerRow + 1;
                 $srNo = 1;
-
                 $user_response = json_decode($details->checklist, true);
                 $groupedBySubtype = [];
 
-                // Group by sub_type_id
                 foreach ($user_response as $checkpointId => $data) {
                     $subTypeId = $data['sub_type_id'] ?? 'Unknown';
                     $groupedBySubtype[$subTypeId][$checkpointId] = $data;
                 }
 
-                // Write data
                 foreach ($groupedBySubtype as $subTypeId => $checkpoints) {
                     $rowCount = count($checkpoints);
                     $firstRow = true;
-
                     foreach ($checkpoints as $checkpointId => $checkpoint) {
                         $checkItem = getSubcategoryDataname($checkpointId);
                         $pump = $checkpoint['pump_no'] ?? '';
@@ -352,9 +338,7 @@ class FirePumpHouseController extends Controller
                         $remark = $checkpoint['remarks'] ?? '';
 
                         if ($firstRow) {
-                            // Merge cells vertically for Serial No
-                            $sheet->mergeCells("A$row:C" . ($row + $rowCount - 1))
-                                ->setCellValue("A$row", $srNo++);
+                            $sheet->mergeCells("A$row:C" . ($row + $rowCount - 1))->setCellValue("A$row", $srNo++);
                             $sheet->getStyle("A$row:C" . ($row + $rowCount - 1))->applyFromArray([
                                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
@@ -363,20 +347,12 @@ class FirePumpHouseController extends Controller
                             $firstRow = false;
                         }
 
-                        // Check Item
                         $sheet->mergeCells("D$row:I$row")->setCellValue("D$row", $checkItem);
-
-                        // Pump No
                         $sheet->mergeCells("J$row:L$row")->setCellValue("J$row", $pump);
-
-                        // Status (✓ or X)
-                        $statusSymbol = $status === 'YES' ? '✓' : ($status === 'NO' || $status === 'N/A' ? 'X' : '-');
+                        $statusSymbol = $status === 'YES' ? '✓' : (($status === 'NO' || $status === 'N/A') ? 'X' : '-');
                         $sheet->mergeCells("M$row:O$row")->setCellValue("M$row", $statusSymbol);
-
-                        // Remarks
                         $sheet->mergeCells("P$row:S$row")->setCellValue("P$row", $remark);
 
-                        // Style for all cells in row
                         $sheet->getStyle("D$row:S$row")->applyFromArray([
                             'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                             'alignment' => ['vertical' => Alignment::VERTICAL_CENTER],
@@ -385,42 +361,49 @@ class FirePumpHouseController extends Controller
                         $row++;
                     }
                 }
+
                 $signatureStartRow = $row;
                 $signatureEndRow = $signatureStartRow + 3;
 
                 if (file_exists($CreatorSignature)) {
-                    // Merge cells for image display
-                    $sheet->mergeCells("A$signatureStartRow:S" . ($signatureStartRow + 2));
-
-                    // Create Drawing instance
+                    $sheet->mergeCells("A$signatureStartRow:S$signatureStartRow");
                     $drawing = new Drawing();
                     $drawing->setName('Creator Signature');
                     $drawing->setDescription('Creator Signature');
-                    $drawing->setPath($CreatorSignature); // Absolute path to the image
-                    $drawing->setCoordinates("I$signatureStartRow"); // Cell coordinate to place image
-                    $drawing->setOffsetX(5); // Optional: Horizontal offset
-                    $drawing->setOffsetY(5); // Optional: Vertical offset
-                    $drawing->setWidthAndHeight(150, 70);
+                    $drawing->setPath($CreatorSignature);
+                    $drawing->setCoordinates("I$signatureStartRow");
+                    $drawing->setOffsetX(90);
+                    $drawing->setOffsetY(5);
+                    $drawing->setWidthAndHeight(120, 60);
                     $drawing->setWorksheet($sheet);
-
-                    // Set row height for image rows
-                    for ($i = $signatureStartRow; $i <= $signatureStartRow + 2; $i++) {
-                        $sheet->getRowDimension($i)->setRowHeight(70);
-                    }
-
-                    // Signature label
-                    $sheet->setCellValue("A" . ($signatureStartRow + 2), "Creator Signature: " . getUserName($details->created_by));
-                    $sheet->mergeCells("A" . ($signatureStartRow + 2) . ":S" . ($signatureStartRow + 2));
-
-                    // Apply border and alignment styles
-                    $sheet->getStyle("A$signatureStartRow:S" . ($signatureStartRow + 2))->applyFromArray([
+                    $sheet->getRowDimension($signatureStartRow)->setRowHeight(80);
+                    $sheet->getStyle("A$signatureStartRow:S$signatureStartRow")->applyFromArray([
                         'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                        'alignment' => [
+                            'horizontal' => Alignment::HORIZONTAL_CENTER,
+                            'vertical' => Alignment::VERTICAL_CENTER,
+                        ],
                     ]);
+
+                    $textRow = $signatureStartRow + 1;
+                    $sheet->mergeCells("A$textRow:S$textRow");
+                    $sheet->setCellValue("A$textRow", "Creator Signature: " . getUserName($details->created_by));
+
+                    $sheet->getStyle("A$textRow:S$textRow")->applyFromArray([
+                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                        'alignment' => [
+                            'horizontal' => Alignment::HORIZONTAL_CENTER,
+                            'vertical' => Alignment::VERTICAL_TOP,
+                            'wrapText' => true,
+                        ],
+                        'font' => ['bold' => true],
+                    ]);
+                    $sheet->getRowDimension($textRow)->setRowHeight(25);
                 }
 
-                $row =   $signatureStartRow + 6;
+                $row = $signatureStartRow + 6;
             }
+
             $fileName = 'Daily Fire Pump House Inspection.xlsx';
             $writer = new Xlsx($spreadsheet);
 
@@ -430,11 +413,11 @@ class FirePumpHouseController extends Controller
                 'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
             ]);
         } catch (Exception $ex) {
-            dd($ex);
             Session::flash('error', 'Something went wrong!');
             return redirect(admin_url('fire/daily-fire-pump-house-inspection/list'));
         }
     }
+
 
     public function exportPDF()
     {
@@ -482,8 +465,6 @@ class FirePumpHouseController extends Controller
             $filename = "Daily Fire Pump House Inspectiony.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-
-            dd($ex);
             Session::flash('error', 'Something went wrong!');
             return redirect(admin_url('fire/daily-fire-pump-house-inspection/list'));
         }
@@ -493,11 +474,10 @@ class FirePumpHouseController extends Controller
     {
         try {
             $id = decryptId($id);
+            // dd($id);
             if (Auth::check()) {
-
-                $dailyFire =   $this->dailyFire->selectOne($id);
+                $dailyFire =   $this->dailyFire->selectDataForPdf($id);
                 $document_no = $this->static_docno->selectOne($dailyFire->document_reference_id);
-
                 $audit_assessmentCkeclist = json_decode($dailyFire);
                 $checklist_details = getCheckListQuestion(CHECKLIST_FIRE_PUMP_HOUSE_INSECTION_CHECKLIST);
                 $options =  getoption(CHECKLIST_FIRE_PUMP_HOUSE_INSECTION_CHECKLIST);
@@ -526,7 +506,7 @@ class FirePumpHouseController extends Controller
             $mpdf->WriteHTML($html);
 
             $filename = "Daily Fire Pump House Inspection.pdf";
-            return $mpdf->Output($filename, 'i');
+            return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);
             return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
@@ -576,7 +556,6 @@ class FirePumpHouseController extends Controller
                 ]);
             }
 
-            // Title Section
             $sheet->mergeCells("G{$currentRow}:M" . ($currentRow + 2));
             $sheet->setCellValue("G{$currentRow}", "DAILY FIRE PUMP HOUSE INSPECTION CHECKLIST PN INTERNATIONAL PVT LTD");
             $sheet->getStyle("G{$currentRow}")->applyFromArray([
@@ -584,10 +563,6 @@ class FirePumpHouseController extends Controller
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
             ]);
-
-
-            // document number
-
 
             $sheet->mergeCells("N$currentRow:P$currentRow")->setCellValue("N$currentRow", 'Doc. No.');
             $sheet->mergeCells("N" . ($currentRow + 1) . ":P" . ($currentRow + 1))->setCellValue("N" . ($currentRow + 1), 'Issue Dt.');
@@ -603,7 +578,6 @@ class FirePumpHouseController extends Controller
                 'font' => ['bold' => true],
             ]);
 
-            // Review Dates
             $sheet->mergeCells("A" . ($currentRow + 3) . ":G" . ($currentRow + 3));
             $richText1 = new RichText();
             $richText1->createTextRun(' DATE OF INSPECTION:- ')->getFont()->setBold(true);
@@ -642,20 +616,17 @@ class FirePumpHouseController extends Controller
                 'font' => ['bold' => true],
             ]);
 
-            // Data Start Row
             $row = $headerRow + 1;
             $srNo = 1;
 
             $user_response = json_decode($dailyFire->checklist, true);
             $groupedBySubtype = [];
 
-            // Group by sub_type_id
             foreach ($user_response as $checkpointId => $data) {
                 $subTypeId = $data['sub_type_id'] ?? 'Unknown';
                 $groupedBySubtype[$subTypeId][$checkpointId] = $data;
             }
 
-            // Write data
             foreach ($groupedBySubtype as $subTypeId => $checkpoints) {
                 $rowCount = count($checkpoints);
                 $firstRow = true;
@@ -667,7 +638,6 @@ class FirePumpHouseController extends Controller
                     $remark = $checkpoint['remarks'] ?? '';
 
                     if ($firstRow) {
-                        // Merge cells vertically for Serial No
                         $sheet->mergeCells("A$row:C" . ($row + $rowCount - 1))
                             ->setCellValue("A$row", $srNo++);
                         $sheet->getStyle("A$row:C" . ($row + $rowCount - 1))->applyFromArray([
@@ -678,20 +648,15 @@ class FirePumpHouseController extends Controller
                         $firstRow = false;
                     }
 
-                    // Check Item
                     $sheet->mergeCells("D$row:I$row")->setCellValue("D$row", $checkItem);
 
-                    // Pump No
                     $sheet->mergeCells("J$row:L$row")->setCellValue("J$row", $pump);
 
-                    // Status (✓ or X)
                     $statusSymbol = $status === 'YES' ? '✓' : ($status === 'NO' || $status === 'N/A' ? 'X' : '-');
                     $sheet->mergeCells("M$row:O$row")->setCellValue("M$row", $statusSymbol);
 
-                    // Remarks
                     $sheet->mergeCells("P$row:S$row")->setCellValue("P$row", $remark);
 
-                    // Style for all cells in row
                     $sheet->getStyle("D$row:S$row")->applyFromArray([
                         'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                         'alignment' => ['vertical' => Alignment::VERTICAL_CENTER],
@@ -704,42 +669,45 @@ class FirePumpHouseController extends Controller
             $signatureEndRow = $signatureStartRow + 3;
 
             if (file_exists($CreatorSignature)) {
-                // Merge cells for image display
-                $sheet->mergeCells("A$signatureStartRow:S" . ($signatureStartRow + 2));
+                $sheet->mergeCells("A$signatureStartRow:S$signatureStartRow");
 
-                // Create Drawing instance
                 $drawing = new Drawing();
                 $drawing->setName('Creator Signature');
                 $drawing->setDescription('Creator Signature');
-                $drawing->setPath($CreatorSignature); // Absolute path to the image
-                $drawing->setCoordinates("I$signatureStartRow"); // Cell coordinate to place image
-                $drawing->setOffsetX(5); // Optional: Horizontal offset
-                $drawing->setOffsetY(5); // Optional: Vertical offset
-                $drawing->setWidthAndHeight(150, 70);
+                $drawing->setPath($CreatorSignature);
+                $drawing->setCoordinates("I$signatureStartRow");
+                $drawing->setOffsetX(90);
+                $drawing->setOffsetY(5);
+                $drawing->setWidthAndHeight(120, 60);
                 $drawing->setWorksheet($sheet);
 
-                // Set row height for image rows
-                for ($i = $signatureStartRow; $i <= $signatureStartRow + 2; $i++) {
-                    $sheet->getRowDimension($i)->setRowHeight(70);
-                }
+                $sheet->getRowDimension($signatureStartRow)->setRowHeight(80);
 
-                // Signature label
-                $sheet->setCellValue("A" . ($signatureStartRow + 2), "Creator Signature: " . getUserName($dailyFire->created_by));
-                $sheet->mergeCells("A" . ($signatureStartRow + 2) . ":S" . ($signatureStartRow + 2));
-
-                // Apply border and alignment styles
-                $sheet->getStyle("A$signatureStartRow:S" . ($signatureStartRow + 2))->applyFromArray([
+                $sheet->getStyle("A$signatureStartRow:S$signatureStartRow")->applyFromArray([
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                    'alignment' => [
+                        'horizontal' => Alignment::HORIZONTAL_CENTER,
+                        'vertical' => Alignment::VERTICAL_CENTER,
+                    ],
                 ]);
+
+                $textRow = $signatureStartRow + 1;
+                $sheet->mergeCells("A$textRow:S$textRow");
+
+                $sheet->setCellValue("A$textRow", "Creator Signature: " . getUserName($dailyFire->created_by));
+
+                $sheet->getStyle("A$textRow:S$textRow")->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => [
+                        'horizontal' => Alignment::HORIZONTAL_CENTER,
+                        'vertical' => Alignment::VERTICAL_TOP,
+                        'wrapText' => true,
+                    ],
+                    'font' => ['bold' => true],
+                ]);
+
+                $sheet->getRowDimension($textRow)->setRowHeight(25);
             }
-
-
-
-
-
-
-
 
             $fileName = 'Daily Fire Pump House Inspection.xlsx';
             $writer = new Xlsx($spreadsheet);

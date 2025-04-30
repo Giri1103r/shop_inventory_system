@@ -94,6 +94,13 @@
                                 valign="top"> {{ getUsername($details['data']->created_by) }}</td>
                         </tr>
                         <tr>
+                            <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
+                                <b>Created Date</b>
+                            </td>
+                            <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
+                                valign="top"> {{ DisplayDateformat($details['data']->created_at) }}</td>
+                        </tr>
+                        <tr>
                             @if (isset($details['data']->verified_by))
                                 <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
                                     <b>Verified By</b>

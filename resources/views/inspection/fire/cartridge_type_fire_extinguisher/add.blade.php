@@ -141,6 +141,7 @@
                                                 </div>
                                             </div>
                                             <div class="col-md-4 form-group form-input mb-2">
+
                                                 @if (isset(Auth::user()->signature_upload))
                                                     <label class="form-label"
                                                         style="display: block; ">{{ __('inspection.signature') }}</label>

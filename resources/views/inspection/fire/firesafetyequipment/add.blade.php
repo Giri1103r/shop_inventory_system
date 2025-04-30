@@ -93,32 +93,32 @@
                                                 <div class="row lesson_learned_row" style="margin-top: 20px;">
 
                                                     <div class="col-md-4 form-input">
-                                                        <label class="form-label">SR NO</label>
+                                                        <label class="form-label require">SR NO</label>
                                                         <input type="text" class="form-control" name="fire[1][sr_no]"
                                                             id="sr_no_1" readonly value="SNO-0001">
                                                     </div>
 
                                                     <div class="col-md-4 form-input">
-                                                        <label class="form-label">Name of Fire & Safety Equipment</label>
+                                                        <label class="form-label require">Name of Fire & Safety Equipment</label>
                                                         <input type="text" class="form-control"
                                                             name="fire[1][name_of_fire_safety]" id="name_of_fire_safety_1">
                                                     </div>
 
                                                     <div class="col-md-4 form-input">
-                                                        <label class="form-label">Resource Code No</label>
+                                                        <label class="form-label require">Resource Code No</label>
                                                         <input type="text" class="form-control"
                                                             name="fire[1][resource_code]" id="resource_code_1">
                                                     </div>
 
 
                                                     <div class="col-md-4 form-input mt-2">
-                                                        <label class="form-label">Series Code</label>
+                                                        <label class="form-label require">Series Code</label>
                                                         <input type="text" name="fire[1][series_code]"
                                                             class="form-control" id="series_code_1">
                                                     </div>
 
                                                     <div class="col-md-4 form-input">
-                                                        <label for="" class="form-label">Unit</label>
+                                                        <label for="" class="form-label require">Unit</label>
                                                         <select class="form-control single-select" name="fire[1][unit_id]"
                                                             style="width: 100%" id="unit_id_1">
                                                             <option value="">Select Unit</option>
@@ -131,13 +131,13 @@
 
 
                                                     <div class="col-md-4 form-input mt-2">
-                                                        <label class="form-label">Allotted Series Code</label>
+                                                        <label class="form-label require">Allotted Series Code</label>
                                                         <input type="text" name="fire[1][allotted_series_code]"
                                                             class="form-control" id="allotted_series_code_1">
                                                     </div>
 
                                                     <div class="col-md-4 form-input mt-2">
-                                                        <label class="form-label">Total Allotted Code</label>
+                                                        <label class="form-label require">Total Allotted Code</label>
                                                         <input type="text" name="fire[1][total_allotted_code]"
                                                             class="form-control" id="total_allotted_code_1">
                                                     </div>
@@ -254,7 +254,7 @@
                         $(this).val("").trigger("change");
                     }
                 });
-                newRow.find("input[name$='[sr_no]']").val("AMBIENT-" + String(rowCount + 1).padStart(4,
+                newRow.find("input[name$='[sr_no]']").val("SNO-" + String(rowCount + 1).padStart(4,
                     '0'));
 
                 newRow.find(".invalid-feedback").remove();
@@ -406,7 +406,7 @@
                     required: "Total Allotted Code is required",
                 }
             });
-           
+
         }
 
         $(function() {

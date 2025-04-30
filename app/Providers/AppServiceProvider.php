@@ -267,6 +267,7 @@ class AppServiceProvider extends ServiceProvider
         //OHC Hygiene Checklist
         defined('CLEANER_SUBMITTED_THE_CHECKLIST') or define('CLEANER_SUBMITTED_THE_CHECKLIST', 1);
         defined('NURSING_OFFICER_SUBMITTED_THE_CHECKLIST') or define('NURSING_OFFICER_SUBMITTED_THE_CHECKLIST', 2);
+        defined('NURSING_OFFICER_REJECTED') or define('NURSING_OFFICER_REJECTED', 3);
 
 
 

@@ -1940,15 +1940,17 @@ if (!function_exists('getMonth')) {
     if (!function_exists('getNursingOfficer')) {
         function getNursingOfficer()
         {
-            $data = User::whereRaw('FIND_IN_SET(' . ROLE_NURSING_OFFICER . ', role)')->where('status', 1)->where('trash', 'NO')->get();
+            $roleId = ROLE_NURSING_OFFICER;
 
-            if (count($data) != 0) {
-                return $data;
-            }
+            $data = User::whereRaw("FIND_IN_SET(?, role)", [$roleId])
+                ->where('status', 1)
+                ->where('trash', 'NO')
+                ->get();
 
-            return false;
+            return $data->isNotEmpty() ? $data : false;
         }
     }
+
 
     if (!function_exists('getCheckListQuestion')) {
         function getCheckListQuestion($id)
