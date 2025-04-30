@@ -26,15 +26,15 @@ class OhcDashboardController extends Controller
 
                 $unit_id = $user->unit_id;
             } else if ($request->has('unit_id') && !empty($request->unit_id) && (checkUserRole(ROLE_SUPERADMIN) || checkUserRole(ROLE_EHS_HEAD))) {
-                // dd( decryptId($request->unit_id));
+
                 $unit_id = decryptId($request->unit_id);
             } else {
-                // dd( 3);
+
                 $unit_id = $user->unit_id;
             }
 
 
-                // dd( $unit_id);
+               
                 $masterLink = [
                     [
                         'link' => 'ohc/medicine-requisition/list',
@@ -249,7 +249,7 @@ class OhcDashboardController extends Controller
                     'medicines' => $medicines,
                     'unit' => $unit,
                 ];
-           
+
 
 
                 return response()->json($data);
