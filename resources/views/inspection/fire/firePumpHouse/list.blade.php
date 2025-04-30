@@ -14,8 +14,8 @@
 
                         <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
                         {{-- @if (CheckUserPermission('add')) --}}
-                            <x-button-add dataId="" class="add btn btn-primary ms-1"
-                                href="{{ admin_url('fire/daily-fire-pump-house-inspection/add') }}">Add</x-button-add>
+                        <x-button-add dataId="" class="add btn btn-primary ms-1"
+                            href="{{ admin_url('fire/daily-fire-pump-house-inspection/add') }}">Add</x-button-add>
                         {{-- @endif --}}
                     </div>
                     <div id="search" class="collapse">
@@ -23,20 +23,31 @@
                             <div class="card-body">
                                 <div class="col-md-12">
                                     <div class="row">
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="inspection_id" class="form-label ">Inspection Id</label>
-                                            <input type="text" name="inspection_id" id="inspection_id"
-                                                class="form-control">
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label require">Unit</label>
+                                                <select name="unit_id" id="unit_id" class=" form-control single-select"
+                                                    style="width: 100%">
+                                                    <option value="">Select Unit</option>
+                                                    @foreach ($unit as $unit)
+                                                        <option value="{{ encryptId($unit->id) }}">
+                                                            {{ $unit->unit_name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
                                         </div>
-
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="status" class="form-label ">{{ __('common.status') }}</label>
-                                            <select name="status" id="status" style="width: 100%"
-                                                class="form-control single-select">
-                                                <option value="">Select Status</option>
-                                                <option value="{{ encryptId(1) }}">Active</option>
-                                                <option value="{{ encryptId(0) }}">In-Active</option>
-                                            </select>
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label require">Shift</label>
+                                                <select name="shift_id" id="shift_id" class=" form-control single-select"
+                                                    style="width: 100%">
+                                                    <option value="">Select Shift</option>
+                                                    @foreach ($shift as $shift)
+                                                        <option value="{{ encryptId($shift->id) }}">
+                                                            {{ $shift->shift }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
                                         </div>
                                         <div class="col-md-3 mt-3">
                                             <x-button-search></x-button-search>
@@ -58,11 +69,9 @@
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
-                                        <th>Inspection Id</th>
                                         <th>Date of Inspection</th>
                                         <th>Unit</th>
                                         <th>Shift</th>
-                                        <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.action') }}</th>
                                     </tr>
                                 </thead>
@@ -118,8 +127,8 @@
                                 .attr('content')
                         },
                         data: function(d) {
-                            d.inspection_id = $('#inspection_id').val();
-                            d.status = $('#status').val();
+                            d.shift_id = $('#shift_id').val();
+                            d.unit_id = $('#unit_id').val();
 
                         },
                         error: function(xhr, error, code) {
@@ -136,10 +145,6 @@
                         },
 
                         {
-                            data: 'inspection_id',
-                            name: 'inspection_id'
-                        },
-                        {
                             data: 'date_of_inspection',
                             name: 'date_of_inspection'
                         },
@@ -150,10 +155,6 @@
                         {
                             data: 'shift',
                             name: 'shift'
-                        },
-                        {
-                            data: 'status',
-                            name: 'status'
                         },
                         {
                             data: 'action',
@@ -184,16 +185,16 @@
                                     text: '{{ __('common.pdf') }}',
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
-                                        checklist = $('#checklist').val();
-                                        status = $('#status').val();
+                                        shift_id = $('#shift_id').val();
+                                        unit_id = $('#unit_id').val();
 
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
                                             "{{ admin_url('fire/daily-fire-pump-house-inspection/export/pdf') }}" +
                                             '?search=' + searchValue +
-                                            '&checklist=' + checklist +
-                                            '&status=' + status
+                                            '&shift_id=' + shift_id +
+                                            '&unit_id=' + unit_id
                                     }
                                 },
                                 {
@@ -201,15 +202,16 @@
                                     text: '{{ __('common.excel') }}',
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
-                                        checklist = $('#checklist').val();
-                                        status = $('#status').val();
+                                        shift_id = $('#shift_id').val();
+                                        unit_id = $('#unit_id').val();
+
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
                                             "{{ admin_url('fire/daily-fire-pump-house-inspection/export/excel') }}" +
                                             '?search=' + searchValue +
-                                            '&checklist=' + checklist +
-                                            '&status=' + status
+                                            '&shift_id=' + shift_id +
+                                            '&unit_id=' + unit_id
                                     }
                                 },
                             ]
@@ -245,12 +247,14 @@
                     var id = $(this).data('id');
                     var types = $(this).data('type');
                     if (types == 1) {
-                        var title = '{{ __('Do You want to In-Activate Daily Fire Pump House Inspection checklist') }}';
+                        var title =
+                            '{{ __('Do You want to In-Activate Daily Fire Pump House Inspection checklist') }}';
                         var text = '{{ __('common.inactive') }}';
                         var btncolor = '#dc3545'
 
                     } else {
-                        var title = '{{ __('Do You want to Activate Daily Fire Pump House Inspection checklist') }}';
+                        var title =
+                            '{{ __('Do You want to Activate Daily Fire Pump House Inspection checklist') }}';
                         var text = '{{ __('common.active') }}';
                         var btncolor = '#7ddc35'
                     }

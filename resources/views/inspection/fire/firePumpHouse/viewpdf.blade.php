@@ -155,7 +155,7 @@
         </table>
     </div>
 
-   
+
 
 
     <table
@@ -182,7 +182,7 @@
                         </tr>
                         <tr>
                             <td style="border: 1px solid black;width:70;">Issue Dt.</td>
-                            <td style="border: 1px solid black;">{{ $document_no->issue_date }}</td>
+                            <td style="border: 1px solid black;">{{ Displaydateformat   ($document_no->issue_date) }}</td>
                         </tr>
                         <tr>
                             <td style="border: 1px solid black;width:70;">Rev.& Dt.</td>
@@ -226,7 +226,6 @@
             $groupedBySubtype = [];
             $srNo = 1;
 
-            // Group checkpoints by sub_type_id
             foreach ($user_response as $checkpointId => $data) {
                 $subTypeId = $data['sub_type_id'] ?? 'Unknown';
                 $groupedBySubtype[$subTypeId][$checkpointId] = $data;
@@ -239,6 +238,7 @@
                 $firstRow = true;
             @endphp
 
+
             @foreach ($checkpoints as $checkpointId => $checkpoint)
                 @php
                     $status = $checkpoint['response'] ?? '';
@@ -248,7 +248,6 @@
 
                 <tr>
                     @if ($firstRow)
-                        {{-- Serial Number (for each sub_type_id) --}}
                         <td rowspan="{{ $rowCount }}" colspan="2"
                             style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
                             {{ $srNo++ }}
@@ -256,17 +255,14 @@
                         @php $firstRow = false; @endphp
                     @endif
 
-                    {{-- CHECK ITEM: show checkpoint id or name --}}
                     <td colspan="4" style="border: 1px solid black; padding: 8px;">
-                        {{ getSubcategoryDataname($checkpointId) }}
+                        {{ GetChecklistTypeDate($checkpointId) }}
                     </td>
 
-                    {{-- PUMP NO --}}
                     <td colspan="4" style="border: 1px solid black; padding: 8px;">
                         {{ $pump_no }}
                     </td>
 
-                    {{-- STATUS --}}
                     <td colspan="4"
                         style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
                         @if ($status === 'YES')
