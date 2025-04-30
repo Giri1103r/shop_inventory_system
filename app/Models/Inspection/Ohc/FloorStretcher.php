@@ -48,13 +48,16 @@ class FloorStretcher extends Model
         }
 
         if (isset($request->frequency) && $request->frequency) {
-            $query = $query->where('inspection_ohc_floorstretcher_checklist.frequency', 'LIKE', '%' . $request->frequency . '%');
+            $query = $query->where('inspection_ohc_floorstretcher_checklist.frequency',decryptId( $request->frequency) );
+        }
+        if (isset($request->issue_date) && $request->issue_date) {
+            $query = $query->where('inspection_ohc_floorstretcher_checklist.issue_date',DBdateformat( $request->issue_date) );
         }
         if (isset($request->unit) && $request->unit) {
-            $query = $query->where('inspection_ohc_floorstretcher_checklist.unit', 'LIKE', '%' . $request->unit . '%');
+            $query = $query->where('inspection_ohc_floorstretcher_checklist.unit',decryptId( $request->unit) );
         }
-        if (isset($request->rev_date) && $request->rev_date) {
-            $query = $query->where('inspection_ohc_floorstretcher_checklist.shift', 'LIKE', '%' . $request->rev_date . '%');
+        if (isset($request->shift) && $request->shift) {
+            $query = $query->where('inspection_ohc_floorstretcher_checklist.shift', decryptId($request->shift) );
         }
 
         if (isset($request->inspection_status) && $request->inspection_status) {
@@ -120,7 +123,7 @@ class FloorStretcher extends Model
             'frequency' => decryptId($request->frequency_id),
             'responses' => json_encode($json_data),
             'created_by' => Auth::id(),
-        ); 
+        );
 
         return $this->create($data);
     }
@@ -145,17 +148,16 @@ class FloorStretcher extends Model
         }
 
         if (isset($request->frequency) && $request->frequency) {
-            $query = $query->where('inspection_ohc_floorstretcher_checklist.frequency', 'LIKE', '%' . $request->frequency . '%');
+            $query = $query->where('inspection_ohc_floorstretcher_checklist.frequency',decryptId( $request->frequency) );
+        }
+        if (isset($request->issue_date) && $request->issue_date) {
+            $query = $query->where('inspection_ohc_floorstretcher_checklist.issue_date',DBdateformat( $request->issue_date) );
         }
         if (isset($request->unit) && $request->unit) {
-            $query = $query->where('inspection_ohc_floorstretcher_checklist.unit', 'LIKE', '%' . $request->unit . '%');
+            $query = $query->where('inspection_ohc_floorstretcher_checklist.unit',decryptId( $request->unit) );
         }
-        if (isset($request->rev_date) && $request->rev_date) {
-            $query = $query->where('inspection_ohc_floorstretcher_checklist.shift', 'LIKE', '%' . $request->rev_date . '%');
-        }
-
-        if (isset($request->inspection_status) && $request->inspection_status) {
-            $query = $query->where('inspection_ohc_floorstretcher_checklist.inspection_status', decryptId($request->inspection_status));
+        if (isset($request->shift) && $request->shift) {
+            $query = $query->where('inspection_ohc_floorstretcher_checklist.shift', decryptId($request->shift) );
         }
         $query->orderBy('id', 'DESC');
 
