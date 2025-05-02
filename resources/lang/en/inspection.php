@@ -12,6 +12,7 @@ return [
     'inactive_msg' => 'Do you want to Inactive the checklist type?',
     'active_msg' => 'Do you want to Activate the checklist type?',
     'doc_no' => 'Document Number',
+    'date_of_inspection' => 'Date Of Inspection',
     'issue_date' => 'Issue Date',
     'rev_date' => 'Revision & Data',
     'inspection_date' => 'Date of Inspection',

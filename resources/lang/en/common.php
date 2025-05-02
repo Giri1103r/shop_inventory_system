@@ -49,7 +49,6 @@ return [
 
     'message_error' => 'Something went wrong, Please try after sometimes!',
     'created_by' => 'Created By',
-    'created_date' => 'Created Date',
 
     'active' => 'Active',
     'inactive' => 'In-Active',

@@ -196,8 +196,9 @@
                                         @endforeach
                                     </div>
                                     @if (
-                                        $inspection->inspection_status == WAITING_FOR_EHS_OFFICER_VERIFICATION &&
-                                            (checkUserRole(ROLE_EHS_OFFICER) || isAdmin()))
+                                        ($inspection->inspection_status == WAITING_FOR_EHS_OFFICER_VERIFICATION &&
+                                            (checkUserRole(ROLE_EHS_OFFICER)) ||  ($inspection->inspection_status == WAITING_FOR_EHS_OFFICER_VERIFICATION &&
+                                            isAdmin())) )
                                         <div class="row mt-3">
                                             <div class="card-header-inner">
                                                 <h4 class="text-white">{{ __('inspection.ehs_officer_verify') }}</h4>
@@ -589,11 +590,15 @@
                                     @endif
 
                                     @if (
-                                        ($inspection->inspection_status == WAITING_FOR_CAPA_ACTION ||
+                                       ( ($inspection->inspection_status == WAITING_FOR_CAPA_ACTION ||
                                             $inspection->inspection_status == L2_MANAGER_REJECTED ||
                                             $inspection->inspection_status == EHS_OFFICER_REJECTED ||
                                             $inspection->inspection_status == L1_MANAGER_REJECTED) &&
-                                            (checkUserRole(ROLE_FIRE_ASSOCIATES) || isAdmin()))
+                                            (checkUserRole(ROLE_FIRE_ASSOCIATES)) ||  ($inspection->inspection_status == WAITING_FOR_CAPA_ACTION ||
+                                            $inspection->inspection_status == L2_MANAGER_REJECTED ||
+                                            $inspection->inspection_status == EHS_OFFICER_REJECTED ||
+                                            $inspection->inspection_status == L1_MANAGER_REJECTED) &&
+                                            isAdmin()))
                                         <div class="row mt-3">
                                             <div class="card-header-inner">
                                                 <h4 class="text-white">{{ __('inspection.capa_action') }}</h4>
@@ -648,7 +653,7 @@
                                         </form>
                                     @endif
 
-                                    @if (($inspection->inspection_status == WAITING_FOR_CAPA_VERIFICATION && checkUserRole(ROLE_EHS_OFFICER)) || isAdmin())
+                                    @if ((($inspection->inspection_status == WAITING_FOR_CAPA_VERIFICATION && checkUserRole(ROLE_EHS_OFFICER))) || ($inspection->inspection_status == WAITING_FOR_CAPA_VERIFICATION && isAdmin()) )
                                         <form method="POST" id="forklistassessmentAdd"
                                             action="{{ admin_url('fire/fire-mock-drill-observation/capa/reverify/submit') }}"
                                             autocomplete="off" enctype="multipart/form-data">
@@ -700,7 +705,7 @@
                                         </form>
                                     @endif
 
-                                    @if (($inspection->inspection_status == WAITING_FOR_L1_VERIFICATION && checkUserRole(ROLE_L1_MANAGER)) || isAdmin())
+                                    @if (($inspection->inspection_status == WAITING_FOR_L1_VERIFICATION && checkUserRole(ROLE_L1_MANAGER)) ||($inspection->inspection_status == WAITING_FOR_L1_VERIFICATION && isAdmin()))
                                         <form method="POST" id="levelOneManager"
                                             action="{{ admin_url('fire/fire-mock-drill-observation/level-one/verify/submit') }}"
                                             autocomplete="off" enctype="multipart/form-data">
@@ -754,7 +759,7 @@
                                         </form>
                                     @endif
 
-                                    @if (($inspection->inspection_status == WAITING_FOR_L2_VERIFICATION && checkUserRole(ROLE_L2_MANAGER)) || isAdmin())
+                                    @if (($inspection->inspection_status == WAITING_FOR_L2_VERIFICATION && checkUserRole(ROLE_L2_MANAGER)) || ($inspection->inspection_status == WAITING_FOR_L2_VERIFICATION && isAdmin()) )
                                         <form method="POST" id="levelTwoManager"
                                             action="{{ admin_url('fire/fire-mock-drill-observation/level-two/verify/submit') }}"
                                             autocomplete="off" enctype="multipart/form-data">

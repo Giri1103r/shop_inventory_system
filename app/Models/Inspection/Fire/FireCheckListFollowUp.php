@@ -52,15 +52,18 @@ class FireCheckListFollowUp extends Model
                 $query->orWhereRaw('revision_data LIKE "%' . $search . '%"');
             });
         }
-
-        if (isset($request->document_number) && $request->document_number) {
-            $query = $query->where('inspection_fire_checklist_follow.document_number', 'LIKE', '%' . $request->document_number . '%');
+        if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_OFFICER) || CheckUserRole(ROLE_L1_MANAGER) || CheckUserRole(ROLE_L2_MANAGER)) {
+        } else if (CheckUserRole(ROLE_FIRE_ASSOCIATES)) {
+            $query->where('inspection_fire_detector.created_by', Auth::id());
+        }
+        if (isset($request->inspection_id) && $request->inspection_id) {
+            $query = $query->where('inspection_fire_checklist_follow.inspection_id',  $request->inspection_id );
         }
         if (isset($request->issue_date) && $request->issue_date) {
-            $query = $query->where('inspection_fire_checklist_follow.issue_date', 'LIKE', '%' . $request->issue_date . '%');
+            $query = $query->where('inspection_fire_checklist_follow.issue_date',  $request->issue_date );
         }
         if (isset($request->rev_date) && $request->rev_date) {
-            $query = $query->where('inspection_fire_checklist_follow.revision_data', 'LIKE', '%' . $request->rev_date . '%');
+            $query = $query->where('inspection_fire_checklist_follow.revision_data',  $request->rev_date );
         }
 
         if (isset($request->inspection_status) && $request->inspection_status) {
@@ -205,7 +208,7 @@ class FireCheckListFollowUp extends Model
         if (isset($request->inspection_status) && $request->inspection_status) {
             $query = $query->where('inspection_fire_checklist_follow.inspection_status', decryptId($request->inspection_status));
         }
-        $query->orderBy('inspection_fire_checklist_follow.id', 'DESC'); 
+        $query->orderBy('inspection_fire_checklist_follow.id', 'DESC');
 
         return  $query->get();
     }

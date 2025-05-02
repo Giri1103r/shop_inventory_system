@@ -62,11 +62,11 @@ class FireMockDrillInspection extends Model
             $search = $request->search['value'];
             $query = $query->where(function ($query) use ($search) {});
         }
-        if (isset($request->issue_date) && $request->issue_date) {
-            $query = $query->where('inspection_fire_mock_drill_observation.issue_date', 'LIKE', '%' . $request->issue_date . '%');
+        if (isset($request->inspection_date) && $request->inspection_date) {
+            $query = $query->where('inspection_fire_mock_drill_observation.inspection_date',  ($request->inspection_date));
         }
         if (isset($request->rev_date) && $request->rev_date) {
-            $query = $query->where('inspection_fire_mock_drill_observation.revision_data', 'LIKE', '%' . $request->rev_date . '%');
+            $query = $query->where('inspection_fire_mock_drill_observation.revision_data',  $request->rev_date);
         }
 
         if (isset($request->inspection_status) && $request->inspection_status) {

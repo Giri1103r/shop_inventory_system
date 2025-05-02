@@ -25,20 +25,11 @@
                                     <div class="row">
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="document_number"
-                                                class="form-label ">{{ __('inspection.doc_no') }}</label>
-                                            <input type="text" name="document_number" id="document_number"
+                                                class="form-label ">{{ __('inspection.date_of_inspection') }}</label>
+                                            <input type="text" name="date_of_inspection" id="date_of_inspection"
                                                 class="form-control">
                                         </div>
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="issue_date"
-                                                class="form-label ">{{ __('inspection.issue_date') }}</label>
-                                            <input type="text" name="issue_date" id="issue_date" class="form-control">
-                                        </div>
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="rev_date"
-                                                class="form-label ">{{ __('inspection.rev_date') }}</label>
-                                            <input type="text" name="rev_date" id="rev_date" class="form-control">
-                                        </div>
+
 
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="inspection_status"
@@ -46,8 +37,17 @@
                                             <select name="inspection_status" id="inspection_status" style="width: 100%"
                                                 class="form-control single-select">
                                                 <option value="">Select Status</option>
-                                                <option value="{{ encryptId('1') }}">Active</option>
-                                                <option value="{{ encryptId('2') }}">InActive</option>
+                                               
+                                                <option value="{{ encryptId('1') }}">WAITING FOR EHS OFFICER VERIFICATION
+                                                </option>
+                                                <option value="{{ encryptId('2') }}">WAITING FOR CAPA ACTION</option>
+                                                <option value="{{ encryptId('3') }}">WAITING FOR CAPA VERIFICATION</option>
+                                                <option value="{{ encryptId('4') }}">WAITING FOR L1 VERIFICATION</option>
+                                                <option value="{{ encryptId('5') }}">WAITING FOR L2 VERIFICATION</option>
+                                                <option value="{{ encryptId('6') }}">CLOSED</option>
+                                                <option value="{{ encryptId('7') }}">EHS OFFICER REJECTED</option>
+                                                <option value="{{ encryptId('8') }}">L1 MANAGER REJECTED</option>
+                                                <option value="{{ encryptId('9') }}">L2 MANAGER REJECTED</option>
 
                                             </select>
                                         </div>
@@ -71,10 +71,10 @@
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
-                                        <th>{{ __('inspection.doc_no') }}</th>
-                                        <th>{{ __('inspection.issue_date') }}</th>
-                                        <th>{{ __('inspection.rev_date') }}</th>
+                                        <th>{{ __('inspection.date_of_inspection') }}</th>
                                         <th>{{ __('Inspection Status') }}</th>
+                                        <th>{{ __('common.created_by') }}</th>
+                                        <th>{{ __(' created date ') }}</th>
                                         <th>{{ __('common.action') }}</th>
                                     </tr>
                                 </thead>
@@ -151,20 +151,20 @@
                         },
 
                         {
-                            data: 'doc_no',
-                            name: 'doc_no',
-                        },
-                        {
-                            data: 'issue_date',
-                            name: 'issue_date',
-                        },
-                        {
-                            data: 'rev_dt',
-                            name: 'rev_dt',
+                            data: 'inspection_date',
+                            name: 'inspection_date',
                         },
                         {
                             data: 'inspection_status',
                             name: 'inspection_status',
+                        },
+                        {
+                            data: 'created_by',
+                            name: 'created_by',
+                        },
+                        {
+                            data: 'created_at',
+                            name: 'created_at',
                         },
                         {
                             data: 'action',
@@ -195,9 +195,8 @@
                                     text: '{{ __('common.pdf') }}',
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
-                                        document_number = $('#document_number').val();
-                                        issue_date = $('#issue_date').val();
-                                        rev_date = $('#rev_date').val();
+                                        date_of_inspection = $('#date_of_inspection').val();
+
                                         status = $('#status').val();
 
                                         $(".dt-button").removeClass('processing');
@@ -205,9 +204,8 @@
                                         window.location.href =
                                             "{{ admin_url('fire/fire-mock-drill-observation/export/pdf') }}" +
                                             '?search=' + searchValue +
-                                            '&document_number=' + document_number +
-                                            '&issue_date=' + issue_date +
-                                            '&rev_date=' + rev_date +
+                                            '&date_of_inspection=' + date_of_inspection +
+
                                             '&status=' + status
                                     }
                                 },
@@ -216,18 +214,16 @@
                                     text: '{{ __('common.excel') }}',
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
-                                        document_number = $('#document_number').val();
-                                        issue_date = $('#issue_date').val();
-                                        rev_date = $('#rev_date').val();
+                                        date_of_inspection = $('#date_of_inspection').val();
+
                                         status = $('#status').val();
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
                                             "{{ admin_url('fire/fire-mock-drill-observation/export/excel') }}" +
                                             '?search=' + searchValue +
-                                            '&document_number=' + document_number +
-                                            '&issue_date=' + issue_date +
-                                            '&rev_date=' + rev_date +
+                                            '&date_of_inspection=' + date_of_inspection +
+
                                             '&status=' + status
                                     }
                                 },

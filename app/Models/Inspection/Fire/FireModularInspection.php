@@ -90,10 +90,11 @@ class FireModularInspection extends Model
             $query = $query->where('inspection_fire_modular_inspection.shift', 'LIKE', '%' . decryptId($request->shift) . '%');
         }
         if (isset($request->inspection_date)) {
-            $query->whereDate('inspection_fire_modular_inspection.date_of_inspection', '=', DBdateformat($request->inspection_date));
+            $query->whereDate('inspection_fire_modular_inspection.date_of_inspection',  DBdateformat($request->inspection_date));
         }
         if (isset($request->next_due)) {
-            $query->whereDate('inspection_fire_modular_inspection.next_due', '=', DBdateformat($request->next_due));
+           
+            $query->whereDate('inspection_fire_modular_inspection.next_due',  DBdateformat($request->next_due));
         }
         if (isset($request->inspection_status) && $request->inspection_status) {
             $query = $query->where('inspection_fire_modular_inspection.inspection_status', 'LIKE', '%' . decryptId($request->inspection_status) . '%');
