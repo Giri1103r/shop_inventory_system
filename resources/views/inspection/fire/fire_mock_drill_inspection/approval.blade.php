@@ -822,48 +822,181 @@
 
     @stop
     @push('script')
-        <script>
-            $('#forklistassessmentAdd').validate({
-                rules: {
-                    capa_remarks: {
-                        required: true,
-                        minlength: 3,
-                        maxlength: 100,
-                        noSpaces: true,
-                    },
-                    signature_image: {
-                        required: true,
-                    }
+    <script>
+        $('#forklistassessmentAdd').validate({
+            rules: {
+                remarks: {
+                    required: true,
+                    minlength: 3,
+                    maxlength: 100,
+                    noSpaces: true,
                 },
-                messages: {
-                    capa_remarks: {
-                        required: "Remarks is Required",
-                        minlength: "Minimum Characters should be 3",
-                        maxlength: "Maximum Characters should not exceed 100",
-                    },
-                    signature_image: {
-                        required: "Signature is Required",
-                    }
-                },
-                errorElement: 'div',
-                errorPlacement: function(error, element) {
-                    error.addClass('invalid-feedback');
-                    element.closest('.form-input').append(error);
-                },
-                highlight: function(element) {
-                    $(element).addClass('is-invalid');
-                },
-                unhighlight: function(element) {
-                    $(element).removeClass('is-invalid');
-                    $(element).closest('.form-input').find('.invalid-feedback').remove();
-                },
-                submitHandler: function(form) {
-                    form.submit();
-                },
-                invalidHandler: function(event, validator) {
-                    var errors = validator.numberOfInvalids();
-                    validator.errorList.forEach(function(error) {});
+                signature_image: {
+                    required: true,
                 }
-            });
-        </script>
-    @endpush
+            },
+            messages: {
+                remarks: {
+                    required: "Remarks is Required",
+                    minlength: "Minimum Characters should be 3",
+                    maxlength: "Maximum Characters should not exceed 100",
+                },
+                signature_image: {
+                    required: "Signature is Required",
+                }
+            },
+            errorElement: 'div',
+            errorPlacement: function(error, element) {
+                error.addClass('invalid-feedback');
+                element.closest('.form-input').append(error);
+            },
+            highlight: function(element) {
+                $(element).addClass('is-invalid');
+            },
+            unhighlight: function(element) {
+                $(element).removeClass('is-invalid');
+                $(element).closest('.form-input').find('.invalid-feedback').remove();
+            },
+            submitHandler: function(form) {
+                form.submit();
+            },
+            invalidHandler: function(event, validator) {
+                var errors = validator.numberOfInvalids();
+                validator.errorList.forEach(function(error) {});
+            }
+        });
+
+        $.validator.addMethod("noSpaces", function(value) {
+            return value.trim().length > 0;
+        }, "Spaces are not allowed");
+
+        $('#capaAction').validate({
+            rules: {
+                capa_remarks: {
+                    required: true,
+                    minlength: 3,
+                    maxlength: 100,
+                    noSpaces: true,
+                },
+                signature_image: {
+                    required: true,
+                }
+            },
+            messages: {
+                capa_remarks: {
+                    required: "Remarks is Required",
+                    minlength: "Minimum Characters should be 3",
+                    maxlength: "Maximum Characters should not exceed 100",
+                },
+                signature_image: {
+                    required: "Signature is Required",
+                }
+            },
+            errorElement: 'div',
+            errorPlacement: function(error, element) {
+                error.addClass('invalid-feedback');
+                element.closest('.form-input').append(error);
+            },
+            highlight: function(element) {
+                $(element).addClass('is-invalid');
+            },
+            unhighlight: function(element) {
+                $(element).removeClass('is-invalid');
+                $(element).closest('.form-input').find('.invalid-feedback').remove();
+            },
+            submitHandler: function(form) {
+                form.submit();
+            },
+            invalidHandler: function(event, validator) {
+                var errors = validator.numberOfInvalids();
+                validator.errorList.forEach(function(error) {});
+            }
+        });
+
+        $('#levelOneManager').validate({
+            rules: {
+                level_one_manager: {
+                    required: true,
+                    minlength: 3,
+                    maxlength: 100,
+                    noSpaces: true,
+                },
+                signature_image: {
+                    required: true,
+                }
+            },
+            messages: {
+                level_one_manager: {
+                    required: "Remarks is Required",
+                    minlength: "Minimum Characters should be 3",
+                    maxlength: "Maximum Characters should not exceed 100",
+                },
+                signature_image: {
+                    required: "Signature is Required",
+                }
+            },
+            errorElement: 'div',
+            errorPlacement: function(error, element) {
+                error.addClass('invalid-feedback');
+                element.closest('.form-input').append(error);
+            },
+            highlight: function(element) {
+                $(element).addClass('is-invalid');
+            },
+            unhighlight: function(element) {
+                $(element).removeClass('is-invalid');
+                $(element).closest('.form-input').find('.invalid-feedback').remove();
+            },
+            submitHandler: function(form) {
+                form.submit();
+            },
+            invalidHandler: function(event, validator) {
+                var errors = validator.numberOfInvalids();
+                validator.errorList.forEach(function(error) {});
+            }
+        });
+
+        $('#levelTwoManager').validate({
+            rules: {
+                level_two_manager: {
+                    required: true,
+                    minlength: 3,
+                    maxlength: 100,
+                    noSpaces: true,
+                },
+                signature_image: {
+                    required: true,
+                }
+            },
+            messages: {
+                level_two_manager: {
+                    required: "Remarks is Required",
+                    minlength: "Minimum Characters should be 3",
+                    maxlength: "Maximum Characters should not exceed 100",
+                },
+                signature_image: {
+                    required: "Signature is Required",
+                }
+            },
+            errorElement: 'div',
+            errorPlacement: function(error, element) {
+                error.addClass('invalid-feedback');
+                element.closest('.form-input').append(error);
+            },
+            highlight: function(element) {
+                $(element).addClass('is-invalid');
+            },
+            unhighlight: function(element) {
+                $(element).removeClass('is-invalid');
+                $(element).closest('.form-input').find('.invalid-feedback').remove();
+            },
+            submitHandler: function(form) {
+                form.submit();
+            },
+            invalidHandler: function(event, validator) {
+                var errors = validator.numberOfInvalids();
+                validator.errorList.forEach(function(error) {});
+            }
+        });
+    </script>
+@endpush
