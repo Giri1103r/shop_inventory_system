@@ -63,7 +63,7 @@ class FireMockDrillInspection extends Model
             $query = $query->where(function ($query) use ($search) {});
         }
         if (isset($request->inspection_date) && $request->inspection_date) {
-            $query = $query->where('inspection_fire_mock_drill_observation.inspection_date',  ($request->inspection_date));
+            $query = $query->where('inspection_fire_mock_drill_observation.inspection_date',  DBdateformat($request->inspection_date));
         }
         if (isset($request->rev_date) && $request->rev_date) {
             $query = $query->where('inspection_fire_mock_drill_observation.revision_data',  $request->rev_date);
@@ -139,27 +139,20 @@ class FireMockDrillInspection extends Model
         $query = $this->select('inspection_fire_mock_drill_observation.*', 'inspection_static_docno.*', 'inspection_fire_mock_drill_observation_details.*', 'inspection_static_docno.*', 'inspection_fire_mock_drill_observation.id as fire_id', 'inspection_fire_mock_drill_observation.created_by as checked_by', 'inspection_fire_mock_drill_observation.updated_by as verified_by')
             ->leftJoin('inspection_fire_mock_drill_observation_details', 'inspection_fire_mock_drill_observation.id', '=', 'inspection_fire_mock_drill_observation_details.inspection_id')
             ->leftJoin('inspection_static_docno', 'inspection_fire_mock_drill_observation.document_reference_id', '=', 'inspection_static_docno.id');
-        if (isset($request->search) && isset($request->search['value']) && $request->search['value'] != '') {
-            $search = $request->search['value'];
-            $query = $query->where(function ($query) use ($search) {});
-        }
 
-        if (isset($request->document_number) && $request->document_number) {
-            $query = $query->where('inspection_fire_mock_drill_observation.document_number', 'LIKE', '%' . $request->document_number . '%');
-        }
-        if (isset($request->issue_date) && $request->issue_date) {
-            $query = $query->where('inspection_fire_mock_drill_observation.issue_date', 'LIKE', '%' . $request->issue_date . '%');
-        }
-        if (isset($request->rev_date) && $request->rev_date) {
-            $query = $query->where('inspection_fire_mock_drill_observation.revision_data', 'LIKE', '%' . $request->rev_date . '%');
-        }
 
+        if (isset($request->inspection_date) && $request->inspection_date) {
+            $query = $query->where('inspection_fire_mock_drill_observation.inspection_date',  DBdateformat($request->inspection_date));
+        }
+     
         if (isset($request->inspection_status) && $request->inspection_status) {
             $query = $query->where('inspection_fire_mock_drill_observation.inspection_status', decryptId($request->inspection_status));
         }
+
         $query->orderBy('inspection_fire_mock_drill_observation.id', 'DESC');
 
         $data = $query->get();
+
         if ($data) {
             return $data->groupBy('fire_id');
         } else {

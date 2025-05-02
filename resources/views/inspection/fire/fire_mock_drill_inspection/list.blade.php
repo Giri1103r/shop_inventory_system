@@ -24,9 +24,9 @@
                                 <div class="col-md-12">
                                     <div class="row">
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="document_number"
+                                            <label for="inspection_date"
                                                 class="form-label ">{{ __('inspection.date_of_inspection') }}</label>
-                                            <input type="text" name="date_of_inspection" id="date_of_inspection"
+                                            <input type="text" name="inspection_date" id="inspection_date"
                                                 class="form-control">
                                         </div>
 
@@ -37,7 +37,7 @@
                                             <select name="inspection_status" id="inspection_status" style="width: 100%"
                                                 class="form-control single-select">
                                                 <option value="">Select Status</option>
-                                               
+
                                                 <option value="{{ encryptId('1') }}">WAITING FOR EHS OFFICER VERIFICATION
                                                 </option>
                                                 <option value="{{ encryptId('2') }}">WAITING FOR CAPA ACTION</option>
@@ -96,7 +96,7 @@
                 firstTh.removeClass('sorting_asc');
             });
 
-            flatpickr("#issue_date", {
+            flatpickr("#inspection_date", {
                 dateFormat: "d-m-Y",
             });
             $(function() {
@@ -132,7 +132,7 @@
                                 .attr('content')
                         },
                         data: function(d) {
-                            d.document_number = $('#document_number').val();
+                            d.inspection_date = $('#inspection_date').val();
                             d.issue_date = $('#issue_date').val();
                             d.rev_date = $('#rev_date').val();
                             d.inspection_status = $('#inspection_status').val();
@@ -195,7 +195,7 @@
                                     text: '{{ __('common.pdf') }}',
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
-                                        date_of_inspection = $('#date_of_inspection').val();
+                                        inspection_date = $('#inspection_date').val();
 
                                         status = $('#status').val();
 
@@ -204,8 +204,7 @@
                                         window.location.href =
                                             "{{ admin_url('fire/fire-mock-drill-observation/export/pdf') }}" +
                                             '?search=' + searchValue +
-                                            '&date_of_inspection=' + date_of_inspection +
-
+                                            '&inspection_date=' + inspection_date +
                                             '&status=' + status
                                     }
                                 },
@@ -214,7 +213,7 @@
                                     text: '{{ __('common.excel') }}',
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
-                                        date_of_inspection = $('#date_of_inspection').val();
+                                        inspection_date = $('#inspection_date').val();
 
                                         status = $('#status').val();
                                         $(".dt-button").removeClass('processing');
@@ -222,7 +221,7 @@
                                         window.location.href =
                                             "{{ admin_url('fire/fire-mock-drill-observation/export/excel') }}" +
                                             '?search=' + searchValue +
-                                            '&date_of_inspection=' + date_of_inspection +
+                                        '&inspection_date=' + inspection_date +
 
                                             '&status=' + status
                                     }
