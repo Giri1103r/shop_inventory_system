@@ -290,7 +290,7 @@
                                     <hr>
                                 </div>
 
-                                @if ($inspection->inspection_status == WAITING_FOR_EHS_OFFICER_VERIFICATION)
+                                 @if ($inspection->inspection_status == WAITING_FOR_EHS_OFFICER_VERIFICATION && (checkUserRole(ROLE_EHS_OFFICER) || isAdmin()))
                                     <div class="row mt-3">
                                         <div class="card-header-inner">
                                             <h4 class="text-white">{{ __('inspection.ehs_officer_verify') }}</h4>
@@ -639,10 +639,11 @@
                                 @endif
 
                                 @if (
-                                    $inspection->inspection_status == WAITING_FOR_CAPA_ACTION ||
+                                    ($inspection->inspection_status == WAITING_FOR_CAPA_ACTION ||
                                         $inspection->inspection_status == L2_MANAGER_REJECTED ||
                                         $inspection->inspection_status == EHS_OFFICER_REJECTED ||
-                                        $inspection->inspection_status == L1_MANAGER_REJECTED)
+                                        $inspection->inspection_status == L1_MANAGER_REJECTED) &&
+                                        (checkUserRole(ROLE_FIRE_ASSOCIATES) || isAdmin()))
                                     <div class="row mt-3">
                                         <div class="card-header-inner">
                                             <h4 class="text-white">{{ __('inspection.capa_action') }}</h4>
@@ -695,7 +696,7 @@
                                     </form>
                                 @endif
 
-                                @if ($inspection->inspection_status == WAITING_FOR_CAPA_VERIFICATION)
+                                @if ($inspection->inspection_status == WAITING_FOR_CAPA_VERIFICATION &&  (checkUserRole(ROLE_EHS_OFFICER) || isAdmin()))
                                     <form method="POST" id="forklistassessmentAdd"
                                         action="{{ admin_url('fire/isolating-valve-inspection/capa/reverify/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
@@ -745,7 +746,7 @@
                                     </form>
                                 @endif
 
-                                @if ($inspection->inspection_status == WAITING_FOR_L1_VERIFICATION)
+                                @if ($inspection->inspection_status == WAITING_FOR_L1_VERIFICATION && (checkUserRole(ROLE_L1_MANAGER) || isAdmin()) )
                                     <form method="POST" id="levelOneManager"
                                         action="{{ admin_url('fire/isolating-valve-inspection/level-one/verify/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
@@ -797,7 +798,7 @@
                                     </form>
                                 @endif
 
-                                @if ($inspection->inspection_status == WAITING_FOR_L2_VERIFICATION)
+                                @if ($inspection->inspection_status == WAITING_FOR_L2_VERIFICATION && (checkUserRole(ROLE_L2_MANAGER) || isAdmin()) )
                                     <form method="POST" id="levelTwoManager"
                                         action="{{ admin_url('fire/isolating-valve-inspection/level-two/verify/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">

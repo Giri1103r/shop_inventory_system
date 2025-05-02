@@ -154,19 +154,21 @@
 
     @push('script')
         <script type="text/javascript">
+            flatpickr("#next_due", {
+                dateFormat: "Y-m-d",
+            });
+            flatpickr("#inspection_date", {
+                dateFormat: "Y-m-d",
+
+            });
+
             $(document).ready(function() {
                 var firstTh = $('.datatable-list thead th:first');
                 firstTh.removeClass('sorting_asc');
 
-                flatpickr("#inspection_date", {
-                    dateFormat: "d-m-Y",
-                });
-                flatpickr("#next_due", {
-                    dateFormat: "d-m-Y",
-                    minDate: new Date(),
-                });
-
             });
+
+
 
             $(function() {
                 /* Datatable */

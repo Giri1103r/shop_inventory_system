@@ -205,6 +205,8 @@
                             d.shift = $('#shift').val();
                             d.unit = $('#unit').val();
                             d.frequency = $('#frequency').val();
+                            d.inspection_status = $('#inspection_status').val();
+
                         },
                         error: function(xhr, error, code) {
                             if (xhr.status === 419) {
@@ -278,7 +280,7 @@
                                         var searchValue = $('#datatable-list_filter input').val();
                                         inspection_date = $('#inspection_date').val();
                                         next_due = $('#next_due').val();
-                                        location = $('#location').val();
+                                        location_id = $('#location').val();
                                         shift = $('#shift').val();
                                         unit = $('#unit').val();
                                         frequency = $('#frequency').val();
@@ -291,11 +293,11 @@
                                             '?search=' + searchValue +
                                             '&inspection_date=' + inspection_date +
                                             '&next_due=' + next_due +
-                                            '&location=' + location +
+                                            '&location=' + location_id +
                                             '&shift=' + shift +
                                             '&unit=' + unit +
                                             '&frequency=' + frequency +
-                                            '&inspection_status=' + inspection_status
+                                            '&inspection_status=' + inspection_status;
                                     }
                                 },
                                 {
@@ -305,7 +307,7 @@
                                         var searchValue = $('#datatable-list_filter input').val();
                                         inspection_date = $('#inspection_date').val();
                                         next_due = $('#next_due').val();
-                                        location = $('#location').val();
+                                        location_id = $('#location').val();
                                         shift = $('#shift').val();
                                         unit = $('#unit').val();
                                         frequency = $('#frequency').val();
@@ -317,11 +319,11 @@
                                             '?search=' + searchValue +
                                             '&inspection_date=' + inspection_date +
                                             '&next_due=' + next_due +
-                                            '&location=' + location +
+                                            '&location=' + location_id +
                                             '&shift=' + shift +
                                             '&unit=' + unit +
                                             '&frequency=' + frequency +
-                                            '&inspection_status=' + inspection_status
+                                            '&inspection_status=' + inspection_status;
                                     }
                                 },
                             ]

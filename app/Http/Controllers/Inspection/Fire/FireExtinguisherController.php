@@ -86,8 +86,11 @@ class FireExtinguisherController extends Controller
                         ->addColumn('created_date', function ($row) {
                             return Displaydateformat($row->created_at);
                         })
-                        ->addColumn('issue_date', function ($row) {
-                            return Displaydateformat($row->issue_date);
+                        ->addColumn('date_of_inspection', function ($row) {
+                            return Displaydateformat($row->date_of_inspection);
+                        })
+                        ->addColumn('next_due', function ($row) {
+                            return Displaydateformat($row->next_due);
                         })
                         ->addColumn('created_by', function ($row) {
                             return getUsername($row->created_by);
@@ -151,7 +154,7 @@ class FireExtinguisherController extends Controller
                             $btn .= '<a href="' . admin_url('fire/fire_extinguisher-inspection/export/excel/' . encryptId($row->inspection_id)) . '" style="margin-right: 5px;" title="Excel"> <i class="fas fa-file-excel" style="color: #1D6F42;" aria-hidden="true"></i></a>';
                             return $btn;
                         })
-                        ->rawColumns(['action', 'created_date', 'created_by', 'status', 'inspection_status', 'issue_date'])
+                        ->rawColumns(['action', 'created_date', 'created_by', 'status', 'inspection_status', 'date_of_inspection','issue_date'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -826,7 +829,7 @@ class FireExtinguisherController extends Controller
 
                 $sheet->mergeCells("A{$headerInfoRow}:D{$headerInfoRow}")->setCellValue("A{$headerInfoRow}", "Date of Inspection:- " . Displaydateformat($inspection_detail->date_of_inspection));
                 $sheet->mergeCells("E{$headerInfoRow}:I{$headerInfoRow}")->setCellValue("E{$headerInfoRow}", "Location:- " . getLocationname($inspection_detail->location));
-                $sheet->mergeCells("J{$headerInfoRow}:M{$headerInfoRow}")->setCellValue("I{$headerInfoRow}", "Shift:- " . $inspection_detail->shift);
+                $sheet->mergeCells("J{$headerInfoRow}:M{$headerInfoRow}")->setCellValue("J{$headerInfoRow}", "Shift:- " . $inspection_detail->shift);
                 $sheet->getStyle("A{$headerInfoRow}:M{$headerInfoRow}")->applyFromArray([
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                 ]);
@@ -834,7 +837,7 @@ class FireExtinguisherController extends Controller
 
                 $sheet->mergeCells("A{$headerInfoRow}:D{$headerInfoRow}")->setCellValue("A{$headerInfoRow}", "Next Due Date:- " . Displaydateformat($inspection_detail->next_due));
                 $sheet->mergeCells("E{$headerInfoRow}:I{$headerInfoRow}")->setCellValue("E{$headerInfoRow}", "Unit:- " . getUnitname($inspection_detail->unit));
-                $sheet->mergeCells("J{$headerInfoRow}:M{$headerInfoRow}")->setCellValue("I{$headerInfoRow}", "Frequency:- " . getFrequencyname($inspection_detail->frequency));
+                $sheet->mergeCells("J{$headerInfoRow}:M{$headerInfoRow}")->setCellValue("J{$headerInfoRow}", "Frequency:- " . getFrequencyname($inspection_detail->frequency));
                 $sheet->getStyle("A{$headerInfoRow}:M{$headerInfoRow}")->applyFromArray([
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                 ]);
@@ -863,7 +866,7 @@ class FireExtinguisherController extends Controller
                 $sheet->mergeCells("A{$headerStart}:A" . ($headerStart + 1))->setCellValue("A{$headerStart}", "SR.NO");
                 $sheet->mergeCells("B{$headerStart}:B" . ($headerStart + 1))->setCellValue("B{$headerStart}", "FIRE POINT NO");
                 $sheet->mergeCells("C{$headerStart}:C" . ($headerStart + 1))->setCellValue("C{$headerStart}", "DEPARTMENT");
-                $sheet->mergeCells("D{$headerStart}:D" . ($headerStart + 1))->setCellValue("C{$headerStart}", "LOCATION");
+                $sheet->mergeCells("D{$headerStart}:D" . ($headerStart + 1))->setCellValue("D{$headerStart}", "LOCATION");
                 $sheet->mergeCells("E{$headerStart}:J{$headerStart}")->setCellValue("E{$headerStart}", "CHECK ITEMS");
 
                 $sheet->setCellValue("E" . ($headerStart + 1), "TYPE");
@@ -874,8 +877,8 @@ class FireExtinguisherController extends Controller
                 $sheet->setCellValue("J" . ($headerStart + 1), "SAFETY PIN");
                 $sheet->setCellValue("K" . ($headerStart + 1), "APPROACH");
 
-                $sheet->mergeCells("L{$headerStart}:L" . ($headerStart + 1))->setCellValue("I{$headerStart}", "DESCRIPTION");
-                $sheet->mergeCells("M{$headerStart}:M" . ($headerStart + 1))->setCellValue("I{$headerStart}", "REMARKS");
+                $sheet->mergeCells("L{$headerStart}:L" . ($headerStart + 1))->setCellValue("L{$headerStart}", "DESCRIPTION");
+                $sheet->mergeCells("M{$headerStart}:M" . ($headerStart + 1))->setCellValue("M{$headerStart}", "REMARKS");
 
                 $sheet->getStyle("A{$headerStart}:M" . ($headerStart + 1))->applyFromArray([
                     'font' => ['bold' => true],

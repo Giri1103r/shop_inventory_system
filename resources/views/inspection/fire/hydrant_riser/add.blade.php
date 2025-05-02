@@ -457,7 +457,7 @@
                                                             </label>
                                                         </div>
 
-                                                       
+
                                                     </div>
                                                 </div>
                                             </div>
@@ -606,7 +606,7 @@
                             // extension: "jpg",
                             filesize: 2097152
                         },
-                        observation: {
+                        observation_needed: {
                             required: true,
                         },
                         signature_image: {
@@ -693,7 +693,7 @@
                             extension: "Only JPG files are allowed.",
                             filesize: "Image must be under 2MB."
                         },
-                        observation: {
+                        observation_needed: {
                             required: "Please add observation",
                         },
 
