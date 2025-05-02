@@ -303,18 +303,29 @@
                                                     </button>
                                                 </div> --}}
 
-                                                <div class="mb-2">
-                                                    <label class="me-3">
-                                                        <input type="radio" name="observation"
-                                                            value="{{ encryptId(1) }}" class="validate-radio-required">
-                                                        Yes
-                                                    </label>
-                                                    <label>
-                                                        <input type="radio" name="observation"
-                                                            value="{{ encryptId(2) }}" class="validate-radio-required">
-                                                        No
-                                                    </label>
+                                                
+                                                <div class="col-md-12 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label require">{{ __('inspection.obs') }}</label>
+
+
+                                                        <div class="mb-2">
+                                                            <label class="me-3">
+                                                                <input type="radio" name="observation"
+                                                                    value="{{encryptId(1)}}" class="validate-radio-required"> Yes
+                                                            </label>
+                                                            <label>
+                                                                <input type="radio" name="observation"
+                                                                    value="{{encryptId(2)}}" class="validate-radio-required"> No
+                                                            </label>
+                                                        </div>
+
+
+                                                    </div>
                                                 </div>
+
+
                                             </div>
                                         </div>
 
@@ -611,7 +622,7 @@
                                                         <select name="department[${form_set_count}]" id="department-${form_set_count}"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Department</option>
-                                                            
+
                                                         </select>
                                                     </div>
                                                 </div>

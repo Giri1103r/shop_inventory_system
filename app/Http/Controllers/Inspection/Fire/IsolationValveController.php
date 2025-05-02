@@ -86,8 +86,11 @@ class IsolationValveController extends Controller
                         ->addColumn('created_date', function ($row) {
                             return Displaydateformat($row->created_at);
                         })
-                        ->addColumn('issue_date', function ($row) {
-                            return Displaydateformat($row->issue_date);
+                        ->addColumn('date_of_inspection', function ($row) {
+                            return Displaydateformat($row->date_of_inspection);
+                        })
+                        ->addColumn('next_due', function ($row) {
+                            return Displaydateformat($row->next_due);
                         })
                         ->addColumn('created_by', function ($row) {
                             return getUsername($row->created_by);
@@ -151,7 +154,7 @@ class IsolationValveController extends Controller
                             $btn .= '<a href="' . admin_url('fire/isolating-valve-inspection/export/excel/' . encryptId($row->inspection_id)) . '" style="margin-right: 5px;" title="Excel"> <i class="fas fa-file-excel" style="color: #1D6F42;" aria-hidden="true"></i></a>';
                             return $btn;
                         })
-                        ->rawColumns(['action', 'created_date', 'created_by', 'status', 'inspection_status', 'issue_date'])
+                        ->rawColumns(['action', 'created_date', 'created_by', 'status', 'inspection_status', 'date_of_inspection','next_due'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -705,7 +708,7 @@ class IsolationValveController extends Controller
 
             }
 
-            $mailsubject = 'FIRE INSPECTION';
+            $mailsubject = 'Fire Isolation Valve Inspection';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
                 'module_type' => 3,
@@ -824,7 +827,7 @@ class IsolationValveController extends Controller
 
                 $sheet->mergeCells("A{$headerInfoRow}:D{$headerInfoRow}")->setCellValue("A{$headerInfoRow}", "Date of Inspection:- " . Displaydateformat($inspection_detail->date_of_inspection));
                 $sheet->mergeCells("E{$headerInfoRow}:I{$headerInfoRow}")->setCellValue("E{$headerInfoRow}", "Location:- " . getLocationname($inspection_detail->location));
-                $sheet->mergeCells("J{$headerInfoRow}:M{$headerInfoRow}")->setCellValue("I{$headerInfoRow}", "Shift:- " . $inspection_detail->shift);
+                $sheet->mergeCells("J{$headerInfoRow}:M{$headerInfoRow}")->setCellValue("J{$headerInfoRow}", "Shift:- " . $inspection_detail->shift);
                 $sheet->getStyle("A{$headerInfoRow}:M{$headerInfoRow}")->applyFromArray([
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                 ]);
@@ -832,7 +835,7 @@ class IsolationValveController extends Controller
 
                 $sheet->mergeCells("A{$headerInfoRow}:D{$headerInfoRow}")->setCellValue("A{$headerInfoRow}", "Next Due Date:- " . Displaydateformat($inspection_detail->next_due));
                 $sheet->mergeCells("E{$headerInfoRow}:I{$headerInfoRow}")->setCellValue("E{$headerInfoRow}", "Unit:- " . getUnitname($inspection_detail->unit));
-                $sheet->mergeCells("J{$headerInfoRow}:M{$headerInfoRow}")->setCellValue("I{$headerInfoRow}", "Frequency:- " . getFrequencyname($inspection_detail->frequency));
+                $sheet->mergeCells("J{$headerInfoRow}:M{$headerInfoRow}")->setCellValue("J{$headerInfoRow}", "Frequency:- " . getFrequencyname($inspection_detail->frequency));
                 $sheet->getStyle("A{$headerInfoRow}:M{$headerInfoRow}")->applyFromArray([
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                 ]);
@@ -1047,7 +1050,7 @@ class IsolationValveController extends Controller
 
             $mpdf->WriteHTML($html);
 
-            $filename = "Fire Exitnguisher Inspection.pdf";
+            $filename = "Isolating Valve Inspection.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             dd($ex);

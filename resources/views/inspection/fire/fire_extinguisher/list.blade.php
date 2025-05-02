@@ -205,6 +205,8 @@
                             d.shift = $('#shift').val();
                             d.unit = $('#unit').val();
                             d.frequency = $('#frequency').val();
+                            d.inspection_status = $('#inspection_status').val();
+
                         },
                         error: function(xhr, error, code) {
                             if (xhr.status === 419) {

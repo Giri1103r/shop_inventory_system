@@ -90,7 +90,7 @@ class HydrantRiserInspection extends Model
             $query = $query->where('inspection_fire_hydrant_riser.shift_id', 'LIKE', '%' . decryptId($request->shift) . '%');
         }
         if (isset($request->inspection_date) && $request->inspection_date) {
-            $query = $query->where('inspection_fire_hydrant_riser.date_of_inspection', 'LIKE', '%' . DBdateformat($request->inspection_date) . '%');
+            $query = $query->where('inspection_fire_hydrant_riser.date_of_inspection',DBdateformat($request->inspection_date));
         }
         if (isset($request->next_due) && $request->next_due) {
             $query = $query->where('inspection_fire_hydrant_riser.next_due', 'LIKE', '%' . DBdateformat($request->next_due) . '%');
