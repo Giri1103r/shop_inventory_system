@@ -83,8 +83,11 @@ class FireAlarmController extends Controller
                         ->addColumn('created_date', function ($row) {
                             return Displaydateformat($row->created_at);
                         })
-                        ->addColumn('issue_date', function ($row) {
-                            return Displaydateformat($row->issue_date);
+                        ->addColumn('date_of_inspection', function ($row) {
+                            return Displaydateformat($row->date_of_inspection);
+                        })
+                        ->addColumn('next_due', function ($row) {
+                            return Displaydateformat($row->next_due);
                         })
                         ->addColumn('created_by', function ($row) {
                             return getUsername($row->created_by);
@@ -149,7 +152,7 @@ class FireAlarmController extends Controller
                             $btn .= '<a href="' . admin_url('fire/fire-alarm-inspection/export/excel/' . encryptId($row->inspection_id)) . '" style="margin-right: 5px;" title="Excel"> <i class="fas fa-file-excel" style="color: #1D6F42;" aria-hidden="true"></i></a>';
                             return $btn;
                         })
-                        ->rawColumns(['action', 'created_date', 'created_by', 'status', 'inspection_status', 'issue_date'])
+                        ->rawColumns(['action', 'created_date', 'created_by', 'status', 'inspection_status', 'date_of_inspection','next_due'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -1043,7 +1046,7 @@ class FireAlarmController extends Controller
             $mpdf->WriteHTML($html);
 
             $filename = "Fire Alarm Inspection.pdf";
-            $mpdf->Output($filename, 'I');
+            $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);
             report($ex);
@@ -1310,7 +1313,7 @@ class FireAlarmController extends Controller
             }
 
             $writer   = new Xlsx($spreadsheet);
-            $fileName = 'Hooter Inspection.xlsx';
+            $fileName = 'Fire Alarm Inspection.xlsx';
             $filePath = storage_path("app/public/$fileName");
             $writer->save($filePath);
 
