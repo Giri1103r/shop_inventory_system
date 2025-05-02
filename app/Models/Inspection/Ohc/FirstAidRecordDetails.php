@@ -145,7 +145,7 @@ class FirstAidRecordDetails extends Model
             'inspection_ohc_first_aid_record_details.created_by as checked_by',
             'inspection_ohc_first_aid_record_details.id as first_aid_record_id'
         )
-            ->leftJoin('inspection_ohc_first_aid_record_checklist', 'inspection_ohc_first_aid_record_details.id', '=', 'inspection_ohc_first_aid_record_checklist.inspection_ohc_first_aid_record_details_id')
+            ->leftJoin('inspection_ohc_first_aid_record_checklist', 'inspection_ohc_first_aid_record_details.id', '=', 'inspection_ohc_first_aid_record_checklist.ohc_first_aid_record_details_id')
             ->leftJoin('masters_department', 'inspection_ohc_first_aid_record_checklist.department', '=', 'masters_department.id')
             ->leftJoin('masters_unit', 'inspection_ohc_first_aid_record_checklist.unit', '=', 'masters_unit.id')
             ->where('inspection_ohc_first_aid_record_details.trash', 'NO');
@@ -168,6 +168,7 @@ class FirstAidRecordDetails extends Model
         $query->orderBy('inspection_ohc_first_aid_record_details.id', 'DESC');
 
         $data = $query->get();
+
         if ($data) {
             return $data = $data->groupBy('inspection_ohc_first_aid_record_details_id');
         }else{

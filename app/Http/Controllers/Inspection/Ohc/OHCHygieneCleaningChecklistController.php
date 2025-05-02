@@ -236,7 +236,7 @@ class OHCHygieneCleaningChecklistController extends Controller
             ];
             return view('inspection.inspection_ohc.ohc_hygiene_checklist.view', $data);
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             report($ex);
             Session::flash('error', 'Something went wrong!');
             return redirect(admin_url('ohc/ohc-hygiene-cleaning-checklist/list'));
@@ -321,7 +321,7 @@ class OHCHygieneCleaningChecklistController extends Controller
             Session::flash('success', __('common.updated_msg'));
             return redirect(admin_url('ohc/ohc-hygiene-cleaning-checklist/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             report($ex);
             Session::flash('error', 'Something went wrong!');
             return redirect(admin_url('ohc/ohc-hygiene-cleaning-checklist/list'));
@@ -716,7 +716,7 @@ class OHCHygieneCleaningChecklistController extends Controller
             $filename = "OHC Hygiene Inspection Checklist.pdf";
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             report($ex);
             return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
         }

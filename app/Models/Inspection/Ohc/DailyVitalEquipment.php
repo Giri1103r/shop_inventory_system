@@ -59,6 +59,7 @@ class DailyVitalEquipment extends Model
             $query = $query->where('inspection_ohc_daily_vital_equipment_checklist.unit','LIKE', '%' . decryptId($request->unit) . '%');
         }
         if (isset($request->date_of_inspection) && $request->date_of_inspection) {
+           
             $query = $query->whereDate('inspection_ohc_daily_vital_equipment_checklist.date_of_inspection', '=', DBdateformat($request->date_of_inspection));
         }
         if ($request->has('shift') && $request->shift) {

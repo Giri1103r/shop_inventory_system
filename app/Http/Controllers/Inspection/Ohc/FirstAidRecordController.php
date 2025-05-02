@@ -211,7 +211,7 @@ class FirstAidRecordController extends Controller
             }
             return view('inspection.inspection_ohc.first_aid_record.view', $data);
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
         }
     }
 
@@ -341,6 +341,7 @@ class FirstAidRecordController extends Controller
                     $sheet->fromArray([
                         $srNo,
                         $month,
+
                         getDepartment($details->department),
                         getUnitname($details->unit),
                         $details->first_aid_station_number ?? '-',
@@ -404,7 +405,6 @@ class FirstAidRecordController extends Controller
 
             $allData = $this->first_aid_details->exportdata();
             $document_no = $this->document_reference->selectUsingName('FirstAidRecord');
-
 
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');

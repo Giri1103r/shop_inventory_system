@@ -61,11 +61,11 @@ class DailyVitalEquipmentController extends Controller
                         })
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            $btn = '<a href="' . admin_url('ohc/daily-vital-equipment/view/' . encryptId($row->id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
-                            $btn .= '<a href="' . admin_url('ohc/daily-vital-equipment/exportViewPdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
+                            $btn = '<a href="' . admin_url('ohc/daily-vital-equipment/view/' . encryptId($row->id)) . '"   class="view-icon me-1" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
+                            $btn .= '<a href="' . admin_url('ohc/daily-vital-equipment/exportViewPdf/' . encryptId($row->id)) . '" class=" me-1" title="PDF">
                                         <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
                                     </a>';
-                            $btn .= '<a href="' . admin_url('ohc/daily-vital-equipment/generalexcel/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
+                            $btn .= '<a href="' . admin_url('ohc/daily-vital-equipment/generalexcel/' . encryptId($row->id)) . '" class=" me-1" title="PDF">
                                         <i class="fas fa-file-excel" style="color: #1D6F42;" aria-hidden="true"></i>
                                     </a>';
                             return $btn;
@@ -121,7 +121,7 @@ class DailyVitalEquipmentController extends Controller
         try {
             $daily_vital = $this->daily_vital->store();
             $id = $daily_vital->id;
-            $inspection_type = OHC_DAILY_VITAL_EQUIPMENT_CHECKLIST;
+            $inspection_type = OHC_TYPE_DAILY_VITAL_EQUIPMENT_CHECKLIST;
             $signature_update = $this->signature->requestorsignatureUpload($inspection_type,$id);
 
             Session::flash('success', __('common.created_msg'));
@@ -171,7 +171,7 @@ class DailyVitalEquipmentController extends Controller
                 $user_response = json_decode($daily_vital->responses, true);
 
                 $document_no = $this->document_reference->selectUsingName('DailyVitalEquipment');
-                $inspection_type = OHC_DAILY_VITAL_EQUIPMENT_CHECKLIST;
+                $inspection_type = OHC_TYPE_DAILY_VITAL_EQUIPMENT_CHECKLIST;
 
                 $inspection_created_by = GetOHCSignature($daily_vital->checked_by, $daily_vital->id, $inspection_type);
 
@@ -318,8 +318,8 @@ class DailyVitalEquipmentController extends Controller
                 }
 
                 $sheet->getRowDimension($row)->setRowHeight(60);
-                $sheet->mergeCells("A{$row}:G{$row}")->setCellValue("A{$row}", "CHECKED BY (NAME & SIGNATURE) :- ");
-                $sheet->mergeCells("H{$row}:M{$row}");
+                $sheet->mergeCells("A{$row}:M{$row}")->setCellValue("A{$row}", "CHECKED BY (NAME & SIGNATURE) :- ");
+
                 $sheet->getStyle("A{$row}:M{$row}")->applyFromArray([
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER,
@@ -336,13 +336,6 @@ class DailyVitalEquipmentController extends Controller
                     $drawing->setWidth(120);
                     $drawing->setHeight(50);
                     $drawing->setWorksheet($sheet);
-                }else {
-                    $sheet->setCellValue("H{$row}", "Inspection not yet started");
-                    $sheet->getStyle("H{$row}:M{$row}")->applyFromArray([
-                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER,
-                        'vertical' => Alignment::VERTICAL_CENTER],
-                        'font' => ['italic' => true],
-                    ]);
                 }
 
                 $sheet->getStyle("A{$currentRow}:M{$row}")->applyFromArray([
@@ -470,7 +463,7 @@ class DailyVitalEquipmentController extends Controller
             $daily_vital = $this->daily_vital->selectOne($id);
             $document_no = $this->document_reference->selectUsingName('DailyVitalEquipment');
             $user_response = json_decode($daily_vital->responses, true);
-            $inspection_type = OHC_DAILY_VITAL_EQUIPMENT_CHECKLIST;
+            $inspection_type = OHC_TYPE_DAILY_VITAL_EQUIPMENT_CHECKLIST;
             $inspection_created_by = GetOHCSignature($daily_vital->created_by, $daily_vital->id, $inspection_type);
 
             $sheet->getDefaultColumnDimension()->setWidth(14);
@@ -631,8 +624,7 @@ class DailyVitalEquipmentController extends Controller
             }
 
             $sheet->getRowDimension($row)->setRowHeight(60);
-            $sheet->mergeCells("A{$row}:G{$row}")->setCellValue("A{$row}", "CHECKED BY (NAME & SIGNATURE) :- ");
-            $sheet->mergeCells("H{$row}:M{$row}");
+            $sheet->mergeCells("A{$row}:M{$row}")->setCellValue("A{$row}", "CHECKED BY (NAME & SIGNATURE) :- ");
 
             $sheet->getStyle("A{$row}:M{$row}")->applyFromArray([
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
@@ -649,13 +641,6 @@ class DailyVitalEquipmentController extends Controller
                 $drawing->setWidth(120);
                 $drawing->setHeight(50);
                 $drawing->setWorksheet($sheet);
-            }else {
-                $sheet->setCellValue("H{$row}", "Inspection not yet started");
-                $sheet->getStyle("H{$row}:M{$row}")->applyFromArray([
-                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER,
-                    'vertical' => Alignment::VERTICAL_CENTER],
-                    'font' => ['italic' => true],
-                ]);
             }
 
             $writer = new Xlsx($spreadsheet);

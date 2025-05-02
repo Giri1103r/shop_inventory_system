@@ -1047,7 +1047,7 @@ class FireExtinguisherController extends Controller
             $filename = "Fire Exitnguisher Inspection.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('fire/fire_extinguisher-inspection/list'));
