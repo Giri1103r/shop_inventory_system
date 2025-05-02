@@ -286,13 +286,13 @@ class IsolationValveController extends Controller
             $inspection_details = $this->isolation_valve_details->store($id);
             $inspection_file = $this->files->file_upload($inspection_type, $id);
 
-            $checklist_store = $this->checklist_follow->store($inspection_type, $id);
+            // $checklist_store = $this->checklist_follow->store($inspection_type, $id);
 
             $signature_update = $this->signature->CheckedBySignature($id, $inspection_type);
 
             $ehsOfficer = GetEHSOfficer();
             $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
-            $mailsubject = 'FIRE INSPECTION';
+            $mailsubject = 'Fire Isolation Valve Inspection';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
                 'module_type' => 3,
@@ -334,6 +334,7 @@ class IsolationValveController extends Controller
             ];
             $this->statusLog->create($insert_array);
             Session::flash('success', 'Your data added successfully');
+
             if ($inspection->observation == 1) {
                 return redirect(admin_url('fire/checklist-observation/add/' . encryptId($inspection_type) . '/' . encryptId($id)));
             } else {
@@ -423,7 +424,7 @@ class IsolationValveController extends Controller
             $userIds = [
                 'users' => $inspection_details->created_by,
             ];
-            $mailsubject = 'FIRE INSPECTION';
+            $mailsubject = 'Fire Isolation Valve Inspection';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
                 'module_type' => 3,
@@ -485,7 +486,7 @@ class IsolationValveController extends Controller
             $userIds = [
                 'users' => $ehsOfficers,
             ];
-            $mailsubject = 'Fire Inspection';
+            $mailsubject = 'Fire Isolation Valve Inspection';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
                 'module_type' => 3,
@@ -553,11 +554,11 @@ class IsolationValveController extends Controller
             } else {
                 $message = 'EHS Officer Rejected the CAPA Action';
                 $web_link =   admin_url('fire/isolating-valve-inspection/verification/' . encryptId($inspection_details->id) . '/capa');
-                $users = $inspection_details->created_by;
+                $users = [$inspection_details->created_by];
                 $to_status = EHS_OFFICER_REJECTED;
             }
 
-            $mailsubject = 'FIRE INSPECTION';
+            $mailsubject = 'Fire Isolation Valve Inspection';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
                 'module_type' => 3,
@@ -580,7 +581,7 @@ class IsolationValveController extends Controller
                 $email_id = getUseremail($user);
                 $url = $web_link;
                 $details = array(
-                    'fire_type' => 'Isolation Valve Inspection',
+                    'fire_type' => 'Fire Isolation Valve Inspection',
                     'email' => $email_id,
                     'mail_subject' => $mailsubject,
                     'title' => $title,
@@ -627,11 +628,11 @@ class IsolationValveController extends Controller
             } else {
                 $message = 'Level One Manager Rejected the CAPA Action';
                 $web_link =   admin_url('fire/isolating-valve-inspection/verification/' . encryptId($inspection_details->id) . '/capa');
-                $users = $inspection_details->created_by;
+                $users = [$inspection_details->created_by];
                 $to_status = L1_MANAGER_REJECTED;
             }
 
-            $mailsubject = 'FIRE INSPECTION';
+            $mailsubject = 'Fire Isolation Valve Inspection';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
                 'module_type' => 3,
@@ -1049,7 +1050,7 @@ class IsolationValveController extends Controller
             $filename = "Fire Exitnguisher Inspection.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            report($ex);
+            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('fire/isolating-valve-inspection/list'));
@@ -1103,7 +1104,7 @@ class IsolationValveController extends Controller
             $mpdf->WriteHTML($view);
 
             $filename = "Isolation Valve Inspection.pdf";
-            return $mpdf->Output($filename, 'I');
+            return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
@@ -1123,7 +1124,7 @@ class IsolationValveController extends Controller
             $document_no     = $this->document_reference->selectOne($inspection->document_reference_id);
 
             $prepared_by_signature = GetFireSignature($inspection->created_by, $inspection->id, ISOLATION_VALVE_INSPECTION);
-            $verified_by_signature = GetFireSignature($inspection->updated_by, $inspection->id, ISOLATION_VALVE_INSPECTION);
+            $verified_by_signature = GetFireSignature($inspection->verified_by, $inspection->id, ISOLATION_VALVE_INSPECTION);
             $approved_by_signature = GetFireSignature($inspection->approved_by, $inspection->id, ISOLATION_VALVE_INSPECTION);
 
             foreach (range('A', 'M') as $col) {
@@ -1280,7 +1281,7 @@ class IsolationValveController extends Controller
                 $drawing->setOffsetY(5);
                 $drawing->setHeight(40);
                 $drawing->setWorksheet($sheet);
-                $sheet->setCellValue("F{$signatureRowStart}", "\n\n\nVerified By:\n" . getUsername($inspection->updated_by));
+                $sheet->setCellValue("F{$signatureRowStart}", "\n\n\nVerified By:\n" . getUsername($inspection->verified_by));
             } else {
                 $sheet->setCellValue("F{$signatureRowStart}", "Verified By:\nInspection not yet completed");
             }

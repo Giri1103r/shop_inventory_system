@@ -678,7 +678,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.location') }}</label>
-                                                        <input type="text" name="location[${form_set_count}]" id = "location"
+                                                        <input type="text" name="location[${form_set_count}]" id = "location_${form_set_count}"
                                                             class="form-control">
                                                     </div>
                                                 </div>
