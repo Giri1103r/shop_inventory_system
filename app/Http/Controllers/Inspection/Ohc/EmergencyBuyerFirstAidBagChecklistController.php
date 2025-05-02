@@ -189,7 +189,7 @@ class EmergencyBuyerFirstAidBagChecklistController extends Controller
                 return redirect(admin_url('ohc/emergency-buyer-first-aid-bag/checklist/list'));
             }
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/emergency-buyer-first-aid-bag/checklist/list'));
         }

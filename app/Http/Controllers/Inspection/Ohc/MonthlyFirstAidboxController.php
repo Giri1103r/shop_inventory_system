@@ -114,14 +114,14 @@ class MonthlyFirstAidboxController extends Controller
                         ->addColumn('action', function ($row) {
                             $btn = '';
 
-                            $btn .=  '<a href="' . admin_url('ohc/first-aid-box/monthly-audit/view/' . encryptId($row->inspection_id)) . '" class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a>';
+                            $btn .=  '<a href="' . admin_url('ohc/first-aid-box/monthly-audit/view/' . encryptId($row->inspection_id)) . '" class="view-icon me-1" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a>';
 
 
 
-                            $btn .= '<a href="' . admin_url('ohc/first-aid-box/monthly-audit/generalpdf/' . encryptId($row->inspection_id)) . '" style="margin-right: 5px;" title="PDF">
+                            $btn .= '<a href="' . admin_url('ohc/first-aid-box/monthly-audit/generalpdf/' . encryptId($row->inspection_id)) . '" class=" me-1" title="PDF">
                             <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
                         </a>';
-                            $btn .= '<a href="' . admin_url('ohc/first-aid-box/monthly-audit/generalExcel/' . encryptId($row->inspection_id)) . '" style="margin-right: 5px;" title="PDF">
+                            $btn .= '<a href="' . admin_url('ohc/first-aid-box/monthly-audit/generalExcel/' . encryptId($row->inspection_id)) . '" class=" me-1" title="PDF">
                         <i class="fas fa-file-excel" style="color: #1D6F42;" aria-hidden="true"></i>
                      </a>';
                             return $btn;
@@ -266,7 +266,7 @@ class MonthlyFirstAidboxController extends Controller
 
             $filename = "Monthly First Aid Audit Checklist Inspection.pdf";
 
-            return $mpdf->Output($filename, 'i');
+            return $mpdf->Output($filename, 'D');
         } catch (\Exception $ex) {
              report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');

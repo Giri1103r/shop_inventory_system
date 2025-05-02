@@ -147,7 +147,7 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
 
                     return $datatables;
                 } catch (Exception $ex) {
-                     dd($ex);
+                     report($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }
@@ -738,7 +738,7 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
                 $drawing->setWorksheet($sheet);
                 $sheet->getRowDimension($signatureStartRow + 2)->setRowHeight(40);
                 // Label + Name
-                $sheet->setCellValue("K" . ($signatureStartRow + 3), "SAFETY OFFICER SIGNATURE: " . getUserName($medicine_requisition_fdo_details->verified_by));
+                $sheet->setCellValue("K" . ($signatureStartRow + 3), "SAFETY OFFICER SIGNATURE: " . getUserName($medicine_requisition_fdo_details->approved_by));
                 $sheet->mergeCells("K" . ($signatureStartRow + 3) . ":S" . ($signatureStartRow + 3));
 
                 $sheet->getStyle("K$signatureStartRow:S" . ($signatureStartRow + 3))->applyFromArray([
@@ -822,7 +822,7 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
             $mpdf->WriteHTML($html);
 
             $filename = "Medical Requisition Slip- Fdo & Security Gate.pdf";
-            $mpdf->Output($filename, 'I');
+            $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 
              report($ex);
@@ -995,7 +995,7 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
                 $drawing->setWorksheet($sheet);
                 $sheet->getRowDimension($signatureStartRow + 2)->setRowHeight(40);
                 // Label + Name
-                $sheet->setCellValue("K" . ($signatureStartRow + 3), "SAFETY OFFICER SIGNATURE: " . getUserName($medicine_requisition_fdo_details->verified_by));
+                $sheet->setCellValue("K" . ($signatureStartRow + 3), "SAFETY OFFICER SIGNATURE: " . getUserName($medicine_requisition_fdo_details->approved_by));
                 $sheet->mergeCells("K" . ($signatureStartRow + 3) . ":S" . ($signatureStartRow + 3));
 
                 $sheet->getStyle("K$signatureStartRow:S" . ($signatureStartRow + 3))->applyFromArray([

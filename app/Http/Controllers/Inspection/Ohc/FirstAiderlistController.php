@@ -90,7 +90,7 @@ class FirstAiderlistController extends Controller
                             return Displaydateformat($row->last_updated_date);
                         })
                         ->addColumn('next_review_date', function ($row) {
-                            return Displaydateformat($row->last_updated_date);
+                            return Displaydateformat($row->next_review_date);
                         })
                         ->addColumn('created_by', function ($row) {
                             return getUsername($row->created_by);

@@ -187,12 +187,12 @@ class HealthInstrumentCalibrationController extends Controller
                 Session::flash('success', 'Your data has been created successfully!');
                 return redirect(admin_url('ohc/health-instrument/calibration-track-sheet/list'));
             } catch (Exception $ex) {
-                dd($ex);
+                report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
                 return redirect(admin_url('ohc/health-instrument/calibration-track-sheet/list'));
             }
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/health-instrument/calibration-track-sheet/list'));
         }

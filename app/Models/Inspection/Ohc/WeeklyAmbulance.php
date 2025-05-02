@@ -75,8 +75,9 @@ class WeeklyAmbulance extends Model
                       ->orWhere('masters_location.location_name', 'LIKE', '%' . $search . '%');
             });
         }
-        if (isset($request->unit) && $request->unit) {
-            $query = $query->where('inspection_ohc_weekly_ambulance_inspection_checklist.unit', decryptId($request->unit));
+        if (isset($request->unit_id) && $request->unit_id) {
+           
+            $query = $query->where('inspection_ohc_weekly_ambulance_inspection_checklist.unit', decryptId($request->unit_id));
         }
         if (isset($request->shift) && $request->shift) {
             $query = $query->where('inspection_ohc_weekly_ambulance_inspection_checklist.shift', decryptId($request->shift));

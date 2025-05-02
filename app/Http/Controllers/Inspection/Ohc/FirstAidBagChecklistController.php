@@ -196,7 +196,7 @@ class FirstAidBagChecklistController extends Controller
             Session::flash('success', 'Your data has been added successfully');
             return redirect(admin_url('ohc/emergency-floor-first-aid-bag/checklist/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('ohc/emergency-floor-first-aid-bag/checklist/list'));

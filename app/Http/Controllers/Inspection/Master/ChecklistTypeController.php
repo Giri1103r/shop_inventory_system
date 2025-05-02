@@ -117,7 +117,7 @@ class ChecklistTypeController extends Controller
                 $this->checklist_file->store($checklist_type->id, CHECKLIST_TYPE);
                 Session::flash('success', __('inspection.check_list_type_success'));
             } catch (Exception $ex) {
-                report($ex);
+                dd($ex);
                 Session::flash('error', __('common.message_error'));
             }
 

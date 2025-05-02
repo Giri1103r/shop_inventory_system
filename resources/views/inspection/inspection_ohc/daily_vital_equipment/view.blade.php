@@ -90,7 +90,7 @@
                                         $signature = GetOHCSignature(
                                             $daily_vital->created_by,
                                             $daily_vital->id,
-                                            OHC_DAILY_VITAL_EQUIPMENT_CHECKLIST,
+                                            OHC_TYPE_DAILY_VITAL_EQUIPMENT_CHECKLIST,
                                         );
                                     @endphp
                                     @if (isset($signature))

@@ -83,11 +83,11 @@ class SafetyPettyController extends Controller
                         })
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            $btn = '<a href="' . admin_url('ohc/safety-petty-logbook/view/' . encryptId($row->safety_petty_id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
-                            $btn .= '<a href="' . admin_url('ohc/safety-petty-logbook/generalpdf/' . encryptId($row->safety_petty_id)) . '" style="margin-right: 5px;" title="PDF">
+                            $btn = '<a href="' . admin_url('ohc/safety-petty-logbook/view/' . encryptId($row->safety_petty_id)) . '"   class="view-icon me-1" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
+                            $btn .= '<a href="' . admin_url('ohc/safety-petty-logbook/generalpdf/' . encryptId($row->safety_petty_id)) . '" class="view-icon me-1" title="PDF">
                                         <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
                                     </a>';
-                            $btn .= '<a href="' . admin_url('ohc/safety-petty-logbook/generalexcel/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
+                            $btn .= '<a href="' . admin_url('ohc/safety-petty-logbook/generalexcel/' . encryptId($row->id)) . '" class="view-icon me-1" title="PDF">
                                         <i class="fas fa-file-excel" style="color: #1D6F42;" aria-hidden="true"></i>
                                     </a>';
                             return $btn;
@@ -233,6 +233,8 @@ class SafetyPettyController extends Controller
             return view('inspection.inspection_ohc.safety_petty.view', $data);
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/safety-petty-logbook/list'));
         }
     }
 
