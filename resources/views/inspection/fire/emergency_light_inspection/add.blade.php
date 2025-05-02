@@ -474,8 +474,8 @@
                         },
                         device_image: {
                             required: true,
-                            extension: "jpg",
-                            filesize: 2097152
+                            // extension: "jpg",
+                            // filesize: 2097152
                         },
                         observation: {
                             required: true,
@@ -580,8 +580,8 @@
                         },
                         device_image: {
                             required: "Please upload an image.",
-                            extension: "Only JPG files are allowed.",
-                            filesize: "Image must be under 2MB."
+                            // extension: "Only JPG files are allowed.",
+                            // filesize: "Image must be under 2MB."
                         },
                         observation: {
                             required: "Please add observation",
@@ -678,7 +678,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.location') }}</label>
-                                                        <input type="text" name="location[${form_set_count}]" id = "location"
+                                                        <input type="text" name="location[${form_set_count}]" id = "location_${form_set_count}"
                                                             class="form-control">
                                                     </div>
                                                 </div>

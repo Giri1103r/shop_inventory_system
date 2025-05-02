@@ -191,14 +191,14 @@
 
                                                             @foreach ($getoption as $option)
                                                             <td style="text-align: center;">
-                                                                @if ($option == 'Yes')
-                                                                    @if (isset($statuses[$checkPoint]) && $statuses[$checkPoint] == 'Yes')
+                                                                @if ($option == 'YES')
+                                                                    @if (isset($statuses[$checkPoint]) && $statuses[$checkPoint] == 'YES')
                                                                         <i class="fa-solid fa-check" style="color: #267709; width: 15px;"></i>
                                                                     @else
                                                                         <i class="fa-solid fa-times" style="color: #d40a0a; width: 15px;"></i>
                                                                     @endif
-                                                                @elseif ($option == 'No')
-                                                                    @if (isset($statuses[$checkPoint]) && $statuses[$checkPoint] == 'No')
+                                                                @elseif ($option == 'NO')
+                                                                    @if (isset($statuses[$checkPoint]) && $statuses[$checkPoint] == 'NO')
                                                                         <i class="fa-solid fa-check" style="color: #267709; width: 15px;"></i>
                                                                     @else
                                                                         <i class="fa-solid fa-times" style="color: #d40a0a; width: 15px;"></i>

@@ -1937,6 +1937,21 @@ if (!function_exists('getMonth')) {
         }
     }
 
+    if (!function_exists('getNursingOfficer')) {
+        function getNursingOfficer()
+        {
+            $roleId = ROLE_NURSING_OFFICER;
+
+            $data = User::whereRaw("FIND_IN_SET(?, role)", [$roleId])
+                ->where('status', 1)
+                ->where('trash', 'NO')
+                ->get();
+
+            return $data->isNotEmpty() ? $data : false;
+        }
+    }
+
+
     if (!function_exists('getCheckListQuestion')) {
         function getCheckListQuestion($id)
         {

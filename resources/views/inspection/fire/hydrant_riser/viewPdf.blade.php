@@ -336,12 +336,13 @@
                         <span style="color: gray; font-weight: bold;">N/A</span>
                     @endif
                 </td>
-                
+
                 <td style="border: 1px solid black; padding: 8px;">{{ $details->flow_test }}</td>
                 <td style="border: 1px solid black; padding: 8px;">{{ $details->approach }}</td>
                 <td style="border: 1px solid black; padding: 8px;">{{ $details->remarks }}</td>
             </tr>
         @endforeach
+
 
         @php
         $prepared_by_signature = GetFireSignature(
@@ -350,7 +351,7 @@
             HYDRANT_RISER,
         );
         $verified_by_signature = GetFireSignature(
-            $hydrant_details->updated_by,
+            $hydrant_details->verified_by,
             $hydrant_details->id,
             HYDRANT_RISER,
         );
@@ -369,23 +370,23 @@
         </td>
         <td colspan="5"
             style="border: 2px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
-            @if ($hydrant_details->updated_by != null)
+            {{-- @if ($hydrant_details->updated_by != null) --}}
                 <img src="{{ admin_url($verified_by_signature) }}" alt="Verified By Signature"
                     style="height: 50px;">
-                <div>Verified By: {{ getUsername($hydrant_details->updated_by) }}</div>
-            @else
-                <p>Inspection has not been Verified Yet</p>
-            @endif
+                <div>Verified By: {{ getUsername($hydrant_details->verified_by) }}</div>
+            {{-- @else --}}
+                {{-- <p>Inspection has not been Verified Yet</p> --}}
+            {{-- @endif --}}
         </td>
         <td colspan="5"
             style="border: 2px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
-            @if ($hydrant_details->approved_by != null)
+            {{-- @if ($hydrant_details->approved_by != null) --}}
                 <img src="{{ admin_url($verified_by_signature) }}" alt="Verified By Signature"
                     style="height: 50px;">
                 <div>Approved By: {{ getUsername($hydrant_details->approved_by) }}</div>
-            @else
-                <p>Inspection has not been Verified Yet</p>
-            @endif
+            {{-- @else --}}
+                {{-- <p>Inspection has not been Verified Yet</p> --}}
+            {{-- @endif --}}
         </td>
     </tr>
     </table>
@@ -407,7 +408,7 @@
             <td width="50%" style="padding:5px;"><b>{{ __('inspection.observation') }} :</b>
                 {{ $hydrant_details->observation == '1' ? 'YES' : 'NO' }}
             </td>
-          
+
         </tr>
     </table>
     <br>

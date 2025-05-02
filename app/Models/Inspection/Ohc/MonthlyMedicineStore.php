@@ -60,7 +60,7 @@ class MonthlyMedicineStore extends Model
 
         if ($request->has('status') && $request->status) {
 
-            $query = $query->where('inspection_ohc_medicine_store_inspection.status',  decryptId($request->status));
+            $query = $query->where('inspection_ohc_medicine_store_inspection.inspection_status',  decryptId($request->status));
         }
 
 
@@ -139,8 +139,9 @@ class MonthlyMedicineStore extends Model
             $query = $query->whereDate('inspection_ohc_medicine_store_inspection.next_due', $formattedDate);
         }
 
-        if (isset($request->inspection_status) && $request->inspection_status) {
-            $query = $query->where('inspection_ohc_medicine_store_inspection.inspection_status', decryptId($request->inspection_status));
+        if ($request->has('status') && $request->status) {
+
+            $query = $query->where('inspection_ohc_medicine_store_inspection.inspection_status',  decryptId($request->status));
         }
         $query->orderBy('id', 'DESC');
 

@@ -165,6 +165,7 @@
                             d.location_id = $('#location_id').val();
                             d.unit_id = $('#unit_id').val();
                             d.shift = $('#shift').val();
+                            d.location_id = $('#location_id').val();
                             d.status = $('#status').val();
                         },
                         error: function(xhr, error, code) {
@@ -232,6 +233,7 @@
                                         var searchValue = $('#datatable-list_filter input').val();
                                         location_id = $('#location_id').val();
                                         unit_id = $('#unit_id').val();
+                                        location_id = $('#location_id').val();
                                         shift = $('#shift').val();
                                         status = $('#status').val();
 
@@ -253,6 +255,7 @@
                                         var searchValue = $('#datatable-list_filter input').val();
                                         location_id = $('#location_id').val();
                                         unit_id = $('#unit_id').val();
+                                        location_id = $('#location_id').val();
                                         shift = $('#shift').val();
                                         status = $('#status').val();
                                         $(".dt-button").removeClass('processing');

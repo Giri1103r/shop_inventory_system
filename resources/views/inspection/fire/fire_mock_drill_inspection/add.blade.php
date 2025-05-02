@@ -529,7 +529,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.employee') }}</label>
-                                                        <select name="emp_id[${form_set_current_count}]" id="emp_id[1]"
+                                                        <select name="emp_id[${form_set_current_count}]" id="emp_id[${form_set_current_count}]"
                                                             class="form-control single-select responsibility_id"
                                                             style="width: 100%">
                                                             <option value="">Select Employee Name</option>

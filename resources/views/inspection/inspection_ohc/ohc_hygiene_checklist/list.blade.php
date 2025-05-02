@@ -50,7 +50,8 @@
                                                 <option value="">Select Status</option>
                                                 <option value="{{ encryptId('1') }}">WAITING FOR NURSING OFFICER ACTION
                                                 </option>
-                                                <option value="{{ encryptId('2') }}">INSPECTION COMPLETED</option>
+                                                <option value="{{ encryptId('2') }}">INSPECTION APPROVED</option>
+                                                <option value="{{ encryptId('3') }}">INSPECTION REJECTED</option>
                                             </select>
                                         </div>
                                         <div class="col-md-3 mt-3">

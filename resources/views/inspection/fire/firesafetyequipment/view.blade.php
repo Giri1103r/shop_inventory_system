@@ -111,7 +111,7 @@
                                                     <div class="col-md-4 form-input">
                                                         <label class="form-label">SR NO</label>
                                                         <div class="view_data">
-                                                            {{ $fireSafetyEquipmentData->sr_no ?? '-' }}
+                                                            {{ $loop->iteration ?? '-' }}
                                                         </div>
                                                     </div>
 
@@ -161,7 +161,7 @@
                                                             {{ $fireSafetyEquipmentData->remark ?? '-' }}
                                                         </div>
                                                     </div>
-                                                   
+
 
                                                 </div>
                                                 <hr>

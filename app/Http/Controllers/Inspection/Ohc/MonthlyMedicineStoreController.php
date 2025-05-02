@@ -78,10 +78,11 @@ class MonthlyMedicineStoreController extends Controller
 
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            $btn = '<a href="' . admin_url('ohc/monthly-medicine-store/inspection/view/' . encryptId($row->id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
+                            $btn = '<a href="' . admin_url('ohc/monthly-medicine-store/inspection/view/' . encryptId($row->id)) . '"   class="view-icon me-1" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
 
-                            if ($row->inspection_status == OBSERVATION_PENDING &&  isAdmin()) {
-                                $btn .= '<a href="' . admin_url('ohc/monthly-medicine-store/inspection/approval/' . encryptId($row->id)) . '" class="" title="Action"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                            if (($row->inspection_status == OBSERVATION_PENDING &&  isAdmin()) ||($row->inspection_status == OBSERVATION_PENDING &&  CheckUserRole(ROLE_EHS_OFFICER)) ) {
+
+                                $btn .= '<a href="' . admin_url('ohc/monthly-medicine-store/inspection/approval/' . encryptId($row->id)) . '" class="me-1" title="Action"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
 
                             $btn .= '<a href="' . admin_url('ohc/monthly-medicine-store/inspection/exportViewpdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
@@ -171,40 +172,41 @@ class MonthlyMedicineStoreController extends Controller
             $files = $this->signature->requestorsignatureUpload($inspection_type, $inspection_details->id);
 
             $ehsOfficer = GetEHSOfficer();
-            $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
-            $mailsubject = 'OHC';
-            $notificationData = array(
-                'notification_type' => SAFETY_INSPECTION,
-                'module_type' => 1,
-                'notification_message' => $mailsubject,
-                'mobile_notification' => json_encode(array(
-                    'title' => $mailsubject,
-                    'message' => "Monthly Medicine Store inspection Has been Created",
-                    'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
-                    'id' => $inspection_details->id,
-                    'module' => 1,
-                )),
-                'web_link' =>  admin_url('ohc/monthly-medicine-store/inspection/view/' . encryptId($inspection_details->id)),
-                'assigned_user' => array_to_string($ehsOfficers),
-                'created_by' => Auth::id(),
-            );
-            notificationSave($notificationData);
-
-            $title = 'Monthly Medicine Store Observation has been Created';
-            foreach ($ehsOfficers as $user) {
-                $email_id = getUseremail($user);
-                $url = admin_url('ohc/monthly-medicine-store/inspection/approval/' . encryptId($inspection_details->id));
-                $details = array(
-                    'safety_type' => 'Monthly Medicine Store',
-                    'email' => $email_id,
-                    'mail_subject' => $mailsubject,
-                    'title' => $title,
-                    'url' => $url,
-                    'data' => $inspection_details
+            if (!empty($ehsOfficer)) {
+                $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
+                $mailsubject = 'Monthly OHC Store Medicine Inspection Checklist';
+                $notificationData = array(
+                    'notification_type' => OHC_INSPECTION,
+                    'module_type' => 1,
+                    'notification_message' => $mailsubject,
+                    'mobile_notification' => json_encode(array(
+                        'title' => $mailsubject,
+                        'message' => "Monthly Medicine Store inspection Has been Created",
+                        'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
+                        'id' => $inspection_details->id,
+                        'module' => 1,
+                    )),
+                    'web_link' =>  admin_url('ohc/monthly-medicine-store/inspection/view/' . encryptId($inspection_details->id)),
+                    'assigned_user' => array_to_string($ehsOfficers),
+                    'created_by' => Auth::id(),
                 );
-                Mail::to($email_id)->queue(new SafetyInspection($details));
-            }
+                notificationSave($notificationData);
 
+                $title = 'Monthly Medicine Store Observation has been Created';
+                foreach ($ehsOfficers as $user) {
+                    $email_id = getUseremail($user);
+                    $url = admin_url('ohc/monthly-medicine-store/inspection/approval/' . encryptId($inspection_details->id));
+                    $details = array(
+                        'safety_type' => 'Monthly Medicine Store',
+                        'email' => $email_id,
+                        'mail_subject' => $mailsubject,
+                        'title' => $title,
+                        'url' => $url,
+                        'data' => $inspection_details
+                    );
+                    Mail::to($email_id)->queue(new SafetyInspection($details));
+                }
+            }
 
             Session::flash('success', 'Your data has been added successfully');
             return redirect(admin_url('ohc/monthly-medicine-store/inspection/list'));
@@ -377,9 +379,9 @@ class MonthlyMedicineStoreController extends Controller
                 $to_status = OBSERVATION_REJECTED;
             }
             $web_link =   admin_url('ohc/monthly-medicine-store/inspection/view/' . encryptId($inspection_details->id));
-            $mailsubject = 'OHC';
+            $mailsubject = 'Monthly OHC Store Medicine Inspection Checklist';
             $notificationData = array(
-                'notification_type' => SAFETY_INSPECTION,
+                'notification_type' => OHC_INSPECTION,
                 'module_type' => 1,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
@@ -635,7 +637,7 @@ class MonthlyMedicineStoreController extends Controller
                     ]);
                 }
 
-                $sheet->mergeCells("G{$currentRow}:M" . ($currentRow + 2));
+                $sheet->mergeCells("G{$currentRow}:N" . ($currentRow + 2));
                 $sheet->setCellValue("G{$currentRow}", "Monthly OHC Store Medicine Inspection Checklist PN International Pvt.Ltd");
                 $sheet->getStyle("G{$currentRow}")->applyFromArray([
                     'font' => ['bold' => true, 'size' => 14],

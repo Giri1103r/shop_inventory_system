@@ -76,11 +76,11 @@ class FirstAidRecordController extends Controller
                         })
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            $btn = '<a href="' . admin_url('ohc/first-aid-record/view/' . encryptId($row->id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
-                            $btn .= '<a href="' . admin_url('ohc/first-aid-record/generalpdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
+                            $btn = '<a href="' . admin_url('ohc/first-aid-record/view/' . encryptId($row->id)) . '"   class="view-icon me-1"  title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
+                            $btn .= '<a href="' . admin_url('ohc/first-aid-record/generalpdf/' . encryptId($row->id)) . '"  class=" me-1" title="PDF">
                                         <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
                                     </a>';
-                            $btn .= '<a href="' . admin_url('ohc/first-aid-record/generalexcel/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
+                            $btn .= '<a href="' . admin_url('ohc/first-aid-record/generalexcel/' . encryptId($row->id)) . '"  class=" me-1" title="PDF">
                                         <i class="fas fa-file-excel" style="color: #1D6F42;" aria-hidden="true"></i>
                                     </a>';
                             return $btn;
@@ -341,6 +341,7 @@ class FirstAidRecordController extends Controller
                     $sheet->fromArray([
                         $srNo,
                         $month,
+
                         getDepartment($details->department),
                         getUnitname($details->unit),
                         $details->first_aid_station_number ?? '-',
@@ -404,7 +405,6 @@ class FirstAidRecordController extends Controller
 
             $allData = $this->first_aid_details->exportdata();
             $document_no = $this->document_reference->selectUsingName('FirstAidRecord');
-
 
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');

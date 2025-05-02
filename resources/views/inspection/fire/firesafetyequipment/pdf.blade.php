@@ -198,11 +198,11 @@
 
                 @foreach ($group as $details)
                     <tr>
-                        <td colspan="2" style="border: 1px solid black; padding: 8px;">{{ $details->sr_no }}</td>
+                        <td colspan="2" style="border: 1px solid black; padding: 8px;">{{ $loop->iteration }}</td>
                         <td colspan="2" style="border: 1px solid black; padding: 8px;">{{ $details->name_of_fire_safety }}</td>
                         <td colspan="2" style="border: 1px solid black; padding: 8px;">{{ $details->resource_code }}</td>
                         <td colspan="2" style="border: 1px solid black; padding: 8px;">{{ $details->series_code }}</td>
-                        <td colspan="2" style="border: 1px solid black; padding: 8px;">{{ $details->unit_name }}</td>
+                        <td colspan="2" style="border: 1px solid black; padding: 8px;">{{ getUnitname($details->unit_id) }}</td>
                         <td colspan="2" style="border: 1px solid black; padding: 8px;">{{ $details->allotted_series_code }}</td>
                         <td colspan="2" style="border: 1px solid black; padding: 8px;">{{ $details->total_allotted_code }}</td>
                         <td colspan="2" style="border: 1px solid black; padding: 8px;">{{ $details->remark }}</td>

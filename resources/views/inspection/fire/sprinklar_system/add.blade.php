@@ -432,6 +432,15 @@
                         forklift_type: {
                             required: true,
                         },
+                        "department[1]": {
+                            required: true,
+                        },
+                        "resource_code[1]":{
+                            required: true,
+                        },
+                        "quantity[1]":{
+                            required:true,
+                        },
                         "drain_condition[1]": {
                             required: true,
                             uniqueItemCode: true,
@@ -501,8 +510,14 @@
                         frequency_id: {
                             required: "Frequency is required",
                         },
+                        "department[1]": {
+                            required: "Please add the Department",
+                        },
                         "resource_code[1]": {
                             required: "Please add the resource code",
+                        },
+                        "quantity[1]": {
+                            required: "Please add the Quantity",
                         },
                         "water_leakage[1]": {
                             required: 'Please select the water leakage status',
@@ -605,7 +620,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.sr_no') }}</label>
-                                                        <input type="text" name="sr_no[${form_set_count}]" id = "sr_no"
+                                                        <input type="text" name="sr_no[${form_set_count}]" id = "sr_no-${form_set_count}"
                                                             class="form-control"
                                                             value="{{ FireSequence(SPRINKLAR_SYSTEM_INSPECTION) }}"
                                                             readonly>
@@ -620,7 +635,7 @@
                                                                     class=" form-control single-select"
                                                                     style="width: 100%">
                                                                     <option value="">Select Department</option>
-                                                                    
+
                                                                 </select>
                                                             </div>
                                                         </div>
@@ -629,14 +644,14 @@
                                                         <label
                                                             class="form-label require">{{ __('inspection.resource_code') }}</label>
                                                         <input type="text" name="resource_code[${form_set_count}]"
-                                                            id = "resource_code" class="form-control" value="">
+                                                            id = "resource_code-${form_set_count}" class="form-control" value="">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.quantity') }}</label>
-                                                        <input type="number" name="quantity[${form_set_count}]" id = "quantity"
+                                                        <input type="number" name="quantity[${form_set_count}]" id = "quantity-${form_set_count}"
                                                             class="form-control" value="">
                                                     </div>
                                                 </div>
@@ -731,7 +746,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.remarks') }}</label>
-                                                        <textarea name="remarks[${form_set_count}]" id="remarks" class="form-control" style="resize: none;"></textarea>
+                                                        <textarea name="remarks[${form_set_count}]" id="remarks-${form_set_count}" class="form-control" style="resize: none;"></textarea>
 
                                                     </div>
                                                 </div>

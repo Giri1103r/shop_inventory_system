@@ -201,6 +201,11 @@ class HooterInspection extends Model
             });
         }
 
+        if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_OFFICER) || CheckUserRole(ROLE_L1_MANAGER) || CheckUserRole(ROLE_L2_MANAGER)) {
+        } else if (CheckUserRole(ROLE_FIRE_ASSOCIATES)) {
+            $query->where('inspection_fire_hooter.created_by', Auth::id());
+        }
+
         if ($request->has('inspection_date') && $request->inspection_date) {
 
             $formattedDate = DBdateformat($request->inspection_date);

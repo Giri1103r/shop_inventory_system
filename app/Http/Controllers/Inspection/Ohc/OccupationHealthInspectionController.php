@@ -1022,6 +1022,15 @@ class OccupationHealthInspectionController extends Controller
                         'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                     ]);
                 }
+                else{
+                    $sheet->setCellValue("G" . ($row + 3), "Inpection Yet Start " );
+                    $sheet->mergeCells("G" . ($row + 3) . ":L" . ($row + 3));
+
+                    $sheet->getStyle("G$row:L" . ($row + 3))->applyFromArray([
+                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                    ]);
+                }
 
                 if (file_exists($ApprovedSignature)) {
                     $sheet->mergeCells("M$row:S" . ($row + 2));
@@ -1038,6 +1047,14 @@ class OccupationHealthInspectionController extends Controller
                     $sheet->getRowDimension($row + 2)->setRowHeight(25);
                     // Label + Name
                     $sheet->setCellValue("M" . ($row + 3), "Approved By: " . getUserName($occupational_health_center->approved_by));
+                    $sheet->mergeCells("M" . ($row + 3) . ":S" . ($row + 3));
+
+                    $sheet->getStyle("M$row:S" . ($row + 3))->applyFromArray([
+                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                    ]);
+                }else{
+                    $sheet->setCellValue("M" . ($row + 3), "Inpection Yet Start " );
                     $sheet->mergeCells("M" . ($row + 3) . ":S" . ($row + 3));
 
                     $sheet->getStyle("M$row:S" . ($row + 3))->applyFromArray([

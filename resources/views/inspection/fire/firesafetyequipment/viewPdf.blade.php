@@ -209,7 +209,7 @@
         <tbody>
             @foreach ($fire_safety_equipment as $details)
                 <tr>
-                    <td colspan="2" style="border: 1px solid black; padding: 8px;">{{ $details->sr_no }}</td>
+                    <td colspan="2" style="border: 1px solid black; padding: 8px;">{{ $loop->iteration }}</td>
                     <td colspan="2" style="border: 1px solid black; padding: 8px;">{{ $details->name_of_fire_safety }}</td>
                     <td colspan="2" style="border: 1px solid black; padding: 8px;">{{ $details->resource_code }}</td>
                     <td colspan="2" style="border: 1px solid black; padding: 8px;">{{ $details->series_code }}</td>

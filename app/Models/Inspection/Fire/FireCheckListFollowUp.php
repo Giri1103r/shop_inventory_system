@@ -52,19 +52,17 @@ class FireCheckListFollowUp extends Model
                 $query->orWhereRaw('revision_data LIKE "%' . $search . '%"');
             });
         }
+        if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_OFFICER) || CheckUserRole(ROLE_L1_MANAGER) || CheckUserRole(ROLE_L2_MANAGER)) {
+        } else if (CheckUserRole(ROLE_FIRE_ASSOCIATES)) {
+            $query->where('inspection_fire_detector.created_by', Auth::id());
+        }
+        if (isset($request->observation_id) && $request->observation_id) {
+            $query = $query->where('inspection_fire_checklist_follow.observation_id',  $request->observation_id );
+        }
 
-        if (isset($request->document_number) && $request->document_number) {
-            $query = $query->where('inspection_fire_checklist_follow.document_number', 'LIKE', '%' . $request->document_number . '%');
-        }
-        if (isset($request->issue_date) && $request->issue_date) {
-            $query = $query->where('inspection_fire_checklist_follow.issue_date', 'LIKE', '%' . $request->issue_date . '%');
-        }
-        if (isset($request->rev_date) && $request->rev_date) {
-            $query = $query->where('inspection_fire_checklist_follow.revision_data', 'LIKE', '%' . $request->rev_date . '%');
-        }
 
         if (isset($request->inspection_status) && $request->inspection_status) {
-            $query = $query->where('inspection_fire_checklist_follow.inspection_status', decryptId($request->inspection_status));
+            $query = $query->where('inspection_fire_observation.observation_status', decryptId($request->inspection_status));
         }
 
         if (isset($request->order) && count($request->order) > 0) {
@@ -192,20 +190,17 @@ class FireCheckListFollowUp extends Model
             });
         }
 
-        if (isset($request->document_number) && $request->document_number) {
-            $query = $query->where('inspection_fire_checklist_follow.document_number', 'LIKE', '%' . $request->document_number . '%');
-        }
-        if (isset($request->issue_date) && $request->issue_date) {
-            $query = $query->where('inspection_fire_checklist_follow.issue_date', 'LIKE', '%' . $request->issue_date . '%');
-        }
-        if (isset($request->rev_date) && $request->rev_date) {
-            $query = $query->where('inspection_fire_checklist_follow.revision_data', 'LIKE', '%' . $request->rev_date . '%');
+        if (isset($request->observation_id) && $request->observation_id) {
+            $query = $query->where('inspection_fire_checklist_follow.observation_id',  $request->observation_id );
         }
 
+
+      
+
         if (isset($request->inspection_status) && $request->inspection_status) {
-            $query = $query->where('inspection_fire_checklist_follow.inspection_status', decryptId($request->inspection_status));
+            $query = $query->where('inspection_fire_observation.observation_status', decryptId($request->inspection_status));
         }
-        $query->orderBy('inspection_fire_checklist_follow.id', 'DESC'); 
+        $query->orderBy('inspection_fire_checklist_follow.id', 'DESC');
 
         return  $query->get();
     }

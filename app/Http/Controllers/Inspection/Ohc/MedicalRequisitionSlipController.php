@@ -150,7 +150,7 @@ class MedicalRequisitionSlipController extends Controller
 
                     return $datatables;
                 } catch (Exception $ex) {
-                     dd($ex);
+                     report($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }
@@ -995,7 +995,7 @@ PN INTERNATIONAL PVT. LTD.");
             $mpdf->WriteHTML($html);
 
             $filename = "Medicine Requisition Slip Floor.pdf";
-            $mpdf->Output($filename, 'i');
+            $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 
              report($ex);

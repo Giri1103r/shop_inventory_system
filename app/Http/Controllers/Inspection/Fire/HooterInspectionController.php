@@ -286,7 +286,7 @@ class HooterInspectionController extends Controller
 
             $ehsOfficer = GetEHSOfficer();
             $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
-            $mailsubject = 'FIRE HOOTER INSPECTION';
+            $mailsubject = 'Fire Hooter Inspection';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
                 'module_type' => 3,
@@ -364,7 +364,6 @@ class HooterInspectionController extends Controller
             return view('inspection.fire.hooter_inspection.view', $data);
         } catch (Exception $ex) {
             report($ex);
-            report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('fire/hooter-inspection/list'));
         }
@@ -418,7 +417,7 @@ class HooterInspectionController extends Controller
             $userIds = [
                 'users' => $inspection_details->created_by,
             ];
-            $mailsubject = 'FIRE HOOTER INSPECTION';
+            $mailsubject = 'Fire Hooter Inspection';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
                 'module_type' => 3,
@@ -463,7 +462,6 @@ class HooterInspectionController extends Controller
             return redirect(admin_url('fire/hooter-inspection/list'));
         } catch (Exception $ex) {
             report($ex);
-            report($ex);
             Session::flash('error', 'Something Went Wrong!');
             return redirect(admin_url('fire/hooter-inspection/list'));
         }
@@ -480,7 +478,7 @@ class HooterInspectionController extends Controller
             $userIds = [
                 'users' => $ehsOfficers,
             ];
-            $mailsubject = 'FIRE HOOTER INSPECTION';
+            $mailsubject = 'Fire Hooter Inspection';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
                 'module_type' => 3,
@@ -552,7 +550,7 @@ class HooterInspectionController extends Controller
                 $to_status = EHS_OFFICER_REJECTED;
             }
 
-            $mailsubject = 'FIRE HOOTER INSPECTION';
+            $mailsubject = 'Fire Hooter Inspection';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
                 'module_type' => 3,
@@ -628,7 +626,7 @@ class HooterInspectionController extends Controller
             }
 
 
-            $mailsubject = 'FIRE HOOTER INSPECTION';
+            $mailsubject = 'Fire Hooter Inspection';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
                 'module_type' => 3,
@@ -674,7 +672,6 @@ class HooterInspectionController extends Controller
             return redirect(admin_url('fire/hooter-inspection/list'));
         } catch (Exception $ex) {
             report($ex);
-            report($ex);
             Session::flash('error', 'Something Went wrong!');
             return redirect(admin_url('fire/hooter-inspection/list'));
         }
@@ -704,7 +701,7 @@ class HooterInspectionController extends Controller
             // dd($users);
 
 
-            $mailsubject = 'FIRE HOOTER INSPECTION';
+            $mailsubject = 'Fire Hooter Inspection';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
                 'module_type' => 3,
@@ -796,7 +793,7 @@ class HooterInspectionController extends Controller
                 ]);
 
                 $sheet->mergeCells("C{$titleRow}:I" . ($titleRow + 2));
-                $sheet->setCellValue("C{$titleRow}", "PA SYSTEM INSPECTION CHECKLIST PN INTERNATIONAL PVT. LTD.");
+                $sheet->setCellValue("C{$titleRow}", "HOOTER  INSPECTION CHECKLIST PN INTERNATIONAL PVT. LTD.");
 
                 $sheet->getStyle("C{$titleRow}:I" . ($titleRow + 2))->applyFromArray([
                     'font' => ['bold' => true, 'size' => 14],

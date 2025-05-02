@@ -92,8 +92,8 @@ class MedicineRequistionSlipfloordetails extends Model
         if (isset($request->department_id) && $request->department_id) {
             $query = $query->where('inspection_ohc_medicine_requisition_slip_floor_details.department', decryptId($request->department_id));
         }
-        if (isset($request->status) && $request->status) {
-            $query = $query->where('inspection_ohc_medicine_requisition_slip_floor_details.approve_status',  decryptId($request->status));
+        if (isset($request->approve_status) && $request->approve_status) {
+            $query = $query->where('inspection_ohc_medicine_requisition_slip_floor_details.approve_status',  decryptId($request->approve_status));
         }
 
         $user = Auth::user();
@@ -160,7 +160,7 @@ class MedicineRequistionSlipfloordetails extends Model
 
         $insert_array = [
 
-           
+
             'department' => decryptId($request->department_id),
             'unit' => decryptId($request->unit_id),
             'date' => !empty($request->date) ? DBdateformat($request->date) : null,
@@ -228,8 +228,8 @@ class MedicineRequistionSlipfloordetails extends Model
         if (isset($request->department_id) && $request->department_id) {
             $query = $query->where('inspection_ohc_medicine_requisition_slip_floor_details.department', decryptId($request->department_id));
         }
-        if (isset($request->status) && $request->status) {
-            $query = $query->where('inspection_ohc_medicine_requisition_slip_floor_details.approve_status',  decryptId($request->status));
+        if (isset($request->approve_status) && $request->approve_status) {
+            $query = $query->where('inspection_ohc_medicine_requisition_slip_floor_details.approve_status',  decryptId($request->approve_status));
         }
 
         if (isset($request->order) && count($request->order) > 0) {

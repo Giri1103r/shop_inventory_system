@@ -92,7 +92,7 @@
                                             </div>
                                         </div>
 
-                                        <div class="col-md-3 mb-3 form-input">
+                                        <div class="col-md-4 mb-3 form-input">
                                             <label for="inspection_status"
                                                 class="form-label ">{{ __('common.status') }}</label>
                                             <select name="inspection_status" id="inspection_status" style="width: 100%"
@@ -158,6 +158,14 @@
                 firstTh.removeClass('sorting_asc');
             });
 
+            flatpickr("#next_due", {
+                dateFormat: "Y-m-d",
+            });
+            flatpickr("#inspection_date", {
+                dateFormat: "Y-m-d",
+
+            });
+
             $(function() {
                 /* Datatable */
                 var table = $('.datatable-list').DataTable({
@@ -197,6 +205,8 @@
                             d.shift = $('#shift').val();
                             d.unit = $('#unit').val();
                             d.frequency = $('#frequency').val();
+                            d.inspection_status = $('#inspection_status').val();
+
                         },
                         error: function(xhr, error, code) {
                             if (xhr.status === 419) {

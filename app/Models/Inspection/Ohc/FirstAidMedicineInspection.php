@@ -60,7 +60,7 @@ class FirstAidMedicineInspection extends Model
 
         if ($request->has('status') && $request->status) {
 
-            $query = $query->where('inspection_ohc_first_aid_inspection.status',  decryptId($request->status));
+            $query = $query->where('inspection_ohc_first_aid_inspection.inspection_status',  decryptId($request->status));
         }
 
 
@@ -138,8 +138,8 @@ class FirstAidMedicineInspection extends Model
             $query = $query->whereDate('inspection_ohc_first_aid_inspection.next_due', $formattedDate);
         }
 
-        if (isset($request->inspection_status) && $request->inspection_status) {
-            $query = $query->where('inspection_ohc_first_aid_inspection.inspection_status', decryptId($request->inspection_status));
+        if (isset($request->status) && $request->status) {
+            $query = $query->where('inspection_ohc_first_aid_inspection.inspection_status', decryptId($request->status));
         }
         $query->orderBy('id', 'DESC');
 

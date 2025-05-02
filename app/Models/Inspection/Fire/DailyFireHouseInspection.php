@@ -39,25 +39,23 @@ class DailyFireHouseInspection extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_daily_fire_pump_checklist.*', 'masters_unit.unit_name', 'inspection_shift_option.shift')->leftjoin('masters_unit', 'masters_unit.id', '=', 'inspection_daily_fire_pump_checklist.unit_id')->leftjoin('inspection_shift_option', 'inspection_shift_option.id', '=', 'inspection_daily_fire_pump_checklist.shift_id');
+        $query = $this->select('inspection_daily_fire_pump_checklist.*', 'inspection_daily_fire_pump_checklist.id as fire_id', 'masters_unit.unit_name', 'inspection_shift_option.shift')->leftjoin('masters_unit', 'masters_unit.id', '=', 'inspection_daily_fire_pump_checklist.unit_id')->leftjoin('inspection_shift_option', 'inspection_shift_option.id', '=', 'inspection_daily_fire_pump_checklist.shift_id');
         $org_total =  $query;
         $org_total_counts = $org_total->count();
 
         if (isset($request->search) && isset($request->search['value']) && $request->search['value'] != '') {
             $search = $request->search['value'];
             $query = $query->where(function ($query) use ($search) {
-                $query->orWhereRaw('doc_no LIKE "%' . $search . '%"');
-                $query->orWhereRaw('issue_date LIKE "%' . $search . '%"');
-                $query->orWhereRaw('rev.dt LIKE "%' . $search . '%"');
+                $query->orWhereRaw('shift LIKE "%' . $search . '%"');
+                $query->orWhereRaw('unit_name LIKE "%' . $search . '%"');
             });
         }
 
-
-        if (isset($request->inspection_id) && $request->inspection_id) {
-            $query = $query->where('inspection_daily_fire_pump_checklist.inspection_id', 'LIKE', '%' . $request->inspection_id . '%');
+        if (isset($request->unit_id) && $request->unit_id) {
+            $query = $query->where('inspection_daily_fire_pump_checklist.unit_id', 'LIKE', '%' . decryptId($request->unit_id) . '%');
         }
-        if (isset($request->status) && $request->status) {
-            $query = $query->where('inspection_daily_fire_pump_checklist.status', decryptId($request->status));
+        if (isset($request->shift_id) && $request->shift_id) {
+            $query = $query->where('inspection_daily_fire_pump_checklist.shift_id', decryptId($request->shift_id));
         }
         $query->orderBy('id', 'desc');
         $data_count = $query;
@@ -84,13 +82,14 @@ class DailyFireHouseInspection extends Model
         $request = request();
         $structuredChecklist = [];
 
+
         foreach ($request->checklist as $subTypeId => $checklists) {
             foreach ($checklists as $checklistId => $response) {
                 $structuredChecklist[$checklistId] = [
                     'response' => $response,
                     'pump_no' => $request->pump_no[$checklistId] ?? 'N/A',
                     'remarks' => $request->remarks[$checklistId] ?? '',
-                    'sub_type_id' => $subTypeId
+                    'sub_type_id' => $checklistId
                 ];
             }
         }
@@ -112,7 +111,7 @@ class DailyFireHouseInspection extends Model
 
     public function selectOne($id)
     {
-        $data =   $this->select('inspection_daily_fire_pump_checklist.*', 'masters_unit.unit_name', 'inspection_fire_signatureupload.file_path','inspection_static_docno.doc_no as document_no','inspection_static_docno.issue_date as issuedate','inspection_static_docno.rev_dt as rev_date')
+        $data =   $this->select('inspection_daily_fire_pump_checklist.*' , 'masters_unit.unit_name', 'inspection_fire_signatureupload.file_path','inspection_static_docno.doc_no as document_no','inspection_static_docno.issue_date as issuedate','inspection_static_docno.rev_dt as rev_date')
         ->leftjoin('masters_unit', 'masters_unit.id', '=', 'inspection_daily_fire_pump_checklist.unit_id')
         ->leftjoin('inspection_fire_signatureupload', 'inspection_daily_fire_pump_checklist.id', '=', 'inspection_fire_signatureupload.inspection_id')
         ->leftjoin('inspection_static_docno', 'inspection_static_docno.id', '=', 'inspection_daily_fire_pump_checklist.document_reference_id')
@@ -121,32 +120,30 @@ class DailyFireHouseInspection extends Model
         return $data;
     }
 
+    public function selectDataForPdf($id){
+        return $this->where('id', $id)->first();
+    }
     public function exportdata()
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_daily_fire_pump_checklist.*');
+        $query = $this->select('inspection_daily_fire_pump_checklist.*', 'masters_unit.unit_name', 'inspection_shift_option.shift')->leftjoin('masters_unit', 'masters_unit.id', '=', 'inspection_daily_fire_pump_checklist.unit_id')->leftjoin('inspection_shift_option', 'inspection_shift_option.id', '=', 'inspection_daily_fire_pump_checklist.shift_id');
+
         if (isset($request->search) && isset($request->search['value']) && $request->search['value'] != '') {
             $search = $request->search['value'];
             $query = $query->where(function ($query) use ($search) {
-                $query->orWhereRaw('doc_no LIKE "%' . $search . '%"');
-                $query->orWhereRaw('issue_date LIKE "%' . $search . '%"');
-                $query->orWhereRaw('revision_data LIKE "%' . $search . '%"');
+                $query->orWhereRaw('shift LIKE "%' . $search . '%"');
+                $query->orWhereRaw('unit_name LIKE "%' . $search . '%"');
             });
         }
 
-        if (isset($request->doc_no) && $request->doc_no) {
-            $query = $query->where('inspection_daily_fire_pump_checklist.doc_no', 'LIKE', '%' . $request->doc_no . '%');
+        if (isset($request->unit_id) && $request->unit_id) {
+            $query = $query->where('inspection_daily_fire_pump_checklist.unit_id', 'LIKE', '%' . decryptId($request->unit_id) . '%');
         }
-        if (isset($request->issue_date) && $request->issue_date) {
-            $query = $query->whereDate('inspection_daily_fire_pump_checklist.issue_date', '=', DBdateformat($request->issue_date));
+        if (isset($request->shift_id) && $request->shift_id) {
+            $query = $query->where('inspection_daily_fire_pump_checklist.shift_id', decryptId($request->shift_id));
         }
-        if (isset($request->rev_date) && $request->rev_date) {
-            $query = $query->where('inspection_daily_fire_pump_checklist.revision_data', 'LIKE', '%' . $request->rev_date . '%');
-        }
-        if (isset($request->inspection_status) && $request->inspection_status) {
-            $query = $query->where('inspection_daily_fire_pump_checklist.inspection_status', decryptId($request->inspection_status));
-        }
+
         $query->orderBy('id', 'DESC');
 
         return  $query->get();
