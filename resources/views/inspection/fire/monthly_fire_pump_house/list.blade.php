@@ -29,20 +29,7 @@
                                                     class="form-control">
                                             </div>
                                         </div>
-                                        {{-- <div class="col-md-4 mb-2">
-                                            <div class="form-group form-input">
-                                                <label class="form-label require">{{ __('inspection.location') }}</label>
-                                                <select name="location" id="location" class=" form-control single-select"
-                                                    style="width: 100%">
-                                                    <option value="">Select {{ __('inspection.location') }}
-                                                    </option>
-                                                    @foreach ($locations as $location)
-                                                        <option value="{{ encryptId($location->id) }}">
-                                                            {{ $location->location_name }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                        </div> --}}
+
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
                                                 <label class="form-label require">Shift</label>
@@ -70,19 +57,7 @@
                                                 </select>
                                             </div>
                                         </div>
-                                        {{-- <div class="col-md-4 mb-2">
-                                            <div class="form-group form-input">
-                                                <label class="form-label require">{{ __('inspection.frequency') }}</label>
-                                                <select name="frequency" id="frequency" class=" form-control single-select"
-                                                    style="width: 100%">
-                                                    <option value="">Select Frequency</option>
-                                                    @foreach ($frequency as $frequency)
-                                                        <option value="{{ encryptId($frequency->id) }}">
-                                                            {{ $frequency->frequency_name }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                        </div> --}}
+
 
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="inspection_status"
@@ -146,7 +121,9 @@
                 var firstTh = $('.datatable-list thead th:first');
                 firstTh.removeClass('sorting_asc');
             });
-
+            flatpickr("#inspection_date", {
+                dateFormat: "d-m-Y",
+            });
             $(function() {
                 /* Datatable */
                 var table = $('.datatable-list').DataTable({
@@ -183,6 +160,8 @@
                             d.inspection_date = $('#inspection_date').val();
                             d.shift = $('#shift').val();
                             d.unit = $('#unit').val();
+                          
+                            d.inspection_status = $('#inspection_status').val();
                         },
                         error: function(xhr, error, code) {
                             if (xhr.status === 419) {

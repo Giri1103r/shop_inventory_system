@@ -202,7 +202,7 @@ class MonthlyFirePumpHouseController extends Controller
 
             $ehsOfficer = GetEHSOfficer();
             $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
-            $mailsubject = 'FIRE INSPECTION';
+            $mailsubject = 'Monthly Fire Pump House Inspection';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
                 'module_type' => 3,
@@ -261,7 +261,7 @@ class MonthlyFirePumpHouseController extends Controller
         try {
             $id = decryptId($request->id);
             $inspection_details = $this->monthlyfirepump->selectOne($id);
-            $status_log = $this->statusLog->selectOne($id, SAFETY_GALLERY_INSPECTION);
+            $status_log = $this->statusLog->selectOne($id, MONTHLY_FIRE_PUMP);
             $document_no = $this->document_reference->selectOne($inspection_details->document_reference_id);
             $data = [
                 'inspection_details' => $inspection_details,
@@ -314,7 +314,7 @@ class MonthlyFirePumpHouseController extends Controller
             $userIds = [
                 'users' => $inspection_details->created_by,
             ];
-            $mailsubject = 'FIRE INSPECTION';
+            $mailsubject = 'Monthly Fire Pump House Inspection';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
                 'module_type' => 3,
@@ -375,7 +375,7 @@ class MonthlyFirePumpHouseController extends Controller
             $userIds = [
                 'users' => $ehsOfficers,
             ];
-            $mailsubject = 'Fire Inspection';
+            $mailsubject = 'Monthly Fire Pump House Inspection';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
                 'module_type' => 3,
@@ -447,7 +447,7 @@ class MonthlyFirePumpHouseController extends Controller
                 $to_status = EHS_OFFICER_REJECTED;
             }
 
-            $mailsubject = 'FIRE INSPECTION';
+            $mailsubject = 'Monthly Fire Pump House Inspection';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
                 'module_type' => 3,
@@ -517,11 +517,14 @@ class MonthlyFirePumpHouseController extends Controller
             } else {
                 $message = 'Level One Manager Rejected the CAPA Action';
                 $web_link =   admin_url('fire/monthly-fire-pump-house-inspection/verification/' . encryptId($inspection_details->id) . '/capa');
-                $users = $inspection_details->created_by;
+                $users = [
+                    'users' => $inspection_details->created_by,
+                ];
+
                 $to_status = L1_MANAGER_REJECTED;
             }
 
-            $mailsubject = 'FIRE INSPECTION';
+            $mailsubject = 'Monthly Fire Pump House Inspection';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
                 'module_type' => 3,
@@ -593,7 +596,7 @@ class MonthlyFirePumpHouseController extends Controller
                 $users = array_merge([$inspection_details->created_by], [$inspection_details->verified_by], [$inspection_details->l1_manager_verified_by]);
             }
 
-            $mailsubject = 'FIRE INSPECTION';
+            $mailsubject = 'Monthly Fire Pump House Inspection';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
                 'module_type' => 3,

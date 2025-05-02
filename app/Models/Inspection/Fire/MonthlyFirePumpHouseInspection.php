@@ -81,8 +81,8 @@ class MonthlyFirePumpHouseInspection extends Model
         if (isset($request->shift) && $request->shift) {
             $query = $query->where('inspection_fire_monthly_fire_pumphouse.shift', 'LIKE', '%' . decryptId($request->shift) . '%');
         }
-        if (isset($request->date_of_inspection) && $request->date_of_inspection) {
-            $query = $query->where('inspection_fire_monthly_fire_pumphouse.date_of_inspection', 'LIKE', '%' . DBdateformat($request->date_of_inspection) . '%');
+        if (isset($request->inspection_date) && $request->inspection_date) {
+            $query = $query->where('inspection_fire_monthly_fire_pumphouse.date_of_inspection', 'LIKE', '%' . DBdateformat($request->inspection_date) . '%');
         }
         if (isset($request->next_due) && $request->next_due) {
             $query = $query->where('inspection_fire_monthly_fire_pumphouse.next_due', 'LIKE', '%' . DBdateformat($request->next_due) . '%');
@@ -312,11 +312,16 @@ class MonthlyFirePumpHouseInspection extends Model
         if (isset($request->shift) && $request->shift) {
             $query = $query->where('inspection_fire_monthly_fire_pumphouse.shift', 'LIKE', '%' . decryptId($request->shift) . '%');
         }
-        if (isset($request->date_of_inspection) && $request->date_of_inspection) {
-            $query = $query->where('inspection_fire_monthly_fire_pumphouse.date_of_inspection', 'LIKE', '%' . DBdateformat($request->date_of_inspection) . '%');
+        if (isset($request->inspection_date) && $request->inspection_date) {
+            $query = $query->where('inspection_fire_monthly_fire_pumphouse.date_of_inspection', 'LIKE', '%' . DBdateformat($request->inspection_date) . '%');
         }
         if (isset($request->next_due) && $request->next_due) {
             $query = $query->where('inspection_fire_monthly_fire_pumphouse.next_due', 'LIKE', '%' . DBdateformat($request->next_due) . '%');
+        }
+
+
+        if (isset($request->inspection_status) && $request->inspection_status) {
+            $query = $query->where('inspection_fire_monthly_fire_pumphouse.inspection_status', decryptId($request->inspection_status));
         }
 
         $query->orderBy('inspection_fire_monthly_fire_pumphouse.id', 'DESC');
