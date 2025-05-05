@@ -72,7 +72,7 @@ class EquipmentController extends Controller
 
         $data = array();
 
-        return view('inspection.safety.master.equipment.list', $data);
+        return view('inspection.Safety.master.equipment.list', $data);
     }
 
     public function Add(Request $request)
@@ -80,9 +80,11 @@ class EquipmentController extends Controller
         try {
 
             $data = array();
-            return view('inspection.safety.master.equipment.add', $data);
+            return view('inspection.Safety.master.equipment.add', $data);
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error',  __('common.message_error'));
+            return redirect(admin_url('safety/master/equipment/list'));
         }
     }
 
@@ -124,7 +126,7 @@ class EquipmentController extends Controller
                     'equipment' => $equipment,
                 );
             }
-            return view('inspection.safety.master.equipment.view', $data);
+            return view('inspection.Safety.master.equipment.view', $data);
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error',  __('common.message_error'));
@@ -141,7 +143,7 @@ class EquipmentController extends Controller
             $data = array(
                 'equipment' => $equipment,
             );
-            return view('inspection.safety.master.equipment.edit', $data);
+            return view('inspection.Safety.master.equipment.edit', $data);
         } catch (Exception $error) {
             report($error->getMessage());
             Session::flash('error',  __('common.message_error'));
@@ -240,7 +242,7 @@ class EquipmentController extends Controller
     {
         $data = array();
 
-        return view('inspection.safety.master.equipment.import', $data);
+        return view('inspection.Safety.master.equipment.import', $data);
     }
 
     public function ImportSubmit(Request $request)
@@ -392,7 +394,7 @@ class EquipmentController extends Controller
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $view = view('inspection.safety.master.equipment.pdf', $data);
+            $view = view('inspection.Safety.master.equipment.pdf', $data);
             $html = $view->render();
 
 
