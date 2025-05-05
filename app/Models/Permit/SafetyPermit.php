@@ -22,6 +22,7 @@ class SafetyPermit extends Model
     protected $fillable = [
         'permit_id',
         'date',
+        'to_date',
         'location',
         'time_from',
         'time_to',
@@ -262,6 +263,7 @@ class SafetyPermit extends Model
         $insert_array = array(
             // 'permit_id' => $request->permit_id,
             'date' => DBdateformat($request->date),
+            'to_date' => DBdateformat($request->to_date),
             'time_from' => $request->time_from,
             'time_to' => $request->time_to,
             'unit_id' => decryptId($request->unit_id),
@@ -311,6 +313,7 @@ class SafetyPermit extends Model
         $update_array = [];
         $update_array['permit_id'] = $request->permit_id ?? $safetypermit->permit_id;
         $update_array['date'] = DBdateformat($request->date ?? $safetypermit->date);
+        $update_array['to_date'] = DBdateformat($request->to_date ?? $safetypermit->to_date);
         $update_array['company_id'] =  $company;
         $update_array['time_from'] = $request->time_from ?? $safetypermit->time_from;
         $update_array['time_to'] = $request->time_to ?? $safetypermit->time_to;

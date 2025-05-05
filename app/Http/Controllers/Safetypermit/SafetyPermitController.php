@@ -133,12 +133,17 @@ class SafetyPermitController extends Controller
                         </a>';
                             }
 
-                            $permitDate = date('Y-m-d', strtotime($row->date));
+                            $permitDate = date('Y-m-d', strtotime($row->to_date));
                             $nextDay = date('Y-m-d', strtotime($permitDate . ' +1 day'));
                             $today = date('Y-m-d');
+                            $toTime = Carbon::parse($row->time_to); // Ensure it's a Carbon instance
+                            $currentTime = Carbon::now();
+
                             if ($today == $nextDay) {
-                                if (($row->permit_status == STATUS_PERMIT_EXPIRED)
-                                    && ($row->created_by == Auth::id() || CheckUserRole(ROLE_SUPERADMIN))
+                                if (
+                                    $row->permit_status == STATUS_PERMIT_EXPIRED &&
+                                    $currentTime->lessThanOrEqualTo($toTime) &&
+                                    ($row->created_by == Auth::id() || CheckUserRole(ROLE_SUPERADMIN))
                                 ) {
                                     $btn .= '<a href="' . admin_url('safetypermit/permitExtension/' . encryptId($row->id)) . '"
                                     class="permitExtension" title="' . __('Permit Extension') . '">
@@ -1315,6 +1320,7 @@ class SafetyPermitController extends Controller
                 __("Work Permit No"),
                 __("Unit"),
                 __("Date"),
+                __("To Date"),
                 __("Exact Job Location"),
                 __("From Status"),
                 __("To Status"),
@@ -1330,6 +1336,7 @@ class SafetyPermitController extends Controller
                 $export[] =  $data->permit_id;
                 $export[] = getUnitname($data->unit_id);
                 $export[] = Displaydateformat($data->date);
+                $export[] = Displaydateformat($data->to_date);
                 $export[] = $data->exact_location_job;
                 $export[] =  $data->to_status;
                 $export[] =  $data->status_name;
@@ -1371,6 +1378,7 @@ class SafetyPermitController extends Controller
                 __("Work Permit No"),
                 __("Unit"),
                 __("Date"),
+                __("To Date"),
                 __("Exact Job Location"),
                 __("From Status"),
                 __("To Status"),

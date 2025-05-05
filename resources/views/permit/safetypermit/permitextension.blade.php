@@ -81,7 +81,7 @@
     <script>
         $(document).on('change', '#date', function() {
             const toTime = "{{ $totime }}";
-            const toDate = "{{ $safetypermit->date }}";
+            const toDate = "{{ $safetypermit->to_date }}";
             let selectedDate = $(this).val(); // Get selected date
 
             function formatDate(dateStr) {

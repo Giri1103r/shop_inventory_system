@@ -767,7 +767,7 @@ class CronController extends Controller
             $permits = SafetyPermit::where('trash', 'NO')
                 ->where('permit_status', '!=', STATUS_CLOSED)
                 ->where('permit_status', '!=', STATUS_PERMIT_EXPIRED)
-                ->whereDate('date', Carbon::today())
+                ->whereDate('to_date', Carbon::today())
                 ->where('time_to', '<', $currentTime)
                 ->get();
 
