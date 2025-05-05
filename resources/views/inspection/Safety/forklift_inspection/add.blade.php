@@ -341,9 +341,13 @@
                             // },
                             "observation[1]": {
                                 required: true,
+                                minlength: 3,
+                                maxlength: 100,
                             },
                             "corrective_action[1]": {
                                 required: true,
+                                minlength: 3,
+                                maxlength: 100,
                             },
 
                             "emp_id[1]": {
@@ -359,6 +363,8 @@
                             },
                             "remarks[1]": {
                                 required: true,
+                                minlength: 3,
+                                maxlength: 100,
                             },
                         },
                         messages: {
@@ -390,9 +396,13 @@
                             // },
                             "observation[1]": {
                                 required: "Observation is required",
+                                minlength: "Minimum Characters should be 3",
+                                maxlength: "Maximum Characters should not exceed 100",
                             },
                             "corrective_action[1]": {
                                 required: "Corrective Action and preventive Action is required",
+                                minlength: "Minimum Characters should be 3",
+                                maxlength: "Maximum Characters should not exceed 100",
                             },
                             "emp_id[1]": {
                                 required: "Employee is required",
@@ -407,6 +417,8 @@
                             },
                             "remarks[1]": {
                                 required: "Remarks is required",
+                                minlength: "Minimum Characters should be 3",
+                                maxlength: "Maximum Characters should not exceed 300",
 
                             },
                         },
@@ -616,14 +628,22 @@
                 });
                 $("input[name='observation[" + form_set_current_count + "]']").rules('add', {
                     required: true,
+                    minlength: 3,
+                    maxlength: 100,
                     messages: {
                         required: 'Please Enter the Observation',
+                        minlength: "Minimum Characters should be 3",
+                        maxlength: "Maximum Characters should not exceed 100",
                     }
                 });
                 $("input[name='corrective_action[" + form_set_current_count + "]']").rules('add', {
                     required: true,
+                    minlength: 3,
+                    maxlength: 100,
                     messages: {
                         required: 'Please Enter the Corrective  and Preventive Action',
+                        minlength: "Minimum Characters should be 3",
+                        maxlength: "Maximum Characters should not exceed 100",
                     }
                 });
 
@@ -651,8 +671,12 @@
 
                 $(".remarks").rules('add', {
                     required: true,
+                    minlength: 3,
+                    maxlength: 300,
                     messages: {
                         required: 'Please Enter the Remarks',
+                        minlength: "Minimum Characters should be 3",
+                        maxlength: "Maximum Characters should not exceed 300",
                     }
                 });
 

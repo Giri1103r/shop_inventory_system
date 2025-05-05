@@ -125,6 +125,7 @@ return [
     'previous_month_observation' => 'Previous Month Obervation',
     'current_month_observation' => 'Current Month Obervation',
     'date_of_observation' => 'Observation Date',
+    'month' => 'Month',
 
     //ohc safety petty logbook
     'safety_petty_logbook' => 'Safety Petty Logbook',

@@ -192,7 +192,7 @@
             <tr>
                 <td colspan="4" style="border: 1px solid black; padding: 5px;">
                     <strong>DATE OF INSPECTION :-</strong>
-                    {{ $details->date_of_inspection }}
+                    {{ Displaydateformat($details->date_of_inspection) }}
                 </td>
                 <td colspan="4" style="border: 1px solid black; padding: 5px;">
                     <strong>FIRST-AID BOX No :-</strong>

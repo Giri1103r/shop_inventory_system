@@ -78,7 +78,7 @@ class SafetyWalkObservationController extends Controller
                         })
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            $btn = '<a href="' . admin_url('safety/safety-walk-observation/view/' . encryptId($row->inspection_id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
+                            $btn = '<a href="' . admin_url('safety/safety-walk-observation/view/' . encryptId($row->inspection_id)) . '"   class="view-icon me-1" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
                             $btn .= '<a href="' . admin_url('safety/safety-walk-observation/exportViewPdf/' . encryptId($row->inspection_id)) . '" style="margin-right: 5px;" title="PDF">
                                         <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
                                     </a>';
@@ -86,7 +86,7 @@ class SafetyWalkObservationController extends Controller
                                         <i class="fas fa-file-excel" style="color: #1D6F42;" aria-hidden="true"></i>
                                     </a>';
 
-                            if ($row->observation_status == OBSERVATION_PENDING && (isAdmin())) {
+                            if (($row->observation_status == OBSERVATION_PENDING && (isAdmin())) ||($row->observation_status == OBSERVATION_PENDING && (CheckUserRole(ROLE_EHS_OFFICER)))) {
                                 $btn .= '<a href="' . admin_url('safety/safety-walk-observation/approval/' . encryptId($row->inspection_id)) . '" class="" title="' . __('inspection.approval') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             return $btn;
@@ -231,10 +231,10 @@ class SafetyWalkObservationController extends Controller
 
             $ehsOfficer = GetEHSOfficer();
             $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
-            $mailsubject = 'SAFETY INSPECTION';
+            $mailsubject = 'Safety Walk Observation';
             $notificationData = array(
                 'notification_type' => SAFETY_INSPECTION,
-                'module_type' => 3,
+                'module_type' => 7,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
@@ -243,13 +243,13 @@ class SafetyWalkObservationController extends Controller
                     'id' => $safety_walk_observation->id,
                     'module' => 1,
                 )),
-                'web_link' =>  admin_url('safety/safety-walk-observation/view/' . encryptId($safety_walk_observation->id)),
+                'web_link' =>  admin_url('safety/safety-walk-observation/approval/' . encryptId($safety_walk_observation->id)),
                 'assigned_user' => array_to_string($ehsOfficers),
                 'created_by' => Auth::id(),
             );
             notificationSave($notificationData);
 
-            $title = 'FORKLIFT INSPECTION - Observation has been Created';
+            $title = 'SAFETY INSPECTION - Observation has been Created';
             foreach ($ehsOfficers as $user) {
                 $email_id = getUseremail($user);
                 $url = admin_url('safety/safety-walk-observation/approval/' . encryptId($safety_walk_observation->id));
@@ -267,7 +267,7 @@ class SafetyWalkObservationController extends Controller
             Session::flash('success', 'Safety Walk Observation added successfully!');
             return redirect(admin_url('safety/safety-walk-observation/list'));
         } catch (Exception $ex) {
-            report($ex);
+            dd($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('safety/safety-walk-observation/list'));
         }
@@ -332,17 +332,17 @@ class SafetyWalkObservationController extends Controller
             $ehsOfficer = [$inspection_details->created_by];
 
             if ($status == 1) {
-                $message = 'Safety Walk OBSERVATION APPROVED';
+                $message = 'SAFETY WALK OBSERVATION APPROVED';
                 $to_status = OBSERVATION_APPROVED;
             } else {
-                $message = 'Safety Walk OBSERVATION Rejected';
+                $message = 'SAFETY WALK OBSERVATION REJECTED';
                 $to_status = OBSERVATION_REJECTED;
             }
             $web_link =   admin_url('safety/safety-walk-observation/view/' . encryptId($inspection_details->id));
-            $mailsubject = 'SAFETY INSPECTION';
+            $mailsubject = 'Safety Walk Observation';
             $notificationData = array(
                 'notification_type' => SAFETY_INSPECTION,
-                'module_type' => 3,
+                'module_type' => 7,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
@@ -357,7 +357,7 @@ class SafetyWalkObservationController extends Controller
             );
             notificationSave($notificationData);
 
-            $title = 'FORKLIFT INSPECTION - Observation Status';
+            $title = 'SAFETY INSPECTION - Observation Status';
             $email_id = getUseremail($ehsOfficer);
             $url = admin_url('safety/safety-walk-observation/view/' . encryptId($inspection_details->id));
             $details = array(

@@ -1030,12 +1030,12 @@
             // Set initial state for today
             const currentTime = today.getHours() + ":" + today.getMinutes().toString().padStart(2, "0");
             startTimePicker.set({
-                minTime: currentTime, // Current time
-                maxTime: "18:00", // Until 6:00 PM
+                minTime: currentTime,
+                maxTime: "18:00",
             });
             endTimePicker.set({
-                minTime: currentTime, // Current time
-                maxTime: "18:00", // Until 6:00 PM
+                minTime: currentTime,
+                
             });
 
 

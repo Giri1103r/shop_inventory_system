@@ -46,7 +46,7 @@ class EquipmentController extends Controller
                             return $text;
                         })
                         ->addColumn('created_date', function ($row) {
-                            return Displaydatetimeformat($row->created_at);
+                            return Displaydateformat($row->created_at);
                         })
                         ->addColumn('created_by', function ($row) {
                             return getUsername($row->created_by);
@@ -65,7 +65,7 @@ class EquipmentController extends Controller
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
-                    return response()->json(['status' => 'error', 'msg' => __('administration.please_try_after_some_time')], 406);
+                    return response()->json(['status' => 'error', 'msg' => __('Inspection.please_try_after_some_time')], 406);
                 }
             }
         }
@@ -127,6 +127,8 @@ class EquipmentController extends Controller
             return view('inspection.safety.master.equipment.view', $data);
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error',  __('common.message_error'));
+            return redirect(admin_url('safety/master/equipment/list'));
         }
     }
 
@@ -142,6 +144,8 @@ class EquipmentController extends Controller
             return view('inspection.safety.master.equipment.edit', $data);
         } catch (Exception $error) {
             report($error->getMessage());
+            Session::flash('error',  __('common.message_error'));
+            return redirect(admin_url('safety/master/equipment/list'));
         }
     }
 
@@ -158,7 +162,7 @@ class EquipmentController extends Controller
                 'equipment_name.required' => __('equipment to be taken is required'),
 
             ];
-           
+
             $validator = Validator::make($request->all(), $rules, $messages);
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator)->withInput();
@@ -276,7 +280,7 @@ class EquipmentController extends Controller
                 $user_id = Auth::id();
 
                 $insert_data = array(
-                    'upload_type' => 14,
+                    'upload_type' => 19,
                     'upload_status' => 0,
                     'file_name' => $filenewname,
                     'file_orgname' => $fileName,

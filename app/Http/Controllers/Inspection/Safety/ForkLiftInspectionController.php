@@ -70,7 +70,7 @@ class ForkLiftInspectionController extends Controller
                         })
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            $btn = '<a href="' . admin_url('safety/forklift-inspection/view/' . encryptId($row->inspection_id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
+                            $btn = '<a href="' . admin_url('safety/forklift-inspection/view/' . encryptId($row->inspection_id)) . '"   class="view-icon me-1" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
                             $btn .= '<a href="' . admin_url('safety/forklift-inspection/exportViewPdf/' . encryptId($row->inspection_id)) . '" style="margin-right: 5px;" title="PDF">
                     <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
                 </a>';
@@ -79,8 +79,8 @@ class ForkLiftInspectionController extends Controller
                 <i class="fas fa-file-excel" style="color: #1D6F42;" aria-hidden="true"></i>
              </a>';
 
-                            if ($row->observation_status == OBSERVATION_PENDING && (isAdmin())) {
-                                $btn .= '<a href="' . admin_url('safety/forklift-inspection/approval/' . encryptId($row->inspection_id)) . '" class="" title="' . __('inspection.approval') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                            if ($row->observation_status == OBSERVATION_PENDING && (isAdmin() || CheckUserRole(ROLE_EHS_HEAD)) ) {
+                                $btn .= '<a href="' . admin_url('safety/forklift-inspection/approval/' . encryptId($row->inspection_id)) . '" class="me-1" title="' . __('inspection.approval') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             return $btn;
                         })
@@ -191,7 +191,7 @@ class ForkLiftInspectionController extends Controller
             $ehsOfficer = GetEHSHead();
             if (!empty($ehsOfficer)) {
                 $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
-                $mailsubject = 'SAFETY INSPECTION';
+                $mailsubject = 'FORKLIFT INSPECTION';
                 $notificationData = array(
                     'notification_type' => SAFETY_INSPECTION,
                     'module_type' => 3,
@@ -283,6 +283,7 @@ class ForkLiftInspectionController extends Controller
 
         try {
             $allData = $this->forklift->exportdata();
+
             $spreadsheet = new Spreadsheet();
             $sheet = $spreadsheet->getActiveSheet();
 
@@ -404,7 +405,7 @@ class ForkLiftInspectionController extends Controller
                 $sheet->getRowDimension($signatureRowStart)->setRowHeight(60);
 
                 $prepared_by_signature = GetSafetySignature($detail->checked_by, $detail->safety_id, FORKLIFT_INSPECTION);
-                $verified_by_signature = GetSafetySignature($detail->updated_by, $detail->safety_id, FORKLIFT_INSPECTION);
+                $verified_by_signature = GetSafetySignature($detail->verified_by, $detail->safety_id, FORKLIFT_INSPECTION);
 
                 $sheet->mergeCells("A{$signatureRowStart}:E{$signatureRowStart}");
                 $sheet->getStyle("A{$signatureRowStart}:E{$signatureRowStart}")->applyFromArray([
@@ -506,7 +507,7 @@ class ForkLiftInspectionController extends Controller
             $filename = "Forklift Inspection.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            report($ex);
+
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('safety/forklift-inspection/list'));
@@ -572,7 +573,7 @@ class ForkLiftInspectionController extends Controller
                 $to_status = OBSERVATION_REJECTED;
             }
             $web_link =   admin_url('safety/forklift-inspection/view/' . encryptId($inspection_details->id));
-            $mailsubject = 'SAFETY INSPECTION';
+            $mailsubject = 'FORKLIFT INSPECTION';
             $notificationData = array(
                 'notification_type' => SAFETY_INSPECTION,
                 'module_type' => 3,

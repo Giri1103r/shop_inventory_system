@@ -266,12 +266,13 @@
                                                     );
                                                 @endphp
                                             @endif
+                                           
                                             @if (isset($inspection_details->created_at))
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label class="form-label ">{{ __('inspection.date') }}</label>
                                                         <div class="view_data">
-                                                            {{ Displaydateformat($updated_time->created_at) }}
+                                                            {{ Displaydateformat($inspection_details->created_at) }}
                                                         </div>
                                                     </div>
                                                 </div>

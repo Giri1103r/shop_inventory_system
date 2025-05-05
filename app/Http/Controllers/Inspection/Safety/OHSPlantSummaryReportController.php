@@ -99,7 +99,7 @@ class OHSPlantSummaryReportController extends Controller
                         })
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            $btn = '<a href="' . admin_url('safety/ohc-plant-summary/view/' . encryptId($row->inspection_id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
+                            $btn = '<a href="' . admin_url('safety/ohc-plant-summary/view/' . encryptId($row->inspection_id)) . '"   class="view-icon me-1" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
                             if ($row->inspection_status == WAITING_FOR_EHS_OFFICER_VERIFICATION && (CheckUserRole(ROLE_EHS_OFFICER) || isAdmin())) {
                                 $btn .= '<a href="' . admin_url('safety/ohc-plant-summary/verification/' . encryptId($row->inspection_id)) . '/ehs" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
@@ -362,10 +362,10 @@ class OHSPlantSummaryReportController extends Controller
                     $sheet->mergeCells("B{$row}:D{$row}");
                     $sheet->setCellValue("A{$row}", $sr);
                     $sheet->setCellValue("B{$row}", $detail['description'] ?? '');
-                    $sheet->setCellValue("E{$row}", $detail['unit - 1'] ?? '');
-                    $sheet->setCellValue("F{$row}", $detail['unit - 2'] ?? '');
-                    $sheet->setCellValue("G{$row}", $detail['unit - 3'] ?? '');
-                    $sheet->setCellValue("H{$row}", $detail['unit - 4'] ?? '');
+                    $sheet->setCellValue("E{$row}", $detail['unit_1'] ?? '');
+                    $sheet->setCellValue("F{$row}", $detail['unit_2'] ?? '');
+                    $sheet->setCellValue("G{$row}", $detail['unit_3'] ?? '');
+                    $sheet->setCellValue("H{$row}", $detail['unit_4'] ?? '');
                     $sheet->mergeCells("I{$row}:J{$row}");
                     $sheet->setCellValue("I{$row}", $detail['total_quantity'] ?? '');
 

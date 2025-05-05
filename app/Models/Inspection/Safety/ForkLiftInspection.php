@@ -40,7 +40,7 @@ class ForkLiftInspection extends Model
             ->leftJoin('inspection_static_docno', 'inspection_safety_forklift_inspection.document_reference_id', '=', 'inspection_static_docno.id');
 
         if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_HEAD)) {
-        } else if (CheckUserRole(ROLE_EHS_OFFICER)) {
+        } else if (CheckUserRole(ROLE_INSPECTION_CREATOR)) {
             $query->where('inspection_safety_forklift_inspection.created_by', Auth::id());
         }
 

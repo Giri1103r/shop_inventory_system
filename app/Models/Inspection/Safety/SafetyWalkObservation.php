@@ -39,6 +39,8 @@ class SafetyWalkObservation extends Model
     public function list()
     {
         $request = request();
+        $user = Auth::user();
+        $userRole = string_to_array($user->role);
         $search = '';
         $query = $this->select('inspection_safety_walk_observation.*', 'inspection_shift_option.*', 'masters_unit.*', 'inspection_safety_walk_observation.id as inspection_id')
             ->leftJoin('inspection_shift_option', 'inspection_safety_walk_observation.shift_id', '=', 'inspection_shift_option.id')
@@ -57,8 +59,10 @@ class SafetyWalkObservation extends Model
                 $query->orWhereRaw('month LIKE "%' . $search . '%"');
             });
         }
-
-
+        if (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole)) {
+        }  elseif (in_array(ROLE_INSPECTION_CREATOR, $userRole)) {
+            $query->where('inspection_safety_walk_observation.created_by',Auth::user()->id);
+        }
 
         if (isset($request->month) && $request->month) {
             $query = $query->where('inspection_safety_walk_observation.month', 'LIKE', '%' . $request->month . '%');

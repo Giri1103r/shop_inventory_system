@@ -1141,7 +1141,7 @@
                     time_24hr: true,
                     defaultDate: "{{ $safetypermit->time_to }}",
                     minTime: "{{ $safetypermit->time_from ?? currentTime }}",
-                    maxTime: "18:00",
+                  
                 });
             });
 
@@ -1885,7 +1885,7 @@
                         ${isChecked}>
                     <label for="checkpoint-${workId}-${item.id}">${equipmentName}</label>
                 </div>`;
-            
+
                         container.append(checkpointHtml);
 
 

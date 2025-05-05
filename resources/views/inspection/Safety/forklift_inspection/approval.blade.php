@@ -175,10 +175,10 @@
                                             </div>
                                         @endforeach
                                     </div>
-                                    @if (checkUserRole(ROLE_EHS_HEAD) || isAdmin())
+                                    @if ((checkUserRole(ROLE_EHS_HEAD) || isAdmin()) &&  $inspection_details->observation_status == OBSERVATION_PENDING)
                                         <div>
                                             <div class="card-header-inner p-2">
-                                                <h4 class="text-white">APPROVAL</h4>
+                                                <h4 class="text-white">EHS Head Approval</h4>
 
                                             </div>
 

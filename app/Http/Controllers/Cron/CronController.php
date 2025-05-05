@@ -1206,6 +1206,26 @@ class CronController extends Controller
             return response()->json(['message' => 'No jobs in the Current Nxt Code Dailing Import queue to process', 'exit_code' => 0]);
         }
     }
+    public function equipmentimport()
+    {
+        $queueLength = Queue::size('equipmentimport');
+        if ($queueLength > 0) {
+            $options = [
+                '--sleep' => 3,
+                '--tries' => 3,
+                '--queue' => 'equipmentimport',
+                '--timeout' => 600,
+                '--max-jobs' => 10,
+            ];
+
+            $exitCode = Artisan::call('queue:work', $options);
+            Session::invalidate();
+            return response()->json(['message' => 'Queue  Safety Equipment Master command executed successfully',  'exit_code' => $exitCode]);
+        } else {
+            Session::invalidate();
+            return response()->json(['message' => 'No jobs in the  Safety Equipment Master Import queue to process', 'exit_code' => 0]);
+        }
+    }
     public function queueChecklistmasterImport()
     {
         $queueLength = Queue::size('checklistimport');

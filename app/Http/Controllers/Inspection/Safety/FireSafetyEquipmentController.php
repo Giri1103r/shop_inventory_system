@@ -59,10 +59,17 @@ class FireSafetyEquipmentController extends Controller
                         })
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            $btn = '<a href="' . admin_url('safety/fire-safety-equipment/view/' . encryptId($row->inspection_id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
+                            $btn = '<a href="' . admin_url('safety/fire-safety-equipment/view/' . encryptId($row->inspection_id)) . '"   class="view-icon me-1" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
                             //         $btn .= '<a href="' . admin_url('safety/fire-safety-equipment/exportViewPdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
                             //     <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
                             // </a>';
+
+                            $btn .= '<a href="' . admin_url('safety/fire-safety-equipment/exportViewPdf/' . encryptId($row->inspection_id)) . '" style="margin-right: 5px;" title="PDF">
+                            <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
+                        </a>';
+                            $btn .= '<a href="' . admin_url('safety/fire-safety-equipment/generalExcel/' . encryptId($row->inspection_id)) . '" style="margin-right: 5px;" title="EXCEL">
+                            <i class="fas fa-file-excel" style="color: #1D6F42;" aria-hidden="true"></i>
+                        </a>';
                             return $btn;
                         })
                         ->addColumn('created_date', function ($row) {
@@ -174,7 +181,7 @@ class FireSafetyEquipmentController extends Controller
             Session::flash('success', 'Equipment Name is Added Successfully');
             return redirect(admin_url('safety/fire-safety-equipment/list'));
         } catch (Exception $ex) {
-            report($ex);
+            dd($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('safety/fire-safety-equipment/list'));
         }
@@ -384,12 +391,12 @@ class FireSafetyEquipmentController extends Controller
             $id = decryptId($request->id);
             if (Auth::check()) {
                 $inspection_details = $this->safety_equipment->selectOne($id);
-                $inspection = $this->safety_equipment_details->GetDetails($inspection_details->id);
+
                 $document_no = $this->document_reference->selectOne($inspection_details->document_reference_id);
 
                 $data = [
                     'inspection_details' => $inspection_details,
-                    'inspection' => $inspection,
+
                     'pagetitle' => "Safety Equipment List",
                     'document_no' => $document_no,
                 ];
@@ -412,10 +419,10 @@ class FireSafetyEquipmentController extends Controller
             $mpdf->WriteHTML($view);
 
             $filename = "Safety Equipment List.pdf";
-            return $mpdf->Output($filename, 'i');
+            return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            report($ex);
-            report($ex);
+
+            dd($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('safety/fire-safety-equipment/list'));
         }
