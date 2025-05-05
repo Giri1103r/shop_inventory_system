@@ -103,11 +103,7 @@
                 time_24hr: true,
                 minuteIncrement: 5,
                 dateFormat: "H:i",
-
-                onOpen: function(selectedDates, dateStr, instance) {
-                    let minTime = (formattedSelectedDate === formattedToDate) ? toTime : "09:00";
-                    instance.set("minTime", minTime);
-                },
+               
             });
 
             console.log("Selected Date:", formattedSelectedDate);
@@ -144,7 +140,7 @@
                 rules: {
                     time_to: {
                         required: true,
-
+                        validTimeTo: true,
                     },
                     extension_remarks: {
                         required: true,
@@ -155,7 +151,7 @@
                 messages: {
                     time_to: {
                         required: "Time is empty.",
-                      
+                        validTimeTo: "To Time should not exceed 18:00 PM.",
                     },
                     extension_remarks: {
                         required: "Remarks cannot be empty.",
