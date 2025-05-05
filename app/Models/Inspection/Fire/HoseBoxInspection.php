@@ -95,8 +95,8 @@ class HoseBoxInspection extends Model
         if (isset($request->frequency) && $request->frequency) {
             $query = $query->where('inspection_fire_hose_box.frequency', 'LIKE', '%' . decryptId($request->frequency) . '%');
         }
-        if (isset($request->date_of_inspection) && $request->date_of_inspection) {
-            $query = $query->where('inspection_fire_hose_box.date_of_inspection', 'LIKE', '%' . DBdateformat($request->date_of_inspection) . '%');
+        if (isset($request->inspection_date) && $request->inspection_date) {
+            $query = $query->where('inspection_fire_hose_box.date_of_inspection', 'LIKE', '%' . DBdateformat($request->inspection_date) . '%');
         }
         if (isset($request->next_due) && $request->next_due) {
             $query = $query->where('inspection_fire_hose_box.next_due', 'LIKE', '%' . DBdateformat($request->next_due) . '%');
@@ -204,11 +204,16 @@ class HoseBoxInspection extends Model
         if (isset($request->frequency) && $request->frequency) {
             $query = $query->where('inspection_fire_hose_box.frequency', 'LIKE', '%' . decryptId($request->frequency) . '%');
         }
-        if (isset($request->date_of_inspection) && $request->date_of_inspection) {
-            $query = $query->where('inspection_fire_hose_box.date_of_inspection', 'LIKE', '%' . DBdateformat($request->date_of_inspection) . '%');
+        if (isset($request->inspection_date) && $request->inspection_date) {
+            $query = $query->where('inspection_fire_hose_box.date_of_inspection', 'LIKE', '%' . DBdateformat($request->inspection_date) . '%');
         }
         if (isset($request->next_due) && $request->next_due) {
             $query = $query->where('inspection_fire_hose_box.next_due', 'LIKE', '%' . DBdateformat($request->next_due) . '%');
+        }
+
+
+        if (isset($request->inspection_status) && $request->inspection_status) {
+            $query = $query->where('inspection_fire_hose_box.inspection_status', decryptId($request->inspection_status));
         }
 
         $query->orderBy('inspection_fire_hose_box.id', 'DESC');

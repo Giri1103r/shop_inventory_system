@@ -221,10 +221,10 @@
                                                                 {{ __('inspection.hose_types') }}
                                                             </option>
                                                             @foreach ($types as $types)
-                                                                <option value="{{ encryptId($types->id) }}">
-                                                                    {{ $types->name }}</option>
-                                                            @endforeach
-                                                        </select>
+                                                            <option value="{{ encryptId($types->id) }}">
+                                                                {{ $types->name }}</option>
+                                                                @endforeach
+                                                            </select>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 mb-2">
@@ -299,17 +299,25 @@
                                                     <h4 class="text-white">Hose Box Inspection Observation</h4>
                                                 </div>
 
-                                                <div class="mb-2">
-                                                    <label class="me-3">
-                                                        <input type="radio" name="observation"
-                                                            value="{{ encryptId(1) }}" class="validate-radio-required">
-                                                        Yes
-                                                    </label>
-                                                    <label>
-                                                        <input type="radio" name="observation"
-                                                            value="{{ encryptId(2) }}" class="validate-radio-required">
-                                                        No
-                                                    </label>
+                                                <div class="col-md-12 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label require">{{ __('inspection.obs') }}</label>
+
+
+                                                        <div class="mb-2">
+                                                            <label class="me-3">
+                                                                <input type="radio" name="observation"
+                                                                    value="{{encryptId(1)}}" class="validate-radio-required"> Yes
+                                                            </label>
+                                                            <label>
+                                                                <input type="radio" name="observation"
+                                                                    value="{{encryptId(2)}}" class="validate-radio-required"> No
+                                                            </label>
+                                                        </div>
+
+
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -607,7 +615,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.sr_no') }}</label>
-                                                        <input type="text" name="sr_no[${form_set_count}]" id = "sr_no"
+                                                        <input type="text" name="sr_no[${form_set_count}]" id = "sr_no-${form_set_count}"
                                                             class="form-control"
                                                             value="{{ FireSequence(HOSE_BOX_INSPECTION) }}" readonly>
                                                     </div>
@@ -633,7 +641,7 @@
                                                         <label
                                                             class="form-label require">{{ __('inspection.hose_box_inspection') }}</label>
                                                         <input type="text" name="hose_box_no[${form_set_count}]"
-                                                            id = "hose_box_no" class="form-control" value="">
+                                                            id = "hose_box_no-${form_set_count}" class="form-control" value="">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 mb-2">
@@ -655,7 +663,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.quantity') }}</label>
-                                                        <input type="number" name="quantity[${form_set_count}]" id = "quantity"
+                                                        <input type="number" name="quantity[${form_set_count}]" id = "quantity-${form_set_count}"
                                                             class="form-control" value="">
                                                     </div>
                                                 </div>
@@ -664,7 +672,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.branch_quantity') }}</label>
-                                                        <input type="number" name="branch_quantity[${form_set_count}]" id = "branch_quantity"
+                                                        <input type="number" name="branch_quantity[${form_set_count}]" id = "branch_quantity-${form_set_count}"
                                                             class="form-control" value="">
                                                     </div>
                                                 </div>
@@ -703,7 +711,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.approach') }}</label>
-                                                        <textarea name="approach[${form_set_count}]" id="approach" class="form-control" style="resize: none;"></textarea>
+                                                        <textarea name="approach[${form_set_count}]" id="approach-${form_set_count}" class="form-control" style="resize: none;"></textarea>
 
                                                     </div>
                                                 </div>
@@ -711,7 +719,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.remarks') }}</label>
-                                                        <textarea name="remarks[${form_set_count}]" id="remarks" class="form-control" style="resize: none;"></textarea>
+                                                        <textarea name="remarks[${form_set_count}]" id="remarks-${form_set_count}" class="form-control" style="resize: none;"></textarea>
 
                                                     </div>
                                                 </div>

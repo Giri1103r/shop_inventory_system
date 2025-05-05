@@ -86,8 +86,11 @@ class HoseBoxController extends Controller
                         ->addColumn('created_date', function ($row) {
                             return Displaydateformat($row->created_at);
                         })
-                        ->addColumn('issue_date', function ($row) {
-                            return Displaydateformat($row->issue_date);
+                        ->addColumn('date_of_inspection', function ($row) {
+                            return Displaydateformat($row->date_of_inspection);
+                        })
+                        ->addColumn('next_due', function ($row) {
+                            return Displaydateformat($row->next_due);
                         })
                         ->addColumn('created_by', function ($row) {
                             return getUsername($row->created_by);
@@ -151,7 +154,7 @@ class HoseBoxController extends Controller
                             $btn .= '<a href="' . admin_url('fire/hose-box-inspection/export/excel/' . encryptId($row->inspection_id)) . '" style="margin-right: 5px;" title="Excel"> <i class="fas fa-file-excel" style="color: #1D6F42;" aria-hidden="true"></i></a>';
                             return $btn;
                         })
-                        ->rawColumns(['action', 'created_date', 'created_by', 'status', 'inspection_status', 'issue_date'])
+                        ->rawColumns(['action', 'created_date', 'created_by', 'status', 'inspection_status','date_of_inspection','next_due'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -181,6 +184,7 @@ class HoseBoxController extends Controller
     public function Add(Request $request)
     {
         try {
+
             $location = $this->location->getLocationName();
             $unit = $this->unit->getUnit();
             $frequency = $this->frequency->getFrequency();
@@ -287,13 +291,13 @@ class HoseBoxController extends Controller
             $inspection_details = $this->hose_box_details->store($id);
             $inspection_file = $this->files->file_upload($inspection_type, $id);
 
-            $checklist_store = $this->checklist_follow->store($inspection_type, $id);
+            // $checklist_store = $this->checklist_follow->store($inspection_type, $id);
 
             $signature_update = $this->signature->CheckedBySignature($id, $inspection_type);
 
             $ehsOfficer = GetEHSOfficer();
             $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
-            $mailsubject = 'FIRE INSPECTION';
+            $mailsubject = 'Fire Hose Box Inspection';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
                 'module_type' => 3,
@@ -341,7 +345,7 @@ class HoseBoxController extends Controller
                 return redirect(admin_url('fire/hose-box-inspection/list'));
             }
         } catch (Exception $ex) {
-            report($ex);
+            dd($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('fire/hose-box-inspection/list'));
         }
@@ -424,7 +428,7 @@ class HoseBoxController extends Controller
             $userIds = [
                 'users' => $inspection_details->created_by,
             ];
-            $mailsubject = 'FIRE INSPECTION';
+            $mailsubject = 'Fire Hose Box Inspection';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
                 'module_type' => 3,
@@ -486,7 +490,7 @@ class HoseBoxController extends Controller
             $userIds = [
                 'users' => $ehsOfficers,
             ];
-            $mailsubject = 'Fire Inspection';
+            $mailsubject = 'Fire Hose Box Inspection';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
                 'module_type' => 3,
@@ -554,11 +558,11 @@ class HoseBoxController extends Controller
             } else {
                 $message = 'EHS Officer Rejected the CAPA Action';
                 $web_link =   admin_url('fire/hose-box-inspection/verification/' . encryptId($inspection_details->id) . '/capa');
-                $users = $inspection_details->created_by;
+                $users = [$inspection_details->created_by];
                 $to_status = EHS_OFFICER_REJECTED;
             }
 
-            $mailsubject = 'FIRE INSPECTION';
+            $mailsubject = 'Fire Hose Box Inspection';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
                 'module_type' => 3,
@@ -628,11 +632,11 @@ class HoseBoxController extends Controller
             } else {
                 $message = 'Level One Manager Rejected the CAPA Action';
                 $web_link =   admin_url('fire/hose-box-inspection/verification/' . encryptId($inspection_details->id) . '/capa');
-                $users = $inspection_details->created_by;
+                $users = [$inspection_details->created_by];
                 $to_status = L1_MANAGER_REJECTED;
             }
 
-            $mailsubject = 'FIRE INSPECTION';
+            $mailsubject = 'Fire Hose Box Inspection';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
                 'module_type' => 3,
@@ -705,7 +709,7 @@ class HoseBoxController extends Controller
 
             }
 
-            $mailsubject = 'FIRE INSPECTION';
+            $mailsubject = 'Fire Hose Box Inspection';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
                 'module_type' => 3,
@@ -887,7 +891,7 @@ class HoseBoxController extends Controller
                     $sheet->setCellValue("B$dataRow", getLocationname($detail['location'] ?? ''));
                     $sheet->setCellValue("C$dataRow", $detail['hose_box_no'] ?? '');
 
-                    $hose_Types = $detail['hose_Types'] ?? '';
+                    $hose_Types = $detail['hose_types'] ?? '';
                     $quantity = $detail['quantity'] ?? '';
                     $branch_quantity = $detail['branch_quantity'] ?? '';
                     $hose_box_key = $detail['hose_box_key'] ?? '';
@@ -1219,7 +1223,7 @@ class HoseBoxController extends Controller
                 $sheet->setCellValue("B$row", getLocationname($detail['location'] ?? ''));
                 $sheet->setCellValue("C$row", $detail['hose_box_no'] ?? '');
 
-                $hose_Types = $detail['hose_Types'] ?? '';
+                $hose_Types = $detail['hose_types'] ?? '';
                 $quantity = $detail['quantity'] ?? '';
                 $branch_quantity = $detail['branch_quantity'] ?? '';
                 $hose_box_key = $detail['hose_box_key'] ?? '';

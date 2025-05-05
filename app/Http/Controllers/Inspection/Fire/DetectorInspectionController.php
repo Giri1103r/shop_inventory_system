@@ -300,7 +300,7 @@ class DetectorInspectionController extends Controller
 
             $ehsOfficer = GetEHSOfficer();
             $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
-            $mailsubject = 'DETECTOR INSPECTION';
+            $mailsubject = 'Fire Detector Inspection';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
                 'module_type' => 3,
@@ -349,7 +349,7 @@ class DetectorInspectionController extends Controller
                 return redirect(admin_url('fire/detector-inspection/list'));
             }
         } catch (Exception $ex) {
-            report($ex);
+            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('fire/detector-inspection/list'));
@@ -432,7 +432,7 @@ class DetectorInspectionController extends Controller
             $userIds = [
                 'users' => $inspection_details->created_by,
             ];
-            $mailsubject = 'DETECTOR INSPECTION';
+            $mailsubject = 'Fire Detector Inspection';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
                 'module_type' => 3,
@@ -494,7 +494,7 @@ class DetectorInspectionController extends Controller
             $userIds = [
                 'users' => $ehsOfficers,
             ];
-            $mailsubject = 'DETECTOR INSPECTION';
+            $mailsubject = 'Fire Detector Inspection';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
                 'module_type' => 3,
@@ -516,7 +516,7 @@ class DetectorInspectionController extends Controller
             $email_id = getUseremail($user);
             $url = admin_url('fire/detector-inspection/verification/' . encryptId($id) . '/ehs');
             $details = array(
-                'fire_type' => 'Detector Inspection',
+                'fire_type' => 'Fire Detector Inspection',
                 'email' => $email_id,
                 'mail_subject' => $mailsubject,
                 'title' => 'CAPA Action Completed by the Fire Associates',
@@ -562,11 +562,11 @@ class DetectorInspectionController extends Controller
             } else {
                 $message = 'EHS Officer Rejected the CAPA Action';
                 $web_link =   admin_url('fire/detector-inspection/verification/' . encryptId($inspection_details->id) . '/capa');
-                $users = $inspection_details->created_by;
+                $users = [$inspection_details->created_by];
                 $to_status = EHS_OFFICER_REJECTED;
             }
 
-            $mailsubject = 'DETECTOR INSPECTION';
+            $mailsubject = 'Fire Detector Inspection';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
                 'module_type' => 3,
@@ -636,11 +636,11 @@ class DetectorInspectionController extends Controller
             } else {
                 $message = 'Level One Manager Rejected the CAPA Action';
                 $web_link =   admin_url('fire/detector-inspection/verification/' . encryptId($inspection_details->id) . '/capa');
-                $users = $inspection_details->created_by;
+                $users = [$inspection_details->created_by];
                 $to_status = L1_MANAGER_REJECTED;
             }
 
-            $mailsubject = 'DETECTOR INSPECTION';
+            $mailsubject = 'Fire Detector Inspection';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
                 'module_type' => 3,
@@ -701,7 +701,7 @@ class DetectorInspectionController extends Controller
             $signature_update = $this->signature->signatureUpload(DETECTOR_INSPECTION);
             $inspection_details = $this->detector->selectOne($id);
             if ($status == 1) {
-                $message = 'detector Inspeciton Approved Successfully!';
+                $message = 'Detector Inspeciton Approved Successfully!';
                 $web_link =   admin_url('fire/detector-inspection/view/' . encryptId($inspection_details->id));
                 $to_status = INSPECTION_APPROVED;
                 $users = array_merge([$inspection_details->created_by], [$inspection_details->verified_by], [$inspection_details->l1_manager_verified_by]);
@@ -713,7 +713,7 @@ class DetectorInspectionController extends Controller
 
             }
 
-            $mailsubject = 'DETECTOR INSPECTION';
+            $mailsubject = 'Fire Detector Inspection';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
                 'module_type' => 3,
@@ -1013,7 +1013,7 @@ class DetectorInspectionController extends Controller
                     $drawing->setOffsetY(5);
                     $drawing->setHeight(40);
                     $drawing->setWorksheet($sheet);
-                    $sheet->setCellValue("D{$signatureRowStart}", "\n\n\nVerified By:\n" . getUsername($inspection_detail->updated_by));
+                    $sheet->setCellValue("D{$signatureRowStart}", "\n\n\nVerified By:\n" . getUsername($inspection_detail->verified_by));
                 } else {
                     $sheet->setCellValue("D{$signatureRowStart}", "Verified By:\nInspection not yet completed");
                 }

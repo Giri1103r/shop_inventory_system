@@ -86,8 +86,11 @@ class HoseReelHoseController extends Controller
                         ->addColumn('created_date', function ($row) {
                             return Displaydateformat($row->created_at);
                         })
-                        ->addColumn('issue_date', function ($row) {
-                            return Displaydateformat($row->issue_date);
+                        ->addColumn('date_of_inspection', function ($row) {
+                            return Displaydateformat($row->date_of_inspection);
+                        })
+                        ->addColumn('next_due', function ($row) {
+                            return Displaydateformat($row->next_due);
                         })
                         ->addColumn('created_by', function ($row) {
                             return getUsername($row->created_by);
@@ -151,7 +154,7 @@ class HoseReelHoseController extends Controller
                             $btn .= '<a href="' . admin_url('fire/hose-reel-hose-inspection/export/excel/' . encryptId($row->inspection_id)) . '" style="margin-right: 5px;" title="Excel"> <i class="fas fa-file-excel" style="color: #1D6F42;" aria-hidden="true"></i></a>';
                             return $btn;
                         })
-                        ->rawColumns(['action', 'created_date', 'created_by', 'status', 'inspection_status', 'issue_date'])
+                        ->rawColumns(['action', 'created_date', 'created_by', 'status', 'inspection_status','date_of_inspection','next_due'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -284,13 +287,13 @@ class HoseReelHoseController extends Controller
             $inspection_details = $this->hose_reel_details->store($id);
             $inspection_file = $this->files->file_upload($inspection_type, $id);
 
-            $checklist_store = $this->checklist_follow->store($inspection_type, $id);
+            // $checklist_store = $this->checklist_follow->store($inspection_type, $id);
 
             $signature_update = $this->signature->CheckedBySignature($id, $inspection_type);
 
             $ehsOfficer = GetEHSOfficer();
             $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
-            $mailsubject = 'FIRE INSPECTION';
+            $mailsubject = 'Fire Hose Reel Inspection';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
                 'module_type' => 3,
@@ -421,7 +424,7 @@ class HoseReelHoseController extends Controller
             $userIds = [
                 'users' => $inspection_details->created_by,
             ];
-            $mailsubject = 'FIRE INSPECTION';
+            $mailsubject = 'Fire Hose Reel Inspection';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
                 'module_type' => 3,
@@ -483,7 +486,7 @@ class HoseReelHoseController extends Controller
             $userIds = [
                 'users' => $ehsOfficers,
             ];
-            $mailsubject = 'Fire Inspection';
+            $mailsubject = 'Fire Hose Reel Inspection';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
                 'module_type' => 3,
@@ -551,11 +554,11 @@ class HoseReelHoseController extends Controller
             } else {
                 $message = 'EHS Officer Rejected the CAPA Action';
                 $web_link =   admin_url('fire/hose-reel-hose-inspection/verification/' . encryptId($inspection_details->id) . '/capa');
-                $users = $inspection_details->created_by;
+                $users = [$inspection_details->created_by];
                 $to_status = EHS_OFFICER_REJECTED;
             }
 
-            $mailsubject = 'FIRE INSPECTION';
+            $mailsubject = 'Fire Hose Reel Inspection';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
                 'module_type' => 3,
@@ -625,11 +628,11 @@ class HoseReelHoseController extends Controller
             } else {
                 $message = 'Level One Manager Rejected the CAPA Action';
                 $web_link =   admin_url('fire/hose-reel-hose-inspection/verification/' . encryptId($inspection_details->id) . '/capa');
-                $users = $inspection_details->created_by;
+                $users =[$inspection_details->created_by];
                 $to_status = L1_MANAGER_REJECTED;
             }
 
-            $mailsubject = 'FIRE INSPECTION';
+            $mailsubject = 'Fire Hose Reel Inspection';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
                 'module_type' => 3,
@@ -702,7 +705,7 @@ class HoseReelHoseController extends Controller
 
             }
 
-            $mailsubject = 'FIRE INSPECTION';
+            $mailsubject = 'Fire Hose Reel Inspection';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
                 'module_type' => 3,
@@ -1105,7 +1108,7 @@ class HoseReelHoseController extends Controller
             $mpdf->WriteHTML($view);
 
             $filename = "Hose Reel Inspection.pdf";
-            return $mpdf->Output($filename, 'I');
+            return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
@@ -1125,7 +1128,7 @@ class HoseReelHoseController extends Controller
             $document_no        = $this->document_reference->selectOne($inspection->document_reference_id);
 
             $prepared_by_signature = GetFireSignature($inspection->created_by, $inspection->id, HOSE_REEL_INSPECTION);
-            $verified_by_signature = GetFireSignature($inspection->updated_by, $inspection->id, HOSE_REEL_INSPECTION);
+            $verified_by_signature = GetFireSignature($inspection->verified_by, $inspection->id, HOSE_REEL_INSPECTION);
             $approved_by_signature = GetFireSignature($inspection->approved_by, $inspection->id, HOSE_REEL_INSPECTION);
 
             foreach (range('A', 'L') as $col) {
@@ -1296,7 +1299,7 @@ class HoseReelHoseController extends Controller
                 $drawing->setOffsetY(5);
                 $drawing->setHeight(40);
                 $drawing->setWorksheet($sheet);
-                $sheet->setCellValue("E{$signatureRowStart}", "\n\n\nVerified By:\n" . getUsername($inspection->updated_by));
+                $sheet->setCellValue("E{$signatureRowStart}", "\n\n\nVerified By:\n" . getUsername($inspection->verified_by));
             } else {
                 $sheet->setCellValue("E{$signatureRowStart}", "Verified By:\nInspection not yet completed");
             }
