@@ -144,7 +144,7 @@ class ChecklistObservationFollowupController extends Controller
                             $btn .= '<a href="' . admin_url('fire/checklist-observation/generalpdf/' . encryptId($row->inspectionid) . '/' . encryptId($row->observationid)) . '" style="margin-right: 5px;" title="PDF">
                             <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
                         </a>';
-                           
+
                             return $btn;
                         })
                         ->rawColumns(['action', 'created_date', 'created_by', 'status', 'observation_status'])
@@ -314,7 +314,7 @@ class ChecklistObservationFollowupController extends Controller
             );
             return view('inspection.fire.observationFollowup.approve', $data);
         } catch (Exception $ex) {
-            dd($ex);
+           report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('fire/checklist-observation/list'));
         }

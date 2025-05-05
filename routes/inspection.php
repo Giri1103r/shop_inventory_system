@@ -59,7 +59,7 @@ use App\Http\Controllers\Inspection\Fire\CartridgeTypeFireExtinguisherController
 use App\Http\Controllers\Inspection\Environment\AmbientAirMonitoringYearlyController;
 use App\Http\Controllers\Inspection\Ohc\EmergencyBuyerFirstAidBagChecklistController;
 use App\Http\Controllers\Inspection\Environment\DgSetStackEmissionMonitoringController;
-use App\Http\Controllers\Inspection\Safety\EquipmentController as SafetyEquipmentController;
+
 use App\Http\Controllers\Inspection\Fire\FirePumpHouseController;
 use App\Http\Controllers\Inspection\Fire\FirePreNocController;
 use App\Http\Controllers\Inspection\Audit\InterUnitAuditController;

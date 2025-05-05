@@ -193,11 +193,15 @@
                 },
                 'item_code[1]': {
                     required: true,
+                    minlength: 3,
+                    maxlength: 30,
                     uniqueItemCode: true,
                     noSpaces: true,
                 },
                 'name_of_chemical[1]': {
                     required: true,
+                    minlength: 3,
+                    maxlength: 30,
                     noSpaces: true,
                 },
                 'msds_availability_status[1]': {
@@ -205,6 +209,8 @@
                 },
                 'remark[1]': {
                     required: true,
+                    minlength: 3,
+                    maxlength: 300,
                     noSpaces: true,
                 },
             },
@@ -220,16 +226,22 @@
                 },
                 'item_code[1]': {
                     required: "Item Code is Required",
+                    minlength: "Minimum Characters should be 3",
+                    maxlength: "Maximum Characters should not exceed 30",
                     uniqueItemCode: "Item Code must be unique",
                 },
                 'name_of_chemical[1]': {
                     required: "Name of Chemical is Required",
+                    minlength: "Minimum Characters should be 3",
+                    maxlength: "Maximum Characters should not exceed 30",
                 },
                 'msds_availability_status[1]': {
                     required: "MSDS Availability Status is Required",
                 },
                 'remark[1]': {
                     required: "Remark is Required",
+                    minlength: "Minimum Characters should be 3",
+                    maxlength: "Maximum Characters should not exceed 300",
                 },
             },
             errorElement: 'span',
@@ -357,9 +369,13 @@
                 required: true,
                 uniqueItemCode: true,
                 noSpaces: true,
+                minlength: 3,
+                maxlength: 30,
                 messages: {
                     required: 'Item Code is required',
                     uniqueItemCode: 'Item Code must be unique',
+                    minlength: "Minimum Characters should be 3",
+                    maxlength: "Maximum Characters should not exceed 30",
                     noSpaces: 'Item Code cannot be empty or only spaces'
                 }
             });
@@ -367,8 +383,12 @@
             $("input[name='name_of_chemical[" + form_set_count + "]']").rules('add', {
                 required: true,
                 noSpaces: true,
+                minlength: 3,
+                maxlength: 30,
                 messages: {
                     required: 'Name of Chemical is required',
+                    minlength: "Minimum Characters should be 3",
+                    maxlength: "Maximum Characters should not exceed 30",
                     noSpaces: 'Item Code cannot be empty or only spaces'
                 }
             });
@@ -382,9 +402,13 @@
 
             $("textarea[name='remark[" + form_set_count + "]']").rules('add', {
                 required: true,
+                minlength: 3,
+                maxlength: 300,
                 noSpaces: true,
                 messages: {
                     required: 'Remark is required',
+                    minlength: "Minimum Characters should be 3",
+                    maxlength: "Maximum Characters should not exceed 300",
                     noSpaces: 'Remark cannot be empty or only spaces'
                 }
             });

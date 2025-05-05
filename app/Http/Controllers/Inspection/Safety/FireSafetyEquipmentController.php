@@ -181,7 +181,7 @@ class FireSafetyEquipmentController extends Controller
             Session::flash('success', 'Equipment Name is Added Successfully');
             return redirect(admin_url('safety/fire-safety-equipment/list'));
         } catch (Exception $ex) {
-            dd($ex);
+           report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('safety/fire-safety-equipment/list'));
         }
@@ -422,7 +422,7 @@ class FireSafetyEquipmentController extends Controller
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 
-            dd($ex);
+           report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('safety/fire-safety-equipment/list'));
         }

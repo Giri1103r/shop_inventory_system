@@ -368,7 +368,7 @@
                                                 <div class="col-md-12 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.remarks') }}</label>
+                                                            class="form-label ">{{ __('inspection.remarks') }}</label>
                                                         <textarea name="remarks[1]" id="remarks" class="form-control" style="resize: none;">{{ old('remarks.1') }}</textarea>
 
                                                     </div>
@@ -501,7 +501,10 @@
                             required: true,
                         },
                         "remarks[1]": {
-                            required: true,
+
+                            minlength: 3,
+                            maxlength: 300,
+
                         }
 
                     },
@@ -576,6 +579,8 @@
                         },
                         "remarks[1]": {
                             required: "Please add remarks",
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 300",
                         }
 
                     },
@@ -766,8 +771,8 @@
                                                 <div class="col-md-12 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.remarks') }}</label>
-                                                        <textarea name="remarks[${form_set_count}]" id="remarks" class="form-control" style="resize: none;"></textarea>
+                                                            class="form-label ">{{ __('inspection.remarks') }}</label>
+                                                        <textarea name="remarks[${form_set_count}]" id="remarks[${form_set_count}]" class="form-control" style="resize: none;"></textarea>
 
                                                     </div>
                                                 </div>
@@ -804,9 +809,13 @@
                     });
 
                     $("textarea[name='remarks[" + form_set_count + "]']").rules('add', {
-                        required: true,
+                       
+                        minlength: 3,
+                        maxlength: 300,
                         messages: {
-                            required: 'Please add the temperature details for the Eye wash inspection',
+                            required: 'Please add the remarks',
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 100",
                         }
                     });
 

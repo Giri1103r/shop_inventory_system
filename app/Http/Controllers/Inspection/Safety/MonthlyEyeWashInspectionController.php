@@ -271,7 +271,7 @@ class MonthlyEyeWashInspectionController extends Controller
 
             $ehsOfficer = GetEHSOfficer();
             $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
-            $mailsubject = 'SAFETY INSPECTION';
+         $mailsubject = 'Monthly EyeWash Inspection';
             $notificationData = array(
                 'notification_type' => SAFETY_INSPECTION,
                 'module_type' => 3,
@@ -408,7 +408,7 @@ class MonthlyEyeWashInspectionController extends Controller
             $userIds = [
                 'users' => $inspection_details->created_by,
             ];
-            $mailsubject = 'SAFETY INSPECTION';
+         $mailsubject = 'Monthly EyeWash Inspection';
             $notificationData = array(
                 'notification_type' => SAFETY_INSPECTION,
                 'module_type' => 3,
@@ -470,7 +470,7 @@ class MonthlyEyeWashInspectionController extends Controller
                 'users' => $ehsOfficers,
             ];
 
-            $mailsubject = 'Safety Inspection';
+         $mailsubject = 'Monthly EyeWash Inspection';
             $notificationData = array(
                 'notification_type' => SAFETY_INSPECTION,
                 'module_type' => 3,
@@ -541,7 +541,7 @@ class MonthlyEyeWashInspectionController extends Controller
                 $users = $inspection_details->created_by;
                 $to_status = EHS_OFFICER_REJECTED;
             }
-            $mailsubject = 'SAFETY INSPECTION';
+         $mailsubject = 'Monthly EyeWash Inspection';
             $notificationData = array(
                 'notification_type' => SAFETY_INSPECTION,
                 'module_type' => 3,
@@ -615,7 +615,7 @@ class MonthlyEyeWashInspectionController extends Controller
                 $users = $inspection_details->created_by;
                 $to_status = L1_MANAGER_REJECTED;
             }
-            $mailsubject = 'SAFETY INSPECTION';
+         $mailsubject = 'Monthly EyeWash Inspection';
             $notificationData = array(
                 'notification_type' => SAFETY_INSPECTION,
                 'module_type' => 3,
@@ -686,7 +686,7 @@ class MonthlyEyeWashInspectionController extends Controller
                 $to_status = L2_MANAGER_REJECTED;
             }
 
-            $mailsubject = 'SAFETY INSPECTION';
+         $mailsubject = 'Monthly EyeWash Inspection';
             $notificationData = array(
                 'notification_type' => SAFETY_INSPECTION,
                 'module_type' => 3,

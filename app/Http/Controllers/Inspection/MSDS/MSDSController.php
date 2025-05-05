@@ -67,7 +67,7 @@ class MSDSController extends Controller
                         })
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            $btn = '<a href="' . admin_url('msds/view/' . encryptId($row->id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
+                            $btn = '<a href="' . admin_url('msds/view/' . encryptId($row->id)) . '"   class="view-icon me-1" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
                             $btn .= '<a href="' . admin_url('msds/generalpdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
                                         <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
                                     </a>';
@@ -104,6 +104,8 @@ class MSDSController extends Controller
             return view('inspection.msds.add', $data);
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error',  __('common.message_error'));
+            return redirect(admin_url('msds/list'));
         }
     }
 
@@ -133,7 +135,9 @@ class MSDSController extends Controller
 
                 Session::flash('success', __('Your data has been created successfully'));
             } catch (Exception $ex) {
-                Session::flash('error', __('common.message_error'));
+
+                Session::flash('error',  __('common.message_error'));
+                return redirect(admin_url('msds/list'));
             }
             return redirect(admin_url('msds/list'));
         } catch (Exception $ex) {
@@ -161,6 +165,8 @@ class MSDSController extends Controller
             return view('inspection.msds.view', $data);
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error',  __('common.message_error'));
+            return redirect(admin_url('msds/list'));
         }
     }
 
@@ -393,7 +399,8 @@ class MSDSController extends Controller
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);
-            return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
+            Session::flash('error',  __('common.message_error'));
+            return redirect(admin_url('msds/list'));
         }
     }
 

@@ -383,7 +383,7 @@ class FireModularInspectionController extends Controller
             );
             return view('inspection.fire.fire_modular_inspection.view', $data);
         } catch (Exception $ex) {
-            dd($ex);
+           report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('fire/fire-modular-inspection/checklist/list'));
         }
