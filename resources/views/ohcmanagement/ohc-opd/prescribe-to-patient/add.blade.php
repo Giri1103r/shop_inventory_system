@@ -465,8 +465,7 @@
                 noCalendar: true,
                 dateFormat: "H:i",
                 time_24hr: true,
-                defaultDate: currentTime,
-                minTime: currentTime,
+               
             });
 
 
@@ -1133,7 +1132,7 @@
                         notEqual: "Mobile number and emergency contact should not be the same."
                     },
                     emergency_contact: {
-                     
+
                         digits: "The Moblie contains only the numeric",
                         minlength: "Emergency Contact minimum 10 required",
                         maxlength: "Emergency Contact maximum 10 required",
