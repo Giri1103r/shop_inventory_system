@@ -12,10 +12,10 @@ use App\Models\UploadLog;
 use Shuchkin\SimpleXLSX;
 use App\Models\UploadLogError;
 use Illuminate\Support\Facades\Session;
-// class ImportCurrentNewExtCodeDailingJob implements ShouldQueue
-class ImportCurrentNewExtCodeDailingJob
+class ImportCurrentNewExtCodeDailingJob implements ShouldQueue
+// class ImportCurrentNewExtCodeDailingJob
 {
-    // use Queueable;
+
 
 
     protected $details;

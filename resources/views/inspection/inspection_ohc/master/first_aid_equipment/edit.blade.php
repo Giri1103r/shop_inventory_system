@@ -58,9 +58,9 @@
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Freeze Quantity</label>
-                                                    <input type="text" name="freeze_quantity" id = "freeze_quantity"
+                                                    <input type="number" min="1" name="freeze_quantity" id = "freeze_quantity"
                                                         class="form-control" value="{{ $first_aid->freeze_quantity }}"
-                                                        placeholder="Medicine Name">
+                                                        placeholder="freeze Quantity">
                                                 </div>
                                             </div>
 

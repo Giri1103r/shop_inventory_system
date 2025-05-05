@@ -173,6 +173,8 @@ class CurrentNewExtCodeDialingController extends Controller
             return view('inspection.inspection_ohc.current_new_ext_code_dialing.view', $data);
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/current-new-ext-code-dialing/list'));
         }
     }
 
@@ -195,6 +197,8 @@ class CurrentNewExtCodeDialingController extends Controller
             return view('inspection.inspection_ohc.current_new_ext_code_dialing.edit', $data);
         } catch (Exception $error) {
             report($error->getMessage());
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/current-new-ext-code-dialing/list'));
         }
     }
 
@@ -388,6 +392,8 @@ class CurrentNewExtCodeDialingController extends Controller
 
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/current-new-ext-code-dialing/list'));
         }
     }
 
@@ -432,6 +438,8 @@ class CurrentNewExtCodeDialingController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/current-new-ext-code-dialing/list'));
         }
     }
 
@@ -489,7 +497,7 @@ class CurrentNewExtCodeDialingController extends Controller
                 $user_id = Auth::id();
 
                 $insert_data = array(
-                    'upload_type' => 20,
+                    'upload_type' => 21,
                     'upload_status' => 0,
                     'file_name' => $filenewname,
                     'file_orgname' => $fileName,

@@ -103,6 +103,8 @@ class FirstAidController extends Controller
             return view('inspection.inspection_ohc.master.first_aid_equipment.add', $data);
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/master/first-aid-stock/list'));
         }
     }
 
@@ -176,7 +178,9 @@ class FirstAidController extends Controller
 
             return view('inspection.inspection_ohc.master.first_aid_equipment.edit', $data);
         } catch (Exception $error) {
-            report($error->getMessage());
+            report($error);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/master/first-aid-stock/list'));
         }
     }
 
@@ -225,6 +229,8 @@ class FirstAidController extends Controller
             return view('inspection.inspection_ohc.master.first_aid_equipment.view', $data);
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/master/first-aid-stock/list'));
         }
     }
 
@@ -296,6 +302,8 @@ class FirstAidController extends Controller
                 );
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/master/first-aid-stock/list'));
         }
     }
 
@@ -351,6 +359,8 @@ class FirstAidController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/master/first-aid-stock/list'));
         }
     }
 
@@ -406,7 +416,7 @@ class FirstAidController extends Controller
                 $user_id = Auth::id();
 
                 $insert_data = array(
-                    'upload_type' => 14,
+                    'upload_type' => 20,
                     'upload_status' => 0,
                     'file_name' => $filenewname,
                     'file_orgname' => $fileName,
@@ -424,8 +434,8 @@ class FirstAidController extends Controller
                     "path" => $path,
                 ];
 
-                dispatch(new ImportFirstAidEquipmentJob($details));
-                // dispatch((new ImportFirstAidEquipmentJob($details))->onQueue('equipmentimport'));
+                // dispatch(new ImportFirstAidEquipmentJob($details));
+                dispatch((new ImportFirstAidEquipmentJob($details))->onQueue('firstAidEquipmentImport'));
             }
 
             $insert_data['log_id'] = $insert_id;

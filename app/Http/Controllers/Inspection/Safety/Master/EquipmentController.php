@@ -176,7 +176,7 @@ class EquipmentController extends Controller
             Session::flash('success', __('Your data has been updated successfully'));
             return redirect(admin_url('safety/master/equipment/list'));
         } catch (Exception $ex) {
-
+report($ex);
             Session::flash('error', __('Something went wrong try again'));
             return redirect(admin_url('safety/master/equipment/list'));
         }
@@ -352,6 +352,8 @@ class EquipmentController extends Controller
                 );
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error', __('Something went wrong try again'));
+            return redirect(admin_url('safety/master/equipment/list'));
         }
     }
 
@@ -406,6 +408,8 @@ class EquipmentController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
+            Session::flash('error', __('Something went wrong try again'));
+            return redirect(admin_url('safety/master/equipment/list'));
         }
     }
 }
