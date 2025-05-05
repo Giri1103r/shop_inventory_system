@@ -59,7 +59,7 @@ class NotificationController extends Controller
                                 $btn = "PTW";
                             } elseif ($row->notification_type == 4) {
                                 $btn = "OHC Management";
-                            } elseif ($row->notification_type == GEMBA_WALK) {
+                            } elseif ($row->notification_type == GEMBA_WALK_NOTIIFCATION) {
                                 $btn = "Gemba Walk";
                             } elseif ($row->notification_type == OHC_INSPECTION) {
                                 $btn = "Inspection OHC";

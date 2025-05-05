@@ -278,7 +278,7 @@ class GembaWalkController extends Controller
                 }
 
                 $notificationData = array(
-                    'notification_type' => 9,
+                    'notification_type' => GEMBA_WALK_NOTIIFCATION,
                     'module_type' => 3,
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(
@@ -349,7 +349,7 @@ class GembaWalkController extends Controller
                 }
 
                 $notificationData = array(
-                    'notification_type' => 9,
+                    'notification_type' => GEMBA_WALK_NOTIIFCATION,
                     'module_type' => 3,
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(
@@ -383,7 +383,7 @@ class GembaWalkController extends Controller
             } else {
                 return redirect(admin_url('inspection/gemba-walk/list'));
             }
-            
+
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
@@ -526,7 +526,7 @@ class GembaWalkController extends Controller
 
 
             $notificationData = array(
-                'notification_type' => 9,
+                'notification_type' => GEMBA_WALK_NOTIIFCATION,
                 'module_type' => 3,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
@@ -660,7 +660,7 @@ class GembaWalkController extends Controller
                 }
 
                 $notificationData = array(
-                    'notification_type' => 9,
+                    'notification_type' => GEMBA_WALK_NOTIIFCATION,
                     'module_type' => 3,
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(
@@ -731,7 +731,7 @@ class GembaWalkController extends Controller
 
 
                 $notificationData = array(
-                    'notification_type' => 9,
+                    'notification_type' => GEMBA_WALK_NOTIIFCATION,
                     'module_type' => 3,
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(
@@ -766,7 +766,7 @@ class GembaWalkController extends Controller
         }
     }
 
-  
+
 
 
     public function generalpdf(Request $request)
@@ -912,7 +912,7 @@ class GembaWalkController extends Controller
                 'L2:M2' => 'Issue Dt.',
                 'L3:M3' => 'Rev. & Dt.',
             ];
-            
+
             foreach ($headerLabels as $cellRange => $label) {
                 $cell = explode(':', $cellRange)[0];
                 $sheet->mergeCells($cellRange)->setCellValue($cell, $label);
@@ -925,16 +925,16 @@ class GembaWalkController extends Controller
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE, 'color' => ['argb' => '000000']]],
                 ]);
             }
-            
+
             $sheet->setCellValue("N1", $document_no->doc_no);
             $sheet->setCellValue("N2", Displaydateformat($document_no->issue_date));
             $sheet->setCellValue("N3", $document_no->rev_dt);
-            
+
             $sheet->getStyle("L1:N3")->applyFromArray([
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE, 'color' => ['argb' => '000000']]],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
             ]);
-            
+
 
             $headers = [
                 'Sr.',
@@ -1230,12 +1230,12 @@ class GembaWalkController extends Controller
                 $sheet->getStyle("L{$currentRow}:N" . ($currentRow + 2))->applyFromArray([
                     'borders' => [
                         'allBorders' => [
-                            'borderStyle' => Border::BORDER_DOUBLE,  
-                            'color' => ['argb' => '000000'],  
+                            'borderStyle' => Border::BORDER_DOUBLE,
+                            'color' => ['argb' => '000000'],
                         ]
                     ],
                     'alignment' => [
-                        'horizontal' => Alignment::HORIZONTAL_CENTER, 
+                        'horizontal' => Alignment::HORIZONTAL_CENTER,
                         'vertical' => Alignment::VERTICAL_CENTER
                     ]
                 ]);

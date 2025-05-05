@@ -270,7 +270,6 @@ class AppServiceProvider extends ServiceProvider
         defined('NURSING_OFFICER_REJECTED') or define('NURSING_OFFICER_REJECTED', 3);
 
 
-
         // INSPECTION OHC
         defined('OHC_CREATION') or define('OHC_CREATION', 1);
         defined('FLOOR_MANAGER_APPROVAL_PENDING') or define('FLOOR_MANAGER_APPROVAL_PENDING', 2);
@@ -284,7 +283,6 @@ class AppServiceProvider extends ServiceProvider
         defined('MEDICAL_ASSISTANT_REJECTED') or define('MEDICAL_ASSISTANT_REJECTED', 10);
 
         //environment
-
         defined('AMBIENTNOISE') or define('AMBIENTNOISE', 1);
         defined('WORKNOISE') or define('WORKNOISE', 2);
         defined('AMBIENT_AIR') or define('AMBIENT_AIR', 3);
@@ -293,10 +291,12 @@ class AppServiceProvider extends ServiceProvider
         defined('LUX') or define('LUX', 6);
 
         //Notification Type
-        defined('SAFETY_INSPECTION') or define('SAFETY_INSPECTION', 10);
         defined('FIRE_INSPECTION') or define('FIRE_INSPECTION', 8);
+        defined('GEMBA_WALK_NOTIIFCATION') or define('GEMBA_WALK_NOTIIFCATION', 9);
+        defined('SAFETY_INSPECTION') or define('SAFETY_INSPECTION', 10);
+        defined('RRAA_INSPECTION') or define('RRAA_INSPECTION', 11);
         defined('OHC_INSPECTION') or define('OHC_INSPECTION', 12);
-
+        defined('MSDS_INSPECTION') or define('MSDS_INSPECTION', 13);
 
         // Gemba Walk
         defined('GEMBA_WALK_INSPECTION_START') or define('GEMBA_WALK_INSPECTION_START', 1);
@@ -304,19 +304,16 @@ class AppServiceProvider extends ServiceProvider
         defined('GEMBA_WALK_INSPECTION_WAITING_FOR_EHS_OFFICER_VERIFICATION') or define('GEMBA_WALK_INSPECTION_WAITING_FOR_EHS_OFFICER_VERIFICATION', 3);
         defined('GEMBA_WALK_INSPECTION_REJECTED') or define('GEMBA_WALK_INSPECTION_REJECTED', 4);
         defined('GEMBA_WALK_INSPECTION_CLOSED') or define('GEMBA_WALK_INSPECTION_CLOSED', 5);
-
-
         defined('GEMBA_WALK_INSPECTION_EHS_FILE_TYPE_1') or define('GEMBA_WALK_INSPECTION_EHS_FILE_TYPE_1', 1);
         defined('GEMBA_WALK_INSPECTION_EHS_FILE_TYPE_2') or define('GEMBA_WALK_INSPECTION_EHS_FILE_TYPE_2', 2);
         defined('GEMBA_WALK_INSPECTION_PASS_L1') or define('GEMBA_WALK_INSPECTION_PASS_L1', 1);
         defined('GEMBA_WALK_INSPECTION_PASS_L2') or define('GEMBA_WALK_INSPECTION_PASS_L2', 2);
         defined('GEMBA_WALK_INSPECTION_FAIL') or define('GEMBA_WALK_INSPECTION_FAIL', 3);
         defined('GEMBA_WALK_INSPECTION_PASS') or define('GEMBA_WALK_INSPECTION_PASS', 4);
-
-
         defined('GEMBA_WALK') or define('GEMBA_WALK', 16);
-        defined('MSDS_INSPECTION') or define('MSDS_INSPECTION', 13);
-        defined('RRAA_INSPECTION') or define('RRAA_INSPECTION', 11);
+
+
+
 
         //Status Log
         defined('EYE_WASH_INSPECTION') or define('EYE_WASH_INSPECTION', 1);
