@@ -527,7 +527,7 @@
                         signature_image: {
                             required: true,
                         },
-                      
+
                     },
                     messages: {
                         doc_no: {
@@ -673,7 +673,7 @@
                                                         <label
                                                             class="form-label require">{{ __('inspection.resource_code') }}</label>
                                                         <input type="text" name="resource_code[${form_set_count}]"
-                                                            id = "resource_code" class="form-control">
+                                                            id = "resource_code-${form_set_count}" class="form-control">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 mb-2">
@@ -746,7 +746,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.remarks') }}</label>
-                                                        <textarea name="remarks[${form_set_count}]" id="remarks" class="form-control" style="resize: none;"></textarea>
+                                                        <textarea name="remarks[${form_set_count}]" id="remarks-${form_set_count}" class="form-control" style="resize: none;"></textarea>
 
                                                     </div>
                                                 </div>

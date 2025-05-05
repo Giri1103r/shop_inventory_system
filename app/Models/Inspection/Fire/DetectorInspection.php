@@ -90,8 +90,8 @@ class DetectorInspection extends Model
         if (isset($request->shift) && $request->shift) {
             $query = $query->where('inspection_fire_detector.shift', 'LIKE', '%' . decryptId($request->shift) . '%');
         }
-        if (isset($request->date_of_inspection) && $request->date_of_inspection) {
-            $query = $query->where('inspection_fire_detector.date_of_inspection', 'LIKE', '%' . DBdateformat($request->date_of_inspection) . '%');
+        if (isset($request->inspection_date) && $request->inspection_date) {
+            $query = $query->where('inspection_fire_detector.date_of_inspection', 'LIKE', '%' . DBdateformat($request->inspection_date) . '%');
         }
         if (isset($request->next_due) && $request->next_due) {
             $query = $query->where('inspection_fire_detector.next_due', 'LIKE', '%' . DBdateformat($request->next_due) . '%');
@@ -145,10 +145,10 @@ class DetectorInspection extends Model
         $data = array(
             'doc_no' => $request->doc_no,
             'document_reference_id' => decryptId($request->document_reference_id),
-            'date_of_inspection' => $request->inspection_date,
+            'date_of_inspection' => DBdateformat($request->inspection_date),
             'location' => decryptId($request->location_id),
             'shift' => decryptId($request->shift_id),
-            'next_due' => $request->next_due,
+            'next_due' => DBdateformat($request->next_due),
             // 'observation' => $request->observation,
             'observation_needed' => decryptId($request->observation_needed),
             'unit' => decryptId($request->unit_id),
@@ -196,9 +196,8 @@ class DetectorInspection extends Model
         if (isset($request->shift) && $request->shift) {
             $query = $query->where('inspection_fire_detector.shift', 'LIKE', '%' . decryptId($request->shift) . '%');
         }
-
-        if (isset($request->date_of_inspection) && $request->date_of_inspection) {
-            $query = $query->where('inspection_fire_detector.date_of_inspection', 'LIKE', '%' . DBdateformat($request->date_of_inspection) . '%');
+        if (isset($request->inspection_date) && $request->inspection_date) {
+            $query = $query->where('inspection_fire_detector.date_of_inspection', 'LIKE', '%' . DBdateformat($request->inspection_date) . '%');
         }
         if (isset($request->next_due) && $request->next_due) {
             $query = $query->where('inspection_fire_detector.next_due', 'LIKE', '%' . DBdateformat($request->next_due) . '%');
@@ -206,6 +205,7 @@ class DetectorInspection extends Model
         if (isset($request->inspection_status) && $request->inspection_status) {
             $query = $query->where('inspection_fire_detector.inspection_status', 'LIKE', '%' . decryptId($request->inspection_status) . '%');
         }
+        
         $query->orderBy('inspection_fire_detector.id', 'DESC');
 
         $data = $query->get();

@@ -15,7 +15,7 @@
                     {{-- @if (CheckUserPermission('import')) --}}
                         {{-- <x-button-import href="{{ admin_url('inspection/checklist-type/import') }}"></x-button-import> --}}
                     {{-- @endif --}}
-                    {{-- @if (CheckUserPermission('add')) --}}
+                    {{-- @if (CheckUserPermission('add'))    --}}
                         <x-button-add dataId="" class="add btn btn-primary ms-1"
                             href="{{ admin_url('inspection/gemba-walk/add') }}">Add</x-button-add>
                     {{-- @endif --}}
@@ -62,7 +62,7 @@
                                             <option value="{{encryptId('5')}}">EHS Officer Rejected - Resubmit to Floor Manager Verification
                                             </option>
 
-                                            
+
                                         </select>
                                     </div>
                                     <div class="col-md-3 mt-3">
@@ -204,7 +204,7 @@
                         data: 'shift',
                         name: 'shift'
                     },
-                   
+
                     {
                         data: 'gemba_walk_status',
                         name: 'gemba_walk_status'
@@ -260,7 +260,7 @@
                                        '&gemba_walk_auto_id=' + gemba_walk_auto_id +
                                         '&date=' + date +
                                         '&inspection_status=' + inspection_status +
-                                        '&shift=' + shift 
+                                        '&shift=' + shift
 
 
                                 }
@@ -285,7 +285,7 @@
                                        '&gemba_walk_auto_id=' + gemba_walk_auto_id +
                                         '&date=' + date +
                                         '&inspection_status=' + inspection_status +
-                                        '&shift=' + shift 
+                                        '&shift=' + shift
 
                                 }
                             },

@@ -316,17 +316,25 @@
                                                     <h4 class="text-white">Hose Reel Inspection Observation</h4>
                                                 </div>
 
-                                                <div class="mb-2">
-                                                    <label class="me-3">
-                                                        <input type="radio" name="observation"
-                                                            value="{{ encryptId(1) }}" class="validate-radio-required">
-                                                        Yes
-                                                    </label>
-                                                    <label>
-                                                        <input type="radio" name="observation"
-                                                            value="{{ encryptId(2) }}" class="validate-radio-required">
-                                                        No
-                                                    </label>
+                                                <div class="col-md-12 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label require">{{ __('inspection.obs') }}</label>
+
+
+                                                        <div class="mb-2">
+                                                            <label class="me-3">
+                                                                <input type="radio" name="observation"
+                                                                    value="{{encryptId(1)}}" class="validate-radio-required"> Yes
+                                                            </label>
+                                                            <label>
+                                                                <input type="radio" name="observation"
+                                                                    value="{{encryptId(2)}}" class="validate-radio-required"> No
+                                                            </label>
+                                                        </div>
+
+
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -610,7 +618,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.sr_no') }}</label>
-                                                        <input type="text" name="sr_no[${form_set_count}]" id = "sr_no"
+                                                        <input type="text" name="sr_no[${form_set_count}]" id = "sr_no-${form_set_count}"
                                                             class="form-control"
                                                             value="{{ FireSequence(HOSE_REEL_INSPECTION) }}" readonly>
                                                     </div>
@@ -650,11 +658,11 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.length') }}</label>
-                                                        <input type="number" name="length[${form_set_count}]" id = "length"
+                                                        <input type="number" name="length[${form_set_count}]" id = "length-${form_set_count}"
                                                             class="form-control" value="">
                                                     </div>
                                                 </div>
-                                                
+
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
@@ -723,7 +731,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.approach') }}</label>
-                                                        <textarea name="approach[${form_set_count}]" id="approach" class="form-control" style="resize: none;"></textarea>
+                                                        <textarea name="approach[${form_set_count}]" id="approach-${form_set_count}" class="form-control" style="resize: none;"></textarea>
 
                                                     </div>
                                                 </div>
@@ -731,7 +739,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.remarks') }}</label>
-                                                        <textarea name="remarks[${form_set_count}]" id="remarks" class="form-control" style="resize: none;"></textarea>
+                                                        <textarea name="remarks[${form_set_count}]" id="remarks-${form_set_count}" class="form-control" style="resize: none;"></textarea>
 
                                                     </div>
                                                 </div>
