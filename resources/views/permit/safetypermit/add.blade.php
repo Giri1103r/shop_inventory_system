@@ -1046,7 +1046,7 @@
                                     dateFormat: "H:i",
                                     time_24hr: true,
                                     minTime: formatTime(toMinTime),
-                                   
+
                                 });
                             }
                         }
@@ -2176,6 +2176,9 @@
                     date: {
                         required: true,
                     },
+                    to_date: {
+                        required: true,
+                    },
                     time_from: {
                         required: true,
                     },
@@ -2237,6 +2240,9 @@
                 messages: {
 
                     date: {
+                        required: "Date cannot be empty.",
+                    },
+                    to_date: {
                         required: "Date cannot be empty.",
                     },
                     time_from: {
