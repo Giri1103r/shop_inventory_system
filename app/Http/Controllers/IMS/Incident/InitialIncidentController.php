@@ -39,6 +39,7 @@ use App\Mail\IncidentEmail;
 use App\Models\IMS\Incident\InjuryDetails;
 use App\Models\IMS\Incident\IncidentBodyParts;
 use App\Models\IMS\Incident\Rcpa;
+use App\Models\Master\Company;
 
 class InitialIncidentController extends Controller
 {
@@ -64,6 +65,7 @@ class InitialIncidentController extends Controller
     private $injury_details;
     private $incident_body_parts;
     private $rcpa;
+    private $work;
 
 
     public function __construct()
@@ -90,6 +92,7 @@ class InitialIncidentController extends Controller
         $this->status = new Incidentstatus();
         $this->injury_details = new InjuryDetails();
         $this->rcpa = new Rcpa();
+        $this->work = new Work();
     }
 
 
@@ -377,6 +380,33 @@ class InitialIncidentController extends Controller
         );
     }
 
+    public function employeeid(Request $request)
+    {
+        $name = $request->input('search');
+
+        $employee_code = $this->employee->where('emp_id', 'like', '%' . $name . '%')
+            ->where('status', 1)
+            ->limit(10)
+            ->get();
+
+        $work = $this->work->where('emp_id', 'like', '%' . $name . '%')
+            ->where('status', 1)
+            ->limit(10)
+            ->get();
+
+
+        $mergedResults = $employee_code->merge($work);
+
+        return response()->json(
+            $mergedResults->map(function ($employee) {
+                return [
+                    'id' => $employee->emp_id,
+                    'text' => $employee->emp_id,
+                ];
+            })
+        );
+    }
+
     public function getEmployee(Request $request)
     {
         $name = $request->input('search');
@@ -451,15 +481,26 @@ class InitialIncidentController extends Controller
 
     public function fetchEmployeeDetails($emp_id)
     {
-        $emp_id = decryptId($emp_id);
+        
         $employee = Employee::select('emp_name', 'emp_id', 'email', 'department', 'designation')
-            ->where('id', $emp_id)
+            ->where('emp_id', $emp_id)
             ->first();
+
+        if (!$employee) {
+            $employee = Work::select('emp_name', 'emp_id', 'department', 'designation')
+                ->where('emp_id', $emp_id)
+                ->first();
+        }
         if ($employee) {
+            
             return response()->json([
+                'departments' => $this->department->select('id', 'department_name')->where('status', '1')->get(),
                 'employee' => $employee,
-                'departments' => $this->department->select('id', 'department_name')->where('status', '1')->get()
             ]);
+        } else {
+            return response()->json([
+                'message' => 'Employee not found'
+            ], 404);
         }
     }
     public function fetchPersonDetails($id, $type)
@@ -647,6 +688,7 @@ class InitialIncidentController extends Controller
 
                 Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
+
                 report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
@@ -747,8 +789,8 @@ class InitialIncidentController extends Controller
                     return $mediaOptions[$media] ?? $media;
                 }, $selectedMedia);
                 $injury_details = $this->injury_details->getBodypartsInjuryPerson($id);
-                $status_log = $this->Statuslog->selectCAPA($incident_id,$id, 1);
-                $capaEvidence = $this->initialincidentevidence->SelectcapaEvidence($id,$incident_id);
+                $status_log = $this->Statuslog->selectCAPA($incident_id, $id, 1);
+                $capaEvidence = $this->initialincidentevidence->SelectcapaEvidence($id, $incident_id);
                 $data = array(
                     'incident_report' => $incident_report,
                     'displayMedia' => $displayMedia,
@@ -960,7 +1002,7 @@ class InitialIncidentController extends Controller
                 $displayMedia = array_map(function ($media) use ($mediaOptions) {
                     return $mediaOptions[$media] ?? $media;
                 }, $selectedMedia);
-                $capaEvidence = $this->initialincidentevidence->SelectcapaEvidence($id,$incident_id);
+                $capaEvidence = $this->initialincidentevidence->SelectcapaEvidence($id, $incident_id);
                 $data = array(
                     'incident_report' => $incident_report,
                     'displayMedia' => $displayMedia,
@@ -1285,56 +1327,52 @@ class InitialIncidentController extends Controller
                 $this->fishboneAnalysis->storeFishbone($incident_id, $incidentinvestigation->id);
             }
             $incidentDetails = $this->initialincident->selectOne($incident_id);
-            $responsibilityIds = is_array($rcpa['responsibility']) ? $rcpa['responsibility'] : [$rcpa['responsibility']];
 
-            // Get users from responsibility IDs
-            $responsibleUsers = User::whereIn('id', $responsibilityIds)->get();
+            foreach($rcpa as $item) { 
+                $responsibilityIds = is_array($item['responsibility']) ? $item['responsibility'] : [$item['responsibility']];
             
-            // Get users with EHS_HEAD role
-            $ehsHeadUsers = User::where('role', ROLE_EHS_HEAD)->get();
+                $responsibleUsers = User::whereIn('id', $responsibilityIds)->get();
+                $ehsHeadUsers = User::where('role', ROLE_EHS_HEAD)->get();
+                $superadminUsers = User::where('role', ROLE_SUPERADMIN)->get();
+                $users = $responsibleUsers->merge($ehsHeadUsers)->merge($superadminUsers)->unique('id');
             
-            // Get users with SUPERADMIN role
-            $superadminUsers = User::where('role', ROLE_SUPERADMIN)->get();
-            
-            // Merge all collections and remove duplicates by ID
-            $users = $responsibleUsers->merge($ehsHeadUsers)->merge($superadminUsers)->unique('id');
-        
-            if ($users->isEmpty()) {
-                return;
-            }
-
-            $mailsubject = 'Investigation Submitted CAPA Pending';
-            $incidentarray = $incidentDetails->toArray();
-
-            foreach ($users as $user) {
-                $email_id = $user->email;
-
-                if ($email_id) { // Better email validation
-                    $incidentarray['name'] = $user->name;
-                    $incidentarray['email_id'] = $email_id;
-                    $incidentarray['mail_subject'] = $mailsubject;
-
-                    Mail::to($email_id)->queue(new IncidentEmail($incidentarray));
+                if ($users->isEmpty()) {
+                    continue; 
                 }
+            
+                $mailsubject = 'Investigation Submitted CAPA Pending';
+                $incidentarray = $incidentDetails->toArray();
+            
+                foreach ($users as $user) {
+                    $email_id = $user->email;
+            
+                    if ($email_id) {
+                        $incidentarray['name'] = $user->name;
+                        $incidentarray['email_id'] = $email_id;
+                        $incidentarray['mail_subject'] = $mailsubject;
+            
+                        Mail::to($email_id)->queue(new IncidentEmail($incidentarray));
+                    }
+                }
+            
+                $notificationData = [
+                    'notification_type' => 5,
+                    'module_type' => 1,
+                    'notification_message' => $mailsubject,
+                    'mobile_notification' => json_encode([
+                        'title' => $mailsubject,
+                        'message' => 'Incident ' . $incidentDetails->sr_no . ' submitted by ' . getUsername($incidentinvestigation->created_by),
+                        'icon' => admin_url('public/assets/icons/incident.png'),
+                        'id' => $incidentDetails->id,
+                        'module' => 1,
+                    ]),
+                    'web_link' => admin_url('incident/initial-incident/caSubmission/' . encryptId($item['rcpa_id']) . '/' . encryptId($incident_id)),
+                    'assigned_user' => implode(',', $users->pluck('id')->toArray()),
+                    'created_by' => Auth::id(),
+                ];
+            
+                notificationSave($notificationData);
             }
-
-            $notificationData = [
-                'notification_type' => 5,
-                'module_type' => 1,
-                'notification_message' => $mailsubject,
-                'mobile_notification' => json_encode([
-                    'title' => $mailsubject,
-                    'message' => 'Incident ' . $incidentDetails->sr_no . ' submitted by ' . getUsername($incidentinvestigation->created_by),
-                    'icon' => admin_url('public/assets/icons/incident.png'),
-                    'id' => $incidentDetails->id,
-                    'module' => 1,
-                ]),
-                'web_link' => admin_url('incident/initial-incident/approvereject/' . encryptId($incidentDetails->id)),
-                'assigned_user' => implode(',', $users->pluck('id')->toArray()), // Get IDs from the users collection
-                'created_by' => Auth::id(),
-            ];
-
-            notificationSave($notificationData);
             $insert_array = array(
                 'ims_type' => 1,
                 'ims_id' => $incidentDetails->id,
@@ -1407,7 +1445,6 @@ class InitialIncidentController extends Controller
             return view('ims.initial.incident.riskanalysis', $data);
         } catch (Exception $error) {
             report($error->getMessage());
-
         }
     }
 
@@ -1490,7 +1527,7 @@ class InitialIncidentController extends Controller
             $rcpa_id = decryptId($request->rcpa_id);
             $initialincident = $this->initialincident->selectOne($incident_id);
             $incident_status = STATUS_EHSAPPROVAL_PENDING;
-            $this->initialincidentevidence->capaEvidence($initialincident,$rcpa_id);
+            $this->initialincidentevidence->capaEvidence($initialincident, $rcpa_id);
             $this->rcpa->actiontakensubmit($rcpa_id);
             $user_role = ROLE_EHS_HEAD;
             $mailsubject = 'Action Submitted';
@@ -1801,7 +1838,7 @@ class InitialIncidentController extends Controller
             $html = view('ims.initial.incident.exportpdf', $data)->render();
             $mpdf->WriteHTML($html);
             $filename = "Incident.pdf";
-           return $mpdf->Output($filename, 'D');
+            return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);
         }
@@ -1824,7 +1861,7 @@ class InitialIncidentController extends Controller
                 $getrisklevel = $this->initialincident->getrisklevel($incident_id);
                 $getEHSApprovalincident = $this->initialincident->getEHSApprovalincident($incident_id);
                 $initialincidentevidence = $this->initialincidentevidence->selectOne($incident_id);
-                $capaEvidence = $this->initialincidentevidence->SelectcapaEvidence($id,$incident_id);
+                $capaEvidence = $this->initialincidentevidence->SelectcapaEvidence($id, $incident_id);
                 $mediaOptions = [
                     1 => 'Phone',
                     2 => 'Walkie Talkie',
@@ -1843,7 +1880,7 @@ class InitialIncidentController extends Controller
             $injury_details = $this->injury_details->getBodypartsInjuryPerson($incident_id);
 
             $rcpa = $this->rcpa->selectOne($id, $incident_id);
-            $status_log = $this->Statuslog->selectCAPA($incident_id,$id, 1);
+            $status_log = $this->Statuslog->selectCAPA($incident_id, $id, 1);
             $data = array(
                 'incident_report' => $incident_report,
                 'displayMedia' => $displayMedia,
@@ -1875,7 +1912,7 @@ class InitialIncidentController extends Controller
             $html = view('ims.initial.incident.capdf', $data)->render();
             $mpdf->WriteHTML($html);
             $filename = "Incident.pdf";
-           return $mpdf->Output($filename, 'D');
+            return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);
         }

@@ -1279,6 +1279,7 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('/get-employees', [InitialIncidentController::class, 'getEmployee']);
                 Route::get('/get-workers', [InitialIncidentController::class, 'getWorkers']);
                 Route::post('/injuryDelete/{incidentId}/{injuryId}', [InitialIncidentController::class, 'injuryDelete']);
+                Route::get('/employeeid', [EmployeecumPatientController::class, 'employeeid']);
             });
 
             Route::group(['prefix' => 'ohc/'], function () {

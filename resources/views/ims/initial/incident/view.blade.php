@@ -166,6 +166,53 @@
 
                                 <div class="row">
                                     <div class="card-header-inner">
+                                        <h4 class="text-white">Incident Reported By</h4>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">Employee Code</label>
+                                        <div class="view_data">
+                                            {{ $incident_report->employee_code }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">Name</label>
+                                        <div class="view_data">
+                                            {{ $incident_report->reported_name }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">Designation</label>
+                                        <div class="view_data">
+                                            {{ $incident_report->designation }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">Department</label>
+                                        <div class="view_data">
+                                            {{ $incident_report->reported_department }}
+                                        </div>
+                                    </div>
+                                   
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">Time of reporting</label>
+                                        <div class="view_data">
+                                            {{ $incident_report->time_of_reporting }}
+                                        </div>
+                                    </div>
+
+
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">Reporting Media</label>
+                                        <div class="view_data">
+                                            {{ implode(', ', $displayMedia) }}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mt-3">
+                                    <div class="card-header-inner">
                                         <h4 class="text-white">Incident Report Details</h4>
                                     </div>
                                 </div>
@@ -202,58 +249,17 @@
                                             {{ $incident_report->location_name }}
                                         </div>
                                     </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">Exact Location</label>
+                                        <div class="view_data">
+                                            {{ $incident_report->exact_location }}
+                                        </div>
+                                    </div>
 
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">IIR Type</label>
                                         <div class="view_data">
                                             {{ $incident_report->incident_type_name }}
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="row mt-3">
-                                    <div class="card-header-inner">
-                                        <h4 class="text-white">Incident Reported By</h4>
-                                    </div>
-                                </div>
-                                <div class="row">
-
-                                    <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">Name</label>
-                                        <div class="view_data">
-                                            {{ $incident_report->reported_by }}
-                                        </div>
-                                    </div>
-                                    <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">Designation</label>
-                                        <div class="view_data">
-                                            {{ $incident_report->designation }}
-                                        </div>
-                                    </div>
-                                    <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">Department</label>
-                                        <div class="view_data">
-                                            {{ $incident_report->reported_department }}
-                                        </div>
-                                    </div>
-                                    <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">Employee Code</label>
-                                        <div class="view_data">
-                                            {{ $incident_report->employee_code }}
-                                        </div>
-                                    </div>
-                                    <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">Time of reporting</label>
-                                        <div class="view_data">
-                                            {{ $incident_report->time_of_reporting }}
-                                        </div>
-                                    </div>
-
-
-                                    <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">Reporting Media</label>
-                                        <div class="view_data">
-                                            {{ implode(', ', $displayMedia) }}
                                         </div>
                                     </div>
 
@@ -485,18 +491,22 @@
                                                 @endif
                                             </div>
                                         </div>
-
-                                        <div class="mb-3 col-md-4 form-input">
-                                            <label class="form-label view_label">Immediate action taken
-                                                (If any)</label>
-                                            <div class="view_data">
-                                                {{ $getInvestigation->action_taken }}
-                                            </div>
-                                        </div>
                                         <div class="mb-3 col-md-4 form-input">
                                             <label class="form-label view_label">Remarks (If Any)</label>
                                             <div class="view_data">
                                                 {{ $getInvestigation->remark }}
+                                            </div>
+                                        </div>
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <label class="form-label view_label">Investigation Submission Date</label>
+                                            <div class="view_data">
+                                                {{ Displaydateformat($getInvestigation->investigation_date) }}
+                                            </div>
+                                        </div>
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <label class="form-label view_label">Investigation Submission Time</label>
+                                            <div class="view_data">
+                                                {{$getInvestigation->investigation_time }}
                                             </div>
                                         </div>
                                         <div class="mb-3 col-md-4 form-input">
@@ -740,52 +750,40 @@
                                         </div>
                                     </div>
                                     <div class="row">
-                                        @foreach ($rcpa as $rcpa)
-                                            <div class="mb-3 col-md-4 form-input">
-                                                <label class="form-label view_label">RCPA ID</label>
-                                                <div class="view_data">
-                                                    {{ $rcpa->rcpa_id }}
-                                                </div>
-                                            </div>
-                                            <div class="mb-3 col-md-4 form-input">
-                                                <label class="form-label view_label">Recommended Corrective & Preventive
-                                                    Action</label>
-                                                <div class="view_data">
-                                                    {{ $rcpa->rcpa }}
-                                                </div>
-                                            </div>
-                                            <div class="mb-3 col-md-4 form-input">
-                                                <label class="form-label view_label">Responsibility</label>
-                                                <div class="view_data">
-                                                    {{ $rcpa->responsibility }}
-                                                </div>
-                                            </div>
-                                            <div class="mb-3 col-md-4 form-input">
-                                                <label class="form-label view_label">Timeline</label>
-                                                <div class="view_data">
-                                                    {{ DisplayDateformat($rcpa->timeline) }}
-                                                </div>
-                                            </div>
-                                            <div class="mb-3 col-md-12 form-input">
-                                                <label class="form-label view_label">Status</label>
-                                                <div class="view_data">
-                                                    @if ($rcpa->capa_status == 1)
-                                                        <span class="badge bg-success">Open</span>
-                                                    @elseif($rcpa->capa_status == 2)
-                                                        <span class="badge bg-warning text-dark">In Progress</span>
-                                                    @elseif($rcpa->capa_status == 3)
-                                                        <span class="badge bg-secondary">Closed</span>
-                                                    @endif
-                                                </div>
-                                            </div>
-                                            <div class="mb-3 col-md-12 form-input">
-                                                <label class="form-label view_label">Remark if any</label>
-                                                <div class="view_data">
-                                                    {{ $rcpa->remark }}
-                                                </div>
-                                            </div>
-                                        @endforeach
-                                        <hr>
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered rcpa-view text-center">
+                                                <thead class="table-dark">
+                                                    <tr>
+                                                        <th>RCPA ID</th>
+                                                        <th>Recommended Corrective & Preventive Action</th>
+                                                        <th>Responsibility</th>
+                                                        <th>Timeline</th>
+                                                        <th>Status</th>
+                                                        <th>Remark</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach ($rcpa as $item)
+                                                        <tr>
+                                                            <td>{{ $item->rcpa_id }}</td>
+                                                            <td>{{ $item->rcpa }}</td>
+                                                            <td>{{ getUsername($item->responsibility) }}</td>
+                                                            <td>{{ DisplayDateformat($item->timeline) }}</td>
+                                                            <td>
+                                                                @if ($item->capa_status == 1)
+                                                                    <span class="badge bg-success">Open</span>
+                                                                @elseif($item->capa_status == 2)
+                                                                    <span class="badge bg-warning text-dark">In Progress</span>
+                                                                @elseif($item->capa_status == 3)
+                                                                    <span class="badge bg-secondary">Closed</span>
+                                                                @endif
+                                                            </td>
+                                                            <td>{{ $item->remark }}</td>
+                                                        </tr>
+                                                    @endforeach
+                                                </tbody>
+                                            </table>
+                                        </div>
 
                                         <div class="mb-3 col-md-12 form-input">
                                             <label class="form-label view_label">Main Root Cause</label>
