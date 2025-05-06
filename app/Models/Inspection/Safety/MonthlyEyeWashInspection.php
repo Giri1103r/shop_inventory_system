@@ -81,8 +81,8 @@ class MonthlyEyeWashInspection extends Model
         if (isset($request->shift) && $request->shift) {
             $query = $query->where('inspection_monthly_eyewash.shift', 'LIKE', '%' . decryptId($request->shift) . '%');
         }
-        if (isset($request->date_of_inspection) && $request->date_of_inspection) {
-            $query = $query->where('inspection_monthly_eyewash.date_of_inspection', 'LIKE', '%' . DBdateformat($request->date_of_inspection) . '%');
+        if (isset($request->inspection_date) && $request->inspection_date) {
+            $query = $query->where('inspection_monthly_eyewash.date_of_inspection', 'LIKE', '%' . DBdateformat($request->inspection_date) . '%');
         }
         if (isset($request->next_due) && $request->next_due) {
             $query = $query->where('inspection_monthly_eyewash.next_due', 'LIKE', '%' . DBdateformat($request->next_due) . '%');
@@ -290,8 +290,8 @@ class MonthlyEyeWashInspection extends Model
         if (isset($request->shift) && $request->shift) {
             $query = $query->where('inspection_monthly_eyewash.shift', 'LIKE', '%' . decryptId($request->shift) . '%');
         }
-        if (isset($request->date_of_inspection) && $request->date_of_inspection) {
-            $query = $query->where('inspection_monthly_eyewash.date_of_inspection', 'LIKE', '%' . DBdateformat($request->date_of_inspection) . '%');
+        if (isset($request->inspection_date) && $request->inspection_date) {
+            $query = $query->where('inspection_monthly_eyewash.date_of_inspection', 'LIKE', '%' . DBdateformat($request->inspection_date) . '%');
         }
         if (isset($request->next_due) && $request->next_due) {
             $query = $query->where('inspection_monthly_eyewash.next_due', 'LIKE', '%' . DBdateformat($request->next_due) . '%');
