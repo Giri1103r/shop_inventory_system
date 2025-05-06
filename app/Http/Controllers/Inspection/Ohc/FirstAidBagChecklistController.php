@@ -23,7 +23,7 @@ use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\RichText\RichText;
 use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 use App\Models\Inspection\InspectionStaticDocno;
-use App\Models\Inspection\ohc\FirstAidBagChecklist;
+use App\Models\Inspection\Ohc\FirstAidBagChecklist;
 use App\Models\Inspection\Ohc\Master\FirstAidEquipment;
 
 class FirstAidBagChecklistController extends Controller
