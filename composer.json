@@ -19,6 +19,7 @@
         "maatwebsite/excel": "^3.1",
         "mews/captcha": "^3.4",
         "mpdf/mpdf": "^8.2",
+        "opcodesio/log-viewer": "^3.15",
         "shuchkin/simplexlsx": "^1.1",
         "shuchkin/simplexlsxgen": "^1.4",
         "simplesoftwareio/simple-qrcode": "^4.2",
