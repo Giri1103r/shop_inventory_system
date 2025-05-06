@@ -338,7 +338,7 @@ class FireAlarmController extends Controller
                 return redirect(admin_url('fire/fire-alarm-inspection/list'));
             }
         } catch (Exception $ex) {
-            dd($ex);
+           report($ex);
             report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('fire/fire-alarm-inspection/list'));

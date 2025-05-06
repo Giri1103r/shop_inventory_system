@@ -80,7 +80,7 @@
                                                                         value="{{ encryptId($medicines->id) }}"></td>
                                                                 <td>
                                                                     <div class="form-input">
-                                                                        <input class="form-control" type="text"
+                                                                        <input class="form-control" type="number" min="1"
                                                                             name="available_quantity[{{ $medicines->id }}]"
                                                                             value="{{ old('available_quantity.' . $loop->iteration) }}" />
                                                                     </div>
@@ -153,7 +153,7 @@
                                                 <x-button-submit class="submit"></x-button-submit>
                                                 <x-button-reset class="submit"></x-button-reset>
                                                 <x-button-cancel
-                                                    href="{{ admin_url('safety/forklift-inspection/monthly/list') }}"></x-button-cancel>
+                                                    href="{{ admin_url('ohc/first-aid/opd-medicine-inspection/list') }}"></x-button-cancel>
                                             </div>
 
                                     </form>
@@ -299,9 +299,13 @@
 
                     $('textarea[name^="remarks"]').each(function() {
                         $(this).rules('add', {
-                            required: 500,
+                              required: true,
+                            minlength:3,
+                            maxlength:300,
                             messages: {
-                                required: "Remarks is required"
+                                required: "Remarks is required",
+                                minlength:"Minimum 3 characters required",
+                                maxlength:"Maximum character does not exceed 300"
                             }
                         });
                     });

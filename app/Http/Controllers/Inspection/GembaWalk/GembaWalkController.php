@@ -105,15 +105,15 @@ class GembaWalkController extends Controller
                                 return "<span class='" . $row->bg_color . "' >" . $row->status_name . "</span>";
                             })
                             ->addColumn('action', function ($row) {
-                                $btn = '<a href="' . admin_url('inspection/gemba-walk/view/' . encryptId($row->gemba_walk_id)) . '" title="View"><i class="fa-solid fa-eye"></i></a> ';
+                                $btn = '<a href="' . admin_url('inspection/gemba-walk/view/' . encryptId($row->gemba_walk_id)) . ' "class=" me-1"  title="View "><i class="fa-solid fa-eye"></i></a> ';
 
 
                                 if (($row->gemba_walk_status == GEMBA_WALK_INSPECTION_WAITING_FOR_FLOOR_MANAGER_VERIFICATION || $row->gemba_walk_status == GEMBA_WALK_INSPECTION_REJECTED) && (CheckUserRole(ROLE_FLOOR_MANAGER) || isAdmin())) {
-                                    $btn .= '<a href="' . admin_url('inspection/gemba-walk/floor-manager/' . encryptId($row->gemba_walk_id)) . '" title="' . 'Floor Manager Action' . '"><i class="fa-solid fa-check-to-slot text-primary"></i></a> ';
+                                    $btn .= '<a href="' . admin_url('inspection/gemba-walk/floor-manager/' . encryptId($row->gemba_walk_id)) . '"class=" me-1" title="' . 'Floor Manager Action' . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                                 }
 
                                 if ($row->gemba_walk_status == GEMBA_WALK_INSPECTION_WAITING_FOR_EHS_OFFICER_VERIFICATION  && (CheckUserRole(ROLE_EHS_OFFICER) || isAdmin())) {
-                                    $btn .= '<a href="' . admin_url('inspection/gemba-walk/ehs-officer/' . encryptId($row->gemba_walk_id)) . '" title="' . 'EHS Officer Action' . '"><i class="fa-solid fa-check-to-slot text-primary"></i></a> ';
+                                    $btn .= '<a href="' . admin_url('inspection/gemba-walk/ehs-officer/' . encryptId($row->gemba_walk_id)) . '" class=" me-1" title="' . 'EHS Officer Action' . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                                 }
 
                                 $btn .= '<a href="' . admin_url('inspection/gemba-walk/generalpdf/' . encryptId($row->gemba_walk_id)) . '" style="margin-right: 5px;" title="PDF"> <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i></a>';
@@ -129,7 +129,7 @@ class GembaWalkController extends Controller
 
                         return $datatables;
                     } catch (Exception $ex) {
-                        report($ex);
+                      report($ex);
                         return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                     }
                 }
@@ -142,7 +142,7 @@ class GembaWalkController extends Controller
 
             return view('inspection.gembaWalk.list', $data);
         } catch (Exception $ex) {
-            report($ex);
+          report($ex);
             return response()->json(['status' => 'error', 'msg' => 'An error occurred while processing your request. Please try again later.'], 500);
         }
     }
@@ -169,7 +169,7 @@ class GembaWalkController extends Controller
             );
             return view('inspection.gembaWalk.add', $data);
         } catch (Exception $ex) {
-            report($ex);
+          report($ex);
         }
     }
 
@@ -385,8 +385,9 @@ class GembaWalkController extends Controller
             }
 
         } catch (Exception $ex) {
-            report($ex);
+          report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('inspection/gemba-walk/list'));
         }
     }
 
@@ -426,7 +427,9 @@ class GembaWalkController extends Controller
             // dd($data);
             return view('inspection.gembaWalk.view', $data);
         } catch (Exception $ex) {
-            report($ex);
+          report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('inspection/gemba-walk/list'));
         }
     }
 
@@ -458,7 +461,9 @@ class GembaWalkController extends Controller
             }
             return view('inspection.gembaWalk.approval', $data);
         } catch (Exception $ex) {
-            report($ex);
+          report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('inspection/gemba-walk/list'));
         }
     }
 
@@ -556,7 +561,9 @@ class GembaWalkController extends Controller
             Session::flash('success', 'Floor Manager Verification successfully');
             return redirect(admin_url('inspection/gemba-walk/list'));
         } catch (Exception $ex) {
-            report($ex);
+          report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('inspection/gemba-walk/list'));
         }
     }
 
@@ -586,7 +593,9 @@ class GembaWalkController extends Controller
             }
             return view('inspection.gembaWalk.approval', $data);
         } catch (Exception $ex) {
-            report($ex);
+          report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('inspection/gemba-walk/list'));
         }
     }
 
@@ -762,7 +771,9 @@ class GembaWalkController extends Controller
             Session::flash('success', '  EHS Officer Verication successfully');
             return redirect(admin_url('inspection/gemba-walk/list'));
         } catch (Exception $ex) {
-            report($ex);
+          report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('inspection/gemba-walk/list'));
         }
     }
 
@@ -820,8 +831,9 @@ class GembaWalkController extends Controller
             $filename = "Gemba Walk Details.pdf";
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            report($ex);
-            return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
+          report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('inspection/gemba-walk/list'));
         }
     }
 
@@ -1090,9 +1102,10 @@ class GembaWalkController extends Controller
                 'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
             ]);
         } catch (\Exception $e) {
-            dd($e);
+
             report($e);
-            return back()->with('error', 'Failed to export Gemba Walk data.');
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('inspection/gemba-walk/list'));
         }
     }
 
@@ -1137,7 +1150,7 @@ class GembaWalkController extends Controller
             $filename = "Gemba Walk.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            report($ex);
+          report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('inspection/gemba-walk/list'));
         }
@@ -1394,8 +1407,9 @@ class GembaWalkController extends Controller
             $writer->save("php://output");
             exit;
         } catch (\Exception $e) {
-            dd($e);
-            return back()->with('error', $e->getMessage());
+            report($e);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('inspection/gemba-walk/list'));
         }
     }
 }

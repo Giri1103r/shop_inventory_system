@@ -492,7 +492,7 @@
             initializeFlatpickr();
         });
 
-        function addValidationRules(row) {
+        function addValidationRules(newRow) {
             newRow.find("input[name$='[instrument_name]']").rules("add", {
                 minlength: 3,
                 maxlength: 2000,

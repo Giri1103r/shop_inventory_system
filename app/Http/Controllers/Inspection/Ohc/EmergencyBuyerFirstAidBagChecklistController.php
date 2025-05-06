@@ -131,6 +131,8 @@ class EmergencyBuyerFirstAidBagChecklistController extends Controller
             return view('inspection.inspection_ohc.emergency_buyer_bag_inspection.add', $data);
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/emergency-buyer-first-aid-bag/checklist/list'));
         }
     }
 

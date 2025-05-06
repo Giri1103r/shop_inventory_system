@@ -180,7 +180,7 @@ class FirstAidMedicineInspectionController extends Controller
                 $mailsubject = 'Monthly OHC First-Aid Medicine Inspection Checklist';
                 $notificationData = array(
                     'notification_type' => OHC_INSPECTION,
-                    'module_type' => 1,
+                    'module_type' => 19,
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(
                         'title' => $mailsubject,
@@ -189,7 +189,7 @@ class FirstAidMedicineInspectionController extends Controller
                         'id' => $inspection_details->id,
                         'module' => 1,
                     )),
-                    'web_link' =>  admin_url('ohc/first-aid/opd-medicine-inspection/view/' . encryptId($inspection_details->id)),
+                    'web_link' =>  admin_url('ohc/first-aid/opd-medicine-inspection/approval/' . encryptId($inspection_details->id)),
                     'assigned_user' => array_to_string($ehsOfficers),
                     'created_by' => Auth::id(),
                 );
@@ -303,7 +303,7 @@ class FirstAidMedicineInspectionController extends Controller
                     ]);
                 }
 
-                $sheet->mergeCells("G{$currentRow}:M" . ($currentRow + 2));
+                $sheet->mergeCells("G{$currentRow}:N" . ($currentRow + 2));
                 $sheet->setCellValue("G{$currentRow}", "Monthly OHC First-Aid Medicine Inspection Checklist PN International Pvt.Ltd");
                 $sheet->getStyle("G{$currentRow}")->applyFromArray([
                     'font' => ['bold' => true, 'size' => 14],
@@ -593,7 +593,7 @@ class FirstAidMedicineInspectionController extends Controller
             $mailsubject = 'Monthly OHC First-Aid Medicine Inspection Checklist';
             $notificationData = array(
                 'notification_type' => OHC_INSPECTION,
-                'module_type' => 1,
+                'module_type' => 19,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,

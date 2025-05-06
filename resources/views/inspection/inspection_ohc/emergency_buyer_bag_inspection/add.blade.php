@@ -105,8 +105,8 @@
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Frequency</label>
-                                                    <select name="frequency_id" id="frequency_id" class="form-control single-select"
-                                                        style="width: 100%">
+                                                    <select name="frequency_id" id="frequency_id"
+                                                        class="form-control single-select" style="width: 100%">
                                                         <option value="">Select the Frequency</option>
                                                         @foreach ($frequency as $frequency)
                                                             <option value="{{ encryptId($frequency->id) }}">
@@ -147,7 +147,7 @@
                                                                 </td>
                                                                 <td>
                                                                     <div class="form-input">
-                                                                        <input class="form-control" type="text"
+                                                                        <input class="form-control" type="number" min="1"
                                                                             name="available_quantity[{{ $medicines->id }}]" />
                                                                     </div>
                                                                 </td>
@@ -259,7 +259,7 @@
 
             $('#EmergencyFirstAidBagAdd').validate({
                 rules: {
-                   
+
                     date_of_inspection: {
                         required: true,
                     },
@@ -283,10 +283,13 @@
                     },
                     remark_by: {
                         required: true,
+                        minlength:3,
+                        maxlength:300,
+
                     }
                 },
                 messages: {
-                    
+
                     date_of_inspection: {
                         required: "Date of Inspection is required",
                     },
@@ -304,13 +307,15 @@
                     },
                     frequency_id: {
                         required: "Frequency  selection is required",
-                        
+
                     },
                     signature_image: {
                         required: "Signature is required",
                     },
                     remark_by: {
                         required: "Please add remarks",
+                        minlength: "Minimum 3 characters required",
+                        maxlength: "Maximum character does not exceed 300"
                     }
                 },
                 errorElement: 'span',
@@ -375,9 +380,13 @@
 
                 $('textarea[name^="remarks"]').each(function() {
                     $(this).rules('add', {
-                        required: 500,
+                        required: true,
+                        minlength:3,
+                        maxlength:300,
                         messages: {
-                            required: "Remarks is required"
+                            required: "Remarks is required",
+                            minlength: "Minimum 3 characters required",
+                            maxlength: "Maximum character does not exceed 300"
                         }
                     });
                 });

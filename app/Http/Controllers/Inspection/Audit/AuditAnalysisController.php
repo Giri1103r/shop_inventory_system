@@ -137,7 +137,7 @@ class AuditAnalysisController extends Controller
                 Session::flash('success', __('Your data has been created successfully'));
             } catch (Exception $ex) {
 
-                dd($ex);
+               report($ex);
                 Session::flash('error', __('common.message_error'));
             }
             return redirect(admin_url('audit/6s-analysis/list'));

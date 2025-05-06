@@ -233,6 +233,20 @@ class Notification extends Model
                     ->where('template_notification.trash', 'NO');
             }
 
+        }elseif (Auth::user()->role == ROLE_INSPECTION_CREATOR) {
+            $nomination = DB::table('users')
+                ->select('id')
+                ->where('employee_id', Auth::user()->employee_id)
+                ->first();
+
+            if ($nomination) {
+                $assignedUserId = $nomination->id;
+
+                $query->whereRaw("FIND_IN_SET(?, assigned_user)", [$assignedUserId])
+                    ->where('notification_type', [SAFETY_INSPECTION,OHC_INSPECTION,FIRE_INSPECTION])
+                    ->where('template_notification.trash', 'NO');
+            }
+
         }
 
 

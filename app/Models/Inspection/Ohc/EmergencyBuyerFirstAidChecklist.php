@@ -57,6 +57,8 @@ class EmergencyBuyerFirstAidChecklist extends Model
                     ->orWhere('masters_unit.unit_name', 'LIKE', '%' . $search . '%');
             });
         }
+
+        
         if ($request->has('date_of_inspection') && $request->date_of_inspection) {
             $formattedDate = DBdateformat($request->date_of_inspection);
             $query = $query->whereDate('inspection_ohc_emergency_buyer_first_aid_bag_checklist_details.date_of_inspection', $formattedDate);

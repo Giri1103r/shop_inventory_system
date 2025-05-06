@@ -1226,6 +1226,26 @@ class CronController extends Controller
             return response()->json(['message' => 'No jobs in the  Safety Equipment Master Import queue to process', 'exit_code' => 0]);
         }
     }
+    public function firstAidEquipmentImport()
+    {
+        $queueLength = Queue::size('firstAidEquipmentImport');
+        if ($queueLength > 0) {
+            $options = [
+                '--sleep' => 3,
+                '--tries' => 3,
+                '--queue' => 'firstAidEquipmentImport',
+                '--timeout' => 600,
+                '--max-jobs' => 10,
+            ];
+
+            $exitCode = Artisan::call('queue:work', $options);
+            Session::invalidate();
+            return response()->json(['message' => 'Queue  OHC Inspection Master command executed successfully',  'exit_code' => $exitCode]);
+        } else {
+            Session::invalidate();
+            return response()->json(['message' => 'No jobs in the OHC Inspection Master Import queue to process', 'exit_code' => 0]);
+        }
+    }
     public function queueChecklistmasterImport()
     {
         $queueLength = Queue::size('checklistimport');

@@ -28,7 +28,7 @@ use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use PhpOffice\PhpSpreadsheet\RichText\RichText;
-
+use Illuminate\Support\Facades\Response;
 
 class MSDSController extends Controller
 {
@@ -67,7 +67,7 @@ class MSDSController extends Controller
                         })
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            $btn = '<a href="' . admin_url('msds/view/' . encryptId($row->id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
+                            $btn = '<a href="' . admin_url('msds/view/' . encryptId($row->id)) . '"   class="view-icon me-1" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
                             $btn .= '<a href="' . admin_url('msds/generalpdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
                                         <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
                                     </a>';
@@ -104,6 +104,8 @@ class MSDSController extends Controller
             return view('inspection.msds.add', $data);
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error',  __('common.message_error'));
+            return redirect(admin_url('msds/list'));
         }
     }
 
@@ -133,13 +135,40 @@ class MSDSController extends Controller
 
                 Session::flash('success', __('Your data has been created successfully'));
             } catch (Exception $ex) {
-                Session::flash('error', __('common.message_error'));
+
+                Session::flash('error',  __('common.message_error'));
+                return redirect(admin_url('msds/list'));
             }
             return redirect(admin_url('msds/list'));
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('msds/list'));
+        }
+    }
+
+    public function Uniquecheck(Request $request)
+    {
+        if ($request->ajax()) {
+            $item_code = $request->item_code;
+            $name_of_chemical = $request->name_of_chemical;
+
+            $id = $request->id;
+
+            if (empty($id)) {
+                $isUnique = $this->msdsDetails->uniqueCheck($item_code, $name_of_chemical);
+
+
+            } else {
+                $id = decryptId($id);
+
+                $isUnique = $this->msdsDetails->existUniqueCheck($item_code, $id);
+            }
+
+            if ($isUnique->count()) {
+                return Response::json(false);
+            }
+            return Response::json(true);
         }
     }
 
@@ -161,6 +190,8 @@ class MSDSController extends Controller
             return view('inspection.msds.view', $data);
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error',  __('common.message_error'));
+            return redirect(admin_url('msds/list'));
         }
     }
 
@@ -393,7 +424,8 @@ class MSDSController extends Controller
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);
-            return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
+            Session::flash('error',  __('common.message_error'));
+            return redirect(admin_url('msds/list'));
         }
     }
 

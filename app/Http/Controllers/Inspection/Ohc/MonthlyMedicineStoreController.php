@@ -177,7 +177,7 @@ class MonthlyMedicineStoreController extends Controller
                 $mailsubject = 'Monthly OHC Store Medicine Inspection Checklist';
                 $notificationData = array(
                     'notification_type' => OHC_INSPECTION,
-                    'module_type' => 1,
+                    'module_type' => 18,
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(
                         'title' => $mailsubject,
@@ -186,7 +186,7 @@ class MonthlyMedicineStoreController extends Controller
                         'id' => $inspection_details->id,
                         'module' => 1,
                     )),
-                    'web_link' =>  admin_url('ohc/monthly-medicine-store/inspection/view/' . encryptId($inspection_details->id)),
+                    'web_link' =>  admin_url('ohc/monthly-medicine-store/inspection/approval/' . encryptId($inspection_details->id)),
                     'assigned_user' => array_to_string($ehsOfficers),
                     'created_by' => Auth::id(),
                 );
@@ -382,7 +382,7 @@ class MonthlyMedicineStoreController extends Controller
             $mailsubject = 'Monthly OHC Store Medicine Inspection Checklist';
             $notificationData = array(
                 'notification_type' => OHC_INSPECTION,
-                'module_type' => 1,
+                'module_type' => 18,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
