@@ -137,9 +137,7 @@
                             .attr('content')
                     },
                     data: function(d) {
-                        d.document_number = $('#document_number').val();
-                        d.issue_date = $('#issue_date').val();
-                        d.revision_date = $('#revision_date').val();
+                        d.audit_analysis_id = $('#audit_analysis_id').val();
                         d.status = $('#status').val();
 
                     },
@@ -201,9 +199,7 @@
                                 text: '{{ __('common.pdf') }}',
                                 action: function(e, dt, button, config) {
                                     var searchValue = $('#datatable-list_filter input').val();
-                                    document_number = $('#document_number').val();
-                                    issue_date = $('#issue_date').val();
-                                    revision_date = $('#revision_date').val();
+                                    audit_analysis_id = $('#audit_analysis_id').val();
                                     status = $('#status').val();
 
                                     $(".dt-button").removeClass('processing');
@@ -211,9 +207,7 @@
                                     window.location.href =
                                         "{{ admin_url('audit/6s-analysis/export/pdf') }}" +
                                         '?search=' + searchValue +
-                                        '&document_number=' + document_number +
-                                        '&issue_date=' + issue_date +
-                                        '&revision_date=' + revision_date +
+                                        '&audit_analysis_id=' + audit_analysis_id +
                                         '&status=' + status
                                 }
                             },
@@ -222,18 +216,14 @@
                                 text: '{{ __('common.excel') }}',
                                 action: function(e, dt, button, config) {
                                     var searchValue = $('#datatable-list_filter input').val();
-                                    document_number = $('#document_number').val();
-                                    issue_date = $('#issue_date').val();
-                                    revision_date = $('#revision_date').val();
+                                    audit_analysis_id = $('#audit_analysis_id').val();
                                     status = $('#status').val();
                                     $(".dt-button").removeClass('processing');
                                     $('body').click();
                                     window.location.href =
                                         "{{ admin_url('audit/6s-analysis/export/excel') }}" +
                                         '?search=' + searchValue +
-                                        '&document_number=' + document_number +
-                                        '&issue_date=' + issue_date +
-                                        '&revision_date=' + revision_date +
+                                        '&audit_analysis_id=' + audit_analysis_id +
                                         '&status=' + status
                                 }
                             },
