@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Validator;
 use Spatie\SimpleExcel\SimpleExcelWriter;
 use Yajra\DataTables\Facades\DataTables;
 use App\Models\OhcManagement\Master\HospitalDetails;
+use App\Models\OhcManagement\Master\Medicine;
 
 class FirstAidController extends Controller
 {
@@ -22,6 +23,7 @@ class FirstAidController extends Controller
     private $work;
     private $employee;
     private $hospital;
+    private $medicine;
 
     public function __construct()
     {
@@ -29,7 +31,7 @@ class FirstAidController extends Controller
         $this->employee = new Employee();
         $this->work = new Work();
         $this->hospital = new HospitalDetails();
-
+        $this->medicine = new Medicine();
     }
     public function index(Request $request)
     {
@@ -62,22 +64,40 @@ class FirstAidController extends Controller
                         ->editColumn('unit_id', function ($row) {
                             return $row->unit_name;
                         })
+                        ->editColumn('medicine_id', function ($row) {
+                            if (empty($row->medicine_id)) {
+                                return '-';
+                            }
+
+                            $medicineIds = explode(',', $row->medicine_id);
+                            $medicineNames = [];
+
+                            foreach ($medicineIds as $id) {
+                                $medicineName = getMedicinename(trim($id));
+                                if (!empty($medicineName)) {
+                                    $medicineNames[] = $medicineName;
+                                }
+                            }
+
+                            return implode(', ', $medicineNames);
+                        })
+
                         ->addColumn('created_by', function ($row) {
                             return getUsername($row->created_by);
                         })
 
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            // if (CheckUserPermission('view')) {
-                            $btn = '<a href="' . admin_url('ohc/first-aid/view/' . encryptId($row->id)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
-                            // }
-                            // if (CheckUserPermission('edit')) {
-                            $btn .= '<a href="' . admin_url('ohc/first-aid/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
-                            // }
+                            if (CheckUserPermission('view')) {
+                                $btn = '<a href="' . admin_url('ohc/first-aid/view/' . encryptId($row->id)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
+                            }
+                            if (CheckUserPermission('edit')) {
+                                $btn .= '<a href="' . admin_url('ohc/first-aid/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
+                            }
 
                             return $btn;
                         })
-                        ->rawColumns(['action', 'created_date', 'created_by', 'status','date_of_incident'])
+                        ->rawColumns(['action', 'created_date', 'created_by', 'status', 'date_of_incident'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -99,12 +119,14 @@ class FirstAidController extends Controller
     {
         try {
             $hospital = $this->hospital->getHospitalname();
+            $medicine = $this->medicine->getMedicineData();
             $data = [
 
-                'hospital' => $hospital
+                'hospital' => $hospital,
+                'medicine' => $medicine,
             ];
 
-            return view('ohcmanagement.ohc-opd.first-aid.add',$data);
+            return view('ohcmanagement.ohc-opd.first-aid.add', $data);
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
@@ -144,14 +166,14 @@ class FirstAidController extends Controller
 
                 Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
-                 report($ex);
+                report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
             return redirect(admin_url('ohc/first-aid/list'));
         } catch (Exception $ex) {
 
-             report($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/first-aid/list'));
         }
@@ -165,15 +187,17 @@ class FirstAidController extends Controller
                 $opd_first_aid = $this->ohc_opd_first_aid->selectOne($id);
             }
             $hospital = $this->hospital->getHospitalname();
+            $medicine = $this->medicine->getMedicineData();
 
             $data = array(
                 'opd_first_aid' => $opd_first_aid,
-                'hospital' => $hospital
+                'hospital' => $hospital,
+                'medicine' => $medicine,
 
             );
             return view('ohcmanagement.ohc-opd.first-aid.edit', $data);
         } catch (Exception $ex) {
-             report($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/first-aid/list'));
         }
@@ -227,10 +251,13 @@ class FirstAidController extends Controller
         try {
             $id = decryptId($request->id);
             if (Auth::check()) {
+                $medicine = $this->medicine->select('id', 'medicine')->where('status', '1')->get();
+
                 $opd_first_aid = $this->ohc_opd_first_aid->selectOne($id);
             }
             $data = array(
                 'opd_first_aid' => $opd_first_aid,
+                'medicine' => $medicine,
 
             );
             return view('ohcmanagement.ohc-opd.first-aid.view', $data);
@@ -258,12 +285,12 @@ class FirstAidController extends Controller
                 'Employee Name',
                 'Date of Incident',
                 'Time of Incident',
+                'Medicine',
                 'Treatment Provided',
                 'Treatment Start Time',
                 'Treatment End  Time',
                 'First Aider Name',
                 'Follow Up Required',
-                'Refered To',
                 'Remarks',
                 __("common.status"),
                 __("common.created_by"),
@@ -271,7 +298,17 @@ class FirstAidController extends Controller
             ];
 
             $i = 1;
+            $medicine = $this->medicine->select('id', 'medicine')->where('status', '1')->get();
+
             foreach ($allData as $data) {
+                $medicineIds = explode(',', $data->medicine_id ?? '');
+                $medicineNames = [];
+
+                foreach ($medicine as $list) {
+                    if (in_array($list->id, $medicineIds)){
+                        $medicineNames[] = $list->medicine;
+                    }
+                }
 
                 $export = [];
                 $export[] =  $i;
@@ -279,12 +316,13 @@ class FirstAidController extends Controller
                 $export[] =  $data->emp_name;
                 $export[] =  $data->date_of_incident;
                 $export[] =  $data->time_of_incident;
+                $export[] =  implode(', ', $medicineNames);
                 $export[] =  $data->treatment_provided;
                 $export[] =  $data->treatment_start_time;
                 $export[] =  $data->treatment_end_time;
                 $export[] =  $data->first_aider_name;
                 $export[] =  $data->follow_up_required == 1 ? 'Yes' : 'No';
-                $export[] =  $data->referred_to;
+
                 $export[] =  $data->remarks;
                 $export[] =  $data->status == 1 ? 'Active' : 'In-Active';
                 $export[] =  getusername($data->created_by);
@@ -295,14 +333,16 @@ class FirstAidController extends Controller
                 $i++;
             }
 
-            $writer = SimpleExcelWriter::streamDownload(' First Aid.xlsx')
+            $writer = SimpleExcelWriter::streamDownload('First Aid.xlsx')
                 ->addHeader($header)
                 ->addRows(
                     $exportData
                 );
         } catch (Exception $ex) {
 
-            report($ex);
+            dd($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/first-aid/list'));
         }
     }
 
@@ -316,19 +356,19 @@ class FirstAidController extends Controller
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
             }
-
+            $medicine = $this->medicine->select('id', 'medicine')->where('status', '1')->get();
             $header = [
                 __("common.sno"),
                 'Employee Code',
                 'Employee Name',
                 'Date of Incident',
                 'Time of Incident',
+                'Medicine Name',
                 'Treatment Provided',
                 'Treatment Start Time',
                 'Treatment End  Time',
                 'First Aider Name',
                 'Follow Up Required',
-                'Refered To',
                 'Remarks',
                 __("common.status"),
                 __("common.created_by"),
@@ -337,6 +377,7 @@ class FirstAidController extends Controller
 
             $data = array(
                 'header' => $header,
+                'medicine' => $medicine,
                 'content' => $allData,
                 'pagetitle' => " First Aid",
             );
@@ -365,6 +406,8 @@ class FirstAidController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/first-aid/list'));
         }
     }
     public function StatusChange(Request $request)
@@ -383,7 +426,8 @@ class FirstAidController extends Controller
     }
     // employee name
 
-    public function employeename(Request $request){
+    public function employeename(Request $request)
+    {
         $name = $request->input('search');
 
         $employee_code = $this->employee->where('emp_id', 'like', '%' . $name . '%')

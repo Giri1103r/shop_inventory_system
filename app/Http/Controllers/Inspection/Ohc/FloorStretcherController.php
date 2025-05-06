@@ -78,12 +78,12 @@ class FloorStretcherController extends Controller
 
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            $btn = '<a href="' . admin_url('ohc/floor_stretcher/checklist/view/' . encryptId($row->id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
+                            $btn = '<a href="' . admin_url('ohc/floor_stretcher/checklist/view/' . encryptId($row->checklist_id)) . '"   class="view-icon me-1" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
 
-                            $btn .= '<a href="' . admin_url('ohc/floor_stretcher/checklist/exportViewPdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
+                            $btn .= '<a href="' . admin_url('ohc/floor_stretcher/checklist/exportViewPdf/' . encryptId($row->checklist_id)) . '" style="margin-right: 5px;" title="PDF">
                             <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
                         </a>';
-                            $btn .= '<a href="' . admin_url('ohc/floor_stretcher/checklist/export/excel/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
+                            $btn .= '<a href="' . admin_url('ohc/floor_stretcher/checklist/export/excel/' . encryptId($row->checklist_id)) . '" style="margin-right: 5px;" title="PDF">
                         <i class="fas fa-file-excel" style="color: #1D6F42;" aria-hidden="true"></i>
                      </a>';
                             return $btn;
@@ -100,8 +100,16 @@ class FloorStretcherController extends Controller
                 }
             }
         }
+        $shifts = $this->shift->getShiftname();
+        $frequency = $this->frequency->getFrequency();
+        $unit = $this->unit->getUnit();
+        $data = array(
+            'shifts' => $shifts,
+            'units' => $unit,
+            'frequency' => $frequency,
 
-        return view('inspection.ohc.floor_stretcher.list');
+        );
+        return view('inspection.ohc.floor_stretcher.list',$data);
     }
 
     public function Add(Request $request)
@@ -124,7 +132,7 @@ class FloorStretcherController extends Controller
             );
             return view('inspection.ohc.floor_stretcher.add', $data);
         } catch (Exception $ex) {
-            dd($ex);
+
             report($ex);
             Session::flash('error', 'Something went wrong!');
             return redirect(admin_url('ohc/floor_stretcher/checklist/list'));
@@ -136,7 +144,6 @@ class FloorStretcherController extends Controller
         try {
             $store = $this->floor_strecther->store();
             $inspection_id = $store->id;
-
 
 
 
@@ -184,7 +191,6 @@ class FloorStretcherController extends Controller
             Session::flash('success', 'Your data has been added successfully');
             return redirect(admin_url('ohc/floor_stretcher/checklist/list'));
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('ohc/floor_stretcher/checklist/list'));
@@ -207,7 +213,7 @@ class FloorStretcherController extends Controller
 
             return view('inspection.ohc.floor_stretcher.view', $data);
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('ohc/floor_stretcher/checklist/list'));
@@ -396,9 +402,7 @@ class FloorStretcherController extends Controller
                 return redirect()->back()->with('error', 'No data found');
             }
 
-            if (count($allData) > 20) {
-                return redirect()->back()->with('error', "__('inspection.excess_error')");
-            }
+
 
             $data = array(
                 'content' => $allData,
@@ -425,7 +429,7 @@ class FloorStretcherController extends Controller
             $filename = "Floor-Stretcher Inspection.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('ohc/floor_stretcher/checklist/list'));
@@ -449,7 +453,6 @@ class FloorStretcherController extends Controller
                 'margin_top' => 10,
 
             ];
-
             $data = array(
                 'inspection_detail' => $inspection_detail,
                 'inspection_file' => $inspection_file,

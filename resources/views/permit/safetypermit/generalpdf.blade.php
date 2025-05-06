@@ -34,6 +34,9 @@
                             {{ Displaydateformat($value->date) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
+                            {{ Displaydateformat($value->to_date) }}
+                        </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
                             {{ $value->exact_location_job }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>

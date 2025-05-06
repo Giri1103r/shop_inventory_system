@@ -75,15 +75,15 @@ class HealthInstrumentCalibrationController extends Controller
                         })
 
                         ->addColumn('action', function ($row) {
-                            $btn = '<a href="' . admin_url('ohc/health-instrument/calibration-track-sheet/view/' . encryptId($row->id)) . '" class="view-icon" title="' . __('common.view') . '">
+                            $btn = '<a href="' . admin_url('ohc/health-instrument/calibration-track-sheet/view/' . encryptId($row->id)) . '" class="view-icon me-1" title="' . __('common.view') . '">
                                         <i class="fa-solid fa-eye"></i>
                                     </a>';
 
-                            $btn .= '<a href="' . admin_url('ohc/health-instrument/calibration-track-sheet/generalpdf/' . encryptId($row->id)) . '" style="margin-left: 5px;" title="PDF">
+                            $btn .= '<a href="' . admin_url('ohc/health-instrument/calibration-track-sheet/generalpdf/' . encryptId($row->id)) . '" class=" me-1"  title="PDF">
                                         <i class="fas fa-file-pdf" style="color: #e67265;" aria-hidden="true"></i>
                                     </a>';
 
-                            $btn .= '<a href="' . admin_url('ohc/health-instrument/calibration-track-sheet/generalExcel/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="Excel"> <i class="fas fa-file-excel" style="color: #1D6F42;" aria-hidden="true"></i></a>';
+                            $btn .= '<a href="' . admin_url('ohc/health-instrument/calibration-track-sheet/generalExcel/' . encryptId($row->id)) . '" class=" me-1"  title="Excel"> <i class="fas fa-file-excel" style="color: #1D6F42;" aria-hidden="true"></i></a>';
 
                             return $btn;
                         })
@@ -127,6 +127,8 @@ class HealthInstrumentCalibrationController extends Controller
             return view('inspection.inspection_ohc.health_instrument.add', $data);
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/health-instrument/calibration-track-sheet/list'));
         }
     }
 
@@ -189,9 +191,12 @@ class HealthInstrumentCalibrationController extends Controller
             } catch (Exception $ex) {
                 report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
+                return redirect(admin_url('ohc/health-instrument/calibration-track-sheet/list'));
             }
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/health-instrument/calibration-track-sheet/list'));
         }
     }
 
@@ -213,6 +218,8 @@ class HealthInstrumentCalibrationController extends Controller
             return view('inspection.inspection_ohc.health_instrument.view', $data);
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/health-instrument/calibration-track-sheet/list'));
         }
     }
 
@@ -469,7 +476,8 @@ class HealthInstrumentCalibrationController extends Controller
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);
-            return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/health-instrument/calibration-track-sheet/list'));
         }
     }
 
@@ -678,9 +686,10 @@ class HealthInstrumentCalibrationController extends Controller
             $writer->save($filePath);
 
             return response()->download($filePath)->deleteFileAfterSend(true);
-        } catch (\Exception $e) {
-            dd($e);
-            return back()->with('error', $e->getMessage());
+        } catch (\Exception $ex) {
+            report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/health-instrument/calibration-track-sheet/list'));
         }
     }
 

@@ -211,7 +211,7 @@ class CartridgeTypeFireExtinguisherController extends Controller
 
             return view('inspection.fire.cartridge_type_fire_extinguisher.add', $data);
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('fire/fire-extinguisher/cartridge/list'));
@@ -572,7 +572,7 @@ class CartridgeTypeFireExtinguisherController extends Controller
             } else {
                 $message = 'EHS Officer Rejected the CAPA Action';
                 $web_link =   admin_url('fire/fire-extinguisher/cartridge/verification/' . encryptId($inspection_details->id) . '/capa');
-                $users = $inspection_details->created_by;
+                $users = [$inspection_details->created_by];
                 $to_status = EHS_OFFICER_REJECTED;
             }
 
@@ -714,11 +714,12 @@ class CartridgeTypeFireExtinguisherController extends Controller
                 $message = 'Cartridge Type Fire Inspeciton Approved Successfully!';
                 $web_link =   admin_url('fire/fire-extinguisher/cartridge/view/' . encryptId($inspection_details->id));
                 $to_status = INSPECTION_APPROVED;
-                $users = array_merge([$inspection_details->created_by], [$inspection_details->verified_by], [$inspection_details->l1_manager_verified_by], [$inspection_details->l2_manager_verified_by]);
+                $users = array_merge([$inspection_details->created_by], [$inspection_details->verified_by], [$inspection_details->l1_manager_verified_by]);
             } else {
                 $message = 'Level Two Manager Rejected the CAPA Action';
                 $web_link =   admin_url('fire/fire-extinguisher/cartridge/verification/' . encryptId($inspection_details->id) . '/capa');
                 $to_status = L2_MANAGER_REJECTED;
+                $users = array_merge([$inspection_details->created_by], [$inspection_details->verified_by], [$inspection_details->l1_manager_verified_by]);
             }
 
             $mailsubject = 'CARTRIDGE TYPE FIRE INSPECTION';

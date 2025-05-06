@@ -38,6 +38,12 @@
                                     </div>
                                 </div>
                                 <div class="mb-3 col-md-4 form-input">
+                                    <label class="form-label view_label">{{ __('To Date') }}</label>
+                                    <div class="view_data">
+                                        {{ isset($safetypermit->to_date) ? Displaydateformat($safetypermit->to_date) : '' }}
+                                    </div>
+                                </div>
+                                <div class="mb-3 col-md-4 form-input">
                                     <label class="form-label view_label">{{ __('Time(From)') }}</label>
                                     <div class="view_data">
                                         {{ isset($safetypermit->time_from) ? $safetypermit->time_from : '' }}
@@ -1311,127 +1317,135 @@
 @stop
 
 @push('script')
-
-
 <script>
     $(document).ready(function () {
+        const maxUploads = 5;
+        const maxFileSize = 5 * 1024 * 1024; // 5MB
+
+        $('#dynamic-add-more').on('click', function () {
+            let currentFileUploads = $('.file-upload-block').length;
+
+            if (currentFileUploads >= maxUploads) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Sorry!',
+                    text: 'Maximum 5 records only.',
+                });
+                return;
+            }
+
+            let newFileUploadBlock = `
+                <div class="col-md-4 mb-3 file-upload-block">
+                    <label for="site_image_${currentFileUploads}" class="form-label require">Site Image</label>
+                    <input type="file" class="form-control validate-file-accept validate-file-required"
+                        accept="image/png, image/jpeg, image/jpg"
+                        name="site_images[${currentFileUploads}][]"
+                        id="site_image_${currentFileUploads}"
+                        multiple>
+                    <div class="text-danger"></div>
+                    <small>Allowed file types: png, jpeg , jpg</small>
+                    <button type="button" class="btn btn-danger btn-sm remove-upload-block">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                    <div class="preview-container mt-2 d-flex flex-wrap gap-2" id="preview-container-${currentFileUploads}"></div>
+                </div>
+            `;
+
+            $('#file-upload-container').append(newFileUploadBlock);
+        });
 
 
+        $(document).on('change', 'input[type="file"]', function (e) {
+            const files = this.files;
+            const errorContainer = $(this).siblings('.text-danger');
+            errorContainer.text('');
 
-
-        $(document).ready(function () {
-    const maxUploads = 5;
-
-    $('#dynamic-add-more').on('click', function () {
-        let currentFileUploads = $('.file-upload-block').length;
-
-        if (currentFileUploads >= maxUploads) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Sorry!',
-                text: 'Maximum 5 records only.',
-            });
-            return;
-        }
-
-        let newFileUploadBlock = `
-            <div class="col-md-4 mb-3 file-upload-block">
-                <label for="site_image_${currentFileUploads}" class="form-label require">Site Image</label>
-                <input type="file" class="form-control validate-file-accept validate-file-required"
-                    accept="image/png, image/jpeg, image/jpg"
-                    name="site_images[${currentFileUploads}][]"
-                    id="site_image_${currentFileUploads}"
-                    multiple>
-                <div class="text-danger"></div>
-                <small>Allowed file types: png, jpeg , jpg</small>
-                <button type="button" class="btn btn-danger btn-sm remove-upload-block">
-                    <i class="fas fa-trash"></i>
-                </button>
-                <div class="preview-container mt-2 d-flex flex-wrap gap-2" id="preview-container-${currentFileUploads}"></div>
-            </div>
-        `;
-
-        $('#file-upload-container').append(newFileUploadBlock);
-    });
-
-
-    $(document).on('click', '.remove-upload-block', function () {
-        $(this).closest('.file-upload-block').remove();
-    });
-
-    $(document).on('change', 'input[type="file"]', function (event) {
-        let input = $(this);
-        let fileInputId = input.attr('id').split('_')[2];
-        let previewContainer = $('#preview-container-' + fileInputId);
-
-        previewContainer.html("");
-
-        let files = event.target.files;
-        if (files.length > 0) {
-            Array.from(files).forEach(file => {
-                if (file.type.startsWith("image/")) {
-                    let reader = new FileReader();
-                    reader.onload = function (e) {
-                        let img = $("<img>").attr("src", e.target.result)
-                            .addClass("img-thumbnail")
-                            .css({ width: "100px", height: "100px", objectFit: "cover", marginRight: "5px" });
-
-                        previewContainer.append(img);
-                    };
-                    reader.readAsDataURL(file);
+            for (let i = 0; i < files.length; i++) {
+                if (files[i].size > maxFileSize) {
+                    errorContainer.text('Each file must be less than or equal to 5MB.');
+                    $(this).val(''); // Clear the input
+                    break;
                 }
-            });
-        }
-    });
+            }
+        });
 
-    $('#ehs_verification').validate().resetForm();
-});
+        $(document).on('click', '.remove-upload-block', function () {
+            $(this).closest('.file-upload-block').remove();
+        });
+
+        $(document).on('change', 'input[type="file"]', function (event) {
+            let input = $(this);
+            let fileInputId = input.attr('id').split('_')[2];
+            let previewContainer = $('#preview-container-' + fileInputId);
+
+            previewContainer.html("");
+
+            let files = event.target.files;
+            if (files.length > 0) {
+                Array.from(files).forEach(file => {
+                    if (file.type.startsWith("image/")) {
+                        let reader = new FileReader();
+                        reader.onload = function (e) {
+                            let img = $("<img>").attr("src", e.target.result)
+                                .addClass("img-thumbnail")
+                                .css({ width: "100px", height: "100px", objectFit: "cover", marginRight: "5px" });
+
+                            previewContainer.append(img);
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+            }
+        });
+
+        $('#ehs_verification').validate().resetForm();
+
 
 
 
 
         // Initialize form validation
         $('#ehs_verification').validate({
-            rules: {
-                ehs_verification_remarks: {
-                    required: true,
-                    minlength: 3,
-                    maxlength: 2000,
-                },
-
-
+        rules: {
+            ehs_verification_remarks: {
+                required: true,
+                minlength: 3,
+                maxlength: 2000,
             },
-            messages: {
-                ehs_verification_remarks: {
-                    required: "Remarks cannot be empty.",
+
+
+        },
+        messages: {
+            ehs_verification_remarks: {
+                required: "Remarks cannot be empty.",
                     minlength: "Remarks must contain between 3 and 2000 characters.",
                     maxlength: "Remarks must contain between 3 and 2000 characters.",
-                },
+            },
 
-            },
-            errorElement: 'div',
-            errorPlacement: function (error, element) {
-                var errorDiv = element.siblings('div.text-danger');
+        },
+        errorElement: 'div',
+        errorPlacement: function (error, element) {
+            var errorDiv = element.siblings('div.text-danger');
                 errorDiv.html(error);
-            },
+        },
             highlight: function (element, errorClass, validClass) {
-                $(element).addClass('is-invalid');
-            },
+            $(element).addClass('is-invalid');
+        },
             unhighlight: function (element, errorClass, validClass) {
-                $(element).removeClass('is-invalid');
-            },
-            submitHandler: function (form) {
+            $(element).removeClass('is-invalid');
+        },
+        submitHandler: function (form) {
                 $('#submit').prop('disabled', true);
-                form.submit();
-            },
-            invalidHandler: function (event, validator) {
-                var errors = validator.numberOfInvalids();
-                console.log(errors + " field(s) are invalid");
-                validator.errorList.forEach(function (error) {
-                    console.log("Field: " + error.element.name + ", Error: " + error.message);
-                });
-            }
-        });
+            form.submit();
+        },
+        invalidHandler: function (event, validator) {
+            var errors = validator.numberOfInvalids();
+            console.log(errors + " field(s) are invalid");
+            validator.errorList.forEach(function (error) {
+                console.log("Field: " + error.element.name + ", Error: " + error.message);
+            });
+        }
+    });
 
         // Dynamic validation for newly added site image inputs
         $('form').on('change', '.validate-file-siteImage', function () {
@@ -1538,17 +1552,58 @@
         });
 
         // Validation for other sections
-        $('#planthead_approval, #extension_approval').each(function () {
+        $('#planthead_approval').each(function () {
             $(this).validate({
                 rules: {
-                    remarks: {
+                    planthead_approval_remarks: {
                         required: true,
                         minlength: 3,
                         maxlength: 600,
                     }
                 },
                 messages: {
-                    remarks: {
+                    planthead_approval_remarks: {
+                        required: "Remarks cannot be empty.",
+                        minlength: "Remarks must contain between 3 and 600 characters.",
+                        maxlength: "Remarks must contain between 3 and 600 characters.",
+                    }
+                },
+                errorElement: 'div',
+                errorPlacement: function (error, element) {
+                    var errorDiv = element.siblings('div.text-danger');
+                    errorDiv.html(error);
+                },
+                highlight: function (element, errorClass, validClass) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function (element, errorClass, validClass) {
+                    $(element).removeClass('is-invalid');
+                },
+                submitHandler: function (form) {
+                    $('#submit').prop('disabled', true);
+                    form.submit();
+                },
+                invalidHandler: function (event, validator) {
+                    var errors = validator.numberOfInvalids();
+                    console.log(errors + " field(s) are invalid");
+                    validator.errorList.forEach(function (error) {
+                        console.log("Field: " + error.element.name + ", Error: " + error.message);
+                    });
+                }
+            });
+        });
+
+        $('#extension_approval').each(function () {
+            $(this).validate({
+                rules: {
+                    extension_aproval_remarks: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 600,
+                    }
+                },
+                messages: {
+                    extension_aproval_remarks: {
                         required: "Remarks cannot be empty.",
                         minlength: "Remarks must contain between 3 and 600 characters.",
                         maxlength: "Remarks must contain between 3 and 600 characters.",

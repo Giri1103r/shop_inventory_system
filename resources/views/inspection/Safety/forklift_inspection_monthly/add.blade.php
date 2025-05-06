@@ -199,7 +199,7 @@
                                                 <div class="form-group form-input">
                                                     <label
                                                         class="form-label require">{{ __('inspection.capacity') }}</label>
-                                                    <input type="text" name="capacity" id = "capacity"
+                                                    <input type="number" min="1" name="capacity" id = "capacity"
                                                         class="form-control" placeholder="Enter Capacity"
                                                         value="{{ old('capacity') }}">
                                                 </div>
@@ -325,7 +325,7 @@
                     e.preventDefault();
                     location.reload();
                 });
-              
+
                 flatpickr("#inspection_date", {
                     dateFormat: "d-m-Y",
                 });
@@ -489,9 +489,13 @@
                     });
                     $('input[name^="remarks"]').each(function() {
                         $(this).rules('add', {
-                            required: 500,
+                            required: true,
+                            minlength: 3,
+                            maxlength: 300,
                             messages: {
-                                required: "Remarks is required"
+                                required: "Remarks is required",
+                                minlength: "Minimum Characters should be 3",
+                                maxlength: "Maximum Characters should not exceed 300",
                             }
                         });
                     });

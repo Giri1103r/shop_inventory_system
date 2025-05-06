@@ -40,7 +40,7 @@ class ForkLiftInspection extends Model
             ->leftJoin('inspection_static_docno', 'inspection_safety_forklift_inspection.document_reference_id', '=', 'inspection_static_docno.id');
 
         if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_HEAD)) {
-        } else if (CheckUserRole(ROLE_EHS_OFFICER)) {
+        } else if (CheckUserRole(ROLE_INSPECTION_CREATOR)) {
             $query->where('inspection_safety_forklift_inspection.created_by', Auth::id());
         }
 
@@ -57,8 +57,8 @@ class ForkLiftInspection extends Model
             $query = $query->whereDate('inspection_safety_forklift_inspection.inspection_date', '=', DBdateformat($request->issue_date));
         }
 
-        if (isset($request->obsrevation_status) && $request->obsrevation_status) {
-            $query = $query->where('inspection_safety_forklift_inspection.observation_status', decryptId($request->obsrevation_status));
+        if (isset($request->observation_status) && $request->observation_status) {
+            $query = $query->where('inspection_safety_forklift_inspection.observation_status', decryptId($request->observation_status));
         }
 
         if (isset($request->order) && count($request->order) > 0) {
@@ -143,8 +143,8 @@ class ForkLiftInspection extends Model
             $query = $query->whereDate('inspection_safety_forklift_inspection.inspection_date', '=', DBdateformat($request->issue_date));
         }
 
-        if (isset($request->obsrevation_status) && $request->obsrevation_status) {
-            $query = $query->where('inspection_safety_forklift_inspection.observation_status', decryptId($request->obsrevation_status));
+        if (isset($request->observation_status) && $request->observation_status) {
+            $query = $query->where('inspection_safety_forklift_inspection.observation_status', decryptId($request->observation_status));
         }
 
         $query->orderBy('inspection_safety_forklift_inspection.id', 'DESC');

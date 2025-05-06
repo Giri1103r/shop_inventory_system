@@ -93,19 +93,19 @@
                                                 <div class="row lesson_learned_row" style="margin-top: 20px;">
 
                                                     <div class="col-md-4 form-input">
-                                                        <label class="form-label">SR NO</label>
+                                                        <label class="form-label require">SR NO</label>
                                                         <input type="text" class="form-control" name="fire[1][sr_no]"
                                                             id="sr_no_1" readonly value="SNO-0001">
                                                     </div>
 
                                                     <div class="col-md-4 form-input">
-                                                        <label class="form-label">Name</label>
+                                                        <label class="form-label require">Name</label>
                                                         <input type="text" class="form-control" name="fire[1][emp_name]"
                                                             id="emp_name_1">
                                                     </div>
 
                                                     <div class="col-md-4 form-input">
-                                                        <label for="" class="form-label">Department</label>
+                                                        <label for="" class="form-label require">Department</label>
                                                         <select class="form-control single-select"
                                                             name="fire[1][department_id]" style="width: 100%"
                                                             id="department_id_1">
@@ -118,18 +118,18 @@
                                                     </div>
 
                                                     <div class="col-md-4 form-input mt-2">
-                                                        <label class="form-label">Emp Code</label>
+                                                        <label class="form-label require">Emp Code</label>
                                                         <input type="text" name="fire[1][emp_code]" class="form-control"
                                                             id="emp_code_1">
                                                     </div>
 
                                                     <div class="col-md-4 form-input mt-2">
-                                                        <label class="form-label">Contact Number</label>
+                                                        <label class="form-label require">Contact Number</label>
                                                         <input type="text" name="fire[1][emp_phone]"
                                                             class="form-control" id="emp_phone_1">
                                                     </div>
                                                     <div class="col-md-4 form-input mt-2">
-                                                        <label class="form-label">Status</label>
+                                                        <label class="form-label require">Status</label>
                                                         <select class="form-control single-select"
                                                             name="fire[1][emp_status]" style="width: 100%"
                                                             id="emp_status_1">
@@ -248,7 +248,7 @@
                         $(this).val("").trigger("change");
                     }
                 });
-                newRow.find("input[name$='[sr_no]']").val("AMBIENT-" + String(rowCount + 1).padStart(4,
+                newRow.find("input[name$='[sr_no]']").val("SNO-" + String(rowCount + 1).padStart(4,
                     '0'));
 
                 newRow.find(".invalid-feedback").remove();

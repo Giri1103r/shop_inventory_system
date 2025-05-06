@@ -139,6 +139,12 @@
                     {{ Displaydateformat(isset($safetypermit->date) ? $safetypermit->date : '') }}</td>
             </tr>
             <tr>
+                <td width="50%" style="padding:5px;"><b>To Date</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;">
+                    {{ Displaydateformat(isset($safetypermit->to_date) ? $safetypermit->to_date : '') }}</td>
+            </tr>
+            <tr>
                 <td width="50%" style="padding:5px;"><b>Time(From)</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">

@@ -95,8 +95,8 @@ class FireExtinguisher extends Model
         if (isset($request->frequency) && $request->frequency) {
             $query = $query->where('inspection_fire_fire_extinguisher.frequency', 'LIKE', '%' . decryptId($request->frequency) . '%');
         }
-        if (isset($request->date_of_inspection) && $request->date_of_inspection) {
-            $query = $query->where('inspection_fire_fire_extinguisher.date_of_inspection', 'LIKE', '%' . DBdateformat($request->date_of_inspection) . '%');
+        if (isset($request->inspection_date) && $request->inspection_date) {
+            $query = $query->where('inspection_fire_fire_extinguisher.date_of_inspection', 'LIKE', '%' . DBdateformat($request->inspection_date) . '%');
         }
         if (isset($request->next_due) && $request->next_due) {
             $query = $query->where('inspection_fire_fire_extinguisher.next_due', 'LIKE', '%' . DBdateformat($request->next_due) . '%');
@@ -153,7 +153,7 @@ class FireExtinguisher extends Model
             'location' => decryptId($request->location_id),
             'shift' => decryptId($request->shift_id),
             'next_due' => DBdateformat($request->next_due),
-            'observation' => $request->observation,
+            'observation' => decryptId($request->observation),
             'unit' => decryptId($request->unit_id),
             'frequency' => decryptId($request->frequency_id),
             'inspection_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,
@@ -172,7 +172,7 @@ class FireExtinguisher extends Model
             ->leftJoin('masters_location', 'inspection_fire_fire_extinguisher.location', '=', 'masters_location.id')
             ->leftJoin('inspection_shift_option', 'inspection_fire_fire_extinguisher.shift', '=', 'inspection_shift_option.id')
             ->leftJoin('masters_unit', 'inspection_fire_fire_extinguisher.unit', '=', 'masters_unit.id')
-            ->leftJoin('inspection_fire_fire_extinguisher_details', 'inspection_fire_fire_extinguisher.unit', '=', 'inspection_fire_fire_extinguisher_details.inspection_id')
+            ->leftJoin('inspection_fire_fire_extinguisher_details', 'inspection_fire_fire_extinguisher.id', '=', 'inspection_fire_fire_extinguisher_details.inspection_id')
             ->leftJoin('inspection_static_docno', 'inspection_fire_fire_extinguisher.document_reference_id', '=', 'inspection_static_docno.id')
             ->leftJoin('inspection_frequency_option', 'inspection_fire_fire_extinguisher.frequency', '=', 'inspection_frequency_option.id');
 
@@ -184,6 +184,11 @@ class FireExtinguisher extends Model
                 $query->orWhereRaw('inspection_shift_option.shift LIKE "%' . $search . '%"');
                 $query->orWhereRaw('inspection_frequency_option.frequency_name LIKE "%' . $search . '%"');
             });
+        }
+
+        if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_OFFICER) || CheckUserRole(ROLE_L1_MANAGER) || CheckUserRole(ROLE_L2_MANAGER)) {
+        } else if (CheckUserRole(ROLE_FIRE_ASSOCIATES)) {
+            $query->where('inspection_fire_fire_extinguisher.created_by', Auth::id());
         }
 
         if (isset($request->location) && $request->location) {
@@ -204,8 +209,8 @@ class FireExtinguisher extends Model
         if (isset($request->frequency) && $request->frequency) {
             $query = $query->where('inspection_fire_fire_extinguisher.frequency', 'LIKE', '%' . decryptId($request->frequency) . '%');
         }
-        if (isset($request->date_of_inspection) && $request->date_of_inspection) {
-            $query = $query->where('inspection_fire_fire_extinguisher.date_of_inspection', 'LIKE', '%' . DBdateformat($request->date_of_inspection) . '%');
+        if (isset($request->inspection_date) && $request->inspection_date) {
+            $query = $query->where('inspection_fire_fire_extinguisher.date_of_inspection', 'LIKE', '%' . DBdateformat($request->inspection_date) . '%');
         }
         if (isset($request->next_due) && $request->next_due) {
             $query = $query->where('inspection_fire_fire_extinguisher.next_due', 'LIKE', '%' . DBdateformat($request->next_due) . '%');
@@ -215,6 +220,7 @@ class FireExtinguisher extends Model
         if (isset($request->inspection_status) && $request->inspection_status) {
             $query = $query->where('inspection_fire_fire_extinguisher.inspection_status', decryptId($request->inspection_status));
         }
+
 
         $query->orderBy('inspection_fire_fire_extinguisher.id', 'DESC');
 

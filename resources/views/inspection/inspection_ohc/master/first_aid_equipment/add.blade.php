@@ -34,7 +34,7 @@
                                         @csrf
 
                                         <div class="row">
-                                            
+
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Medicine Name</label>
@@ -51,8 +51,8 @@
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Freeze Quantity</label>
-                                                    <input type="text" name="freeze_quantity" id = "freeze_quantity" class="form-control"
-                                                        placeholder="Medicine Name">
+                                                    <input type="number" min="1" name="freeze_quantity" id = "freeze_quantity" class="form-control"
+                                                        placeholder="freeze Quantity">
                                                 </div>
                                             </div>
 
@@ -99,7 +99,7 @@
 
                     freeze_quantity: {
                         required: true,
-                        
+
                     }
 
                 },
@@ -109,11 +109,11 @@
                         remote: "{{ __('Medicine Name should be unique') }}",
 
                     },
-                  
+
                     freeze_quantity: {
                         required: "Freeze Quantity is Required",
                     },
-                    
+
 
                 },
                 errorElement: 'span',

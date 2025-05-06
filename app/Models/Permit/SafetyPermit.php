@@ -22,9 +22,11 @@ class SafetyPermit extends Model
     protected $fillable = [
         'permit_id',
         'date',
+        'to_date',
         'location',
         'time_from',
         'time_to',
+        'company_id',
         'unit_id',
         'exact_location_job',
         'job_location_area',
@@ -102,12 +104,13 @@ class SafetyPermit extends Model
         $userRole = $user->role;
         $unit_id = $user->unit_id;
         $empid = $user->id;
+        $companyId= $user->company_id;
 
         $userRole = string_to_array($userRole);
         if (isAdmin()) {
             $query = $this->select('ptw_safety.*', 'masters_unit.unit_name', 'ptw_status.status_name', 'ptw_status.bg_color')->leftJoin('masters_unit', 'masters_unit.id', '=', 'ptw_safety.unit_id')->leftJoin('ptw_status', 'ptw_status.id', '=', 'ptw_safety.permit_status');
         } elseif (in_array(ROLE_EHS_OFFICER, $userRole)) {
-            $query = $this->select('ptw_safety.*', 'masters_unit.unit_name', 'ptw_status.status_name', 'ptw_status.bg_color')->leftJoin('masters_unit', 'masters_unit.id', '=', 'ptw_safety.unit_id')->leftJoin('ptw_status', 'ptw_status.id', '=', 'ptw_safety.permit_status');
+            $query = $this->select('ptw_safety.*', 'masters_unit.unit_name', 'ptw_status.status_name', 'ptw_status.bg_color')->leftJoin('masters_unit', 'masters_unit.id', '=', 'ptw_safety.unit_id')->leftJoin('ptw_status', 'ptw_status.id', '=', 'ptw_safety.permit_status')->where('ptw_safety.company_id',$companyId);;
         } elseif (in_array(ROLE_PLANT_HEAD, $userRole)) {
             $query = $this->select('ptw_safety.*', 'masters_unit.unit_name', 'ptw_status.status_name', 'ptw_status.bg_color')->leftJoin('masters_unit', 'masters_unit.id', '=', 'ptw_safety.unit_id')->leftJoin('ptw_status', 'ptw_status.id', '=', 'ptw_safety.permit_status')->where('ptw_safety.unit_id', $unit_id);
         } elseif (in_array(ROLE_EHS_HEAD, $userRole)) {
@@ -256,13 +259,15 @@ class SafetyPermit extends Model
         $toolboxTalk = $request->has('toolbox_talk') ? 1 : 0;
         $assignedJob = $request->has('assigned_job') ? 1 : 0;
         $equipment_checklist_inspection = $request->has('equipment_checklist_inspection') ? 1 : 0;
-
+        $company = Auth::user()->company_id;
         $insert_array = array(
             // 'permit_id' => $request->permit_id,
             'date' => DBdateformat($request->date),
+            'to_date' => DBdateformat($request->to_date),
             'time_from' => $request->time_from,
             'time_to' => $request->time_to,
             'unit_id' => decryptId($request->unit_id),
+            'company_id' => $company,
             'exact_location_job' => $request->exact_location_job,
             'job_location_area' => $request->job_location_area,
             'sub_permit' => $sub_permit,
@@ -303,10 +308,13 @@ class SafetyPermit extends Model
         $request = request();
         //  dd($request);
         $safetypermit = $this->find($id);
+        $company = Auth::user()->company_id;
 
         $update_array = [];
         $update_array['permit_id'] = $request->permit_id ?? $safetypermit->permit_id;
         $update_array['date'] = DBdateformat($request->date ?? $safetypermit->date);
+        $update_array['to_date'] = DBdateformat($request->to_date ?? $safetypermit->to_date);
+        $update_array['company_id'] =  $company;
         $update_array['time_from'] = $request->time_from ?? $safetypermit->time_from;
         $update_array['time_to'] = $request->time_to ?? $safetypermit->time_to;
         $update_array['unit_id'] = decryptId($request->unit_id) ?? $safetypermit->unit_id;

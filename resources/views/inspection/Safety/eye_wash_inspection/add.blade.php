@@ -368,7 +368,7 @@
                                                 <div class="col-md-12 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.remarks') }}</label>
+                                                            class="form-label ">{{ __('inspection.remarks') }}</label>
                                                         <textarea name="remarks[1]" id="remarks" class="form-control" style="resize: none;">{{ old('remarks.1') }}</textarea>
 
                                                     </div>
@@ -469,27 +469,41 @@
                         },
                         "pressure[1]": {
                             required: true,
+                            minlength: 3,
+                            maxlength: 30
                         },
                         "quality[1]": {
                             required: true,
+                            minlength: 3,
+                            maxlength: 30
                         },
                         "water[1]": {
                             required: true,
                         },
                         "receptacle[1]": {
                             required: true,
+                            minlength: 3,
+                            maxlength: 30
                         },
                         "eyewash_heads[1]": {
                             required: true,
+                            minlength: 3,
+                            maxlength: 30
                         },
                         "foot_pedal[1]": {
                             required: true,
+                            minlength: 3,
+                            maxlength: 30
                         },
                         "hfsov[1]": {
                             required: true,
+                            minlength: 3,
+                            maxlength: 30
                         },
                         "value[1]": {
                             required: true,
+                            minlength: 3,
+                            maxlength: 30
                         },
                         "condition[1]": {
                             required: true,
@@ -499,9 +513,14 @@
                         },
                         "resource_code[1]": {
                             required: true,
+                            minlength: 3,
+                            maxlength: 30
                         },
                         "remarks[1]": {
-                            required: true,
+
+                            minlength: 3,
+                            maxlength: 300,
+
                         }
 
                     },
@@ -549,33 +568,51 @@
                         },
                         "value[1]": {
                             required: "Please add the value",
+                            minlength: "Please enter at least 3 characters.",
+                            maxlength: "Please enter no more than 30 characters."
                         },
                         "hfsov[1]": {
                             required: "Please add the value of Hand free stay open",
+                            minlength: "Please enter at least 3 characters.",
+                            maxlength: "Please enter no more than 30 characters."
                         },
                         "foot_pedal[1]": {
                             required: "Please add foot pedal value",
+                            minlength: "Please enter at least 3 characters.",
+                            maxlength: "Please enter no more than 30 characters."
                         },
                         "eyewash_heads[1]": {
                             required: "Please add the name of Eyewash heads",
+                            minlength: "Please enter at least 3 characters.",
+                            maxlength: "Please enter no more than 30 characters."
                         },
                         "receptacle[1]": {
                             required: "Please add the name of receptable used",
+                            minlength: "Please enter at least 3 characters.",
+                            maxlength: "Please enter no more than 30 characters."
                         },
                         "water[1]": {
                             required: "Please select the water quality",
                         },
                         "quality[1]": {
                             required: "Please select the quality of water",
+                            minlength: "Please enter at least 3 characters.",
+                            maxlength: "Please enter no more than 30 characters."
                         },
                         "pressure[1]": {
                             required: "Please add the pressure of the water",
+                            minlength: "Please enter at least 3 characters.",
+                            maxlength: "Please enter no more than 30 characters."
                         },
                         "resource_code[1]": {
                             required: "Please add the resource code",
+                            minlength: "Please enter at least 3 characters.",
+                            maxlength: "Please enter no more than 30 characters."
                         },
                         "remarks[1]": {
                             required: "Please add remarks",
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 300",
                         }
 
                     },
@@ -659,7 +696,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.location') }}</label>
-                                                        <select name="location[${form_set_count}]" id="location"
+                                                        <select name="location[${form_set_count}]" id="location[${form_set_count}]"
                                                             class=" form-control single-select location-select" style="width: 100%">
                                                             <option value="">Select Location</option>
                                                         </select>
@@ -670,14 +707,14 @@
                                                         <label
                                                             class="form-label require">{{ __('inspection.resource_code') }}</label>
                                                         <input type="text" name="resource_code[${form_set_count}]"
-                                                            id = "resource_code" class="form-control">
+                                                            id = "resource_code[${form_set_count}]" class="form-control">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.condition') }}</label>
-                                                        <select name="condition[${form_set_count}]" id="condition"
+                                                        <select name="condition[${form_set_count}]" id="condition[${form_set_count}]"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Condition</option>
                                                             <option value="{{ encryptId(GOOD) }}">Good</option>
@@ -690,7 +727,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.value') }}</label>
-                                                        <input type="text" name="value[${form_set_count}]" id = "value"
+                                                        <input type="text" name="value[${form_set_count}]" id = "value[${form_set_count}]"
                                                             class="form-control">
                                                     </div>
                                                 </div>
@@ -698,7 +735,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.hfsov') }}</label>
-                                                        <input type="text" name="hfsov[${form_set_count}]" id = "hfsov"
+                                                        <input type="text" name="hfsov[${form_set_count}]" id = "hfsov[${form_set_count}]"
                                                             class="form-control">
                                                     </div>
                                                 </div>
@@ -706,7 +743,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.foot_pedal_value') }}</label>
-                                                        <input type="text" name="foot_pedal[${form_set_count}]" id = "foot_pedal"
+                                                        <input type="text" name="foot_pedal[${form_set_count}]" id = "foot_pedal[${form_set_count}]"
                                                             class="form-control">
                                                     </div>
                                                 </div>
@@ -715,14 +752,14 @@
                                                         <label
                                                             class="form-label require">{{ __('inspection.eyewash_heads') }}</label>
                                                         <input type="text" name="eyewash_heads[${form_set_count}]"
-                                                            id = "eyewash_heads" class="form-control">
+                                                            id = "eyewash_heads[${form_set_count}]" class="form-control">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.receptacle') }}</label>
-                                                        <input type="text" name="receptacle[${form_set_count}]" id = "receptacle"
+                                                        <input type="text" name="receptacle[${form_set_count}]" id = "receptacle[${form_set_count}]"
                                                             class="form-control">
                                                     </div>
                                                 </div>
@@ -730,7 +767,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.water') }}</label>
-                                                        <select name="water[${form_set_count}]" id="water"
+                                                        <select name="water[${form_set_count}]" id="water[${form_set_count}]"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Water</option>
                                                             <option value="{{ encryptId(GOOD) }}">Good</option>
@@ -743,7 +780,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.quality') }}</label>
-                                                        <input type="text" name="quality[${form_set_count}]" id = "quality"
+                                                        <input type="text" name="quality[${form_set_count}]" id = "quality[${form_set_count}]"
                                                             class="form-control">
                                                     </div>
                                                 </div>
@@ -751,7 +788,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.pressure') }}</label>
-                                                        <input type="text" name="pressure[${form_set_count}]" id = "pressure"
+                                                        <input type="text" name="pressure[${form_set_count}]" id = "pressure[${form_set_count}]"
                                                             class="form-control">
                                                     </div>
                                                 </div>
@@ -759,15 +796,15 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.temperature') }}</label>
-                                                        <input type="text" name="temperature[${form_set_count}]" id = "temperature"
+                                                        <input type="text" name="temperature[${form_set_count}]" id = "temperature[${form_set_count}]"
                                                             class="form-control">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-12 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.remarks') }}</label>
-                                                        <textarea name="remarks[${form_set_count}]" id="remarks" class="form-control" style="resize: none;"></textarea>
+                                                            class="form-label ">{{ __('inspection.remarks') }}</label>
+                                                        <textarea name="remarks[${form_set_count}]" id="remarks[${form_set_count}]" class="form-control" style="resize: none;"></textarea>
 
                                                     </div>
                                                 </div>
@@ -791,8 +828,12 @@
 
                     $("input[name='resource_code[" + form_set_count + "]']").rules('add', {
                         required: true,
+                        minlength: 3,
+                        maxlength: 30,
                         messages: {
                             required: 'Please add the resource code',
+                            minlength: "Please enter at least 3 characters.",
+                            maxlength: "Please enter no more than 30 characters."
                         }
                     });
 
@@ -804,44 +845,68 @@
                     });
 
                     $("textarea[name='remarks[" + form_set_count + "]']").rules('add', {
-                        required: true,
+
+                        minlength: 3,
+                        maxlength: 300,
                         messages: {
-                            required: 'Please add the temperature details for the Eye wash inspection',
+                            required: 'Please add the remarks',
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 100",
                         }
                     });
 
                     $("input[name='value[" + form_set_count + "]']").rules('add', {
                         required: true,
+                        minlength: 3,
+                        maxlength: 30,
                         messages: {
                             required: 'Please add the valve',
+                              minlength: "Please enter at least 3 characters.",
+                             maxlength: "Please enter no more than 30 characters."
                         }
                     });
 
                     $("input[name='hfsov[" + form_set_count + "]']").rules('add', {
                         required: true,
+                        minlength: 3,
+                        maxlength: 30,
                         messages: {
                             required: 'Please add the value of Hand free stay open',
+                              minlength: "Please enter at least 3 characters.",
+                            maxlength: "Please enter no more than 30 characters."
                         }
                     });
 
                     $("input[name='foot_pedal[" + form_set_count + "]']").rules('add', {
                         required: true,
+                        minlength: 3,
+                        maxlength: 30,
                         messages: {
                             required: 'Please add foot pedal value',
+                              minlength: "Please enter at least 3 characters.",
+                            maxlength: "Please enter no more than 30 characters."
                         }
                     });
 
                     $("input[name='eyewash_heads[" + form_set_count + "]']").rules('add', {
                         required: true,
+                        minlength: 3,
+                        maxlength: 30,
                         messages: {
                             required: 'Please add the name of Eyewash heads',
+                              minlength: "Please enter at least 3 characters.",
+                            maxlength: "Please enter no more than 30 characters."
                         }
                     });
 
                     $("input[name='receptacle[" + form_set_count + "]']").rules('add', {
                         required: true,
+                        minlength: 3,
+                        maxlength: 30,
                         messages: {
                             required: 'Please add the name of receptable used',
+                              minlength: "Please enter at least 3 characters.",
+                            maxlength: "Please enter no more than 30 characters."
                         }
                     });
 
@@ -854,15 +919,23 @@
 
                     $("input[name='quality[" + form_set_count + "]']").rules('add', {
                         required: true,
+                        minlength: 3,
+                        maxlength: 30,
                         messages: {
                             required: 'Please select the quality of water',
+                              minlength: "Please enter at least 3 characters.",
+                            maxlength: "Please enter no more than 30 characters."
                         }
                     });
 
                     $("input[name='pressure[" + form_set_count + "]']").rules('add', {
                         required: true,
+                        minlength: 3,
+                        maxlength: 30,
                         messages: {
                             required: 'Please add the pressure of the water',
+                            minlength: "Please enter at least 3 characters.",
+                            maxlength: "Please enter no more than 30 characters."
                         }
                     });
 
@@ -917,7 +990,7 @@
                     $(this).find('input[name^="quality"]').attr('name', 'quality[' + idx + ']');
                     $(this).find('input[name^="pressure"]').attr('name', 'pressure[' + idx + ']');
                     $(this).find('input[name^="temperature"]').attr('name', 'temperature[' + idx + ']');
-                    $(this).find('textarea[name^="remarks"]').attr('name', 'temperature[' + idx + ']');
+                    $(this).find('textarea[name^="remarks"]').attr('name', 'remarks[' + idx + ']');
 
                     $(this).find('select').select2();
                 });

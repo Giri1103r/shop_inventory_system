@@ -244,7 +244,7 @@
                             if (!isNaN(issuedDate.getTime()) && issuedDate.getUTCFullYear() === parseInt(
                                     year)) {
                                 let monthIndex = issuedDate.getUTCMonth();
-                                issueQuantities[monthIndex] += issued.quantity || 0;
+                                issueQuantities[monthIndex] += Number(issued.quantity) || 0;
                             }
                         }
                     });

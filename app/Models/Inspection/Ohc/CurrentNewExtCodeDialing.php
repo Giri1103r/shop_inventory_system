@@ -60,7 +60,7 @@ class CurrentNewExtCodeDialing extends Model
         if ($request->has('department_id') && $request->department_id) {
             $query = $query->where('inspection_ohc_current_new_ext_code_dailing.department_id', 'LIKE', '%' . decryptId($request->department_id) . '%');
         }
-        
+
         if ($request->has('emp_name_id') && $request->emp_name_id) {
             $query = $query->where('inspection_ohc_current_new_ext_code_dailing.emp_name_id', 'LIKE', '%' . decryptId($request->emp_name_id) . '%');
         }
@@ -68,7 +68,7 @@ class CurrentNewExtCodeDialing extends Model
         if ($request->has('number') && $request->number) {
             $query = $query->where('inspection_ohc_current_new_ext_code_dailing.number', 'LIKE', '%' . $request->number . '%');
         }
-       
+
         if ($request->has('status') && $request->status) {
 
             $query = $query->where('inspection_ohc_current_new_ext_code_dailing.status', decryptId($request->status));
@@ -92,7 +92,7 @@ class CurrentNewExtCodeDialing extends Model
         );
         return $datas;
     }
-    
+
     public function store()
     {
         $request = request();
@@ -100,7 +100,7 @@ class CurrentNewExtCodeDialing extends Model
         $department = $request->department_id;
         $emp_id = $request->emp_name;
         $number = $request->number;
-        
+
         foreach ($unit as $index => $unit) {
             $data = array(
                 'unit_id' => decryptId($unit),
@@ -109,7 +109,7 @@ class CurrentNewExtCodeDialing extends Model
                 'number' => $number[$index],
                 'created_by' => Auth::id(),
             );
-            
+
             $this->create($data);
         }
     }
@@ -119,7 +119,7 @@ class CurrentNewExtCodeDialing extends Model
                         ->leftJoin('masters_department', 'masters_department.id', '=', 'inspection_ohc_current_new_ext_code_dailing.department_id')
                         ->leftJoin('masters_unit', 'masters_unit.id', '=', 'inspection_ohc_current_new_ext_code_dailing.unit_id')
                         ->leftJoin('masters_employee', 'masters_employee.id', '=', 'inspection_ohc_current_new_ext_code_dailing.emp_name_id')->where('inspection_ohc_current_new_ext_code_dailing.id',$id)->first();
-        
+
     }
 
     public function updates($id)
@@ -164,17 +164,15 @@ class CurrentNewExtCodeDialing extends Model
         if ($request->has('department_id') && $request->department_id) {
             $query = $query->where('inspection_ohc_current_new_ext_code_dailing.department_id', 'LIKE', '%' . decryptId($request->department_id) . '%');
         }
-        
+
         if ($request->has('emp_name_id') && $request->emp_name_id) {
             $query = $query->where('inspection_ohc_current_new_ext_code_dailing.emp_name_id', 'LIKE', '%' . decryptId($request->emp_name_id) . '%');
         }
 
         if ($request->has('number') && $request->number) {
-
             $query = $query->where('inspection_ohc_current_new_ext_code_dailing.number', 'LIKE', '%' . $request->number . '%');
-
         }
-       
+
         if ($request->has('status') && $request->status) {
 
             $query = $query->where('inspection_ohc_current_new_ext_code_dailing.status', decryptId($request->status));

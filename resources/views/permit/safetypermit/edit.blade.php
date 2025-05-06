@@ -46,7 +46,14 @@
                                                     <div class="text-danger"></div>
                                                 </div>
                                             </div>
-
+                                            <div class="col-md-3 mb-3">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">To Date</label>
+                                                    <input type="text" name="to_date" id="to_date_picker"
+                                                    value="{{ displaydateformat($safetypermit->to_date) }}" class="form-control">
+                                                    <div class="text-danger"></div>
+                                                </div>
+                                            </div>
                                             <div class="col-md-3">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Time(From)</label>
@@ -1080,70 +1087,142 @@
         $(document).ready(function() {
 
 
+            // $(document).ready(function() {
+            //     const today = new Date();
+            //     const currentTime = today.getHours() + ":" + today.getMinutes().toString().padStart(2, "0");
+
+            //     // Initialize date picker
+            //     flatpickr("#date_picker", {
+            //         minDate: today,
+            //         dateFormat: "d-m-Y",
+            //         defaultDate: "{{ displaydateformat($safetypermit->date) }}"
+            //     });
+
+            //     // Declare endTimePicker globally so it's accessible in the startTimePicker onChange
+            //     let endTimePicker;
+
+            //     // Initialize start time picker
+            //     const startTimePicker = flatpickr("#time_from_picker", {
+            //         enableTime: true,
+            //         noCalendar: true,
+            //         dateFormat: "H:i",
+            //         time_24hr: true,
+            //         defaultDate: "{{ $safetypermit->time_from }}",
+
+            //         onChange: function(selectedDates, dateStr, instance) {
+            //             if (selectedDates.length > 0) {
+            //                 const fromDate = selectedDates[0];
+            //                 const toDate = new Date(fromDate.getTime() + 9 * 60 * 60 *
+            //                     1000); // +9 hours
+
+            //                 // Set limits on end time picker
+            //                 if (endTimePicker) {
+            //                     endTimePicker.set('minDate', fromDate);
+            //                     endTimePicker.set('maxDate', toDate);
+            //                     endTimePicker.setDate(toDate);
+            //                 }
+            //             }
+            //         }
+            //     });
+
+            //     // Initialize end time picker
+            //     endTimePicker = flatpickr("#time_to_picker", {
+            //         enableTime: true,
+            //         noCalendar: true,
+            //         dateFormat: "H:i",
+            //         time_24hr: true,
+            //         defaultDate: "{{ $safetypermit->time_to }}",
+            //         minTime: "{{ $safetypermit->time_from ?? currentTime }}"
+            //     });
+            // });
+
+
             $(document).ready(function() {
-                const today = new Date();
-                const currentTime = today.getHours() + ":" + today.getMinutes().toString().padStart(2, "0");
+                let fromDate = new Date();
+                let nextDate = new Date();
+                nextDate.setDate(fromDate.getDate() + 1);
+                let fromDateTime = null;
 
-                flatpickr("#date_picker", {
-                    minDate: today,
-                    dateFormat: "d-m-Y",
-                    defaultDate: "{{ displaydateformat($safetypermit->date) }}",
-                    onChange: function(selectedDates) {
-                        const selectedDate = selectedDates[0];
+                function formatDate(date) {
+                    return flatpickr.formatDate(date, 'd-m-Y');
+                }
 
-                        if (selectedDate) {
-                            startTimePicker.setDate(null);
-                            endTimePicker.setDate(null);
+                function initFromDatePicker() {
+                    $('#date_picker').flatpickr({
+                        dateFormat: 'd-m-Y',
+                        minDate: 'today',
+                       defaultDate: "{{ Displaydateformat($safetypermit->date) }}",
+                        onChange: function(selectedDates) {
+                            if (selectedDates.length > 0) {
+                                fromDate = selectedDates[0];
+                                nextDate = new Date(fromDate);
+                                nextDate.setDate(fromDate.getDate() + 1);
 
-                            if (selectedDate.toDateString() === today.toDateString()) {
-                                startTimePicker.set({
-                                    minTime: currentTime,
-                                    maxTime: "18:00",
-                                });
-                                endTimePicker.set({
-                                    minTime: currentTime,
-                                    maxTime: "18:00",
-                                });
-                            } else {
-                                startTimePicker.set({
-                                    minTime: "09:00",
-                                    maxTime: "18:00",
-                                });
-                                endTimePicker.set({
-                                    minTime: "09:00",
-                                    maxTime: "18:00",
+                                initToDatePicker();
+                            }
+                        }
+                    });
+                }
+
+                function initToDatePicker() {
+                    $('#to_date_picker').flatpickr({
+                        dateFormat: 'd-m-Y',
+                        minDate: fromDate,
+                        maxDate: nextDate,
+                        defaultDate: "{{ Displaydateformat($safetypermit->to_date) }}",
+                    });
+                }
+
+                function initTimePickers() {
+                    $('#time_from_picker').flatpickr({
+                        enableTime: true,
+                        noCalendar: true,
+                        dateFormat: "H:i",
+                        defaultDate: "{{ $safetypermit->from_time }}",
+                        time_24hr: true,
+                        onChange: function(selectedDates) {
+                            if (selectedDates.length > 0) {
+                                const selectedTime = selectedDates[0];
+
+
+                                fromDateTime = new Date(fromDate);
+                                fromDateTime.setHours(selectedTime.getHours(), selectedTime
+                                    .getMinutes());
+
+                                const toMinTime = new Date(fromDateTime);
+                                const toMaxTime = new Date(fromDateTime);
+                                toMaxTime.setHours(toMaxTime.getHours() + 9);
+
+
+                                if ($('#time_to_picker')[0]._flatpickr) {
+                                    $('#time_to_picker')[0]._flatpickr.destroy();
+                                }
+
+                                $('#time_to_picker').flatpickr({
+                                    enableTime: true,
+                                    noCalendar: true,
+                                    dateFormat: "H:i",
+                                    defaultDate: "{{ $safetypermit->to_time }}",
+                                    time_24hr: true,
+                                    minTime: formatTime(toMinTime),
+
                                 });
                             }
                         }
-                    },
-                });
+                    });
+                }
 
-                const startTimePicker = flatpickr("#time_from_picker", {
-                    enableTime: true,
-                    noCalendar: true,
-                    dateFormat: "H:i",
-                    time_24hr: true,
-                    defaultDate: "{{ $safetypermit->time_from }}",
-                    minTime: "{{ $safetypermit->date && $safetypermit->date === now()->format('d-m-Y') ? currentTime : '09:00' }}",
-                    maxTime: "18:00",
-                    onChange: function(selectedDates, dateStr) {
-                        if (selectedDates.length > 0) {
-                            endTimePicker.set("minTime",
-                                dateStr);
-                        }
-                    },
-                });
+                function formatTime(date) {
+                    return date.toTimeString().slice(0, 5); // "HH:MM"
+                }
 
-                const endTimePicker = flatpickr("#time_to_picker", {
-                    enableTime: true,
-                    noCalendar: true,
-                    dateFormat: "H:i",
-                    time_24hr: true,
-                    defaultDate: "{{ $safetypermit->time_to }}",
-                    minTime: "{{ $safetypermit->time_from ?? currentTime }}",
-                    maxTime: "18:00",
-                });
+
+                // Initialize
+                initFromDatePicker();
+                initToDatePicker();
+                initTimePickers();
             });
+
 
 
             $(document).ready(function() {
@@ -1885,7 +1964,7 @@
                         ${isChecked}>
                     <label for="checkpoint-${workId}-${item.id}">${equipmentName}</label>
                 </div>`;
-            
+
                         container.append(checkpointHtml);
 
 
@@ -2420,6 +2499,9 @@
                     date: {
                         required: true,
                     },
+                    to_date: {
+                        required: true,
+                    },
                     time_from: {
                         required: true,
                     },
@@ -2480,6 +2562,9 @@
                 messages: {
 
                     date: {
+                        required: "Date cannot be empty.",
+                    },
+                    to_date: {
                         required: "Date cannot be empty.",
                     },
                     time_from: {

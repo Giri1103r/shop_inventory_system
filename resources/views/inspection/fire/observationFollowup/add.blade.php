@@ -107,8 +107,7 @@
                                                             <div class="form-group form-input">
                                                                 <label class="form-label require">Unit Name</label>
                                                                 <select name="obs[1][unit_id]" id="unit_id_1"
-                                                                    class="form-control single-select"
-                                                                    style="width: 100%">
+                                                                    class="form-control single-select" style="width: 100%">
                                                                     <option value="">Select Unit</option>
                                                                     @foreach ($unitList as $unit)
                                                                         <option value="{{ $unit->id }}">
@@ -333,7 +332,14 @@
                         autoclose: true
                     });
 
-
+                    $('select[name="unit_id_[' + form_set_count + ']"]').select2({
+                        placeholder: "Select the Unit Name",
+                        width: '100%'
+                    });
+                    $('select[name="department_id_[' + form_set_count + ']"]').select2({
+                        placeholder: "Select the Department Name",
+                        width: '100%'
+                    });
 
                     $('#unit_id_' + form_set_count).rules('add', {
                         required: true,
@@ -440,21 +446,59 @@
                 $('#observationadd').validate({
                     rules: {
 
-                        block_based_statement: {
+                        date_of_inspection: {
                             required: true,
                         },
-                        block: {
+                        'obs[1][month]': {
+                            required: true,
+                        },
+                        'obs[1][date]': {
+                            required: true,
+                        },
+                        'bs[1][observation]': {
+                            required: true,
+                        },
+                        'obs[1][equipment_code]': {
+                            required: true,
+                        },
+                        'obs[1][equipment_name]': {
+                            required: true,
+                        },
+                        'obs[1][department_id]': {
+                            required: true,
+                        },
+                        'obs[1][unit_id]': {
                             required: true,
                         },
 
+
                     },
                     messages: {
-                        block_based_statement: {
-                            required: "{{ __('ब्लाक आधारित विवरण (Block based statement) is Required') }}",
+                        date_of_inspection: {
+                            required: "{{ __(' Date of inspection is Required') }}",
                         },
-                        block: {
-                            required: "{{ __('ब्लाक(Block) is Required') }}",
+                        'obs[1][month]': {
+                            required: "{{ __('Month  is Required') }}",
                         },
+                        'obs[1][date]': {
+                            required: "{{ __('Date  is Required') }}",
+                        },
+                        'obs[1][observation]': {
+                            required: "{{ __(' Observation is Required') }}",
+                        },
+                        'obs[1][equipment_code]': {
+                            required: "{{ __('Equipment Code  is Required') }}",
+                        },
+                        'obs[1][equipment_name]': {
+                            required: "{{ __('Equipment Name  is Required') }}",
+                        },
+                        'obs[1][department_id]': {
+                            required: "{{ __('Department  is Required') }}",
+                        },
+                        'obs[1][unit_id]': {
+                            required: "{{ __(' Unit is Required') }}",
+                        },
+
 
                     },
                     errorElement: 'span',

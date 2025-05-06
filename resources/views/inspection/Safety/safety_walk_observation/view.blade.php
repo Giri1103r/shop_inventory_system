@@ -219,7 +219,7 @@
                                     @endforeach
                                     @if (isset($inspection_details->approval_remarks))
                                         <div class="card-header-inner p-2">
-                                            <h4 class="text-white">Approval</h4>
+                                            <h4 class="text-white">EHS Officer Approval</h4>
                                         </div>
                                         <div class="row">
                                             <div class="col-md-4 mb-2">

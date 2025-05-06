@@ -106,7 +106,7 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Emergency Contact</label>
+                                                    <label class="form-label ">Emergency Contact</label>
                                                     <input type="text" name="emergency_contact" id="emergency_contact"
                                                         class="form-control">
                                                 </div>
@@ -269,7 +269,7 @@
                                                                         <div class="form-group form-input">
                                                                             <label for="quantity"
                                                                                 class="require">Quantity</label>
-                                                                            <input type="number" min = "1" name="quantity[0]"
+                                                                            <input type="number"  name="quantity[0]"
                                                                                 id="quantity"
                                                                                 placeholder="Enter the quantity"
                                                                                 class="form-control">
@@ -465,8 +465,7 @@
                 noCalendar: true,
                 dateFormat: "H:i",
                 time_24hr: true,
-                defaultDate: currentTime,
-                minTime: currentTime,
+               
             });
 
 
@@ -779,7 +778,7 @@
                 <td>
                     <div class="form-group form-input">
                         <label for="quantity" class="require">Quantity</label>
-                        <input type="number" min = "1" name="quantity[${rowcount}]"   placeholder="Enter the quantity" class="form-control">
+                        <input type="number"  name="quantity[${rowcount}]"   placeholder="Enter the quantity" class="form-control">
                          <span id="quantity-error" style=" display:none;"  class="text-danger quantity-error">Quantity must be less than available quantity.</span>
 
 
@@ -959,7 +958,7 @@
                         required: true,
                     },
                     emergency_contact: {
-                        required: true,
+
                         digits: true,
                         minlength: 10,
                         maxlength: 10,
@@ -1133,7 +1132,7 @@
                         notEqual: "Mobile number and emergency contact should not be the same."
                     },
                     emergency_contact: {
-                        required: "Please enter the Emergency Contact.",
+
                         digits: "The Moblie contains only the numeric",
                         minlength: "Emergency Contact minimum 10 required",
                         maxlength: "Emergency Contact maximum 10 required",

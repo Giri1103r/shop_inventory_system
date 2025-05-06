@@ -130,7 +130,7 @@
                                             </div>
                                         @endif
                                     </div>
-                                    <hr>
+                                    {{-- <hr>
                                     <div class="form-observation">
                                         <div class="row mt-4 form-obs">
                                             <div class="card-header-inner p-2">
@@ -147,7 +147,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <hr>
+                                    <hr> --}}
 
                                     @foreach ($inspection_details as $details)
                                         <div class="form-wrapper">
@@ -275,9 +275,7 @@
                                     <hr>
                                 </div>
 
-                                @if (
-                                    $inspection->inspection_status == WAITING_FOR_EHS_OFFICER_VERIFICATION &&
-                                        (checkUserRole(ROLE_FIRE_ASSOCIATES) || isAdmin()))
+                                @if ($inspection->inspection_status == WAITING_FOR_EHS_OFFICER_VERIFICATION &&(checkUserRole(ROLE_EHS_OFFICER) || isAdmin()))
                                     <div class="row mt-3">
                                         <div class="card-header-inner">
                                             <h4 class="text-white">{{ __('inspection.ehs_officer_verify') }}</h4>
@@ -370,6 +368,7 @@
                                                         DETECTOR_INSPECTION,
                                                         WAITING_FOR_EHS_OFFICER_VERIFICATION,
                                                     );
+
                                                 @endphp
                                             @endif
                                             @if (isset($inspection->created_at))

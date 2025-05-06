@@ -178,10 +178,13 @@ class EmergencyLightInspectionController extends Controller
                 }
             }
         }
+
+        $location = $this->location->getLocationName();
         $unit = $this->unit->getUnit();
         $frequency = $this->frequency->getFrequency();
         $shifts = $this->shift->getShiftname();
         $data = array(
+            'locations'=>$location,
             'units' => $unit,
             'frequency' => $frequency,
             'shifts' => $shifts,
@@ -217,7 +220,7 @@ class EmergencyLightInspectionController extends Controller
 
             return view('inspection.fire.emergency_light_inspection.add', $data);
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('fire/emergency-light-inspection/list'));
         }
@@ -260,14 +263,14 @@ class EmergencyLightInspectionController extends Controller
 
             $ehsOfficer = GetEHSOfficer();
             $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
-            $mailsubject = 'FIRE INSPECTION';
+            $mailsubject = 'Fire Emergency Light Inspection';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
                 'module_type' => 3,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
-                    'message' => "Fire Associate create the Hooter Inspection",
+                    'message' => "Fire Associate create the Emergency Light Inspection",
                     'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
                     'id' => $id,
                     'module' => 1,
@@ -278,12 +281,12 @@ class EmergencyLightInspectionController extends Controller
             );
             notificationSave($notificationData);
 
-            $title = 'Fire Associate create the Hooter Inspection';
+            $title = 'Fire Associate create the Emergency Light Inspection';
             foreach ($ehsOfficers as $user) {
                 $email_id = getUseremail($user);
                 $url = admin_url('fire/emergency-light-inspection/verification/' . encryptId($id) . '/ehs');
                 $details = array(
-                    'fire_type' => 'Hooter Inspection',
+                    'fire_type' => 'Emergency Light Inspection',
                     'email' => $email_id,
                     'mail_subject' => $mailsubject,
                     'title' => $title,
@@ -311,7 +314,7 @@ class EmergencyLightInspectionController extends Controller
             Session::flash('success', 'Your data added successfully');
             return redirect(admin_url('fire/emergency-light-inspection/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('fire/emergency-light-inspection/list'));
         }
@@ -338,7 +341,7 @@ class EmergencyLightInspectionController extends Controller
             );
             return view('inspection.fire.emergency_light_inspection.view', $data);
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('fire/emergency-light-inspection/list'));
         }
@@ -365,7 +368,7 @@ class EmergencyLightInspectionController extends Controller
             );
             return view('inspection.fire.emergency_light_inspection.approve', $data);
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('fire/emergency-light-inspection/list'));
         }
@@ -380,7 +383,7 @@ class EmergencyLightInspectionController extends Controller
             $signature_update = $this->signature->signatureUpload(EMERGENCY_LIGHT_INSPECTION);
             $inspection_details = $this->emergency_light->selectOne($id);
             if ($request->is_passed == 1) {
-                $message = 'Hooter Inspeciton Approved Successfully';
+                $message = 'Emergency Light Inspeciton Approved Successfully';
                 $web_link =   admin_url('fire/emergency-light-inspection/verification/' . encryptId($inspection_details->id));
                 $to_status = INSPECTION_APPROVED;
             } else {
@@ -391,7 +394,7 @@ class EmergencyLightInspectionController extends Controller
             $userIds = [
                 'users' => $inspection_details->created_by,
             ];
-            $mailsubject = 'FIRE INSPECTION';
+            $mailsubject = 'Fire Emergency Light Inspection';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
                 'module_type' => 3,
@@ -435,7 +438,6 @@ class EmergencyLightInspectionController extends Controller
             Session::flash('success', __('common.updated_msg'));
             return redirect(admin_url('fire/emergency-light-inspection/list'));
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
             Session::flash('error', 'Something Went Wrong!');
             return redirect(admin_url('fire/emergency-light-inspection/list'));
@@ -453,7 +455,7 @@ class EmergencyLightInspectionController extends Controller
             $userIds = [
                 'users' => $ehsOfficers,
             ];
-            $mailsubject = 'Fire Inspection';
+            $mailsubject = 'Fire Emergency Light Inspection';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
                 'module_type' => 3,
@@ -521,11 +523,11 @@ class EmergencyLightInspectionController extends Controller
             } else {
                 $message = 'EHS Officer Rejected the CAPA Action';
                 $web_link =   admin_url('fire/emergency-light-inspection/verification/' . encryptId($inspection_details->id) . '/capa');
-                $users = $inspection_details->created_by;
+                $users = [$inspection_details->created_by];
                 $to_status = EHS_OFFICER_REJECTED;
             }
 
-            $mailsubject = 'FIRE INSPECTION';
+            $mailsubject = 'Fire Emergency Light Inspection';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
                 'module_type' => 3,
@@ -595,11 +597,11 @@ class EmergencyLightInspectionController extends Controller
             } else {
                 $message = 'Level One Manager Rejected the CAPA Action';
                 $web_link =   admin_url('fire/emergency-light-inspection/verification/' . encryptId($inspection_details->id) . '/capa');
-                $users = $inspection_details->created_by;
+                $users = [$inspection_details->created_by];
                 $to_status = L1_MANAGER_REJECTED;
             }
 
-            $mailsubject = 'FIRE INSPECTION';
+            $mailsubject = 'Fire Emergency Light Inspection';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
                 'module_type' => 3,
@@ -644,7 +646,7 @@ class EmergencyLightInspectionController extends Controller
             Session::flash('success', __('common.updated_msg'));
             return redirect(admin_url('fire/emergency-light-inspection/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something Went wrong!');
             return redirect(admin_url('fire/emergency-light-inspection/list'));
         }
@@ -663,14 +665,16 @@ class EmergencyLightInspectionController extends Controller
                 $message = 'Hooter Inspeciton Approved Successfully!';
                 $web_link =   admin_url('fire/emergency-light-inspection/view/' . encryptId($inspection_details->id));
                 $to_status = INSPECTION_APPROVED;
-                $users = array_merge([$inspection_details->created_by], [$inspection_details->verified_by], [$inspection_details->l1_manager_verified_by], [$inspection_details->l2_manager_verified_by]);
+                $users = array_merge([$inspection_details->created_by], [$inspection_details->verified_by], [$inspection_details->l1_manager_verified_by]);
             } else {
                 $message = 'Level Two Manager Rejected the CAPA Action';
                 $web_link =   admin_url('fire/emergency-light-inspection/verification/' . encryptId($inspection_details->id) . '/capa');
                 $to_status = L2_MANAGER_REJECTED;
+                $users = array_merge([$inspection_details->created_by], [$inspection_details->verified_by], [$inspection_details->l1_manager_verified_by]);
+
             }
 
-            $mailsubject = 'FIRE INSPECTION';
+            $mailsubject = 'Fire Emergency Light Inspection';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
                 'module_type' => 3,
@@ -854,7 +858,9 @@ class EmergencyLightInspectionController extends Controller
             $sheet->mergeCells("O$thirdRow:P$thirdRow")->setCellValue("O$thirdRow", "POWER SUPPLY");
 
             // Final vertical column
-            $sheet->mergeCells("Q$headerRow:R$thirdRow")->setCellValue("Q$thirdRow", "STATUS");
+            // $sheet->mergeCells("Q$headerRow:R$thirdRow")->setCellValue("Q$thirdRow", "STATUS");
+            $sheet->mergeCells("Q$thirdRow:R$thirdRow")->setCellValue("Q$thirdRow", "STATUS");
+
             $sheet->mergeCells("S$headerRow:U$thirdRow")->setCellValue("S$headerRow", "REMARKS");
 
 
@@ -1043,7 +1049,7 @@ class EmergencyLightInspectionController extends Controller
             $filename = "Emergency Light Inspection.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('fire/emergency-light-inspection/list'));
         }
@@ -1100,7 +1106,7 @@ class EmergencyLightInspectionController extends Controller
                 }
                 $sheet->mergeCells("G{$currentRow}:M" . ($currentRow + 2));
                 $sheet->setCellValue("G{$currentRow}", "EMERGENCY LIGHT INSPECTION CHECKLIST PN INTERNATIONAL PVT LTD");
-                $sheet->getStyle("G{$currentRow}")->applyFromArray([
+                $sheet->getStyle("G{$currentRow}:M{$currentRow}")->applyFromArray([
                     'font' => ['bold' => true, 'size' => 14],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
@@ -1192,7 +1198,7 @@ class EmergencyLightInspectionController extends Controller
                 $sheet->mergeCells("O$thirdRow:P$thirdRow")->setCellValue("O$thirdRow", "POWER SUPPLY");
 
                 // Final vertical column
-                $sheet->mergeCells("Q$headerRow:R$thirdRow")->setCellValue("Q$thirdRow", "STATUS");
+                $sheet->mergeCells("Q$thirdRow:R$thirdRow")->setCellValue("Q$thirdRow", "STATUS");
                 $sheet->mergeCells("S$headerRow:U$thirdRow")->setCellValue("S$headerRow", "REMARKS");
 
 
@@ -1334,7 +1340,7 @@ class EmergencyLightInspectionController extends Controller
                 'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
             ]);
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('fire/emergency-light-inspection/list'));
         }
@@ -1380,7 +1386,7 @@ class EmergencyLightInspectionController extends Controller
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('fire/emergency-light-inspection/list'));
         }

@@ -106,7 +106,7 @@ class MonthlyPhysicalInspectionController extends Controller
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
-                    dd($ex);
+                    report($ex);
                     report($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
@@ -410,7 +410,7 @@ class MonthlyPhysicalInspectionController extends Controller
             return response()->download($filePath)->deleteFileAfterSend(true);
 
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             report($ex);
             Session::flash('error', 'Something went wrong, Please try again later!');
             return redirect(admin_url('fire/equipment-monthly-physical-inspection/list'));
@@ -718,7 +718,7 @@ class MonthlyPhysicalInspectionController extends Controller
 
             return response()->download($filePath)->deleteFileAfterSend(true);
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('fire/sprinkler-inspection/list'));

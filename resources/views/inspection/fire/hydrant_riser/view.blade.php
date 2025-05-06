@@ -180,7 +180,7 @@
                                                     </div>
                                                 </div>
 
-                                               
+
 
                                                 <!-- Hydrant No  -->
                                                 <div class="col-md-4 mb-2">
@@ -378,16 +378,7 @@
                                                     </div>
                                                 </div>
                                             @endif
-                                            @if (isset($inspection->created_at))
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label class="form-label ">{{ __('inspection.date') }}</label>
-                                                        <div class="view_data">
-                                                            {{ Displaydateformat($inspection->created_at) }}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            @endif
+                                            
                                             @if (isset($signature))
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
@@ -416,18 +407,19 @@
                                                             HYDRANT_RISER,
                                                         );
                                                     @endphp
+                                                    @if (isset($signature))
+                                                    <div class="col-md-4 mb-2">
+                                                        <div class="form-group form-input">
+                                                            <label class="form-label"
+                                                                style="display: block;">{{ __('inspection.signature') }}</label>
+                                                            <img src="{{ admin_url($signature) }}" alt="Signature Upload"
+                                                                style="width: 150px; margin-top: -10px;" />
+                                                        </div>
+                                                    </div>
+                                                @endif
                                                 @endif
                                             @endif
-                                            @if (isset($signature))
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label class="form-label"
-                                                            style="display: block;">{{ __('inspection.signature') }}</label>
-                                                        <img src="{{ admin_url($signature) }}" alt="Signature Upload"
-                                                            style="width: 150px; margin-top: -10px;" />
-                                                    </div>
-                                                </div>
-                                            @endif
+
                                             @if (isset($inspection->capa_recomendation))
                                                 <div class="col-md-12 mb-2">
                                                     <div class="form-group form-input">
@@ -464,7 +456,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                           
+
                                             @php
                                                 $signature = GetFireSignature(
                                                     $inspection->created_by,
@@ -524,7 +516,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                       
+
                                         @php
                                             $signature = GetFireSignature(
                                                 $inspection->verified_by,
@@ -584,7 +576,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                       
+
                                         @php
                                             $signature = GetFireSignature(
                                                 $inspection->l1_manager_verified_by,
@@ -642,7 +634,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                      
+
                                         @php
                                             $signature = GetFireSignature(
                                                 $inspection->l2_manager_verified_by,
@@ -674,6 +666,7 @@
                                                 </div>
                                             </div>
                                         @endif
+{{--
                                         @if ($inspection->approved_by)
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
@@ -700,7 +693,7 @@
                                                         style="width: 150px; margin-top: -10px;" />
                                                 </div>
                                             </div>
-                                        @endif
+                                        @endif --}}
                                         <div class="col-md-12 mb-2">
                                             <div class="form-group form-input">
                                                 <label

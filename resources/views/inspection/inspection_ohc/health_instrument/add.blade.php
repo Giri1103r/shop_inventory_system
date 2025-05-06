@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', ' Add Health Instrument Calibration ')
+@section('title', 'Health Instrument Calibration Add')
 @section('pageurl', admin_url('ohc/first-aider/list'))
 
 @section('content')
@@ -492,7 +492,7 @@
             initializeFlatpickr();
         });
 
-        function addValidationRules(row) {
+        function addValidationRules(newRow) {
             newRow.find("input[name$='[instrument_name]']").rules("add", {
                 minlength: 3,
                 maxlength: 2000,

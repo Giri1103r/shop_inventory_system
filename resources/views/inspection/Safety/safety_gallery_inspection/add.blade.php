@@ -278,7 +278,10 @@
                         },
                         resource_code: {
                             required: true,
-                          
+                            minlength: 3,
+                            maxlength: 30,
+
+
                         }
                     },
                     messages: {
@@ -305,6 +308,8 @@
                         resource_code: {
                             required: 'Resource Code is required',
                             remote: 'Resource Code already exists',
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 30",
                         }
                     },
                     errorElement: 'span',
@@ -336,9 +341,14 @@
                 });
                 $('input[name^="remarks"]').each(function() {
                     $(this).rules('add', {
-                        required: true, // 'required' must be a boolean value
+                        required: true,
+                        minlength: 3,
+                        maxlength: 300,
+
                         messages: {
-                            required: "Remarks is required" // Make sure 'required' is the correct rule
+                            required: "Remarks is required",
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 300",
                         }
                     });
                 });

@@ -38,6 +38,12 @@
                                     </div>
                                 </div>
                                 <div class="mb-3 col-md-4 form-input">
+                                    <label class="form-label view_label">{{ __('To Date') }}</label>
+                                    <div class="view_data">
+                                        {{ isset($safetypermit->to_date) ? Displaydateformat($safetypermit->to_date) : '' }}
+                                    </div>
+                                </div>
+                                <div class="mb-3 col-md-4 form-input">
                                     <label class="form-label view_label">{{ __('Time(From)') }}</label>
                                     <div class="view_data">
                                         {{ isset($safetypermit->time_from) ? $safetypermit->time_from : '' }}

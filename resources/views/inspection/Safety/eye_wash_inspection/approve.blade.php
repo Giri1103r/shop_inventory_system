@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Monthly Eye Wash Inspection Add')
+@section('title', 'Monthly Eye Wash Inspection Approval')
 @section('pageurl', admin_url('safety/eye-wash-inspection/monthly/list'))
 @section('content')
     <div class="clearfix"></div>
@@ -100,6 +100,24 @@
                                                 </div>
                                             </div>
                                         </div>
+
+                                        @php
+                                        $signature = GetSafetySignature(
+                                            $inspection_details->created_by,
+                                            $inspection_details->id,
+                                            EYE_WASH_INSPECTION,
+                                        );
+                                    @endphp
+                                    @if (isset($signature))
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label"
+                                                    style="display: block;">{{ __('inspection.signature') }}</label>
+                                                <img src="{{ admin_url($signature) }}" alt="Signature Upload"
+                                                    style="width: 100px; margin-top: -10px;" />
+                                            </div>
+                                        </div>
+                                    @endif
                                     </div>
                                     <hr>
                                     @foreach ($inspection as $details)
@@ -250,29 +268,14 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                @php
-                                                    $signature = GetSafetySignature(
-                                                        $inspection_details->created_by,
-                                                        $inspection_details->id,
-                                                        EYE_WASH_INSPECTION,
-                                                    );
-                                                @endphp
-                                                @if (isset($signature))
-                                                    <div class="col-md-4 mb-2">
-                                                        <div class="form-group form-input">
-                                                            <label class="form-label"
-                                                                style="display: block;">{{ __('inspection.signature') }}</label>
-                                                            <img src="{{ admin_url($signature) }}" alt="Signature Upload"
-                                                                style="width: 100px; margin-top: -10px;" />
-                                                        </div>
-                                                    </div>
-                                                @endif
+
 
                                             </div>
                                         </div>
                                     @endforeach
                                 </div>
-                                @if ($inspection_details->inspection_status == WAITING_FOR_EHS_OFFICER_VERIFICATION)
+
+                                @if ($inspection_details->inspection_status == WAITING_FOR_EHS_OFFICER_VERIFICATION && (checkUserRole(ROLE_EHS_OFFICER) || isAdmin()))
                                     <div class="row mt-3">
                                         <div class="card-header-inner">
                                             <h4 class="text-white">{{ __('inspection.ehs_officer_verify') }}</h4>
@@ -530,7 +533,7 @@
                                                     <label
                                                         class="form-label ">{{ __('inspection.level_one_manager') }}</label>
                                                     <div class="view_data">
-                                                        {{ getUserName($inspection_details->l1_manager_verified_by) }}
+                                                        {{ getUserName($inspection_details->l1_manager_verification) }}
                                                     </div>
                                                 </div>
                                             </div>
@@ -544,7 +547,7 @@
                                             </div>
                                             @php
                                                 $signature = GetSafetySignature(
-                                                    $inspection_details->l1_manager_verified_by,
+                                                    $inspection_details->l1_manager_verification,
                                                     $inspection_details->id,
                                                     EYE_WASH_INSPECTION,
                                                 );
@@ -581,7 +584,7 @@
                                                     <label
                                                         class="form-label ">{{ __('inspection.level_two_manager') }}</label>
                                                     <div class="view_data">
-                                                        {{ getUserName($inspection_details->l2_manager_verified_by) }}
+                                                        {{ getUserName($inspection_details->l2_manager_verification) }}
                                                     </div>
                                                 </div>
                                             </div>
@@ -604,7 +607,7 @@
                                             </div>
                                             @php
                                                 $signature = GetSafetySignature(
-                                                    $inspection_details->l2_manager_verified_by,
+                                                    $inspection_details->l2_manager_verification,
                                                     $inspection_details->id,
                                                     EYE_WASH_INSPECTION,
                                                 );
@@ -627,7 +630,7 @@
                                     $inspection_details->inspection_status == WAITING_FOR_CAPA_ACTION ||
                                         $inspection_details->inspection_status == L2_MANAGER_REJECTED ||
                                         $inspection_details->inspection_status == EHS_OFFICER_REJECTED ||
-                                        $inspection_details->inspection_status == L1_MANAGER_REJECTED)
+                                        $inspection_details->inspection_status == L1_MANAGER_REJECTED && checkUserRole(ROLE_FIRE_ASSOCIATES || isAdmin()))
                                     <div class="row mt-3">
                                         <div class="card-header-inner">
                                             <h4 class="text-white">{{ __('inspection.capa_action') }}</h4>
@@ -681,7 +684,7 @@
                                     </form>
                                 @endif
 
-                                @if ($inspection_details->inspection_status == WAITING_FOR_CAPA_VERIFICATION)
+                                @if ($inspection_details->inspection_status == WAITING_FOR_CAPA_VERIFICATION && (checkUserRole(ROLE_EHS_OFFICER) || isAdmin()))
                                     <form method="POST" id="forklistassessmentAdd"
                                         action="{{ admin_url('safety/eye-wash-inspection/monthly/capa/reverify/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
@@ -732,7 +735,8 @@
                                     </form>
                                 @endif
 
-                                @if ($inspection_details->inspection_status == WAITING_FOR_L1_VERIFICATION)
+                                @if ($inspection_details->inspection_status == WAITING_FOR_L1_VERIFICATION && (checkUserRole(ROLE_L1_MANAGER) || isAdmin()))
+
                                     <form method="POST" id="levelOneManager"
                                         action="{{ admin_url('safety/eye-wash-inspection/monthly/level-one/verify/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
@@ -784,7 +788,8 @@
                                     </form>
                                 @endif
 
-                                @if ($inspection_details->inspection_status == WAITING_FOR_L2_VERIFICATION)
+                                @if ($inspection_details->inspection_status == WAITING_FOR_L2_VERIFICATION && (checkUserRole(ROLE_L2_MANAGER) || isAdmin()))
+
                                     <form method="POST" id="levelTwoManager"
                                         action="{{ admin_url('safety/eye-wash-inspection/monthly/level-two/verify/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
@@ -843,4 +848,183 @@
         </div>
 
 
-    @stop
+        @stop
+        @push('script')
+            <script>
+                $('#forklistassessmentAdd').validate({
+                    rules: {
+                        remarks: {
+                            required: true,
+                            minlength: 3,
+                            maxlength: 100,
+                            noSpaces: true,
+                        },
+                        signature_image: {
+                            required: true,
+                        }
+                    },
+                    messages: {
+                        remarks: {
+                            required: "Remarks is Required",
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 100",
+                        },
+                        signature_image: {
+                            required: "Signature is Required",
+                        }
+                    },
+                    errorElement: 'div',
+                    errorPlacement: function(error, element) {
+                        error.addClass('invalid-feedback');
+                        element.closest('.form-input').append(error);
+                    },
+                    highlight: function(element) {
+                        $(element).addClass('is-invalid');
+                    },
+                    unhighlight: function(element) {
+                        $(element).removeClass('is-invalid');
+                        $(element).closest('.form-input').find('.invalid-feedback').remove();
+                    },
+                    submitHandler: function(form) {
+                        form.submit();
+                    },
+                    invalidHandler: function(event, validator) {
+                        var errors = validator.numberOfInvalids();
+                        validator.errorList.forEach(function(error) {});
+                    }
+                });
+
+                $.validator.addMethod("noSpaces", function(value) {
+                    return value.trim().length > 0;
+                }, "Spaces are not allowed");
+
+                $('#capaAction').validate({
+                    rules: {
+                        capa_remarks: {
+                            required: true,
+                            minlength: 3,
+                            maxlength: 100,
+                            noSpaces: true,
+                        },
+                        signature_image: {
+                            required: true,
+                        }
+                    },
+                    messages: {
+                        capa_remarks: {
+                            required: "Remarks is Required",
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 100",
+                        },
+                        signature_image: {
+                            required: "Signature is Required",
+                        }
+                    },
+                    errorElement: 'div',
+                    errorPlacement: function(error, element) {
+                        error.addClass('invalid-feedback');
+                        element.closest('.form-input').append(error);
+                    },
+                    highlight: function(element) {
+                        $(element).addClass('is-invalid');
+                    },
+                    unhighlight: function(element) {
+                        $(element).removeClass('is-invalid');
+                        $(element).closest('.form-input').find('.invalid-feedback').remove();
+                    },
+                    submitHandler: function(form) {
+                        form.submit();
+                    },
+                    invalidHandler: function(event, validator) {
+                        var errors = validator.numberOfInvalids();
+                        validator.errorList.forEach(function(error) {});
+                    }
+                });
+
+                $('#levelOneManager').validate({
+                    rules: {
+                        level_one_manager: {
+                            required: true,
+                            minlength: 3,
+                            maxlength: 100,
+                            noSpaces: true,
+                        },
+                        signature_image: {
+                            required: true,
+                        }
+                    },
+                    messages: {
+                        level_one_manager: {
+                            required: "Remarks is Required",
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 100",
+                        },
+                        signature_image: {
+                            required: "Signature is Required",
+                        }
+                    },
+                    errorElement: 'div',
+                    errorPlacement: function(error, element) {
+                        error.addClass('invalid-feedback');
+                        element.closest('.form-input').append(error);
+                    },
+                    highlight: function(element) {
+                        $(element).addClass('is-invalid');
+                    },
+                    unhighlight: function(element) {
+                        $(element).removeClass('is-invalid');
+                        $(element).closest('.form-input').find('.invalid-feedback').remove();
+                    },
+                    submitHandler: function(form) {
+                        form.submit();
+                    },
+                    invalidHandler: function(event, validator) {
+                        var errors = validator.numberOfInvalids();
+                        validator.errorList.forEach(function(error) {});
+                    }
+                });
+
+                $('#levelTwoManager').validate({
+                    rules: {
+                        level_two_manager: {
+                            required: true,
+                            minlength: 3,
+                            maxlength: 100,
+                            noSpaces: true,
+                        },
+                        signature_image: {
+                            required: true,
+                        }
+                    },
+                    messages: {
+                        level_two_manager: {
+                            required: "Remarks is Required",
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 100",
+                        },
+                        signature_image: {
+                            required: "Signature is Required",
+                        }
+                    },
+                    errorElement: 'div',
+                    errorPlacement: function(error, element) {
+                        error.addClass('invalid-feedback');
+                        element.closest('.form-input').append(error);
+                    },
+                    highlight: function(element) {
+                        $(element).addClass('is-invalid');
+                    },
+                    unhighlight: function(element) {
+                        $(element).removeClass('is-invalid');
+                        $(element).closest('.form-input').find('.invalid-feedback').remove();
+                    },
+                    submitHandler: function(form) {
+                        form.submit();
+                    },
+                    invalidHandler: function(event, validator) {
+                        var errors = validator.numberOfInvalids();
+                        validator.errorList.forEach(function(error) {});
+                    }
+                });
+            </script>
+        @endpush

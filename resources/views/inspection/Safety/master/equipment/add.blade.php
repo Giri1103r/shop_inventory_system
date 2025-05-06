@@ -74,7 +74,7 @@
                     equipment_name: {
                         required: true,
                         minlength: 3,
-                        maxlength: 2000,
+                        maxlength: 100,
                         remote: {
                             url: '{{ admin_url("safety/master/equipment/unique") }}',
                             type: 'post',
@@ -91,7 +91,7 @@
                     equipment_name: {
                         required: "{{ __('Equipment Name is Required') }}",
                         minlength: "Minimum Characters should be 3",
-                        maxlength: "Maximum Characters should not exceed 2000",
+                        maxlength: "Maximum Characters should not exceed 100",
                         remote: "{{ __('Equipment Name should be unique') }}",
 
                     },

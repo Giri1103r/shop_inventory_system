@@ -113,12 +113,12 @@ class WeeklyFirstAidBox extends Model
                 'available_quantity' => $request->available_quantity[$index],
                 'expired_date' => dbdateformat($request->expired_date[$index]),
                 'remarks' => $request->remarks[$index],
-                
+
             ];
         }
         $updated_medicine_checklist = json_encode($updated_medicine_checklist);
         $data = [
-            
+
             'document_reference_id'=>$request->document_reference_id,
             'date_of_inspection' =>  DBdateformat($request->date_of_inspection),
             'location' => decryptId($request->location_id),
@@ -144,7 +144,9 @@ class WeeklyFirstAidBox extends Model
         $request = request();
         // dd($request);
         $search = '';
-        $query = $this->select('inspection_ohc_weekly_first_aid_box_inspection_checklist_details.*', 'masters_location.location_name', 'masters_unit.unit_name','inspection_shift_option.shift','ohc_master_certified_first_aider.certifier_name','inspection_ohc_weekly_first_aid_box_inspection_checklist_details.shift as shift_id','inspection_static_docno.*')
+        $query = $this->select('inspection_ohc_weekly_first_aid_box_inspection_checklist_details.*', 'masters_location.location_name', 'masters_unit.unit_name','inspection_shift_option.shift','ohc_master_certified_first_aider.certifier_name','inspection_ohc_weekly_first_aid_box_inspection_checklist_details.shift as shift_id',
+        'inspection_ohc_weekly_first_aid_box_inspection_checklist_details.id as checklist_id',
+        'inspection_static_docno.*')
             ->leftJoin('masters_location', 'masters_location.id', '=', 'inspection_ohc_weekly_first_aid_box_inspection_checklist_details.location')
             ->leftJoin('masters_unit', 'masters_unit.id', '=', 'inspection_ohc_weekly_first_aid_box_inspection_checklist_details.unit')
             ->leftJoin('ohc_master_certified_first_aider', 'ohc_master_certified_first_aider.id', '=', 'inspection_ohc_weekly_first_aid_box_inspection_checklist_details.first_aider')

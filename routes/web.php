@@ -70,6 +70,7 @@ use App\Http\Controllers\OhcManagement\Report\MedicineExpireController;
 use App\Http\Controllers\OhcManagement\Report\MonthlyInventoryController;
 use App\Http\Controllers\OhcManagement\Report\YearlyInventoryController;
 use App\Http\Controllers\OhcManagement\OhcDashboardController;
+use App\Http\Controllers\KPI\KpiDashboardController;
 
 Route::get('cache', function () {
     Artisan::call('optimize:clear');
@@ -114,7 +115,11 @@ Route::get('cron/safetypermit/protectiveequipmentmaster/import', [CronController
 Route::get('cron/safetypermit/equipinvolvemaster/import', [CronController::class, 'queueEquipinvolvemasterImport']);
 Route::get('cron/safetypermit/safeworkmaster/import', [CronController::class, 'queueSafeworkmasterImport']);
 Route::get('cron/safetypermit/precautionmaster/import', [CronController::class, 'queuePrecautionmasterImport']);
+
 Route::get('cron/safetypermit/checklistmaster/import', [CronController::class, 'queueChecklistmasterImport']);
+Route::get('cron/inspection/ohc/current_new_code/import', [CronController::class, 'currentNextCodeImport']);
+Route::get('cron/inspection/safety/equipment/import', [CronController::class, 'equipmentimport']);
+Route::get('cron/inspection/ohc/first-aid-equipment/import', [CronController::class, 'firstAidEquipmentImport']);
 
 
 
@@ -126,6 +131,7 @@ Route::get('cron/master/workmastertemp', [CronController::class, 'workMasterTemp
 Route::get('cron/master/worksave', [CronController::class, 'workSave']);
 Route::get('cron/master/employee/all-details-temp', [CronController::class, 'employeeMasterTempAllDetails']);
 Route::get('cron/master/employee/temp-details', [CronController::class, 'employeeMasterTemp']);
+Route::get('cron/master/employee/temp-custom-details', [CronController::class, 'employeeMasterTempCustom']);
 Route::get('cron/master/employee_save', [CronController::class, 'EmployeeSave']);
 Route::get('permit_expiry', [CronController::class, 'permitExpiry']);
 Route::get('permit_close', [CronController::class, 'permitClose']);
@@ -186,6 +192,37 @@ Route::middleware(['securityheader'])->group(function () {
             Route::get('training/dashboard/department', [TrainingController::class, 'getDepartment']);
             Route::get('training/dashboard/monthwisetraining', [TrainingController::class, 'getmonthwiseTraining']);
             Route::get('training/dashboard/trainingStatusCount', [TrainingController::class, 'gettrainingStatusCount']);
+
+
+
+            /**
+             * KPI
+             */
+
+            Route::group(['prefix' => 'kpi/dashboard/'], function () {
+                Route::get('', [KpiDashboardController::class, 'index']);
+                Route::get('chart1', [KpiDashboardController::class, 'getChart1']);
+                Route::get('chart2', [KpiDashboardController::class, 'getChart2']);
+                Route::get('chart3', [KpiDashboardController::class, 'getChart3']);
+                Route::get('chart4', [KpiDashboardController::class, 'getChart4']);
+                Route::get('chart5', [KpiDashboardController::class, 'getChart5']);
+                Route::get('chart6', [KpiDashboardController::class, 'getChart6']);
+                Route::get('chart7', [KpiDashboardController::class, 'getChart7']);
+                Route::get('chart8', [KpiDashboardController::class, 'getChart8']);
+                Route::get('chart9', [KpiDashboardController::class, 'getChart9']);
+                Route::get('chart10', [KpiDashboardController::class, 'getChart10']);
+                Route::get('chart11', [KpiDashboardController::class, 'getChart11']);
+                Route::get('chart12', [KpiDashboardController::class, 'getChart12']);
+                Route::get('chart13', [KpiDashboardController::class, 'getChart13']);
+                Route::get('chart14', [KpiDashboardController::class, 'getChart14']);
+                Route::get('chart15', [KpiDashboardController::class, 'getChart15']);
+                Route::get('chart16', [KpiDashboardController::class, 'getChart16']);
+                Route::get('chart17', [KpiDashboardController::class, 'getChart17']);
+                Route::get('chart18', [KpiDashboardController::class, 'getChart18']);
+                Route::get('chart19', [KpiDashboardController::class, 'getChart19']);
+                Route::get('chart20', [KpiDashboardController::class, 'getChart20']);
+                Route::get('chart21', [KpiDashboardController::class, 'getChart21']);
+            });
 
             /**
              * User Access Log

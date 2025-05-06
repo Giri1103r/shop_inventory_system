@@ -74,9 +74,9 @@ class MonthlyEyeWashInspectionController extends Controller
                             $text = "<span style='color:red'>In-Active</span>";
                             // if (CheckUserRole(ROLE_SUPERADMIN)) {
                             if ($row->status == 1) {
-                                $text = "<span style='color:green;cursor:pointer' class='statusChange' data-id='" . encryptId($row->id) . "' data-type = '1'>Active</span>";
+                                $text = "<span style='color:green;cursor:pointer' class='statusChange' data-id='" . encryptId($row->inspection_id) . "' data-type = '1'>Active</span>";
                             } else if ($row->status == 0) {
-                                $text = "<span style='color:red;cursor:pointer' class='statusChange' data-id='" . encryptId($row->id) . "' data-type = '0'>In-Active</span>";
+                                $text = "<span style='color:red;cursor:pointer' class='statusChange' data-id='" . encryptId($row->inspection_id) . "' data-type = '0'>In-Active</span>";
                             }
                             // }
                             return $text;
@@ -89,6 +89,12 @@ class MonthlyEyeWashInspectionController extends Controller
                         })
                         ->addColumn('created_by', function ($row) {
                             return getUsername($row->created_by);
+                        })
+                        ->addColumn('date_of_inspection', function ($row) {
+                            return Displaydateformat($row->date_of_inspection);
+                        })
+                        ->addColumn('next_due', function ($row) {
+                            return Displaydateformat($row->next_due);
                         })
                         ->addColumn('inspection_status', function ($row) {
                             $text = '';
@@ -127,31 +133,32 @@ class MonthlyEyeWashInspectionController extends Controller
                         })
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            $btn = '<a href="' . admin_url('safety/eye-wash-inspection/monthly/view/' . encryptId($row->id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
+                            $btn = '<a href="' . admin_url('safety/eye-wash-inspection/monthly/view/' . encryptId($row->inspection_id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
                             if ($row->inspection_status == WAITING_FOR_EHS_OFFICER_VERIFICATION && (CheckUserRole(ROLE_EHS_OFFICER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('safety/eye-wash-inspection/monthly/verification/' . encryptId($row->id)) . '/ehs" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('safety/eye-wash-inspection/monthly/verification/' . encryptId($row->inspection_id)) . '/ehs" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if (($row->inspection_status == WAITING_FOR_CAPA_ACTION || $row->inspection_status == L2_MANAGER_REJECTED || $row->inspection_status == EHS_OFFICER_REJECTED || $row->inspection_status == L1_MANAGER_REJECTED) && (CheckUserRole(ROLE_FIRE_ASSOCIATES) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('safety/eye-wash-inspection/monthly/verification/' . encryptId($row->id)) . '/capa" class="" title="' . __('inspection.capa_action') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('safety/eye-wash-inspection/monthly/verification/' . encryptId($row->inspection_id)) . '/capa" class="" title="' . __('inspection.capa_action') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if ($row->inspection_status == WAITING_FOR_CAPA_VERIFICATION && (CheckUserRole(ROLE_EHS_OFFICER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('safety/eye-wash-inspection/monthly/verification/' . encryptId($row->id)) . '/ehsVerify" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('safety/eye-wash-inspection/monthly/verification/' . encryptId($row->inspection_id)) . '/ehsVerify" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if ($row->inspection_status == WAITING_FOR_L1_VERIFICATION && (CheckUserRole(ROLE_L1_MANAGER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('safety/eye-wash-inspection/monthly/verification/' . encryptId($row->id)) . '/level-one-manager" class="" title="' . __('inspection.l1_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('safety/eye-wash-inspection/monthly/verification/' . encryptId($row->inspection_id)) . '/level-one-manager" class="" title="' . __('inspection.l1_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if ($row->inspection_status == WAITING_FOR_L2_VERIFICATION && (CheckUserRole(ROLE_L2_MANAGER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('safety/eyewash/monthly/verification/' . encryptId($row->id)) . '/level-two-manager" class="" title="' . __('inspection.l2_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                // dd($row->inspection_id);
+                                $btn .= '<a href="' . admin_url('safety/eye-wash-inspection/monthly/verification/' . encryptId($row->inspection_id)) . '/level-two-manager" class="" title="' . __('inspection.l2_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
-                            $btn .= '<a href="' . admin_url('safety/eye-wash-inspection/monthly/exportViewPdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
+                            $btn .= '<a href="' . admin_url('safety/eye-wash-inspection/monthly/exportViewPdf/' . encryptId($row->inspection_id)) . '" style="margin-right: 5px;" title="PDF">
                                         <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
                                     </a>';
-                            $btn .= '<a href="' . admin_url('safety/eye-wash-inspection/monthly/generalexcel/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="EXCEL">
+                            $btn .= '<a href="' . admin_url('safety/eye-wash-inspection/monthly/generalexcel/' . encryptId($row->inspection_id)) . '" style="margin-right: 5px;" title="EXCEL">
                                         <i class="fas fa-file-excel" style="color: #1D6F42;" aria-hidden="true"></i>
                                     </a>';
                             return $btn;
                         })
-                        ->rawColumns(['action', 'created_date', 'created_by', 'status', 'inspection_status', 'issue_date'])
+                        ->rawColumns(['action', 'created_date', 'date_of_inspection', 'next_due','created_by', 'status', 'inspection_status', 'issue_date'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -206,7 +213,6 @@ class MonthlyEyeWashInspectionController extends Controller
     {
         try {
 
-            // dd($request->all());
 
             $rules = [
                 'inspection_date' => 'required',
@@ -264,7 +270,7 @@ class MonthlyEyeWashInspectionController extends Controller
 
             $ehsOfficer = GetEHSOfficer();
             $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
-            $mailsubject = 'SAFETY INSPECTION';
+            $mailsubject = 'Monthly EyeWash Inspection';
             $notificationData = array(
                 'notification_type' => SAFETY_INSPECTION,
                 'module_type' => 3,
@@ -309,7 +315,7 @@ class MonthlyEyeWashInspectionController extends Controller
             Session::flash('success', 'Monthly Eye Wash Inspection Added Successfully');
             return redirect(admin_url('safety/eye-wash-inspection/monthly/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('safety/eye-wash-inspection/monthly/list'));
@@ -340,6 +346,7 @@ class MonthlyEyeWashInspectionController extends Controller
             $id = decryptId($request->id);
             $inspection_details = $this->eye_wash->selectOne($id);
             $inspection = $this->eye_wash_details->GetDetails($inspection_details->id);
+
             $status_log = $this->statusLog->selectOne($id, EYE_WASH_INSPECTION);
             $document_no = $this->document_reference->selectOne($inspection_details->document_reference_id);
             $data = array(
@@ -361,6 +368,7 @@ class MonthlyEyeWashInspectionController extends Controller
     {
         try {
             $id = decryptId($request->id);
+
             $inspection_details = $this->eye_wash->selectOne($id);
             $inspection = $this->eye_wash_details->GetDetails($inspection_details->id);
             $document_no = $this->document_reference->selectOne($inspection_details->document_reference_id);
@@ -399,7 +407,7 @@ class MonthlyEyeWashInspectionController extends Controller
             $userIds = [
                 'users' => $inspection_details->created_by,
             ];
-            $mailsubject = 'SAFETY INSPECTION';
+         $mailsubject = 'Monthly EyeWash Inspection';
             $notificationData = array(
                 'notification_type' => SAFETY_INSPECTION,
                 'module_type' => 3,
@@ -460,7 +468,8 @@ class MonthlyEyeWashInspectionController extends Controller
             $userIds = [
                 'users' => $ehsOfficers,
             ];
-            $mailsubject = 'Safety Inspection';
+
+         $mailsubject = 'Monthly EyeWash Inspection';
             $notificationData = array(
                 'notification_type' => SAFETY_INSPECTION,
                 'module_type' => 3,
@@ -531,7 +540,7 @@ class MonthlyEyeWashInspectionController extends Controller
                 $users = $inspection_details->created_by;
                 $to_status = EHS_OFFICER_REJECTED;
             }
-            $mailsubject = 'SAFETY INSPECTION';
+         $mailsubject = 'Monthly EyeWash Inspection';
             $notificationData = array(
                 'notification_type' => SAFETY_INSPECTION,
                 'module_type' => 3,
@@ -605,7 +614,7 @@ class MonthlyEyeWashInspectionController extends Controller
                 $users = $inspection_details->created_by;
                 $to_status = L1_MANAGER_REJECTED;
             }
-            $mailsubject = 'SAFETY INSPECTION';
+         $mailsubject = 'Monthly EyeWash Inspection';
             $notificationData = array(
                 'notification_type' => SAFETY_INSPECTION,
                 'module_type' => 3,
@@ -676,7 +685,7 @@ class MonthlyEyeWashInspectionController extends Controller
                 $to_status = L2_MANAGER_REJECTED;
             }
 
-            $mailsubject = 'SAFETY INSPECTION';
+         $mailsubject = 'Monthly EyeWash Inspection';
             $notificationData = array(
                 'notification_type' => SAFETY_INSPECTION,
                 'module_type' => 3,
@@ -756,7 +765,7 @@ class MonthlyEyeWashInspectionController extends Controller
                 $document_no = $this->document_reference->selectOne($eye_wash->document_reference_id);
 
                 $prepared_by_signature = GetSafetySignature($eye_wash->created_by, $eye_wash->id, EYE_WASH_INSPECTION);
-                $verified_by_signature = GetSafetySignature($eye_wash->updated_by, $eye_wash->id, EYE_WASH_INSPECTION);
+                $verified_by_signature = GetSafetySignature($eye_wash->verified_by, $eye_wash->id, EYE_WASH_INSPECTION);
                 $approved_by_signature = GetSafetySignature($eye_wash->approved_by, $eye_wash->id, EYE_WASH_INSPECTION);
 
                 if (file_exists($logoPath)) {
@@ -914,7 +923,7 @@ class MonthlyEyeWashInspectionController extends Controller
                     $drawing->setOffsetY(5);
                     $drawing->setHeight(40);
                     $drawing->setWorksheet($sheet);
-                    $sheet->setCellValue("F{$signatureRowStart}", "\n\n\nVerified By:\n" . getUsername($eye_wash->updated_by));
+                    $sheet->setCellValue("F{$signatureRowStart}", "\n\n\nVerified By:\n" . getUsername($eye_wash->verified_by));
                 } else {
                     $sheet->setCellValue("F{$signatureRowStart}", "Verified By:\nInspection not yet completed");
                 }
@@ -1009,9 +1018,9 @@ class MonthlyEyeWashInspectionController extends Controller
                 $inspection_details = $this->eye_wash->selectOne($id);
                 $inspection = $this->eye_wash_details->GetDetails($inspection_details->id);
                 $document_no = $this->document_reference->selectOne($inspection_details->document_reference_id);
-                $approved_by = GetSafetySignature($inspection_details->id, $inspection_details->approved_by, EYE_WASH_INSPECTION);
-                $verified_by = GetSafetySignature($inspection_details->id, $inspection_details->verified_by, EYE_WASH_INSPECTION);
-                $checked_by = GetSafetySignature($inspection_details->id, $inspection_details->verified_by, EYE_WASH_INSPECTION);
+                $approved_by = GetSafetySignature( $inspection_details->approved_by, $inspection_details->id, EYE_WASH_INSPECTION);
+                $verified_by = GetSafetySignature( $inspection_details->verified_by, $inspection_details->id,EYE_WASH_INSPECTION);
+                $checked_by = GetSafetySignature( $inspection_details->created_by,$inspection_details->id, EYE_WASH_INSPECTION);
                 $document_no = $this->document_reference->selectUsingName('MonthlyEyeWashInspection');
 
 
@@ -1066,7 +1075,7 @@ class MonthlyEyeWashInspectionController extends Controller
             $document_no = $this->document_reference->selectOne($eye_wash->document_reference_id);
 
             $prepared_by_signature = GetSafetySignature($eye_wash->created_by, $eye_wash->id, EYE_WASH_INSPECTION);
-            $verified_by_signature = GetSafetySignature($eye_wash->updated_by, $eye_wash->id, EYE_WASH_INSPECTION);
+            $verified_by_signature = GetSafetySignature($eye_wash->verified_by, $eye_wash->id, EYE_WASH_INSPECTION);
             $approved_by_signature = GetSafetySignature($eye_wash->approved_by, $eye_wash->id, EYE_WASH_INSPECTION);
 
                 foreach (range('A', 'M') as $col) {
@@ -1238,7 +1247,7 @@ class MonthlyEyeWashInspectionController extends Controller
                 $drawing->setOffsetY(5);
                 $drawing->setHeight(40);
                 $drawing->setWorksheet($sheet);
-                $sheet->setCellValue("F{$signatureRowStart}", "\n\n\nVerified By:\n" . getUsername($eye_wash->updated_by));
+                $sheet->setCellValue("F{$signatureRowStart}", "\n\n\nVerified By:\n" . getUsername($eye_wash->verified_by));
             } else {
                 $sheet->setCellValue("F{$signatureRowStart}", "Verified By:\nInspection not yet completed");
             }

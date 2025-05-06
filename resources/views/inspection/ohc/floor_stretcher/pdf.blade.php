@@ -234,7 +234,7 @@
                         @endforeach
                     @endforeach
                     @php
-                        $signature = GetOHCSignature(
+                        $signature = GetFSSignature(
                             $inspection_details->created_by,
                             $inspection_details->id,
                             OHC_TYPE_FLOOR_STRETCHER,

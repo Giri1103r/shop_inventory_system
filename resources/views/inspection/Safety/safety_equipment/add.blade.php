@@ -159,7 +159,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.minimum_order_value') }}</label>
-                                                        <input type="text" name="minimum_order_value[1]"
+                                                        <input type="number" min="1" name="minimum_order_value[1]"
                                                             id = "minimum_order_value" class="form-control">
                                                         @error('minimum_order_value.1')
                                                             <div class="error">{{ $message }}</div>
@@ -170,7 +170,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.economic_order_quantity') }}</label>
-                                                        <input type="text" name="economic_order_quantity[1]"
+                                                        <input type="number" min="1" name="economic_order_quantity[1]"
                                                             id = "economic_order_quantity" class="form-control">
                                                         @error('economic_order_quantity.1')
                                                             <div class="error">{{ $message }}</div>
@@ -314,6 +314,8 @@
                         "item_code[1]": {
                             required: true,
                             uniqueItemCode: true,
+                            minlength: 3,
+                            maxlength: 30,
                             remote: {
                                 url: '{{ admin_url('safety/fire-safety-equipment/unique') }}',
                                 type: "post",
@@ -332,9 +334,13 @@
                         },
                         "equipment_category[1]": {
                             required: true,
+                            minlength: 3,
+                            maxlength: 30,
                         },
                         "unit_of_measurement[1]": {
                             required: true,
+                            minlength: 3,
+                            maxlength: 30,
                         },
                         "economic_order_quantity[1]": {
                             required: true,
@@ -347,6 +353,8 @@
                         },
                         "remarks[1]": {
                             required: true,
+                            minlength: 3,
+                            maxlength: 600,
                         }
 
                     },
@@ -369,15 +377,21 @@
                         "item_code[1]": {
                             required: "Please Enter the Item Code",
                             uniqueItemCode: 'Item Code Must be Unique',
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 30",
                         },
                         "standard_norms[1]": {
                             required: "Please Select the Standart/Norms",
                         },
                         "equipment_category[1]": {
                             required: "Please Enter the Equipment Category",
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 30",
                         },
                         "unit_of_measurement[1]": {
                             required: "Please Enter the Unit Of Measurement",
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 30",
                         },
                         "minimum_order_value[1]": {
                             required: "Please Enter the Minimum Order Value",
@@ -390,6 +404,8 @@
                         },
                         "remarks[1]": {
                             required: "Please add remarks",
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 600",
                         }
 
                     },
@@ -514,7 +530,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.minimum_order_value') }}</label>
-                                                        <input type="text" name="minimum_order_value[${form_set_count}]" id = "minimum_order_value"
+                                                        <input type="number" min="1" name="minimum_order_value[${form_set_count}]" id = "minimum_order_value"
                                                             class="form-control">
                                                     </div>
                                                 </div>
@@ -522,7 +538,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.economic_order_quantity') }}</label>
-                                                        <input type="text" name="economic_order_quantity[${form_set_count}]"
+                                                        <input type="number" min="1" name="economic_order_quantity[${form_set_count}]"
                                                             id = "economic_order_quantity" class="form-control">
                                                     </div>
                                                 </div>
@@ -578,6 +594,8 @@
                     $("input[name='item_code[" + form_set_count + "]']").rules('add', {
                         required: true,
                         uniqueItemCode: true,
+                        minlength: 3,
+                        maxlength: 30,
                         remote: {
                             url: '{{ admin_url('safety/fire-safety-equipment/unique') }}',
                             type: "post",
@@ -593,7 +611,9 @@
                         messages: {
                             required: 'Please add the Item code',
                             uniqueItemCode: 'Equipment name and Item Code Already Exists',
-                            remote: 'Equipment name and Item Code Already Exists'
+                            remote: 'Equipment name and Item Code Already Exists',
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 30",
                         }
                     });
 
@@ -615,8 +635,12 @@
 
                     $("input[name='unit_of_measurement[" + form_set_count + "]']").rules('add', {
                         required: true,
+                        minlength: 3,
+                        maxlength: 30,
                         messages: {
                             required: 'Please Select the Unit of Measurement',
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 30",
                         }
                     });
 
@@ -643,8 +667,12 @@
 
                     $("input[name='remarks[" + form_set_count + "]']").rules('add', {
                         required: true,
+                        minlength: 3,
+                        maxlength: 600,
                         messages: {
                             required: 'Please Enter the remarks',
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 600",
                         }
                     });
 

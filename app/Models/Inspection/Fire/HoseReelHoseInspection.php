@@ -95,8 +95,8 @@ class HoseReelHoseInspection extends Model
         if (isset($request->frequency) && $request->frequency) {
             $query = $query->where('inspection_fire_hose_reel.frequency', 'LIKE', '%' . decryptId($request->frequency) . '%');
         }
-        if (isset($request->date_of_inspection) && $request->date_of_inspection) {
-            $query = $query->where('inspection_fire_hose_reel.date_of_inspection', 'LIKE', '%' . DBdateformat($request->date_of_inspection) . '%');
+        if (isset($request->inspection_date) && $request->inspection_date) {
+            $query = $query->where('inspection_fire_hose_reel.date_of_inspection', 'LIKE', '%' . DBdateformat($request->inspection_date) . '%');
         }
         if (isset($request->next_due) && $request->next_due) {
             $query = $query->where('inspection_fire_hose_reel.next_due', 'LIKE', '%' . DBdateformat($request->next_due) . '%');
@@ -153,7 +153,7 @@ class HoseReelHoseInspection extends Model
             'location' => decryptId($request->location_id),
             'shift' => decryptId($request->shift_id),
             'next_due' => DBdateformat($request->next_due),
-            'observation' => $request->observation,
+            'observation' => decryptId($request->observation),
             'unit' => decryptId($request->unit_id),
             'frequency' => decryptId($request->frequency_id),
             'inspection_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,
@@ -186,6 +186,12 @@ class HoseReelHoseInspection extends Model
             });
         }
 
+
+        if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_OFFICER) || CheckUserRole(ROLE_L1_MANAGER) || CheckUserRole(ROLE_L2_MANAGER)) {
+        } else if (CheckUserRole(ROLE_FIRE_ASSOCIATES)) {
+            $query->where('inspection_fire_hose_reel.created_by', Auth::id());
+        }
+
         if (isset($request->location) && $request->location) {
             $query = $query->where('inspection_fire_hose_reel.location', 'LIKE', '%' . decryptId($request->location) . '%');
         }
@@ -204,13 +210,12 @@ class HoseReelHoseInspection extends Model
         if (isset($request->frequency) && $request->frequency) {
             $query = $query->where('inspection_fire_hose_reel.frequency', 'LIKE', '%' . decryptId($request->frequency) . '%');
         }
-        if (isset($request->date_of_inspection) && $request->date_of_inspection) {
-            $query = $query->where('inspection_fire_hose_reel.date_of_inspection', 'LIKE', '%' . DBdateformat($request->date_of_inspection) . '%');
+        if (isset($request->inspection_date) && $request->inspection_date) {
+            $query = $query->where('inspection_fire_hose_reel.date_of_inspection', 'LIKE', '%' . DBdateformat($request->inspection_date) . '%');
         }
         if (isset($request->next_due) && $request->next_due) {
             $query = $query->where('inspection_fire_hose_reel.next_due', 'LIKE', '%' . DBdateformat($request->next_due) . '%');
         }
-
         if (isset($request->inspection_status) && $request->inspection_status) {
             $query = $query->where('inspection_fire_hose_reel.inspection_status', decryptId($request->inspection_status));
         }

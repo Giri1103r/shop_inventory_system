@@ -56,7 +56,10 @@ class MSDSDetails extends Model
                     ->orWhere('name_of_chemical', 'LIKE', '%' . $search . '%');
             });
         }
+        if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_OFFICER) || CheckUserRole(ROLE_L1_MANAGER) || CheckUserRole(ROLE_L2_MANAGER)) {
+        } else if (CheckUserRole(ROLE_INSPECTION_CREATOR)) {
 
+        }
         if ($request->has('item_code') && $request->item_code) {
             $query = $query->where('item_code', 'LIKE', '%' . $request->item_code . '%');
         }
@@ -110,6 +113,19 @@ class MSDSDetails extends Model
     public function selectOne($id)
     {
         return $this->where('id', $id)->where('status', 1)->where('trash', 'NO')->first();
+    }
+
+    public function uniqueCheck($item_code,$name_of_chemical)
+    {
+
+        return $this->where('item_code', $item_code)   ->orWhere('name_of_chemical', $name_of_chemical)->get();
+    }
+
+    public function existUniqueCheck($item_code,$id)
+    {
+        return $this->where('item_code', $item_code)
+            ->where('id', '!=', $id)
+            ->get();
     }
 
     public function exportdata()

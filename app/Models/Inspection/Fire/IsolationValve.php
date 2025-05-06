@@ -64,7 +64,7 @@ class IsolationValve extends Model
         $org_total =  $query;
         $org_total_counts = $org_total->count();
 
-
+        // dd($request->all());
 
         if (isset($request->search) && isset($request->search['value']) && $request->search['value'] != '') {
             $search = $request->search['value'];
@@ -95,8 +95,8 @@ class IsolationValve extends Model
         if (isset($request->frequency) && $request->frequency) {
             $query = $query->where('inspection_fire_isolation_valve.frequency', 'LIKE', '%' . decryptId($request->frequency) . '%');
         }
-        if (isset($request->date_of_inspection) && $request->date_of_inspection) {
-            $query = $query->where('inspection_fire_isolation_valve.date_of_inspection', 'LIKE', '%' . DBdateformat($request->date_of_inspection) . '%');
+        if (isset($request->inspection_date) && $request->inspection_date) {
+            $query = $query->where('inspection_fire_isolation_valve.date_of_inspection', 'LIKE', '%' . DBdateformat($request->inspection_date) . '%');
         }
         if (isset($request->next_due) && $request->next_due) {
             $query = $query->where('inspection_fire_isolation_valve.next_due', 'LIKE', '%' . DBdateformat($request->next_due) . '%');
@@ -153,7 +153,7 @@ class IsolationValve extends Model
             'location' => decryptId($request->location_id),
             'shift' => decryptId($request->shift_id),
             'next_due' => DBdateformat($request->next_due),
-            'observation' => $request->observation,
+            'observation' => decryptId($request->observation),
             'unit' => decryptId($request->unit_id),
             'frequency' => decryptId($request->frequency_id),
             'inspection_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,
@@ -204,17 +204,17 @@ class IsolationValve extends Model
         if (isset($request->frequency) && $request->frequency) {
             $query = $query->where('inspection_fire_isolation_valve.frequency', 'LIKE', '%' . decryptId($request->frequency) . '%');
         }
-        if (isset($request->date_of_inspection) && $request->date_of_inspection) {
-            $query = $query->where('inspection_fire_isolation_valve.date_of_inspection', 'LIKE', '%' . DBdateformat($request->date_of_inspection) . '%');
+        if (isset($request->inspection_date) && $request->inspection_date) {
+            $query = $query->where('inspection_fire_isolation_valve.date_of_inspection', 'LIKE', '%' . DBdateformat($request->inspection_date) . '%');
         }
         if (isset($request->next_due) && $request->next_due) {
             $query = $query->where('inspection_fire_isolation_valve.next_due', 'LIKE', '%' . DBdateformat($request->next_due) . '%');
         }
 
-
         if (isset($request->inspection_status) && $request->inspection_status) {
             $query = $query->where('inspection_fire_isolation_valve.inspection_status', decryptId($request->inspection_status));
         }
+
         $query->orderBy('inspection_fire_isolation_valve.id', 'DESC');
 
         return  $query->get()->groupBy('inspection_id');

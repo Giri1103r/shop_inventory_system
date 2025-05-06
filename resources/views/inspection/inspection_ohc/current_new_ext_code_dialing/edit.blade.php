@@ -82,7 +82,7 @@
                                                     <div class="form-group form-input">
                                                         <label class="form-label require">Number</label>
                                                         <input type="text" name="number" id = "number"
-                                                            class="form-control" placeholder="Department Name"
+                                                            class="form-control" placeholder="Enter the number"
                                                             value="{{ $current_new_ext_code->number }}">
                                                     </div>
                                                 </div>
@@ -133,6 +133,7 @@
                         },
                         number: {  // Updated to match the input field name
                             required: true,
+                            number:true,
                             remote: {
                                 url: '{{ admin_url('ohc/current-new-ext-code-dialing/unique') }}',
                                 type: "POST",
@@ -166,8 +167,9 @@
                         emp_name: {
                             required: "Please select an employee."
                         },
-                        number: {  
+                        number: {
                             required: "Please enter a number.",
+                            number: "Please enter a Numeric Digits.",
                             remote: "This number is already in use. Please enter a unique number."
                         }
                     },

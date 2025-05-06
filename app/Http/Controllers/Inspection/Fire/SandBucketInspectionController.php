@@ -337,7 +337,7 @@ class SandBucketInspectionController extends Controller
                 return redirect(admin_url('fire/fire-sand-bucket-inspection/list'));
             }
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('fire/fire-sand-bucket-inspection/list'));
@@ -365,7 +365,7 @@ class SandBucketInspectionController extends Controller
             );
             return view('inspection.fire.sand_bucket_inspection.view', $data);
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('fire/fire-sand-bucket-inspection/list'));
@@ -465,7 +465,7 @@ class SandBucketInspectionController extends Controller
             Session::flash('success', __('common.updated_msg'));
             return redirect(admin_url('fire/fire-sand-bucket-inspection/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             report($ex);
             Session::flash('error', 'Something Went Wrong!');
             return redirect(admin_url('fire/fire-sand-bucket-inspection/list'));
@@ -693,11 +693,13 @@ class SandBucketInspectionController extends Controller
                 $message = 'detector Inspeciton Approved Successfully!';
                 $web_link =   admin_url('fire/fire-sand-bucket-inspection/view/' . encryptId($inspection_details->id));
                 $to_status = INSPECTION_APPROVED;
-                $users = array_merge([$inspection_details->created_by], [$inspection_details->verified_by], [$inspection_details->l1_manager_verified_by], [$inspection_details->l2_manager_verified_by]);
+                $users = array_merge([$inspection_details->created_by], [$inspection_details->verified_by], [$inspection_details->l1_manager_verified_by]);
             } else {
                 $message = 'Level Two Manager Rejected the CAPA Action';
                 $web_link =   admin_url('fire/fire-sand-bucket-inspection/verification/' . encryptId($inspection_details->id) . '/capa');
                 $to_status = L2_MANAGER_REJECTED;
+                $users = array_merge([$inspection_details->created_by], [$inspection_details->verified_by], [$inspection_details->l1_manager_verified_by]);
+
             }
 
             $mailsubject = 'SAND BUCKET INSPECTION';

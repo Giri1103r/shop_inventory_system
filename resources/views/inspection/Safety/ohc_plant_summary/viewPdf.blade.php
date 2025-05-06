@@ -253,7 +253,7 @@
                         {{ $quantity_detail['description'] }}</td>
                     @foreach ($units as $index => $unit)
                         <td style="border: 1px solid #000;">
-                            {{ isset($quantity_detail['unit - ' . $index + 1]) ? $quantity_detail['unit - ' . $index + 1] : '' }}
+                            {{ isset($quantity_detail['unit_' . $index + 1]) ? $quantity_detail['unit_' . $index + 1] : '' }}
                         </td>
                     @endforeach
 

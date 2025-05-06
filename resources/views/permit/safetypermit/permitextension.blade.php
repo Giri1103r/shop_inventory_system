@@ -81,7 +81,7 @@
     <script>
         $(document).on('change', '#date', function() {
             const toTime = "{{ $totime }}";
-            const toDate = "{{ $safetypermit->date }}";
+            const toDate = "{{ $safetypermit->to_date }}";
             let selectedDate = $(this).val(); // Get selected date
 
             function formatDate(dateStr) {
@@ -103,11 +103,7 @@
                 time_24hr: true,
                 minuteIncrement: 5,
                 dateFormat: "H:i",
-                maxTime: "18:00",
-                onOpen: function(selectedDates, dateStr, instance) {
-                    let minTime = (formattedSelectedDate === formattedToDate) ? toTime : "09:00";
-                    instance.set("minTime", minTime);
-                },
+               
             });
 
             console.log("Selected Date:", formattedSelectedDate);

@@ -189,16 +189,16 @@
 
                                                             @foreach ($getoption as $option)
                                                                 <td style="text-align: center;">
-                                                                    @if ($option == 'Yes')
-                                                                        @if (isset($statuses[$checkPoint]) && $statuses[$checkPoint] == 'Yes')
+                                                                    @if ($option == 'YES')
+                                                                        @if (isset($statuses[$checkPoint]) && $statuses[$checkPoint] == 'YES')
                                                                             <i class="fa-solid fa-check"
                                                                                 style="color: #267709; width: 15px;"></i>
                                                                         @else
                                                                             <i class="fa-solid fa-times"
                                                                                 style="color: #d40a0a; width: 15px;"></i>
                                                                         @endif
-                                                                    @elseif ($option == 'No')
-                                                                        @if (isset($statuses[$checkPoint]) && $statuses[$checkPoint] == 'No')
+                                                                    @elseif ($option == 'NO')
+                                                                        @if (isset($statuses[$checkPoint]) && $statuses[$checkPoint] == 'NO')
                                                                             <i class="fa-solid fa-check"
                                                                                 style="color: #267709; width: 15px;"></i>
                                                                         @else
@@ -599,11 +599,11 @@
                                 @endif
 
                                 @if (
-                                    ($occupational_health_center->approve_status == WAITING_FOR_CAPA_ACTION ||
+                                    $occupational_health_center->approve_status == WAITING_FOR_CAPA_ACTION ||
                                         $occupational_health_center->approve_status == L2_MANAGER_REJECTED ||
                                         $occupational_health_center->approve_status == EHS_OFFICER_REJECTED ||
-                                        ($occupational_health_center->approve_status == L1_MANAGER_REJECTED && CheckUserRole(ROLE_FIRE_ASSOCIATES)))||(
-                                        $occupational_health_center->approve_status == WAITING_FOR_CAPA_ACTION ||
+                                        ($occupational_health_center->approve_status == L1_MANAGER_REJECTED && CheckUserRole(ROLE_FIRE_ASSOCIATES)) ||
+                                        ($occupational_health_center->approve_status == WAITING_FOR_CAPA_ACTION ||
                                             $occupational_health_center->approve_status == L2_MANAGER_REJECTED ||
                                             $occupational_health_center->approve_status == EHS_OFFICER_REJECTED ||
                                             ($occupational_health_center->approve_status == L1_MANAGER_REJECTED && CheckUserRole(ROLE_SUPERADMIN))))
@@ -714,7 +714,9 @@
                                     </form>
                                 @endif
 
-                                @if (($occupational_health_center->approve_status == WAITING_FOR_L1_VERIFICATION && CheckUserRole(ROLE_L1_MANAGER)) || ($occupational_health_center->approve_status == WAITING_FOR_L1_VERIFICATION && CheckUserRole(ROLE_SUPERADMIN)))
+                                @if (
+                                    ($occupational_health_center->approve_status == WAITING_FOR_L1_VERIFICATION && CheckUserRole(ROLE_L1_MANAGER)) ||
+                                        ($occupational_health_center->approve_status == WAITING_FOR_L1_VERIFICATION && CheckUserRole(ROLE_SUPERADMIN)))
                                     <form method="POST" id="levelOneManager"
                                         action="{{ admin_url('ohc/inspection/level-one/verify/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
@@ -766,7 +768,9 @@
                                     </form>
                                 @endif
 
-                                @if (($occupational_health_center->approve_status == WAITING_FOR_L2_VERIFICATION&& CheckUserRole(ROLE_L2_MANAGER)) || ($occupational_health_center->approve_status == WAITING_FOR_L2_VERIFICATION && CheckUserRole(ROLE_SUPERADMIN)))
+                                @if (
+                                    ($occupational_health_center->approve_status == WAITING_FOR_L2_VERIFICATION && CheckUserRole(ROLE_L2_MANAGER)) ||
+                                        ($occupational_health_center->approve_status == WAITING_FOR_L2_VERIFICATION && CheckUserRole(ROLE_SUPERADMIN)))
                                     <form method="POST" id="levelTwoManager"
                                         action="{{ admin_url('ohc/inspection/level-two/verify/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">

@@ -71,7 +71,7 @@ class CurrentNewExtCodeDialingController extends Controller
                             return Displaydatetimeformat($row->created_at);
                         })
                         ->addColumn('created_date', function ($row) {
-                            return Displaydatetimeformat($row->created_at);
+                            return Displaydateformat($row->created_at);
                         })
                         ->addColumn('created_by', function ($row) {
                             return getUsername($row->created_by);
@@ -80,7 +80,7 @@ class CurrentNewExtCodeDialingController extends Controller
                             $btn = '';
                             $btn = '<a href="' . admin_url('ohc/current-new-ext-code-dialing/view/' . encryptId($row->id)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
                             $btn .= '<a href="' . admin_url('ohc/current-new-ext-code-dialing/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
-                            $btn .= '<a href="javascript:void(0);"  data-id="' . encryptId($row->id) . '" class="recordDelete" title="Delete"><i class="fa-solid fa-trash text-danger" ></i></i></a> ';
+                            // $btn .= '<a href="javascript:void(0);"  data-id="' . encryptId($row->id) . '" class="recordDelete" title="Delete"><i class="fa-solid fa-trash text-danger" ></i></i></a> ';
                             return $btn;
                         })
                         ->rawColumns(['action', 'created_date', 'created_by', 'status'])
@@ -114,6 +114,8 @@ class CurrentNewExtCodeDialingController extends Controller
             return view('inspection.inspection_ohc.current_new_ext_code_dialing.add', $data);
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/current-new-ext-code-dialing/list'));
         }
     }
 
@@ -126,20 +128,20 @@ class CurrentNewExtCodeDialingController extends Controller
                 'emp_name.*'       => 'required',
                 'number.*'         => 'required',
             ];
-            
+
             $messages = [
                 'unit_id.*.required'        => 'Please select a unit for each row.',
                 'department_id.*.required'  => 'Please select a department for each row.',
                 'emp_name.*.required'       => 'Please enter the employee name for each row.',
                 'number.*.required'         => 'Please enter the number .',
             ];
-            
+
             $validator = Validator::make($request->all(), $rules, $messages);
-            
+
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator)->withInput();
             }
-            
+
 
             try {
 
@@ -173,6 +175,8 @@ class CurrentNewExtCodeDialingController extends Controller
             return view('inspection.inspection_ohc.current_new_ext_code_dialing.view', $data);
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/current-new-ext-code-dialing/list'));
         }
     }
 
@@ -195,6 +199,8 @@ class CurrentNewExtCodeDialingController extends Controller
             return view('inspection.inspection_ohc.current_new_ext_code_dialing.edit', $data);
         } catch (Exception $error) {
             report($error->getMessage());
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/current-new-ext-code-dialing/list'));
         }
     }
 
@@ -208,16 +214,16 @@ class CurrentNewExtCodeDialingController extends Controller
                 'emp_name.*'       => 'required',
                 'number.*'         => 'required',
             ];
-            
+
             $messages = [
                 'unit_id.*.required'        => 'Please select a unit for each row.',
                 'department_id.*.required'  => 'Please select a department for each row.',
                 'emp_name.*.required'       => 'Please enter the employee name for each row.',
                 'number.*.required'         => 'Please enter the number .',
             ];
-            
+
             $validator = Validator::make($request->all(), $rules, $messages);
-            
+
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator)->withInput();
             }
@@ -329,14 +335,14 @@ class CurrentNewExtCodeDialingController extends Controller
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                     'fill' => [
                         'fillType' => Fill::FILL_SOLID,
-                        'startColor' => ['rgb' => 'F4B2B2'], 
+                        'startColor' => ['rgb' => 'F4B2B2'],
                     ],
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                 ]);
                 $dataRow++;
-            
+
                 $groupedByDept = $items->groupBy('department_name');
-            
+
                 foreach ($groupedByDept as $deptName => $deptItems) {
                     $sheet->mergeCells("A{$dataRow}:D{$dataRow}");
                     $sheet->setCellValue("A{$dataRow}", strtoupper($deptName));
@@ -347,24 +353,24 @@ class CurrentNewExtCodeDialingController extends Controller
                         'alignment' => ['horizontal' => Alignment::HORIZONTAL_LEFT, 'vertical' => Alignment::VERTICAL_CENTER],
                         'fill' => [
                             'fillType' => Fill::FILL_SOLID,
-                            'startColor' => ['rgb' => 'D9EDF7'], 
+                            'startColor' => ['rgb' => 'D9EDF7'],
                         ],
                         'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                     ]);
                     $dataRow++;
-            
+
                     $sr = 1;
                     foreach ($deptItems as $detail) {
                         $sheet->setCellValue("A{$dataRow}", $sr);
                         $sheet->setCellValue("B{$dataRow}", $detail['department_name']);
                         $sheet->setCellValue("C{$dataRow}", $detail['emp_name']);
                         $sheet->setCellValue("D{$dataRow}", $detail['number'] ?? '');
-            
+
                         $sheet->getStyle("A{$dataRow}:D{$dataRow}")->applyFromArray([
                             'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                             'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                         ]);
-            
+
                         $dataRow++;
                         $sr++;
                     }
@@ -385,9 +391,11 @@ class CurrentNewExtCodeDialingController extends Controller
             $writer->save($filePath);
 
             return response()->download($filePath)->deleteFileAfterSend(true);
-           
+
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/current-new-ext-code-dialing/list'));
         }
     }
 
@@ -432,6 +440,8 @@ class CurrentNewExtCodeDialingController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/current-new-ext-code-dialing/list'));
         }
     }
 
@@ -489,7 +499,7 @@ class CurrentNewExtCodeDialingController extends Controller
                 $user_id = Auth::id();
 
                 $insert_data = array(
-                    'upload_type' => 14,
+                    'upload_type' => 21,
                     'upload_status' => 0,
                     'file_name' => $filenewname,
                     'file_orgname' => $fileName,
@@ -507,8 +517,8 @@ class CurrentNewExtCodeDialingController extends Controller
                     "path" => $path,
                 ];
 
-                dispatch(new ImportCurrentNewExtCodeDailingJob($details));
-                // dispatch((new ImportFirstAidEquipmentJob($details))->onQueue('equipmentimport'));
+                // dispatch(new ImportCurrentNewExtCodeDailingJob($details));
+                dispatch((new ImportCurrentNewExtCodeDailingJob($details))->onQueue('currentNextCodeImport'));
             }
 
             $insert_data['log_id'] = $insert_id;

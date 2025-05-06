@@ -87,6 +87,7 @@ class AppServiceProvider extends ServiceProvider
         defined('ROLE_MEDICAL_ASSISTANT') or define('ROLE_MEDICAL_ASSISTANT', 24);
         defined('ROLE_NURSING_OFFICER') or define('ROLE_NURSING_OFFICER', 25);
         defined('ROLE_CLEANER') or define('ROLE_CLEANER', 26);
+        defined('ROLE_INSPECTION_CREATOR') or define('ROLE_INSPECTION_CREATOR', 27);
 
         defined('NEW_TRAINING_SCHEDULE') or define('NEW_TRAINING_SCHEDULE', 1);
         defined('VP_APPROVE') or define('VP_APPROVE', 2);
@@ -197,7 +198,7 @@ class AppServiceProvider extends ServiceProvider
         defined('OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST') or define('OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST', 5);
         defined('OHC_TYPE_OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST') or define('OHC_TYPE_OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST', 6);
         defined('OHC_SAFETY_PETTY_LOGBOOK_INSPECTION') or define('OHC_SAFETY_PETTY_LOGBOOK_INSPECTION', 9);
-        defined('OHC_DAILY_VITAL_EQUIPMENT_CHECKLIST') or define('OHC_DAILY_VITAL_EQUIPMENT_CHECKLIST', 8);
+        defined('OHC_TYPE_DAILY_VITAL_EQUIPMENT_CHECKLIST') or define('OHC_TYPE_DAILY_VITAL_EQUIPMENT_CHECKLIST', 8);
         defined('OHC_TYPE_MONTHLY_FIRST_AID_BOX_AUDIT_INSPECTION_CHECKLIST') or define('OHC_TYPE_MONTHLY_FIRST_AID_BOX_AUDIT_INSPECTION_CHECKLIST', 7);
 
         defined('OHC_AMOUNT_GIVENBY_INSPECTION') or define('OHC_AMOUNT_GIVENBY_INSPECTION', 1);
@@ -244,12 +245,6 @@ class AppServiceProvider extends ServiceProvider
         //Upload
         defined('CHECKLIST_TYPE_UPLOAD') or define('CHECKLIST_TYPE_UPLOAD', 19);
 
-        //Checklist
-        // defined('FORKLIFT_INSPECTION_MONTHLY_CHECKLIST') or define('FORKLIFT_INSPECTION_MONTHLY_CHECKLIST', getCheckListType('FORKLIFT INSPECTION MONTHLY CHECKLIST'));
-        // defined('SAFETY_GALLERY_INSPECTION_CHECKLIST') or define('SAFETY_GALLERY_INSPECTION_CHECKLIST', getCheckListType('SAFETY_GALLERY_INSPECTION_CHECKLIST'));
-        // defined('CHECKLIST_AUDIT_ASSESSMENT') or define('CHECKLIST_AUDIT_ASSESSMENT',  getCheckListType('6S Audit Assessment'));
-        // defined('EYE_WASH_INSPECTION_CHECKLIST') or define('EYE_WASH_INSPECTION_CHECKLIST', getCheckListType('EYE WASH INSPECTION CHECKLIST'));
-        // defined('WEEKLY_AMBULANCE_INSPECTION_CHECKLIST') or define('WEEKLY_AMBULANCE_INSPECTION_CHECKLIST', getCheckListType('WEEKLY AMBULANCE INSPECTION CHECKLIST'));
 
 
         //Safety
@@ -272,7 +267,7 @@ class AppServiceProvider extends ServiceProvider
         //OHC Hygiene Checklist
         defined('CLEANER_SUBMITTED_THE_CHECKLIST') or define('CLEANER_SUBMITTED_THE_CHECKLIST', 1);
         defined('NURSING_OFFICER_SUBMITTED_THE_CHECKLIST') or define('NURSING_OFFICER_SUBMITTED_THE_CHECKLIST', 2);
-
+        defined('NURSING_OFFICER_REJECTED') or define('NURSING_OFFICER_REJECTED', 3);
 
 
         // INSPECTION OHC
@@ -288,7 +283,6 @@ class AppServiceProvider extends ServiceProvider
         defined('MEDICAL_ASSISTANT_REJECTED') or define('MEDICAL_ASSISTANT_REJECTED', 10);
 
         //environment
-
         defined('AMBIENTNOISE') or define('AMBIENTNOISE', 1);
         defined('WORKNOISE') or define('WORKNOISE', 2);
         defined('AMBIENT_AIR') or define('AMBIENT_AIR', 3);
@@ -297,10 +291,12 @@ class AppServiceProvider extends ServiceProvider
         defined('LUX') or define('LUX', 6);
 
         //Notification Type
-        defined('SAFETY_INSPECTION') or define('SAFETY_INSPECTION', 10);
         defined('FIRE_INSPECTION') or define('FIRE_INSPECTION', 8);
+        defined('GEMBA_WALK_NOTIIFCATION') or define('GEMBA_WALK_NOTIIFCATION', 9);
+        defined('SAFETY_INSPECTION') or define('SAFETY_INSPECTION', 10);
+        defined('RRAA_INSPECTION') or define('RRAA_INSPECTION', 11);
         defined('OHC_INSPECTION') or define('OHC_INSPECTION', 12);
-
+        defined('MSDS_INSPECTION') or define('MSDS_INSPECTION', 13);
 
         // Gemba Walk
         defined('GEMBA_WALK_INSPECTION_START') or define('GEMBA_WALK_INSPECTION_START', 1);
@@ -308,19 +304,16 @@ class AppServiceProvider extends ServiceProvider
         defined('GEMBA_WALK_INSPECTION_WAITING_FOR_EHS_OFFICER_VERIFICATION') or define('GEMBA_WALK_INSPECTION_WAITING_FOR_EHS_OFFICER_VERIFICATION', 3);
         defined('GEMBA_WALK_INSPECTION_REJECTED') or define('GEMBA_WALK_INSPECTION_REJECTED', 4);
         defined('GEMBA_WALK_INSPECTION_CLOSED') or define('GEMBA_WALK_INSPECTION_CLOSED', 5);
-
-
         defined('GEMBA_WALK_INSPECTION_EHS_FILE_TYPE_1') or define('GEMBA_WALK_INSPECTION_EHS_FILE_TYPE_1', 1);
         defined('GEMBA_WALK_INSPECTION_EHS_FILE_TYPE_2') or define('GEMBA_WALK_INSPECTION_EHS_FILE_TYPE_2', 2);
         defined('GEMBA_WALK_INSPECTION_PASS_L1') or define('GEMBA_WALK_INSPECTION_PASS_L1', 1);
         defined('GEMBA_WALK_INSPECTION_PASS_L2') or define('GEMBA_WALK_INSPECTION_PASS_L2', 2);
         defined('GEMBA_WALK_INSPECTION_FAIL') or define('GEMBA_WALK_INSPECTION_FAIL', 3);
         defined('GEMBA_WALK_INSPECTION_PASS') or define('GEMBA_WALK_INSPECTION_PASS', 4);
-
-
         defined('GEMBA_WALK') or define('GEMBA_WALK', 16);
-        defined('MSDS_INSPECTION') or define('MSDS_INSPECTION', 13);
-        defined('RRAA_INSPECTION') or define('RRAA_INSPECTION', 11);
+
+
+
 
         //Status Log
         defined('EYE_WASH_INSPECTION') or define('EYE_WASH_INSPECTION', 1);
@@ -366,6 +359,8 @@ class AppServiceProvider extends ServiceProvider
         defined('CHECKLIST_FIRE_PUMP_HOUSE_INSECTION_CHECKLIST') or define('CHECKLIST_FIRE_PUMP_HOUSE_INSECTION_CHECKLIST', 8);
         defined('INTER_UNIT_AUDIT_CHECKLIST') or define('INTER_UNIT_AUDIT_CHECKLIST', 9);
         defined('FIRE_PRE_NOC_CHECKLIST') or define('FIRE_PRE_NOC_CHECKLIST', 10);
+        defined('OHC_DAILY_VITAL_EQUIPMENT_CHECKLIST') or define('OHC_DAILY_VITAL_EQUIPMENT_CHECKLIST', 11);
+        defined('OHC_PHYSICAL_HEALTH_EXAMINATION') or define('OHC_PHYSICAL_HEALTH_EXAMINATION', 12);
 
         // Fire
         defined('HOOTER_INSPECTION') or define('HOOTER_INSPECTION', 1);

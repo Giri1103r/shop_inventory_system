@@ -13,10 +13,10 @@
                     <div class="d-flex justify-content-end p-2">
 
                         <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
-                        {{-- @if (CheckUserPermission('add')) --}}
+
                         <x-button-add dataId="" class="add btn btn-primary ms-1"
                             href="{{ admin_url('fire/hooter-inspection/add') }}">Add</x-button-add>
-                        {{-- @endif --}}
+                       
                     </div>
                     <div id="search" class="collapse">
                         <form action="" id="formsearch">
@@ -92,7 +92,7 @@
                                             </div>
                                         </div>
 
-                                        <div class="col-md-3 mb-3 form-input">
+                                        <div class="col-md-4 mb-3 form-input">
                                             <label for="inspection_status"
                                                 class="form-label ">{{ __('common.status') }}</label>
                                             <select name="inspection_status" id="inspection_status" style="width: 100%"
@@ -156,6 +156,15 @@
             $(document).ready(function() {
                 var firstTh = $('.datatable-list thead th:first');
                 firstTh.removeClass('sorting_asc');
+            });
+
+            flatpickr("#inspection_date", {
+                dateFormat: "d-m-Y",
+            });
+
+            flatpickr("#next_due", {
+                dateFormat: "d-m-Y",
+                minDate: new Date(),
             });
 
             $(function() {

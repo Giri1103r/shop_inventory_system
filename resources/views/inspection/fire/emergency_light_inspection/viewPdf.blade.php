@@ -358,7 +358,7 @@
                     </td>
                 </tr>
             @endif
-            @if (isset($signature))
+            {{-- @if (isset($signature))
                 <tr>
                     <td width="50%" style="padding:5px;"><b>{{ __('inspection.signature') }}</b></td>
                     <td width="2%" style="padding:5px;">:</td>
@@ -368,7 +368,7 @@
                             style="width: 150px; margin-top: -10px;" /></td>
 
                 </tr>
-            @endif
+            @endif --}}
             @if (isset($emergency_light->approved_by))
                 @if ($emergency_light->verified_by == $emergency_light->approved_by)
                     <tr>
@@ -388,7 +388,7 @@
                     );
                 @endphp
             @endif
-            @if (isset($signature))
+            {{-- @if (isset($signature))
                 <tr>
                     <td width="50%" style="padding:5px;"><b>{{ __('inspection.signature') }}</b></td>
                     <td width="2%" style="padding:5px;">:</td>
@@ -398,7 +398,7 @@
                             style="width: 150px; margin-top: -10px;" /></td>
 
                 </tr>
-            @endif
+            @endif --}}
             @if (isset($emergency_light->capa_recomendation))
                 <tr>
                     <td width="50%" style="padding:5px;"><b>{{ __('inspection.capa_recomendation') }}</b></td>
@@ -449,7 +449,7 @@
                     EMERGENCY_LIGHT_INSPECTION,
                 );
             @endphp
-            @if (isset($signature))
+            {{-- @if (isset($signature))
                 <tr>
                     <td width="50%" style="padding:5px;"><b>{{ __('inspection.signature') }}</b></td>
                     <td width="2%" style="padding:5px;">:</td>
@@ -459,7 +459,7 @@
                             style="width: 150px; margin-top: -10px;" /></td>
 
                 </tr>
-            @endif
+            @endif --}}
             <tr>
                 <td width="50%" style="padding:5px;"><b>{{ __('inspection.capa_action_remarks') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
@@ -502,7 +502,7 @@
                     EMERGENCY_LIGHT_INSPECTION,
                 );
             @endphp
-            @if (isset($signature))
+            {{-- @if (isset($signature))
                 <tr>
                     <td width="50%" style="padding:5px;"><b>{{ __('inspection.signature') }}</b></td>
                     <td width="2%" style="padding:5px;">:</td>
@@ -512,7 +512,7 @@
                             style="width: 150px; margin-top: -10px;" /></td>
 
                 </tr>
-            @endif
+            @endif --}}
             <tr>
                 <td width="50%" style="padding:5px;"><b>{{ __('inspection.capa_reverifcation_remarks') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
@@ -556,7 +556,7 @@
                     EMERGENCY_LIGHT_INSPECTION,
                 );
             @endphp
-            @if (isset($signature))
+            {{-- @if (isset($signature))
                 <tr>
                     <td width="50%" style="padding:5px;"><b>{{ __('inspection.signature') }}</b></td>
                     <td width="2%" style="padding:5px;">:</td>
@@ -566,7 +566,7 @@
                             style="width: 150px; margin-top: -10px;" /></td>
 
                 </tr>
-            @endif
+            @endif --}}
             <tr>
                 <td width="50%" style="padding:5px;"><b>{{ __('inspection.level_one_manager_remarks') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
@@ -609,7 +609,7 @@
                     EMERGENCY_LIGHT_INSPECTION,
                 );
             @endphp
-            @if (isset($signature))
+            {{-- @if (isset($signature))
                 <tr>
                     <td width="50%" style="padding:5px;"><b>{{ __('inspection.signature') }}</b></td>
                     <td width="2%" style="padding:5px;">:</td>
@@ -619,7 +619,7 @@
                             style="width: 150px; margin-top: -10px;" /></td>
 
                 </tr>
-            @endif
+            @endif --}}
             <tr>
                 <td width="50%" style="padding:5px;"><b>{{ __('inspection.level_two_manager_remarks') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>

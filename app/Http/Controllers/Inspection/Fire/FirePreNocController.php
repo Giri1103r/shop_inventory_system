@@ -144,7 +144,7 @@ class FirePreNocController extends Controller
             );
             return view('inspection.fire.firePreNoc.add', $data);
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             report($ex);
         }
     }
@@ -433,7 +433,7 @@ class FirePreNocController extends Controller
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong!');
             return redirect(admin_url('fire/pre-noc/checklist/list'));
         }

@@ -95,8 +95,8 @@ class SprinklarSystemInspection extends Model
         if (isset($request->frequency) && $request->frequency) {
             $query = $query->where('inspection_fire_sprinklar_system.frequency', 'LIKE', '%' . decryptId($request->frequency) . '%');
         }
-        if (isset($request->date_of_inspection) && $request->date_of_inspection) {
-            $query = $query->where('inspection_fire_sprinklar_system.date_of_inspection', 'LIKE', '%' . DBdateformat($request->date_of_inspection) . '%');
+        if (isset($request->inspection_date) && $request->inspection_date) {
+            $query = $query->where('inspection_fire_sprinklar_system.date_of_inspection', 'LIKE', '%' . DBdateformat($request->inspection_date) . '%');
         }
         if (isset($request->next_due) && $request->next_due) {
             $query = $query->where('inspection_fire_sprinklar_system.next_due', 'LIKE', '%' . DBdateformat($request->next_due) . '%');
@@ -153,7 +153,7 @@ class SprinklarSystemInspection extends Model
             'location' => decryptId($request->location_id),
             'shift' => decryptId($request->shift_id),
             'next_due' => DBdateformat($request->next_due),
-            'observation' => $request->observation,
+            'observation' => decryptId($request->observation),
             'unit' => decryptId($request->unit_id),
             'frequency' => decryptId($request->frequency_id),
             'inspection_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,

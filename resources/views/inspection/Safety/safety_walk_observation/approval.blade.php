@@ -218,10 +218,10 @@
                                         </div>
                                     @endforeach
                                 </div>
-                                @if (checkUserRole(ROLE_EHS_OFFICER) || isAdmin())
+                                @if ((checkUserRole(ROLE_EHS_OFFICER) || isAdmin()) && $inspection_details->observation_status == OBSERVATION_PENDING)
                                     <div>
                                         <div class="card-header-inner p-2">
-                                            <h4 class="text-white">APPROVAL</h4>
+                                            <h4 class="text-white">EHS Officer Approval </h4>
                                         </div>
                                         <form method="POST" id="forklistassessmentAdd"
                                             action="{{ admin_url('safety/safety-walk-observation/verify/submit') }}"

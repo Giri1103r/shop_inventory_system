@@ -262,7 +262,7 @@
                 <th colspan="6" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">Checked By</th>
 
                 @php
-                    $createdSignature  = GetOHCSignature($details->checked_by, $details->id,OHC_DAILY_VITAL_EQUIPMENT_CHECKLIST);
+                    $createdSignature  = GetOHCSignature($details->checked_by, $details->id,OHC_TYPE_DAILY_VITAL_EQUIPMENT_CHECKLIST);
                @endphp
 
                 <th colspan="14" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;"><img src="{{ admin_url($createdSignature) }}" alt="Signature Upload"

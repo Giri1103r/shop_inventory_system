@@ -94,7 +94,7 @@
                                                     @enderror
                                                 </div>
                                             </div>
-                                            <div class="col-md-3 mb-3 form-input">
+                                            <div class="col-md-4 mb-3 form-input">
                                                 <label for="emp_name" class="form-label ">Month</label>
                                                 <div class="input-group date form-input  custom-height">
                                                     <input type="text" class="form-control " name="month"
@@ -407,6 +407,8 @@
                             },
                             "safety_walk_taken_by": {
                                 required: true,
+                                minlength:3,
+                                maxlength:30,
                             },
                             "checklist_file[1]": {
                                 required: true,
@@ -421,6 +423,8 @@
 
                             "observation[1]": {
                                 required: true,
+                                minlength:3,
+                                maxlength:30,
                             },
                             "date_of_observation[1]": {
                                 required: true,
@@ -428,6 +432,8 @@
 
                             "recomended_action[1]": {
                                 required: true,
+                                minlength:3,
+                                maxlength:30,
                             },
 
                             "date_of_compliance[1]": {
@@ -440,6 +446,8 @@
 
                             "remarks[1]": {
                                 required: true,
+                                minlength:3,
+                                maxlength:600,
                             },
 
                             "emp_id[1]": {
@@ -476,6 +484,8 @@
                             },
                             "safety_walk_taken_by": {
                                 required: "Safety Walk Taken By is required",
+                                minlength: "Minimum 3 characters required",
+                                maxlength: "Maximum character should not exceed the 30",
                             },
 
 
@@ -488,6 +498,8 @@
 
                             "observation[1]": {
                                 required: "Observation is required",
+                                minlength: "Minimum 3 characters required",
+                                maxlength: "Maximum character should not exceed the 30",
 
                             },
                             "date_of_observation[1]": {
@@ -497,6 +509,8 @@
 
                             "recomended_action[1]": {
                                 required: "Recomended Action is required",
+                                minlength: "Minimum 3 characters required",
+                                maxlength: "Maximum character should not exceed the 30",
 
                             },
 
@@ -512,6 +526,8 @@
 
                             "remarks[1]": {
                                 required: "Remarks is required",
+                                minlength: "Minimum 3 characters required",
+                                maxlength: "Maximum character should not exceed the 600",
                             },
                             "checklist_file[1]": {
                                 required: "Image is Required",
@@ -722,8 +738,12 @@
                 $("input[name='observation[" + form_set_current_count + "]']").rules('add', {
                     required: true,
                     uniqueItemCode: true,
+                    minlength:3,
+                    maxlength:30,
                     messages: {
                         required: 'Please Enter the Observation',
+                        minlength: "Minimum 3 characters required",
+                        maxlength: "Maximum character should not exceed the 30",
                     }
                 });
                 $("input[name='date_of_observation[" + form_set_current_count + "]']").rules('add', {
@@ -735,8 +755,12 @@
                 });
                 $("input[name='recomended_action[" + form_set_current_count + "]']").rules('add', {
                     required: true,
+                    minlength:3,
+                    maxlength:30,
                     messages: {
                         required: 'Please Enter the Recomended Action',
+                        minlength: "Minimum 3 characters required",
+                        maxlength: "Maximum character should not exceed the 30",
                     }
                 });
 
@@ -757,8 +781,12 @@
 
                 $("input[name='remarks[" + form_set_current_count + "]']").rules('add', {
                     required: true,
+                    minlength:3,
+                    maxlength:600,
                     messages: {
                         required: 'Please Enter the Remarks',
+                        minlength: "Minimum 3 characters required",
+                        maxlength: "Maximum character should not exceed the 600",
                     }
                 });
 

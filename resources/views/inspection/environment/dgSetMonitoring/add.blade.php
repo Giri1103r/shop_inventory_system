@@ -343,7 +343,7 @@
             initializeFlatpickr();
         });
 
-        function addValidationRules(row) {
+        function addValidationRules(newRow) {
             newRow.find("input[name$='[kva_rating]']").rules("add", {
                     number: true,
                     required: true,

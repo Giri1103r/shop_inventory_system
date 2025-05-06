@@ -103,6 +103,8 @@
                                         <th>Treatment Start Time</th>
                                         <th>Treatment End Time</th>
                                         <th>First Aider Name</th>
+                                        <th>Medicine Name</th>
+                                        <th>Treatment Provided</th>
                                         <th data-priority='3'>{{ __('common.status') }}</th>
                                         <th data-priority='2'>{{ __('common.created_by') }}</th>
                                         <th data-priority='1'>{{ __('common.action') }}</th>
@@ -202,12 +204,13 @@
         $(function() {
             /* Initialize DataTable */
             var table = $('.datatable-list').DataTable({
-                autoWidth: false,
-                responsive: true,
+                autoWidth: true,
+                responsive: false,
                 processing: true,
                 serverSide: true,
                 searching: true,
                 ordering: true,
+                scrollX: true,
                 dom: 'Bfrtip',
                 ajax: {
                     url: "{{ admin_url('ohc/first-aid/list') }}",
@@ -262,6 +265,14 @@
                     {
                         data: 'first_aider_name',
                         name: 'first_aider_name'
+                    },
+                    {
+                        data: 'medicine_id',
+                        name: 'medicine_id'
+                    },
+                    {
+                        data: 'treatment_provided',
+                        name: 'treatment_provided'
                     },
                     {
                         data: 'status',

@@ -173,7 +173,7 @@ class FireSafetyEquipment extends Model
 
     public function selectOne($id)
     {
-        return $this->where('id', $id)->where('status', 1)->where('trash', 'NO')->first();
+        return $this->where('id', $id)->where('trash', 'NO')->first();
     }
 
     public function exportdata()
@@ -207,17 +207,17 @@ class FireSafetyEquipment extends Model
         }
 
         if (isset($request->equipment_name) && $request->equipment_name) {
-            $query = $query->where('inspection_safety_equipment.equipment_id', 'LIKE', '%' . decryptId($request->equipment_name) . '%');
+            $query = $query->where('inspection_safety_equipment.equipment_id', decryptId($request->equipment_name));
         }
         if (isset($request->item_code) && $request->item_code) {
             $query = $query->where('inspection_safety_equipment.item_code', '=', ($request->item_code));
         }
         if (isset($request->standard_norms) && $request->standard_norms) {
-            $query = $query->where('inspection_safety_equipment.standard_norms', 'LIKE', '%' . decryptId($request->standard_norms) . '%');
+            $query = $query->where('inspection_safety_equipment.standard_norms', decryptId($request->standard_norms));
         }
 
-        if (isset($request->inspection_status) && $request->inspection_status) {
-            $query = $query->where('inspection_safety_equipment.inspection_status', decryptId($request->inspection_status));
+        if (isset($request->status) && $request->status) {
+            $query = $query->where('inspection_safety_equipment.status', decryptId($request->status));
         }
         $query->orderBy('inspection_safety_equipment.id', 'DESC');
 

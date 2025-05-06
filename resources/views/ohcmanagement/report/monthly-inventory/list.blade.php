@@ -288,6 +288,8 @@
                         }
                     });
 
+                   // Ensure all numeric
+
                     issueData.flat().forEach((issued) => {
                         if (issued.medicine_name === medicineName) {
                             let issuedDate = new Date(issued.created_at);
@@ -296,13 +298,18 @@
                                 let dayIndex = issuedDate.getUTCDate() - 1;
                                 let monthIndex = issuedDate.getUTCMonth() + 1;
 
-                                if (monthIndex === parseInt(month) && issuedDate.getUTCFullYear() === parseInt(
-                                        year)) {
-                                    issueQuantities[dayIndex] = issued.quantity || ""; 
+                                if (
+                                    monthIndex === parseInt(month) &&
+                                    issuedDate.getUTCFullYear() === parseInt(year)
+                                ) {
+                                    issueQuantities[dayIndex] =
+                                        Number(issueQuantities[dayIndex]) +
+                                        Number(issued.quantity || 0);
                                 }
                             }
                         }
                     });
+
 
                     tableBody += `<tr>
         <td>${idCounter++}</td>

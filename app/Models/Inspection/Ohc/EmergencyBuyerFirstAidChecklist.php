@@ -27,7 +27,7 @@ class EmergencyBuyerFirstAidChecklist extends Model
         'status',
         'trash',
     ];
-    
+
 
     protected $attributes = [
         'status' => 1,
@@ -57,7 +57,9 @@ class EmergencyBuyerFirstAidChecklist extends Model
                     ->orWhere('masters_unit.unit_name', 'LIKE', '%' . $search . '%');
             });
         }
-        if ($request->has('date_of_inspection') && $request->date_of_inspection) { 
+
+        
+        if ($request->has('date_of_inspection') && $request->date_of_inspection) {
             $formattedDate = DBdateformat($request->date_of_inspection);
             $query = $query->whereDate('inspection_ohc_emergency_buyer_first_aid_bag_checklist_details.date_of_inspection', $formattedDate);
         }
@@ -97,7 +99,7 @@ class EmergencyBuyerFirstAidChecklist extends Model
     public function store()
     {
         $request = request();
-        // dd($request);   
+        // dd($request);
         $id = $request->medicine_id;
         foreach ($id as $index => $value) {
             $id = decryptId($value);
@@ -125,7 +127,7 @@ class EmergencyBuyerFirstAidChecklist extends Model
           return  $this->create($data);
     }
 
-    
+
     public function selectOne($id)
     {
         return $this->where('id', $id)->first();
@@ -150,8 +152,8 @@ class EmergencyBuyerFirstAidChecklist extends Model
                     ->orWhere('masters_unit.unit_name', 'LIKE', '%' . $search . '%');
             });
         }
-        
-        if ($request->has('date_of_inspection') && $request->date_of_inspection) { 
+
+        if ($request->has('date_of_inspection') && $request->date_of_inspection) {
             $formattedDate = DBdateformat($request->date_of_inspection);
             $query = $query->whereDate('inspection_ohc_emergency_buyer_first_aid_bag_checklist_details.date_of_inspection', $formattedDate);
         }

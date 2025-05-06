@@ -300,6 +300,7 @@
                                         unit_id = $('#unit_id').val();
                                         department_id = $('#department_id').val();
                                         emp_name_id = $('#emp_name').val();
+                                        number = $('#number').val();
                                         status = $('#status').val();
 
 
@@ -310,7 +311,8 @@
                                             '?search=' + searchValue +
                                             '&unit_id=' + unit_id +
                                             '&department_id=' + department_id +
-                                            '&emp_name=' + emp_name_id +
+                                            '&emp_name_id=' + emp_name_id +
+                                            '&number=' + number +
                                             '&status=' + status
                                     }
                                 },
@@ -323,6 +325,7 @@
                                         department_id = $('#department_id').val();
                                         emp_name_id = $('#emp_name').val();
                                         status = $('#status').val();
+                                        number = $('#number').val();
 
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
@@ -331,7 +334,8 @@
                                             '?search=' + searchValue +
                                             '&unit_id=' + unit_id +
                                             '&department_id=' + department_id +
-                                            '&emp_name=' + emp_name_id +
+                                            '&emp_name_id=' + emp_name_id +
+                                            '&number=' + number +
                                             '&status=' + status
                                     }
                                 },

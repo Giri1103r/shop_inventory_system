@@ -266,7 +266,7 @@
                                                             <option value="">Select Valve Type</option>
                                                             @foreach ($types as $type)
                                                                 <option value="{{ encryptId($type->id) }}"
-                                                                    {{ old('type.1') == encryptId($department->id) ? 'selected' : '' }}>
+                                                                    {{ old('type.1') == encryptId($type->id) ? 'selected' : '' }}>
                                                                     {{ $type->name }}</option>
                                                             @endforeach
                                                         </select>
@@ -618,7 +618,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.sr_no') }}</label>
-                                                        <input type="text" name="sr_no[${form_set_count}]" id = "sr_no"
+                                                        <input type="text" name="sr_no[${form_set_count}]" id = "sr_no-${form_set_count}"
                                                             class="form-control"
                                                             value="{{ FireSequence(ISOLATION_VALVE_INSPECTION) }}"
                                                             readonly>
@@ -629,7 +629,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.location_isv') }}</label>
-                                                        <input type="text" name="location_isv[${form_set_count}]" id = "location_isv"
+                                                        <input type="text" name="location_isv[${form_set_count}]" id = "location_isv-${form_set_count}"
                                                             class="form-control" value="">
                                                     </div>
                                                 </div>
@@ -637,7 +637,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.resource_code') }}</label>
-                                                        <input type="text" name="resource_code[${form_set_count}]" id = "resource_code"
+                                                        <input type="text" name="resource_code[${form_set_count}]" id = "resource_code-${form_set_count}"
                                                             class="form-control" value="">
                                                     </div>
                                                 </div>
@@ -645,7 +645,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.size_isv') }}</label>
-                                                        <input type="number" name="size_isv[${form_set_count}]" id = "size_isv"
+                                                        <input type="number" name="size_isv[${form_set_count}]" id = "size_isv-${form_set_count}"
                                                             class="form-control" value="">
                                                     </div>
                                                 </div>
@@ -700,7 +700,7 @@
                                                             <option value="">Select Valve Type</option>
                                                            @foreach ($types as $type)
                                                                 <option value="{{ encryptId($type->id) }}"
-                                                                    {{ old('type.1') == encryptId($department->id) ? 'selected' : '' }}>
+                                                                    {{ old('type.1') == encryptId($type->id) ? 'selected' : '' }}>
                                                                     {{ $type->name }}</option>
                                                             @endforeach
                                                         </select>
@@ -739,7 +739,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.remarks') }}</label>
-                                                        <textarea name="remarks[${form_set_count}]" id="remarks" class="form-control" style="resize: none;"></textarea>
+                                                        <textarea name="remarks[${form_set_count}]" id="remarks-${form_set_count}" class="form-control" style="resize: none;"></textarea>
 
                                                     </div>
                                                 </div>

@@ -155,7 +155,7 @@
             </table>
         </div>
 
-        
+
 
         <table width="100%" style="width:100%; border-collapse: collapse; margin-top: 10px;">
             <tr>
@@ -192,7 +192,7 @@
             <tr>
                 <td colspan="4" style="border: 1px solid black; padding: 5px;">
                     <strong>DATE OF INSPECTION :-</strong>
-                    {{ $details->date_of_inspection }}
+                    {{ Displaydateformat($details->date_of_inspection) }}
                 </td>
                 <td colspan="4" style="border: 1px solid black; padding: 5px;">
                     <strong>FIRST-AID BOX No :-</strong>
@@ -267,7 +267,7 @@
                             {{ $medicines['freeze_quantity'] }}
                         </td>
                         <td style="border: 1px solid black; padding: 8px; text-align: center;">
-                            {{ Displaydateformat($medicines['freeze_quantity']) }}
+                            {{ Displaydateformat($medicines['expired_date']) }}
                         </td>
                         <td style="border: 1px solid black; padding: 8px; text-align: center;">
                             {{ $medicines['remarks'] }}
@@ -278,7 +278,7 @@
                 @php
                     $inspection_created_by = GetOHCSignature(
                         $details->created_by,
-                        $details->id,
+                        $details->checklist_id,
                         OHC_TYPE_WEEEKLY_FIRST_AID_MEDICINE_STORE,
                     );
                 @endphp

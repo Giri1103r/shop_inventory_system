@@ -95,8 +95,9 @@
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
 
-                                        <th>Employee Name</th>
-                                        <th>Problem</th>
+                                        <th>Worker/Employee Name</th>
+                                        <th>Worker/Employee Code</th>
+                                        <th>Chief Complaint</th>
                                         <th>Gender</th>
                                         <th>Unit</th>
                                         <th>Department</th>
@@ -154,7 +155,7 @@
             });
         });
 
-        
+
         $(function() {
             /* Initialize DataTable */
             var table = $('.datatable-list').DataTable({
@@ -196,6 +197,9 @@
                     {
                         data: 'emp_name',
                         name: 'emp_name'
+                    }, {
+                        data: 'emp_id',
+                        name: 'emp_id'
                     },
                     {
                         data: 'cheif_complaint',

@@ -125,6 +125,8 @@ class RRAAController extends Controller
             return view('inspection.rraa.add', $data);
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error',  __('common.message_error'));
+            return redirect(admin_url('rraa/ohc_fire_environment_compliance/list'));
         }
     }
 

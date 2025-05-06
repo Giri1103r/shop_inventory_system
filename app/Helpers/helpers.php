@@ -1876,7 +1876,7 @@ if (!function_exists('getMonth')) {
     if (!function_exists('GetLevelTwoManager')) {
         function GetLevelTwoManager()
         {
-            $data = User::whereRaw('FIND_IN_SET(' . ROLE_L1_MANAGER . ', role)')->where('status', 1)->where('trash', 'NO')->get();
+            $data = User::whereRaw('FIND_IN_SET(' . ROLE_L2_MANAGER . ', role)')->where('status', 1)->where('trash', 'NO')->get();
 
             if (count($data) != 0) {
                 return $data;
@@ -1936,6 +1936,21 @@ if (!function_exists('getMonth')) {
             return false;
         }
     }
+
+    if (!function_exists('getNursingOfficer')) {
+        function getNursingOfficer()
+        {
+            $roleId = ROLE_NURSING_OFFICER;
+
+            $data = User::whereRaw("FIND_IN_SET(?, role)", [$roleId])
+                ->where('status', 1)
+                ->where('trash', 'NO')
+                ->get();
+
+            return $data->isNotEmpty() ? $data : false;
+        }
+    }
+
 
     if (!function_exists('getCheckListQuestion')) {
         function getCheckListQuestion($id)
@@ -2328,6 +2343,20 @@ if (!function_exists('getMonth')) {
                     } else {
                         return $name->file_path;
                     }
+
+                    case DAILY_FIRE_PUMP:
+                        $name = FireSignatureUpload::where('emp_id', $userid)->where('inspection_id', $id)->where('type', DAILY_FIRE_PUMP)
+                            ->where('status', 1)->where('trash', 'NO')->first();
+
+                        if ($name == null) {
+                            $name = User::where('id', $userid)->first();
+                            if ($name == null) {
+                                return null;
+                            }
+                            return $name->signature_upload;
+                        } else {
+                            return $name->file_path;
+                        }
             }
         }
     }

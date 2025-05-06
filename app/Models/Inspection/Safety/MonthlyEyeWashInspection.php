@@ -31,8 +31,8 @@ class MonthlyEyeWashInspection extends Model
         'level_one_manager_remarks',
         'level_two_manager_remarks',
         'capa_ehs_remarks',
-        'l1_manager_verified_by',
-        'l2_manager_verified_by',
+        'l1_manager_verification',
+        'l2_manager_verification',
         'status',
         'trash',
         'created_by',
@@ -81,8 +81,8 @@ class MonthlyEyeWashInspection extends Model
         if (isset($request->shift) && $request->shift) {
             $query = $query->where('inspection_monthly_eyewash.shift', 'LIKE', '%' . decryptId($request->shift) . '%');
         }
-        if (isset($request->date_of_inspection) && $request->date_of_inspection) {
-            $query = $query->where('inspection_monthly_eyewash.date_of_inspection', 'LIKE', '%' . DBdateformat($request->date_of_inspection) . '%');
+        if (isset($request->inspection_date) && $request->inspection_date) {
+            $query = $query->where('inspection_monthly_eyewash.date_of_inspection', 'LIKE', '%' . DBdateformat($request->inspection_date) . '%');
         }
         if (isset($request->next_due) && $request->next_due) {
             $query = $query->where('inspection_monthly_eyewash.next_due', 'LIKE', '%' . DBdateformat($request->next_due) . '%');
@@ -118,7 +118,7 @@ class MonthlyEyeWashInspection extends Model
             $query->offset($request->start)->limit($request->length);
         }
 
-        $data = $query->get();
+        $data = $query->orderBy('inspection_monthly_eyewash.id', 'DESC')->get();
         $datas = array(
             'data' => $data,
             'total_records' => $org_total_counts,
@@ -151,7 +151,7 @@ class MonthlyEyeWashInspection extends Model
 
     public function selectOne($id)
     {
-        return $this->where('id', $id)->where('status', 1)->where('trash', 'NO')->first();
+        return $this->where('inspection_monthly_eyewash.id', $id)->where('status', 1)->where('trash', 'NO')->first();
     }
 
     public function EHSOfficerUpdate($id)
@@ -215,7 +215,7 @@ class MonthlyEyeWashInspection extends Model
     {
         if ($status == 1) {
             $update_array = [
-                'l1_manager_verified_by' => Auth::id(),
+                'l1_manager_verification' => Auth::id(),
                 'updated_by' => Auth::id(),
                 'inspection_status' => WAITING_FOR_L2_VERIFICATION,
                 'level_one_manager_remarks' => $remarks,
@@ -223,7 +223,7 @@ class MonthlyEyeWashInspection extends Model
             $this->where('id', $id)->update($update_array);
         } else {
             $update_array = [
-                'l1_manager_verified_by' => Auth::id(),
+                'l1_manager_verification' => Auth::id(),
                 'updated_by' => Auth::id(),
                 'inspection_status' => L1_MANAGER_REJECTED,
                 'level_one_manager_remarks' => $remarks,
@@ -236,7 +236,7 @@ class MonthlyEyeWashInspection extends Model
     {
         if ($status == 1) {
             $update_array = [
-                'l2_manager_verified_by' => Auth::id(),
+                'l2_manager_verification' => Auth::id(),
                 'approved_by' => Auth::id(),
                 'updated_by' => Auth::id(),
                 'inspection_status' => INSPECTION_APPROVED,
@@ -245,7 +245,7 @@ class MonthlyEyeWashInspection extends Model
             $this->where('id', $id)->update($update_array);
         } else {
             $update_array = [
-                'l2_manager_verified_by' => Auth::id(),
+                'l2_manager_verification' => Auth::id(),
                 'updated_by' => Auth::id(),
                 'inspection_status' => L2_MANAGER_REJECTED,
                 'level_two_manager_remarks' => $remarks,
@@ -290,8 +290,8 @@ class MonthlyEyeWashInspection extends Model
         if (isset($request->shift) && $request->shift) {
             $query = $query->where('inspection_monthly_eyewash.shift', 'LIKE', '%' . decryptId($request->shift) . '%');
         }
-        if (isset($request->date_of_inspection) && $request->date_of_inspection) {
-            $query = $query->where('inspection_monthly_eyewash.date_of_inspection', 'LIKE', '%' . DBdateformat($request->date_of_inspection) . '%');
+        if (isset($request->inspection_date) && $request->inspection_date) {
+            $query = $query->where('inspection_monthly_eyewash.date_of_inspection', 'LIKE', '%' . DBdateformat($request->inspection_date) . '%');
         }
         if (isset($request->next_due) && $request->next_due) {
             $query = $query->where('inspection_monthly_eyewash.next_due', 'LIKE', '%' . DBdateformat($request->next_due) . '%');

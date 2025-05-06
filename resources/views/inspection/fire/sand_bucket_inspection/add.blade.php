@@ -350,7 +350,7 @@
                                                         <div class="form-group form-input">
                                                             <label
                                                                 class="form-label require">{{ __('inspection.remarks') }}</label>
-                                                            <textarea name="remarks[1]" id="remarks" class="form-control" style="resize: none;"></textarea>
+                                                            <textarea name="remarks[1]" id="remarks[1]" class="form-control" style="resize: none;"></textarea>
 
                                                         </div>
                                                     </div>
@@ -585,7 +585,6 @@
                             required: "Please add observation",
                         },
 
-
                     },
                     errorElement: 'span',
                     errorPlacement: function(error, element) {
@@ -607,7 +606,6 @@
                     }
                 });
             });
-
 
 
 
@@ -656,7 +654,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.location') }}</label>
-                                                        <select name="location[${form_set_count}]" id="location"
+                                                        <select name="location[${form_set_count}]" id="location[${form_set_count}]"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select {{ __('inspection.location') }}
                                                             </option>
@@ -694,7 +692,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.fire_bucket_stand_condition') }}</label>
-                                                        <select name="condition[${form_set_count}]" id="condition"
+                                                        <select name="condition[${form_set_count}]" id="condition[${form_set_count}]"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Condition</option>
                                                             <option value="{{ encryptId(GOOD) }}"
@@ -714,7 +712,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.fire_bucket_condition') }}</label>
-                                                        <select name="fire_bucket_condition[${form_set_count}]" id="condition"
+                                                        <select name="fire_bucket_condition[${form_set_count}]" id="fire_bucket_condition[${form_set_count}]"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Condition</option>
                                                             <option value="{{ encryptId(GOOD) }}"
@@ -734,7 +732,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.paint_condition') }}</label>
-                                                        <select name="paint_condition[${form_set_count}]" id="condition"
+                                                        <select name="paint_condition[${form_set_count}]" id="paint_condition[${form_set_count}]"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Condition</option>
                                                             <option value="{{ encryptId(GOOD) }}"
@@ -755,7 +753,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.qualtiy_quantity_sand') }}</label>
-                                                        <select name="qualtiy_quantity_sand[${form_set_count}]" id="qualtiy_quantity_sand"
+                                                        <select name="qualtiy_quantity_sand[${form_set_count}]" id="qualtiy_quantity_sand[${form_set_count}]"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Quantity and Quality of Sand
                                                             </option>
@@ -774,7 +772,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.approach') }}</label>
-                                                        <input type="text" name="approach[${form_set_count}]" id = "approach"
+                                                        <input type="text" name="approach[${form_set_count}]" id = "approach-${form_set_count}"
                                                             class="form-control" value="{{ old('approach.1') }}">
                                                     </div>
 
@@ -784,7 +782,7 @@
                                                         <div class="form-group form-input">
                                                             <label
                                                                 class="form-label require">{{ __('inspection.remarks') }}</label>
-                                                            <textarea name="remarks[${form_set_count}]" id="remarks" class="form-control" style="resize: none;"></textarea>
+                                                            <textarea name="remarks[${form_set_count}]" id="remarks[${form_set_count}]" class="form-control" style="resize: none;"></textarea>
 
                                                         </div>
                                                     </div>
@@ -848,12 +846,21 @@
                             required: 'Please Select the Quality and Quantiy of Sand',
                         }
                     });
+
                     $("input[name='approach[" + form_set_count + "]']").rules('add', {
                         required: true,
                         messages: {
                             required: 'Please Enter the Approach',
                         }
                     });
+
+                    $("textarea[name='remarks[" + form_set_count + "]']").rules('add', {
+                        required: true,
+                        messages: {
+                            required: 'Please Enter the Remarks',
+                        }
+                    });
+
 
 
                     serial_number++;
@@ -940,12 +947,16 @@
                     $(this).find('select[name^="condition"]').attr('name', 'condition[' + idx + ']');
                     $(this).find('select[name^="qualtiy_quantity_sand"]').attr('name', 'qualtiy_quantity_sand[' + idx +
                         ']');
+                    $(this).find('select[name^="fire_bucket_condition"]').attr('name', 'fire_bucket_condition[' + idx +
+                        ']');
+                    $(this).find('select[name^="paint_condition"]').attr('name', 'paint_condition[' + idx + ']');
                     $(this).find('input[name^="approach"]').attr('name', 'approach[' + idx + ']');
-                    $(this).find('input[name^="remarks"]').attr('name', 'remarks[' + idx + ']');
+                    $(this).find('textarea[name^="remarks"]').attr('name', 'remarks[' + idx + ']');
 
                     $(this).find('select').select2();
                 });
             }
+
 
 
             $(document).on('click', '.remove-row', function() {

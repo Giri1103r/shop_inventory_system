@@ -130,24 +130,25 @@
                                             </div>
                                         @endif
                                     </div>
+
                                     <hr>
-                                    {{-- <div class="form-observation">
+                                    <div class="form-observation">
                                         <div class="row mt-4 form-obs">
                                             <div class="card-header-inner p-2">
                                                 <h4 class="text-white">Hooter Inspection Observation</h4>
                                             </div>
-                                            <div class="col-md-12 mb-2">
+                                            <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">{{ __('inspection.obs') }}</label>
+                                                    <label
+                                                        class="form-label require">Observation</label>
                                                     <div class="view_data">
-                                                        {{ $inspection->observation }}
+                                                        {{ $inspection->observation_needed == '1' ? 'YES' : 'NO' }}
                                                     </div>
-
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <hr> --}}
+                                    <hr>
 
                                     @foreach ($inspection_details as $details)
                                         <div class="form-wrapper">
@@ -325,18 +326,20 @@
                                                             HOOTER_INSPECTION,
                                                         );
                                                     @endphp
+                                                     @if (isset($signature))
+                                                     <div class="col-md-4 mb-2">
+                                                         <div class="form-group form-input">
+                                                             <label class="form-label"
+                                                                 style="display: block;">{{ __('inspection.signature') }}</label>
+                                                             <img src="{{ admin_url($signature) }}" alt="Signature Upload"
+                                                                 style="width: 150px; margin-top: -10px;" />
+                                                         </div>
+                                                     </div>
+                                                 @endif
                                                 @endif
                                             @endif
-                                            @if (isset($signature))
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label class="form-label"
-                                                            style="display: block;">{{ __('inspection.signature') }}</label>
-                                                        <img src="{{ admin_url($signature) }}" alt="Signature Upload"
-                                                            style="width: 150px; margin-top: -10px;" />
-                                                    </div>
-                                                </div>
-                                            @endif
+
+
                                             @if (isset($inspection->capa_recomendation))
                                                 <div class="col-md-12 mb-2">
                                                     <div class="form-group form-input">
@@ -514,6 +517,8 @@
                                         </div>
                                     </div>
                                 @endif
+
+
                                 @if (isset($inspection->level_two_manager_remarks))
                                     <div class="row">
                                         <div class="card-header-inner">
@@ -523,7 +528,7 @@
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
                                                 <label
-                                                    class="form-label ">{{ __('inspection.level_one_manager') }}</label>
+                                                    class="form-label ">{{ __('inspection.level_two_manager') }}</label>
                                                 <div class="view_data">
                                                     {{ getUserName($inspection->l2_manager_verified_by) }}
                                                 </div>
@@ -554,7 +559,7 @@
                                                 </div>
                                             </div>
                                         @endif
-                                        @if ($inspection->approved_by)
+                                        {{-- @if ($inspection->approved_by)
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label ">{{ __('inspection.approved_by') }}</label>
@@ -580,7 +585,7 @@
                                                         style="width: 150px; margin-top: -10px;" />
                                                 </div>
                                             </div>
-                                        @endif
+                                        @endif --}}
                                         <div class="col-md-12 mb-2">
                                             <div class="form-group form-input">
                                                 <label
@@ -592,6 +597,7 @@
                                         </div>
                                     </div>
                                 @endif
+
                                 <div class="row">
                                     <div class="card-header-inner">
                                         <h4 class="text-white">{{ __('inspection.status_log') }}</h4>

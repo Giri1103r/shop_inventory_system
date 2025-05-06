@@ -25,7 +25,7 @@
                                 <div class="row">
                                     <div class="col-md-4 mb-3 form-input">
                                         <label class="form-label require">Category</label>
-                                        <select name="category" class="form-control single-select" style="width: 100%">
+                                        <select name="category" class="form-control single-select" id="category" style="width: 100%">
                                             <option value="">Select Category</option>
                                             @foreach ($category as $item)
                                                 <option value="{{ encryptId($item->id) }}">
@@ -36,7 +36,7 @@
                                     <div class="col-md-4 mb-3 form-input">
                                         <label for="ohs_compliance_index" class="form-label ">OHS Compliance Index</label>
                                         <input type="text" name="ohs_compliance_index" id="ohs_compliance_index"
-                                            class="form-control" placeholder="OHC Compliance Index">
+                                            class="form-control" placeholder="OHS Compliance Index">
                                     </div>
                                     <div class="col-md-4 mb-3 form-input">
                                         <label class="form-label require">{{ __('inspection.frequency') }}</label>

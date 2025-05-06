@@ -213,6 +213,7 @@ class CronController extends Controller
         try {
             $fromDate = '2001-01-01';
             $toDate = todayDbdate();
+
             $office_id = $this->company->getcompany();
 
             $responses = [];
@@ -257,8 +258,8 @@ class CronController extends Controller
     public function workMasterTemp()
     {
         try {
-            $fromDate = todayDbdate();
-            $toDate = todayDbdate();
+            $fromDate = now()->subDay()->format('Y-m-d');
+            $toDate = now()->subDay()->format('Y-m-d');
 
             $office_id = $this->company->getcompany();
             foreach ($office_id as $company) {
@@ -292,7 +293,7 @@ class CronController extends Controller
             if (!empty($worktemp)) {
 
                 $work = $this->work->store($worktemp);
-                if (!empty($work))  {
+                if (!empty($work)) {
                     foreach ($work as $item) {
                         $emp_id = $item['emp_id'];
 
@@ -334,8 +335,11 @@ class CronController extends Controller
     {
         try {
 
-            $fromDate = todayDbdate();
-            $toDate = todayDbdate();
+            // $fromDate = todayDbdate();
+            // $toDate = todayDbdate();
+            $fromDate = now()->subDay()->format('Y-m-d');
+            $toDate = now()->subDay()->format('Y-m-d');
+
             $apiKeyTokens = $this->company->getApiKeyToken();
 
             $responses = [];
@@ -371,9 +375,52 @@ class CronController extends Controller
 
 
             return response()->json($responses);
+        } catch (Exception $ex) {
+            report($ex);
+            return response()->json(['message' => 'An error occurred.', 'error' => $ex->getMessage()]);
+        }
+    }
+    public function employeeMasterTempCustom(Request $request)
+    {
+        try {
+
+            $fromDate = $request->fromdate;
+            $toDate = $request->todate;
+            $apiKeyTokens = $this->company->getApiKeyToken();
+
+            $responses = [];
+
+            foreach ($apiKeyTokens as $token) {
+                $apiUrl = "https://hrms.esparsh.in/PunchesAPI/api/Attendance/GetEmployeeDetails?token={$token->api_token_key}&fromDate={$fromDate}&toDate={$toDate}";
+
+                $response = Http::get($apiUrl);
+
+                if ($response->successful()) {
+                    $data = $response->json();
+
+                    if (!empty($data['Result'])) {
+                        $this->emp_temp->store($data);
+                        $responses[] = [
+                            'message' => 'Data saved successfully.',
+                            'token' => $token->api_token_key
+                        ];
+                    } else {
+                        $responses[] = [
+                            'message' => 'No data found in API response.',
+                            'token' => $token->api_token_key
+                        ];
+                    }
+                } else {
+                    $responses[] = [
+                        'message' => 'Failed to fetch data from API.',
+                        'status' => $response->status(),
+                        'token' => $token->api_token_key
+                    ];
+                }
+            }
 
 
-
+            return response()->json($responses);
         } catch (Exception $ex) {
             report($ex);
             return response()->json(['message' => 'An error occurred.', 'error' => $ex->getMessage()]);
@@ -385,7 +432,6 @@ class CronController extends Controller
             $fromDate = '2001-01-01';
             $toDate = todayDbdate();
             $apiKeyTokens = $this->company->getApiKeyToken();
-
             $responses = [];
 
             foreach ($apiKeyTokens as $token) {
@@ -395,7 +441,6 @@ class CronController extends Controller
 
                 if ($response->successful()) {
                     $data = $response->json();
-
                     if (!empty($data['Result'])) {
                         $this->emp_temp->store($data);
                         $responses[] = [
@@ -419,7 +464,6 @@ class CronController extends Controller
 
 
             return response()->json($responses);
-
         } catch (Exception $ex) {
             report($ex);
             return response()->json(['message' => 'An error occurred.', 'error' => $ex->getMessage()]);
@@ -723,7 +767,7 @@ class CronController extends Controller
             $permits = SafetyPermit::where('trash', 'NO')
                 ->where('permit_status', '!=', STATUS_CLOSED)
                 ->where('permit_status', '!=', STATUS_PERMIT_EXPIRED)
-                ->whereDate('date', Carbon::today())
+                ->whereDate('to_date', Carbon::today())
                 ->where('time_to', '<', $currentTime)
                 ->get();
 
@@ -1140,6 +1184,66 @@ class CronController extends Controller
         } else {
             Session::invalidate();
             return response()->json(['message' => 'No jobs in the Nomination Process Import queue to process', 'exit_code' => 0]);
+        }
+    }
+    public function currentNextCodeImport()
+    {
+        $queueLength = Queue::size('currentNextCodeImport');
+        if ($queueLength > 0) {
+            $options = [
+                '--sleep' => 3,
+                '--tries' => 3,
+                '--queue' => 'currentNextCodeImport',
+                '--timeout' => 600,
+                '--max-jobs' => 10,
+            ];
+
+            $exitCode = Artisan::call('queue:work', $options);
+            Session::invalidate();
+            return response()->json(['message' => 'Queue Current Nxt Code Dailing command executed successfully',  'exit_code' => $exitCode]);
+        } else {
+            Session::invalidate();
+            return response()->json(['message' => 'No jobs in the Current Nxt Code Dailing Import queue to process', 'exit_code' => 0]);
+        }
+    }
+    public function equipmentimport()
+    {
+        $queueLength = Queue::size('equipmentimport');
+        if ($queueLength > 0) {
+            $options = [
+                '--sleep' => 3,
+                '--tries' => 3,
+                '--queue' => 'equipmentimport',
+                '--timeout' => 600,
+                '--max-jobs' => 10,
+            ];
+
+            $exitCode = Artisan::call('queue:work', $options);
+            Session::invalidate();
+            return response()->json(['message' => 'Queue  Safety Equipment Master command executed successfully',  'exit_code' => $exitCode]);
+        } else {
+            Session::invalidate();
+            return response()->json(['message' => 'No jobs in the  Safety Equipment Master Import queue to process', 'exit_code' => 0]);
+        }
+    }
+    public function firstAidEquipmentImport()
+    {
+        $queueLength = Queue::size('firstAidEquipmentImport');
+        if ($queueLength > 0) {
+            $options = [
+                '--sleep' => 3,
+                '--tries' => 3,
+                '--queue' => 'firstAidEquipmentImport',
+                '--timeout' => 600,
+                '--max-jobs' => 10,
+            ];
+
+            $exitCode = Artisan::call('queue:work', $options);
+            Session::invalidate();
+            return response()->json(['message' => 'Queue  OHC Inspection Master command executed successfully',  'exit_code' => $exitCode]);
+        } else {
+            Session::invalidate();
+            return response()->json(['message' => 'No jobs in the OHC Inspection Master Import queue to process', 'exit_code' => 0]);
         }
     }
     public function queueChecklistmasterImport()

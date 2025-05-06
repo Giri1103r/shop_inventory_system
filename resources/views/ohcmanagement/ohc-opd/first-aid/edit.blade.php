@@ -89,7 +89,21 @@
                                                     </div>
                                                 </div>
                                             </div>
-
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">Medicine Name</label>
+                                                    <select name="medicine_id[]" multiple id="medicine_id"
+                                                        class="select2 form-control">
+                                                        <option value="">Select medicine Name</option>
+                                                        @foreach ($medicine as $list)
+                                                            <option value="{{ $list->id }}"
+                                                                @if (in_array($list->id, explode(',', $opd_first_aid->medicine_id ?? ''))) selected @endif>
+                                                                {{ $list->medicine }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                            </div>
 
                                             <div class="col-md-12 mb-2">
                                                 <div class="form-group form-input">
@@ -136,11 +150,11 @@
                                                     <label for="hospital_id" class="form-label require">Hospital
                                                         Name</label>
 
-                                                        <select name="hospital_id" id="hospital_id"
+                                                    <select name="hospital_id" id="hospital_id"
                                                         class="form-control single-select" style="width: 100%">
                                                         <option value="">select the Suggested By</option>
                                                         @foreach ($hospital as $list)
-                                                            <option value="{{encryptId( $list->id) }}"
+                                                            <option value="{{ encryptId($list->id) }}"
                                                                 @if ($list->id == $opd_first_aid->hospital_id) selected @endif>
                                                                 {{ $list->hospital_name }}
                                                             </option>
@@ -180,7 +194,7 @@
                                                 </div>
                                             </div>
 
-                                       
+
                                             <div class="col-md-12">
                                                 <div class="form-group form-input">
                                                     <label class="form-label ">Remarks</label>
@@ -218,6 +232,11 @@
                 maxDate: new Date(),
 
             });
+            $('#medicine_id').select2({
+                placeholder: "Select medicine name ",
+                allowClear: true,
+                closeOnSelect: true,
+            });
             // time
             var currentTime = new Date().toLocaleTimeString('en-GB', {
                 hour: '2-digit',
@@ -240,7 +259,7 @@
                 enableTime: true,
                 noCalendar: true,
                 dateFormat: "H:i",
-                defaultDate: "{{$opd_first_aid->treatment_start_time }}",
+                defaultDate: "{{ $opd_first_aid->treatment_start_time }}",
                 time_24hr: false,
                 onChange: function(selectedDates, dateStr) {
                     endPicker.set("minTime", dateStr);
@@ -251,7 +270,7 @@
                 enableTime: true,
                 noCalendar: true,
                 dateFormat: "H:i",
-                defaultDate: "{{$opd_first_aid->treatment_end_time }}",
+                defaultDate: "{{ $opd_first_aid->treatment_end_time }}",
                 time_24hr: false,
             });
 
@@ -398,10 +417,13 @@
                         maxlength: 100
                     },
                     hospital_id: {
-                        required:true,
+                        required: true,
+                    },
+                    'medicine_id[]': {
+                        required: true,
                     },
                     cheif_complaint: {
-                        required:true,
+                        required: true,
                         minlength: 3,
                         maxlength: 100
                     },
@@ -413,6 +435,9 @@
                     emp_id: {
                         required: "Employee ID is required.",
                     },
+                    'medicine_id[]': {
+                        required: "Medicine Name is required.",
+                    },
                     date_of_incident: {
                         required: "Date of incident is required.",
                     },
@@ -423,9 +448,9 @@
                         required: "Hospital Name is required.",
                     },
                     cheif_complaint: {
-                        required:"Cheif Complaint is required.",
+                        required: "Cheif Complaint is required.",
                         minlength: "Minimum 3 characters are required",
-                        maxlength:"Maximum 100 characters are required",
+                        maxlength: "Maximum 100 characters are required",
                     },
                     treatment_provided: {
                         required: "Please specify the treatment provided.",

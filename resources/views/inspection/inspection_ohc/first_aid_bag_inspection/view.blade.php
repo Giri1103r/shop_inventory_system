@@ -20,7 +20,7 @@
                             <div class="card-header">
                                 <div class="align-back-btc">
                                     <x-button-back
-                                        href="{{ admin_url('ohc/first-aid/opd-medicine-inspection/list') }}"></x-button-back>
+                                        href="{{ admin_url('ohc/emergency-floor-first-aid-bag/checklist/list') }}"></x-button-back>
                                 </div>
                             </div>
 

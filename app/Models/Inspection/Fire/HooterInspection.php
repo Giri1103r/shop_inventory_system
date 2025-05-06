@@ -72,11 +72,24 @@ class HooterInspection extends Model
             $search = $request->search['value'];
 
             $query = $query->where(function ($query) use ($search) {
+
                 $query->orWhereRaw('masters_location.location_name LIKE "%' . $search . '%"');
                 $query->orWhereRaw('masters_unit.unit_name LIKE "%' . $search . '%"');
                 $query->orWhereRaw('inspection_shift_option.shift LIKE "%' . $search . '%"');
                 $query->orWhereRaw('inspection_frequency_option.frequency_name LIKE "%' . $search . '%"');
             });
+        }
+
+        if ($request->has('inspection_date') && $request->inspection_date) {
+
+            $formattedDate = DBdateformat($request->inspection_date);
+            $query = $query->whereDate('inspection_fire_hooter.date_of_inspection', $formattedDate);
+        }
+
+        if ($request->has('next_due') && $request->next_due) {
+
+            $formattedDate = DBdateformat($request->next_due);
+            $query = $query->whereDate('inspection_fire_hooter.next_due', $formattedDate);
         }
 
         if (isset($request->location) && $request->location) {
@@ -155,7 +168,7 @@ class HooterInspection extends Model
             'location' => decryptId($request->location_id),
             'shift' => decryptId($request->shift_id),
             'next_due' => DBdateformat($request->next_due),
-            'observation' => $request->observation,
+            'observation' => decryptId($request->observation),
             'unit' => decryptId($request->unit_id),
             'frequency' => decryptId($request->frequency_id),
             'inspection_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,
@@ -186,6 +199,23 @@ class HooterInspection extends Model
                 $query->orWhereRaw('inspection_shift_option.shift LIKE "%' . $search . '%"');
                 $query->orWhereRaw('inspection_frequency_option.frequency_name LIKE "%' . $search . '%"');
             });
+        }
+
+        if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_OFFICER) || CheckUserRole(ROLE_L1_MANAGER) || CheckUserRole(ROLE_L2_MANAGER)) {
+        } else if (CheckUserRole(ROLE_FIRE_ASSOCIATES)) {
+            $query->where('inspection_fire_hooter.created_by', Auth::id());
+        }
+
+        if ($request->has('inspection_date') && $request->inspection_date) {
+
+            $formattedDate = DBdateformat($request->inspection_date);
+            $query = $query->whereDate('inspection_fire_hooter.date_of_inspection', $formattedDate);
+        }
+
+        if ($request->has('next_due') && $request->next_due) {
+
+            $formattedDate = DBdateformat($request->next_due);
+            $query = $query->whereDate('inspection_fire_hooter.next_due', $formattedDate);
         }
 
         if (isset($request->location) && $request->location) {

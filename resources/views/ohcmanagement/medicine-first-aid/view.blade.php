@@ -1,6 +1,6 @@
 
 @extends('admin.layouts.admin')
-@section('title', 'Medicine First Aid Show')
+@section('title', 'First Aid Box Medicine Show')
 @section('pageurl', admin_url('ohc/medicine-requisition/list'))
 
 

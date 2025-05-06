@@ -46,6 +46,14 @@ class FirstAidMedicineInspection extends Model
                     ->orWhere('inspection_ohc_first_aid_inspection.next_due', 'LIKE', '%' . $search . '%');
             });
         }
+        $user = Auth::user();
+        $userRole = string_to_array($user->role);
+        $empId = $user->employee_id;
+        if (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole)  || in_array(ROLE_EHS_OFFICER, $userRole)  || in_array(ROLE_INSPECTION_CREATOR, $userRole) || in_array(ROLE_SAFETY_OFFICER, $userRole) || in_array(ROLE_MEDICAL_ASSISTANT, $userRole)) {
+            $query->orderBy('inspection_ohc_first_aid_inspection.id', 'DESC');
+        } else {
+            $query->where('inspection_ohc_first_aid_inspection.created_by', Auth::id());
+        }
 
         if ($request->has('inspection_date') && $request->inspection_date) {
             $formattedDate = DBdateformat($request->inspection_date);
@@ -60,7 +68,7 @@ class FirstAidMedicineInspection extends Model
 
         if ($request->has('status') && $request->status) {
 
-            $query = $query->where('inspection_ohc_first_aid_inspection.status',  decryptId($request->status));
+            $query = $query->where('inspection_ohc_first_aid_inspection.inspection_status',  decryptId($request->status));
         }
 
 
@@ -138,8 +146,8 @@ class FirstAidMedicineInspection extends Model
             $query = $query->whereDate('inspection_ohc_first_aid_inspection.next_due', $formattedDate);
         }
 
-        if (isset($request->inspection_status) && $request->inspection_status) {
-            $query = $query->where('inspection_ohc_first_aid_inspection.inspection_status', decryptId($request->inspection_status));
+        if (isset($request->status) && $request->status) {
+            $query = $query->where('inspection_ohc_first_aid_inspection.inspection_status', decryptId($request->status));
         }
         $query->orderBy('id', 'DESC');
 

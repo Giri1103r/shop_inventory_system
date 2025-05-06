@@ -62,36 +62,36 @@
 
 
 
-            <div id="search" class="collapse">
-                <form action="{{ admin_url('ohc/dashboard') }}" method="GET" id="formsearch">
-                    <div class="card-body">
-                        <div class="col-md-12">
-                            <div class="row">
+                <div id="search" class="collapse">
+                    <form action="{{ admin_url('ohc/dashboard') }}" method="GET" id="formsearch">
+                        <div class="card-body">
+                            <div class="col-md-12">
+                                <div class="row">
 
 
-                                <div class="col-md-3 mb-2">
-                                    <div class="form-group form-input">
-                                        <label class="form-label ">Unit</label>
-                                        <select name="unit_id" id="unit_id" class="form-control single-select"
-                                            style="width: 100%">
-                                            <option value="">Select the unit</option>
-                                            @foreach ($unit as $list)
-                                                <option value="{{ encryptId($list->id) }}">
-                                                    {{ $list->unit_name }}</option>
-                                            @endforeach
-                                        </select>
+                                    <div class="col-md-3 mb-2">
+                                        <div class="form-group form-input">
+                                            <label class="form-label ">Unit</label>
+                                            <select name="unit_id" id="unit_id" class="form-control single-select"
+                                                style="width: 100%">
+                                                <option value="">Select the unit</option>
+                                                @foreach ($unit as $list)
+                                                    <option value="{{ encryptId($list->id) }}">
+                                                        {{ $list->unit_name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-md-3 mt-3">
-                                    <x-button-search></x-button-search>
-                                    <x-button-reset></x-button-reset>
+                                    <div class="col-md-3 mt-3">
+                                        <x-button-search></x-button-search>
+                                        <x-button-reset></x-button-reset>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </form>
-                <hr>
-            </div>
+                    </form>
+                    <hr>
+                </div>
             @endif
             <div class="card view_card">
 
@@ -501,6 +501,10 @@
             var url = "{{ admin_url('') }}" + link;
             window.location.href = url;
         }
+        $('#resetform').on('click', function(e) {
+            e.preventDefault();
+            location.reload();
+        });
     </script>
 
     <script>

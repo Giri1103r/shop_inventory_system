@@ -112,15 +112,10 @@ class OHCHygieneCleaningChecklist extends Model
         $org_total =  $query;
         $org_total_counts = $org_total->count();
 
-        // if ($request->search['value'] != null || $request->search['value'] != '') {
-        //     $search = $request->search['value'];
+        if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_NURSING_OFFICER)) {
+        } else if (CheckUserRole(ROLE_CLEANER)) {
 
-        //     $query->where(function ($query) use ($search) {
-        //         $query
-        //             ->orWhere('issue_date', 'LIKE', '%' . $search . '%')
-        //             ->orWhere('shift', 'LIKE', '%' . $search . '%');
-        //     });
-        // }
+        }
 
         if ($request->has('shift_id') && $request->shift_id) {
             $query = $query->where('shift_id', 'LIKE', '%' . decryptId($request->shift_id) . '%');
@@ -144,14 +139,14 @@ class OHCHygieneCleaningChecklist extends Model
         return $this->where('id', $id)->first();
     }
 
-    public function approvalSubmit()
+    public function approvalSubmit($id, $to_status, $remarks)
     {
         $request = request();
         $update_array = [
-            'nursing_officer_remarks' => $request->capa_remarks,
+            'nursing_officer_remarks' => $remarks,
             'updated_by' => Auth::id(),
-            'checklist_status' => NURSING_OFFICER_SUBMITTED_THE_CHECKLIST,
+            'checklist_status' => $to_status,
         ];
-        $this->where('id', decryptId($request->id))->update($update_array);
+        $this->where('id', $id)->update($update_array);
     }
 }

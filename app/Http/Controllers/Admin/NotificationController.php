@@ -57,32 +57,21 @@ class NotificationController extends Controller
                                 $btn = "TRAINING";
                             } elseif ($row->notification_type == 3) {
                                 $btn = "PTW";
-                            }elseif ($row->notification_type == 4) {
+                            } elseif ($row->notification_type == 4) {
                                 $btn = "OHC Management";
-                            }elseif ($row->notification_type == GEMBA_WALK) {
+                            } elseif ($row->notification_type == GEMBA_WALK_NOTIIFCATION) {
                                 $btn = "Gemba Walk";
-                            }elseif ($row->notification_type == OHC_INSPECTION) {
+                            } elseif ($row->notification_type == OHC_INSPECTION) {
                                 $btn = "Inspection OHC";
-                            }
-                            elseif ($row->notification_type == 5) {
-                                $btn = "IMS";
-                            }
-                            elseif ($row->notification_type == 5) {
-                                $btn = "IMS";
-                            }
-                            elseif ($row->notification_type == 5) {
-                                $btn = "IMS";
-                            }
-                            elseif ($row->notification_type == 5) {
-                                $btn = "IMS";
-                            }
-                            elseif ($row->notification_type == 5) {
-                                $btn = "IMS";
-                            }
-                            elseif ($row->notification_type == 5) {
-                                $btn = "IMS";
-                            }
-                            else{
+                            } elseif ($row->notification_type == SAFETY_INSPECTION) {
+                                $btn = "Safety Inspection";
+                            } elseif ($row->notification_type == FIRE_INSPECTION) {
+                                $btn = "Fire Inspection";
+                            } elseif ($row->notification_type == MSDS_INSPECTION) {
+                                $btn = "MSDS Inspection";
+                            } elseif ($row->notification_type == RRAA_INSPECTION) {
+                                $btn = "RRAA Inspection";
+                            } else {
                                 $btn = "";
                             }
 

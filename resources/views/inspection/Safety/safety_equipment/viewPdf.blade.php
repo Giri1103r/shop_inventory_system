@@ -204,7 +204,7 @@
     <table style="width: 100%; border-collapse: collapse; text-align: center;">
         <thead>
             <tr>
-                <th rowspan="2" style="border: 2px solid black; padding: 8px; background-color: #ddd;">SR. NO.</th>
+         
                 <th rowspan="2" style="border: 2px solid black; padding: 8px; background-color: #ddd;">
                     {{ __('inspection.equipment_name') }}
                 </th>
@@ -239,33 +239,32 @@
             </tr>
         </thead>
         <tbody>
-            @foreach ($inspection as $details)
+
                 <tr>
-                    <td style="border: 2px solid black; padding: 8px;">{{ $loop->iteration }}</td>
-                    <td style="border: 2px solid black; padding: 8px;">{{ getEquipmentName($details->equipment_id) }}
+                    <td style="border: 2px solid black; padding: 8px;">{{ getEquipmentName($inspection_details->equipment_id) }}
                     </td>
-                    <td style="border: 2px solid black; padding: 8px;">{{ $details->item_code }}</td>
+                    <td style="border: 2px solid black; padding: 8px;">{{ $inspection_details->item_code }}</td>
                     <td style="border: 2px solid black; padding: 8px;">
-                        @if ($details->standard_norms == STANDARD)
+                        @if ($inspection_details->standard_norms == STANDARD)
                             Standard
-                        @elseif ($details->standard_norms == NORMS)
+                        @elseif ($inspection_details->standard_norms == NORMS)
                             Norms
                         @endif
                     </td>
-                    <td style="border: 2px solid black; padding: 8px;">{{ $details->equipment_category }}</td>
-                    <td style="border: 2px solid black; padding: 8px;">{{ $details->measurement_unit }}</td>
-                    <td style="border: 2px solid black; padding: 8px;">{{ $details->minimum_order_level }}</td>
-                    <td style="border: 2px solid black; padding: 8px;">{{ $details->economic_order_quantity }}</td>
+                    <td style="border: 2px solid black; padding: 8px;">{{ $inspection_details->equipment_category }}</td>
+                    <td style="border: 2px solid black; padding: 8px;">{{ $inspection_details->measurement_unit }}</td>
+                    <td style="border: 2px solid black; padding: 8px;">{{ $inspection_details->minimum_order_level }}</td>
+                    <td style="border: 2px solid black; padding: 8px;">{{ $inspection_details->economic_order_quantity }}</td>
                     <td style="border: 2px solid black; padding: 8px;">
-                        @if ($details->observation_status == 1)
+                        @if ($inspection_details->observation_status == 1)
                             Active
-                        @elseif($details->observation_status == 0)
+                        @elseif($inspection_details->observation_status == 0)
                             Deactive
                         @endif
                     </td>
-                    <td style="border: 2px solid black; padding: 8px;">{{ $details->remark }}</td>
+                    <td style="border: 2px solid black; padding: 8px;">{{ $inspection_details->remark }}</td>
                 </tr>
-            @endforeach
+
         </tbody>
     </table>
     <br>

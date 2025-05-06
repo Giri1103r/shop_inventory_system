@@ -85,19 +85,19 @@ class TrainingAttendance extends Model
             $attendanceData[] = [
                 'training_schedule_id' => ($record['training_schedule_id']),
                 'nomination_id' => $record['nomination_id'],
-                'attendance_date' => ($record['attendance_date']),
+                'attendance_date' =>DBdatetimeformat ($record['attendance_date']),
                 'attendance_status' => $record['attendance_status'],
                 'emp_id' => $record['emp_id'],
                 'emp_name' => $record['emp_name'],
                 'email' => $record['email'],
-                'from_date' => ($record['from_date']),
-                'to_date' => ($record['to_date']),
+                'from_date' => DBdatetimeformat($record['from_date']),
+                'to_date' => DBdatetimeformat($record['to_date']),
                 'topic_id' => $record['topic_id'],
                 'status' => 1,
                 'created_by' => Auth::id(),
             ];
         }
-   
+
         return $this->insert($attendanceData);
     }
 

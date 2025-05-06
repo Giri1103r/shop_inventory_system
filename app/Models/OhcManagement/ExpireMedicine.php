@@ -56,16 +56,18 @@ class ExpireMedicine extends Model
         if ($request->has('expire_date') && $request->expire_date) {
             $query = $query->where('ohc_management_expire_medicine.expire_date',  DBdateformat($request->expire_date));
         }
-        $org_total_counts = $query->count();
 
+        $total_records = $query->count();;
         if ($request->length != -1) {
             $query->offset($request->start)->limit($request->length);
         }
-
-        $query
-      ->orderBy('ohc_management_expire_medicine.id', 'desc');
+        $query->orderBy('ohc_management_expire_medicine.id', 'DESC');
         $data = $query->get();
-        $total_records = $data->count();
+
+
+        $org_total_counts = $this->count();
+      
+
 
         return [
             'data' => $data,

@@ -390,14 +390,14 @@
                     HOSE_REEL_INSPECTION,
                 );
             @endphp
-            @if (isset($forklift_details->verified_by))
+            {{-- @if (isset($forklift_details->verified_by))
                 <tr>
                     <td width="50%" style="padding:5px;"><b>{{ __('inspection.signature') }}</b></td>
                     <td width="2%" style="padding:5px;">:</td>
                     <td width="48%" style="padding:5px;"> <img src="{{ admin_url($getSafetySignature) }}"
                             alt="" style="height: 60px; width:60px;"></td>
                 </tr>
-            @endif
+            @endif --}}
         </table>
         <br>
     @endif
@@ -439,14 +439,14 @@
                     HOSE_REEL_INSPECTION,
                 );
             @endphp
-            @if (isset($forklift_details->verified_by))
+            {{-- @if (isset($forklift_details->verified_by))
                 <tr>
                     <td width="50%" style="padding:5px;"><b>{{ __('inspection.signature') }}</b></td>
                     <td width="2%" style="padding:5px;">:</td>
                     <td width="48%" style="padding:5px;"> <img src="{{ admin_url($getSafetySignature) }}"
                             alt="" style="height: 60px; width:60px;"></td>
                 </tr>
-            @endif
+            @endif --}}
         </table>
         <br>
     @endif
@@ -489,14 +489,14 @@
                     HOSE_REEL_INSPECTION,
                 );
             @endphp
-            @if (isset($forklift_details->verified_by))
+            {{-- @if (isset($forklift_details->verified_by))
                 <tr>
                     <td width="50%" style="padding:5px;"><b>{{ __('inspection.signature') }}</b></td>
                     <td width="2%" style="padding:5px;">:</td>
                     <td width="48%" style="padding:5px;"> <img src="{{ admin_url($getSafetySignature) }}"
                             alt="" style="height: 60px; width:60px;"></td>
                 </tr>
-            @endif
+            @endif --}}
         </table>
         <br>
     @endif
@@ -540,14 +540,14 @@
                     HOSE_REEL_INSPECTION,
                 );
             @endphp
-            @if (isset($forklift_details->verified_by))
+            {{-- @if (isset($forklift_details->verified_by))
                 <tr>
                     <td width="50%" style="padding:5px;"><b>{{ __('inspection.signature') }}</b></td>
                     <td width="2%" style="padding:5px;">:</td>
                     <td width="48%" style="padding:5px;"> <img src="{{ admin_url($getSafetySignature) }}"
                             alt="" style="height: 60px; width:60px;"></td>
                 </tr>
-            @endif
+            @endif --}}
         </table>
         <br>
     @endif
@@ -597,14 +597,14 @@
                     HOSE_REEL_INSPECTION,
                 );
             @endphp
-            @if (isset($forklift_details->verified_by))
+            {{-- @if (isset($forklift_details->verified_by))
                 <tr>
                     <td width="50%" style="padding:5px;"><b>{{ __('inspection.signature') }}</b></td>
                     <td width="2%" style="padding:5px;">:</td>
                     <td width="48%" style="padding:5px;"> <img src="{{ admin_url($getSafetySignature) }}"
                             alt="" style="height: 60px; width:60px;"></td>
                 </tr>
-            @endif
+            @endif --}}
         </table>
         <br>
     @endif

@@ -138,7 +138,7 @@ class AuditAssessmentController extends Controller
             );
             return view('inspection.inspection_audit.auditAssessment.add', $data);
         } catch (Exception $ex) {
-            dd($ex);
+           report($ex);
             report($ex);
         }
     }
@@ -499,7 +499,7 @@ class AuditAssessmentController extends Controller
             $filename = "6S Audit Assessment.pdf";
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            dd($ex);
+           report($ex);
             return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
         }
     }
@@ -675,7 +675,7 @@ class AuditAssessmentController extends Controller
             $writer->save('php://output');
             exit;
         } catch (Exception $ex) {
-            dd($ex);
+           report($ex);
             return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
         }
     }
