@@ -360,6 +360,7 @@ class AppServiceProvider extends ServiceProvider
         defined('INTER_UNIT_AUDIT_CHECKLIST') or define('INTER_UNIT_AUDIT_CHECKLIST', 9);
         defined('FIRE_PRE_NOC_CHECKLIST') or define('FIRE_PRE_NOC_CHECKLIST', 10);
         defined('OHC_DAILY_VITAL_EQUIPMENT_CHECKLIST') or define('OHC_DAILY_VITAL_EQUIPMENT_CHECKLIST', 11);
+        defined('OHC_PHYSICAL_HEALTH_EXAMINATION') or define('OHC_PHYSICAL_HEALTH_EXAMINATION', 12);
 
         // Fire
         defined('HOOTER_INSPECTION') or define('HOOTER_INSPECTION', 1);

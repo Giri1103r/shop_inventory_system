@@ -71,7 +71,7 @@ class CurrentNewExtCodeDialingController extends Controller
                             return Displaydatetimeformat($row->created_at);
                         })
                         ->addColumn('created_date', function ($row) {
-                            return Displaydatetimeformat($row->created_at);
+                            return Displaydateformat($row->created_at);
                         })
                         ->addColumn('created_by', function ($row) {
                             return getUsername($row->created_by);
@@ -114,6 +114,8 @@ class CurrentNewExtCodeDialingController extends Controller
             return view('inspection.inspection_ohc.current_new_ext_code_dialing.add', $data);
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/current-new-ext-code-dialing/list'));
         }
     }
 

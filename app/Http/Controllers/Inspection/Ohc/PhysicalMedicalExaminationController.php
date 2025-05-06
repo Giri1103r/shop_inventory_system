@@ -21,16 +21,20 @@ use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\RichText\RichText;
 use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 use App\Models\Inspection\InspectionStaticDocno;
+use App\Models\Inspection\Ohc\Master\FamilyHistory;
+use App\Models\Inspection\Ohc\Master\PersonalDetails;
 use App\Models\Inspection\ohc\OHCHygieneCleaningChecklist;
 use Illuminate\Support\Facades\Mail;
 use Mpdf\Tag\Dd;
 
-class OHCHygieneCleaningChecklistController extends Controller
+class PhysicalMedicalExaminationController extends Controller
 {
     private $ohc_hygiene;
     private $shift;
     private $signature;
     private $document_reference;
+    private $personalDetails;
+    private $familyHistory;
 
 
     public function __construct()
@@ -39,6 +43,8 @@ class OHCHygieneCleaningChecklistController extends Controller
         $this->shift = new Shift();
         $this->signature = new OhcSignature();
         $this->document_reference = new InspectionStaticDocno();
+        $this->personalDetails = new PersonalDetails();
+        $this->familyHistory = new FamilyHistory();
     }
 
     public function Index(Request $request)
@@ -122,21 +128,27 @@ class OHCHygieneCleaningChecklistController extends Controller
         $data = array(
             'shifts' => $shift,
         );
-        return view('inspection.inspection_ohc.ohc_hygiene_checklist.list', $data);
+        return view('inspection.inspection_ohc.physical_medical_examination.list', $data);
     }
 
     public function add(Request $request)
     {
         try {
             $shift  = $this->shift->select('id', 'shift')->where('status', '1')->get();
-            $document_no = $this->document_reference->selectUsingName('DailyOHCHygieneCleaningChecklist');
-
+            $document_no = $this->document_reference->selectUsingName('PhysicalHealthExamination');
+            $personalDetails = $this->personalDetails->personalDetails();
+            $familyHistory = $this->familyHistory->familyHistory();
+            $check_points = getCheckListQuestion(OHC_PHYSICAL_HEALTH_EXAMINATION);
+          
             $data = array(
                 'shifts' => $shift,
                 'document_no' => $document_no,
+                'personalDetails' => $personalDetails,
+                'check_points' => $check_points,
+                'familyHistory' => $familyHistory,
 
             );
-            return view('inspection.inspection_ohc.ohc_hygiene_checklist.add', $data);
+            return view('inspection.inspection_ohc.physical_medical_examination.add', $data);
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong!');
@@ -234,7 +246,7 @@ class OHCHygieneCleaningChecklistController extends Controller
                 'document_no' => $document_no,
 
             ];
-            return view('inspection.inspection_ohc.ohc_hygiene_checklist.view', $data);
+            return view('inspection.inspection_ohc.physical_medical_examination.view', $data);
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong!');
@@ -257,7 +269,7 @@ class OHCHygieneCleaningChecklistController extends Controller
                 'document_no' => $document_no,
 
             ];
-            return view('inspection.inspection_ohc.ohc_hygiene_checklist.approval', $data);
+            return view('inspection.inspection_ohc.physical_medical_examination.approval', $data);
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong!');
@@ -662,7 +674,7 @@ class OHCHygieneCleaningChecklistController extends Controller
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $view = view('inspection.inspection_ohc.ohc_hygiene_checklist.pdf', $data);
+            $view = view('inspection.inspection_ohc.physical_medical_examination.pdf', $data);
             $html = $view->render();
 
 
@@ -708,7 +720,7 @@ class OHCHygieneCleaningChecklistController extends Controller
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $html = view('inspection.inspection_ohc.ohc_hygiene_checklist.generalPdf', $data)->render();
+            $html = view('inspection.inspection_ohc.physical_medical_examination.generalPdf', $data)->render();
 
             $mpdf->WriteHTML($html);
 

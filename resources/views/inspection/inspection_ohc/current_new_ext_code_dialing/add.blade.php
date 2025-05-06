@@ -91,7 +91,7 @@
                                                     <div class="col-md-4 mb-3">
                                                         <div class="form-group form-input">
                                                             <label class="form-label require">Enter Number</label>
-                                                            <input type="text" name="number[1]" id="number"
+                                                            <input type="text" name="number[1]" id="number" placeholder="Enter the number"
                                                                 class="form-control">
                                                         </div>
                                                     </div>
@@ -257,7 +257,7 @@
                             <div class="row">
                                 <div class="col-md-4 mb-3">
                                     <div class="form-group form-input">
-                                        <label class="form-label require">Unit</label> 
+                                        <label class="form-label require">Unit</label>
                                         <select name="unit_id[${form_set_count}]" id="unit_id-${form_set_count}" class="form-control unit-select single-select">
                                             <option value="">Select Unit</option>
                                             @foreach ($unitList as $unit)

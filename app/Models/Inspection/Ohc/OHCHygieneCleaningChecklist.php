@@ -41,7 +41,7 @@ class OHCHygieneCleaningChecklist extends Model
 
         if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_NURSING_OFFICER)) {
         } else if (CheckUserRole(ROLE_CLEANER)) {
-
+            $query->where('inspection_ohc_hygiene_checklist.created_by', Auth::id());
         }
 
         $org_total =  $query;

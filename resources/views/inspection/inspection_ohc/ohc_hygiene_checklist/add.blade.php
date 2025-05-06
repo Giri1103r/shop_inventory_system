@@ -238,6 +238,9 @@
                             remarks: {
                                 required: true,
                                 noSpaces: true,
+                                minlength: 3,
+                                maxlength: 300,
+
                             },
                         },
                         messages: {
@@ -253,6 +256,9 @@
                             },
                             remarks: {
                                 required: "Remarks is required",
+                                minlength: "Minimum 3 characters required",
+                                maxlength: "Maximum character does not exceed 300"
+
                             },
                         },
                         errorElement: 'span',
