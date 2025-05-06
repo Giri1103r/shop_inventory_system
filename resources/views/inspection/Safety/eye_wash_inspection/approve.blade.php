@@ -100,6 +100,24 @@
                                                 </div>
                                             </div>
                                         </div>
+
+                                        @php
+                                        $signature = GetSafetySignature(
+                                            $inspection_details->created_by,
+                                            $inspection_details->id,
+                                            EYE_WASH_INSPECTION,
+                                        );
+                                    @endphp
+                                    @if (isset($signature))
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label"
+                                                    style="display: block;">{{ __('inspection.signature') }}</label>
+                                                <img src="{{ admin_url($signature) }}" alt="Signature Upload"
+                                                    style="width: 100px; margin-top: -10px;" />
+                                            </div>
+                                        </div>
+                                    @endif
                                     </div>
                                     <hr>
                                     @foreach ($inspection as $details)
@@ -250,29 +268,14 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                @php
-                                                    $signature = GetSafetySignature(
-                                                        $inspection_details->created_by,
-                                                        $inspection_details->id,
-                                                        EYE_WASH_INSPECTION,
-                                                    );
-                                                @endphp
-                                                @if (isset($signature))
-                                                    <div class="col-md-4 mb-2">
-                                                        <div class="form-group form-input">
-                                                            <label class="form-label"
-                                                                style="display: block;">{{ __('inspection.signature') }}</label>
-                                                            <img src="{{ admin_url($signature) }}" alt="Signature Upload"
-                                                                style="width: 100px; margin-top: -10px;" />
-                                                        </div>
-                                                    </div>
-                                                @endif
+
 
                                             </div>
                                         </div>
                                     @endforeach
                                 </div>
-                                @if ($inspection_details->inspection_status == WAITING_FOR_EHS_OFFICER_VERIFICATION)
+
+                                @if ($inspection_details->inspection_status == WAITING_FOR_EHS_OFFICER_VERIFICATION && (checkUserRole(ROLE_EHS_OFFICER) || isAdmin()))
                                     <div class="row mt-3">
                                         <div class="card-header-inner">
                                             <h4 class="text-white">{{ __('inspection.ehs_officer_verify') }}</h4>
@@ -627,7 +630,7 @@
                                     $inspection_details->inspection_status == WAITING_FOR_CAPA_ACTION ||
                                         $inspection_details->inspection_status == L2_MANAGER_REJECTED ||
                                         $inspection_details->inspection_status == EHS_OFFICER_REJECTED ||
-                                        $inspection_details->inspection_status == L1_MANAGER_REJECTED)
+                                        $inspection_details->inspection_status == L1_MANAGER_REJECTED && checkUserRole(ROLE_FIRE_ASSOCIATES || isAdmin()))
                                     <div class="row mt-3">
                                         <div class="card-header-inner">
                                             <h4 class="text-white">{{ __('inspection.capa_action') }}</h4>
@@ -681,7 +684,7 @@
                                     </form>
                                 @endif
 
-                                @if ($inspection_details->inspection_status == WAITING_FOR_CAPA_VERIFICATION)
+                                @if ($inspection_details->inspection_status == WAITING_FOR_CAPA_VERIFICATION && (checkUserRole(ROLE_EHS_OFFICER) || isAdmin()))
                                     <form method="POST" id="forklistassessmentAdd"
                                         action="{{ admin_url('safety/eye-wash-inspection/monthly/capa/reverify/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
@@ -732,7 +735,8 @@
                                     </form>
                                 @endif
 
-                                @if ($inspection_details->inspection_status == WAITING_FOR_L1_VERIFICATION)
+                                @if ($inspection_details->inspection_status == WAITING_FOR_L1_VERIFICATION && (checkUserRole(ROLE_L1_MANAGER) || isAdmin()))
+
                                     <form method="POST" id="levelOneManager"
                                         action="{{ admin_url('safety/eye-wash-inspection/monthly/level-one/verify/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
@@ -784,7 +788,8 @@
                                     </form>
                                 @endif
 
-                                @if ($inspection_details->inspection_status == WAITING_FOR_L2_VERIFICATION)
+                                @if ($inspection_details->inspection_status == WAITING_FOR_L2_VERIFICATION && (checkUserRole(ROLE_L2_MANAGER) || isAdmin()))
+
                                     <form method="POST" id="levelTwoManager"
                                         action="{{ admin_url('safety/eye-wash-inspection/monthly/level-two/verify/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">

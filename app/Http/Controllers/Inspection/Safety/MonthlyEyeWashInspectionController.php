@@ -213,7 +213,6 @@ class MonthlyEyeWashInspectionController extends Controller
     {
         try {
 
-            // dd($request->all());
 
             $rules = [
                 'inspection_date' => 'required',
@@ -271,7 +270,7 @@ class MonthlyEyeWashInspectionController extends Controller
 
             $ehsOfficer = GetEHSOfficer();
             $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
-         $mailsubject = 'Monthly EyeWash Inspection';
+            $mailsubject = 'Monthly EyeWash Inspection';
             $notificationData = array(
                 'notification_type' => SAFETY_INSPECTION,
                 'module_type' => 3,
@@ -766,7 +765,7 @@ class MonthlyEyeWashInspectionController extends Controller
                 $document_no = $this->document_reference->selectOne($eye_wash->document_reference_id);
 
                 $prepared_by_signature = GetSafetySignature($eye_wash->created_by, $eye_wash->id, EYE_WASH_INSPECTION);
-                $verified_by_signature = GetSafetySignature($eye_wash->updated_by, $eye_wash->id, EYE_WASH_INSPECTION);
+                $verified_by_signature = GetSafetySignature($eye_wash->verified_by, $eye_wash->id, EYE_WASH_INSPECTION);
                 $approved_by_signature = GetSafetySignature($eye_wash->approved_by, $eye_wash->id, EYE_WASH_INSPECTION);
 
                 if (file_exists($logoPath)) {
@@ -924,7 +923,7 @@ class MonthlyEyeWashInspectionController extends Controller
                     $drawing->setOffsetY(5);
                     $drawing->setHeight(40);
                     $drawing->setWorksheet($sheet);
-                    $sheet->setCellValue("F{$signatureRowStart}", "\n\n\nVerified By:\n" . getUsername($eye_wash->updated_by));
+                    $sheet->setCellValue("F{$signatureRowStart}", "\n\n\nVerified By:\n" . getUsername($eye_wash->verified_by));
                 } else {
                     $sheet->setCellValue("F{$signatureRowStart}", "Verified By:\nInspection not yet completed");
                 }
@@ -1021,7 +1020,7 @@ class MonthlyEyeWashInspectionController extends Controller
                 $document_no = $this->document_reference->selectOne($inspection_details->document_reference_id);
                 $approved_by = GetSafetySignature( $inspection_details->approved_by, $inspection_details->id, EYE_WASH_INSPECTION);
                 $verified_by = GetSafetySignature( $inspection_details->verified_by, $inspection_details->id,EYE_WASH_INSPECTION);
-                $checked_by = GetSafetySignature( $inspection_details->verified_by,$inspection_details->id, EYE_WASH_INSPECTION);
+                $checked_by = GetSafetySignature( $inspection_details->created_by,$inspection_details->id, EYE_WASH_INSPECTION);
                 $document_no = $this->document_reference->selectUsingName('MonthlyEyeWashInspection');
 
 
@@ -1076,7 +1075,7 @@ class MonthlyEyeWashInspectionController extends Controller
             $document_no = $this->document_reference->selectOne($eye_wash->document_reference_id);
 
             $prepared_by_signature = GetSafetySignature($eye_wash->created_by, $eye_wash->id, EYE_WASH_INSPECTION);
-            $verified_by_signature = GetSafetySignature($eye_wash->updated_by, $eye_wash->id, EYE_WASH_INSPECTION);
+            $verified_by_signature = GetSafetySignature($eye_wash->verified_by, $eye_wash->id, EYE_WASH_INSPECTION);
             $approved_by_signature = GetSafetySignature($eye_wash->approved_by, $eye_wash->id, EYE_WASH_INSPECTION);
 
                 foreach (range('A', 'M') as $col) {
@@ -1248,7 +1247,7 @@ class MonthlyEyeWashInspectionController extends Controller
                 $drawing->setOffsetY(5);
                 $drawing->setHeight(40);
                 $drawing->setWorksheet($sheet);
-                $sheet->setCellValue("F{$signatureRowStart}", "\n\n\nVerified By:\n" . getUsername($eye_wash->updated_by));
+                $sheet->setCellValue("F{$signatureRowStart}", "\n\n\nVerified By:\n" . getUsername($eye_wash->verified_by));
             } else {
                 $sheet->setCellValue("F{$signatureRowStart}", "Verified By:\nInspection not yet completed");
             }
