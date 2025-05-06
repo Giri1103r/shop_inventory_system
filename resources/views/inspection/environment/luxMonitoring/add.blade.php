@@ -216,14 +216,14 @@
                     dateFormat: "d-m-Y",
                     onChange: function(selectedDates, dateStr, instance) {
                         let index = instance.element.id.replace("date_of_monitoring_",
-                            ""); // Extract index
+                            "");
                         let $nextDueDate = $("#next_due_date_of_monitoring_" + index);
 
                         if ($nextDueDate.length) {
                             $nextDueDate.flatpickr({
                                 dateFormat: "d-m-Y",
                                 minDate: selectedDates[0].fp_incr(
-                                    1) // Next Due Date should be after Date of Monitoring
+                                    1)
                             });
                         }
                     }
@@ -232,14 +232,14 @@
                     dateFormat: "d-m-Y",
                     onChange: function(selectedDates, dateStr, instance) {
                         let index = instance.element.id.replace("date_of_monitoring2_",
-                            ""); // Extract index
+                            "");
                         let $nextDueDate = $("#next_due_date_of_monitoring2_" + index);
 
                         if ($nextDueDate.length) {
                             $nextDueDate.flatpickr({
                                 dateFormat: "d-m-Y",
                                 minDate: selectedDates[0].fp_incr(
-                                    1) // Next Due Date should be after Date of Monitoring
+                                    1)
                             });
                         }
                     }
@@ -413,7 +413,7 @@
                         required: "Please Select the date."
                     }
                 });
-                row.find("input[name$='[act_rule]']").rules("add", {
+                newRow.find("input[name$='[act_rule]']").rules("add", {
                     minlength: 3,
                     maxlength: 100,
                     required: true,
@@ -567,8 +567,8 @@
                 addValidationRules($(this));
             });
 
-            function addValidationRules(row) {
-                row.find("input[name*='[lux_level1]']").rules("add", {
+            function addValidationRules(newRow) {
+                newRow.find("input[name*='[lux_level1]']").rules("add", {
                     number: true,
                     required: true,
                     min: 0,
@@ -578,7 +578,7 @@
                         required: "Lux Level is required.",
                     }
                 });
-                row.find("input[name*='[lux_level2]']").rules("add", {
+                newRow.find("input[name*='[lux_level2]']").rules("add", {
                     number: true,
                     required: true,
                     min: 0,
@@ -588,19 +588,19 @@
                         required: "Lux Level is required.",
                     }
                 });
-                row.find("select[name$='[unit_id]']").rules("add", {
+                newRow.find("select[name$='[unit_id]']").rules("add", {
                     required: true,
                     messages: {
                         required: "Please select the Unit .",
                     }
                 });
-                row.find("select[name$='[location_id]']").rules("add", {
+                newRow.find("select[name$='[location_id]']").rules("add", {
                     required: true,
                     messages: {
                         required: "Please select the location.",
                     }
                 });
-                row.find("select[name$='[department_id]']").rules("add", {
+                newRow.find("select[name$='[department_id]']").rules("add", {
                     required: true,
                     messages: {
                         required: "Please select the department.",
@@ -631,7 +631,7 @@
                         required: "Please Select the date."
                     }
                 });
-                row.find("input[name$='[act_rule]']").rules("add", {
+                newRow.find("input[name$='[act_rule]']").rules("add", {
                     minlength: 3,
                     maxlength: 100,
                     required: true,

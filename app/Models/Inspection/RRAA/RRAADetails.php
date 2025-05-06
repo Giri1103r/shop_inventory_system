@@ -68,7 +68,7 @@ class RRAADetails extends Model
             $query = $query->where('inspection_rraa.category',  decryptId($request->category) );
         }
         if (isset($request->ohs_compliance_index) && $request->ohs_compliance_index) {
-            dd($request->ohs_compliance_index);
+            
             $query = $query->where('inspection_rraa.ohs_compliance_index',  $request->ohs_compliance_index );
         }
         if ($request->has('frequency') && $request->frequency) {

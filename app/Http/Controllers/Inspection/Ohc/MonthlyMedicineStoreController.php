@@ -177,7 +177,7 @@ class MonthlyMedicineStoreController extends Controller
                 $mailsubject = 'Monthly OHC Store Medicine Inspection Checklist';
                 $notificationData = array(
                     'notification_type' => OHC_INSPECTION,
-                    'module_type' => 1,
+                    'module_type' => 18,
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(
                         'title' => $mailsubject,
@@ -382,7 +382,7 @@ class MonthlyMedicineStoreController extends Controller
             $mailsubject = 'Monthly OHC Store Medicine Inspection Checklist';
             $notificationData = array(
                 'notification_type' => OHC_INSPECTION,
-                'module_type' => 1,
+                'module_type' => 18,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,

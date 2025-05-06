@@ -81,7 +81,7 @@
 
                                 <div class="row ">
                                     <div class="card-header-inner">
-                                        <h4 class="text-white">Approval</h4>
+                                        <h4 class="text-white">EHS Officer Approval</h4>
                                     </div>
 
                                     <form method="POST" id="forklistassessmentAdd" action="{{ admin_url('ohc/first-aid/opd-medicine-inspection/verify/submit') }}" autocomplete="off" enctype="multipart/form-data">
@@ -142,7 +142,7 @@
                         required: true,
                         minlength: 3,
                         maxlength: 100,
-                        
+
                     },
                     signature_image: {
                         required: true,

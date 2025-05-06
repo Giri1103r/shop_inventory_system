@@ -28,7 +28,7 @@ use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use PhpOffice\PhpSpreadsheet\RichText\RichText;
-
+use Illuminate\Support\Facades\Response;
 
 class MSDSController extends Controller
 {
@@ -144,6 +144,31 @@ class MSDSController extends Controller
             report($ex);
             Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('msds/list'));
+        }
+    }
+
+    public function Uniquecheck(Request $request)
+    {
+        if ($request->ajax()) {
+            $item_code = $request->item_code;
+            $name_of_chemical = $request->name_of_chemical;
+
+            $id = $request->id;
+
+            if (empty($id)) {
+                $isUnique = $this->msdsDetails->uniqueCheck($item_code, $name_of_chemical);
+
+
+            } else {
+                $id = decryptId($id);
+
+                $isUnique = $this->msdsDetails->existUniqueCheck($item_code, $id);
+            }
+
+            if ($isUnique->count()) {
+                return Response::json(false);
+            }
+            return Response::json(true);
         }
     }
 
