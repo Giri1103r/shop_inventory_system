@@ -153,7 +153,7 @@
                                                 <x-button-submit class="submit"></x-button-submit>
                                                 <x-button-reset class="submit"></x-button-reset>
                                                 <x-button-cancel
-                                                    href="{{ admin_url('safety/forklift-inspection/monthly/list') }}"></x-button-cancel>
+                                                    href="{{ admin_url('ohc/first-aid/opd-medicine-inspection/list') }}"></x-button-cancel>
                                             </div>
 
                                     </form>

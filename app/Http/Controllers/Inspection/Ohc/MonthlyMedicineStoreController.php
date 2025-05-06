@@ -186,7 +186,7 @@ class MonthlyMedicineStoreController extends Controller
                         'id' => $inspection_details->id,
                         'module' => 1,
                     )),
-                    'web_link' =>  admin_url('ohc/monthly-medicine-store/inspection/view/' . encryptId($inspection_details->id)),
+                    'web_link' =>  admin_url('ohc/monthly-medicine-store/inspection/approval/' . encryptId($inspection_details->id)),
                     'assigned_user' => array_to_string($ehsOfficers),
                     'created_by' => Auth::id(),
                 );

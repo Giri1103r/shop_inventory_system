@@ -127,6 +127,8 @@ class HealthInstrumentCalibrationController extends Controller
             return view('inspection.inspection_ohc.health_instrument.add', $data);
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/health-instrument/calibration-track-sheet/list'));
         }
     }
 
@@ -216,6 +218,8 @@ class HealthInstrumentCalibrationController extends Controller
             return view('inspection.inspection_ohc.health_instrument.view', $data);
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/health-instrument/calibration-track-sheet/list'));
         }
     }
 
@@ -472,7 +476,8 @@ class HealthInstrumentCalibrationController extends Controller
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);
-            return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/health-instrument/calibration-track-sheet/list'));
         }
     }
 
@@ -681,9 +686,10 @@ class HealthInstrumentCalibrationController extends Controller
             $writer->save($filePath);
 
             return response()->download($filePath)->deleteFileAfterSend(true);
-        } catch (\Exception $e) {
-            dd($e);
-            return back()->with('error', $e->getMessage());
+        } catch (\Exception $ex) {
+            report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/health-instrument/calibration-track-sheet/list'));
         }
     }
 

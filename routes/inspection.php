@@ -27,7 +27,7 @@ use App\Http\Controllers\Inspection\Fire\PASystemInspectionController;
 use App\Http\Controllers\Inspection\Master\ChecklistSubTypeController;
 use App\Http\Controllers\Inspection\Ohc\DailyVitalEquipmentController;
 use App\Http\Controllers\Inspection\Safety\Master\EquipmentController;
-use App\Http\Controllers\Inspection\ohc\FirstAidBagChecklistController;
+use App\Http\Controllers\Inspection\Ohc\FirstAidBagChecklistController;
 use App\Http\Controllers\Inspection\Ohc\MonthlyMedicineStoreController;
 use App\Http\Controllers\Inspection\Environment\LuxMonitoringController;
 use App\Http\Controllers\Inspection\Fire\CertifiedFireFighterController;

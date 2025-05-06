@@ -233,7 +233,7 @@ class Notification extends Model
                     ->where('template_notification.trash', 'NO');
             }
 
-        }elseif (Auth::user()->role == ROLE_EHS_OFFICER) {
+        }elseif (Auth::user()->role == ROLE_INSPECTION_CREATOR) {
             $nomination = DB::table('users')
                 ->select('id')
                 ->where('employee_id', Auth::user()->employee_id)

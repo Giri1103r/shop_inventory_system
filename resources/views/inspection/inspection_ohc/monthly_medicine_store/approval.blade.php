@@ -83,7 +83,7 @@
 
                                 <div class="row card">
                                     <div class="card-header-inner p-2">
-                                        <h4 class="text-white">Approval</h4>
+                                        <h4 class="text-white">EHS Officer Approval</h4>
                                     </div>
                                     <form method="POST" id="forklistassessmentAdd"
                                         action="{{ admin_url('ohc/monthly-medicine-store/inspection/verify/submit') }}"

@@ -46,7 +46,14 @@ class MonthlyMedicineStore extends Model
                     ->orWhere('inspection_ohc_medicine_store_inspection.next_due', 'LIKE', '%' . $search . '%');
             });
         }
-
+        $user = Auth::user();
+        $userRole = string_to_array($user->role);
+        $empId = $user->employee_id;
+        if (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole)  || in_array(ROLE_EHS_OFFICER, $userRole)  || in_array(ROLE_INSPECTION_CREATOR, $userRole) || in_array(ROLE_SAFETY_OFFICER, $userRole) || in_array(ROLE_MEDICAL_ASSISTANT, $userRole)) {
+            $query->orderBy('inspection_ohc_medicine_store_inspection.id', 'DESC');
+        } else {
+            $query->where('inspection_ohc_medicine_store_inspection.created_by', Auth::id());
+        }
         if ($request->has('inspection_date') && $request->inspection_date) {
             $formattedDate = DBdateformat($request->inspection_date);
             $query = $query->whereDate('inspection_ohc_medicine_store_inspection.inspection_date', $formattedDate);

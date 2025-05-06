@@ -90,7 +90,7 @@
                                     </div>
                                 </div>
                                 <div class="mb-3 col-md-4 form-input">
-                                    <label class="form-label view_label">{{ __('category') }}</label>
+                                    <label class="form-label view_label">{{ __('Category') }}</label>
                                     <div class="view_data">
                                         {{ getCategoryname($rraa_details->category) }}
                                     </div>
