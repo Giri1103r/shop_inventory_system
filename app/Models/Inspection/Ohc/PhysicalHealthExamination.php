@@ -166,7 +166,7 @@ class PhysicalHealthExamination extends Model
         }
 
         $responses = [
-            'clinical_details' => ( $request->persnal_details),
+
             'status' => ($request->status),
 
         ];
@@ -189,16 +189,16 @@ class PhysicalHealthExamination extends Model
             'dob' => DBdateformat($request->dob),
             'address' => $request->address,
             'past_history' => $request->past_history,
-            'present_complaint' => $request->present_complaint,
+            'present_complaint' => $request->present_complaints,
             'personal_details'=>json_encode( $responses),
             'family_history'=>json_encode( $request->family_remarks),
-            'vital_checkpoints' => json_encode($request->reading_values),
-            'near_with_glass' => $request->near_with_glass,
-            'near_without_glass' => $request->near_without_glass,
-            'near_without_glass_yes' => $request->near_without_glass_yes,
-            'distance_with_glass' => $request->distance_with_glass,
-            'distance_without_glass' => $request->distance_without_glass,
-            'distance_without_glass_yes' => $request->distance_without_glass_yes,
+            'vital_checkpoints' => json_encode($request->reading_value),
+            'near_with_glass' => $request->near_with_glasses,
+            'near_without_glass' => $request->near_without_glasses,
+            'near_without_glass_yes' => $request->near_without_glasses_yes,
+            'distance_with_glass' => $request->distance_with_glasses,
+            'distance_without_glass' => decryptId($request->distance_with_out_glasses),
+            'distance_without_glass_yes' =>decryptId( $request->distance_with_out_glasses_yes),
             'remarks' => $request->remarks,
 
             'created_by' => Auth::id(),
