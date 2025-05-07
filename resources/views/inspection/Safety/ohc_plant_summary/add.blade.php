@@ -127,7 +127,7 @@
                                                         <tr>
                                                             <td style="border: 1px solid #000;">1</td>
                                                             <td style="border: 1px solid #000;">
-                                                                <div class="form-input">
+                                                                <div class="form-input col-md-3" style="min-width:200px;">
                                                                     <textarea type="text" class="form-control description" style="resize: none;" name="description[1]">{{ old('description.1') }}</textarea>
                                                                     @error('description.1')
                                                                         <div class="error">{{ $message }}</div>
@@ -137,21 +137,26 @@
                                                             @foreach ($units as $index => $unit)
                                                                 <td style="border: 1px solid #000;">
                                                                     <div class="form-input">
-                                                                        <input type="number" class="form-control"
-                                                                            name="unit_{{ $index + 1 }}[1]"
-                                                                            data-row-id="1"
-                                                                            data-index="{{ $index + 1 }}"
-                                                                            value="{{ old('unit_' . ($index + 1) . '.1') }}">
+                                                                        <div class="col-md-3" style="min-width: 200px;">
+                                                                            <input type="number" class="form-control"
+                                                                                name="unit_{{ $index + 1 }}[1]"
+                                                                                data-row-id="1"
+                                                                                data-index="{{ $index + 1 }}"
+                                                                                value="{{ old('unit_' . ($index + 1) . '.1') }}">
+                                                                        </div>
                                                                     </div>
                                                                     @error('unit_' . ($index + 1) . '.1')
                                                                         <div class="error">{{ $message }}</div>
                                                                     @enderror
                                                                 </td>
                                                             @endforeach
+
                                                             <td style="border: 1px solid #000;">
-                                                                <input type="number" class="form-control" readonly
-                                                                    name="total_quantity[1]"
-                                                                    value="{{ old('total_quantity.1') }}">
+                                                                <div class="form-input" style="width: 200px;">
+                                                                    <input type="number" class="form-control" readonly
+                                                                        name="total_quantity[1]"
+                                                                        value="{{ old('total_quantity.1') }}">
+                                                                </div>
                                                                 @error('total_quantity.1')
                                                                     <div class="error">{{ $message }}</div>
                                                                 @enderror
@@ -209,7 +214,7 @@
                                                         <tr>
                                                             <td style="border: 1px solid #000;">1</td>
                                                             <td style="border: 1px solid #000;">
-                                                                <div class="form-input">
+                                                                <div class="form-input" style="min-width:200px;">
                                                                     <textarea type="text" class="form-control" style="resize: none;" name="fire_pump_details[1]">{{ old('fire_pump_details.1') }}</textarea>
                                                                 </div>
                                                                 @error('fire_pump_details.1')
@@ -218,7 +223,7 @@
                                                             </td>
                                                             @foreach ($units as $index => $unit)
                                                                 <td style="border: 1px solid #000;">
-                                                                    <div class="form-input">
+                                                                    <div class="form-input" style="min-width: 200px;">
                                                                         <input type="number" class="form-control"
                                                                             name="fire_pump_details_unit_{{ $index + 1 }}[1]"
                                                                             value="{{ old('fire_pump_details_unit_' . ($index + 1) . '.1') }}">

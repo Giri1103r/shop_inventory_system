@@ -50,7 +50,7 @@ class TypeofWork extends Model
             '=',
             'ptw_masters_typeofwork.id'
         )
-        ->where('ptw_masters_typeofwork_upload.trash', 'NO');
+      ;
 
         $org_total =  $query;
         $org_total_counts = $org_total->count();

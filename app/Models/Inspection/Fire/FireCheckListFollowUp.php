@@ -40,7 +40,7 @@ class FireCheckListFollowUp extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_fire_checklist_follow.*', 'inspection_fire_observation.*', 'inspection_fire_checklist_follow.id as inspectionid', 'inspection_fire_observation.id as observationid')->leftjoin('inspection_fire_observation', 'inspection_fire_observation.inspection_id', '=', 'inspection_fire_checklist_follow.id');
+        $query = $this->select('inspection_fire_checklist_follow.*', 'inspection_fire_checklist_follow.created_by as fire_created_by', 'inspection_fire_observation.*', 'inspection_fire_checklist_follow.id as inspectionid', 'inspection_fire_observation.id as observationid')->leftjoin('inspection_fire_observation', 'inspection_fire_observation.inspection_id', '=', 'inspection_fire_checklist_follow.id');
         $org_total =  $query;
         $org_total_counts = $org_total->count();
 
@@ -54,7 +54,7 @@ class FireCheckListFollowUp extends Model
         }
         if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_OFFICER) || CheckUserRole(ROLE_L1_MANAGER) || CheckUserRole(ROLE_L2_MANAGER)) {
         } else if (CheckUserRole(ROLE_FIRE_ASSOCIATES)) {
-            $query->where('inspection_fire_detector.created_by', Auth::id());
+            $query->where('inspection_fire_checklist_follow.created_by', Auth::id());
         }
         if (isset($request->observation_id) && $request->observation_id) {
             $query = $query->where('inspection_fire_checklist_follow.observation_id',  $request->observation_id );
@@ -195,7 +195,7 @@ class FireCheckListFollowUp extends Model
         }
 
 
-      
+
 
         if (isset($request->inspection_status) && $request->inspection_status) {
             $query = $query->where('inspection_fire_observation.observation_status', decryptId($request->inspection_status));

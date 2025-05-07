@@ -155,12 +155,13 @@
 
                                                     <tbody>
                                                         @foreach ($fire_water_pump_details as $index => $quantity_detail)
-                                                            <tr>
-                                                                <td style="border: 1px solid #000;">{{ $index }}
-                                                                </td>
-                                                                <td style="border: 1px solid #000;">
-                                                                    {{ $quantity_detail['fire_pump_details'] }}</td>
+                                                        <tr>
+                                                            <td style="border: 1px solid #000;">{{ $index }}
+                                                            </td>
+                                                            <td style="border: 1px solid #000;">
+                                                                {{ $quantity_detail['fire_pump_details'] }}</td>
                                                                 @foreach ($units as $index => $unit)
+
                                                                     <td style="border: 1px solid #000;">
                                                                         {{ isset($quantity_detail['fire_pump_details_unit_' . $index + 1]) ? $quantity_detail['fire_pump_details_unit_' . $index + 1] : '' }}
                                                                     </td>

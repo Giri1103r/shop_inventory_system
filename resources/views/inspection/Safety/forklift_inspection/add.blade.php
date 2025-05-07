@@ -597,7 +597,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.remarks') }}</label>
-                                                        <textarea name="remarks[${form_set_count}]" id="remarks" class="form-control remarks" style="resize: none;"></textarea>
+                                                        <textarea name="remarks[${form_set_count}]" id="remarks[${form_set_count}]" class="form-control remarks" style="resize: none;"></textarea>
                                                     </div>
                                                 </div>
                                             </div>

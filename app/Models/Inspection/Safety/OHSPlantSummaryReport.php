@@ -112,14 +112,12 @@ class OHSPlantSummaryReport extends Model
         foreach ($descriptions as $key => $desc) {
             $item = ['description' => $desc];
 
-            // Dynamically collect all "unit_x" fields
             foreach ($request->all() as $field => $values) {
                 if (preg_match('/^unit_\d+$/', $field) && isset($values[$key])) {
                     $item[$field] = $values[$key];
                 }
             }
 
-            // Include total_quantity if provided
             if (isset($request->total_quantity[$key])) {
                 $item['total_quantity'] = $request->total_quantity[$key];
             }
@@ -127,14 +125,12 @@ class OHSPlantSummaryReport extends Model
             $quantity_details[$key] = $item;
         }
 
-        // Handle fire_water_pump_details dynamically
         $fire_water_pump_details = [];
         $fire_pump_details = $request->fire_pump_details ?? [];
 
         foreach ($fire_pump_details as $key => $desc) {
             $item = ['fire_pump_details' => $desc];
 
-            // Dynamically collect all "fire_pump_details_unit_x" fields
             foreach ($request->all() as $field => $values) {
                 if (preg_match('/^fire_pump_details_unit_\d+$/', $field) && isset($values[$key])) {
                     $item[$field] = $values[$key];
@@ -144,7 +140,6 @@ class OHSPlantSummaryReport extends Model
             $fire_water_pump_details[$key] = $item;
         }
 
-        // Final insert array
         $insert_array = [
             'document_reference_id' => decryptId($request->document_reference_id),
             'inspection_date' => DBdateformat($request->inspection_date),

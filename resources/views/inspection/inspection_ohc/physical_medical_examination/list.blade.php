@@ -73,11 +73,13 @@
                                 class="table primary-table-bordered table-bordered table-striped display responsive nowrap w-100 mt-2 datatable-list">
                                 <thead class="thead-primary">
                                     <tr>
-                                        <th>{{ __('common.sno') }}</th>
-                                        <th>{{ __('inspection.date') }}</th>
-                                        <th>{{ __('Shift') }}</th>
-                                        <th>{{ __('Checklist Status') }}</th>
-                                        <th>{{ __('common.action') }}</th>
+                                        <th>S.NO</th>
+                                       <th>Employee Id</th>
+                                       <th>Employee Name</th>
+                                       <th>Unit</th>
+                                       <th>Department</th>
+                                       <th>Date</th>
+                                       <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody></tbody>
@@ -153,16 +155,24 @@
                             searchable: true,
                         },
                         {
+                            data: 'emp_id',
+                            name: 'emp_id',
+                        },
+                        {
+                            data: 'emp_name',
+                            name: 'emp_name',
+                        },
+                        {
+                            data: 'unit_id',
+                            name: 'unit_id',
+                        },
+                        {
+                            data: 'department_id',
+                            name: 'department_id',
+                        },
+                        {
                             data: 'date',
                             name: 'date',
-                        },
-                        {
-                            data: 'shift',
-                            name: 'shift',
-                        },
-                        {
-                            data: 'checklist_status',
-                            name: 'checklist_status',
                         },
                         {
                             data: 'action',
