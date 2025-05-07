@@ -23,7 +23,7 @@ class LogViewer
     $allowedUserId = env('LOG_VIEWER_CHECK_ID');
 
     if (Auth::id() != $allowedUserId) {
-      dd('test');
+      dd('test',Auth::id(), $allowedUserId);
       abort(403, 'Unauthorized');
     }
 
