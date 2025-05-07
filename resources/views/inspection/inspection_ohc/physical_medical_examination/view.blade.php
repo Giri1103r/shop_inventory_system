@@ -38,139 +38,139 @@
                             <div class="card-body ">
                                 <div class="row">
                                     <div class="card-header-inner">
-                                        <h4 class="text-white">OHC HYGIENE CLEANING CHECKLIST</h4>
+                                        <h4 class="text-white">Employee Details</h4>
                                     </div>
                                 </div>
 
 
 
                                 <div class="row">
-
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('inspection.doc_no') }}</label>
+                                        <div class="view_data">
+                                            {{ (isset($document_no->doc_no) ? $document_no->doc_no : '') }}
+                                        </div>
+                                    </div>
 
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('inspection.issue_date') }}</label>
                                         <div class="view_data">
-                                            {{ Displaydateformat(isset($inspection_details->issue_date) ? $inspection_details->issue_date : '') }}
+                                            {{ Displaydateformat(isset($document_no->issue_date) ? $document_no->issue_date : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('inspection.rev_date') }}</label>
                                         <div class="view_data">
-                                            {{ getShiftname(isset($inspection_details->shift_id) ? $inspection_details->shift_id : '') }}
+                                            {{ (isset($document_no->rev_dt) ? $document_no->rev_dt : '') }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('Employee Id') }}</label>
+                                        <div class="view_data">
+                                            {{ (isset($physicalHealth->emp_id) ? $physicalHealth->emp_id : '') }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('Employee Name') }}</label>
+                                        <div class="view_data">
+                                            {{ (isset($physicalHealth->emp_name) ? $physicalHealth->emp_name : '') }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('Contact Number') }}</label>
+                                        <div class="view_data">
+                                            {{ (isset($physicalHealth->mobile_no) ? $physicalHealth->mobile_no : '') }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('Age') }}</label>
+                                        <div class="view_data">
+                                            {{ (isset($physicalHealth->age) ? $physicalHealth->age : '') }}
                                         </div>
                                     </div>
 
                                     <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('Date') }}</label>
+                                        <div class="view_data">
+                                            {{ Displaydateformat(isset($physicalHealth->date) ? $physicalHealth->date : '') }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('Date of Birth') }}</label>
+                                        <div class="view_data">
+                                            {{ Displaydateformat(isset($physicalHealth->dob) ? $physicalHealth->dob : '') }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('Unit') }}</label>
+                                        <div class="view_data">
+                                            {{ getUnitname(isset($physicalHealth->unit_id) ? $physicalHealth->unit_id : '') }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('Department') }}</label>
+                                        <div class="view_data">
+                                            {{getDepartment(isset($physicalHealth->department_id) ? $physicalHealth->department_id : '') }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('Gender') }}</label>
+                                        <div class="view_data">
+                                            {{ (isset($physicalHealth->gender) ? $physicalHealth->gender : '') }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('Blood Group') }}</label>
+                                        <div class="view_data">
+                                            {{ getBloodGroupname(isset($physicalHealth->blood_group)) }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('Heigth') }}</label>
+                                        <div class="view_data">
+                                            {{ (isset($physicalHealth->height) ? $physicalHealth->height : '') }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('Weigth') }}</label>
+                                        <div class="view_data">
+                                            {{ (isset($physicalHealth->weight) ? $physicalHealth->weight : '') }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('BMI') }}</label>
+                                        <div class="view_data">
+                                            {{ (isset($physicalHealth->bmi) ? $physicalHealth->bmi : '') }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('Address') }}</label>
+                                        <div class="view_data">
+                                            {{ (isset($physicalHealth->address) ? $physicalHealth->address : '') }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('common.created_by') }}</label>
                                         <div class="view_data">
-                                            {{ getUsername(isset($inspection_details->created_by) ? $inspection_details->created_by : '') }}
+                                            {{ getUsername(isset($physicalHealth->created_by) ? $physicalHealth->created_by : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('common.created_date') }}</label>
                                         <div class="view_data">
-                                            {{ displaydateformat(isset($inspection_details->created_at) ? $inspection_details->created_at : '') }}
+                                            {{ displaydateformat(isset($physicalHealth->created_at) ? $physicalHealth->created_at : '') }}
                                         </div>
                                     </div>
                                 </div>
 
-                            </div>
-                            <div class="table-responsive container mb-3">
-                                <table class="container p-5">
-                                    <thead>
-                                        <tr>
-                                            <th rowspan="2"
-                                                style="border: 1px solid black; padding: 12px; background-color: #ccc; text-align: center;">
-                                                Date
-                                            </th>
-                                            <th rowspan="2"
-                                                style="border: 1px solid black; padding: 12px; background-color: #ccc; text-align: center;">
-                                                Shift
-                                            </th>
-                                            <th rowspan="2"
-                                                style="border: 1px solid black; padding: 12px; background-color: #ccc; text-align: center;">
-                                                Description/Equipment
-                                            </th>
-                                            <th colspan="2"
-                                                style="border: 1px solid black; padding: 12px; background-color: #ccc; text-align: center;">
-                                                Cleaning and Sanitization
-                                            </th>
-                                            <th rowspan="2"
-                                                style="border: 1px solid black; padding: 12px; background-color: #ccc; text-align: center;">
-                                                Cleaner Signature</th>
-                                            <th rowspan="2"
-                                                style="border: 1px solid black; padding: 12px; background-color: #ccc; text-align: center;">
-                                                Nursing Signature</th>
-                                            <th rowspan="2"
-                                                style="border: 1px solid black; padding: 12px; background-color: #ccc; text-align: center;">
-                                                Remarks</th>
-                                            @isset($nursing_signature)
-                                                <th rowspan="2"
-                                                    style="border: 1px solid black; padding: 12px; background-color: #ccc; text-align: center;">
-                                                    Nursing Officer Remarks</th>
-                                            @endisset
-                                        </tr>
-                                        <tr>
-                                            <td
-                                                style="border: 1px solid black; text-align: center; padding: 12px; background-color: #ccc;">
-                                                YES</td>
-                                            <td
-                                                style="border: 1px solid black; text-align: center; padding: 12px; background-color: #ccc;">
-                                                NO</td>
-                                        </tr>
-
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td style="border: 1px solid black; text-align: center; padding: 12px;">
-                                                {{ Displaydateformat($inspection_details->issue_date) }}
-                                            </td>
-                                            <td style="border: 1px solid black; padding: 12px;">
-                                                {{ getShiftname($inspection_details->shift_id) }}
-                                            </td>
-                                            <td style="border: 1px solid black; padding: 12px;">
-                                                {{ $inspection_details->inspection_question }}
-                                            </td>
-                                            <td colspan="2"
-                                                style="border: 1px solid black; text-align: center; padding: 12px;"
-                                                class="form-input">
-                                                @if ($inspection_details->inspection_value == 1)
-                                                    <span style="color: green;">✅</span>
-                                                @else
-                                                    <span style="color: red;">❌</span>
-                                                @endif
-
-                                            </td>
-
-                                            <td style="border: 1px solid black; text-align: center; padding: 12px;"
-                                                class="form-input">
-                                                <img src="{{ admin_url($cleaner_signature) }}" alt="Cleaner Signature"
-                                                    style="width:100px; height:100px;">
-                                            </td>
-                                            <td style="border: 1px solid black; text-align: center; padding: 12px;"
-                                                class="form-input">
-                                                @if ($nursing_signature)
-                                                    <img src="{{ admin_url($cleaner_signature) }}" alt="Cleaner Signature"
-                                                        style="width:100px; height:100px;">
-                                                @else
-                                                <p>Inspection has not been Verified Yet</p>
-                                                @endif
-                                            </td>
-                                            <td style="border: 1px solid black; text-align: center; padding: 12px;"
-                                                class="form-input">
-                                                {{ $inspection_details->cleaner_remarks }}
-                                            </td>
-                                            @if ($inspection_details->updated_by)
-                                                <td style="border: 1px solid black; text-align: center; padding: 12px;"
-                                                    class="form-input">
-                                                    {{ isset($inspection_details->nursing_officer_remarks) ? $inspection_details->nursing_officer_remarks : '-' }}
-                                                </td>
-                                            @endif
-                                        </tr>
-                                    </tbody>
-                                </table>
+                                <div class="row">
+                                    <div class="card-header-inner">
+                                        <h4 class="text-white">Clinical Details</h4>
+                                    </div>
+                                </div>
 
                             </div>
+
                         </div>
                     </div>
                 </div>

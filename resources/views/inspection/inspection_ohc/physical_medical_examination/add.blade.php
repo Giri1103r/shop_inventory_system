@@ -202,8 +202,8 @@
                                                                 <td class="text-center">
                                                                     {{ $personalDetails->personal_details }}
                                                                     <input type="hidden"
-                                                                        name="id[{{ $personalDetails->id }}]"
-                                                                        value="{{ encryptId($personalDetails->id) }}">
+                                                                        name="persnal_details[{{ $personalDetails->id }}]"
+                                                                        value="{{ ($personalDetails->id) }}">
                                                                 </td>
 
                                                                 <td class="text-center">
@@ -275,10 +275,12 @@
                                                                 </td>
 
                                                                 <td class="text-center">
-                                                                    <input type="text"
-                                                                        name="remarks[{{ $familyHistory->id }}]"
-                                                                        class="form-control form-control-sm"
-                                                                        placeholder="Enter remarks">
+                                                                    <div class="form-group form-input">
+                                                                        <input type="text"
+                                                                            name="family_remarks[{{ $familyHistory->id }}]"
+                                                                            class="form-control form-control-sm"
+                                                                            placeholder="Enter remarks">
+                                                                    </div>
                                                                 </td>
                                                             </tr>
                                                         @endforeach
@@ -318,10 +320,13 @@
                                                                     </td>
 
                                                                     <td class="text-center">
-                                                                        <input type="text"
-                                                                            name="reading_value[{{ $point->id }}]"
-                                                                            class="form-control form-control-sm"
-                                                                            placeholder="Enter Reading value">
+                                                                        <div class="form-group form-input">
+                                                                            <input type="text"
+                                                                                name="reading_value[{{ $point->id }}]"
+                                                                                class="form-control form-control-sm"
+                                                                                placeholder="Enter Reading value">
+                                                                        </div>
+
                                                                     </td>
                                                                 </tr>
                                                             @endforeach
@@ -348,6 +353,7 @@
                                                             <th style="text-align: center">Vision</th>
                                                             <th style="text-align: center">Without Glasses(Right)</th>
                                                             <th style="text-align: center">With Glasses(Left)</th>
+                                                            <th style="text-align: center">Color Blindness</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -366,6 +372,16 @@
                                                                         id="distance_with_glasses" class="form-control">
                                                                 </div>
                                                             </td>
+                                                            <td>
+                                                                <div class="form-group form-input">
+                                                                   <select name="distance_with_out_glasses_yes" id="distance_with_out_glasses_yes" class="form-control single-select " style="width:100%"
+                                                                   >
+                                                                   <option value="">Select the Option</option>
+                                                                   <option value="{{encryptId(1)}}">Yes</option>
+                                                                   <option value="{{encryptId(0)}}">NO</option>
+                                                                </select>
+                                                                </div>
+                                                            </td>
                                                         </tr>
                                                         <tr>
                                                             <td>Near</td>
@@ -379,6 +395,16 @@
                                                                 <div class="form-group form-input">
                                                                     <input type="text" name="near_with_glasses"
                                                                         id="near_with_glasses" class="form-control">
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-group form-input">
+                                                                   <select name="near_with_out_glasses_yes" id="near_with_out_glasses_yes" class="form-control single-select " style="width:100%"
+                                                                   >
+                                                                   <option value="">Select the Option</option>
+                                                                   <option value="{{encryptId(1)}}">Yes</option>
+                                                                   <option value="{{encryptId(0)}}">NO</option>
+                                                                </select>
                                                                 </div>
                                                             </td>
                                                         </tr>
@@ -614,6 +640,34 @@
                             minlength: 3,
                             maxlength: 300,
                         },
+                        near_with_glasses: {
+                            required: true,
+                            minlength: 3,
+                            maxlength: 100,
+                        },
+                        near_with_out_glasses: {
+                            required: true,
+                            minlength: 3,
+                            maxlength: 100,
+                        },
+                        near_with_out_glasses_yes: {
+                            required: true,
+
+                        },
+                        distance_with_glasses: {
+                            required: true,
+                            minlength: 3,
+                            maxlength: 100,
+                        },
+                        distance_with_out_glasses: {
+                            required: true,
+                            minlength: 3,
+                            maxlength: 100,
+                        },
+                        distance_with_out_glasses_yes: {
+                            required: true,
+
+                        },
                         remarks: {
                             required: true,
                             minlength: 3,
@@ -662,6 +716,34 @@
                         },
                         bmi: {
                             required: "BMI is required"
+                        },
+                        near_with_glasses: {
+                            required: "Near with Glasses is required",
+                            minlength: "Near with Glasses must be at least 3 characters",
+                            maxlength: "Near with Glasses must not exceed 300 characters"
+                        },
+                        near_with_out_glasses: {
+                            required: "Near With out Glasses is required",
+                            minlength: "Near With out Glasses must be at least 3 characters",
+                            maxlength: "Near With out Glasses must not exceed 300 characters"
+                        },
+                        distance_with_glasses: {
+                            required: "Distance with glasses is required",
+                            minlength: "Distance with glasses must be at least 3 characters",
+                            maxlength: "Distance with glasses must not exceed 300 characters"
+                        },
+                        distance_with_out_glasses: {
+                            required: "distance without glasses is required",
+                            minlength: "distance without glasses must be at least 3 characters",
+                            maxlength: "distance without glasses must not exceed 300 characters"
+                        },
+                        distance_with_out_glasses_yes: {
+                            required: "Please Select the option",
+
+                        },
+                        near_with_out_glasses_yes: {
+                            required: "Please Select the option",
+
                         },
                         address: {
                             required: "Address is required",
@@ -719,6 +801,37 @@
                         });
                     }
                 });
+
+                $('input[name^="reading_value"]').each(function() {
+                    $(this).rules('add', {
+                        required: true,
+                        number: true,
+                        messages: {
+                            required: "Reading value is required",
+                            number: "Reading value must be a number"
+                        }
+                    });
+                });
+
+                $('input[name^="family_remarks"]').each(function() {
+                    const id = $(this).attr('name').match(/\d+/)[0]; // extract ID from name="remarks[ID]"
+
+                    $(this).rules('add', {
+                        required: {
+                            depends: function() {
+                                return $('input[name="status[' + id + ']"]:checked').length > 0;
+                            }
+                        },
+                        minlength: 3,
+                        maxlength: 100,
+                        messages: {
+                            required: "Remarks are required when status is checked",
+                            minlength: "Remarks must be at least 3 characters",
+                            maxlength: "Remarks must not exceed 100 characters"
+                        }
+                    });
+                });
+
 
 
             });
