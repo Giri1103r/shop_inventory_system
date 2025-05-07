@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'OHC HYGIENE CLEANING CHECKLIST Approval')
-@section('pageurl', admin_url('ohc/first-aid-record/list'))
+@section('title', 'Physical Health Examination Check-up')
+@section('pageurl', admin_url('ohc/physical-medical-examination/yearly/list'))
 
 @section('content')
 
@@ -29,7 +29,7 @@
                         <div class="card">
                             <div class="card-header">
                                 <div class="align-back-btc">
-                                    <x-button-back href="{{ admin_url('ohc/first-aid-record/list') }}"></x-button-back>
+                                    <x-button-back href="{{ admin_url('ohc/physical-medical-examination/yearly/list') }}"></x-button-back>
 
                                 </div>
                             </div>

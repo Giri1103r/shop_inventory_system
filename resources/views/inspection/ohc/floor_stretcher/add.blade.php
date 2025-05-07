@@ -354,6 +354,8 @@
                         },
                         resource_code: {
                             required: true,
+                            minlength: 3,
+                            maxlength: 30,
                         },
                         frequency_id: {
                             required: true,
@@ -361,7 +363,7 @@
                         "remarks[*][*]": {
                             required: true,
                             minlength: 3,
-                            maxlength: 100,
+                            maxlength: 300,
                         },
 
                     },
@@ -384,11 +386,13 @@
                         },
                         resource_code: {
                             required: 'Recource Code is requried',
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 30",
                         },
                         "remarks[*][*]": {
                             required: "Remarks is required",
                             minlength: "Minimum Characters should be 3",
-                            maxlength: "Maximum Characters should not exceed 100",
+                            maxlength: "Maximum Characters should not exceed 300",
                         }
 
                     },

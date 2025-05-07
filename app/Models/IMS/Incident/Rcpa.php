@@ -146,14 +146,14 @@ class Rcpa extends Model
     {
         $request = request();
     
-        $serial_numbers = $request->input('serial_number', []); // Changed variable name to plural
+        $serial_numbers = $request->input('serial_number', []);
         $rcpaItems = $request->input('rcpa', []);
         $responsibilities = $request->input('responsibility', []);
         $timelines = $request->input('timeline', []);
         $statuses = $request->input('capa_status', []);
         $remarks = $request->input('capa_remark', []);
     
-        $insertedResponsibilities = [];
+        $result = []; 
     
         foreach ($rcpaItems as $index => $rcpaText) {
             if (trim($rcpaText)) {
@@ -161,7 +161,7 @@ class Rcpa extends Model
                 $data = [
                     'incident_id' => $incident_id,
                     'investigation_id' => $investigation_id,
-                    'rcpa_id' => $serial_numbers[$index] ?? null, // Access specific index
+                    'rcpa_id' => $serial_numbers[$index] ?? null,
                     'rcpa' => $rcpaText,
                     'responsibility' => $responsibility_id,
                     'timeline' => isset($timelines[$index]) ? DBdateformat($timelines[$index]) : null,
@@ -170,17 +170,16 @@ class Rcpa extends Model
                     'remark' => $remarks[$index] ?? null,
                     'created_by' => Auth::id(),
                 ];
-                Rcpa::create($data);
-    
-                if ($responsibility_id) {
-                    $insertedResponsibilities[] = $responsibility_id;
-                }
+                $rcpaRecord = Rcpa::create($data);
+
+                $result[] = [
+                    'rcpa_id' => $rcpaRecord->id,
+                    'responsibility' => $responsibility_id
+                ];
             }
         }
     
-        return [
-            'responsibility' => $insertedResponsibilities,
-        ];
+        return $result;
     }
     public function actiontakensubmit($id)
     {
@@ -225,11 +224,10 @@ class Rcpa extends Model
     {
 
         $data = $this->select(
-            'ims_rcpa_responsible.*',
-            'masters_employee.emp_name as responsibility',
+            'ims_rcpa_responsible.*'
         )
             ->where('ims_rcpa_responsible.incident_id', $id)
-            ->leftJoin('masters_employee', 'masters_employee.id', '=', 'ims_rcpa_responsible.responsibility')
+            // ->leftJoin('masters_employee', 'masters_employee.id', '=', 'ims_rcpa_responsible.responsibility')
             ->get();
         return $data;
     }

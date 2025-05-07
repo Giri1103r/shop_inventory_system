@@ -462,15 +462,6 @@
                     </td>
                 </tr>
                 <tr>
-                    <td width="50%" style="padding:5px;"><b>Immediate action taken
-                            (If any)</b></td>
-                    <td width="2%" style="padding:5px;">:</td>
-                    <td width="48%" style="padding:5px;">
-                        {{ $getInvestigation->action_taken }}
-                    </td>
-                </tr>
-
-                <tr>
                     <td width="50%" style="padding:5px;"><b>Remarks (If Any)</b></td>
                     <td width="2%" style="padding:5px;">:</td>
                     <td width="48%" style="padding:5px;">
@@ -483,6 +474,20 @@
                     <td width="2%" style="padding:5px;">:</td>
                     <td width="48%" style="padding:5px;">
                         {{ $getInvestigation->corrective_preventive_action }}
+                    </td>
+                </tr>
+                <tr>
+                    <td width="50%" style="padding:5px;"><b>Investigation Submission Date</b></td>
+                    <td width="2%" style="padding:5px;">:</td>
+                    <td width="48%" style="padding:5px;">
+                        {{ Displaydateformat($getInvestigation->investigation_date) }}
+                    </td>
+                </tr>
+                <tr>
+                    <td width="50%" style="padding:5px;"><b>Investigation Submission Time</b></td>
+                    <td width="2%" style="padding:5px;">:</td>
+                    <td width="48%" style="padding:5px;">
+                        {{ $getInvestigation->investigation_time }}
                     </td>
                 </tr>
                 <tr>

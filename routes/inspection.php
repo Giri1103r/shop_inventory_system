@@ -64,6 +64,7 @@ use App\Http\Controllers\Inspection\Fire\FirePumpHouseController;
 use App\Http\Controllers\Inspection\Fire\FirePreNocController;
 use App\Http\Controllers\Inspection\Audit\InterUnitAuditController;
 use App\Http\Controllers\Inspection\Fire\ChecklistObservationFollowupController;
+use App\Http\Controllers\Inspection\Ohc\PhysicalMedicalExaminationController;
 
 Route::group(['prefix' => 'inspection/master/'], function () {
     Route::group(['prefix' => 'checklist-type'], function () {
@@ -1067,6 +1068,21 @@ Route::group(['prefix' => 'ohc/ohc-hygiene-cleaning-checklist/'], function () {
 });
 
 
+Route::group(['prefix' => 'ohc/physical-medical-examination/yearly/'], function () {
+    Route::get('list', [PhysicalMedicalExaminationController::class, 'index']);
+    Route::post('list', [PhysicalMedicalExaminationController::class, 'index']);
+    Route::get('add', [PhysicalMedicalExaminationController::class, 'add']);
+    Route::post('add/submit', [PhysicalMedicalExaminationController::class, 'store']);
+    Route::get('view/{id}', [PhysicalMedicalExaminationController::class, 'view']);
+    Route::get('export/pdf', [PhysicalMedicalExaminationController::class, 'ExportPDF']);
+    Route::get('export/excel', [PhysicalMedicalExaminationController::class, 'ExportExcel']);
+    Route::get('approval/{id}', [PhysicalMedicalExaminationController::class, 'approval']);
+    Route::post('verify/submit', [PhysicalMedicalExaminationController::class, 'approvalSubmit']);
+    Route::get('generalexcel/{id}', [PhysicalMedicalExaminationController::class, 'generalExcel']);
+    Route::get('generalpdf/{id}', [PhysicalMedicalExaminationController::class, 'generalpdf']);
+});
+
+
 Route::group(['prefix' => 'ohc/first-aid-box/weekly-inspection/'], function () {
     Route::get('list', [WeeklyFirstAidBoxController::class, 'index']);
     Route::post('list', [WeeklyFirstAidBoxController::class, 'index']);
@@ -1131,4 +1147,3 @@ Route::group(['prefix' => 'ohc/current-new-ext-code-dialing/'], function () {
 //Monthly Store Medicine - ohc - Role
 //OPD Medicine Inspection - ohc - Role
 //Emergency Floor First Aid Box Checklist - ohc - Role
-

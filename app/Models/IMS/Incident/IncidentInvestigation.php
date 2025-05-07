@@ -31,6 +31,8 @@ class IncidentInvestigation extends Model
         'remark',
         'risk_analysis',
         'risk_analysis_remark',
+        'investigation_date',
+        'investigation_time',
         'main_root_cause',
         'leading_factors',
         'status',
@@ -67,6 +69,8 @@ class IncidentInvestigation extends Model
             'remark' => $request->remark,
             'risk_analysis' => $request->risk_analysis,
             'risk_analysis_remark' => $request->risk_analysis_remark,
+            'investigation_date' => DBdateformat($request->investigation_date),
+            'investigation_time' => $request->investigation_time,
             'main_root_cause' => $request->main_root_cause,
             'leading_factors' => $request->leading_factors,
             'created_by' => Auth::id()

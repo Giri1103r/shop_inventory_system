@@ -11,6 +11,7 @@ use App\Models\Master\Department;
 use App\Models\User;
 use App\Models\UploadLog;
 use App\Jobs\ImportCompanyJob;
+use App\Models\Master\Bloodgroup;
 use App\Models\Master\Employee;
 use App\Models\Master\Work;
 use App\Models\OhcManagement\Master\EmployeeCumPatient;
@@ -471,24 +472,36 @@ class EmployeecumPatientController extends Controller
     {
         $emp_id = $request->input('empId');
 
-        $employee = Employee::select('emp_name', 'mobile_no', 'company')
+        $employee = Employee::select('*')
             ->where('emp_id', $emp_id)
             ->first();
 
         if (!$employee) {
-            $employee = Work::select('emp_name', 'mobile_no', 'company')
+            $employee = Work::select('*')
                 ->where('emp_id', $emp_id)
                 ->first();
         }
         if ($employee) {
-            
+
             $company = Company::where('id', $employee->company)
+                ->where('status', 1)
+                ->first();
+                $department = Department::where('id', $employee->company)
+                ->where('status', 1)
+                ->first();
+                $unit = Unit::where('id', $employee->company)
+                ->where('status', 1)
+                ->first();
+                $blood_group = Bloodgroup::where('id', $employee->blood_group)
                 ->where('status', 1)
                 ->first();
 
             return response()->json([
                 'employee' => $employee,
                 'company' => $company,
+                'department' => $department,
+                'blood_group' => $blood_group,
+                'unit' => $unit,
             ]);
         } else {
             return response()->json([

@@ -246,6 +246,53 @@
 
                                 <div class="row">
                                     <div class="card-header-inner">
+                                        <h4 class="text-white">Incident Reported By</h4>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">Employee Code</label>
+                                        <div class="view_data">
+                                            {{ $incident_report->employee_code }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">Name</label>
+                                        <div class="view_data">
+                                            {{ $incident_report->reported_name }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">Designation</label>
+                                        <div class="view_data">
+                                            {{ $incident_report->designation }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">Department</label>
+                                        <div class="view_data">
+                                            {{ $incident_report->reported_department }}
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">Time of reporting</label>
+                                        <div class="view_data">
+                                            {{ $incident_report->time_of_reporting }}
+                                        </div>
+                                    </div>
+
+
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">Reporting Media</label>
+                                        <div class="view_data">
+                                            {{ implode(', ', $displayMedia) }}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mt-3">
+                                    <div class="card-header-inner">
                                         <h4 class="text-white">Incident Report Details</h4>
                                     </div>
                                 </div>
@@ -254,7 +301,7 @@
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">Sr. No</label>
                                         <div class="view_data">
-                                            {{ $incident_report->sr_no ?? null }}
+                                            {{ $incident_report->sr_no }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
@@ -282,58 +329,17 @@
                                             {{ $incident_report->location_name }}
                                         </div>
                                     </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">Exact Location</label>
+                                        <div class="view_data">
+                                            {{ $incident_report->exact_location }}
+                                        </div>
+                                    </div>
 
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">IIR Type</label>
                                         <div class="view_data">
                                             {{ $incident_report->incident_type_name }}
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="row mt-3">
-                                    <div class="card-header-inner">
-                                        <h4 class="text-white">Incident Reported By</h4>
-                                    </div>
-                                </div>
-                                <div class="row">
-
-                                    <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">Name</label>
-                                        <div class="view_data">
-                                            {{ $incident_report->reported_by }}
-                                        </div>
-                                    </div>
-                                    <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">Designation</label>
-                                        <div class="view_data">
-                                            {{ $incident_report->designation }}
-                                        </div>
-                                    </div>
-                                    <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">Department</label>
-                                        <div class="view_data">
-                                            {{ $incident_report->reported_department }}
-                                        </div>
-                                    </div>
-                                    <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">Employee Code</label>
-                                        <div class="view_data">
-                                            {{ $incident_report->employee_code }}
-                                        </div>
-                                    </div>
-                                    <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">Time of reporting</label>
-                                        <div class="view_data">
-                                            {{ $incident_report->time_of_reporting }}
-                                        </div>
-                                    </div>
-
-
-                                    <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">Reporting Media</label>
-                                        <div class="view_data">
-                                            {{ implode(', ', $displayMedia) }}
                                         </div>
                                     </div>
 
@@ -618,14 +624,14 @@
                                                     </select>
                                                 </div>
                                             </div>
-                                            <div class="col-md-4 mt-2">
+                                            {{-- <div class="col-md-4 mt-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label">Immediate action taken
                                                         (If any)</label>
                                                     <input type="text" name="action_taken" id="action_taken"
                                                         class="form-control" placeholder="Immediate action taken">
                                                 </div>
-                                            </div>
+                                            </div> --}}
                                             {{-- <div class="col-md-4 mt-2">
                                                 <div class="form-group form-input">
                                                     <label for="responsible_person_id"
@@ -654,7 +660,22 @@
 
                                                 </div>
                                             </div>
-
+                                            <div class="col-md-4 mt-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">Investigation Submission Date</label>
+                                                    <input type="text" name="investigation_date"
+                                                        id="investigation_date" class="form-control"
+                                                        value="{{ todayDate() }}" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mt-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">Investigation Submission Time</label>
+                                                    <input type="text" name="investigation_time"
+                                                        id="investigation_time" class="form-control"
+                                                        value="{{ currenttime() }}" readonly>
+                                                </div>
+                                            </div>
                                             <div class="col-md-4 mt-3">
                                                 <div class="form-group">
                                                     <label class="form-label require d-block">Risk Analysis</label>
@@ -993,71 +1014,74 @@
                                                 <div class="card-header-inner">
                                                     <h4 class="text-white p-1">RCPA</h4>
                                                 </div>
-                                                <div class="d-flex justify-content-end">
+                                                <div class="d-flex justify-content-end mb-3">
                                                     <button class="btn btn-primary add-row me-3" type="button"
                                                         id="add-row" style="width: 84px;">
                                                         Add
                                                     </button>
-                                                    <button type="button" class="btn btn-danger remove-row">
+                                                    {{-- <button type="button" class="btn btn-danger remove-row">
                                                         <i class="fa-solid fa-trash"></i> Remove
-                                                    </button>
+                                                    </button> --}}
                                                 </div>
-                                                <div class="row">
-                                                    <div class="col-md-4">
-                                                        <div class="form-group form-input">
-                                                            <label class="form-label require">Serial Number</label>
-                                                            <input type="text" name="serial_number[1]"
-                                                                class="form-control" placeholder="Serial Number"
-                                                                value="RCPA-00001" readonly>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="col-md-4">
-                                                        <div class="form-group form-input">
-                                                            <label class="form-label require">Recommended Corrective &
-                                                                Preventive Action</label>
-                                                            <input type="text" name="rcpa[1]" class="form-control"
-                                                                placeholder="Recommended Corrective & Preventive Action"
-                                                                value="">
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="col-md-4">
-                                                        <div class="form-group form-input">
-                                                            <label class="form-label require">Responsibility</label>
-                                                            <select name="responsibility[1]"
-                                                                class="form-control responsibility-select"></select>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="col-md-4 mt-2">
-                                                        <div class="form-group form-input">
-                                                            <label class="form-label require">Timeline</label>
-                                                            <input type="text" name="timeline[1]"
-                                                                class="form-control timeline-picker" value="">
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="col-md-4 mt-2">
-                                                        <div class="form-group form-input">
-                                                            <label class="form-label require">Status</label>
-                                                            <select name="capa_status[1]"
-                                                                class="form-control single-select" style="width: 100%">
-                                                                <option value="">Select RCPA Status
-                                                                </option>
-                                                                <option value="{{ encryptId(YES) }}">Open</option>
-                                                                <option value="{{ encryptId(NO) }}">In-Progress</option>
-                                                                <option value="{{ encryptId(NO) }}">Closed</option>
-                                                            </select>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="col-md-12 mt-2 mb-2">
-                                                        <div class="form-group form-input">
-                                                            <label class="form-label">Remark if any</label>
-                                                            <textarea name="capa_remark[1]" class="form-control" placeholder="Remark" rows="3"></textarea>
-                                                        </div>
-                                                    </div>
+                                                <div class="table-responsive">
+                                                    <table class="table table-bordered rcpa-table text-center">
+                                                        <thead class="table-dark">
+                                                            <tr>
+                                                                <th>Serial Number</th>
+                                                                <th>Recommended Corrective & Preventive Action</th>
+                                                                <th>Responsibility</th>
+                                                                <th>Timeline</th>
+                                                                <th>Status</th>
+                                                                <th>Remark if any</th>
+                                                                <th>Action</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody id="rcpaBody">
+                                                            <tr id="RowRCPAView0">
+                                                                <td>
+                                                                    <input type="text" name="serial_number[1]"
+                                                                        class="form-control" placeholder="Serial Number"
+                                                                        value="RCPA-00001" readonly>
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" name="rcpa[1]"
+                                                                        class="form-control"
+                                                                        placeholder="Recommended Corrective & Preventive Action"
+                                                                        value="">
+                                                                </td>
+                                                                <td>
+                                                                    <select name="responsibility[1]"
+                                                                        class="form-control responsibility-select"></select>
+                                                                </td>
+                                                                <td>
+                                                                    <input type="text" name="timeline[1]"
+                                                                        class="form-control timeline-picker"
+                                                                        value="">
+                                                                </td>
+                                                                <td>
+                                                                    <select name="capa_status[1]"
+                                                                        class="form-control single-select"
+                                                                        style="width: 100%">
+                                                                        <option value="">Select RCPA Status</option>
+                                                                        <option value="{{ encryptId(1) }}">Open</option>
+                                                                        <option value="{{ encryptId(2) }}">In-Progress
+                                                                        </option>
+                                                                        <option value="{{ encryptId(3) }}">Closed
+                                                                        </option>
+                                                                    </select>
+                                                                </td>
+                                                                <td>
+                                                                    <textarea name="capa_remark[1]" class="form-control" placeholder="Remark" rows="1"></textarea>
+                                                                </td>
+                                                                <td>
+                                                                    <button type="button"
+                                                                        class="btn btn-sm removeRCPARow">
+                                                                        <i class="fa-solid fa-trash text-danger"></i>
+                                                                    </button>
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
                                                 </div>
                                             </div>
                                         </div>
@@ -1671,9 +1695,9 @@
             const minFormSets = 1;
 
             $(document).on('click', ".add-row", function() {
-                let currentFormSets = $('#form-wrapper .form-set').length;
+                let currentRows = $('#rcpaBody tr').length;
 
-                if (currentFormSets >= maxFormSets) {
+                if (currentRows >= maxFormSets) {
                     Swal.fire({
                         icon: 'warning',
                         title: 'Maximum RCPA Reached',
@@ -1684,77 +1708,54 @@
                 }
 
                 let newSerialNumber = 'RCPA-' + ('0000' + serial_number).slice(-5);
-                var newFormSet = `
-                    <div class="form-set">
-                        <div class="card-header-inner">
-                            <h4 class="text-white p-1">RCPA</h4>
-                        </div>
-                        <div class="d-flex justify-content-end">
-                            <button class="btn btn-primary add-row me-3" type="button" style="width: 84px;">
-                                Add
-                            </button>
-                            <button type="button" class="btn btn-danger remove-row">
-                                <i class="fa-solid fa-trash"></i> Remove
-                            </button>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-4">
-                            <div class="form-group form-input">
-                                <label class="form-label require">Serial Number</label>
-                                <input type="text" name="serial_number[${form_set_count}]" class="form-control" placeholder="Serial Number" value="${newSerialNumber}" readonly>
-                            </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-group form-input">
-                                    <label class="form-label require">Recommended Corrective & Preventive Action</label>
-                                    <input type="text" name="rcpa[${form_set_count}]" class="form-control rcpa-input" placeholder="Recommended Corrective & Preventive Action" value="">
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-group form-input">
-                                    <label class="form-label require">Responsibility</label>
-                                    <select name="responsibility[${form_set_count}]" class="form-control responsibility-select"></select>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-group form-input">
-                                    <label class="form-label require">Timeline</label>
-                                    <input type="text" name="timeline[${form_set_count}]" class="form-control timeline-picker">
-                                </div>
-                            </div>
-                            <div class="col-md-4 mt-2">
-                                <div class="form-group form-input">
-                                    <label class="form-label require">Status</label>
-                                    <select name="capa_status[${form_set_count}]" class="form-control single-select capa-status" style="width: 100%">
-                                        <option value="">Select RCPA Status</option>
-                                        <option value="{{ encryptId(YES) }}">Open</option>
-                                        <option value="{{ encryptId(NO) }}">In-Progress</option>
-                                        <option value="{{ encryptId(NO) }}">Closed</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-12 mt-2 mb-2">
-                                <div class="form-group form-input">
-                                    <label class="form-label">Remarks (If Any)</label>
-                                    <textarea name="capa_remark[${form_set_count}]" class="form-control capa-remark" placeholder="Remark" rows="3"></textarea>
-                                </div>
-                            </div>
-                        </div>
-                    </div>`;
+                var newRow = `
+    <tr id="RowRCPAView${form_set_count}">
+        <td>
+            <input type="text" name="serial_number[${form_set_count}]" class="form-control" 
+                placeholder="Serial Number" value="${newSerialNumber}" readonly>
+        </td>
+        <td>
+            <input type="text" name="rcpa[${form_set_count}]" class="form-control rcpa-input" 
+                placeholder="Recommended Corrective & Preventive Action" value="">
+        </td>
+        <td>
+            <select name="responsibility[${form_set_count}]" class="form-control responsibility-select"></select>
+        </td>
+        <td>
+            <input type="text" name="timeline[${form_set_count}]" class="form-control timeline-picker" value="">
+        </td>
+        <td>
+            <select name="capa_status[${form_set_count}]" class="form-control single-select capa-status" style="width: 100%">
+                <option value="">Select RCPA Status</option>
+                <option value="{{ encryptId(1) }}">Open</option>
+                <option value="{{ encryptId(2) }}">In-Progress</option>
+                <option value="{{ encryptId(3) }}">Closed</option>
+            </select>
+        </td>
+        <td>
+            <textarea name="capa_remark[${form_set_count}]" class="form-control capa-remark" placeholder="Remark" rows="1"></textarea>
+        </td>
+        <td>
+            <button type="button" class="btn btn-sm removeRCPARow"> 
+                <i class="fa-solid fa-trash text-danger"></i>
+            </button>
+        </td>
+    </tr>`;
 
-                $('#form-wrapper').append(newFormSet);
+                $('#rcpaBody').append(newRow);
 
-                // Initialize select2 and datepicker
-                let newElement = $('#form-wrapper .form-set').last().find('.responsibility-select');
+                // Initialize select2 and datepicker for the new row
+                let newElement = $('#RowRCPAView' + form_set_count).find('.responsibility-select');
                 initResponsibilitySelect(newElement);
-                let timelinePicker = $('#form-wrapper .form-set').last().find('.timeline-picker');
+
+                let timelinePicker = $('#RowRCPAView' + form_set_count).find('.timeline-picker');
                 initDatePickers(timelinePicker);
 
-                // Add validation rules AFTER the element is added to DOM
+                // Add validation rules
                 let $form = $("#incidentinvestigation");
-                $form.validate(); // Ensure validator exists
+                $form.validate();
 
-                $form.find('.form-set').last().find('.rcpa-input').rules('add', {
+                $('#RowRCPAView' + form_set_count).find('.rcpa-input').rules('add', {
                     required: true,
                     noSpaces: true,
                     messages: {
@@ -1762,21 +1763,21 @@
                     }
                 });
 
-                $form.find('.form-set').last().find('.timeline-picker').rules('add', {
+                $('#RowRCPAView' + form_set_count).find('.timeline-picker').rules('add', {
                     required: true,
                     messages: {
                         required: 'Timeline is required',
                     }
                 });
 
-                $form.find('.form-set').last().find('.capa-status').rules('add', {
+                $('#RowRCPAView' + form_set_count).find('.capa-status').rules('add', {
                     required: true,
                     messages: {
                         required: 'RCPA Status is required',
                     }
                 });
 
-                $form.find('.form-set').last().find('.capa-remark').rules('add', {
+                $('#RowRCPAView' + form_set_count).find('.capa-remark').rules('add', {
                     required: true,
                     messages: {
                         required: 'Remark is required',
@@ -1788,10 +1789,10 @@
                 updatePageIndices();
             });
 
-            $(document).on('click', '.remove-row', function() {
-                let currentFormSets = $('#form-wrapper .form-set').length;
+            $(document).on('click', '.removeRCPARow', function() {
+                let currentRows = $('#rcpaBody tr').length;
 
-                if (currentFormSets <= minFormSets) {
+                if (currentRows <= minFormSets) {
                     Swal.fire({
                         icon: 'warning',
                         title: 'Minimum RCPA Required',
@@ -1801,23 +1802,23 @@
                     return;
                 }
 
-                $(this).closest('.form-set').remove();
+                $(this).closest('tr').remove();
                 updatePageIndices();
             });
 
             function updatePageIndices() {
-                $('#form-wrapper .form-set').each(function(index) {
+                $('#rcpaBody tr').each(function(index) {
                     const i = index + 1;
-                    $(this).find("input[name^='serial_number']").val('RCPA-' + ('0000' + (i)).slice(-5));
+                    $(this).find("input[name^='serial_number']").val('RCPA-' + ('0000' + i).slice(-5));
                     $(this).find('input[name^="rcpa"]').attr('name', 'rcpa[' + i + ']');
                     $(this).find('input[name^="timeline"]').attr('name', 'timeline[' + i + ']');
                     $(this).find('select[name^="capa_status"]').attr('name', 'capa_status[' + i + ']');
                     $(this).find('select[name^="responsibility"]').attr('name', 'responsibility[' + i +
-                        ']');
+                    ']');
                     $(this).find('textarea[name^="capa_remark"]').attr('name', 'capa_remark[' + i + ']');
+                    $(this).find('input[name^="serial_number"]').attr('name', 'serial_number[' + i + ']');
                 });
             }
-
 
             $(".submit").on('click', function() {
                 if ($("#incidentinvestigation").valid()) {

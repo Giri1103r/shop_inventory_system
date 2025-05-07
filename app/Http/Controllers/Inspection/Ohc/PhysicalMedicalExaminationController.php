@@ -21,16 +21,22 @@ use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\RichText\RichText;
 use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 use App\Models\Inspection\InspectionStaticDocno;
+use App\Models\Inspection\Ohc\Master\FamilyHistory;
+use App\Models\Inspection\Ohc\Master\PersonalDetails;
 use App\Models\Inspection\ohc\OHCHygieneCleaningChecklist;
+use App\Models\Inspection\Ohc\PhysicalHealthExamination;
 use Illuminate\Support\Facades\Mail;
 use Mpdf\Tag\Dd;
 
-class OHCHygieneCleaningChecklistController extends Controller
+class PhysicalMedicalExaminationController extends Controller
 {
     private $ohc_hygiene;
     private $shift;
     private $signature;
     private $document_reference;
+    private $personalDetails;
+    private $familyHistory;
+    private $physicalHealth;
 
 
     public function __construct()
@@ -39,6 +45,9 @@ class OHCHygieneCleaningChecklistController extends Controller
         $this->shift = new Shift();
         $this->signature = new OhcSignature();
         $this->document_reference = new InspectionStaticDocno();
+        $this->personalDetails = new PersonalDetails();
+        $this->familyHistory = new FamilyHistory();
+        $this->physicalHealth = new PhysicalHealthExamination();
     }
 
     public function Index(Request $request)
@@ -46,7 +55,7 @@ class OHCHygieneCleaningChecklistController extends Controller
         if (Auth::check()) {
             if ($request->ajax()) {
                 try {
-                    $data =  $this->ohc_hygiene->list();
+                    $data =  $this->physicalHealth->list();
                     $datatables = DataTables::of($data['data'])
                         ->addIndexColumn()
                         ->addColumn('status', function ($row) {
@@ -64,13 +73,16 @@ class OHCHygieneCleaningChecklistController extends Controller
                             return Displaydateformat($row->created_at);
                         })
                         ->addColumn('date', function ($row) {
-                            return Displaydateformat($row->issue_date);
+                            return Displaydateformat($row->date);
                         })
                         ->addColumn('created_by', function ($row) {
                             return getUsername($row->created_by);
                         })
-                        ->addColumn('shift', function ($row) {
-                            return getShiftname($row->shift_id);
+                        ->addColumn('unit_id', function ($row) {
+                            return getUnitname($row->unit_id);
+                        })
+                        ->addColumn('department_id', function ($row) {
+                            return getDepartment($row->department_id);
                         })
                         ->addColumn('checklist_status', function ($row) {
                             $text = '';
@@ -91,20 +103,18 @@ class OHCHygieneCleaningChecklistController extends Controller
                         })
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            $btn = '<a href="' . admin_url('ohc/ohc-hygiene-cleaning-checklist/view/' . encryptId($row->inspection_id)) . '"   class="view-icon me-1" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
-                            if (($row->checklist_status == CLEANER_SUBMITTED_THE_CHECKLIST & isAdmin()) || ($row->checklist_status == CLEANER_SUBMITTED_THE_CHECKLIST & CheckUserRole(ROLE_NURSING_OFFICER))) {
-                                $btn .= '<a href="' . admin_url('ohc/ohc-hygiene-cleaning-checklist/approval/' . encryptId($row->inspection_id)) . '" class="me-1" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
-                            }
-                            $btn .= '<a href="' . admin_url('ohc/ohc-hygiene-cleaning-checklist/generalpdf/' . encryptId($row->inspection_id)) . '"class="me-1" title="PDF">
+                            $btn = '<a href="' . admin_url('ohc/physical-medical-examination/yearly/view/' . encryptId($row->id)) . '"   class="view-icon me-1" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
+
+                            $btn .= '<a href="' . admin_url('ohc/physical-medical-examination/yearly/generalpdf/' . encryptId($row->id)) . '"class="me-1" title="PDF">
                             <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
                         </a>';
 
-                            $btn .= '<a href="' . admin_url('ohc/ohc-hygiene-cleaning-checklist/generalexcel/' . encryptId($row->inspection_id)) . '"class="me-1" title="EXCEL">
+                            $btn .= '<a href="' . admin_url('ohc/physical-medical-examination/yearly/generalexcel/' . encryptId($row->id)) . '"class="me-1" title="EXCEL">
                         <i class="fas fa-file-excel" style="color: #1D6F42;" aria-hidden="true"></i>
                      </a>';
                             return $btn;
                         })
-                        ->rawColumns(['action', 'created_date', 'created_by', 'checklist_status', 'issue_date'])
+                        ->rawColumns(['action', 'created_date', 'created_by', 'checklist_status', 'date'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -122,25 +132,31 @@ class OHCHygieneCleaningChecklistController extends Controller
         $data = array(
             'shifts' => $shift,
         );
-        return view('inspection.inspection_ohc.ohc_hygiene_checklist.list', $data);
+        return view('inspection.inspection_ohc.physical_medical_examination.list', $data);
     }
 
     public function add(Request $request)
     {
         try {
-            $shift  = $this->shift->select('id', 'shift')->where('status', '1')->get();
-            $document_no = $this->document_reference->selectUsingName('DailyOHCHygieneCleaningChecklist');
+
+            $document_no = $this->document_reference->selectUsingName('PhysicalHealthExamination');
+            $personalDetails = $this->personalDetails->personalDetails();
+            $familyHistory = $this->familyHistory->familyHistory();
+            $check_points = getCheckListQuestion(OHC_PHYSICAL_HEALTH_EXAMINATION);
 
             $data = array(
-                'shifts' => $shift,
+
                 'document_no' => $document_no,
+                'personalDetails' => $personalDetails,
+                'check_points' => $check_points,
+                'familyHistory' => $familyHistory,
 
             );
-            return view('inspection.inspection_ohc.ohc_hygiene_checklist.add', $data);
+            return view('inspection.inspection_ohc.physical_medical_examination.add', $data);
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong!');
-            return redirect(admin_url('ohc/ohc-hygiene-cleaning-checklist/list'));
+            return redirect(admin_url('ohc/physical-medical-examination/yearly/list'));
         }
     }
 
@@ -148,73 +164,17 @@ class OHCHygieneCleaningChecklistController extends Controller
     {
         try {
 
-            $rules = [
-                'issue_date' => 'required',
-                'shift_id' => 'required',
-                'inspection' => 'required',
-                'remarks' => 'required',
 
-            ];
+          $document_no = $this->document_reference->selectUsingName('PhysicalHealthExamination');
+            $physicalHealth = $this->physicalHealth->store($document_no);
+            $signature_update = $this->signature->requestorsignatureUpload(OHC_TYPE_PHYSICAL_HEALTH_EXAMINATION, $physicalHealth->id);
 
-            $messages = [
-                'issue_date.required' => 'Issue Date is required.',
-                'shift_id.required' => 'Shift ID is required.',
-                'inspection.required' => 'Inspection is required.',
-                'remarks.required' => 'Remarks is required.',
-
-            ];
-
-            $validator = Validator::make($request->all(), $rules, $messages);
-
-            if ($validator->fails()) {
-                return redirect()->back()->withErrors($validator)->withInput();
-            }
-
-            $ohc_hygiene_inspection = $this->ohc_hygiene->store();
-            $signature_update = $this->signature->requestorsignatureUpload(DAILY_OHC_HYGIENE_CLEANING_CHECKLIST, $ohc_hygiene_inspection->id);
-            $inspection_details = $this->ohc_hygiene->selectOne($ohc_hygiene_inspection->id);
-            $nursingofficer = getNursingOfficer();
-            if (!empty($nursingofficer)) {
-                $nursingofficers = $nursingofficer->pluck('id')->toArray();
-                $mailsubject = 'OHC HYGIENE CLEANING CHECKLIST';
-                $notificationData = array(
-                    'notification_type' => OHC_INSPECTION,
-                    'module_type' => 1,
-                    'notification_message' => $mailsubject,
-                    'mobile_notification' => json_encode(array(
-                        'title' => $mailsubject,
-                        'message' => "OHC HYGIENE CLEANING CHECKLIST Has been Created",
-                        'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
-                        'id' => $inspection_details->id,
-                        'module' => 1,
-                    )),
-                    'web_link' =>  admin_url('ohc/ohc-hygiene-cleaning-checklist/approval/' . encryptId($inspection_details->id)),
-                    'assigned_user' => array_to_string($nursingofficers),
-                    'created_by' => Auth::id(),
-                );
-                notificationSave($notificationData);
-
-                $title = 'OHC HYGIENE CLEANING CHECKLIST has been Created';
-                foreach ($nursingofficer as $user) {
-                    $email_id = getUseremail($user);
-                    $url = admin_url('ohc/ohc-hygiene-cleaning-checklist/approval/' . encryptId($inspection_details->id));
-                    $details = array(
-                        'safety_type' => 'OHC HYGIENE CLEANING CHECKLIST',
-                        'email' => $email_id,
-                        'mail_subject' => $mailsubject,
-                        'title' => $title,
-                        'url' => $url,
-                        'data' => $inspection_details
-                    );
-                    Mail::to($email_id)->queue(new SafetyInspection($details));
-                }
-            }
             Session::flash('success', __('common.created_msg'));
-            return redirect(admin_url('ohc/ohc-hygiene-cleaning-checklist/list'));
+            return redirect(admin_url('ohc/physical-medical-examination/yearly/list'));
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong!');
-            return redirect(admin_url('ohc/ohc-hygiene-cleaning-checklist/list'));
+            return redirect(admin_url('ohc/physical-medical-examination/yearly/list'));
         }
     }
 
@@ -222,23 +182,25 @@ class OHCHygieneCleaningChecklistController extends Controller
     {
         try {
             $id = decryptId($request->id);
-            $inspection_details = $this->ohc_hygiene->selectOne($id);
-            $cleaner_signature = GetOHCSignature($inspection_details->created_by, $inspection_details->id, DAILY_OHC_HYGIENE_CLEANING_CHECKLIST);
-            $nursing_signature = GetOHCSignature($inspection_details->updated_by, $inspection_details->id, DAILY_OHC_HYGIENE_CLEANING_CHECKLIST);
-            $document_no = $this->document_reference->selectOne($inspection_details->document_reference_id);
+
+            $physicalHealth = $this->physicalHealth->selectOne($id);
+            $document_no = $this->document_reference->selectOne($physicalHealth->document_reference_id);
+          
+            $fmo_signature = GetOHCSignature($physicalHealth->created_by, $id, OHC_TYPE_PHYSICAL_HEALTH_EXAMINATION);
+
 
             $data = [
-                'inspection_details' => $inspection_details,
-                'cleaner_signature' => $cleaner_signature,
-                'nursing_signature' => $nursing_signature,
+                'physicalHealth' => $physicalHealth,
                 'document_no' => $document_no,
+                'fmo_signature' => $fmo_signature,
+
 
             ];
-            return view('inspection.inspection_ohc.ohc_hygiene_checklist.view', $data);
+            return view('inspection.inspection_ohc.physical_medical_examination.view', $data);
         } catch (Exception $ex) {
-            report($ex);
+            dd($ex);
             Session::flash('error', 'Something went wrong!');
-            return redirect(admin_url('ohc/ohc-hygiene-cleaning-checklist/list'));
+            return redirect(admin_url('ohc/physical-medical-examination/yearly/list'));
         }
     }
     public function approval(Request $request)
@@ -257,11 +219,11 @@ class OHCHygieneCleaningChecklistController extends Controller
                 'document_no' => $document_no,
 
             ];
-            return view('inspection.inspection_ohc.ohc_hygiene_checklist.approval', $data);
+            return view('inspection.inspection_ohc.physical_medical_examination.approval', $data);
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong!');
-            return redirect(admin_url('ohc/ohc-hygiene-cleaning-checklist/list'));
+            return redirect(admin_url('ohc/physical-medical-examination/yearly/list'));
         }
     }
 
@@ -286,7 +248,7 @@ class OHCHygieneCleaningChecklistController extends Controller
 
             $inspection_details = $this->ohc_hygiene->selectOne($id);
             $ehsOfficer = [$inspection_details->created_by];
-            $web_link =   admin_url('ohc/ohc-hygiene-cleaning-checklist/view/' . encryptId($inspection_details->id));
+            $web_link =   admin_url('ohc/physical-medical-examination/yearly/view/' . encryptId($inspection_details->id));
             $mailsubject = 'OHC HYGIENE CLEANING CHECKLIST';
             $notificationData = array(
                 'notification_type' => OHC_INSPECTION,
@@ -307,7 +269,7 @@ class OHCHygieneCleaningChecklistController extends Controller
 
             $title = 'OHC HYGIENE CLEANING CHECKLIST';
             $email_id = getUseremail($ehsOfficer);
-            $url = admin_url('ohc/ohc-hygiene-cleaning-checklist/view/' . encryptId($inspection_details->id));
+            $url = admin_url('ohc/physical-medical-examination/yearly/view/' . encryptId($inspection_details->id));
             $details = array(
                 'safety_type' => 'OHC HYGIENE CLEANING CHECKLIST',
                 'email' => $email_id,
@@ -318,12 +280,12 @@ class OHCHygieneCleaningChecklistController extends Controller
             );
             Mail::to($email_id)->queue(new SafetyInspection($details));
             Session::flash('success', __('common.updated_msg'));
-            return redirect(admin_url('ohc/ohc-hygiene-cleaning-checklist/list'));
+            return redirect(admin_url('ohc/physical-medical-examination/yearly/list'));
         } catch (Exception $ex) {
             report($ex);
             report($ex);
             Session::flash('error', 'Something went wrong!');
-            return redirect(admin_url('ohc/ohc-hygiene-cleaning-checklist/list'));
+            return redirect(admin_url('ohc/physical-medical-examination/yearly/list'));
         }
     }
 
@@ -662,7 +624,7 @@ class OHCHygieneCleaningChecklistController extends Controller
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $view = view('inspection.inspection_ohc.ohc_hygiene_checklist.pdf', $data);
+            $view = view('inspection.inspection_ohc.physical_medical_examination.pdf', $data);
             $html = $view->render();
 
 
@@ -708,7 +670,7 @@ class OHCHygieneCleaningChecklistController extends Controller
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $html = view('inspection.inspection_ohc.ohc_hygiene_checklist.generalPdf', $data)->render();
+            $html = view('inspection.inspection_ohc.physical_medical_examination.generalPdf', $data)->render();
 
             $mpdf->WriteHTML($html);
 

@@ -290,14 +290,33 @@
                                         <div class="row">
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
+                                                    <label class="form-label require">Employee Code</label>
+                                                    {{-- <input type="text" name="employee_code"
+                                                        class="form-control employee_code" placeholder="Employee Code"
+                                                        readonly value = "{{ $initialincident->employee_code }}"> --}}
+
+                                                        <select name="employee_code" id="employee_code"
+                                                            class="form-control employee_code">
+                                                            <option value="">Select Name</option>
+                                                            <option value="{{ $initialincident->employee_code }}" selected>
+                                                                {{ $initialincident->employee_code }}</option>
+                                                        </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group form-input">
                                                     <label class="form-label require">Name</label>
                                                     <div class="col-sm-6" style="width: 100%">
-                                                        <select name="reported_name" id="reported_name"
+                                                        {{-- <select name="reported_name" id="reported_name"
                                                             class="form-control reported_name">
                                                             <option value="">Select Name</option>
                                                             <option value="{{ $initialincident->reported_name }}" selected>
                                                                 {{ $initialincident->reported_by }}</option>
-                                                        </select>
+                                                        </select> --}}
+
+                                                        <input type="text" name="reported_name"
+                                                        class="form-control reported_name" placeholder="Employee Code"
+                                                        readonly value = "{{ $initialincident->reported_name }}">
                                                     </div>
                                                 </div>
                                             </div>
@@ -319,14 +338,7 @@
                                                     </select>
                                                 </div>
                                             </div>
-                                            <div class="col-md-4">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label require">Employee Code</label>
-                                                    <input type="text" name="employee_code"
-                                                        class="form-control employee_code" placeholder="Employee Code"
-                                                        readonly value = "{{ $initialincident->employee_code }}">
-                                                </div>
-                                            </div>
+                                           
 
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
@@ -1675,9 +1687,9 @@
                 $('#reporting_media_othersdiv').hide();
             }
         });
-        $('.reported_name').select2({
+        $('.employee_code').select2({
             ajax: {
-                url: "{{ admin_url('incident/initial-incident/employeename') }}",
+                url: "{{ admin_url('incident/initial-incident/employeeid') }}",
                 dataType: 'json',
                 delay: 250,
                 data: function(params) {
@@ -1705,7 +1717,7 @@
         });
 
 
-        $(document).on("change", ".reported_name", function() {
+        $(document).on("change", ".employee_code", function() {
             var emp_id = $(this).val();
             var currentRow = $(this).closest(".row");
 
@@ -1715,7 +1727,7 @@
                     type: "GET",
                     success: function(data) {
                         if (data.employee) {
-                            currentRow.find('.employee_code').val(data.employee.emp_id).prop("readonly",
+                            currentRow.find('.reported_name').val(data.employee.emp_name).prop("readonly",
                                 true);
                             currentRow.find('.designation').val(data.employee.designation).prop(
                                 "readonly", true);

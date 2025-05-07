@@ -56,8 +56,8 @@ class FloorStretcher extends Model
         if (isset($request->unit) && $request->unit) {
             $query = $query->where('inspection_ohc_floorstretcher_checklist.unit',decryptId( $request->unit) );
         }
-        if (isset($request->shift) && $request->shift) {
-            $query = $query->where('inspection_ohc_floorstretcher_checklist.shift', decryptId($request->shift) );
+        if (isset($request->shift_id) && $request->shift_id) {
+            $query = $query->where('inspection_ohc_floorstretcher_checklist.shift', decryptId($request->shift_id) );
         }
 
         if (isset($request->inspection_status) && $request->inspection_status) {
@@ -156,8 +156,8 @@ class FloorStretcher extends Model
         if (isset($request->unit) && $request->unit) {
             $query = $query->where('inspection_ohc_floorstretcher_checklist.unit',decryptId( $request->unit) );
         }
-        if (isset($request->shift) && $request->shift) {
-            $query = $query->where('inspection_ohc_floorstretcher_checklist.shift', decryptId($request->shift) );
+        if (isset($request->shift_id) && $request->shift_id) {
+            $query = $query->where('inspection_ohc_floorstretcher_checklist.shift', decryptId($request->shift_id) );
         }
         $query->orderBy('id', 'DESC');
 

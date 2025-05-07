@@ -192,7 +192,6 @@ class FloorStretcherController extends Controller
             return redirect(admin_url('ohc/floor_stretcher/checklist/list'));
         } catch (Exception $ex) {
             report($ex);
-            report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('ohc/floor_stretcher/checklist/list'));
         }
@@ -403,9 +402,7 @@ class FloorStretcherController extends Controller
                 return redirect()->back()->with('error', 'No data found');
             }
 
-            if (count($allData) > 20) {
-                return redirect()->back()->with('error', "__('inspection.excess_error')");
-            }
+
 
             $data = array(
                 'content' => $allData,
