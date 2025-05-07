@@ -888,7 +888,7 @@ class EmergencyLightInspectionController extends Controller
             $dataStartRow = $thirdRow + 1;
 
             foreach ($emergency_light_details as $index => $detail) {
-                $row = $dataStartRow + $index;
+                $row = $dataStartRow;
 
                 $sheet->setCellValue("A$row", $detail->sr_no ?? '');
                 $sheet->setCellValue("B$row", getDepartment($detail->department) ?? '');
@@ -922,31 +922,33 @@ class EmergencyLightInspectionController extends Controller
             $VerifiedSignature = GetSignature($data->verified_by, $id, EMERGENCY_LIGHT_INSPECTION);
             $ApprovedSignature = GetSignature($data->approved_by, $id, EMERGENCY_LIGHT_INSPECTION);
 
+            $sheet->mergeCells("A$row:H" . ($row + 2));
             if (file_exists($CreatorSignature)) {
-                $sheet->mergeCells("A$row:H" . ($row + 2));
 
                 $drawing = new Drawing();
                 $drawing->setName('Creator Signature');
                 $drawing->setPath($CreatorSignature);
-                $drawing->setCoordinates("A$row");
+                $drawing->setCoordinates("C$row");
                 $drawing->setOffsetX(100);
                 $drawing->setOffsetY(5);
                 $drawing->setWidth(70);
                 $drawing->setHeight(70);
                 $drawing->setWorksheet($sheet);
                 $sheet->getRowDimension($row + 2)->setRowHeight(40);
-                // Label + Name
-                $sheet->setCellValue("A" . ($row + 3), "Checked By: " . getUserName($data->created_by));
-                $sheet->mergeCells("A" . ($row + 3) . ":H" . ($row + 3));
-
-                $sheet->getStyle("A$row:H" . ($row + 3))->applyFromArray([
-                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
-                ]);
+            }else {
+                $sheet->setCellValue("A{$row}", "Inspection has not been  started");
             }
+            // Label + Name
+            $sheet->setCellValue("A" . ($row + 3), "Checked By: " . getUserName($data->created_by));
+            $sheet->mergeCells("A" . ($row + 3) . ":H" . ($row + 3));
 
+            $sheet->getStyle("A$row:H" . ($row + 3))->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+            ]);
+
+            $sheet->mergeCells("I$row:N" . ($row + 2));
             if (file_exists($VerifiedSignature)) {
-                $sheet->mergeCells("I$row:N" . ($row + 2));
 
                 $drawing = new Drawing();
                 $drawing->setName('Verified Signature');
@@ -958,7 +960,10 @@ class EmergencyLightInspectionController extends Controller
                 $drawing->setHeight(70);
                 $drawing->setWorksheet($sheet);
                 $sheet->getRowDimension($row + 2)->setRowHeight(40);
-                // Label + Name
+            }else {
+                $sheet->setCellValue("I{$row}", "Inspection has not been  started");
+            }
+                        // Label + Name
                 $sheet->setCellValue("I" . ($row + 3), "Verified By: " . getUserName($data->verified_by));
                 $sheet->mergeCells("I" . ($row + 3) . ":N" . ($row + 3));
 
@@ -966,10 +971,9 @@ class EmergencyLightInspectionController extends Controller
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                 ]);
-            }
 
+            $sheet->mergeCells("O$row:U" . ($row + 2));
             if (file_exists($ApprovedSignature)) {
-                $sheet->mergeCells("O$row:U" . ($row + 2));
 
                 $drawing = new Drawing();
                 $drawing->setName('Approved Signature');
@@ -981,15 +985,17 @@ class EmergencyLightInspectionController extends Controller
                 $drawing->setHeight(70);
                 $drawing->setWorksheet($sheet);
                 $sheet->getRowDimension($row + 2)->setRowHeight(60);
-                // Label + Name
-                $sheet->setCellValue("O" . ($row + 3), "Approved By: " . getUserName($data->approved_by));
-                $sheet->mergeCells("O" . ($row + 3) . ":U" . ($row + 3));
-
-                $sheet->getStyle("O$row:U" . ($row + 3))->applyFromArray([
-                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
-                ]);
+            }else {
+                $sheet->setCellValue("O{$row}", "Inspection has not been  started");
             }
+            // Label + Name
+            $sheet->setCellValue("O" . ($row + 3), "Approved By: " . getUserName($data->approved_by));
+            $sheet->mergeCells("O" . ($row + 3) . ":U" . ($row + 3));
+
+            $sheet->getStyle("O$row:U" . ($row + 3))->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+            ]);
             $fileName = 'emergency_light_inspection.xlsx';
             $writer = new Xlsx($spreadsheet);
 
@@ -1226,7 +1232,7 @@ class EmergencyLightInspectionController extends Controller
                 $dataStartRow = $thirdRow + 1;
 
                 foreach ($emergency_light_details as $index => $detail) {
-                    $row = $dataStartRow + $index;
+                    $row = $dataStartRow;
 
                     $sheet->setCellValue("A$row", $detail->sr_no ?? '');
                     $sheet->setCellValue("B$row", getDepartment($detail->department) ?? '');
@@ -1260,8 +1266,8 @@ class EmergencyLightInspectionController extends Controller
                 $VerifiedSignature = GetSignature($data->verified_by,  $details->id, EMERGENCY_LIGHT_INSPECTION);
                 $ApprovedSignature = GetSignature($data->approved_by,  $details->id, EMERGENCY_LIGHT_INSPECTION);
 
+                $sheet->mergeCells("A$row:H" . ($row + 2));
                 if (file_exists($CreatorSignature)) {
-                    $sheet->mergeCells("A$row:H" . ($row + 2));
 
                     $drawing = new Drawing();
                     $drawing->setName('Creator Signature');
@@ -1273,18 +1279,20 @@ class EmergencyLightInspectionController extends Controller
                     $drawing->setHeight(70);
                     $drawing->setWorksheet($sheet);
                     $sheet->getRowDimension($row + 2)->setRowHeight(40);
-                    // Label + Name
-                    $sheet->setCellValue("A" . ($row + 3), "Checked By: " . getUserName($data->created_by));
-                    $sheet->mergeCells("A" . ($row + 3) . ":H" . ($row + 3));
-
-                    $sheet->getStyle("A$row:H" . ($row + 3))->applyFromArray([
-                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
-                    ]);
+                }else {
+                    $sheet->setCellValue("A{$row}", "Prepared By:\nInspection not yet started");
                 }
+                // Label + Name
+                $sheet->setCellValue("A" . ($row + 3), "Checked By: " . getUserName($data->created_by));
+                $sheet->mergeCells("A" . ($row + 3) . ":H" . ($row + 3));
 
+                $sheet->getStyle("A$row:H" . ($row + 3))->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                ]);
+
+                $sheet->mergeCells("I$row:N" . ($row + 2));
                 if (file_exists($VerifiedSignature)) {
-                    $sheet->mergeCells("I$row:N" . ($row + 2));
 
                     $drawing = new Drawing();
                     $drawing->setName('Verified Signature');
@@ -1296,6 +1304,9 @@ class EmergencyLightInspectionController extends Controller
                     $drawing->setHeight(70);
                     $drawing->setWorksheet($sheet);
                     $sheet->getRowDimension($row + 2)->setRowHeight(40);
+                }else {
+                    $sheet->setCellValue("I{$row}", "Inspection has not been Verified yet");
+                }
                     // Label + Name
                     $sheet->setCellValue("I" . ($row + 3), "Verified By: " . getUserName($data->verified_by));
                     $sheet->mergeCells("I" . ($row + 3) . ":N" . ($row + 3));
@@ -1304,10 +1315,9 @@ class EmergencyLightInspectionController extends Controller
                         'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                         'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                     ]);
-                }
 
-                if (file_exists($ApprovedSignature)) {
                     $sheet->mergeCells("O$row:U" . ($row + 2));
+                if (file_exists($ApprovedSignature)) {
 
                     $drawing = new Drawing();
                     $drawing->setName('Approved Signature');
@@ -1319,6 +1329,9 @@ class EmergencyLightInspectionController extends Controller
                     $drawing->setHeight(70);
                     $drawing->setWorksheet($sheet);
                     $sheet->getRowDimension($row + 2)->setRowHeight(60);
+                }else {
+                    $sheet->setCellValue("O{$row}", "Inspection has not been Approved yet");
+                }
                     // Label + Name
                     $sheet->setCellValue("O" . ($row + 3), "Approved By: " . getUserName($data->approved_by));
                     $sheet->mergeCells("O" . ($row + 3) . ":U" . ($row + 3));
@@ -1327,7 +1340,6 @@ class EmergencyLightInspectionController extends Controller
                         'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                         'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                     ]);
-                }
                 $row = $row + 5;
             }
 
