@@ -162,7 +162,7 @@ class MonthlyForkLiftInspectionController extends Controller
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
-                    report($ex);
+
                     report($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
@@ -956,7 +956,7 @@ class MonthlyForkLiftInspectionController extends Controller
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);
-            report($ex);
+
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('safety/forklift-inspection/monthly/list'));
         }
@@ -999,7 +999,7 @@ class MonthlyForkLiftInspectionController extends Controller
             $filename = "ForkLift Inspection.pdf";
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            report($ex);
+
             report($ex);
             return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
         }

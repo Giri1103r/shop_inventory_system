@@ -1202,7 +1202,6 @@ class HooterInspectionController extends Controller
 
             return response()->download($filePath)->deleteFileAfterSend(true);
         } catch (\Exception $e) {
-            dd($e);
             report($e);
             Session::flash('error', 'Something went wrong!');
             return redirect(admin_url('fire/hooter-inspection/list'));

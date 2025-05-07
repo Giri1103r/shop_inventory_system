@@ -472,7 +472,7 @@ class IsolationValveController extends Controller
             return redirect(admin_url('fire/isolating-valve-inspection/list'));
         } catch (Exception $ex) {
             report($ex);
-            report($ex);
+
             Session::flash('error', 'Something Went Wrong!');
             return redirect(admin_url('fire/isolating-valve-inspection/list'));
         }
@@ -1000,7 +1000,7 @@ class IsolationValveController extends Controller
 
             return response()->download($tempFile)->deleteFileAfterSend(true);
         } catch (\Exception $e) {
-            dd($e);
+
             report($e);
             Session::flash('error', 'Something went wrong!');
             return redirect(admin_url('fire/isolating-valve-inspection/list'));
@@ -1054,7 +1054,7 @@ class IsolationValveController extends Controller
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
            report($ex);
-            report($ex);
+
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('fire/isolating-valve-inspection/list'));
         }

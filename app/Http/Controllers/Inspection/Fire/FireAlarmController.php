@@ -338,7 +338,6 @@ class FireAlarmController extends Controller
                 return redirect(admin_url('fire/fire-alarm-inspection/list'));
             }
         } catch (Exception $ex) {
-           report($ex);
             report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('fire/fire-alarm-inspection/list'));
@@ -397,7 +396,6 @@ class FireAlarmController extends Controller
             );
             return view('inspection.fire.fire_alarm.approve', $data);
         } catch (Exception $ex) {
-            report($ex);
             report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('fire/fire-alarm-inspection/list'));
@@ -468,7 +466,6 @@ class FireAlarmController extends Controller
             Session::flash('success', __('common.updated_msg'));
             return redirect(admin_url('fire/fire-alarm-inspection/list'));
         } catch (Exception $ex) {
-            report($ex);
             report($ex);
             Session::flash('error', 'Something Went Wrong!');
             return redirect(admin_url('fire/fire-alarm-inspection/list'));
@@ -1049,7 +1046,6 @@ class FireAlarmController extends Controller
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);
-            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('fire/fire-alarm-inspection/list'));
         }
@@ -1319,7 +1315,7 @@ class FireAlarmController extends Controller
 
             return response()->download($filePath)->deleteFileAfterSend(true);
         } catch (\Exception $e) {
-            dd($e);
+            
             report($e);
             Session::flash('error', 'Something went wrong!');
             return redirect(admin_url('fire/fire-alarm-inspection/list'));

@@ -1020,7 +1020,7 @@ class FireModularInspectionController extends Controller
             header('Cache-Control: max-age=0');
             $writer->save('php://output');
         } catch (\Exception $e) {
-            dd($e);
+            
             report($e);
             Session::flash('error', 'Something went wrong!');
             return redirect(admin_url('fire/detector-inspection/list'));
@@ -1067,7 +1067,7 @@ class FireModularInspectionController extends Controller
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);
-            report($ex);
+
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('fire/fire-modular-inspection/checklist/list'));
         }
@@ -1119,7 +1119,7 @@ class FireModularInspectionController extends Controller
             $filename = "Fire Modular Inspection.pdf";
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            report($ex);
+
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('fire/fire-modular-inspection/checklist/list'));

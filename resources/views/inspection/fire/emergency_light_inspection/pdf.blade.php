@@ -149,6 +149,7 @@
 
 
     @foreach ($content as $details)
+
         <br>
 
         <div style="width:100%;">
@@ -258,33 +259,34 @@
             @php
                 $inspection = GetEmeregencyLightInspection($details->id);
             @endphp
-            @foreach ($inspection as $details)
+
+            @foreach ($inspection as $detail)
                 <tr>
                     <td style="border: 1px solid black; padding: 8px;">{{ $loop->iteration }}</td>
-                    <td style="border: 1px solid black; padding: 8px;">{{ getDepartment($details->department) }}</td>
-                    <td style="border: 1px solid black; padding: 8px;">{{ $details->location }}</td>
-                    <td style="border: 1px solid black; padding: 8px;">{{ $details->emergency_of_light }}</td>
-                    <td style="border: 1px solid black; padding: 8px;">{{ GetTypeofLight($details->type_of_light) }}
+                    <td style="border: 1px solid black; padding: 8px;">{{ getDepartment($detail->department) }}</td>
+                    <td style="border: 1px solid black; padding: 8px;">{{ $detail->location }}</td>
+                    <td style="border: 1px solid black; padding: 8px;">{{ $detail->emergency_of_light }}</td>
+                    <td style="border: 1px solid black; padding: 8px;">{{ GetTypeofLight($detail->type_of_light) }}
                     </td>
 
                     <td style="border: 1px solid black; padding: 8px;">
-                        {{ $details->capacity }}
+                        {{ $detail->capacity }}
                     </td>
                     <td style="border: 1px solid black; padding: 8px;">
-                        {{ $details->quantity }}
+                        {{ $detail->quantity }}
                     </td>
                     <td style="border: 1px solid black; padding: 8px;">
-                        {{ getLightCondition($details->light_condition) }}
+                        {{ getLightCondition($detail->light_condition) }}
                     </td>
                     <td style="border: 1px solid black; padding: 8px;">
-                        {{ getLightCondition($details->switc_condition) }}
+                        {{ getLightCondition($detail->switc_condition) }}
 
                     </td>
-                    <td style="border: 1px solid black; padding: 8px;">{{ GetPowerSuply($details->power_supply) }}
+                    <td style="border: 1px solid black; padding: 8px;">{{ GetPowerSuply($detail->power_supply) }}
                     </td>
                     <td style="border: 1px solid black; padding: 8px;">
-                        {{ getFireLightInspectionStatus($details->fire_status) }}</td>
-                    <td style="border: 1px solid black; padding: 8px;">{{ $details->remarks }}</td>
+                        {{ getFireLightInspectionStatus($detail->fire_status) }}</td>
+                    <td style="border: 1px solid black; padding: 8px;">{{ $detail->remarks }}</td>
 
 
                 </tr>
@@ -308,7 +310,7 @@
                 </td>
                 <td colspan="4" style="border: 1px solid black; padding: 6px; text-align: center;">
                     <div class="view_data">
-                        @if (!empty($details->updated_by))
+                        @if (!empty($details->verified_by))
                             <img src="{{ admin_url($verified_by) }}" alt=""
                                 style="max-height: 60px; display: block; margin: 0 auto 5px;">
                             <p style="margin: 0;">Verified By:- {{ getUsername($details->verified_by) }}</p>

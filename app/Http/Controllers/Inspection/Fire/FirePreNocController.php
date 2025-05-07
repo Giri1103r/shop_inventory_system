@@ -145,7 +145,8 @@ class FirePreNocController extends Controller
             return view('inspection.fire.firePreNoc.add', $data);
         } catch (Exception $ex) {
             report($ex);
-            report($ex);
+            Session::flash('error',  __('common.message_error'));
+            return redirect(admin_url('fire/pre-noc/checklist/list'));
         }
     }
 

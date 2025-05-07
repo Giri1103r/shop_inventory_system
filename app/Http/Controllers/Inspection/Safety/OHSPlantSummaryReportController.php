@@ -232,9 +232,7 @@ class OHSPlantSummaryReportController extends Controller
 
     public function ExportExcel(Request $request)
     {
-
         try {
-
             $allData = $this->ohsreport->exportdata();
 
             $spreadsheet = new Spreadsheet();
@@ -247,11 +245,20 @@ class OHSPlantSummaryReportController extends Controller
                 $quantity_details = json_decode($inspection_details->quantity_details, true);
                 $fire_water_pump_details = json_decode($inspection_details->fire_water_pump_details, true);
                 $units = $this->unit->getUnit();
+                $unitCount = count($units);
+
                 $document_no = $this->document_reference->selectOne($inspection_details->document_reference_id);
 
+                $quantityStartColIndex = Coordinate::columnIndexFromString('E');
+                $quantityEndColIndex = $quantityStartColIndex + $unitCount - 1;
+                $quantityEndColLetter = Coordinate::stringFromColumnIndex($quantityEndColIndex);
 
+                $totalStartIndex = $quantityEndColIndex + 1;
+                $totalEndIndex = $totalStartIndex + 1;
+                $totalStartLetter = Coordinate::stringFromColumnIndex($totalStartIndex);
+                $totalEndLetter = Coordinate::stringFromColumnIndex($totalEndIndex);
 
-                foreach (range('A', 'J') as $col) {
+                foreach (range('A', $totalEndLetter) as $col) {
                     $sheet->getColumnDimension($col)->setWidth(15);
                     $sheet->getStyle($col)->getAlignment()->setWrapText(true);
                 }
@@ -274,7 +281,12 @@ class OHSPlantSummaryReportController extends Controller
                     $drawing->setWorksheet($sheet);
                 }
 
-                $sheet->mergeCells("D{$row}:H" . ($row + 2));
+                $titleStartColIndex = Coordinate::columnIndexFromString('D');
+                $titleEndColIndex = $totalEndIndex - 2;
+                $titleStartLetter = Coordinate::stringFromColumnIndex($titleStartColIndex);
+                $titleEndLetter = Coordinate::stringFromColumnIndex($titleEndColIndex);
+
+                $sheet->mergeCells("{$titleStartLetter}{$row}:{$titleEndLetter}" . ($row + 2));
                 $sheet->setCellValue("D{$row}", 'OHS PLANT SUMMARY REPORT PN INTERNATIONAL PVT. LTD.');
                 $sheet->getStyle("D{$row}:H" . ($row + 2))->applyFromArray([
                     'font' => ['bold' => true, 'size' => 14],
@@ -282,30 +294,62 @@ class OHSPlantSummaryReportController extends Controller
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                 ]);
 
+                $docStartIndex = $totalEndIndex - 1;
+                $docLabelCol = Coordinate::stringFromColumnIndex($docStartIndex);
+                $docValueCol = Coordinate::stringFromColumnIndex($docStartIndex + 1);
+
                 $labelMap = [
-                    ["I{$row}", 'Doc. No.', $document_no->doc_no],
-                    ["I" . ($row + 1), 'Issue Dt.', Displaydateformat($document_no->issue_date)],
-                    ["I" . ($row + 2), 'Rev. & Dt.', $document_no->rev_dt],
+                    [$docLabelCol . ($row), 'Doc. No.', $document_no->doc_no],
+                    [$docLabelCol . ($row + 1), 'Issue Dt.', Displaydateformat($document_no->issue_date)],
+                    [$docLabelCol . ($row + 2), 'Rev. & Dt.', $document_no->rev_dt],
                 ];
 
                 foreach ($labelMap as [$labelCell, $label, $data]) {
-                    $dataCell = str_replace('I', 'J', $labelCell);
+                    $dataCell = str_replace($docLabelCol, $docValueCol, $labelCell);
+
                     $sheet->setCellValue($labelCell, $label);
                     $sheet->setCellValue($dataCell, $data);
+
                     $sheet->getStyle("$labelCell:$dataCell")->applyFromArray([
-                        'font' => ['bold' => true],
-                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
-                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_LEFT, 'vertical' => Alignment::VERTICAL_CENTER],
+                        'font' => [
+                            'size' => 12,
+                        ],
+                        'borders' => [
+                            'allBorders' => [
+                                'borderStyle' => Border::BORDER_DOUBLE,
+                                'color' => ['argb' => '000000']
+                            ]
+                        ],
+                        'alignment' => [
+                            'horizontal' => Alignment::HORIZONTAL_LEFT,
+                            'vertical' => Alignment::VERTICAL_CENTER,
+                        ],
                         'wrapText' => true,
                     ]);
                 }
 
                 $row += 3;
 
-                $sheet->mergeCells("A{$row}:E{$row}")->setCellValue("A{$row}", "Date:- " . Displaydateformat($inspection_details->inspection_date));
-                $sheet->mergeCells("F{$row}:J{$row}")->setCellValue("F{$row}", "UPDATED FREQUENCY :- " . $inspection_details->updated_frequency);
-                $sheet->getStyle("A{$row}:J{$row}")->applyFromArray([
+                $endColIndex = Coordinate::columnIndexFromString($totalEndLetter);
+                $halfColIndex = floor($endColIndex / 2);
+                $firstHalfStart = 'A';
+                $firstHalfEnd = Coordinate::stringFromColumnIndex($halfColIndex);
+                $secondHalfStart = Coordinate::stringFromColumnIndex($halfColIndex + 1);
+                $secondHalfEnd = $totalEndLetter;
+
+                $sheet->mergeCells("{$firstHalfStart}4:{$firstHalfEnd}4")
+                    ->setCellValue("{$firstHalfStart}4", "Date:- " . Displaydateformat($inspection_details->inspection_date));
+
+                $sheet->mergeCells("{$secondHalfStart}4:{$secondHalfEnd}4")
+                    ->setCellValue("{$secondHalfStart}4", "UPDATED FREQUENCY :- " . $inspection_details->updated_frequency);
+
+                $sheet->getStyle("A4:{$totalEndLetter}4")->applyFromArray([
                     'font' => ['bold' => true],
+                    'alignment' => [
+                        'vertical' => Alignment::VERTICAL_CENTER,
+                        'horizontal' => Alignment::HORIZONTAL_CENTER,
+
+                    ],
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                 ]);
 
@@ -313,7 +357,7 @@ class OHSPlantSummaryReportController extends Controller
 
                 $sheet->mergeCells("A{$row}:A" . ($row + 1))->setCellValue("A{$row}", "SR.NO");
                 $sheet->mergeCells("B{$row}:D" . ($row + 1))->setCellValue("B{$row}", "DESCRIPTION");
-                $sheet->mergeCells("E{$row}:H{$row}")->setCellValue("E{$row}", "QUANTITY");
+                $sheet->mergeCells("E{$row}:{$quantityEndColLetter}{$row}")->setCellValue("E{$row}", "QUANTITY");
 
                 $colIndex = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString('E');
                 foreach ($units as $unit) {
@@ -322,9 +366,9 @@ class OHSPlantSummaryReportController extends Controller
                     $colIndex++;
                 }
 
-                $sheet->mergeCells("I{$row}:J" . ($row + 1))->setCellValue("I{$row}", "TOTAL QUANTITY");
+                $sheet->mergeCells("{$totalStartLetter}{$row}:{$totalEndLetter}" . ($row + 1))->setCellValue("{$totalStartLetter}{$row}", "TOTAL QUANTITY");
 
-                $sheet->getStyle("A{$row}:J" . ($row + 1))->applyFromArray([
+                $sheet->getStyle("A{$row}:{$totalEndLetter}" . ($row + 1))->applyFromArray([
                     'font' => ['bold' => true],
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
@@ -338,15 +382,20 @@ class OHSPlantSummaryReportController extends Controller
                     $sheet->mergeCells("B{$row}:D{$row}");
                     $sheet->setCellValue("A{$row}", $sr);
                     $sheet->setCellValue("B{$row}", $detail['description'] ?? '');
-                    foreach ($units as $unit) {
-                        $sheet->setCellValue("E{$row}", $detail['unit_1'] ?? '');
-                        $sheet->setCellValue("F{$row}", $detail['unit_2'] ?? '');
-                        $sheet->setCellValue("G{$row}", $detail['unit_3'] ?? '');
+                    $currentColIndex = $quantityStartColIndex;
+                    foreach ($units as $index => $unit) {
+                        $colLetter = Coordinate::stringFromColumnIndex($currentColIndex);
+                        $sheet->setCellValue("{$colLetter}{$row}", $detail['unit_' . ($index + 1)] ?? '');
+                        $currentColIndex++;
                     }
-                    $sheet->mergeCells("I{$row}:J{$row}");
-                    $sheet->setCellValue("I{$row}", $detail['total_quantity'] ?? '');
 
-                    $sheet->getStyle("A{$row}:J{$row}")->applyFromArray([
+                    $totalColLetter = Coordinate::stringFromColumnIndex($currentColIndex);
+                    $sign_col = Coordinate::stringFromColumnIndex($currentColIndex + 1);
+
+                    $sheet->mergeCells("{$totalColLetter}{$row}:{$sign_col}{$row}");
+                    $sheet->setCellValue("{$totalColLetter}{$row}", $detail['total_quantity'] ?? '');
+
+                    $sheet->getStyle("A$row:{$sign_col}$row")->applyFromArray([
                         'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                         'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                     ]);
@@ -356,8 +405,8 @@ class OHSPlantSummaryReportController extends Controller
 
                 $row += 2;
 
-                $sheet->mergeCells("A{$row}:J{$row}")->setCellValue("A{$row}", "FIRE WATER PUMP DETAILS");
-                $sheet->getStyle("A{$row}:J{$row}")->applyFromArray([
+                $sheet->mergeCells("A{$row}:{$totalEndLetter}{$row}")->setCellValue("A{$row}", "FIRE WATER PUMP DETAILS");
+                $sheet->getStyle("A{$row}:{$totalEndLetter}{$row}")->applyFromArray([
                     'font' => ['bold' => true, 'size' => 12],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
@@ -366,16 +415,21 @@ class OHSPlantSummaryReportController extends Controller
 
                 $sheet->mergeCells("A{$row}:A" . ($row + 1))->setCellValue("A{$row}", "SR.NO");
                 $sheet->mergeCells("B{$row}:F" . ($row + 1))->setCellValue("B{$row}", "FIRE PUMP DETAILS");
-                $sheet->mergeCells("G{$row}:J{$row}")->setCellValue("G{$row}", "CAPACITY");
 
-                $colIndex = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::columnIndexFromString('G');
+                $capacityStartColIndex = Coordinate::columnIndexFromString('G');
+                $capacityEndColIndex = $capacityStartColIndex + $unitCount - 1;
+                $capacityEndLetter = Coordinate::stringFromColumnIndex($capacityEndColIndex);
+
+                $sheet->mergeCells("G{$row}:{$capacityEndLetter}{$row}")->setCellValue("G{$row}", "CAPACITY");
+
+                $currentColIndex = $capacityStartColIndex;
                 foreach ($units as $unit) {
-                    $unitCol = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($colIndex);
+                    $unitCol = Coordinate::stringFromColumnIndex($currentColIndex);
                     $sheet->setCellValue("{$unitCol}" . ($row + 1), $unit->unit_name);
-                    $colIndex++;
+                    $currentColIndex++;
                 }
 
-                $sheet->getStyle("A{$row}:J" . ($row + 1))->applyFromArray([
+                $sheet->getStyle("A{$row}:{$capacityEndLetter}" . ($row + 1))->applyFromArray([
                     'font' => ['bold' => true],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
@@ -388,12 +442,20 @@ class OHSPlantSummaryReportController extends Controller
                     $sheet->setCellValue("A{$row}", $sr);
                     $sheet->mergeCells("B{$row}:F{$row}");
                     $sheet->setCellValue("B{$row}", $item['fire_pump_details'] ?? '');
-                    $sheet->setCellValue("G{$row}", $item['fire_pump_details_unit_1'] ?? '');
-                    $sheet->setCellValue("H{$row}", $item['fire_pump_details_unit_2'] ?? '');
-                    $sheet->setCellValue("I{$row}", $item['fire_pump_details_unit_3'] ?? '');
-                    $sheet->setCellValue("J{$row}", $item['fire_pump_details_unit_4'] ?? '');
+                    $currentColIndex = $capacityStartColIndex;
+                    foreach ($units as $index => $unit) {
+                        $colLetter = Coordinate::stringFromColumnIndex($currentColIndex);
+                        $sheet->setCellValue("{$colLetter}{$row}", $item['fire_pump_details_unit_' . ($index + 1)] ?? '');
+                        $currentColIndex++;
+                    }
 
-                    $sheet->getStyle("A{$row}:J{$row}")->applyFromArray([
+                    $lastColLetter = Coordinate::stringFromColumnIndex($currentColIndex - 1);
+                    $sheet->getStyle("A{$row}:{$lastColLetter}{$row}")->applyFromArray([
+                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                    ]);
+
+                    $sheet->getStyle("A{$row}:{$totalEndLetter}{$row}")->applyFromArray([
                         'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                         'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                     ]);
@@ -402,12 +464,11 @@ class OHSPlantSummaryReportController extends Controller
                 }
 
                 $signatureRow = $row;
-                // $sheet->getRowDimension($signatureRow)->setRowHeight(60);
 
                 $approvedByName = getUserName($inspection_details->created_by);
-                $sheet->mergeCells("A$signatureRow:J$signatureRow")->setCellValue("A$signatureRow", "CHECKED AND PREPARED BY: $approvedByName");
+                $sheet->mergeCells("A$signatureRow:{$totalEndLetter}$signatureRow")->setCellValue("A$signatureRow", "CHECKED AND PREPARED BY: $approvedByName");
 
-                $sheet->getStyle("A{$startRow}:J{$row}")->applyFromArray([
+                $sheet->getStyle("A{$startRow}:{$totalEndLetter}{$row}")->applyFromArray([
                     'borders' => [
                         'top'    => ['borderStyle' => Border::BORDER_THICK],
                         'bottom' => ['borderStyle' => Border::BORDER_THICK],
@@ -425,6 +486,7 @@ class OHSPlantSummaryReportController extends Controller
 
             return response()->download($filePath)->deleteFileAfterSend(true);
         } catch (Exception $ex) {
+            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('safety/ohc-plant-summary/list'));
@@ -622,30 +684,28 @@ class OHSPlantSummaryReportController extends Controller
                 ]);
             }
 
-                $endColIndex = Coordinate::columnIndexFromString($totalEndLetter);
-                $halfColIndex = floor($endColIndex / 2);
-                $firstHalfStart = 'A';
-                $firstHalfEnd = Coordinate::stringFromColumnIndex($halfColIndex);
-                $secondHalfStart = Coordinate::stringFromColumnIndex($halfColIndex + 1);
-                $secondHalfEnd = $totalEndLetter;
+            $endColIndex = Coordinate::columnIndexFromString($totalEndLetter);
+            $halfColIndex = floor($endColIndex / 2);
+            $firstHalfStart = 'A';
+            $firstHalfEnd = Coordinate::stringFromColumnIndex($halfColIndex);
+            $secondHalfStart = Coordinate::stringFromColumnIndex($halfColIndex + 1);
+            $secondHalfEnd = $totalEndLetter;
 
-                $sheet->mergeCells("{$firstHalfStart}4:{$firstHalfEnd}4")
-                    ->setCellValue("{$firstHalfStart}4", "Date:- " . Displaydateformat($inspection_details->inspection_date));
+            $sheet->mergeCells("{$firstHalfStart}4:{$firstHalfEnd}4")
+                ->setCellValue("{$firstHalfStart}4", "Date:- " . Displaydateformat($inspection_details->inspection_date));
 
-                $sheet->mergeCells("{$secondHalfStart}4:{$secondHalfEnd}4")
-                    ->setCellValue("{$secondHalfStart}4", "UPDATED FREQUENCY :- " . $inspection_details->updated_frequency);
+            $sheet->mergeCells("{$secondHalfStart}4:{$secondHalfEnd}4")
+                ->setCellValue("{$secondHalfStart}4", "UPDATED FREQUENCY :- " . $inspection_details->updated_frequency);
 
-                $sheet->getStyle("A4:{$totalEndLetter}4")->applyFromArray([
-                    'font' => ['bold' => true],
-                    'alignment' => [
-                        'vertical' => Alignment::VERTICAL_CENTER,
-                        'horizontal' => Alignment::HORIZONTAL_CENTER,
+            $sheet->getStyle("A4:{$totalEndLetter}4")->applyFromArray([
+                'font' => ['bold' => true],
+                'alignment' => [
+                    'vertical' => Alignment::VERTICAL_CENTER,
+                    'horizontal' => Alignment::HORIZONTAL_CENTER,
 
-                    ],
-                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                ]);
-
-
+                ],
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+            ]);
 
 
             $sheet->mergeCells("A6:A7")->setCellValue("A6", "SR.NO");
@@ -769,7 +829,6 @@ class OHSPlantSummaryReportController extends Controller
 
             return response()->download($filePath)->deleteFileAfterSend(true);
         } catch (Exception $e) {
-            dd($e);
             report($e);
             Session::flash('error', 'Something went wrong!');
             return redirect(admin_url('safety/ohc-plant-summary/list'));
