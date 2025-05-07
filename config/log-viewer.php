@@ -73,6 +73,7 @@ return [
 
     'middleware' => [
         'web',
+        'islogin',
         \App\Http\Middleware\LogViewer::class,
     ],
 
@@ -86,7 +87,8 @@ return [
     */
 
     'api_middleware' => [
-        \Opcodes\LogViewer\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
+        'islogin',
+       // \Opcodes\LogViewer\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
         \Opcodes\LogViewer\Http\Middleware\AuthorizeLogViewer::class,
     ],
 
