@@ -442,10 +442,29 @@ class SafetyPermitController extends Controller
             $getinstruction = $this->safework->selectchecklist();
             $getprecaution = $this->precaution->selectchecklist();
             $getchecklist = $this->checklist->selectchecklist();
-            $confinedSpaceEntry = json_decode($safetypermit->confined_space_entry, true);
-            $stateIsolationLoto = json_decode($safetypermit->state_isolation_loto, true);
-            $protectiveEquipment = json_decode($safetypermit->protective_equip, true);
-            $equipmentInvolved = json_decode($safetypermit->equipment_involved, true);
+
+
+            $confinedSpaceEntry = [];
+            $stateIsolationLoto = [];
+            $protectiveEquipment = [];
+            $equipmentInvolved = [];
+
+            if (!empty($safetypermit->confined_space_entry)) {
+                $confinedSpaceEntry = json_decode($safetypermit->confined_space_entry, true);
+            }
+
+            if (!empty($safetypermit->state_isolation_loto)) {
+                $stateIsolationLoto = json_decode($safetypermit->state_isolation_loto, true);
+            }
+
+            if (!empty($safetypermit->protective_equip)) {
+                $protectiveEquipment = json_decode($safetypermit->protective_equip, true);
+            }
+
+            if (!empty($safetypermit->equipment_involved)) {
+                $equipmentInvolved = json_decode($safetypermit->equipment_involved, true);
+            }
+
 
             $workman = $this->workmaninvolved->getWorkmaninvolved($id);
 
@@ -2168,23 +2187,23 @@ class SafetyPermitController extends Controller
         // Fetch month-wise permit counts grouped by month and year
         $permitCounts = $this->safetypermit
             ->selectRaw('MONTH(created_at) as month, YEAR(created_at) as year, COUNT(*) as permit_count')
-            ->where('status', 1)
-            ->where('trash', 'NO')
-            ->groupBy('year', 'month')
+            ->where('status', 1) // Only include permits with status 1
+            ->where('trash', 'NO') // Exclude permits marked as trash
+            ->groupBy('year', 'month') // Group by year and month
             ->orderBy('year')
             ->orderBy('month')
             ->get();
 
-
+        // Process the data to ensure all months are included, even if no data exists
         $result = [];
         $currentYear = date('Y');
 
-
+        // Initialize all months with 0 for the current year
         for ($month = 1; $month <= 12; $month++) {
             $result[$month] = 0;
         }
 
-
+        // Overwrite the permit counts with actual data
         foreach ($permitCounts as $count) {
             if ($count->year == $currentYear) {
                 $result[$count->month] = $count->permit_count;
@@ -2192,7 +2211,7 @@ class SafetyPermitController extends Controller
         }
 
         return view('permit.safetypermit.monthwisecount', [
-            'monthlyCounts' => $result,
+            'monthlyCounts' => $result, // Pass processed data to the view
         ]);
     }
 
@@ -2204,11 +2223,10 @@ class SafetyPermitController extends Controller
         $request = request();
 
         $params = [
-            'unit_id' => $request->Unit ? (array)$request->Unit : [],
+            // 'factory_ids' => $request->Factory ? arrayDecrypt($request->Factory) : [],
             'from_date' => $request->Fromdate ?? null,
             'to_date' => $request->Todate ?? null,
         ];
-
         $permitStatus = [
             [
                 'name' => 'Total Training',
