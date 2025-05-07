@@ -10,8 +10,8 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Auth;
 
 use Str;
-use Response;
-use Session;
+use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Session;
 use Exception;
 use DataTables;
 
@@ -137,6 +137,8 @@ class TypeofWorkController extends Controller
             return view('master.typeofwork.add', $data);
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error',  __('common.message_error'));
+            return redirect(admin_url('ptw/typeofworkmaster/list'));
         }
     }
 
@@ -188,7 +190,7 @@ class TypeofWorkController extends Controller
             if (Auth::check()) {
                 $typeofwork = $this->typeofwork->selectone($id);
 
-                // dd($typeofwork);
+
                 $protectivequip_checklist = $this->protective->selectchecklist();
                 $equipinvalve_checklist = $this->equipinvalve->selectchecklist();
                 $safework_checklist = $this->safework->selectchecklist();
@@ -235,6 +237,8 @@ class TypeofWorkController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
+            Session::flash('error',  __('common.message_error'));
+            return redirect(admin_url('ptw/typeofworkmaster/list'));
         }
     }
 
@@ -243,7 +247,7 @@ class TypeofWorkController extends Controller
         try {
             $id = decryptId($request->id);
 
-            // dd($id);
+
             $typeofwork = $this->typeofwork->selectone($id);
             $protectivequip_checklist = $this->protective->selectchecklist();
             $equipinvalve_checklist = $this->equipinvalve->selectchecklist();
@@ -251,13 +255,13 @@ class TypeofWorkController extends Controller
             $precaution_checklist = $this->precaution->selectchecklist();
             $equipchecklist_checklist = $this->checklist->selectchecklist();
             $file = $this->typeofworkupload->where('typeofwork_id', $id)->first();
-            // dd($precaution_checklist);
+
 
             $protective = $this->typeofworkchecklist->where('typeofwork_id', $id)->where('type', 'type1')->get()->KeyBy('check_points');
             $equipment = $this->typeofworkchecklist->where('typeofwork_id', $id)->where('type', 'type2')->get()->KeyBy('check_points');
             $manual = $this->typeofworkchecklist->where('typeofwork_id', $id)->where('type', 'type3')->get()->KeyBy('check_points');
 
-            // dd($manual);
+
             $check = $this->typeofworkchecklist->where('typeofwork_id', $id)->where('type', 'type4')->get()->KeyBy('check_points');
             $instruction = $this->typeofworkchecklist->where('typeofwork_id', $id)->where('type', 'type5')->get()->KeyBy('check_points');
 
@@ -280,7 +284,8 @@ class TypeofWorkController extends Controller
         } catch (Exception $error) {
 
             report($error);
-            report($error->getMessage());
+            Session::flash('error',  __('common.message_error'));
+            return redirect(admin_url('ptw/typeofworkmaster/list'));
         }
     }
 
@@ -288,19 +293,8 @@ class TypeofWorkController extends Controller
     {
         try {
             $id = decryptId($request->id);
-            // dd($id)
-            // $rules = [
-            //     'checklist' => 'required',
 
-            // ];
-            // $messages = [
-            //     'checklist.required' => __('Type of work is required'),
 
-            // ];
-            // $validator = Validator::make($request->all(), $rules, $messages);
-            // if ($validator->fails()) {
-            //     return redirect()->back()->withErrors($validator)->withInput();
-            // }
 
 
             $typeofwork =  $this->typeofwork->updates($id);
