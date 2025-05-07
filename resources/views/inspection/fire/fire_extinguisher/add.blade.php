@@ -205,8 +205,8 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.fire_point_no') }}</label>
-                                                        <input type="text" name="sr_no[1]" id = "sr_no"
-                                                            class="form-control">
+                                                        <input type="number" min="1" name="sr_no[1]"
+                                                            id = "sr_no" class="form-control">
                                                     </div>
                                                 </div>
 
@@ -487,7 +487,7 @@
                         forklift_type: {
                             required: true,
                         },
-                        "sr_no[1]" :{
+                        "sr_no[1]": {
                             required: true,
                             uniqueItemCode: true,
                         },
@@ -505,6 +505,9 @@
                         },
                         "remarks[1]": {
                             required: true,
+                            minlength: 3,
+                            maxlength: 300,
+                            noSpaces: true,
                         },
                         "type[1]": {
                             required: true,
@@ -514,6 +517,9 @@
                         },
                         "description[1]": {
                             required: true,
+                            minlength: 3,
+                            maxlength: 300,
+                            noSpaces: true,
                         },
                         "cylinder_pressure[1]": {
                             required: true,
@@ -523,6 +529,9 @@
                         },
                         "approach[1]": {
                             required: true,
+                            minlength: 3,
+                            maxlength: 300,
+                            noSpaces: true,
                         },
                         "safety_pin[1]": {
                             required: true,
@@ -590,6 +599,8 @@
                         },
                         "remarks[1]": {
                             required: "Please add remarks",
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 300",
                         },
                         "location[1]": {
                             required: "Please select the location",
@@ -599,6 +610,9 @@
                         },
                         "approach[1]": {
                             required: "Please fill this field",
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 300",
+
                         },
                         "discharge_tube[1]": {
                             required: "Please Select the status of Discharge tube"
@@ -611,11 +625,13 @@
                         },
                         "description[1]": {
                             required: "Please enter the description",
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 300",
                         },
                         "safety_pin[1]": {
                             required: "Please select the status of safety pin",
                         },
-                        "sr_no[1]" :{
+                        "sr_no[1]": {
                             required: 'Fire Point is required',
                             uniqueItemCode: "Fire Point Should Be Unique",
                         },
@@ -702,7 +718,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.fire_point_no') }}</label>
-                                                        <input type="text" name="sr_no[${form_set_count}]" id = "sr_no"
+                                                        <input type="number" min="1" name="sr_no[${form_set_count}]" id = "sr_no"
                                                             class="form-control">
                                                     </div>
                                                 </div>
@@ -856,8 +872,13 @@
 
                     $("textarea[name='description[" + form_set_count + "]']").rules('add', {
                         required: true,
+                        minlength: 3,
+                        maxlength: 300,
+                        noSpaces: true,
                         messages: {
                             required: 'Please provide a description',
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 300",
                         }
                     });
 
@@ -913,15 +934,25 @@
 
                     $("textarea[name='approach[" + form_set_count + "]']").rules('add', {
                         required: true,
+                        minlength: 3,
+                        maxlength: 300,
+                        noSpaces: true,
                         messages: {
                             required: 'Please specify the approach details',
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 300",
                         }
                     });
 
                     $("textarea[name='remarks[" + form_set_count + "]']").rules('add', {
                         required: true,
+                        minlength: 3,
+                        maxlength: 300,
+                        noSpaces: true,
                         messages: {
                             required: 'Please add remarks',
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 300",
                         }
                     });
 

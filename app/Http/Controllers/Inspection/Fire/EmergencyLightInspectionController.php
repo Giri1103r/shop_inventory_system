@@ -307,6 +307,7 @@ class EmergencyLightInspectionController extends Controller
             $this->statusLog->create($insert_array);
 
             if ($inspection->observation == 1) {
+                Session::flash('success', 'Your data added successfully');
                 return redirect(admin_url('fire/checklist-observation/add/' . encryptId($inspection_type) . '/' . encryptId($id)));
             } else {
                 return redirect(admin_url('fire/emergency-light-inspection/list'));
@@ -314,7 +315,7 @@ class EmergencyLightInspectionController extends Controller
             Session::flash('success', 'Your data added successfully');
             return redirect(admin_url('fire/emergency-light-inspection/list'));
         } catch (Exception $ex) {
-            report($ex);
+            dd($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('fire/emergency-light-inspection/list'));
         }

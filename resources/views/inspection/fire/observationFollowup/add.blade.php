@@ -107,7 +107,8 @@
                                                             <div class="form-group form-input">
                                                                 <label class="form-label require">Unit Name</label>
                                                                 <select name="obs[1][unit_id]" id="unit_id_1"
-                                                                    class="form-control single-select" style="width: 100%">
+                                                                    class="form-control select2 unit-select"
+                                                                    style="width: 100%">
                                                                     <option value="">Select Unit</option>
                                                                     @foreach ($unitList as $unit)
                                                                         <option value="{{ $unit->id }}">
@@ -120,13 +121,10 @@
                                                             <div class="form-group form-input">
                                                                 <label class="form-label require">Department Name</label>
                                                                 <select name="obs[1][department_id]" id="department_id_1"
-                                                                    class="form-control single-select"
+                                                                    class="form-control department-select select2"
                                                                     style="width: 100%">
                                                                     <option value="">Select Department</option>
-                                                                    @foreach ($departmentList as $department)
-                                                                        <option value="{{ $department->id }}">
-                                                                            {{ $department->department_name }}</option>
-                                                                    @endforeach
+
                                                                 </select>
                                                             </div>
                                                         </div>
@@ -200,6 +198,41 @@
 
     @push('script')
         <script type="text/javascript" nonce="projectcab">
+   $(document).on('change', '.unit-select', function() {
+                        let unitId = $(this).val();
+                        let row = $(this).closest(
+                        '.row'); // adjust if you're using <tr> or other structure
+
+                        let departmentSelect = row.find('.department-select');
+                        departmentSelect.empty().append('<option value="">Select Department</option>');
+
+                        if (unitId) {
+                            $.ajax({
+                                url: "{{ admin_url('department/ajax-list') }}/" + unitId +
+                                    "/0",
+                                type: 'GET',
+                                dataType: 'json',
+                                success: function(data) {
+                                    $.each(data, function(key, value) {
+                                        departmentSelect.append('<option value="' +
+                                            value.id + '">' + value
+                                            .name + '</option>');
+                                    });
+                                    departmentSelect.trigger('change');
+                                },
+                                error: function() {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Error',
+                                        text: 'Failed to fetch departments. Please try again.'
+                                    });
+                                }
+                            });
+                        }
+                    });
+          $('.select2').select2({
+                        width: '100%'
+                    });
             $(document).ready(function() {
                 $('#resetform').on('click', function(e) {
                     e.preventDefault();
@@ -241,81 +274,80 @@
 
 
                     var newFormSet = `
-                <div class="form-set mb-3">
-                    <div class="card-header-inner">
-                        <h4 class="text-white">Observation</h4>
-                    </div>
-                    <div class="d-flex justify-content-end">
-                        <button class="btn btn-primary add-row me-3" type="button"
-                            id="add-row" style="width: 84px;">
-                            Add
-                        </button>
-                        <button type="button" class="btn btn-danger remove-row">
-                            <i class="fa-solid fa-trash"></i> Remove
-                        </button>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div class="form-group form-input">
-                                <label class="form-label require">Serial Number</label>
-                                <input type="text" name="obs[${form_set_count}][serial_number]" class="form-control" placeholder="Serial Number" value="${newSerialNumber}" readonly>
+                        <div class="form-set mb-3">
+                            <div class="card-header-inner">
+                                <h4 class="text-white">Observation</h4>
                             </div>
-                        </div>
+                            <div class="d-flex justify-content-end">
+                                <button class="btn btn-primary add-row me-3" type="button"
+                                    id="add-row" style="width: 84px;">
+                                    Add
+                                </button>
+                                <button type="button" class="btn btn-danger remove-row">
+                                    <i class="fa-solid fa-trash"></i> Remove
+                                </button>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group form-input">
+                                        <label class="form-label require">Serial Number</label>
+                                        <input type="text" name="obs[${form_set_count}][serial_number]" class="form-control" placeholder="Serial Number" value="${newSerialNumber}" readonly>
+                                    </div>
+                                </div>
 
-                            <div class="col-md-4">
-                                <div class="form-group form-input">
-                                    <label class="form-label require">Unit Name</label>
-                                    <select name="obs[${form_set_count}][unit_id]" id="unit_id_${form_set_count}" class="form-control single-select">
-                                        <option value="">Select Unit</option>
-                                        @foreach ($unitList as $unit)
-                                            <option value="{{ $unit->id }}">{{ $unit->unit_name }}</option>
-                                        @endforeach
-                                    </select>
+                                    <div class="col-md-4">
+                                        <div class="form-group form-input">
+                                            <label class="form-label require">Unit Name</label>
+                                            <select name="obs[${form_set_count}][unit_id]" id="unit_id_${form_set_count}" class="form-control  unit-select select2">
+                                                <option value="">Select Unit</option>
+                                                @foreach ($unitList as $unit)
+                                                    <option value="{{ $unit->id }}">{{ $unit->unit_name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group form-input">
+                                            <label class="form-label require">Department Name</label>
+                                            <select name="obs[${form_set_count}][department_id]" id="department_id_${form_set_count}" class="form-control select2 department-select" style="width: 100%">
+                                                <option value="">Select Department</option>
+
+                                            </select>
+                                        </div>
+                                    </div>
+                                <div class="col-md-4 mt-2">
+                                    <div class="form-group form-input">
+                                        <label class="form-label require">Name of Equipment</label>
+                                        <input name="obs[${form_set_count}][equipment_name]" class="form-control" placeholder="Enter the Equipment name ">
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mt-2">
+                                    <div class="form-group form-input">
+                                        <label class="form-label require">Resource Code of Equipment</label>
+                                        <input name="obs[${form_set_count}][equipment_code]" class="form-control" placeholder="Enter the Resource Code">
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mt-2">
+                                    <div class="form-group form-input">
+                                        <label class="form-label require">Observation</label>
+                                        <input name="obs[${form_set_count}][observation]" class="form-control" placeholder="Enter the Observation">
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mt-2">
+                                    <div class="form-group form-input">
+                                        <label class="form-label require">Date of Observation / Inspection</label>
+                                        <input name="obs[${form_set_count}][date]"  id="date_${form_set_count}" class="form-control" placeholder="Date">
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mt-2">
+                                    <div class="form-group form-input">
+                                        <label class="form-label require">Observation of the Month</label>
+                                        <input name="obs[${form_set_count}][month]" id="month_${form_set_count}" class="form-control" placeholder="Month">
+                                    </div>
                                 </div>
                             </div>
-                             <div class="col-md-4">
-                                <div class="form-group form-input">
-                                    <label class="form-label require">Department Name</label>
-                                    <select name="obs[${form_set_count}][department_id]" id="department_id_${form_set_count}" class="form-control single-select" style="width: 100%">
-                                        <option value="">Select Department</option>
-                                        @foreach ($departmentList as $department)
-                                            <option value="{{ $department->id }}">{{ $department->department_name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-                        <div class="col-md-4 mt-2">
-                            <div class="form-group form-input">
-                                <label class="form-label require">Name of Equipment</label>
-                                <input name="obs[${form_set_count}][equipment_name]" class="form-control" placeholder="Remark">
-                            </div>
                         </div>
-                          <div class="col-md-4 mt-2">
-                            <div class="form-group form-input">
-                                <label class="form-label require">Resource Code of Equipment</label>
-                                <input name="obs[${form_set_count}][equipment_code]" class="form-control" placeholder="Remark">
-                            </div>
-                        </div>
-                         <div class="col-md-4 mt-2">
-                            <div class="form-group form-input">
-                                <label class="form-label require">Observation</label>
-                                <input name="obs[${form_set_count}][observation]" class="form-control" placeholder="Remark">
-                            </div>
-                        </div>
-                         <div class="col-md-4 mt-2">
-                            <div class="form-group form-input">
-                                <label class="form-label require">Date of Observation / Inspection</label>
-                                <input name="obs[${form_set_count}][date]"  id="date_${form_set_count}" class="form-control" placeholder="Date">
-                            </div>
-                        </div>
-                        <div class="col-md-4 mt-2">
-                            <div class="form-group form-input">
-                                <label class="form-label require">Observation of the Month</label>
-                                <input name="obs[${form_set_count}][month]" id="month_${form_set_count}" class="form-control" placeholder="Month">
-                            </div>
-                        </div>
-                    </div>
-                </div>`;
+                    `;
 
                     $('#form-wrapper').append(newFormSet);
 
@@ -323,6 +355,10 @@
 
                     flatpickr('#date_' + form_set_count, {
                         dateFormat: "d-m-Y",
+                    });
+
+                    $('.select2').select2({
+                        width: '100%'
                     });
 
                     $('#month_' + form_set_count).datepicker({
@@ -357,22 +393,34 @@
 
                     $("input[name='obs[" + form_set_count + "][equipment_name]']").rules('add', {
                         required: true,
+                        minlength: 3,
+                        maxlength: 30,
                         messages: {
-                            required: 'Equipment name is required'
+                            required: 'Equipment name is required',
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 30",
                         }
                     });
 
                     $("input[name='obs[" + form_set_count + "][equipment_code]']").rules('add', {
                         required: true,
+                        minlength: 3,
+                        maxlength: 30,
                         messages: {
-                            required: 'Resource code is required'
+                            required: 'Resource code is required',
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 30",
                         }
                     });
 
                     $("input[name='obs[" + form_set_count + "][observation]']").rules('add', {
                         required: true,
+                        minlength: 3,
+                        maxlength: 30,
                         messages: {
-                            required: 'Observation is required'
+                            required: 'Observation is required',
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 30",
                         }
                     });
 
@@ -392,7 +440,42 @@
 
                     form_set_count++;
                     updatePageIndices();
+
+                    $(document).on('change', '.unit-select', function() {
+                        let unitId = $(this).val();
+                        let row = $(this).closest(
+                        '.row'); // adjust if you're using <tr> or other structure
+
+                        let departmentSelect = row.find('.department-select');
+                        departmentSelect.empty().append('<option value="">Select Department</option>');
+
+                        if (unitId) {
+                            $.ajax({
+                                url: "{{ admin_url('department/ajax-list') }}/" + unitId +
+                                    "/0",
+                                type: 'GET',
+                                dataType: 'json',
+                                success: function(data) {
+                                    $.each(data, function(key, value) {
+                                        departmentSelect.append('<option value="' +
+                                            value.id + '">' + value
+                                            .name + '</option>');
+                                    });
+                                    departmentSelect.trigger('change');
+                                },
+                                error: function() {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Error',
+                                        text: 'Failed to fetch departments. Please try again.'
+                                    });
+                                }
+                            });
+                        }
+                    });
                 });
+
+
 
                 $(document).on('click', '.remove-row', function() {
                     let currentFormSets = $('#form-wrapper .form-set').length;
@@ -455,14 +538,20 @@
                         'obs[1][date]': {
                             required: true,
                         },
-                        'bs[1][observation]': {
+                        'obs[1][observation]': {
                             required: true,
+                            minlength: 3,
+                            maxlength: 30,
                         },
                         'obs[1][equipment_code]': {
                             required: true,
+                            minlength: 3,
+                            maxlength: 30,
                         },
                         'obs[1][equipment_name]': {
                             required: true,
+                            minlength: 3,
+                            maxlength: 30,
                         },
                         'obs[1][department_id]': {
                             required: true,
@@ -485,12 +574,18 @@
                         },
                         'obs[1][observation]': {
                             required: "{{ __(' Observation is Required') }}",
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 30",
                         },
                         'obs[1][equipment_code]': {
                             required: "{{ __('Equipment Code  is Required') }}",
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 30",
                         },
                         'obs[1][equipment_name]': {
                             required: "{{ __('Equipment Name  is Required') }}",
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 30",
                         },
                         'obs[1][department_id]': {
                             required: "{{ __('Department  is Required') }}",

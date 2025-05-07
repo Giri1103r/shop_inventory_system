@@ -132,6 +132,73 @@ class ChecklistObservationFollowupController extends Controller
                             }
                             return $text;
                         })
+
+                        ->addColumn('inspection_type', function ($row) {
+                            $text = '';
+                            switch ($row->inspection_type) {
+                                case HOOTER_INSPECTION:
+                                    $text = 'Hooter Inspection';
+                                    break;
+                                case EMERGENCY_LIGHT_INSPECTION:
+                                    $text = 'Emergency Light Inspection';
+                                    break;
+                                case MONTHLY_FIRE_PUMP:
+                                    $text = 'Monthly Fire Pump';
+                                    break;
+                                case FIRE_MOCK_DRILL_INSPECION:
+                                    $text = 'Fire Mock Drill Inspection';
+                                    break;
+                                case FIRE_EXTINGUISHER_INSPECTION:
+                                    $text = 'Fire Extinguisher Inspection';
+                                    break;
+                                case ISOLATION_VALVE_INSPECTION:
+                                    $text = 'Isolation Valve Inspection';
+                                    break;
+                                case FIRE_ALARM_INSPECTION:
+                                    $text = 'Fire Alarm Inspection';
+                                    break;
+                                case SPRINKLAR_SYSTEM_INSPECTION:
+                                    $text = 'Sprinkler System Inspection';
+                                    break;
+                                case SAND_BUCKET_INSPECTION:
+                                    $text = 'Sand Bucket Inspection';
+                                    break;
+                                case DETECTOR_INSPECTION:
+                                    $text = 'Detector Inspection';
+                                    break;
+                                case FIRE_PA_SYSTEM_INSPECTION:
+                                    $text = 'Fire PA System Inspection';
+                                    break;
+                                case DAILY_FIRE_PUMP:
+                                    $text = 'Daily Fire Pump';
+                                    break;
+                                case CO_TYPE_FIRE_EXTINGUISHER_INSPECTION:
+                                    $text = 'CO Type Fire Extinguisher Inspection';
+                                    break;
+                                case HOSE_BOX_INSPECTION:
+                                    $text = 'Hose Box Inspection';
+                                    break;
+                                case CARTRIDGE_TYPE_FIRE_EXTINGUISHER_INSPECTION:
+                                    $text = 'Cartridge Type Fire Extinguisher Inspection';
+                                    break;
+                                case HOSE_REEL_INSPECTION:
+                                    $text = 'Hose Reel Inspection';
+                                    break;
+                                case FIRE_MODULAR_INSPECTION:
+                                    $text = 'Fire Modular Inspection';
+                                    break;
+                                case HYDRANT_RISER:
+                                    $text = 'Hydrant Riser';
+                                    break;
+                                case OBSERVATION_FOLLOWUP:
+                                    $text = 'Observation Follow-up';
+                                    break;
+                                default:
+                                    $text = 'Unknown';
+                            }
+                            return $text;
+                        })
+
                         ->addColumn('action', function ($row) {
                             $btn = '';
                             $btn = '<a href="' . admin_url('fire/checklist-observation/view/' . encryptId($row->inspectionid) . '/' . encryptId($row->observationid)) .  '"   class="view-icon me-1" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
@@ -148,7 +215,7 @@ class ChecklistObservationFollowupController extends Controller
 
                             return $btn;
                         })
-                        ->rawColumns(['action', 'created_date', 'created_by', 'status', 'observation_status'])
+                        ->rawColumns(['action', 'created_date', 'created_by', 'status', 'observation_status','inspection_type'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -240,13 +307,13 @@ class ChecklistObservationFollowupController extends Controller
 
                 Session::flash('success', __('Your data has been created successfully'));
             } catch (Exception $ex) {
-                report($ex);
-                report($ex);
+
+                dd($ex);
                 Session::flash('error', __('common.message_error'));
             }
             return redirect(admin_url('fire/checklist-observation/list'));
         } catch (Exception $ex) {
-            report($ex);
+            dd($ex);
             Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('fire/checklist-observation/list'));
         }

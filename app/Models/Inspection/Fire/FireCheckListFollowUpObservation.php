@@ -144,8 +144,8 @@ class FireCheckListFollowUpObservation extends Model
             $insert_array = [
                 'inspection_id' => $inspection_id,
                 'sr_no' => $obs['serial_number'] ?? null,
-                'unit_id' => $obs['unit_id'] ?? null,
-                'department_id' => $obs['department_id'] ?? null,
+                'unit_id' => ($obs['unit_id'] ?? null),
+                'department_id' => decryptId($obs['department_id'] ?? null),
                 'equipment_name' => $obs['equipment_name'] ?? null,
                 'equipment_code' => $obs['equipment_code'] ?? null,
                 'observation' => $obs['observation'] ?? null,
