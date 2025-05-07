@@ -40,7 +40,7 @@ class FireCheckListFollowUp extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_fire_checklist_follow.*', 'inspection_fire_observation.*', 'inspection_fire_checklist_follow.id as inspectionid', 'inspection_fire_observation.id as observationid')->leftjoin('inspection_fire_observation', 'inspection_fire_observation.inspection_id', '=', 'inspection_fire_checklist_follow.id');
+        $query = $this->select('inspection_fire_checklist_follow.*', 'inspection_fire_checklist_follow.created_by as fire_created_by', 'inspection_fire_observation.*', 'inspection_fire_checklist_follow.id as inspectionid', 'inspection_fire_observation.id as observationid')->leftjoin('inspection_fire_observation', 'inspection_fire_observation.inspection_id', '=', 'inspection_fire_checklist_follow.id');
         $org_total =  $query;
         $org_total_counts = $org_total->count();
 
