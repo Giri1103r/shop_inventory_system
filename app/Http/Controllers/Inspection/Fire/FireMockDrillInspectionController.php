@@ -281,7 +281,7 @@ class FireMockDrillInspectionController extends Controller
             return redirect(admin_url('fire/fire-mock-drill-observation/list'));
         } catch (Exception $ex) {
             report($ex);
-            report($ex);
+
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('fire/fire-mock-drill-observation/list'));
         }
@@ -309,7 +309,7 @@ class FireMockDrillInspectionController extends Controller
             return view('inspection.fire.fire_mock_drill_inspection.view', $data);
         } catch (Exception $ex) {
             report($ex);
-            report($ex);
+
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('fire/fire-mock-drill-observation/list'));
         }
@@ -340,7 +340,7 @@ class FireMockDrillInspectionController extends Controller
             return view('inspection.fire.fire_mock_drill_inspection.approval', $data);
         } catch (Exception $ex) {
             report($ex);
-            report($ex);
+
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('fire/fire-mock-drill-observation/list'));
         }
@@ -410,7 +410,7 @@ class FireMockDrillInspectionController extends Controller
             Session::flash('success', __('common.updated_msg'));
             return redirect(admin_url('fire/fire-mock-drill-observation/list'));
         } catch (Exception $ex) {
-            report($ex);
+
             report($ex);
             Session::flash('error', 'Something Went Wrong!');
             return redirect(admin_url('fire/fire-mock-drill-observation/list'));
@@ -962,7 +962,7 @@ class FireMockDrillInspectionController extends Controller
             header('Cache-Control: max-age=0');
             $writer->save('php://output');
         } catch (\Exception $e) {
-            dd($e);
+
             report($e);
             Session::flash('error', 'Something went wrong!');
             return redirect(admin_url('fire/detector-inspection/list'));
@@ -1010,7 +1010,7 @@ class FireMockDrillInspectionController extends Controller
             $filename = "Fire Exitnguisher Inspection.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            report($ex);
+
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('fire/fire-mock-drill-observation/list'));
@@ -1272,7 +1272,7 @@ class FireMockDrillInspectionController extends Controller
 
             return response()->download($filePath)->deleteFileAfterSend(true);
         } catch (\Exception $e) {
-        dd($e);
+
             report($e);
             Session::flash('error', 'Something went wrong!');
             return redirect(admin_url('fire/fire-extinguisher/cartridge/list'));

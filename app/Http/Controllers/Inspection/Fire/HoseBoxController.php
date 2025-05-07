@@ -473,7 +473,7 @@ class HoseBoxController extends Controller
             return redirect(admin_url('fire/hose-box-inspection/list'));
         } catch (Exception $ex) {
             report($ex);
-            report($ex);
+
             Session::flash('error', 'Something Went Wrong!');
             return redirect(admin_url('fire/hose-box-inspection/list'));
         }

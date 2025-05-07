@@ -98,7 +98,7 @@ class FireSafetyEquipmentController extends Controller
                     return $datatables;
                 } catch (Exception $ex) {
                     report($ex);
-                    report($ex);
+
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }

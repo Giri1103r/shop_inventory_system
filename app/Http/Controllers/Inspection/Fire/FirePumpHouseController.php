@@ -156,8 +156,10 @@ class FirePumpHouseController extends Controller
             );
             return view('inspection.fire.firePumpHouse.add', $data);
         } catch (Exception $ex) {
+
             report($ex);
-            report($ex);
+            Session::flash('error',  __('common.message_error'));
+            return redirect(admin_url('fire/daily-fire-pump-house-inspection/list'));
         }
     }
 
@@ -413,6 +415,7 @@ class FirePumpHouseController extends Controller
                 'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
             ]);
         } catch (Exception $ex) {
+            report($ex);
             Session::flash('error', 'Something went wrong!');
             return redirect(admin_url('fire/daily-fire-pump-house-inspection/list'));
         }
@@ -465,6 +468,7 @@ class FirePumpHouseController extends Controller
             $filename = "Daily Fire Pump House Inspectiony.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
+            report($ex);
             Session::flash('error', 'Something went wrong!');
             return redirect(admin_url('fire/daily-fire-pump-house-inspection/list'));
         }

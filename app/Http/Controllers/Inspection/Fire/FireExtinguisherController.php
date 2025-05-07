@@ -1005,8 +1005,6 @@ class FireExtinguisherController extends Controller
 
             return response()->download($tempFile)->deleteFileAfterSend(true);
         } catch (\Exception $e) {
-            dd($e);
-
             report($e);
             Session::flash('error', 'Something went wrong!');
             return redirect(admin_url('fire/fire_extinguisher-inspection/list'));
@@ -1050,7 +1048,6 @@ class FireExtinguisherController extends Controller
             $filename = "Fire Exitnguisher Inspection.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            report($ex);
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('fire/fire_extinguisher-inspection/list'));
@@ -1316,7 +1313,6 @@ class FireExtinguisherController extends Controller
 
             return response()->download($filePath)->deleteFileAfterSend(true);
         } catch (\Exception $e) {
-            dd($e);
             report($e);
             Session::flash('error', 'Something went wrong!');
             return redirect(admin_url('fire/fire_extinguisher-inspection/list'));

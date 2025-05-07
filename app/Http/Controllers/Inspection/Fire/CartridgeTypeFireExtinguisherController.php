@@ -212,7 +212,6 @@ class CartridgeTypeFireExtinguisherController extends Controller
             return view('inspection.fire.cartridge_type_fire_extinguisher.add', $data);
         } catch (Exception $ex) {
             report($ex);
-            report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('fire/fire-extinguisher/cartridge/list'));
         }
@@ -1381,7 +1380,7 @@ class CartridgeTypeFireExtinguisherController extends Controller
 
             return response()->download($filePath)->deleteFileAfterSend(true);
         } catch (\Exception $e) {
-            dd($e);
+            
             report($e);
             Session::flash('error', 'Something went wrong!');
             return redirect(admin_url('fire/fire-extinguisher/cartridge/list'));
