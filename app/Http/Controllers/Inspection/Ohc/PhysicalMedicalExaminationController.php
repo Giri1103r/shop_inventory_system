@@ -154,7 +154,7 @@ class PhysicalMedicalExaminationController extends Controller
             );
             return view('inspection.inspection_ohc.physical_medical_examination.add', $data);
         } catch (Exception $ex) {
-            report($ex);
+            dd($ex);
             Session::flash('error', 'Something went wrong!');
             return redirect(admin_url('ohc/physical-medical-examination/yearly/list'));
         }
@@ -172,7 +172,7 @@ class PhysicalMedicalExaminationController extends Controller
             Session::flash('success', __('common.created_msg'));
             return redirect(admin_url('ohc/physical-medical-examination/yearly/list'));
         } catch (Exception $ex) {
-            report($ex);
+            dd($ex);
             Session::flash('error', 'Something went wrong!');
             return redirect(admin_url('ohc/physical-medical-examination/yearly/list'));
         }
@@ -185,14 +185,19 @@ class PhysicalMedicalExaminationController extends Controller
 
             $physicalHealth = $this->physicalHealth->selectOne($id);
             $document_no = $this->document_reference->selectOne($physicalHealth->document_reference_id);
-          
+
             $fmo_signature = GetOHCSignature($physicalHealth->created_by, $id, OHC_TYPE_PHYSICAL_HEALTH_EXAMINATION);
 
-
+            $personalDetails = $this->personalDetails->personalDetails();
+            $familyHistory = $this->familyHistory->familyHistory();
+            $check_points = getCheckListQuestion(OHC_PHYSICAL_HEALTH_EXAMINATION);
             $data = [
                 'physicalHealth' => $physicalHealth,
                 'document_no' => $document_no,
                 'fmo_signature' => $fmo_signature,
+                'personalDetails' => $personalDetails,
+                'check_points' => $check_points,
+                'familyHistory' => $familyHistory,
 
 
             ];

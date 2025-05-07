@@ -48,7 +48,7 @@
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('inspection.doc_no') }}</label>
                                         <div class="view_data">
-                                            {{ (isset($document_no->doc_no) ? $document_no->doc_no : '') }}
+                                            {{ isset($document_no->doc_no) ? $document_no->doc_no : '' }}
                                         </div>
                                     </div>
 
@@ -61,31 +61,31 @@
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('inspection.rev_date') }}</label>
                                         <div class="view_data">
-                                            {{ (isset($document_no->rev_dt) ? $document_no->rev_dt : '') }}
+                                            {{ isset($document_no->rev_dt) ? $document_no->rev_dt : '' }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('Employee Id') }}</label>
                                         <div class="view_data">
-                                            {{ (isset($physicalHealth->emp_id) ? $physicalHealth->emp_id : '') }}
+                                            {{ isset($physicalHealth->emp_id) ? $physicalHealth->emp_id : '' }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('Employee Name') }}</label>
                                         <div class="view_data">
-                                            {{ (isset($physicalHealth->emp_name) ? $physicalHealth->emp_name : '') }}
+                                            {{ isset($physicalHealth->emp_name) ? $physicalHealth->emp_name : '' }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('Contact Number') }}</label>
                                         <div class="view_data">
-                                            {{ (isset($physicalHealth->mobile_no) ? $physicalHealth->mobile_no : '') }}
+                                            {{ isset($physicalHealth->mobile_no) ? $physicalHealth->mobile_no : '' }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('Age') }}</label>
                                         <div class="view_data">
-                                            {{ (isset($physicalHealth->age) ? $physicalHealth->age : '') }}
+                                            {{ isset($physicalHealth->age) ? $physicalHealth->age : '' }}
                                         </div>
                                     </div>
 
@@ -110,13 +110,13 @@
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('Department') }}</label>
                                         <div class="view_data">
-                                            {{getDepartment(isset($physicalHealth->department_id) ? $physicalHealth->department_id : '') }}
+                                            {{ getDepartment(isset($physicalHealth->department_id) ? $physicalHealth->department_id : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('Gender') }}</label>
                                         <div class="view_data">
-                                            {{ (isset($physicalHealth->gender) ? $physicalHealth->gender : '') }}
+                                            {{ isset($physicalHealth->gender) ? $physicalHealth->gender : '' }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
@@ -128,25 +128,25 @@
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('Heigth') }}</label>
                                         <div class="view_data">
-                                            {{ (isset($physicalHealth->height) ? $physicalHealth->height : '') }}
+                                            {{ isset($physicalHealth->height) ? $physicalHealth->height : '' }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('Weigth') }}</label>
                                         <div class="view_data">
-                                            {{ (isset($physicalHealth->weight) ? $physicalHealth->weight : '') }}
+                                            {{ isset($physicalHealth->weight) ? $physicalHealth->weight : '' }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('BMI') }}</label>
                                         <div class="view_data">
-                                            {{ (isset($physicalHealth->bmi) ? $physicalHealth->bmi : '') }}
+                                            {{ isset($physicalHealth->bmi) ? $physicalHealth->bmi : '' }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('Address') }}</label>
                                         <div class="view_data">
-                                            {{ (isset($physicalHealth->address) ? $physicalHealth->address : '') }}
+                                            {{ isset($physicalHealth->address) ? $physicalHealth->address : '' }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
@@ -161,12 +161,61 @@
                                             {{ displaydateformat(isset($physicalHealth->created_at) ? $physicalHealth->created_at : '') }}
                                         </div>
                                     </div>
+                                    <div class="mb-3 col-md-8 form-input">
+                                        <label class="form-label view_label">{{ __('Past History') }}</label>
+                                        <div class="view_data">
+                                            {{ isset($physicalHealth->past_history) ? $physicalHealth->past_history : '' }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-8 form-input">
+                                        <label class="form-label view_label">{{ __('Present Complaints') }}</label>
+                                        <div class="view_data">
+                                            {{ isset($physicalHealth->present_complaint) ? $physicalHealth->present_complaint : '' }}
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <div class="row">
                                     <div class="card-header-inner">
                                         <h4 class="text-white">Clinical Details</h4>
                                     </div>
+                                </div>
+
+                                <div class="mb-2">
+                                    <table class="table table-bordered table-striped">
+                                        <thead class="table-secondary">
+                                            <tr>
+                                                <th style="text-align: center">Sr. No.</th>
+                                                <th style="text-align: center">Details Of Personal Habits</th>
+                                                <th style="text-align: center">Status</th>
+
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach ($personalDetails as $personalDetails)
+                                                <tr>
+                                                    <td class="text-center">{{ $loop->iteration }}</td>
+
+                                                    <td class="text-center">
+                                                        {{ $personalDetails->personal_details }}
+                                                        <input type="hidden"
+                                                            name="persnal_details[{{ $personalDetails->id }}]"
+                                                            value="{{ $personalDetails->id }}">
+                                                    </td>
+
+                                                    <td class="text-center">
+                                                        <input type="hidden" name="status[{{ $personalDetails->id }}]"
+                                                            value="0">
+                                                        <input type="checkbox" name="status[{{ $personalDetails->id }}]"
+                                                            value="1">
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+
+                                    </table>
+
+
                                 </div>
 
                             </div>
