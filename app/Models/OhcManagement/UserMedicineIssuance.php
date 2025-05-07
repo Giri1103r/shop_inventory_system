@@ -33,12 +33,8 @@ class UserMedicineIssuance extends Model
         $user = Auth::user();
         $userRole = string_to_array($user->role);
         $empId = $user->employee_id;
-        $query = $this->select('ohc_management_user_medicine_issuance.*', 'masters_department.department_name', 'masters_unit.unit_name')
-            ->where('ohc_management_user_medicine_issuance.unit_id', '!=', 1)
-            ->join('masters_department', 'ohc_management_user_medicine_issuance.department_id', '=', 'masters_department.id')
-            ->join('masters_unit', 'ohc_management_user_medicine_issuance.unit_id', '=', 'masters_unit.id')
-            ->where('masters_department.trash', 'NO')
-            ->where('masters_unit.trash', 'NO');
+        $query = $this->select('ohc_management_user_medicine_issuance.*');
+
 
 
         if ($request->search['value'] != null) {
@@ -255,7 +251,7 @@ class UserMedicineIssuance extends Model
             ->where('unit_id', $selectedUnit)
             ->pluck('id')
             ->toArray();
-            
+
     }
 
     public function getYealyunitdata($selectedYear, $selectedUnit)

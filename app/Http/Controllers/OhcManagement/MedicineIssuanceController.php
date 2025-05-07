@@ -82,10 +82,10 @@ class MedicineIssuanceController extends Controller
                     $datatables = DataTables::of($data['data'])
                         ->addIndexColumn()
                         ->editColumn('unit_id', function ($row) {
-                            return $row->unit_name;
+                            return getUnitname($row->unit_id);
                         })
                         ->editColumn('department_id', function ($row) {
-                            return $row->department_name;
+                            return getDepartment($row->department_id);
                         })
 
                         ->editColumn('issue_date', function ($row) {
@@ -664,7 +664,7 @@ class MedicineIssuanceController extends Controller
             ['available_quantity' => $availableQuantity->balance]
         );
     }
-   
+
 
     public function import()
     {

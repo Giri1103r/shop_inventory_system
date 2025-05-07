@@ -74,12 +74,11 @@ class MedicineFirstAidController extends Controller
                     $datatables = DataTables::of($data['data'])
                         ->addIndexColumn()
                         ->editColumn('unit_id', function ($row) {
-                            return $row->unit_name;
+                            return getUnitname($row->unit_id);
                         })
                         ->editColumn('department_id', function ($row) {
-                            return $row->department_name;
+                            return getDepartment($row->department_id);
                         })
-
                         ->editColumn('issue_date', function ($row) {
                             return displaydateformat($row->issue_date);
                         })

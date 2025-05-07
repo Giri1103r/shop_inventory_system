@@ -33,11 +33,7 @@ class UserMedicineFirstAid extends Model
         $user = Auth::user();
         $userRole = string_to_array($user->role);
         $empId = $user->employee_id;
-        $query = $this->select('ohc_management_user_medicine_first_aid.*', 'masters_department.department_name', 'masters_unit.unit_name')
-            ->join('masters_department', 'ohc_management_user_medicine_first_aid.department_id', '=', 'masters_department.id')
-            ->join('masters_unit', 'ohc_management_user_medicine_first_aid.unit_id', '=', 'masters_unit.id')
-            ->where('masters_department.trash', 'NO')
-            ->where('masters_unit.trash', 'NO');
+        $query = $this->select('ohc_management_user_medicine_first_aid.*');
 
 
         if ($request->search['value'] != null) {
