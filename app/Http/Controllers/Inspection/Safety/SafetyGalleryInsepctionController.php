@@ -339,7 +339,7 @@ class SafetyGalleryInsepctionController extends Controller
             $signature_update = $this->signature->signatureUpload(SAFETY_GALLERY_INSPECTION, $id);
             $inspection_details = $this->safetygallery->selectOne($id);
             if ($request->is_passed == 1) {
-                $message = 'safetygallery Inspeciton Approved Successfully';
+                $message = 'Safetygallery Inspeciton Approved Successfully';
                 $web_link =   admin_url('safety/safety-gallery-inspection/view/' . encryptId($inspection_details->id));
                 $to_status = INSPECTION_APPROVED;
             } else {
@@ -621,12 +621,13 @@ class SafetyGalleryInsepctionController extends Controller
                 $message = 'Safety Gallery Inspeciton Approved Successfully!';
                 $web_link =   admin_url('safety/safety-gallery-inspection/view/' . encryptId($inspection_details->id));
                 $to_status = INSPECTION_APPROVED;
-                $users = array_merge([$inspection_details->created_by], [$inspection_details->verified_by], [$inspection_details->l1_manager_verified_by], [$inspection_details->l2_manager_verified_by]);
+                $users = array_merge([$inspection_details->created_by], [$inspection_details->verified_by], [$inspection_details->l1_manager_verified_by]);
             } else {
                 $message = 'Level Two Manager Rejected the CAPA Action';
                 $web_link =   admin_url('safety/safety-gallery-inspection/verification/' . encryptId($inspection_details->id) . '/capa');
                 $to_status = L2_MANAGER_REJECTED;
-                $users = [$inspection_details->created_by];
+                $users = array_merge([$inspection_details->created_by], [$inspection_details->verified_by], [$inspection_details->l1_manager_verified_by]);
+
             }
 
             $mailsubject = 'Safety Gallery inspection';

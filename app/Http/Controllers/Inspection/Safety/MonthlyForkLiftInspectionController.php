@@ -278,7 +278,7 @@ class MonthlyForkLiftInspectionController extends Controller
                     'id' => $forklift_inspection->id,
                     'module' => 1,
                 )),
-                'web_link' =>  admin_url('safety/forklift-inspection/monthly/verification/' . encryptId($forklift_inspection->id)),
+                'web_link' =>  admin_url('safety/forklift-inspection/monthly/verification/' . encryptId($forklift_inspection->id) . '/ehs'),
                 'assigned_user' => array_to_string($ehsOfficers),
                 'created_by' => Auth::id(),
             );
@@ -650,12 +650,12 @@ class MonthlyForkLiftInspectionController extends Controller
                 $message = 'ForkLift Inspeciton Approved Successfully!';
                 $web_link =   admin_url('safety/forklift-inspection/monthly/view/' . encryptId($inspection_details->id));
                 $to_status = INSPECTION_APPROVED;
-                $users = array_merge([$inspection_details->created_by], [$inspection_details->verified_by], [$inspection_details->l1_manager_verified_by], [$inspection_details->l2_manager_verified_by]);
+                $users = array_merge([$inspection_details->created_by], [$inspection_details->verified_by], [$inspection_details->l1_manager_verified_by]);
             } else {
                 $message = 'Level Two Manager Rejected the CAPA Action';
                 $web_link =   admin_url('safety/forklift-inspection/monthly/verification/' . encryptId($inspection_details->id) . '/capa');
                 $to_status = L2_MANAGER_REJECTED;
-                $users = array_merge([$inspection_details->created_by], [$inspection_details->verified_by], [$inspection_details->l1_manager_verified_by], [$inspection_details->l2_manager_verified_by]);
+                $users = array_merge([$inspection_details->created_by], [$inspection_details->verified_by], [$inspection_details->l1_manager_verified_by]);
 
             }
 

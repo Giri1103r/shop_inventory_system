@@ -67,7 +67,7 @@
                                                 </select>
                                             </div>
                                         </div>
-                                        <div class="col-md-3 mb-3 form-input">
+                                        <div class="col-md-4 mb-3 form-input">
                                             <label for="inspection_status"
                                                 class="form-label ">{{ __('common.status') }}</label>
                                             <select name="inspection_status" id="inspection_status" style="width: 100%"
