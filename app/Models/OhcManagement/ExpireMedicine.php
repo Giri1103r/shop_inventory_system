@@ -40,8 +40,16 @@ class ExpireMedicine extends Model
             'ohc_report_inventory.balance',
             'ohc_management_expire_medicine.medicine_id as medicine'
         )
-            ->leftjoin('ohc_report_inventory', 'ohc_management_expire_medicine.medicine_id', '=', 'ohc_report_inventory.medicine_id')
-            ->where('ohc_report_inventory.unit_id', '=',   $user->unit_id);
+        ->leftJoin('ohc_report_inventory', 'ohc_management_expire_medicine.medicine_id', '=', 'ohc_report_inventory.medicine_id')
+        ->where('ohc_report_inventory.unit_id', '=', $user->unit_id)
+        ->orderByRaw("
+            CASE
+                WHEN ohc_management_expire_medicine.expire_date < CURDATE() THEN 0
+                ELSE 1
+            END,
+            ohc_management_expire_medicine.expire_date ASC
+        ");
+
 
         if ($request->search['value'] != null) {
             $search = $request->search['value'];
@@ -66,7 +74,7 @@ class ExpireMedicine extends Model
 
 
         $org_total_counts = $this->count();
-      
+
 
 
         return [

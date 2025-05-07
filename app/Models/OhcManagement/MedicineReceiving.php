@@ -71,7 +71,7 @@ class MedicineReceiving extends Model
         if ($request->search['value'] != null) {
             $search = $request->search['value'];
             $query->where(function ($query) use ($search) {
-                $query->orWhere('medicine_id', 'LIKE', '%' . $search . '%')
+                $query->orWhere('ohc_master_medicine.medicine', 'LIKE', '%' . $search . '%')
                ->orWhere('ohc_management_medicine_receiving.hsn_id', 'LIKE', '%' . $search . '%')
                ->orWhere('batch_number', 'LIKE', '%' . $search . '%')
                ->orWhere('ohc_management_medicine_receiving.expire_date', 'LIKE', '%' . $search . '%')

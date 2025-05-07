@@ -161,6 +161,10 @@ class FireCheckListFollowUpObservation extends Model
         return $data;
     }
 
+    public function getInspection($id){
+        return $this->where('inspection_id',$id)->first();
+    }
+
     public function EHSOfficerUpdate($id)
     {
         $request = request();
