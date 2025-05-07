@@ -15,9 +15,9 @@ class LogViewer
     if (!Auth::check()) {
       if (!$request->ajax()) {
         return response()->json(['message' => 'Unauthorized'], 419);
-      } else {
-        return redirect()->guest(route('login'));
-      }
+      } 
+    }else {
+      return redirect()->guest(route('login'));
     }
 
     $allowedUserId = null;
