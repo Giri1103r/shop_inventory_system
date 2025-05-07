@@ -138,7 +138,7 @@ class ChecklistObservationFollowupController extends Controller
                             // if (CheckUserRole(ROLE_SUPERADMIN)) {
                             // $btn .= '<a href="' . admin_url('inspection/master/checklist-sub-type/edit/' . encryptId($row->id)) . '" class="edit-icon " title="' . __('common.edit') . '"><i class="fa-solid fa-pen-to-square"></i> ';
                             // }
-                            if (($row->observation_status == WAITING_FOR_EHS_OFFICER_VERIFICATION && ((CheckUserRole(ROLE_EHS_OFFICER)) || isAdmin())) || ($row->observation_status == WAITING_FOR_CAPA_VERIFICATION && ((CheckUserRole(ROLE_FIRE_ASSOCIATES)) || isAdmin())) || ($row->observation_status == WAITING_FOR_L1_VERIFICATION && ((CheckUserRole(ROLE_L1_MANAGER)) || isAdmin()))  || ($row->observation_status == WAITING_FOR_L2_VERIFICATION && ((CheckUserRole(ROLE_L2_MANAGER)) || isAdmin()))  || ($row->observation_status == EHS_OFFICER_REJECTED && ($row->ehs_verify_by == Auth::id() || isAdmin())) || ($row->observation_status == L1_MANAGER_REJECTED && ($row->ehs_verify_by == Auth::id() || isAdmin())) || ($row->observation_status == L2_MANAGER_REJECTED && ($row->ehs_verify_by == Auth::id() || isAdmin()))) {
+                            if (($row->observation_status == WAITING_FOR_EHS_OFFICER_VERIFICATION && ((CheckUserRole(ROLE_EHS_OFFICER)) || isAdmin())) || ($row->observation_status == WAITING_FOR_CAPA_ACTION && ((CheckUserRole(ROLE_FIRE_ASSOCIATES)) || isAdmin())) || ($row->observation_status == WAITING_FOR_CAPA_VERIFICATION && ((CheckUserRole(ROLE_EHS_OFFICER)) || isAdmin())) || ($row->observation_status == WAITING_FOR_L1_VERIFICATION && ((CheckUserRole(ROLE_L1_MANAGER)) || isAdmin()))  || ($row->observation_status == WAITING_FOR_L2_VERIFICATION && ((CheckUserRole(ROLE_L2_MANAGER)) || isAdmin()))  || ($row->observation_status == EHS_OFFICER_REJECTED && ($row->ehs_verify_by == Auth::id() || $row->fire_created_by == Auth::id() || isAdmin())) || ($row->observation_status == L1_MANAGER_REJECTED && ($row->ehs_verify_by == Auth::id() || $row->fire_created_by == Auth::id() || isAdmin())) || ($row->observation_status == L2_MANAGER_REJECTED && ($row->ehs_verify_by == Auth::id()  || $row->fire_created_by == Auth::id()|| isAdmin()))) {
                                 $btn .= '<a href="' . admin_url('fire/checklist-observation/verification/' . encryptId($row->inspectionid) . '/' . encryptId($row->observationid)) . '" class="me-1" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             $btn .= '<a href="' . admin_url('fire/checklist-observation/generalpdf/' . encryptId($row->inspectionid) . '/' . encryptId($row->observationid)) . '" style="margin-right: 5px;" title="PDF">
@@ -314,7 +314,7 @@ class ChecklistObservationFollowupController extends Controller
             );
             return view('inspection.fire.observationFollowup.approve', $data);
         } catch (Exception $ex) {
-           report($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('fire/checklist-observation/list'));
         }
@@ -867,7 +867,7 @@ class ChecklistObservationFollowupController extends Controller
                 $export[] =  $i;
                 $export[] =  $data->observation_id;
                 $export[] =  $data->sr_no;
-                $export[] = Displaydateformat( $data->date_of_inspection);
+                $export[] = Displaydateformat($data->date_of_inspection);
                 $export[] =  getInspectionstatus($data->observation_status);
                 $export[] =  $data->status == 1 ? 'Active' : 'In-Active';
                 $export[] =  getusername($data->created_by);
