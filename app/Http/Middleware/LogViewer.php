@@ -16,10 +16,8 @@ class LogViewer
       if (!$request->ajax()) {
         return response()->json(['message' => 'Unauthorized'], 419);
       } 
-    }else {
-      return redirect()->guest(route('login'));
     }
-
+    
     $allowedUserId = null;
 
       $allowedUserId = env('LOG_VIEWER_CHECK_ID');
