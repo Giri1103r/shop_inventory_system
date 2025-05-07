@@ -86,6 +86,7 @@ return [
     */
 
     'api_middleware' => [
+        \App\Http\Middleware\LogViewer::class,
         \Opcodes\LogViewer\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
         \Opcodes\LogViewer\Http\Middleware\AuthorizeLogViewer::class,
     ],

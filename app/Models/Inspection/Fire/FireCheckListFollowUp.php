@@ -54,12 +54,14 @@ class FireCheckListFollowUp extends Model
         }
         if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_OFFICER) || CheckUserRole(ROLE_L1_MANAGER) || CheckUserRole(ROLE_L2_MANAGER)) {
         } else if (CheckUserRole(ROLE_FIRE_ASSOCIATES)) {
-            $query->where('inspection_fire_checklist_follow.created_by', Auth::id());
+
         }
         if (isset($request->observation_id) && $request->observation_id) {
             $query = $query->where('inspection_fire_checklist_follow.observation_id',  $request->observation_id );
         }
-
+        if (isset($request->inspection_type) && $request->inspection_type) {
+            $query = $query->where('inspection_fire_checklist_follow.inspection_type', decryptId( $request->inspection_type) );
+        }
 
         if (isset($request->inspection_status) && $request->inspection_status) {
             $query = $query->where('inspection_fire_observation.observation_status', decryptId($request->inspection_status));
@@ -162,6 +164,10 @@ class FireCheckListFollowUp extends Model
 
     }
 
+    public function getInspection($id){
+        return $this->select('*')->where('id',$id)->first();
+    }
+
 
     public function exportdata()
     {
@@ -195,7 +201,9 @@ class FireCheckListFollowUp extends Model
         }
 
 
-
+        if (isset($request->inspection_type) && $request->inspection_type) {
+            $query = $query->where('inspection_fire_checklist_follow.inspection_type', decryptId( $request->inspection_type) );
+        }
 
         if (isset($request->inspection_status) && $request->inspection_status) {
             $query = $query->where('inspection_fire_observation.observation_status', decryptId($request->inspection_status));
