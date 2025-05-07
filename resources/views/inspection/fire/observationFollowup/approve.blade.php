@@ -281,7 +281,7 @@
                                     <td><i class="fas fa-arrow-right text-success"></i>
                                     </td>
                                     <td> <div class="form-group form-input"><input type="text" name="corrective_action" class="form-control"></div></td>
-                                
+
                             </tr>
                             </tbody>
                             </table>
