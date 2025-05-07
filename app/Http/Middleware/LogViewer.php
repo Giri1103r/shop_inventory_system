@@ -15,12 +15,12 @@ class LogViewer
     if (!Auth::check()) {
       if (!$request->ajax()) {
         return response()->json(['message' => 'Unauthorized'], 419);
-      } 
+      }
     }
-    
+
     $allowedUserId = null;
 
-      $allowedUserId = env('LOG_VIEWER_CHECK_ID');
+    $allowedUserId = env('LOG_VIEWER_CHECK_ID');
 
     if (Auth::id() != $allowedUserId) {
       abort(403, 'Unauthorized');
