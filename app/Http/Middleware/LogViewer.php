@@ -13,14 +13,13 @@ class LogViewer
     session(['requested_url' => $request->fullUrl()]);
 
     if (!Auth::check()) {
-      if ($request->ajax()) {
+      if (!$request->ajax()) {
         return response()->json(['message' => 'Unauthorized'], 419);
       } else {
         return redirect()->guest(route('login'));
       }
     }
 
-    $env = app()->environment();
     $allowedUserId = null;
 
       $allowedUserId = env('LOG_VIEWER_CHECK_ID');
