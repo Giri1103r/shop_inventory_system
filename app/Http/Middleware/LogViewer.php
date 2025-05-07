@@ -10,15 +10,7 @@ class LogViewer
   public function handle($request,Closure $next)
   {
 
-
-    if (!Auth::check()) {
-  
-        return response()->json(['message' => 'Unauthorized'], 419);
-     
-    }
-
-
-  
+ 
     return $next($request);
   }
 }
