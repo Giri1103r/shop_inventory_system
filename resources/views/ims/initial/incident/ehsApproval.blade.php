@@ -503,7 +503,7 @@
                                         <div class="mb-3 col-md-4 form-input">
                                             <label class="form-label view_label">Investigation Submission Time</label>
                                             <div class="view_data">
-                                                {{$getInvestigation->investigation_time }}
+                                                {{ $getInvestigation->investigation_time }}
                                             </div>
                                         </div>
                                         <div class="mb-3 col-md-4 form-input">
@@ -893,7 +893,7 @@
                                     @endif
                                 </div>
                             @endif
-                           
+
                             @if ($rcpa->incident_status == STATUS_ACTION_PENDING)
                                 <div class="card-body ">
                                     <div class="row">
@@ -1016,35 +1016,7 @@
                                     </div>
                                 </div>
                             @endif
-                            @if($rcpa->incident_status > STATUS_ACTION_PENDING && $rcpa->incident_status != STATUS_EHSAPPROVAL_REJECTED)
-                            <div class="card-body ">
-                                <div class="row">
-                                    <div class="card-header-inner">
-                                        <h4 class="text-white">Report Logged By</h4>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">Incident Reported By</label>
-                                        <div class="view_data">
-                                            {{ getUsername($incident_report->created_by) }}
-                                        </div>
-                                    </div>
-                                    <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">Created date and time</label>
-                                        <div class="view_data">
-                                            {{ $incident_report->created_at }}
-                                        </div>
-                                    </div>
-                                    <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">Immediate Action Taken</label>
-                                        <div class="view_data">
-                                            {{ $incident_report->immediate_action_taken }}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            @endif
+
                             @if ($rcpa->incident_status == STATUS_EHSAPPROVAL_PENDING)
                                 <div class="card-body ">
                                     <div class="row">
@@ -1407,7 +1379,7 @@
                     },
                     'evidence[0][]': {
                         extension: "Allowed file types: png, jpeg, jpg",
-                        
+
                     }
                 },
                 errorElement: 'span',

@@ -192,7 +192,7 @@
                                             {{ $incident_report->reported_department }}
                                         </div>
                                     </div>
-                                   
+
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">Time of reporting</label>
                                         <div class="view_data">
@@ -386,6 +386,36 @@
                                     @endif
                                 </div>
                             </div>
+
+                            @if ($incident_report->incident_status >= STATUS_INCIDENT_REPORT)
+                                <div class="card-body ">
+                                    <div class="row">
+                                        <div class="card-header-inner">
+                                            <h4 class="text-white">Report Logged By</h4>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <label class="form-label view_label">Incident Reported By</label>
+                                            <div class="view_data">
+                                                {{ getUsername($incident_report->created_by) }}
+                                            </div>
+                                        </div>
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <label class="form-label view_label">Created date and time</label>
+                                            <div class="view_data">
+                                                {{ $incident_report->created_at }}
+                                            </div>
+                                        </div>
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <label class="form-label view_label">Immediate Action Taken</label>
+                                            <div class="view_data">
+                                                {{ $incident_report->immediate_action_taken }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
                             @if ($incident_report->incident_status == STATUS_INCIDENT_REPORT)
                                 <div class="card-body ">
 
@@ -506,7 +536,8 @@
                                             </div>
                                         </div>
                                         <div class="mb-3 col-md-4 form-input">
-                                            <label for="team_id" class="form-label">Incident/Accident Investigation Report
+                                            <label for="team_id" class="form-label">Incident/Accident Investigation
+                                                Report
                                                 Prepared by</label>
                                             <div class="view_data">
                                                 {{ getUsername($incident_report->investigation_reported_by) }}
@@ -846,7 +877,8 @@
                                                                 @if ($item->capa_status == 1)
                                                                     <span class="badge bg-success">Open</span>
                                                                 @elseif($item->capa_status == 2)
-                                                                    <span class="badge bg-warning text-dark">In Progress</span>
+                                                                    <span class="badge bg-warning text-dark">In
+                                                                        Progress</span>
                                                                 @elseif($item->capa_status == 3)
                                                                     <span class="badge bg-secondary">Closed</span>
                                                                 @endif
