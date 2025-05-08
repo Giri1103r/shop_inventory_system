@@ -85,7 +85,7 @@ class TrainingAssessmentFeedback extends Model
         $request = request();
 
         $data = $request->input('data');
-        dd( $data);
+       
         $insertData = [];
         foreach ($data as $item) {
 
