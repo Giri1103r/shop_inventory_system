@@ -48,6 +48,36 @@
                                             </select>
                                         </div>
 
+                                        <div class="col-md-3 mb-3 form-input">
+                                            <label for="status" class="form-label ">{{ __('Inspection Type') }}</label>
+                                            <select name="inspection_type" id="inspection_type" style="width: 100%"
+                                                class="form-control single-select">
+                                                <option value="">Select Status</option>
+
+                                                <option value="{{ encryptId('1') }}">HOOTER INSPECTION</option>
+                                                <option value="{{ encryptId('2') }}">EMERGENCY LIGHT INSPECTION</option>
+                                                <option value="{{ encryptId('3') }}">FIRE EXTINGUISHER INSPECTION</option>
+                                                <option value="{{ encryptId('4') }}">HYDRANT RISER</option>
+                                                <option value="{{ encryptId('5') }}">ISOLATION VALVE INSPECTION</option>
+                                                <option value="{{ encryptId('6') }}">FIRE ALARM INSPECTION</option>
+                                                <option value="{{ encryptId('7') }}">SPRINKLER SYSTEM INSPECTION</option>
+                                                <option value="{{ encryptId('8') }}">SAND BUCKET INSPECTION</option>
+                                                <option value="{{ encryptId('9') }}">HOSE BOX INSPECTION</option>
+                                                <option value="{{ encryptId('10') }}">HOSE REEL INSPECTION</option>
+                                                <option value="{{ encryptId('11') }}">DETECTOR INSPECTION</option>
+                                                <option value="{{ encryptId('12') }}">FIRE PA SYSTEM INSPECTION</option>
+                                                <option value="{{ encryptId('13') }}">CO TYPE FIRE EXTINGUISHER INSPECTION</option>
+                                                <option value="{{ encryptId('14') }}">MONTHLY FIRE PUMP</option>
+                                                <option value="{{ encryptId('15') }}">CARTRIDGE TYPE FIRE EXTINGUISHER INSPECTION</option>
+                                                <option value="{{ encryptId('17') }}">OBSERVATION FOLLOW-UP</option>
+                                                <option value="{{ encryptId('18') }}">FIRE MOCK DRILL INSPECTION</option>
+                                                <option value="{{ encryptId('19') }}">DAILY FIRE PUMP</option>
+                                                <option value="{{ encryptId('23') }}">FIRE MODULAR INSPECTION</option>
+
+
+                                            </select>
+                                        </div>
+
                                         <div class="col-md-3 mt-3">
                                             <x-button-search></x-button-search>
                                             <x-button-reset></x-button-reset>
@@ -69,6 +99,7 @@
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
                                         <th>Observation Id</th>
+                                        <th>Inspection Type</th>
                                         <th>Serial Number</th>
                                         <th>Date of Inspection</th>
                                         <th>Approve Status </th>
@@ -129,6 +160,7 @@
                         },
                         data: function(d) {
                             d.observation_id = $('#observation_id').val();
+                            d.inspection_type = $('#inspection_type').val();
                             d.inspection_status = $('#inspection_status').val();
 
                         },
@@ -148,6 +180,10 @@
                         {
                             data: 'observation_id',
                             name: 'observation_id'
+                        },
+                        {
+                            data: 'inspection_type',
+                            name: 'inspection_type'
                         },
                         {
                             data: 'sr_no',
@@ -192,6 +228,7 @@
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
                                         observation_id = $('#observation_id').val();
+                                        inspection_type = $('#inspection_type').val();
                                         inspection_status = $('#inspection_status').val();
 
                                         $(".dt-button").removeClass('processing');
@@ -200,6 +237,7 @@
                                             "{{ admin_url('fire/checklist-observation/export/pdf') }}" +
                                             '?search=' + searchValue +
                                             '&observation_id=' + observation_id +
+                                            '&inspection_type=' + inspection_type +
                                             '&inspection_status=' + inspection_status
                                     }
                                 },
@@ -209,6 +247,7 @@
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
                                         observation_id = $('#observation_id').val();
+                                        inspection_type = $('#inspection_type').val();
                                         inspection_status = $('#inspection_status').val();
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
@@ -216,6 +255,7 @@
                                             "{{ admin_url('fire/checklist-observation/export/excel') }}" +
                                             '?search=' + searchValue +
                                             '&observation_id=' + observation_id +
+                                            '&inspection_type=' + inspection_type +
                                             '&inspection_status=' + inspection_status
                                     }
                                 },

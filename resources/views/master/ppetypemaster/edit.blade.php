@@ -100,7 +100,7 @@
                                                     <div class="text-danger" id="protection_error"></div>
                                                 </div>
                                             </div>
-                                            <div class="col-md-4 mb-3">
+                                            {{-- <div class="col-md-4 mb-3">
                                                 <div class="form-group form-input">
                                                     <label class="form-label">Image</label>
                                                     <input type="file" name="ppe_file" id="ppe_file"
@@ -124,7 +124,7 @@
                                                     @enderror
                                                     <div id="ppe_file_error" class="text-danger"></div>
                                                 </div>
-                                            </div>
+                                            </div> --}}
                                             <div class="col-md-12 mb-3">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">PPE Standard</label>
@@ -192,7 +192,7 @@
                     ppe_name: {
                         required: true,
                         minlength: 3,
-                        maxlength: 200,
+                       maxlength: 500,
 
                     },
                     ppe_type: {
@@ -201,13 +201,13 @@
                     protection_category: {
                         required: true,
                         minlength: 3,
-                        maxlength: 30,
+                        maxlength: 500,
 
                     },
                     ppe_standard: {
                         required: true,
                         minlength: 3,
-                        maxlength: 200,
+                       maxlength: 500,
 
                     },
                     ppe_file: {
@@ -219,13 +219,13 @@
                         required: "Item Code cannot be empty.",
                         minlength: "Item code must contain between 3 and 30 characters.",
                         maxlength: "Item code must contain between 3 and 30 characters.",
-                     
+
                         remote: "Item code already exists."
                     },
                     ppe_name: {
                         required: "PPE Name cannot be empty.",
-                        minlength: "PPE Name must be between 3 and 200 characters.",
-                        maxlength: "PPE Name must be between 3 and 200 characters.",
+                        minlength: "PPE Name must be between 3 and 500 characters.",
+                        maxlength: "PPE Name must be between 3 and 500 characters.",
 
                     },
                     ppe_type: {
@@ -233,13 +233,13 @@
                     },
                     protection_category: {
                         required: "Protection Category cannot be empty.",
-                        minlength: "Protection Category must be between 3 and 200 characters.",
-                        maxlength: "Protection Category must be between 3 and 200 characters.",
+                        minlength: "Protection Category must be between 3 and 500 characters.",
+                        maxlength: "Protection Category must be between 3 and 500 characters.",
                     },
                     ppe_standard: {
                         required: "PPE Standard cannot be empty.",
-                        minlength: "PPE  Standard must be between 3 and 200 characters.",
-                        maxlength: "PPE  Standard must be between 3 and 200 characters.",
+                        minlength: "PPE  Standard must be between 3 and 500 characters.",
+                        maxlength: "PPE  Standard must be between 3 and 500 characters.",
 
                     },
                     ppe_file: {

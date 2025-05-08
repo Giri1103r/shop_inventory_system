@@ -176,7 +176,7 @@ class EquipmentController extends Controller
             Session::flash('success', __('Your data has been updated successfully'));
             return redirect(admin_url('safety/master/equipment/list'));
         } catch (Exception $ex) {
-report($ex);
+            report($ex);
             Session::flash('error', __('Something went wrong try again'));
             return redirect(admin_url('safety/master/equipment/list'));
         }
@@ -300,8 +300,8 @@ report($ex);
                     "path" => $path,
                 ];
 
-                // dispatch(new ImportequipmentJob($details));
-                dispatch((new ImportEquipmentJob($details))->onQueue('equipmentimport'));
+                dispatch(new ImportequipmentJob($details));
+                // dispatch((new ImportEquipmentJob($details))->onQueue('equipmentimport'));
             }
 
             $insert_data['log_id'] = $insert_id;

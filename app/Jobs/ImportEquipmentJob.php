@@ -5,16 +5,18 @@ namespace App\Jobs;
 use Shuchkin\SimpleXLSX;
 use App\Models\UploadLog;
 use App\Models\UploadLogError;
+use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
 use App\Models\Inspection\Safety\Master\Equipment;
 
-class ImportEquipmentJob implements ShouldQueue
-// class ImportEquipmentJob
+// class ImportEquipmentJob implements ShouldQueue
+class ImportEquipmentJob
 {
-    use Queueable;
-
+    use  Queueable;
     private $details;
     /**
      * Create a new job instance.
@@ -103,6 +105,7 @@ class ImportEquipmentJob implements ShouldQueue
             Equipment::create($data);
             $i++;
         }
+
 
         if (count($cond_error_datas) > 0) {
             UploadLogError::insert($cond_error_datas);

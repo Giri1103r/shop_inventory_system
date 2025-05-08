@@ -41,31 +41,34 @@ class Inventory extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('ohc_report_inventory.*')->where('unit_id', Auth::user()->unit_id);
 
-        $org_total =  $query;
+        $query = $this->select('ohc_report_inventory.*', 'ohc_master_medicine.medicine')
+            ->join('ohc_master_medicine', 'ohc_master_medicine.id', '=', 'ohc_report_inventory.medicine_id')
+            ->where('ohc_report_inventory.unit_id', Auth::user()->unit_id);
+
+        $org_total = clone $query;
         $org_total_counts = $org_total->count();
 
-        if ($request->search['value'] != null || $request->search['value'] != '') {
+        if (!empty($request->search['value'])) {
             $search = $request->search['value'];
 
             $query->where(function ($query) use ($search) {
                 $query
-                    ->orWhere('medicine_id', 'LIKE', '%' . $search . '%')
-                    ->orWhere('total_purchase', 'LIKE', '%' . $search . '%')
-                    ->orWhere('total_first_aid', 'LIKE', '%' . $search . '%')
-                    ->orWhere('total_prescribe', 'LIKE', '%' . $search . '%')
-                    ->orWhere('total_received', 'LIKE', '%' . $search . '%')
-                    ->orWhere('balance', 'LIKE', '%' . $search . '%')
-                    ->orWhere('total_issue', 'LIKE', '%' . $search . '%')
-                    ->orWhere('unit_id', 'LIKE', '%' . $search . '%');
+                    ->orWhere('ohc_master_medicine.medicine', 'LIKE', '%' . $search . '%')
+                    ->orWhere('ohc_report_inventory.total_purchase', 'LIKE', '%' . $search . '%')
+                    ->orWhere('ohc_report_inventory.total_first_aid', 'LIKE', '%' . $search . '%')
+                    ->orWhere('ohc_report_inventory.total_prescribe', 'LIKE', '%' . $search . '%')
+                    ->orWhere('ohc_report_inventory.total_received', 'LIKE', '%' . $search . '%')
+                    ->orWhere('ohc_report_inventory.balance', 'LIKE', '%' . $search . '%')
+                    ->orWhere('ohc_report_inventory.total_issue', 'LIKE', '%' . $search . '%')
+                    ->orWhere('ohc_report_inventory.unit_id', 'LIKE', '%' . $search . '%');
             });
         }
 
-        $data_count = $query;
+        $data_count = clone $query;
         $total_records = $data_count->count();
 
-        $query->orderBy('id', 'DESC');
+        $query->orderBy('ohc_report_inventory.id', 'DESC');
 
         if ($request->length != -1) {
             $query->offset($request->start)->limit($request->length);
@@ -73,13 +76,13 @@ class Inventory extends Model
 
         $data = $query->get();
 
-        $datas = array(
+        return [
             'data' => $data,
             'total_records' => $org_total_counts,
             'filter_records' => $total_records,
-        );
-        return $datas;
+        ];
     }
+
     // user list
 
     public function userlist()
@@ -158,26 +161,25 @@ class Inventory extends Model
         // });
     }
 
-    public function getMedicineInspection(){
+    public function getMedicineInspection()
+    {
         return $this
-        ->where('status', 1)
-        ->whereColumn('balance', '<', 'threshold_limit')
-        ->get();
+            ->where('status', 1)
+            ->whereColumn('balance', '<', 'threshold_limit')
+            ->get();
     }
 
     public function getMedicineData()
     {
         return $this->where('unit_id', 1)
-        ->where('status', 1)
-        ->whereColumn('balance', '<', 'threshold_limit')
-
-        ->get();
+            ->where('status', 1)
+            ->get();
     }
 
 
     public function getstockdata()
     {
-        return $this->where('unit_id', 1) ->where('balance','!=','0')->where('status', 1)->get();
+        return $this->where('unit_id', 1)->where('balance', '!=', '0')->where('status', 1)->get();
     }
     public function getAvailableQuantity($id)
     {
@@ -221,13 +223,12 @@ class Inventory extends Model
             $this->where('unit_id', $user_medicine_requisition->unit_id)
                 ->where('medicine_id', $data['medicine_id'])
                 ->update(['balance' => $balancedata]);
-
         }
     }
 
     public function getmedicineUnitwise()
     {
-        return $this->where('unit_id', Auth::user()->unit_id)->where('balance','!=',0)->where('status', 1)->get();
+        return $this->where('unit_id', Auth::user()->unit_id)->where('balance', '!=', 0)->where('status', 1)->get();
     }
     public function getunitwiseAvailableQuantity($id)
     {
@@ -292,9 +293,8 @@ class Inventory extends Model
             ->get();
     }
 
-    public function dicardmedicine($unit_id){
+    public function dicardmedicine($unit_id)
+    {
         return $this->where('unit_id', $unit_id)->where('status', 1)->get();
     }
-
-
 }

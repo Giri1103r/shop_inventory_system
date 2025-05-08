@@ -49,12 +49,13 @@ class SafetyPermitController extends BaseController
             $empId = $user->employee_id;
             $userRole = $user->role;
             $unit_id = $user->unit_id;
+            $company_id = $user->company_id;
             $empid = $user->id;
             $userRole = string_to_array($userRole);
             if (isAdmin()) {
                 $safety_permit_array = SafetyPermit::select('ptw_safety.*', 'masters_unit.unit_name', 'ptw_status.status_name', 'ptw_status.bg_color')->leftJoin('masters_unit', 'masters_unit.id', '=', 'ptw_safety.unit_id')->leftJoin('ptw_status', 'ptw_status.id', '=', 'ptw_safety.permit_status');
             } elseif (in_array(ROLE_EHS_OFFICER, $userRole)) {
-                $safety_permit_array = SafetyPermit::select('ptw_safety.*', 'masters_unit.unit_name', 'ptw_status.status_name', 'ptw_status.bg_color')->leftJoin('masters_unit', 'masters_unit.id', '=', 'ptw_safety.unit_id')->leftJoin('ptw_status', 'ptw_status.id', '=', 'ptw_safety.permit_status');
+                $safety_permit_array = SafetyPermit::select('ptw_safety.*', 'masters_unit.unit_name', 'ptw_status.status_name', 'ptw_status.bg_color')->leftJoin('masters_unit', 'masters_unit.id', '=', 'ptw_safety.unit_id')->leftJoin('ptw_status', 'ptw_status.id', '=', 'ptw_safety.permit_status')->where('ptw_safety.company_id', $company_id);
             } elseif (in_array(ROLE_PLANT_HEAD, $userRole)) {
                 $safety_permit_array = SafetyPermit::select('ptw_safety.*', 'masters_unit.unit_name', 'ptw_status.status_name', 'ptw_status.bg_color')->leftJoin('masters_unit', 'masters_unit.id', '=', 'ptw_safety.unit_id')->leftJoin('ptw_status', 'ptw_status.id', '=', 'ptw_safety.permit_status')->where('ptw_safety.unit_id', $unit_id);
             } elseif (in_array(ROLE_EHS_HEAD, $userRole)) {
@@ -314,6 +315,7 @@ class SafetyPermitController extends BaseController
                     'id' => $safetypermit->id,
                     'permit_id' => $safetypermit->permit_id,
                     'date' => $safetypermit->date,
+                    'to_date' => $safetypermit->to_date,
                     'time_from' => $safetypermit->time_from,
                     'time_to' => $safetypermit->time_to,
                     'unit_id' => getUnitname($safetypermit->unit_id),

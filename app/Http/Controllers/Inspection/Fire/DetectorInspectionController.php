@@ -477,7 +477,6 @@ class DetectorInspectionController extends Controller
             return redirect(admin_url('fire/detector-inspection/list'));
         } catch (Exception $ex) {
             report($ex);
-            report($ex);
             Session::flash('error', 'Something Went Wrong!');
             return redirect(admin_url('fire/detector-inspection/list'));
         }
@@ -1166,7 +1165,6 @@ class DetectorInspectionController extends Controller
             $filename = "Detector Inspection.pdf";
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            report($ex);
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('fire/detector-inspection/list'));

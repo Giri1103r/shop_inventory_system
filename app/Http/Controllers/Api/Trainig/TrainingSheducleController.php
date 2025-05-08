@@ -454,7 +454,7 @@ class TrainingSheducleController extends BaseController
             ];
             return $this->sendResponse($success, 'Assessment update Successfully!');
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
         }
     }

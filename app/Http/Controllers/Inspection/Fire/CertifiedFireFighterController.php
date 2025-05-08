@@ -402,7 +402,6 @@ class CertifiedFireFighterController extends Controller
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);
-            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('fire/certified-fire-fighter/list'));
         }

@@ -83,10 +83,12 @@ class TrainingAssessmentFeedback extends Model
     public function store_api()
     {
         $request = request();
+
         $data = $request->input('data');
+       
         $insertData = [];
         foreach ($data as $item) {
-      
+
 
             $trainingScheduleId = $item['training_schedule_id'];
             $attendanceId = $item['attendance_id'];

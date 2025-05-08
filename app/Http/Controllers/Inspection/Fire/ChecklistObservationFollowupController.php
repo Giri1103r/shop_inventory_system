@@ -132,13 +132,81 @@ class ChecklistObservationFollowupController extends Controller
                             }
                             return $text;
                         })
+
+                        ->addColumn('inspection_type', function ($row) {
+                            $text = '';
+                            switch ($row->inspection_type) {
+                                case HOOTER_INSPECTION:
+                                    $text = 'Hooter Inspection';
+                                    break;
+                                case EMERGENCY_LIGHT_INSPECTION:
+                                    $text = 'Emergency Light Inspection';
+                                    break;
+                                case MONTHLY_FIRE_PUMP:
+                                    $text = 'Monthly Fire Pump';
+                                    break;
+                                case FIRE_MOCK_DRILL_INSPECION:
+                                    $text = 'Fire Mock Drill Inspection';
+                                    break;
+                                case FIRE_EXTINGUISHER_INSPECTION:
+                                    $text = 'Fire Extinguisher Inspection';
+                                    break;
+                                case ISOLATION_VALVE_INSPECTION:
+                                    $text = 'Isolation Valve Inspection';
+                                    break;
+                                case FIRE_ALARM_INSPECTION:
+                                    $text = 'Fire Alarm Inspection';
+                                    break;
+                                case SPRINKLAR_SYSTEM_INSPECTION:
+                                    $text = 'Sprinkler System Inspection';
+                                    break;
+                                case SAND_BUCKET_INSPECTION:
+                                    $text = 'Sand Bucket Inspection';
+                                    break;
+                                case DETECTOR_INSPECTION:
+                                    $text = 'Detector Inspection';
+                                    break;
+                                case FIRE_PA_SYSTEM_INSPECTION:
+                                    $text = 'Fire PA System Inspection';
+                                    break;
+                                case DAILY_FIRE_PUMP:
+                                    $text = 'Daily Fire Pump';
+                                    break;
+                                case CO_TYPE_FIRE_EXTINGUISHER_INSPECTION:
+                                    $text = 'CO Type Fire Extinguisher Inspection';
+                                    break;
+                                case HOSE_BOX_INSPECTION:
+                                    $text = 'Hose Box Inspection';
+                                    break;
+                                case CARTRIDGE_TYPE_FIRE_EXTINGUISHER_INSPECTION:
+                                    $text = 'Cartridge Type Fire Extinguisher Inspection';
+                                    break;
+                                case HOSE_REEL_INSPECTION:
+                                    $text = 'Hose Reel Inspection';
+                                    break;
+                                case FIRE_MODULAR_INSPECTION:
+                                    $text = 'Fire Modular Inspection';
+                                    break;
+                                case HYDRANT_RISER:
+                                    $text = 'Hydrant Riser';
+                                    break;
+                                case OBSERVATION_FOLLOWUP:
+                                    $text = 'Observation Follow-up';
+                                    break;
+                                default:
+                                    $text = 'Unknown';
+                            }
+                            return $text;
+                        })
+
                         ->addColumn('action', function ($row) {
                             $btn = '';
                             $btn = '<a href="' . admin_url('fire/checklist-observation/view/' . encryptId($row->inspectionid) . '/' . encryptId($row->observationid)) .  '"   class="view-icon me-1" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
                             // if (CheckUserRole(ROLE_SUPERADMIN)) {
                             // $btn .= '<a href="' . admin_url('inspection/master/checklist-sub-type/edit/' . encryptId($row->id)) . '" class="edit-icon " title="' . __('common.edit') . '"><i class="fa-solid fa-pen-to-square"></i> ';
                             // }
-                            if (($row->observation_status == WAITING_FOR_EHS_OFFICER_VERIFICATION && ((CheckUserRole(ROLE_EHS_OFFICER)) || isAdmin())) || ($row->observation_status == WAITING_FOR_CAPA_ACTION && ((CheckUserRole(ROLE_FIRE_ASSOCIATES)) || isAdmin())) || ($row->observation_status == WAITING_FOR_CAPA_VERIFICATION && ((CheckUserRole(ROLE_EHS_OFFICER)) || isAdmin())) || ($row->observation_status == WAITING_FOR_L1_VERIFICATION && ((CheckUserRole(ROLE_L1_MANAGER)) || isAdmin()))  || ($row->observation_status == WAITING_FOR_L2_VERIFICATION && ((CheckUserRole(ROLE_L2_MANAGER)) || isAdmin()))  || ($row->observation_status == EHS_OFFICER_REJECTED && ($row->ehs_verify_by == Auth::id() || $row->fire_created_by == Auth::id() || isAdmin())) || ($row->observation_status == L1_MANAGER_REJECTED && ($row->ehs_verify_by == Auth::id() || $row->fire_created_by == Auth::id() || isAdmin())) || ($row->observation_status == L2_MANAGER_REJECTED && ($row->ehs_verify_by == Auth::id()  || $row->fire_created_by == Auth::id() || isAdmin()))) {
+
+                            if (($row->observation_status == WAITING_FOR_EHS_OFFICER_VERIFICATION && ((CheckUserRole(ROLE_EHS_OFFICER)) || isAdmin())) || ($row->observation_status == WAITING_FOR_CAPA_ACTION && ((CheckUserRole(ROLE_FIRE_ASSOCIATES) && ($row->responsible_person_id == Auth::id())) || isAdmin())) || ($row->observation_status == WAITING_FOR_CAPA_VERIFICATION && ((CheckUserRole(ROLE_EHS_OFFICER)) || isAdmin())) || ($row->observation_status == WAITING_FOR_L1_VERIFICATION && ((CheckUserRole(ROLE_L1_MANAGER)) || isAdmin()))  || ($row->observation_status == WAITING_FOR_L2_VERIFICATION && ((CheckUserRole(ROLE_L2_MANAGER)) || isAdmin()))  || ($row->observation_status == EHS_OFFICER_REJECTED && ($row->fire_created_by == Auth::id() || isAdmin())) || ($row->observation_status == L1_MANAGER_REJECTED && ($row->fire_created_by == Auth::id() || isAdmin())) || ($row->observation_status == L2_MANAGER_REJECTED && ($row->fire_created_by == Auth::id() || isAdmin()))) {
                                 $btn .= '<a href="' . admin_url('fire/checklist-observation/verification/' . encryptId($row->inspectionid) . '/' . encryptId($row->observationid)) . '" class="me-1" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             $btn .= '<a href="' . admin_url('fire/checklist-observation/generalpdf/' . encryptId($row->inspectionid) . '/' . encryptId($row->observationid)) . '" style="margin-right: 5px;" title="PDF">
@@ -147,14 +215,13 @@ class ChecklistObservationFollowupController extends Controller
 
                             return $btn;
                         })
-                        ->rawColumns(['action', 'created_date', 'created_by', 'status', 'observation_status'])
+                        ->rawColumns(['action', 'created_date', 'created_by', 'status', 'observation_status','inspection_type'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
-                    dd($ex);
                     report($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
@@ -190,7 +257,6 @@ class ChecklistObservationFollowupController extends Controller
             return view('inspection.fire.observationFollowup.add', $data);
         } catch (Exception $ex) {
             report($ex);
-            report($ex);
         }
     }
 
@@ -202,7 +268,7 @@ class ChecklistObservationFollowupController extends Controller
                 $inspection = $this->followup->store();
                 $inspection_id = $inspection->id;
                 $this->followupObservation->store($inspection_id);
-
+                $inspection_details = $this->followupObservation->getInspection($inspection->id);
                 $ehsOfficer = GetEHSOfficer();
                 $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
                 $mailsubject = 'Observation FollowUp';
@@ -217,7 +283,8 @@ class ChecklistObservationFollowupController extends Controller
                         'id' => $inspection_id,
                         'module' => 1,
                     )),
-                    'web_link' =>  admin_url('fire/checklist-observation/verification/' . encryptId($inspection_id)),
+
+                    'web_link' =>  admin_url('fire/checklist-observation/verification/' . encryptId($inspection_id) . '/' . encryptId($inspection_details->id)),
                     'assigned_user' => array_to_string($ehsOfficers),
                     'created_by' => Auth::id(),
                 );
@@ -240,13 +307,13 @@ class ChecklistObservationFollowupController extends Controller
 
                 Session::flash('success', __('Your data has been created successfully'));
             } catch (Exception $ex) {
-                report($ex);
-                report($ex);
+
+                dd($ex);
                 Session::flash('error', __('common.message_error'));
             }
             return redirect(admin_url('fire/checklist-observation/list'));
         } catch (Exception $ex) {
-            report($ex);
+            dd($ex);
             Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('fire/checklist-observation/list'));
         }
@@ -274,16 +341,40 @@ class ChecklistObservationFollowupController extends Controller
         }
     }
 
+    // public function employeename(Request $request)
+    // {
+    //     $name = $request->input('search');
+
+    //     $employees = Employee::where('emp_name', 'like', '%' . $name . '%')
+    //         ->orWhere('emp_id', 'like', '%' . $name . '%')
+    //         ->where('status', 1)
+    //         ->where('user_role',18)
+    //         ->limit(10)
+    //         ->get();
+
+
+    //     return response()->json(
+    //         $employees->map(function ($employee) {
+    //             return [
+    //                 'id' => encryptId($employee->login_id),
+    //                 'text' => $employee->emp_name . ' - ' . $employee->emp_id,
+    //             ];
+    //         })
+    //     );
+    // }
+
     public function employeename(Request $request)
     {
         $name = $request->input('search');
 
-        $employees = Employee::where('emp_name', 'like', '%' . $name . '%')
-            ->orWhere('emp_id', 'like', '%' . $name . '%')
+        $employees = Employee::where(function ($query) use ($name) {
+            $query->where('emp_name', 'like', '%' . $name . '%')
+                ->orWhere('emp_id', 'like', '%' . $name . '%');
+        })
             ->where('status', 1)
+            ->where('user_role', 18)
             ->limit(10)
             ->get();
-
 
         return response()->json(
             $employees->map(function ($employee) {
@@ -294,6 +385,9 @@ class ChecklistObservationFollowupController extends Controller
             })
         );
     }
+
+
+
     public function Approvals(Request $request)
     {
         try {
@@ -312,6 +406,7 @@ class ChecklistObservationFollowupController extends Controller
                 'observation' => $observation,
                 // 'status_log' => $status_log,
             );
+
             return view('inspection.fire.observationFollowup.approve', $data);
         } catch (Exception $ex) {
             report($ex);
@@ -323,6 +418,8 @@ class ChecklistObservationFollowupController extends Controller
     public function EHSOfficerSubmit(Request $request)
     {
 
+
+
         try {
             $id = decryptId($request->id);
             $observationid = decryptId($request->observation_id);
@@ -333,6 +430,7 @@ class ChecklistObservationFollowupController extends Controller
             $inspection_details = $this->followup->selectOne($id, $observationid);
             $mailsubject = 'CAPA Assigned';
             $employees = User::where('id', $request->responsible_person_id)->get(['name', 'email', 'id']);
+
 
             foreach ($employees as $employee) {
                 $email_id = $employee->email;
@@ -360,7 +458,7 @@ class ChecklistObservationFollowupController extends Controller
                     'id' => $inspection_details->id,
                     'module' => 1,
                 )),
-                'web_link' =>  admin_url('fire/checklist-observation/verification/' . encryptId($id)),
+                'web_link' =>  admin_url('fire/checklist-observation/verification/' . encryptId($id) . '/' . encryptId($observationid)),
                 'assigned_user' => decryptId($request->responsible_person_id),
                 'created_by' => Auth::id(),
             );
@@ -377,9 +475,7 @@ class ChecklistObservationFollowupController extends Controller
             Session::flash('success', __('common.updated_msg'));
             return redirect(admin_url('fire/checklist-observation/list'));
         } catch (Exception $ex) {
-
-            report($ex);
-            report($ex);
+            dd($ex);
             Session::flash('error', 'Something Went Wrong!');
             return redirect(admin_url('fire/checklist-observation/list'));
         }
@@ -392,6 +488,7 @@ class ChecklistObservationFollowupController extends Controller
             $to_status = WAITING_FOR_CAPA_VERIFICATION;
             $id = decryptId($request->id);
             $observationid = decryptId($request->observation_id);
+
             $inspection_updates = $this->followupObservation->capaUpdate($observationid);
             $this->followupObservation->statusUpdate($observationid, $to_status);
             $inspection_details = $this->followup->selectOne($id, $observationid);
@@ -410,7 +507,7 @@ class ChecklistObservationFollowupController extends Controller
                     'id' => $id,
                     'module' => 1,
                 )),
-                'web_link' =>  admin_url('fire/checklist-observation/verification/' . encryptId($id)),
+                'web_link' =>  admin_url('fire/checklist-observation/verification/' . encryptId($id) . '/' . encryptId($observationid)),
                 'assigned_user' => array_to_string($ehsOfficers),
                 'created_by' => Auth::id(),
             );
@@ -475,7 +572,7 @@ class ChecklistObservationFollowupController extends Controller
                         'id' => $inspection_details->id,
                         'module' => 1,
                     )),
-                    'web_link' =>  $web_link,
+                    'web_link' =>  admin_url('fire/checklist-observation/verification/' . encryptId($id) . '/' . encryptId($observationid)),
                     'assigned_user' => array_to_string($users),
                     'created_by' => Auth::id(),
                 );
@@ -512,7 +609,7 @@ class ChecklistObservationFollowupController extends Controller
                         'id' => $inspection_details->id,
                         'module' => 1,
                     )),
-                    'web_link' =>  $web_link,
+                    'web_link' =>  admin_url('fire/checklist-observation/list'),
                     'assigned_user' => $users,
                     'created_by' => Auth::id(),
                 );
@@ -589,7 +686,7 @@ class ChecklistObservationFollowupController extends Controller
                         'id' => $inspection_details->id,
                         'module' => 1,
                     )),
-                    'web_link' =>  $web_link,
+                    'web_link' =>  admin_url('fire/checklist-observation/verification/' . encryptId($id) . '/' . encryptId($observationid)),
                     'assigned_user' => array_to_string($users),
                     'created_by' => Auth::id(),
                 );
@@ -627,7 +724,7 @@ class ChecklistObservationFollowupController extends Controller
                         'id' => $inspection_details->id,
                         'module' => 1,
                     )),
-                    'web_link' =>  $web_link,
+                    'web_link' =>  admin_url('fire/checklist-observation/list'),
                     'assigned_user' => $users,
                     'created_by' => Auth::id(),
                 );
@@ -703,7 +800,7 @@ class ChecklistObservationFollowupController extends Controller
                         'id' => $inspection_details->id,
                         'module' => 1,
                     )),
-                    'web_link' =>  $web_link,
+                    'web_link' =>  admin_url('fire/checklist-observation/verification/' . encryptId($id) . '/' . encryptId($inspection_details->inspection_id)),
                     'assigned_user' => array_to_string($users),
                     'created_by' => Auth::id(),
                 );
@@ -741,7 +838,7 @@ class ChecklistObservationFollowupController extends Controller
                         'id' => $inspection_details->id,
                         'module' => 1,
                     )),
-                    'web_link' =>  $web_link,
+                    'web_link' =>  admin_url('fire/checklist-observation/list'),
                     'assigned_user' => $users,
                     'created_by' => Auth::id(),
                 );

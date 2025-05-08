@@ -98,7 +98,7 @@ class FireSafetyEquipmentController extends Controller
                     return $datatables;
                 } catch (Exception $ex) {
                     report($ex);
-                    report($ex);
+
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }
@@ -458,6 +458,128 @@ class FireSafetyEquipmentController extends Controller
             $equipment_name = decryptId($request->equipment_name);
             $isUnique = $this->safety_equipment->EquipmentUniqueCheck($equipment_name);
             return response()->json($isUnique);
+        }
+    }
+
+
+    public function generalExcel(Request $request)
+    {
+
+        try {
+            $id = decryptId($request->id);
+            $spreadsheet = new Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
+
+            $inspection_details = $this->safety_equipment->selectOne($id);
+
+            $document_no = $this->document_reference->selectOne($inspection_details->document_reference_id);
+            $row = 1;
+            $startRow = $row;
+            $sheet->mergeCells("A{$row}:C" . ($row + 2));
+            $sheet->getStyle("A{$row}:C" . ($row + 2))->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]]
+            ]);
+
+            $logoPath = public_path('assets/images/logo-dark.png');
+            if (file_exists($logoPath)) {
+                $drawing = new Drawing();
+                $drawing->setName('Logo');
+                $drawing->setPath($logoPath);
+                $drawing->setCoordinates("B{$row}");
+                $drawing->setOffsetX(25);
+                $drawing->setOffsetY(10);
+                $drawing->setWidth(90);
+                $drawing->setHeight(50);
+                $drawing->setWorksheet($sheet);
+            }
+
+            $sheet->mergeCells("D{$row}:H" . ($row + 2));
+            $sheet->setCellValue("D{$row}", 'List of Fire Safety & Rescue Equipment PN INTERNATIONAL PVT. LTD.');
+            $sheet->getStyle("D{$row}:H" . ($row + 2))->applyFromArray([
+                'font' => ['bold' => true, 'size' => 14],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+            ]);
+
+            $labelMapStart = $row;
+            $labelMap = [
+                ["I{$labelMapStart}", 'Doc. No.', $document_no->doc_no],
+                ["I" . ($labelMapStart + 1), 'Issue Dt.', Displaydateformat($document_no->issue_date)],
+                ["I" . ($labelMapStart + 2), 'Rev. & Dt.', $document_no->rev_dt],
+            ];
+
+            foreach ($labelMap as [$labelCell, $label, $data]) {
+                $dataCell = str_replace('I', 'J', $labelCell);
+                $sheet->setCellValue($labelCell, $label);
+                $sheet->setCellValue($dataCell, $data);
+
+                $sheet->getStyle("{$labelCell}:{$dataCell}")->applyFromArray([
+                    'font' => ['bold' => true],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_LEFT, 'vertical' => Alignment::VERTICAL_CENTER],
+                    'wrapText' => true,
+                ]);
+            }
+
+            $row += 3;
+            $headers = [
+                'A' => 'SR.NO',
+                'B' => 'EQUIPMENT NAME',
+                'C' => 'ITEM/CODE',
+                'D' => 'STANDARD/NORMS',
+                'E' => 'EQUIPMENT CATEGORY',
+                'F' => 'UNIT OF MEASUREMENT',
+                'G' => 'MINIMUM ORDER LEVEL(MOL)',
+                'H' => 'ECONOMIC ORDER QUANTITY(EOQ)',
+                'I' => 'STATUS',
+                'J' => 'REMARK',
+            ];
+            foreach ($headers as $col => $text) {
+                $sheet->setCellValue("{$col}{$row}", $text);
+                $sheet->getColumnDimension($col)->setAutoSize(true);
+            }
+
+            $sheet->getStyle("A{$row}:J{$row}")->applyFromArray([
+                'font' => ['bold' => true],
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                'wrapText' => true,
+            ]);
+            $sheet->getRowDimension($row)->setRowHeight(40);
+            $row++;
+
+            $sr = 1;
+            $detail = $inspection_details;
+            $sheet->setCellValue("A{$row}", $sr);
+            $sheet->setCellValue("B{$row}", getEquipmentName($detail['equipment_id'] ?? ''));
+            $sheet->setCellValue("C{$row}", $detail['item_code'] ?? '');
+            $sheet->setCellValue("D{$row}", $detail['standard_norms'] ?? '');
+            $sheet->setCellValue("E{$row}", $detail['equipment_category'] ?? '');
+            $sheet->setCellValue("F{$row}", $detail['measurement_unit'] ?? '');
+            $sheet->setCellValue("G{$row}", $detail['minimum_order_level'] ?? '');
+            $sheet->setCellValue("H{$row}", $detail['economic_order_quantity'] ?? '');
+            $status = ($detail['observation_status'] ?? '') == 1 ? 'Active' : 'Inactive';
+            $sheet->setCellValue("I{$row}", $status);
+            $sheet->setCellValue("J{$row}", $detail['remark'] ?? '');
+
+            $sheet->getStyle("A{$row}:J{$row}")->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN]],
+                'alignment' => ['horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER, 'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER],
+                'wrapText' => true,
+            ]);
+            $sheet->getRowDimension($row)->setRowHeight(-1);
+
+            $fileName = 'List of Fire Safety Equipment.xlsx';
+            $filePath = storage_path("app/public/$fileName");
+            $writer = new Xlsx($spreadsheet);
+            $writer->save($filePath);
+
+            return response()->download($filePath)->deleteFileAfterSend(true);
+
+        } catch (Exception $ex) {
+            report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('safety/fire-safety-equipment/list'));
         }
     }
 }

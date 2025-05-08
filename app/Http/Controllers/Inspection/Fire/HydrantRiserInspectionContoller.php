@@ -323,7 +323,7 @@ class HydrantRiserInspectionContoller extends Controller
                     'id' => $id,
                     'module' => 1,
                 )),
-                'web_link' =>  admin_url('fire/hydrant-riser-inspection/view/' . encryptId($id)),
+                'web_link' =>  admin_url('fire/hydrant-riser-inspection/verification/' . encryptId($id)),
                 'assigned_user' => array_to_string($ehsOfficers),
                 'created_by' => Auth::id(),
             );
@@ -1368,7 +1368,7 @@ class HydrantRiserInspectionContoller extends Controller
 
             return response()->download($filePath)->deleteFileAfterSend(true);
         } catch (\Exception $e) {
-            dd($e);
+            report($e);
             return back()->with('error', $e->getMessage());
         }
     }

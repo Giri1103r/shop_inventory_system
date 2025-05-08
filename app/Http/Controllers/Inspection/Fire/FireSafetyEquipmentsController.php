@@ -94,6 +94,7 @@ class FireSafetyEquipmentsController extends Controller
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
+                    report($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }
@@ -122,6 +123,8 @@ class FireSafetyEquipmentsController extends Controller
             return view('inspection.fire.fireSafetyEquipment.add', $data);
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error',  __('common.message_error'));
+            return redirect(admin_url('fire/fire-safety/equipments/code-sheet/list'));
         }
     }
 
@@ -593,7 +596,6 @@ class FireSafetyEquipmentsController extends Controller
 
             return response()->download($filePath)->deleteFileAfterSend(true);
         } catch (\Exception $e) {
-            dd($e);
             report($e);
             Session::flash('error', 'Something went wrong!');
             return redirect(admin_url('fire/fire-safety/equipments/code-sheet/list'));
