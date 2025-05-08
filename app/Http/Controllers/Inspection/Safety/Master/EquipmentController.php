@@ -300,8 +300,8 @@ report($ex);
                     "path" => $path,
                 ];
 
-                // dispatch(new ImportequipmentJob($details));
-                dispatch((new ImportEquipmentJob($details))->onQueue('equipmentimport'));
+                dispatch(new ImportequipmentJob($details));
+                // dispatch((new ImportEquipmentJob($details))->onQueue('equipmentimport'));
             }
 
             $insert_data['log_id'] = $insert_id;
@@ -310,6 +310,7 @@ report($ex);
             Session::flash('success', __('Equipment name Uploaded sucessfully'));
             return redirect(admin_url('safety/master/equipment/list'));
         } catch (Exception $ex) {
+            dd($ex);
             Session::flash('error', __('equipment to be taken upload failed'));
             return redirect(admin_url('safety/master/equipment/list'));
         }
