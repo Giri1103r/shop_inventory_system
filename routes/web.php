@@ -120,6 +120,7 @@ Route::get('cron/safetypermit/checklistmaster/import', [CronController::class, '
 Route::get('cron/inspection/ohc/current_new_code/import', [CronController::class, 'currentNextCodeImport']);
 Route::get('cron/inspection/safety/equipment/import', [CronController::class, 'equipmentimport']);
 Route::get('cron/inspection/ohc/first-aid-equipment/import', [CronController::class, 'firstAidEquipmentImport']);
+Route::get('cron/inspection/audit/task-master/import', [CronController::class, 'task']);
 
 
 

@@ -3,19 +3,25 @@
 namespace App\Jobs;
 
 use App\Models\Inspection\audit\Master\Task;
-use Illuminate\Contracts\Queue\ShouldQueue;
+
 use Illuminate\Foundation\Queue\Queueable;
 use App\Models\UploadLog;
 use Shuchkin\SimpleXLSX;
 use App\Models\UploadLogError;
 use Illuminate\Support\Facades\Session;
 
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Queue\InteractsWithQueue;
 
 
-// class ImportAuditTaskJob implements ShouldQueue
-class ImportAuditTaskJob
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+
+class ImportAuditTaskJob implements ShouldQueue
+// class ImportAuditTaskJob
 {
-    use Queueable;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     private $details;
     /**
@@ -85,7 +91,7 @@ class ImportAuditTaskJob
                 $i++;
                 continue;
             }
-            
+
             $data = [
                 'task_auto_id' => getsequence('audit_task'),
                 'task_name' => $task_name,

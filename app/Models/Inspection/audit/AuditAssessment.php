@@ -44,7 +44,8 @@ class AuditAssessment extends Model
         if (isset($request->search) && isset($request->search['value']) && $request->search['value'] != '') {
             $search = $request->search['value'];
             $query = $query->where(function ($query) use ($search) {
-                $query->orWhereRaw('audit_id LIKE "%' . $search . '%"');
+                $query->orWhereRaw('audit_id LIKE "%' . $search . '%"')
+                ->orWhereRaw('floor_name LIKE "%' . $search . '%"');
             });
         }
 
@@ -103,8 +104,8 @@ class AuditAssessment extends Model
         if (isset($request->search) && isset($request->search['value']) && $request->search['value'] != '') {
             $search = $request->search['value'];
             $query = $query->where(function ($query) use ($search) {
-                $query->orWhereRaw('category_name LIKE "%' . $search . '%"');
-                $query->orWhereRaw('category_id LIKE "%' . $search . '%"');
+                $query->orWhereRaw('audit_id LIKE "%' . $search . '%"')
+                ->orWhereRaw('floor_name LIKE "%' . $search . '%"');
             });
         }
 

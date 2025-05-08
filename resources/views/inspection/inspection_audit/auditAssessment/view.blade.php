@@ -70,61 +70,69 @@
                                     @php
                                         $user_response = json_decode($audit_assessment->checklist, true);
                                     @endphp
-                                    <table class="container p-5">
-                                        <thead>
-                                            <tr>
+                                    @if (!empty($user_response))
+                                        <table class="container p-5">
+                                            <thead>
+                                                <tr>
 
 
-                                                <th colspan="5"
-                                                    style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
-                                                    Check Points
-                                                </th>
+                                                    <th colspan="5"
+                                                        style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
+                                                        Check Points
+                                                    </th>
 
-                                                <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;"
-                                                    class="require">
-                                                    YES/NO/NA
-                                                </th>
+                                                    <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;"
+                                                        class="require">
+                                                        YES/NO/NA
+                                                    </th>
 
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @php $srNo = 1; @endphp
-                                            @foreach ($user_response as $subcategory => $questions)
-                                                @php
-                                                    $rowCount = count($questions);
-                                                    $firstRow = true;
-                                                @endphp
-                                                @foreach ($questions as $questionId => $answer)
-                                                    <tr>
-                                                        @if ($firstRow)
-                                                            <td rowspan="{{ $rowCount }}"
-                                                                style="border: 1px solid black; padding: 8px; font-weight: bold;">
-                                                                {{ GetSubChecklistTypeName($subcategory) }}
-                                                            </td>
-                                                            @php
-                                                                $srNo++;
-                                                                $firstRow = false;
-                                                            @endphp
-                                                        @endif
-                                                        <td colspan="4" style="border: 1px solid black; padding: 8px;">
-                                                            {{ GetChecklistTypeDate($questionId) }}
-                                                        </td>
-                                                        <td
-                                                            style="border: 1px solid black; padding: 8px; text-align: center;">
-                                                            @if ($answer == 'YES')
-                                                                <span style="color: green; font-size: 20px;">✓</span>
-                                                            @elseif ($answer == 'NO')
-                                                                <span style="color: red; font-size: 20px;">X</span>
-                                                            @elseif ($answer == 'N/A')
-                                                                <span
-                                                                    style="color: rgb(191, 212, 4); font-size: 20px;">X</span>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @php $srNo = 1; @endphp
+
+                                                @foreach ($user_response as $subcategory => $questions)
+                                                    @php
+                                                        $rowCount = count($questions);
+                                                        $firstRow = true;
+                                                    @endphp
+                                                    @foreach ($questions as $questionId => $answer)
+                                                        <tr>
+                                                            @if ($firstRow)
+                                                                <td rowspan="{{ $rowCount }}"
+                                                                    style="border: 1px solid black; padding: 8px; font-weight: bold;">
+                                                                    {{ GetSubChecklistTypeName($subcategory) }}
+                                                                </td>
+                                                                @php
+                                                                    $srNo++;
+                                                                    $firstRow = false;
+                                                                @endphp
                                                             @endif
-                                                        </td>
-                                                    </tr>
+                                                            <td colspan="4"
+                                                                style="border: 1px solid black; padding: 8px;">
+                                                                {{ GetChecklistTypeDate($questionId) }}
+                                                            </td>
+                                                            <td
+                                                                style="border: 1px solid black; padding: 8px; text-align: center;">
+                                                                @if ($answer == 'YES')
+                                                                    <span style="color: green; font-size: 20px;">✓</span>
+                                                                @elseif ($answer == 'NO')
+                                                                    <span style="color: red; font-size: 20px;">X</span>
+                                                                @elseif ($answer == 'N/A')
+                                                                    <span
+                                                                        style="color: rgb(191, 212, 4); font-size: 20px;">X</span>
+                                                                @endif
+                                                            </td>
+                                                        </tr>
+                                                    @endforeach
                                                 @endforeach
-                                            @endforeach
-                                        </tbody>
-                                    </table>
+
+
+                                            </tbody>
+                                        </table>
+                                    @else
+                                        <p>No Data is Available</p>
+                                    @endif
                                 </div>
                             </div>
                         </div>

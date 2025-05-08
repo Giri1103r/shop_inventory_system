@@ -55,6 +55,7 @@ return [
     'capa_reverifcation_remarks' => 'Capa Reverifcation Remarks',
     'ehs_officer_reverification' => 'EHS Officer Reverification',
     'status_log' => 'Status Log',
+    'checklist_add' => 'Please Add the Sub category name in master',
 
     'msds' => 'MSDS',
     'ser_no' => 'Serial Number',

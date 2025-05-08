@@ -130,6 +130,10 @@ class AuditAssessmentController extends Controller
             $checklist_details = getCheckListQuestion(CHECKLIST_AUDIT_ASSESSMENT);
             $options =  getoption(CHECKLIST_AUDIT_ASSESSMENT);
             $getoption = string_to_array($options->type);
+            if (count($checklist_details) <= 0) {
+                Session::flash('error', __('inspection.checklist_add'));
+                return redirect()->back();
+            }
             $data = array(
                 'checklist_types' => $checklist_types,
                 'shift' => $shift,
@@ -138,7 +142,6 @@ class AuditAssessmentController extends Controller
             );
             return view('inspection.inspection_audit.auditAssessment.add', $data);
         } catch (Exception $ex) {
-           report($ex);
             report($ex);
         }
     }
@@ -346,51 +349,70 @@ class AuditAssessmentController extends Controller
                 $srNo = 1;
                 $user_response = json_decode($audit_assessment->checklist, true);
 
-
-                foreach ($user_response as $subcategory => $questions) {
-                    if (!is_array($questions)) {
-                        continue; // skip if not a valid sub-array
-                    }
-
-                    $rowCount = count($questions);
-                    $firstRow = true;
-
-                    foreach ($questions as $questionId => $answer) {
-                        if ($firstRow) {
-                            $sheet->mergeCells("A$inspectionRow:C" . ($inspectionRow + $rowCount - 1))
-                                ->setCellValue("A$inspectionRow", getSubcategoryname($subcategory));
-                            $firstRow = false;
+                if (!empty($user_response)) {
+                    foreach ($user_response as $subcategory => $questions) {
+                        if (!is_array($questions)) {
+                            continue; // skip if not a valid sub-array
                         }
 
-                        $sheet->mergeCells("D$inspectionRow:J$inspectionRow")
-                            ->setCellValue("D$inspectionRow", getSubcategoryDataname($questionId));
+                        $rowCount = count($questions);
+                        $firstRow = true;
 
-                        $statusIcon = '-';
-                        if (!empty($answer) && strtoupper($answer) == 'YES') {
-                            $statusIcon = '✓';
-                        } elseif (in_array(strtoupper($answer), ['NO', 'N/A'])) {
-                            $statusIcon = 'X';
-                        }
+                        foreach ($questions as $questionId => $answer) {
+                            if ($firstRow) {
+                                $sheet->mergeCells("A$inspectionRow:C" . ($inspectionRow + $rowCount - 1))
+                                    ->setCellValue("A$inspectionRow", getSubcategoryname($subcategory));
+                                $firstRow = false;
+                            }
 
-                        $sheet->mergeCells("K$inspectionRow:S$inspectionRow")
-                            ->setCellValue("K$inspectionRow", $statusIcon);
+                            $sheet->mergeCells("D$inspectionRow:J$inspectionRow")
+                                ->setCellValue("D$inspectionRow", getSubcategoryDataname($questionId));
 
-                        $sheet->getStyle("A$inspectionRow:S$inspectionRow")->applyFromArray([
-                            'alignment' => [
-                                'horizontal' => Alignment::HORIZONTAL_CENTER,
-                                'vertical' => Alignment::VERTICAL_CENTER,
-                            ],
-                            'borders' => [
-                                'allBorders' => [
-                                    'borderStyle' => Border::BORDER_THIN,
+                            $statusIcon = '-';
+                            if (!empty($answer) && strtoupper($answer) == 'YES') {
+                                $statusIcon = '✓';
+                            } elseif (in_array(strtoupper($answer), ['NO', 'N/A'])) {
+                                $statusIcon = 'X';
+                            }
+
+                            $sheet->mergeCells("K$inspectionRow:S$inspectionRow")
+                                ->setCellValue("K$inspectionRow", $statusIcon);
+
+                            $sheet->getStyle("A$inspectionRow:S$inspectionRow")->applyFromArray([
+                                'alignment' => [
+                                    'horizontal' => Alignment::HORIZONTAL_CENTER,
+                                    'vertical' => Alignment::VERTICAL_CENTER,
                                 ],
-                            ],
-                        ]);
+                                'borders' => [
+                                    'allBorders' => [
+                                        'borderStyle' => Border::BORDER_THIN,
+                                    ],
+                                ],
+                            ]);
 
-                        $inspectionRow++;
-                        $srNo++;
+                            $inspectionRow++;
+                            $srNo++;
+                        }
                     }
+                } else {
+                    $sheet->mergeCells("A$inspectionRow:S$inspectionRow")
+                        ->setCellValue("A$inspectionRow", 'No Questions Found!');
+
+                    $sheet->getStyle("A$inspectionRow:S$inspectionRow")->applyFromArray([
+                        'alignment' => [
+                            'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                            'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+                        ],
+                        'borders' => [
+                            'allBorders' => [
+                                'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                            ],
+                        ],
+                    ]);
+
+                    $inspectionRow++;
                 }
+
 
 
                 $row =  $inspectionRow + 2;
@@ -499,7 +521,7 @@ class AuditAssessmentController extends Controller
             $filename = "6S Audit Assessment.pdf";
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-           report($ex);
+            report($ex);
             return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
         }
     }
@@ -621,50 +643,69 @@ class AuditAssessmentController extends Controller
             $inspectionRow = $headerRow + 1;
             $srNo = 1;
             $user_response = json_decode($audit_assessment->checklist, true);
+            if (!empty($user_response)) {
+                foreach ($user_response as $subcategory => $questions) {
+                    $rowCount = count($questions);
+                    $firstRow = true;
+                    foreach ($questions as $questionId => $answer) {
+                        if ($firstRow) {
+                            // Merge and set subcategory only once per group
+                            $sheet->mergeCells("A$inspectionRow:C" . ($inspectionRow + $rowCount - 1))
+                                ->setCellValue("A$inspectionRow", getSubcategoryname($subcategory));
+                            $firstRow = false;
+                        }
 
-            foreach ($user_response as $subcategory => $questions) {
-                $rowCount = count($questions);
-                $firstRow = true;
-                foreach ($questions as $questionId => $answer) {
-                    if ($firstRow) {
-                        // Merge and set subcategory only once per group
-                        $sheet->mergeCells("A$inspectionRow:C" . ($inspectionRow + $rowCount - 1))
-                            ->setCellValue("A$inspectionRow", getSubcategoryname($subcategory));
-                        $firstRow = false;
-                    }
+                        // Write the question text
+                        $sheet->mergeCells("D$inspectionRow:J$inspectionRow")
+                            ->setCellValue("D$inspectionRow", getSubcategoryDataname($questionId));
 
-                    // Write the question text
-                    $sheet->mergeCells("D$inspectionRow:J$inspectionRow")
-                        ->setCellValue("D$inspectionRow", getSubcategoryDataname($questionId));
+                        // Handle status icon
+                        $statusIcon = '-';
+                        if (!empty($answer) && strtoupper($answer) == 'YES') {
+                            $statusIcon = '✓';
+                        } elseif (in_array(strtoupper($answer), ['NO', 'N/A'])) {
+                            $statusIcon = 'X';
+                        }
 
-                    // Handle status icon
-                    $statusIcon = '-';
-                    if (!empty($answer) && strtoupper($answer) == 'YES') {
-                        $statusIcon = '✓';
-                    } elseif (in_array(strtoupper($answer), ['NO', 'N/A'])) {
-                        $statusIcon = 'X';
-                    }
+                        // Write the status icon
+                        $sheet->mergeCells("K$inspectionRow:S$inspectionRow")
+                            ->setCellValue("K$inspectionRow", $statusIcon);
 
-                    // Write the status icon
-                    $sheet->mergeCells("K$inspectionRow:S$inspectionRow")
-                        ->setCellValue("K$inspectionRow", $statusIcon);
-
-                    $sheet->getStyle("A$inspectionRow:S$inspectionRow")->applyFromArray([
-                        'alignment' => [
-                            'horizontal' => Alignment::HORIZONTAL_CENTER,
-                            'vertical' => Alignment::VERTICAL_CENTER,
-                        ],
-                        'borders' => [
-                            'allBorders' => [
-                                'borderStyle' => Border::BORDER_THIN,
+                        $sheet->getStyle("A$inspectionRow:S$inspectionRow")->applyFromArray([
+                            'alignment' => [
+                                'horizontal' => Alignment::HORIZONTAL_CENTER,
+                                'vertical' => Alignment::VERTICAL_CENTER,
                             ],
-                        ],
-                    ]);
+                            'borders' => [
+                                'allBorders' => [
+                                    'borderStyle' => Border::BORDER_THIN,
+                                ],
+                            ],
+                        ]);
 
-                    $inspectionRow++;
-                    $srNo++;
+                        $inspectionRow++;
+                        $srNo++;
+                    }
                 }
+            } else {
+                $sheet->mergeCells("A$inspectionRow:S$inspectionRow")
+                    ->setCellValue("A$inspectionRow", 'No Questions Found!');
+
+                $sheet->getStyle("A$inspectionRow:S$inspectionRow")->applyFromArray([
+                    'alignment' => [
+                        'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                        'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+                    ],
+                    'borders' => [
+                        'allBorders' => [
+                            'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                        ],
+                    ],
+                ]);
+
+                $inspectionRow++;
             }
+
 
             $filename = 'Audit_Assesment.xlsx';
             header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
@@ -675,7 +716,7 @@ class AuditAssessmentController extends Controller
             $writer->save('php://output');
             exit;
         } catch (Exception $ex) {
-           report($ex);
+            report($ex);
             return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
         }
     }

@@ -71,7 +71,7 @@ class AuditAnalysisController extends Controller
                         })
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            $btn = '<a href="' . admin_url('audit/6s-analysis/view/' . encryptId($row->id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
+                            $btn = '<a href="' . admin_url('audit/6s-analysis/view/' . encryptId($row->id)) . '"   class="view-icon me-1" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
                             // if (CheckUserRole(ROLE_SUPERADMIN)) {
                             // $btn .= '<a href="' . admin_url('audit/6s-analysis/edit/' . encryptId($row->id)) . '" class="edit-icon " title="' . __('common.edit') . '"><i class="fa-solid fa-pen-to-square"></i> ';
                             // $btn .= '<a href="javascript:void(0);"  data-id="' . encryptId($row->id) . '"  class="recordDelete" title="' . __('common.delete') . '"><i class="fa-solid fa-trash text-danger" ></i></i></a> ';
@@ -123,6 +123,8 @@ class AuditAnalysisController extends Controller
             return view('inspection.inspection_audit.auditAnalysis.add', $data);
         } catch (Exception $ex) {
             report($ex);
+             Session::flash('error',  __('common.message_error'));
+            return redirect(admin_url('audit/6s-analysis/list'));
         }
     }
 
@@ -446,75 +448,7 @@ class AuditAnalysisController extends Controller
         }
     }
 
-    public function edit($id)
-    {
-        try {
-            $id = decryptId($id);
 
-            $msdsDetails = $this->auditAnalysis->find($id);
-
-            $msdsCheckList = $this->msdsCheckList->selectOne($id);
-
-            $data = [
-                'msdsDetails' => $msdsDetails,
-                'msdsCheckList' => $msdsCheckList  ?? [],
-            ];
-
-            return view('inspection.inspection_audit.auditAnalysis.edit', $data);
-        } catch (Exception $error) {
-            report($error->getMessage());
-        }
-    }
-
-    public function update(Request $request)
-    {
-
-        try {
-            $id = decryptId($request->id);
-
-            $rules = [
-                'document_number' => 'required',
-                'issue_date' => 'required',
-                'revision_date' => 'required',
-                'item_code' => 'required',
-                'name_of_chemical' => 'required',
-                'msds_availability_status' => 'required',
-                'remark' => 'required',
-            ];
-            $messages = [
-                'document_number.required' => __('Document Number is required'),
-                'issue_date.required' => __('Issue Date is required'),
-                'revision_date.required' => __('Revision Date is required'),
-                'item_code.required' => __('Item Code is required'),
-                'name_of_chemical.required' => __('Name of Chemical is required'),
-                'msds_availability_status.required' => __('MSDS Availability Status is required'),
-                'remark.required' => __('Remark is required'),
-            ];
-
-            $validator = Validator::make($request->all(), $rules, $messages);
-            if ($validator->fails()) {
-                return redirect()->back()->withErrors($validator)->withInput();
-            }
-
-            try {
-
-                $msds = $this->auditAnalysis->updates($id);
-                $msds_details = $this->auditAnalysis->selectOne($id);
-                $msdsId = $msds_details->id;
-
-                $this->msdsCheckList->updates($msdsId);
-
-                Session::flash('success', __('Your data has been updated successfully'));
-            } catch (Exception $ex) {
-                Session::flash('error', __('common.message_error'));
-            }
-            return redirect(admin_url('audit/6s-analysis/list'));
-        } catch (Exception $ex) {
-            report($ex);
-            Session::flash('error',  __('common.message_error'));
-            return redirect(admin_url('audit/6s-analysis/list'));
-        }
-    }
 
     public function ExportViewPDF(Request $request)
     {
