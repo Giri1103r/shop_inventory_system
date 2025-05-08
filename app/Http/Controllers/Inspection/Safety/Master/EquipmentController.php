@@ -300,8 +300,8 @@ report($ex);
                     "path" => $path,
                 ];
 
-                dispatch(new ImportequipmentJob($details));
-                // dispatch((new ImportEquipmentJob($details))->onQueue('equipmentimport'));
+                // dispatch(new ImportequipmentJob($details));
+                dispatch((new ImportEquipmentJob($details))->onQueue('equipmentimport'));
             }
 
             $insert_data['log_id'] = $insert_id;

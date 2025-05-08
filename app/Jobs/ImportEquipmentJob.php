@@ -10,8 +10,8 @@ use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use App\Models\Inspection\Safety\Master\Equipment;
 
-// class ImportEquipmentJob implements ShouldQueue
-class ImportEquipmentJob
+class ImportEquipmentJob implements ShouldQueue
+// class ImportEquipmentJob
 {
     use Queueable;
 
