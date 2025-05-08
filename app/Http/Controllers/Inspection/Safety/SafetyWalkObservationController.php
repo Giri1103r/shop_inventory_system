@@ -177,14 +177,7 @@ class SafetyWalkObservationController extends Controller
                 'observation_status.*' => 'required',
                 'remarks.*' => 'required',
                 'emp_id.*' => 'required',
-                'signature_upload' => [
-                    function ($attribute, $value, $fail) {
-                        $user = Auth::user();
-                        if (($user->signature_upload == null)) {
-                            $fail('Signature is required.');
-                        }
-                    }
-                ],
+
 
             ];
 
@@ -208,14 +201,7 @@ class SafetyWalkObservationController extends Controller
                 'observation_status.*.required' => 'Observation status is required.',
                 'remarks.*.required' => 'Remarks are required.',
                 'emp_id.*.required' => 'Employee ID is required.',
-                'signature_upload' => [
-                    function ($attribute, $value, $fail) {
-                        $user = Auth::user();
-                        if ($user->signature_upload == null) {
-                            $fail('Signature is required.');
-                        }
-                    }
-                ],
+
             ];
 
 
@@ -741,7 +727,8 @@ class SafetyWalkObservationController extends Controller
             $last_month_observation_details = $this->observation_details->GetLastMonthDetails($last_month_inspection);
             $document_no = $this->document_reference->selectOne($inspection_details->document_reference_id);
             $prepared_by_signature = GetSafetySignature($inspection_details->created_by,$inspection_details->id,SAFETY_WALK_OBSERVATION,);
-            $verified_by_signature = GetSafetySignature($inspection_details->verified_by,$inspection_details->id,SAFETY_WALK_OBSERVATION,);
+            $verified_by_signature = GetSafetySignature($inspection_details->updated_by,$inspection_details->id,SAFETY_WALK_OBSERVATION,);
+
 
             $spreadsheet = new Spreadsheet();
             $sheet = $spreadsheet->getActiveSheet();
