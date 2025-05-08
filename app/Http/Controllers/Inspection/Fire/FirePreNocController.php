@@ -135,6 +135,10 @@ class FirePreNocController extends Controller
                 ['type', "FirePreNocChecklist"],
                 ['status', '1']
             ])->first();
+            if (count($checklist_details) <= 0) {
+                Session::flash('error', __('inspection.checklist_add'));
+                return redirect()->back();
+            }
             $data = array(
                 'checklist_types' => $checklist_types,
                 'shift' => $shift,

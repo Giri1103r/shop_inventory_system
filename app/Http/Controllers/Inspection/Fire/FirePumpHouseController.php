@@ -141,7 +141,10 @@ class FirePumpHouseController extends Controller
             $checklist_details = getCheckListQuestion(CHECKLIST_FIRE_PUMP_HOUSE_INSECTION_CHECKLIST);
             $options =  getoption(CHECKLIST_FIRE_PUMP_HOUSE_INSECTION_CHECKLIST);
             $getoption = string_to_array($options->type);
-
+            if (count($checklist_details) <= 0) {
+                Session::flash('error', __('inspection.checklist_add'));
+                return redirect()->back();
+            }
             $staticDocno  = $this->static_docno->select('id', 'doc_no', 'issue_date', 'rev_dt')->where([
                 ['type', "DailyFirePumpHouseChecklist"],
                 ['status', '1']

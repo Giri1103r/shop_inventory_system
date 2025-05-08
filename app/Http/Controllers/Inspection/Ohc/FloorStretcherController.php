@@ -123,6 +123,11 @@ class FloorStretcherController extends Controller
             $options =  getoption(OHC_FLOOR_STRECTHER_CHECKLIST);
             $getoption = string_to_array($options->type);
 
+            if (count($checklistQuestions) <= 0) {
+                Session::flash('error', __('inspection.checklist_add'));
+                return redirect()->back();
+            }
+
             $data = array(
                 'shifts' => $shifts,
                 'units' => $unit,

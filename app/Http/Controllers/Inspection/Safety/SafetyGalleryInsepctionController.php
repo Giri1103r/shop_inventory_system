@@ -179,7 +179,10 @@ class SafetyGalleryInsepctionController extends Controller
             $location = $this->location->getLocationName();
             $unit = $this->unit->getUnit();
             $document_no = $this->document_reference->selectUsingName('SafetyGalleryInspection');
-
+            if (count($checklistQuestions) <= 0) {
+                Session::flash('error', __('inspection.checklist_add'));
+                return redirect()->back();
+            }
             $data = array(
                 'checklist_details' => $checklistQuestions,
                 'getoption' => $getoption,
