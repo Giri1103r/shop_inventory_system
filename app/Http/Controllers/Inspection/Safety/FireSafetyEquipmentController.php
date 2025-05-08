@@ -67,9 +67,9 @@ class FireSafetyEquipmentController extends Controller
                             $btn .= '<a href="' . admin_url('safety/fire-safety-equipment/exportViewPdf/' . encryptId($row->inspection_id)) . '" style="margin-right: 5px;" title="PDF">
                             <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
                         </a>';
-                            $btn .= '<a href="' . admin_url('safety/fire-safety-equipment/generalExcel/' . encryptId($row->inspection_id)) . '" style="margin-right: 5px;" title="EXCEL">
-                            <i class="fas fa-file-excel" style="color: #1D6F42;" aria-hidden="true"></i>
-                        </a>';
+                        //     $btn .= '<a href="' . admin_url('safety/fire-safety-equipment/generalExcel/' . encryptId($row->inspection_id)) . '" style="margin-right: 5px;" title="EXCEL">
+                        //     <i class="fas fa-file-excel" style="color: #1D6F42;" aria-hidden="true"></i>
+                        // </a>';
                             return $btn;
                         })
                         ->addColumn('created_date', function ($row) {
