@@ -192,7 +192,7 @@
                     ppe_name: {
                         required: true,
                         minlength: 3,
-                        maxlength: 200,
+                       maxlength: 500,
 
                     },
                     ppe_type: {
@@ -201,13 +201,13 @@
                     protection_category: {
                         required: true,
                         minlength: 3,
-                        maxlength: 30,
+                        maxlength: 500,
 
                     },
                     ppe_standard: {
                         required: true,
                         minlength: 3,
-                        maxlength: 200,
+                       maxlength: 500,
 
                     },
                     ppe_file: {
@@ -224,8 +224,8 @@
                     },
                     ppe_name: {
                         required: "PPE Name cannot be empty.",
-                        minlength: "PPE Name must be between 3 and 200 characters.",
-                        maxlength: "PPE Name must be between 3 and 200 characters.",
+                        minlength: "PPE Name must be between 3 and 500 characters.",
+                        maxlength: "PPE Name must be between 3 and 500 characters.",
 
                     },
                     ppe_type: {
@@ -233,13 +233,13 @@
                     },
                     protection_category: {
                         required: "Protection Category cannot be empty.",
-                        minlength: "Protection Category must be between 3 and 200 characters.",
-                        maxlength: "Protection Category must be between 3 and 200 characters.",
+                        minlength: "Protection Category must be between 3 and 500 characters.",
+                        maxlength: "Protection Category must be between 3 and 500 characters.",
                     },
                     ppe_standard: {
                         required: "PPE Standard cannot be empty.",
-                        minlength: "PPE  Standard must be between 3 and 200 characters.",
-                        maxlength: "PPE  Standard must be between 3 and 200 characters.",
+                        minlength: "PPE  Standard must be between 3 and 500 characters.",
+                        maxlength: "PPE  Standard must be between 3 and 500 characters.",
 
                     },
                     ppe_file: {
