@@ -572,13 +572,18 @@ class CronController extends Controller
                 if ($response->successful()) {
                     $data = $response->json();
 
-                    if (!empty($data) && is_array($data)) {
+                    if (!empty($data) ) {
                         foreach ($data as $item) {
-                            $this->ppestock->store($item);
+                            try {
+                                $this->ppestock->store($item);
+                            } catch (\Exception $e) {
+                                \Log::error('Failed to store item: ', [
+                                    'item' => $item,
+                                    'error' => $e->getMessage()
+                                ]);
+                            }
                         }
-                    } else {
-                        return response()->json(['message' => 'No data found in API response.']);
-                    }
+                    } 
                 } else {
                     return response()->json([
                         'message' => 'Failed to fetch data from API.',
