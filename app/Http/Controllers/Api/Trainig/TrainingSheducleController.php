@@ -445,7 +445,7 @@ class TrainingSheducleController extends BaseController
         try {
             $trainingScheduleId = ($request->training_schedule_id);
             $training_status = TRAINING_FEEDBACK_ADMIN_APPROVE;
-            // dd($request->all());
+            dd($request->all());
             $AssessmentStore = $this->training_assessment_feedback->store_api();
             $updateStatus = $this->training_schedule->updateStatus($trainingScheduleId, $training_status);
             $statuslog =  $this->training_statuslog->storestatus($trainingScheduleId, $training_status);
