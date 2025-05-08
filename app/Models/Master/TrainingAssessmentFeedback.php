@@ -83,9 +83,9 @@ class TrainingAssessmentFeedback extends Model
     public function store_api()
     {
         $request = request();
-        dd($request->all());
-        $data = $request->input('data');
 
+        $data = $request->input('data');
+        dd( $data);
         $insertData = [];
         foreach ($data as $item) {
 
