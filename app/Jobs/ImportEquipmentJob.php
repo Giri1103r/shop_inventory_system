@@ -13,10 +13,10 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use App\Models\Inspection\Safety\Master\Equipment;
 
-class ImportEquipmentJob implements ShouldQueue
-// class ImportEquipmentJob
+// class ImportEquipmentJob implements ShouldQueue
+class ImportEquipmentJob
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use  Queueable;
     private $details;
     /**
      * Create a new job instance.
