@@ -176,7 +176,7 @@ class EquipmentController extends Controller
             Session::flash('success', __('Your data has been updated successfully'));
             return redirect(admin_url('safety/master/equipment/list'));
         } catch (Exception $ex) {
-report($ex);
+            report($ex);
             Session::flash('error', __('Something went wrong try again'));
             return redirect(admin_url('safety/master/equipment/list'));
         }
@@ -310,7 +310,6 @@ report($ex);
             Session::flash('success', __('Equipment name Uploaded sucessfully'));
             return redirect(admin_url('safety/master/equipment/list'));
         } catch (Exception $ex) {
-            dd($ex);
             Session::flash('error', __('equipment to be taken upload failed'));
             return redirect(admin_url('safety/master/equipment/list'));
         }
