@@ -50,17 +50,17 @@ class ChecklistSubType extends Model
             });
         }
         if (isset($request->subcategory_id) && $request->subcategory_id) {
-            $query = $query->where('inspection_master_checklist_subtype.subcategory_id', 'LIKE', '%' . $request->subcategory_id . '%');
+            $query = $query->where('inspection_master_checklist_subtype.subcategory_id', $request->subcategory_id );
         }
         if (isset($request->subcategory_name) && $request->subcategory_name) {
-            $query = $query->where('inspection_master_checklist_subtype.subcategory_name', 'LIKE', '%' . $request->subcategory_name . '%');
+            $query = $query->where('inspection_master_checklist_subtype.subcategory_name', $request->subcategory_name );
         }
         if (isset($request->category_id) && $request->category_id) {
-            $query = $query->where('inspection_master_checklist_subtype.category_id', 'LIKE', '%' . decryptId($request->category_id) . '%');
+            $query = $query->where('inspection_master_checklist_subtype.category_id', decryptId($request->category_id) );
         }
 
         if (isset($request->status) && $request->status) {
-            $query = $query->where('inspection_master_checklist_subtype.status', 'LIKE', '%' . decryptId($request->status) . '%');
+            $query = $query->where('inspection_master_checklist_subtype.status', decryptId($request->status) );
         }
 
 

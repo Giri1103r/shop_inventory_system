@@ -104,7 +104,7 @@ class FireSafetyEquipmentsController extends Controller
         $data = array(
             'fireList' => $fireList,
         );
-        return view('inspection.fire.fireSafetyEquipment.list', $data);
+        return view('inspection.fire.firesafetyequipment.list', $data);
     }
 
     public function add(Request $request)
@@ -120,7 +120,7 @@ class FireSafetyEquipmentsController extends Controller
                 'unitList' => $unitList,
                 'staticDocno' => $staticDocno,
             );
-            return view('inspection.fire.fireSafetyEquipment.add', $data);
+            return view('inspection.fire.firesafetyequipment.add', $data);
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error',  __('common.message_error'));
@@ -181,7 +181,7 @@ class FireSafetyEquipmentsController extends Controller
                     'staticDocno' => $staticDocno,
                 );
             }
-            return view('inspection.fire.fireSafetyEquipment.view', $data);
+            return view('inspection.fire.firesafetyequipment.view', $data);
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong!');
@@ -403,7 +403,7 @@ class FireSafetyEquipmentsController extends Controller
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $view = view('inspection.fire.fireSafetyEquipment.pdf', $data);
+            $view = view('inspection.fire.firesafetyequipment.pdf', $data);
             $html = $view->render();
 
             $mpdf->WriteHTML($html);
@@ -411,7 +411,7 @@ class FireSafetyEquipmentsController extends Controller
             $filename = "Fire Safety Equipment.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            report($ex);
+            dd($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('fire/fire-safety/equipments/code-sheet/list'));
         }
@@ -445,7 +445,7 @@ class FireSafetyEquipmentsController extends Controller
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $html = view('inspection.fire.fireSafetyEquipment.viewPdf', $data);
+            $html = view('inspection.fire.firesafetyequipment.viewPdf', $data);
             $view = $html->render();
             $mpdf->WriteHTML($view);
 
