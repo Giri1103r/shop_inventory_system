@@ -466,9 +466,13 @@
                         },
                         "sprinkler_head[1]": {
                             required: true,
+                            minlength: 3,
+                            maxlength: 30,
                         },
                         "neck_ring[1]": {
                             required: true,
+                            minlength: 3,
+                            maxlength: 30,
                         },
                         "cylinder_pressure[1]": {
                             required: true,
@@ -481,6 +485,8 @@
                         },
                         "types_of_equipment[1]": {
                             required: true,
+                            minlength: 3,
+                            maxlength: 30,
                         },
                         "location[1]": {
                             required: true,
@@ -490,10 +496,14 @@
                         },
                         "resource_code[1]": {
                             required: true,
+                            minlength: 3,
+                            maxlength: 30,
                             uniqueItemCode: true,
                         },
                         "remarks[1]": {
                             required: true,
+                            minlength: 3,
+                            maxlength: 300,
                         },
                         device_image: {
                             required: true,
@@ -542,6 +552,8 @@
                         },
                         "types_of_equipment[1]": {
                             required: "Please Enter the Types Of Equipment",
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 30",
                         },
                         "capacity_of_equipment[1]": {
                             required: "Please Enter the Capacity Of Equipment",
@@ -551,18 +563,26 @@
                         },
                         "sprinkler_head[1]": {
                             required: "Please Enter the Sprinkler Head",
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 30",
                         },
                         "neck_ring[1]": {
                             required: "Please Enter the Neck Ring",
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 30",
                         },
                         "cylinder_pressure[1]": {
                             required: "Please Enter the Cylinder Pressure",
                         },
                         "resource_code[1]": {
                             required: "Please add the resource code",
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 30",
                         },
                         "remarks[1]": {
                             required: "Please add remarks",
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 300",
                         },
                         device_image: {
                             required: "Please upload an image.",
@@ -662,7 +682,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.location') }}</label>
-                                                        <select name="location[${form_set_count}]" id="location"
+                                                        <select name="location[${form_set_count}]" id="location[${form_set_count}]"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select {{ __('inspection.location') }}
                                                             </option>
@@ -773,22 +793,35 @@
                     $("input[name='resource_code[" + form_set_count + "]']").rules('add', {
                         required: true,
                         uniqueItemCode: true,
+                        minlength: 3,
+                        maxlength: 30,
                         messages: {
                             required: 'Please Enter the resource code',
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 30",
                         }
                     });
                     $("input[name='sprinkler_head[" + form_set_count + "]']").rules('add', {
                         required: true,
                         uniqueItemCode: true,
+                        minlength: 3,
+                        maxlength: 30,
                         messages: {
                             required: 'Please Enter the Sprinkler Head',
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 30",
+
                         }
                     });
                     $("input[name='neck_ring[" + form_set_count + "]']").rules('add', {
                         required: true,
                         uniqueItemCode: true,
+                        minlength: 3,
+                        maxlength: 30,
                         messages: {
                             required: 'Please Enter the Neck Ring',
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 30",
                         }
                     });
                     $("input[name='cylinder_pressure[" + form_set_count + "]']").rules('add', {
@@ -808,8 +841,13 @@
 
                     $("input[name='types_of_equipment[" + form_set_count + "]']").rules('add', {
                         required: true,
+                        minlength: 3,
+                        maxlength: 30,
                         messages: {
                             required: 'Please Enter the Type Of Equipment',
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 30",
+
                         }
                     });
                     $("input[name='capacity_of_equipment[" + form_set_count + "]']").rules('add', {
@@ -827,8 +865,12 @@
 
                     $("textarea[name='remarks[" + form_set_count + "]']").rules('add', {
                         required: true,
+                        minlength: 3,
+                        maxlength: 300,
                         messages: {
                             required: 'Please Enter the Remarks',
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 300",
                         }
                     });
 

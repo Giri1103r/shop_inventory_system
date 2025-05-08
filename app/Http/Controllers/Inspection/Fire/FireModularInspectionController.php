@@ -319,7 +319,7 @@ class FireModularInspectionController extends Controller
                     'id' => $id,
                     'module' => 1,
                 )),
-                'web_link' =>  admin_url('fire/fire-modular-inspection/checklist/view/' . encryptId($id)),
+                'web_link' =>  admin_url('fire/fire-modular-inspection/checklist/verification/' . encryptId($id). '/ehs'),
                 'assigned_user' => array_to_string($ehsOfficers),
                 'created_by' => Auth::id(),
             );
@@ -567,7 +567,7 @@ class FireModularInspectionController extends Controller
             } else {
                 $message = 'EHS Officer Rejected the CAPA Action';
                 $web_link =   admin_url('fire/fire-modular-inspection/checklist/verification/' . encryptId($inspection_details->id) . '/capa');
-                $users = $inspection_details->created_by;
+                $users = [$inspection_details->created_by];
                 $to_status = EHS_OFFICER_REJECTED;
             }
 
@@ -641,7 +641,7 @@ class FireModularInspectionController extends Controller
             } else {
                 $message = 'Level One Manager Rejected the CAPA Action';
                 $web_link =   admin_url('fire/fire-modular-inspection/checklist/verification/' . encryptId($inspection_details->id) . '/capa');
-                $users = $inspection_details->created_by;
+                $users = [$inspection_details->created_by];
                 $to_status = L1_MANAGER_REJECTED;
             }
 
@@ -714,6 +714,7 @@ class FireModularInspectionController extends Controller
                 $message = 'Level Two Manager Rejected the CAPA Action';
                 $web_link =   admin_url('fire/fire-modular-inspection/checklist/verification/' . encryptId($inspection_details->id) . '/capa');
                 $to_status = L2_MANAGER_REJECTED;
+                $users = [$inspection_details->created_by];
             }
 
             $mailsubject = 'FIRE MODULAR INSPECTION';
@@ -773,7 +774,7 @@ class FireModularInspectionController extends Controller
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
             }
-
+         
             $spreadsheet = new Spreadsheet();
             $sheet = $spreadsheet->getActiveSheet();
 
@@ -792,9 +793,9 @@ class FireModularInspectionController extends Controller
                 $inspection_detail = $groupedDetails->first();
                 $document_no = $this->document_reference->selectOne($inspection_detail->document_reference_id);
 
-                $prepared_by_signature = GetFireSignature($inspection_detail->checked_by, $inspection_detail->fire_id, DETECTOR_INSPECTION);
-                $verified_by_signature = GetFireSignature($inspection_detail->verified_by, $inspection_detail->fire_id, DETECTOR_INSPECTION);
-                $approved_by_signature = GetFireSignature($inspection_detail->approved_by, $inspection_detail->fire_id, DETECTOR_INSPECTION);
+                $prepared_by_signature = GetFireSignature($inspection_detail->checked_by, $inspection_detail->fire_id, FIRE_MODULAR_INSPECTION);
+                $verified_by_signature = GetFireSignature($inspection_detail->verified_by, $inspection_detail->fire_id, FIRE_MODULAR_INSPECTION);
+                $approved_by_signature = GetFireSignature($inspection_detail->approved_by, $inspection_detail->fire_id, FIRE_MODULAR_INSPECTION);
 
                 $titleRow = $row;
 
@@ -970,7 +971,7 @@ class FireModularInspectionController extends Controller
                     $drawing->setOffsetY(5);
                     $drawing->setHeight(40);
                     $drawing->setWorksheet($sheet);
-                    $sheet->setCellValue("F{$signatureRowStart}", "\n\n\nVerified By:\n" . getUsername($inspection_detail->updated_by));
+                    $sheet->setCellValue("F{$signatureRowStart}", "\n\n\nVerified By:\n" . getUsername($inspection_detail->verified_by));
                 } else {
                     $sheet->setCellValue("F{$signatureRowStart}", "Verified By:\nInspection not yet completed");
                 }
@@ -1020,7 +1021,7 @@ class FireModularInspectionController extends Controller
             header('Cache-Control: max-age=0');
             $writer->save('php://output');
         } catch (\Exception $e) {
-            
+
             report($e);
             Session::flash('error', 'Something went wrong!');
             return redirect(admin_url('fire/detector-inspection/list'));
@@ -1032,6 +1033,7 @@ class FireModularInspectionController extends Controller
         try {
 
             $allData = $this->detector->exportdata();
+
             $inspection_type = FIRE_MODULAR_INSPECTION;
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
@@ -1304,7 +1306,7 @@ class FireModularInspectionController extends Controller
                 $drawing->setOffsetY(5);
                 $drawing->setHeight(40);
                 $drawing->setWorksheet($sheet);
-                $sheet->setCellValue("F{$signatureRow}", "\n\n\nVerified By:\n" . getUsername($fire_modular->updated_by));
+                $sheet->setCellValue("F{$signatureRow}", "\n\n\nVerified By:\n" . getUsername($fire_modular->verified_by));
             } else {
                 $sheet->setCellValue("F{$signatureRow}", "Verified By:\nInspection not yet completed");
             }
