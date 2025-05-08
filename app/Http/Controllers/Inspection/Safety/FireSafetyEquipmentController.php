@@ -67,9 +67,9 @@ class FireSafetyEquipmentController extends Controller
                             $btn .= '<a href="' . admin_url('safety/fire-safety-equipment/exportViewPdf/' . encryptId($row->inspection_id)) . '" style="margin-right: 5px;" title="PDF">
                             <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
                         </a>';
-                        //     $btn .= '<a href="' . admin_url('safety/fire-safety-equipment/generalExcel/' . encryptId($row->inspection_id)) . '" style="margin-right: 5px;" title="EXCEL">
-                        //     <i class="fas fa-file-excel" style="color: #1D6F42;" aria-hidden="true"></i>
-                        // </a>';
+                            $btn .= '<a href="' . admin_url('safety/fire-safety-equipment/generalExcel/' . encryptId($row->inspection_id)) . '" style="margin-right: 5px;" title="EXCEL">
+                            <i class="fas fa-file-excel" style="color: #1D6F42;" aria-hidden="true"></i>
+                        </a>';
                             return $btn;
                         })
                         ->addColumn('created_date', function ($row) {
@@ -549,27 +549,25 @@ class FireSafetyEquipmentController extends Controller
             $row++;
 
             $sr = 1;
-            foreach ($inspection_details as $detail) {
-                $sheet->setCellValue("A{$row}", $sr++);
-                $sheet->setCellValue("B{$row}", getEquipmentName($detail['equipment_id'] ?? ''));
-                $sheet->setCellValue("C{$row}", ($detail['item_code'] ?? ''));
-                $sheet->setCellValue("D{$row}", $detail['standard_norms'] ?? '');
-                $sheet->setCellValue("E{$row}", $detail['equipment_category'] ?? '');
-                $sheet->setCellValue("F{$row}", $detail['measurement_unit'] ?? '');
-                $sheet->setCellValue("G{$row}", ($detail['minimum_order_level'] ?? ''));
-                $sheet->setCellValue("H{$row}", ($detail['economic_order_quantity'] ?? ''));
-                $status = ($detail['observation_status'] ?? '') == 1 ? 'Active' : 'Inactive';
-                $sheet->setCellValue("I{$row}", $status);
-                $sheet->setCellValue("J{$row}", $detail['remark'] ?? '');
+            $detail = $inspection_details;
+            $sheet->setCellValue("A{$row}", $sr);
+            $sheet->setCellValue("B{$row}", getEquipmentName($detail['equipment_id'] ?? ''));
+            $sheet->setCellValue("C{$row}", $detail['item_code'] ?? '');
+            $sheet->setCellValue("D{$row}", $detail['standard_norms'] ?? '');
+            $sheet->setCellValue("E{$row}", $detail['equipment_category'] ?? '');
+            $sheet->setCellValue("F{$row}", $detail['measurement_unit'] ?? '');
+            $sheet->setCellValue("G{$row}", $detail['minimum_order_level'] ?? '');
+            $sheet->setCellValue("H{$row}", $detail['economic_order_quantity'] ?? '');
+            $status = ($detail['observation_status'] ?? '') == 1 ? 'Active' : 'Inactive';
+            $sheet->setCellValue("I{$row}", $status);
+            $sheet->setCellValue("J{$row}", $detail['remark'] ?? '');
 
-                $sheet->getStyle("A{$row}:J{$row}")->applyFromArray([
-                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
-                    'wrapText' => true,
-                ]);
-                $sheet->getRowDimension($row)->setRowHeight(-1);
-                $row++;
-            }
+            $sheet->getStyle("A{$row}:J{$row}")->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN]],
+                'alignment' => ['horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER, 'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER],
+                'wrapText' => true,
+            ]);
+            $sheet->getRowDimension($row)->setRowHeight(-1);
 
             $fileName = 'List of Fire Safety Equipment.xlsx';
             $filePath = storage_path("app/public/$fileName");
