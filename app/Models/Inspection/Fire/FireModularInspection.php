@@ -93,7 +93,7 @@ class FireModularInspection extends Model
             $query->whereDate('inspection_fire_modular_inspection.date_of_inspection',  DBdateformat($request->inspection_date));
         }
         if (isset($request->next_due)) {
-           
+
             $query->whereDate('inspection_fire_modular_inspection.next_due',  DBdateformat($request->next_due));
         }
         if (isset($request->inspection_status) && $request->inspection_status) {
@@ -146,7 +146,7 @@ class FireModularInspection extends Model
             'date_of_inspection' => DBdateformat($request->inspection_date),
             'location' => decryptId($request->location_id),
             'shift' => decryptId($request->shift_id),
-            'next_due' => $request->next_due,
+            'next_due' =>DBdateformat( $request->next_due),
             'observation_needed' => decryptId($request->observation_needed),
             'unit' => decryptId($request->unit_id),
             'frequency' => decryptId($request->frequency_id),

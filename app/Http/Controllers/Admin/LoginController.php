@@ -80,18 +80,19 @@ class LoginController extends Controller
         $credentials = $request->only('email', 'password');
         $remember = $request->has('remember');
 
-        $user = User::where('email', $credentials['email'])->first();
 
-        if ($user->status == 0) {
-            Session::flash('error', 'Employee no longer exists');
-            return redirect()->back();
-        }
 
         if (Auth::attempt($credentials, $remember)) {
             $request->session()->regenerate();
             RateLimiter::clear($throttleKey);
 
             $user = Auth::user();
+
+            if ($user->status == 0) {
+                Auth::logout(); 
+                Session::flash('error', 'Employee no longer exists');
+                return redirect()->back();
+            }
             session()->put('locale', $user->language ?: env('APP_LOCALE'));
 
             Session::flash('success', 'Login successful');

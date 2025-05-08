@@ -114,7 +114,7 @@ class Fire extends Model
             $query = $query->where('inspection_fire_table.id', decryptId($request->fire_no));
         }
         if ($request->has('status') && $request->status) {
-            $query = $query->where('status', decryptId($request->status));
+            $query = $query->where('inspection_fire_table.status', decryptId($request->status));
         }
         $query->orderBy('inspection_fire_table.id', 'DESC');
         $data = $query->get();

@@ -1114,7 +1114,7 @@
                         messages: {
                             required: 'Please add the remarks',
                             minlength: "Minimum Characters should be 3",
-                            maxlength: "Maximum Characters should not exceed 100",
+                            maxlength: "Maximum Characters should not exceed 300",
                         }
                     });
 
@@ -1125,7 +1125,7 @@
                         messages: {
                             required: 'Please add the Approach',
                             minlength: "Minimum Characters should be 3",
-                            maxlength: "Maximum Characters should not exceed 100",
+                            maxlength: "Maximum Characters should not exceed 300",
                         }
                     });
 

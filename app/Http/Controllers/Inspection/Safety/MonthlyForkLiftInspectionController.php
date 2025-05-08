@@ -195,6 +195,10 @@ class MonthlyForkLiftInspectionController extends Controller
             $frequency = $this->frequency->getFrequency();
             $forklifts = $this->forklift_type->getForkLift();
             $document_no = $this->document_reference->selectUsingName('MonthlyForkliftInspectionChecklist');
+            if (count($checklistQuestions) <= 0) {
+                Session::flash('error', __('inspection.checklist_add'));
+                return redirect()->back();
+            }
             $data = array(
                 'checklist_details' => $checklistQuestions,
                 'shift' => $shift,

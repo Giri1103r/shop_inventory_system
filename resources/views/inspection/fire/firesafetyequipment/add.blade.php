@@ -80,7 +80,7 @@
                                             <div class="row">
                                                 <div class="card-header-inner d-flex justify-content-between">
                                                     <h4 class="text-white">Fire Safety Equipments Details</h4>
-                                                    <button class="btn btn-primary addmorebutton"
+                                                    <button class="btn btn-primary mb-2 addmorebutton"
                                                         data-block='lesson_learned_block' data-row='lesson_learned_row'
                                                         type="button" id="dynamic-add-more"
                                                         style="margin-left: 10px; width: 84px;">
@@ -153,10 +153,11 @@
 
                                                     </div>
 
-                                                    <hr>
-                                                </div>
 
+                                                </div>
+                                                <hr>
                                             </div>
+
 
                                         </div>
                                         <div class="submit-button" style="text-align: right;">
@@ -346,7 +347,7 @@
         });
 
 
-        function addValidationRules(row) {
+        function addValidationRules(newRow) {
             newRow.find("input[name$='[name_of_fire_safety]']").rules("add", {
                 required: true,
                 minlength: 3,

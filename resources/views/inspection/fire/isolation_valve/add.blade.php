@@ -313,21 +313,29 @@
                                         <div class="form-observation">
                                             <div class="row mt-4 form-obs">
                                                 <div class="card-header-inner p-2">
-                                                    <h4 class="text-white">Isolation Valve Inspection Observation</h4>
+                                                    <h4 class="text-white">Hydrant And Riser Observation</h4>
                                                 </div>
+                                                    <div class="col-md-12 mb-2">
+                                                        <div class="form-group form-input">
+                                                            <label
+                                                                class="form-label require">{{ __('inspection.obs') }}</label>
 
-                                                <div class="mb-2">
-                                                    <label class="me-3">
-                                                        <input type="radio" name="observation"
-                                                            value="{{ encryptId(1) }}" class="validate-radio-required">
-                                                        Yes
-                                                    </label>
-                                                    <label>
-                                                        <input type="radio" name="observation"
-                                                            value="{{ encryptId(2) }}" class="validate-radio-required">
-                                                        No
-                                                    </label>
-                                                </div>
+                                                            <!-- Radio Buttons for Observation Needed -->
+                                                            <div class="mb-2">
+                                                                <label class="me-3">
+                                                                    <input type="radio" name="observation"
+                                                                        value="{{encryptId(1)}}"> Yes
+                                                                </label>
+                                                                <label>
+                                                                    <input type="radio" name="observation"
+                                                                        value="{{encryptId(2)}}"> No
+                                                                </label>
+                                                            </div>
+
+
+                                                        </div>
+                                                    </div>
+
                                             </div>
                                         </div>
 
@@ -335,7 +343,7 @@
                                             <x-button-submit class="submit"></x-button-submit>
                                             <x-button-reset class="submit"></x-button-reset>
                                             <x-button-cancel
-                                                href="{{ admin_url('fire/isolating-valve-inspection') }}"></x-button-cancel>
+                                                href="{{ admin_url('fire/isolating-valve-inspection/list') }}"></x-button-cancel>
                                         </div>
 
                                     </form>
@@ -428,12 +436,16 @@
                         "resource_code[1]": {
                             required: true,
                             uniqueItemCode: true,
+                            minlength:3,
+                            maxlength:30,
                         },
                         "type[1]": {
                             required: true,
                         },
                         "location_isv[1]": {
                             required: true,
+                            minlength:3,
+                            maxlength:30,
                         },
                         "size_isv[1]": {
                             required: true,
@@ -456,6 +468,8 @@
                         },
                         "remarks[1]": {
                             required: true,
+                            minlength:3,
+                            maxlength:300,
                         },
 
                         device_image: {
@@ -506,12 +520,16 @@
                         },
                         "resource_code[1]": {
                             required: "Please add the resource code",
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 30",
                         },
                         "type[1]": {
                             required: "Please select the valve type",
                         },
                         "location_isv[1]": {
                             required: "Please enter the location",
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 30",
                         },
                         "size_isv[1]": {
                             required: "Please specify the size",
@@ -534,6 +552,8 @@
                         },
                         "remarks[1]": {
                             required: "Please add remarks",
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 300",
                         },
                         device_image: {
                             required: "Please upload an image.",
@@ -765,17 +785,25 @@
 
                     $("input[name='location_isv[" + form_set_count + "]']").rules('add', {
                         required: true,
+                        minlength:3,
+                        maxlength:30,
                         messages: {
                             required: 'Please enter the location',
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 30",
                         }
                     });
 
                     $("input[name='resource_code[" + form_set_count + "]']").rules('add', {
                         required: true,
                         uniqueItemCode: true,
+                        minlength:3,
+                        maxlength:30,
                         messages: {
                             required: 'Please enter the resource code',
-                            uniqueItemCode: 'Resource code must be unique'
+                            uniqueItemCode: 'Resource code must be unique',
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 30",
                         }
                     });
 
@@ -832,8 +860,12 @@
 
                     $("textarea[name='remarks[" + form_set_count + "]']").rules('add', {
                         required: true,
+                        minlength:3,
+                        maxlength:300,
                         messages: {
                             required: 'Please enter remarks',
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 300",
                         }
                     });
 

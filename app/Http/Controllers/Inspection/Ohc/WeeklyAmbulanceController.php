@@ -213,6 +213,10 @@ class WeeklyAmbulanceController extends Controller
             $location = $this->location->getLocationname();
             $signature_upload = $this->user->getSignature();
             $document_no = $this->document_reference->selectUsingName('WeeklyAmbulanceInspectionChecklist');
+            if (count($checklist_details) <= 0) {
+                Session::flash('error', __('inspection.checklist_add'));
+                return redirect()->back();
+            }
             $data = array(
                 'unit' => $unit,
                 'shift' => $shift,

@@ -303,21 +303,21 @@
                                                     </button>
                                                 </div> --}}
 
-                                                
+
                                                 <div class="col-md-12 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.obs') }}</label>
 
-
+                                                        <!-- Radio Buttons for Observation Needed -->
                                                         <div class="mb-2">
                                                             <label class="me-3">
                                                                 <input type="radio" name="observation"
-                                                                    value="{{encryptId(1)}}" class="validate-radio-required"> Yes
+                                                                    value="{{encryptId(1)}}"> Yes
                                                             </label>
                                                             <label>
                                                                 <input type="radio" name="observation"
-                                                                    value="{{encryptId(2)}}" class="validate-radio-required"> No
+                                                                    value="{{encryptId(2)}}"> No
                                                             </label>
                                                         </div>
 
@@ -429,9 +429,13 @@
                         "resource_code[1]": {
                             required: true,
                             uniqueItemCode: true,
+                            minlength:3,
+                            maxlength: 30,
                         },
                         "approach[1]": {
                             required: true,
+                            minlength:3,
+                            maxlength: 300,
                         },
                         "glass[1]": {
                             required: true,
@@ -450,6 +454,8 @@
                         },
                         "remarks[1]": {
                             required: true,
+                            minlength:3,
+                            maxlength: 300,
                         },
 
                         device_image: {
@@ -500,6 +506,8 @@
                         },
                         "resource_code[1]": {
                             required: "Please add the resource code",
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 30",
                         },
 
                         "department[1]": {
@@ -523,9 +531,13 @@
                         },
                         "approach[1]": {
                             required: 'Please enter the approach details',
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 300",
                         },
                         "remarks[1]": {
                             required: "Please add remarks",
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 300",
                         },
                         device_image: {
                             required: "Please upload an image.",
@@ -732,9 +744,13 @@
                     $("input[name='resource_code[" + form_set_count + "]']").rules('add', {
                         required: true,
                         uniqueItemCode: true,
+                        minlength:3,
+                        maxlength: 30,
                         messages: {
                             required: 'Please enter the resource code',
-                            uniqueItemCode: 'Resource code must be unique'
+                            uniqueItemCode: 'Resource code must be unique',
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 30",
                         }
                     });
 
@@ -772,15 +788,23 @@
 
                     $("textarea[name='approach[" + form_set_count + "]']").rules('add', {
                         required: true,
+                        minlength:3,
+                        maxlength: 300,
                         messages: {
                             required: 'Please enter the approach details',
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 300",
                         }
                     });
 
                     $("textarea[name='remarks[" + form_set_count + "]']").rules('add', {
                         required: true,
+                        minlength:3,
+                        maxlength: 30,
                         messages: {
                             required: 'Please enter remarks',
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 300",
                         }
                     });
 

@@ -459,6 +459,8 @@
                         },
                         "location[1]": {
                             required: true,
+                            minlength:3,
+                            maxlength:30,
                         },
                         "quantity[1]": {
                             required: true,
@@ -471,6 +473,8 @@
                         },
                         "remarks[1]": {
                             required: true,
+                            minlength:3,
+                            maxlength:300,
                         },
                         device_image: {
                             required: true,
@@ -488,6 +492,8 @@
                         },
                         "emergency_light_number[1]": {
                             required: true,
+                            minlength:3,
+                            maxlength:30,
                         },
                         "condition_of_light[1]": {
                             required: true,
@@ -550,12 +556,16 @@
                         },
                         "location[1]": {
                             required: "Please Enter the Location",
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 30",
                         },
                         "capacity[1]": {
                             required: "Please add the capacity",
                         },
                         "emergency_light_number[1]": {
                             required: "Please add the emergency of the light",
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 30",
                         },
                         "condition_of_light[1]": {
                             required: "Please select the condition of light",
@@ -577,6 +587,8 @@
                         },
                         "remarks[1]": {
                             required: "Please add remarks",
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 300",
                         },
                         device_image: {
                             required: "Please upload an image.",
@@ -855,14 +867,22 @@
                     });
                     $("input[name='location[" + form_set_count + "]']").rules('add', {
                         required: true,
+                        minlength:3,
+                        maxlength:30,
                         messages: {
                             required: 'Please add the location',
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 30",
                         }
                     });
                     $("input[name='emergency_light_number[" + form_set_count + "]']").rules('add', {
                         required: true,
+                        minlength:3,
+                        maxlength:30,
                         messages: {
                             required: 'Please add the Emergency of Light',
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 30",
                         }
                     });
                     $("input[name='quantity[" + form_set_count + "]']").rules('add', {
@@ -881,8 +901,12 @@
 
                     $("textarea[name='remarks[" + form_set_count + "]']").rules('add', {
                         required: true,
+                        minlength:3,
+                        maxlength:30,
                         messages: {
                             required: 'Please add the remarks',
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 30",
                         }
                     });
 

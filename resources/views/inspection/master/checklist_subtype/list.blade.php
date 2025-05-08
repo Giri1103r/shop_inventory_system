@@ -42,7 +42,7 @@
                                             </select>
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="subcategory_name" class="form-label ">Checklist Type Name</label>
+                                            <label for="subcategory_name" class="form-label ">Checklist Sub Type Name</label>
                                             <input type="text" name="subcategory_name" id="subcategory_name"
                                                 class="form-control">
                                         </div>

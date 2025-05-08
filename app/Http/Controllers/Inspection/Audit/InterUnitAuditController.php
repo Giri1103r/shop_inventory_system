@@ -130,6 +130,10 @@ class InterUnitAuditController extends Controller
             $options =  getoption(INTER_UNIT_AUDIT_CHECKLIST);
 
             $getoption = string_to_array($options->type);
+            if (count($checklist_details) <= 0) {
+                Session::flash('error', __('inspection.checklist_add'));
+                return redirect()->back();
+            }
             $data = array(
                 'checklist_types' => $checklist_types,
                 'unit' => $unit,

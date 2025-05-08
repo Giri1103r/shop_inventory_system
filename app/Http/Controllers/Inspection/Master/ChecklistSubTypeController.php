@@ -287,6 +287,8 @@ class ChecklistSubTypeController extends Controller
                 );
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('inspection/master/checklist-sub-type/list'));
         }
     }
 
@@ -297,6 +299,7 @@ class ChecklistSubTypeController extends Controller
             ini_set("pcre.backtrack_limit", "5000000");
 
             $allData =   $this->checklist_subtype->exportdata();
+
             $header = [
                 __("common.sno"),
                 __("Checklist Sub-Type ID"),
@@ -336,6 +339,8 @@ class ChecklistSubTypeController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('inspection/master/checklist-sub-type/list'));
         }
     }
 

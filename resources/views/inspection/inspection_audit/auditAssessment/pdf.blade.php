@@ -145,16 +145,16 @@
 
 
     @foreach ($content as $details)
-    <div style="width:100%;">
-        <table style="width:100%;">
-            <tr>
-                <td
-                    style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                    6S AUDIT ASSESSMENT
-                </td>
-            </tr>
-        </table>
-    </div>
+        <div style="width:100%;">
+            <table style="width:100%;">
+                <tr>
+                    <td
+                        style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
+                        6S AUDIT ASSESSMENT
+                    </td>
+                </tr>
+            </table>
+        </div>
         <table
             style="width: 100%; border-collapse: collapse; font-family: Arial, sans-serif; text-align: center; border: 1px solid black;">
 
@@ -217,60 +217,74 @@
             @php
                 $user_response = json_decode($details->checklist, true);
             @endphp
-           @foreach ($user_response as $subcategory => $questions)
-           @php
-               $rowCount = is_array($questions) ? count($questions) : 1;
-               $firstRow = true;
-           @endphp
-           @if (is_array($questions))
-               @foreach ($questions as $questionId => $answer)
-                   <tr>
-                       @if ($firstRow)
-                           <td rowspan="{{ $rowCount }}"
-                               style="border: 1px solid black; padding: 8px; font-weight: bold;">
-                               {{ GetSubChecklistTypeName($subcategory) }}
-                           </td>
-                           @php
-                               $srNo++;
-                               $firstRow = false;
-                           @endphp
-                       @endif
+            @if (!empty($user_response))
+                @foreach ($user_response as $subcategory => $questions)
+                    @php
+                        $rowCount = is_array($questions) ? count($questions) : 1;
+                        $firstRow = true;
+                    @endphp
 
-                       <td colspan="11" style="border: 1px solid black; padding: 8px;">
-                           {{ GetChecklistTypeDate($questionId) }}
-                       </td>
+                    @if (is_array($questions))
+                        @foreach ($questions as $questionId => $answer)
+                            <tr>
+                                @if ($firstRow)
+                                    <td rowspan="{{ $rowCount }}"
+                                        style="border: 1px solid black; padding: 8px; font-weight: bold;">
+                                        {{ GetSubChecklistTypeName($subcategory) }}
+                                    </td>
+                                    @php
+                                        $srNo++;
+                                        $firstRow = false;
+                                    @endphp
+                                @endif
 
-                       <td colspan="12" style="border: 1px solid black; padding: 8px; text-align: center;">
-                           @if ($answer == 'YES')
-                               <span style="color: green; font-size: 20px;">✓</span>
-                           @elseif ($answer == 'NO')
-                               <span style="color: red; font-size: 20px;">X</span>
-                           @elseif ($answer == 'N/A')
-                               <span style="color: rgb(191, 212, 4); font-size: 20px;">X</span>
-                           @endif
-                       </td>
-                   </tr>
-               @endforeach
-           @else
-               <tr>
-                   <td style="border: 1px solid black; padding: 8px; font-weight: bold;">
-                       {{ GetSubChecklistTypeName($subcategory) }}
-                   </td>
-                   <td colspan="11" style="border: 1px solid black; padding: 8px;">
-                       {{ GetChecklistTypeDate($subcategory) }}
-                   </td>
-                   <td colspan="12" style="border: 1px solid black; padding: 8px; text-align: center;">
-                       @if ($questions == 'YES')
-                           <span style="color: green; font-size: 20px;">✓</span>
-                       @elseif ($questions == 'NO')
-                           <span style="color: red; font-size: 20px;">X</span>
-                       @elseif ($questions == 'N/A')
-                           <span style="color: rgb(191, 212, 4); font-size: 20px;">X</span>
-                       @endif
-                   </td>
-               </tr>
-           @endif
-       @endforeach
+                                <td colspan="11" style="border: 1px solid black; padding: 8px;">
+                                    {{ GetChecklistTypeDate($questionId) }}
+                                </td>
+
+                                <td colspan="12" style="border: 1px solid black; padding: 8px; text-align: center;">
+                                    @if ($answer == 'YES')
+                                        <span style="color: green; font-size: 20px;">✓</span>
+                                    @elseif ($answer == 'NO')
+                                        <span style="color: red; font-size: 20px;">X</span>
+                                    @elseif ($answer == 'N/A')
+                                        <span style="color: rgb(191, 212, 4); font-size: 20px;">X</span>
+                                    @endif
+                                </td>
+                            </tr>
+                        @endforeach
+                    @else
+                        <tr>
+                            <td style="border: 1px solid black; padding: 8px; font-weight: bold;">
+                                {{ GetSubChecklistTypeName($subcategory) }}
+                            </td>
+                            <td colspan="11" style="border: 1px solid black; padding: 8px;">
+                                {{ GetChecklistTypeDate($subcategory) }}
+                            </td>
+                            <td colspan="12" style="border: 1px solid black; padding: 8px; text-align: center;">
+                                @if ($questions == 'YES')
+                                    <span style="color: green; font-size: 20px;">✓</span>
+                                @elseif ($questions == 'NO')
+                                    <span style="color: red; font-size: 20px;">X</span>
+                                @elseif ($questions == 'N/A')
+                                    <span style="color: rgb(191, 212, 4); font-size: 20px;">X</span>
+                                @endif
+                            </td>
+                        </tr>
+                    @endif
+                @endforeach
+            @else
+                <tr>
+
+                    <th colspan="24"
+                        style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
+                        No Data is Available
+                    </th>
+
+
+                </tr>
+            @endif
+
 
 
 

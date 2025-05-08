@@ -174,7 +174,10 @@ class MonthlyFirePumpHouseController extends Controller
             $shifts = $this->shift->getShiftname();
             $unit = $this->unit->getUnit();
             $document_no = $this->document_reference->selectUsingName('MonthlyFirePumpHouseInspection');
-
+            if (count($checklistQuestions) <= 0) {
+                Session::flash('error', __('inspection.checklist_add'));
+                return redirect()->back();
+            }
             $data = array(
                 'checklist_details' => $checklistQuestions,
                 'getoption' => $getoption,

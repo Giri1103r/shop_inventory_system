@@ -107,10 +107,10 @@
                                                         <label class="form-label"
                                                             style="display: block; ">{{ __('inspection.signature') }}</label>
                                                         <img src="{{ admin_url(Auth::user()->signature_upload) }}"
-                                                            alt="Signature Upload" style="width: 150px; margin-top:-10px">
+                                                            alt="Signature Upload" style="width: 150px; margin-top:10px">
                                                     @else
                                                             <div class="col-md-12 mt-2 file-upload-block">
-                                                                <label 
+                                                                <label
                                                                 class="form-label require">Signature</label>
                                                                 <input type="file" class="form-control"
                                                                 name="gemba_walk_prepared_by" id="gemba_walk_prepared_by"  placeholder="Enter the image">
@@ -119,7 +119,7 @@
                                                             </div>
                                                     @endif
                                                 </div>
-                                            
+
 
                                                 <input type="hidden" name="document_reference_id"
                                                     value="{{ $document_no->id }}">
@@ -138,7 +138,7 @@
                                                     <div class="row gemba_walk_checklist_add " data-index="0">
 
                                                         <div class="row">
-                                                          
+
                                                             <div class="col-md-4">
                                                                 <div class="form-group form-input">
                                                                     <label for="location_id" class="form-label">
@@ -312,12 +312,12 @@
                                                         <div class="card-header-inner p-2">
                                                             <h4 class="text-white">GembaWalk Inspection Observation</h4>
                                                         </div>
-        
+
                                                         <div class="col-md-12 mb-2">
                                                             <div class="form-group form-input">
                                                                 <label
                                                                     class="form-label require">{{ __('inspection.obs') }}</label>
-        
+
                                                                 <!-- Radio Buttons for Observation Needed -->
                                                                 <div class="mb-2">
                                                                     <label class="me-3">
@@ -329,11 +329,11 @@
                                                                             value="{{encryptId(2)}}" class="validate-radio-required"> No
                                                                     </label>
                                                                 </div>
-        
-                                                               
+
+
                                                             </div>
                                                         </div>
-        
+
                                                     </div>
                                                 </div>
 
@@ -351,7 +351,7 @@
                                                                 <div class="mb-2">
                                                                     <label class="me-3">
                                                                         <input type="radio" name="is_passed"
-                                                                            value="{{ encryptId(1) }}" id="capa_yes" class="validate-radio-required"> Yes   
+                                                                            value="{{ encryptId(1) }}" id="capa_yes" class="validate-radio-required"> Yes
                                                                     </label>
                                                                     <label>
                                                                         <input type="radio" name="is_passed"
@@ -453,7 +453,7 @@
             let checklistCount = 1;
 
 
-         
+
 
 
             $(".addChecklistDetails").on("click", function() {
@@ -463,11 +463,11 @@
                             <hr class="mt-3">
                          <div class="row">
 
-                         
+
 
                             <div class="col-md-4 form-input">
                                 <label class="form-label">Location</label>
-                                <select name="gemba_walk[${checklistIndex}][location_id]" id="location_id_${checklistIndex}" 
+                                <select name="gemba_walk[${checklistIndex}][location_id]" id="location_id_${checklistIndex}"
                                     class="form-control single-select" style="width: 100%">
                                     <option value="">Select Location</option>
                                     @foreach ($locationList as $loc)
@@ -478,7 +478,7 @@
 
                             <div class="col-md-4 form-input">
                                 <label class="form-label">Unit</label>
-                                <select name="gemba_walk[${checklistIndex}][unit_id]" id="unit_id_${checklistIndex}" 
+                                <select name="gemba_walk[${checklistIndex}][unit_id]" id="unit_id_${checklistIndex}"
                                     class="form-control single-select" style="width: 100%">
                                     <option value="">Select Unit</option>
                                     @foreach ($unitList as $unit)
@@ -489,13 +489,13 @@
 
                             <div class="col-md-4 form-input mt-2">
                                 <label class="form-label">Date of Observation</label>
-                                <input type="text" name="gemba_walk[${checklistIndex}][date_of_observation]" 
+                                <input type="text" name="gemba_walk[${checklistIndex}][date_of_observation]"
                                     id="date_of_observation_${checklistIndex}" class="form-control date_of_observation">
                             </div>
 
                             <div class="col-md-4 form-input mt-2">
                                 <label class="form-label">Observation Type</label>
-                                <select name="gemba_walk[${checklistIndex}][observation_type]" id="observation_type_${checklistIndex}" 
+                                <select name="gemba_walk[${checklistIndex}][observation_type]" id="observation_type_${checklistIndex}"
                                     class="form-control single-select" style="width: 100%">
                                     <option value="">Select Observation Type</option>
                                     <option value="1">Unsafe Act</option>
@@ -514,7 +514,7 @@
                                 class="form-control" placeholder="Enter Hazard Observation">
                             </div>
 
-                           
+
 
                              <div class="col-md-4 mt-2 file-upload-block"
                                                                 id="file-upload-0">
@@ -528,14 +528,14 @@
 
                             <div class="col-md-4 form-input mt-2">
                                 <label class="form-label">CAPA</label>
-                                <input type="text" name="gemba_walk[${checklistIndex}][checklist_capa]" id="checklist_capa_${checklistIndex}" 
+                                <input type="text" name="gemba_walk[${checklistIndex}][checklist_capa]" id="checklist_capa_${checklistIndex}"
                                     class="form-control" placeholder="Enter Recommended actions">
                             </div>
 
 
                             <div class="col-md-4 form-input mt-2">
                                 <label class="form-label date">Date of Compliance</label>
-                                <input type="text" name="gemba_walk[${checklistIndex}][date_of_compliance]" 
+                                <input type="text" name="gemba_walk[${checklistIndex}][date_of_compliance]"
                                     id="date_of_compliance_${checklistIndex}" class="form-control date_of_compliance">
                             </div>
 
@@ -554,7 +554,7 @@
 
                             <div class="col-md-4 form-input mt-2">
                                 <label class="form-label">Status</label>
-                                <select name="gemba_walk[${checklistIndex}][current_status]" id="current_status_${checklistIndex}" 
+                                <select name="gemba_walk[${checklistIndex}][current_status]" id="current_status_${checklistIndex}"
                                     class="form-control single-select" style="width: 100%">
                                     <option value="">Select Current Status</option>
                                     <option value="1">Open</option>
@@ -565,12 +565,12 @@
                             <div class="col-md-4 form-input mt-2">
                                 <label class="form-label">Remark</label>
                                 <textarea class="form-control" name="gemba_walk[${checklistIndex}][checklist_remark]" id="checklist_remark_${checklistIndex}"></textarea>
-                            </div> 
+                            </div>
 
-                          </div>  
-                          
-                          
-                          {{--   observation 
+                          </div>
+
+
+                          {{--   observation
                             <div class="row mt-2">
                                 <div class="observationContainer">
                                     <div class="row observationRow">
@@ -678,7 +678,7 @@
             $(document).ready(function() {
 
 
-                
+
                 $.validator.addMethod("customPattern", function(value, element, pattern) {
                     return this.optional(element) || pattern.test(value);
                 }, "Invalid format.");

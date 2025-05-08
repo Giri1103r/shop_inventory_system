@@ -484,9 +484,13 @@
                         },
                         "fire_sand_bucket_stand_no[1]": {
                             required: true,
+                            minlength:3,
+                            maxlength: 30,
                         },
                         "fire_sand_bucket_no[1]": {
                             required: true,
+                            minlength:3,
+                            maxlength: 30,
                         },
                         "condition[1]": {
                             required: true,
@@ -499,6 +503,8 @@
                         },
                         "approach[1]": {
                             required: true,
+                            minlength:3,
+                            maxlength: 300,
                         },
                         "location[1]": {
                             required: true,
@@ -508,6 +514,8 @@
                         },
                         "remarks[1]": {
                             required: true,
+                            minlength:3,
+                            maxlength: 300,
                         },
 
                         observation: {
@@ -553,9 +561,13 @@
                         },
                         "fire_sand_bucket_stand_no[1]": {
                             required: "Please Select the Fire Sand Bucket Stand Number",
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 30",
                         },
                         "fire_sand_bucket_no[1]": {
                             required: "Please Select the Fire Sand Bucket Number",
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 30",
                         },
                         "condition[1]": {
                             required: "Please Enter the Condition",
@@ -568,10 +580,14 @@
                         },
                         "remarks[1]": {
                             required: "Please Enter the Remarks",
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 300",
                         },
 
                         "approach[1]": {
                             required: "Please Enter the Approach",
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 300",
                         },
                         "qualtiy_quantity_sand[1]": {
                             required: "Please select the Quality and Quantity of Sand",
@@ -810,15 +826,23 @@
                     $("input[name='fire_sand_bucket_stand_no[" + form_set_count + "]']").rules('add', {
                         required: true,
                         uniqueItemCode: true,
+                        minlength:3,
+                        maxlength: 30,
                         messages: {
                             required: 'Please add the Fire Sand Bucket Stand Number',
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 30",
                         }
                     });
 
                     $("input[name='fire_sand_bucket_no[" + form_set_count + "]']").rules('add', {
                         required: true,
+                        minlength:3,
+                        maxlength: 30,
                         messages: {
                             required: 'Please Select the Fire Sand Bucket Number',
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 30",
                         }
                     });
 
@@ -849,15 +873,23 @@
 
                     $("input[name='approach[" + form_set_count + "]']").rules('add', {
                         required: true,
+                        minlength:3,
+                        maxlength: 300,
                         messages: {
                             required: 'Please Enter the Approach',
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 300",
                         }
                     });
 
                     $("textarea[name='remarks[" + form_set_count + "]']").rules('add', {
                         required: true,
+                        minlength:3,
+                        maxlength: 300,
                         messages: {
                             required: 'Please Enter the Remarks',
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 300",
                         }
                     });
 

@@ -326,7 +326,7 @@
                                             <x-button-submit class="submit"></x-button-submit>
                                             <x-button-reset class="submit"></x-button-reset>
                                             <x-button-cancel
-                                                href="{{ admin_url('fire/hose-box-inspection') }}"></x-button-cancel>
+                                                href="{{ admin_url('fire/hose-box-inspection/list') }}"></x-button-cancel>
                                         </div>
 
                                     </form>
@@ -422,6 +422,8 @@
                         "hose_box_no[1]": {
                             required: true,
                             uniqueItemCode: true,
+                            minlength:3,
+                            maxlength:30,
                         },
                         "type[1]": {
                             required: true,
@@ -439,9 +441,13 @@
                         },
                         "approach[1]": {
                             required: true,
+                            minlength:3,
+                            maxlength:300,
                         },
                         "remarks[1]": {
                             required: true,
+                            minlength:3,
+                            maxlength:300,
                         },
                         "hose_types[1]": {
                             required: true,
@@ -504,6 +510,8 @@
                         },
                         "hose_box_no[1]": {
                             required: "Please add the hose box code",
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 30",
                         },
                         "type[1]": {
                             required: "Please select the valve type",
@@ -521,9 +529,13 @@
                         },
                         "approach[1]": {
                             required: "Please add approach",
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 300",
                         },
                         "remarks[1]": {
                             required: "Please add remarks",
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 300",
                         },
                         "hose_types[1]": {
                             required: "Please Select the hose type",
@@ -753,9 +765,13 @@
                     $("input[name='hose_box_no[" + form_set_count + "]']").rules('add', {
                         required: true,
                         uniqueItemCode: true,
+                        minlength:3,
+                        maxlength:30,
                         messages: {
                             required: 'Please enter the hose box no',
-                            uniqueItemCode: 'Hose Box No must be unique'
+                            uniqueItemCode: 'Hose Box No must be unique',
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 30",
                         }
                     });
 
@@ -800,15 +816,23 @@
 
                     $("textarea[name='approach[" + form_set_count + "]']").rules('add', {
                         required: true,
+                        minlength:3,
+                        maxlength:300,
                         messages: {
                             required: 'Please enter the approach detail',
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 300",
                         }
                     });
 
                     $("textarea[name='remarks[" + form_set_count + "]']").rules('add', {
                         required: true,
+                        minlength:3,
+                        maxlength:300,
                         messages: {
                             required: 'Please enter remarks',
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 300",
                         }
                     });
 

@@ -371,17 +371,17 @@ class TaskMasterController extends Controller
                     "path" => $path,
                 ];
 
-                dispatch(new ImportAuditTaskJob($details));
-                // dispatch((new ImportFirstAidEquipmentJob($details))->onQueue('equipmentimport'));
+                // dispatch(new ImportAuditTaskJob($details));
+                dispatch((new ImportAuditTaskJob($details))->onQueue('task'));
             }
 
             $insert_data['log_id'] = $insert_id;
             $insert_data['Uploded_by'] = Auth::user()->toArray();
 
-            Session::flash('success', __('Medicine name Uploaded sucessfully'));
+            Session::flash('success', __('Task name Uploaded sucessfully'));
             return redirect(admin_url('audit/master/task/list'));
         } catch (Exception $ex) {
-            Session::flash('error', __('Medicine to be taken upload failed'));
+            Session::flash('error', __('Task to be taken upload failed'));
             return redirect(admin_url('audit/master/task/list'));
         }
     }
