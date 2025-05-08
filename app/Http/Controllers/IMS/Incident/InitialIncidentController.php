@@ -359,26 +359,44 @@ class InitialIncidentController extends Controller
         }
     }
 
+  
     public function employeename(Request $request)
     {
         $name = $request->input('search');
 
-        $employees = Employee::where('emp_name', 'like', '%' . $name . '%')
-            ->orWhere('emp_id', 'like', '%' . $name . '%')
+        $employees = Employee::where(function ($query) use ($name) {
+            $query->where('emp_name', 'like', '%' . $name . '%')
+                ->orWhere('emp_id', 'like', '%' . $name . '%');
+        })
             ->where('status', 1)
             ->limit(10)
-            ->get();
+            ->get()
+            ->map(function ($employee) {
+                return [
+                    'id' =>  $employee->emp_id,
+                    'text' => $employee->emp_name . ' - ' . $employee->emp_id ,
+                ];
+            });
 
+        $workers = Work::where(function ($query) use ($name) {
+            $query->where('emp_name', 'like', '%' . $name . '%')
+                ->orWhere('emp_id', 'like', '%' . $name . '%');
+        })
+            ->where('status', 1)
+            ->limit(10)
+            ->get()
+            ->map(function ($worker) {
+                return [
+                    'id' =>  $worker->emp_id,
+                    'text' => $worker->emp_name . ' - ' . $worker->emp_id ,
+                ];
+            });
 
         return response()->json(
-            $employees->map(function ($employee) {
-                return [
-                    'id' => encryptId($employee->id),
-                    'text' => $employee->emp_name . ' - ' . $employee->emp_id,
-                ];
-            })
+            collect($employees)->merge(collect($workers))
         );
     }
+
 
     public function employeeid(Request $request)
     {
@@ -481,7 +499,7 @@ class InitialIncidentController extends Controller
 
     public function fetchEmployeeDetails($emp_id)
     {
-        
+
         $employee = Employee::select('emp_name', 'emp_id', 'email', 'department', 'designation')
             ->where('emp_id', $emp_id)
             ->first();
@@ -492,7 +510,7 @@ class InitialIncidentController extends Controller
                 ->first();
         }
         if ($employee) {
-            
+
             return response()->json([
                 'departments' => $this->department->select('id', 'department_name')->where('status', '1')->get(),
                 'employee' => $employee,
@@ -574,6 +592,7 @@ class InitialIncidentController extends Controller
             $addInjury = $this->incident_body_parts->addInjury();
             return $addInjury;
         } catch (Exception $ex) {
+            report($ex);
             return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
         }
     }
@@ -583,45 +602,46 @@ class InitialIncidentController extends Controller
     {
         try {
 
-            $rules = [
+            // $rules = [
 
-                'incident_date_time' => 'required',
-                'unit_id' => 'required',
-                'shift' => 'required',
-                'location_id' => 'required',
-                'exact_location' => 'required',
-                'iir_type' => 'required',
-                'reported_name' => 'required',
-                'designation' => 'required',
-                'department' => 'required',
-                'employee_code' => 'required',
-                'time_of_reporting' => 'required',
-                'reporting_media' => 'required',
-                'brief_description' => 'required',
-                'immediate_action_taken' => 'required',
-            ];
-            $messages = [
+            //     'incident_date_time' => 'required',
+            //     'unit_id' => 'required',
+            //     'shift' => 'required',
+            //     // 'locationi_d' => 'required',
+            //     'exact_location' => 'required',
+            //     'iir_type' => 'required',
+            //     'reported_name' => 'required',
+            //     'designation' => 'required',
+            //     'department' => 'required',
+            //     'employee_code' => 'required',
+            //     'time_of_reporting' => 'required',
+            //     'reporting_media' => 'required',
+            //     'brief_description' => 'required',
+            //     'immediate_action_taken' => 'required',
+            // ];
+            // $messages = [
 
-                'incident_date_time.required' => 'Please enter Date and Time',
-                'unit_id.required' => 'Please enter Unit',
-                'shift.required' => 'Please enter Shift',
-                'location_id.required' => 'Please enter Location',
-                'exact_location.required' => 'Please enter Exact Location',
-                'iir_type.required' => 'Please enter IIR Type',
-                'reported_name.required' => 'Please enter Name',
-                'designation.required' => 'Please enter Designation',
-                'department.required' => 'Please enter Department',
-                'employee_code.required' => 'Please enter Employee Code',
-                'time_of_reporting.required' => 'Please enter Time of reporting',
-                'reporting_media.required' => 'Please enter Reporting Media',
-                'brief_description.required' => 'Please enter Brief Description',
-                'immediate_action_taken.required' => 'Please enter Immediate Action Taken',
+            //     'incident_date_time.required' => 'Please enter Date and Time',
+            //     'unit_id.required' => 'Please enter Unit',
+            //     'shift.required' => 'Please enter Shift',
+            //     // 'location_id.required' => 'Please enter Location',
+            //     'exact_location.required' => 'Please enter Exact Location',
+            //     'iir_type.required' => 'Please enter IIR Type',
+            //     'reported_name.required' => 'Please enter Name',
+            //     'designation.required' => 'Please enter Designation',
+            //     'department.required' => 'Please enter Department',
+            //     'employee_code.required' => 'Please enter Employee Code',
+            //     'time_of_reporting.required' => 'Please enter Time of reporting',
+            //     'reporting_media.required' => 'Please enter Reporting Media',
+            //     'brief_description.required' => 'Please enter Brief Description',
+            //     'immediate_action_taken.required' => 'Please enter Immediate Action Taken',
 
-            ];
-            $validator = Validator::make($request->all(), $rules, $messages);
-            if ($validator->fails()) {
-                return redirect()->back()->withErrors($validator)->withInput();
-            }
+            // ];
+            // $validator = Validator::make($request->all(), $rules, $messages);
+            // if ($validator->fails()) {
+            //     dd($validator);
+            //     return redirect()->back()->withErrors($validator)->withInput();
+            // }
 
             try {
 
@@ -1328,33 +1348,33 @@ class InitialIncidentController extends Controller
             }
             $incidentDetails = $this->initialincident->selectOne($incident_id);
 
-            foreach($rcpa as $item) { 
+            foreach ($rcpa as $item) {
                 $responsibilityIds = is_array($item['responsibility']) ? $item['responsibility'] : [$item['responsibility']];
-            
+
                 $responsibleUsers = User::whereIn('id', $responsibilityIds)->get();
                 $ehsHeadUsers = User::where('role', ROLE_EHS_HEAD)->get();
                 $superadminUsers = User::where('role', ROLE_SUPERADMIN)->get();
                 $users = $responsibleUsers->merge($ehsHeadUsers)->merge($superadminUsers)->unique('id');
-            
+
                 if ($users->isEmpty()) {
-                    continue; 
+                    continue;
                 }
-            
+
                 $mailsubject = 'Investigation Submitted CAPA Pending';
                 $incidentarray = $incidentDetails->toArray();
-            
+
                 foreach ($users as $user) {
                     $email_id = $user->email;
-            
+
                     if ($email_id) {
                         $incidentarray['name'] = $user->name;
                         $incidentarray['email_id'] = $email_id;
                         $incidentarray['mail_subject'] = $mailsubject;
-            
+
                         Mail::to($email_id)->queue(new IncidentEmail($incidentarray));
                     }
                 }
-            
+
                 $notificationData = [
                     'notification_type' => 5,
                     'module_type' => 1,
@@ -1370,7 +1390,7 @@ class InitialIncidentController extends Controller
                     'assigned_user' => implode(',', $users->pluck('id')->toArray()),
                     'created_by' => Auth::id(),
                 ];
-            
+
                 notificationSave($notificationData);
             }
             $insert_array = array(

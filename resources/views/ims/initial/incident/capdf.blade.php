@@ -406,7 +406,7 @@
                     </td>
                     <td width="2%" style="padding:5px;">:</td>
                     <td width="48%" style="padding:5px;">
-                        {{ $getInvestigation->witness_name }}
+                        {{ $getInvestigation->witness_name ?? "-"}}
                     </td>
                 </tr>
                 <tr>

@@ -57,11 +57,13 @@ class IncidentInvestigation extends Model
         ? implode(',', $request->anything_damaged)
         : $request->anything_damaged;
     
+        $witnessIds = is_array($request->witness_id)
+        ? implode(',', $request->witness_id)
+        : null;
+
         $insert_array = array(
             'incident_id' => decryptId($request->incident_id),
-            'witness_id' => !empty($request->witness_id) && is_array($request->witness_id)
-                ? implode(',', array_map('decryptId', $request->witness_id))
-                : null,
+            'witness_id' => $witnessIds,
             'anything_damaged' => $commaSeparatedDamaged,
             'root_cause_analysis' => $request->root_cause ?? null,
             'action_taken' => $request->action_taken,
