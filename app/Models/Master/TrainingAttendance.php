@@ -85,7 +85,7 @@ class TrainingAttendance extends Model
             $attendanceData[] = [
                 'training_schedule_id' => ($record['training_schedule_id']),
                 'nomination_id' => $record['nomination_id'],
-                'attendance_date' =>DBdatetimeformat ($record['attendance_date']),
+                'attendance_date' =>DBdatetimeformat ($request->attendance_date),
                 'attendance_status' => $record['attendance_status'],
                 'emp_id' => $record['emp_id'],
                 'emp_name' => $record['emp_name'],
