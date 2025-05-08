@@ -91,61 +91,18 @@ class TypeofWork extends Model
         return $datas;
     }
 
-    //     public function list()
-    // {
-    //     $request = request();
-    //     $search = '';
-    //     $query = $this->select('ptw_masters_typeofwork.*','ptw_masters_typeofwork_upload.file_path');
-    //     $query = $this->leftjoin('ptw_masters_typeofwork_upload' , 'ptw_masters_typeofwork_upload.typeofwork_id' ,'=', 'ptw_masters_typeofwork.id')->where('ptw_masters_typeofwork.trash','YES');
-    //     // dd($query);
-    //     $org_total =  $query;
-    //     $org_total_counts = $org_total->count();
 
-    //     if ($request->search['value'] != null || $request->search['value'] != '') {
-    //         $search = $request->search['value'];
-
-    //         $query->where(function ($query) use ($search) {
-    //             $query
-    //                 ->orWhere('checklist', 'LIKE', '%' . $search . '%');
-    //         });
-    //     }
-
-    //     if ($request->has('checklist') && $request->checklist) {
-    //         $query = $query->where('checklist', 'LIKE', '%' . $request->checklist . '%');
-    //     }
-    //     if ($request->has('status') && $request->status) {
-
-    //         $query = $query->where('status', decryptId($request->status));
-    //     }
-    //     $data_count = $query;
-    //     $total_records = $data_count->count();
-
-    //     $query->orderBy('ptw_masters_typeofwork.id', 'DESC');
-
-    //     if ($request->length != -1) {
-    //         $query->offset($request->start)->limit($request->length);
-    //     }
-
-    //     $data = $query->get();
-
-    //     $datas = array(
-    //         'data' => $data,
-    //         'total_records' => $org_total_counts,
-    //         'filter_records' => $total_records,
-    //     );
-    //     return $datas;
-    // }
 
     public function UniqueCheck($data)
     {
 
-        return $this->where('work_name',  $data)->get();
+        return $this->where('work_name',  $data)->where('ptw_masters_typeofwork.status',1)->where('ptw_masters_typeofwork.trash','NO')->get();
     }
 
     public function ExistuniqueCheck($data, $id)
     {
         return $this->where('work_name',  $data)
-            ->where('id', '!=', $id)
+            ->where('id', '!=', $id)->where('ptw_masters_typeofwork.status',1)->where('ptw_masters_typeofwork.trash','NO')
             ->get();
     }
 
