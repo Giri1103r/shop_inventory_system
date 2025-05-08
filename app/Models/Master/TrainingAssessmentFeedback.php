@@ -84,9 +84,10 @@ class TrainingAssessmentFeedback extends Model
     {
         $request = request();
         $data = $request->input('data');
+        dd($data);
         $insertData = [];
         foreach ($data as $item) {
-      
+
 
             $trainingScheduleId = $item['training_schedule_id'];
             $attendanceId = $item['attendance_id'];
