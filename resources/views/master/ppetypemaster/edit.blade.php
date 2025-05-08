@@ -100,7 +100,7 @@
                                                     <div class="text-danger" id="protection_error"></div>
                                                 </div>
                                             </div>
-                                            <div class="col-md-4 mb-3">
+                                            {{-- <div class="col-md-4 mb-3">
                                                 <div class="form-group form-input">
                                                     <label class="form-label">Image</label>
                                                     <input type="file" name="ppe_file" id="ppe_file"
@@ -124,7 +124,7 @@
                                                     @enderror
                                                     <div id="ppe_file_error" class="text-danger"></div>
                                                 </div>
-                                            </div>
+                                            </div> --}}
                                             <div class="col-md-12 mb-3">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">PPE Standard</label>
@@ -219,7 +219,7 @@
                         required: "Item Code cannot be empty.",
                         minlength: "Item code must contain between 3 and 30 characters.",
                         maxlength: "Item code must contain between 3 and 30 characters.",
-                     
+
                         remote: "Item code already exists."
                     },
                     ppe_name: {
