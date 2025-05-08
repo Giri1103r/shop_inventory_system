@@ -422,6 +422,8 @@
                         },
                         "check_items[1]": {
                             required: true,
+                            minlength:3,
+                            maxlength: 300,
                         },
                         "quantity[1]": {
                             required: true,
@@ -431,9 +433,13 @@
                         },
                         "resource_code[1]": {
                             required: true,
+                            minlength:3,
+                            maxlength:30,
                         },
                         "remarks[1]": {
                             required: true,
+                            minlength:3,
+                            maxlength: 300,
                         },
                         device_image: {
                             required: true,
@@ -489,12 +495,18 @@
                         },
                         "check_items[1]": {
                             required: "Please add the condition of the hooter",
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 300",
                         },
                         "resource_code[1]": {
                             required: "Please add the resource code",
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 30",
                         },
                         "remarks[1]": {
                             required: "Please add remarks",
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 300",
                         },
                         device_image: {
                             required: "Please upload an image.",
@@ -666,8 +678,12 @@
 
                     $("input[name='resource_code[" + form_set_count + "]']").rules('add', {
                         required: true,
+                        minlength:3,
+                        maxlength:30,
                         messages: {
                             required: 'Please add the resource code',
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 30",
                         }
                     });
 
@@ -680,15 +696,23 @@
 
                     $("textarea[name='check_items[" + form_set_count + "]']").rules('add', {
                         required: true,
+                        minlength:3,
+                        maxlength:300,
                         messages: {
                             required: 'Please add the condition of the hooter',
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 300",
                         }
                     });
 
                     $("textarea[name='remarks[" + form_set_count + "]']").rules('add', {
                         required: true,
+                        minlength:3,
+                        maxlength:300,
                         messages: {
                             required: 'Please add the remarks',
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 300",
                         }
                     });
 
