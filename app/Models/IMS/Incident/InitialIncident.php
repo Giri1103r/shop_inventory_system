@@ -617,14 +617,25 @@ class InitialIncident extends Model
             }
             $data->hira_moc = $mergedHiraMoc;
 
+          
+
             if (!empty($data->witness_id)) {
                 $witnessIds = explode(',', $data->witness_id);
-                $employees = DB::table('masters_employee')
-                    ->whereIn('id', $witnessIds)
-                    ->pluck('emp_name')
-                    ->toArray();
-                $data->witness_name = implode(', ', $employees);
+                $employeeNames = DB::table('masters_employee')
+                ->whereIn('emp_id', $witnessIds)
+                ->pluck('emp_name')
+                ->toArray();
+                
+                $workerNames = DB::table('masters_work')
+                ->whereIn('emp_id', $witnessIds)
+                ->pluck('emp_name')
+                ->toArray();
+            
+                $allNames = array_merge($employeeNames, $workerNames);
+            
+                $data->witness_name = implode(', ', $allNames);
             }
+            
         }
 
         return $data;

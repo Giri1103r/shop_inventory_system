@@ -452,7 +452,7 @@
                                             <label class="form-label view_label">Name of the
                                                 Witness</label>
                                             <div class="view_data">
-                                                {{ $getInvestigation->witness_name }}
+                                                {{ $getInvestigation->witness_name ?? "-"}}
                                             </div>
                                         </div>
                                         <div class="mb-3 col-md-4 form-input">

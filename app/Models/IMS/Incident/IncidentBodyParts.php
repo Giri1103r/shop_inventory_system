@@ -121,7 +121,6 @@ class IncidentBodyParts extends Model
     {
         $request = request();
 
-        // dd($request);
         $random_id = $request->random_id;
         $folderPath = 'incident/body_parts/' . $random_id;
 
@@ -161,15 +160,6 @@ class IncidentBodyParts extends Model
             $updtBody =  $this->where('id', $request['body_prim_id'])->update($locdatas);
         } else {
 
-            // dd($request);
-            // dd($request->incident_id, $request->random_id,$request->injury_id );
-            // if ($request->injury_id != '') {
-            //     $this->where([
-            //         ['incident_id', '=', $request->incident_id],
-            //         ['random_id', '=', $request->random_id],
-            //         ['injury_id', '=', $request->injury_id],
-            //     ])->update(['trash' => 'YES']);
-            // }
             $locdatas = [
                 'incident_id' => decryptId($request->incident_id),
                 'random_id' => $random_id,
