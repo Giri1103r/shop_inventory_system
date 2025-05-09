@@ -32,7 +32,7 @@ class NotificationController extends BaseController
 
 
                 $notification_list_array = Notification::select('*')
-                    ->whereRaw("FIND_IN_SET(?, assigned_user) > 0", [Auth::id()]);
+                    ->whereRaw("FIND_IN_SET(?, assigned_user) > 0", [Auth::id(),ROLE_SUPERADMIN]);
 
                 $notification_list_array = $notification_list_array->orderBy('id','DESC')->paginate($request->input('per_page', 10));
                 $notification_list = $notification_list_array->toArray();
