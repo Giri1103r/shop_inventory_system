@@ -353,6 +353,7 @@ class TrainingScheduleController extends Controller
                                     'message' => 'A new training schedule has been created by ' . getUsername($trainingSchedule->created_by),
                                     'icon' => $img,
                                     'module' => 4,
+                                    'id'=>$training->id
                                 ]),
                                 'web_link' => 'training_schedule/ehs_approval/' . encryptId($trainingSchedule->id),
                                 'assigned_user' => array_to_string($ehsids),
@@ -366,14 +367,14 @@ class TrainingScheduleController extends Controller
                 }
                 Session::flash('success', 'Your data has been created successfully');
             } catch (Exception $ex) {
-                report($ex);
+                dd($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
             return redirect(admin_url('training_schedule/list'));
         } catch (Exception $ex) {
 
-            report($ex);
+        dd($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('training_schedule/list'));
         }
@@ -1259,7 +1260,7 @@ class TrainingScheduleController extends Controller
                                 'message' => 'A training reschedule has been created by ' . getUsername($trainingSchedule->created_by),
                                 'icon' =>  $img,
                                 'module' => 4,
-                                'id'=> $id 
+                                'id'=> $id
                             ]),
                             'web_link' => 'training_schedule/ehs_approval/' . encryptId($trainingSchedule->id),
                             'assigned_user' => array_to_string($ehsids),
