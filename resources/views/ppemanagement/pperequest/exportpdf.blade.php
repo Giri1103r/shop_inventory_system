@@ -168,6 +168,24 @@
             <td width="48%" style="padding:5px;"> {{ isset($pperequest->emp_id) ? $pperequest->emp_id : '' }}</td>
         </tr>
         <tr>
+            <td width="50%" style="padding:5px;"><b>Company</b></td>
+            <td width="2%" style="padding:5px;">:</td>
+            <td width="48%" style="padding:5px;">
+                {{ getCompanyname(isset($pperequest->company_id) ? $pperequest->company_id : '') }}</td>
+        </tr>
+        <tr>
+            <td width="50%" style="padding:5px;"><b>Location</b></td>
+            <td width="2%" style="padding:5px;">:</td>
+            <td width="48%" style="padding:5px;">
+                {{ getLocationname(isset($pperequest->location_id) ? $pperequest->location_id : '') }}</td>
+        </tr>
+        <tr>
+            <td width="50%" style="padding:5px;"><b>Unit</b></td>
+            <td width="2%" style="padding:5px;">:</td>
+            <td width="48%" style="padding:5px;">
+                {{ getUnitname(isset($pperequest->unit_id) ? $pperequest->unit_id : '') }}</td>
+        </tr>
+        <tr>
             <td width="50%" style="padding:5px;"><b>Department</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">

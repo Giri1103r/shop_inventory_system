@@ -23,6 +23,8 @@ class PpeRequest extends Model
         'department',
         'request_for',
         'unit_id',
+        'company_id',
+        'location_id',
         'item_code',
         'ppe_type',
         'approve_status',

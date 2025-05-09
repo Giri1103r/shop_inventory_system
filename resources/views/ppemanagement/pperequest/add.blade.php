@@ -179,7 +179,7 @@
 
                                                 </div>
                                             </div>
-                                         
+
                                         @endif
                                             <div class="col-md-4 mb-3">
                                                 <div class="form-group form-input">
@@ -478,6 +478,12 @@
                     department: {
                         required: true,
                     },
+                    company_id: {
+                        required: true,
+                    },
+                    location_id: {
+                        required: true,
+                    },
                     item_code: {
                         required: true,
                     },
@@ -510,6 +516,12 @@
                     },
                     department: {
                         required: "Department cannot be empty.",
+                    },
+                    location_id: {
+                        required: "location cannot be empty.",
+                    },
+                    company_id: {
+                        required: "Company cannot be empty.",
                     },
                     item_code: {
                         required: "Please select the Item Code.",
