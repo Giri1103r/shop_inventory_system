@@ -725,7 +725,7 @@
                             required: true,
                             minlength: 3,
                             maxlength: 2000,
-                            customPattern: /^[a-zA-Z0-9\s\-_'"()]+$/
+
                         },
                         "gemba_walk[0][hazard]": {
                             required: true,
@@ -787,7 +787,7 @@
                             required: "Please enter a description.",
                             minlength: "Checklist Description must be at least 3 characters.",
                             maxlength: "Checklist Description cannot exceed 2000 characters.",
-                            customPattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed."
+
                         },
                         "gemba_walk[0][hazard]": {
                             required: "Please enter a hazard observation.",
@@ -917,12 +917,12 @@
                     required: true,
                     minlength: 3,
                     maxlength: 2000,
-                    pattern: /^[a-zA-Z0-9\s\-_'"()]+$/,
+
                     messages: {
                         required: "Please Enter a Descripotion",
                         minlength: "Checklist Description must be at least 3 characters.",
                         maxlength: "Checklist Description cannot exceed 2000 characters.",
-                        pattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed."
+                       
                     }
                 });
 

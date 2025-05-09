@@ -193,6 +193,12 @@ class ChecklistObservationFollowupController extends Controller
                                 case OBSERVATION_FOLLOWUP:
                                     $text = 'Observation Follow-up';
                                     break;
+                                case OBSERVATION_FOLLOWUP:
+                                    $text = 'Observation Follow-up';
+                                    break;
+                                case GEMBA_WALK:
+                                    $text = 'Observation Follow-up';
+                                    break;
                                 default:
                                     $text = 'Unknown';
                             }
@@ -215,7 +221,7 @@ class ChecklistObservationFollowupController extends Controller
 
                             return $btn;
                         })
-                        ->rawColumns(['action', 'created_date', 'created_by', 'status', 'observation_status','inspection_type'])
+                        ->rawColumns(['action', 'created_date', 'created_by', 'status', 'observation_status', 'inspection_type'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -373,6 +379,7 @@ class ChecklistObservationFollowupController extends Controller
         })
             ->where('status', 1)
             ->where('user_role', 18)
+           
             ->limit(10)
             ->get();
 
