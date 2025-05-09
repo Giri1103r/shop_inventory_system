@@ -431,6 +431,7 @@ class TrainingScheduleController extends Controller
                                 'message' => 'Training on the topic ' . getTopic($nominee->topic_id) . ' has been started by ' . getUsername(Auth::id()),
                                 'icon' =>  $img,
                                 'module' => 4,
+                                'id'=>  $trainingScheduleId
                             ]),
                             'web_link' => 'training_schedule/view/' . encryptId($trainingScheduleId),
                             'assigned_user' => array_to_string($assignedUsers),
@@ -444,7 +445,7 @@ class TrainingScheduleController extends Controller
                 Session::flash('success', 'Training has been started successfully!');
             }
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong. Please try again later!');
             return redirect(admin_url('training_schedule/list'));
         }
@@ -619,7 +620,7 @@ class TrainingScheduleController extends Controller
 
             return redirect(admin_url('training_schedule/list'))->with('success', 'Your feedback has been submitted successfully.');
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             return redirect(admin_url('training_schedule/list'))->withErrors(['error' => 'Something went wrong. Please try again later!']);
         }
     }
@@ -639,7 +640,7 @@ class TrainingScheduleController extends Controller
             ];
             return view('master.training_schedule.worker_feedbacklink', $data);
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             return redirect()->back()->withErrors(['error' => 'Something went wrong. Please try again later!']);
         }
     }
@@ -746,6 +747,7 @@ class TrainingScheduleController extends Controller
                                     'message' => $mailSubject,
                                     'icon' => $img,
                                     'module' => 4,
+                                    'id'=>  $trainingScheduleId
                                 ]),
                                 'web_link' => $feedbackLink,
                                 'assigned_user' => $empIds,
@@ -1030,6 +1032,7 @@ class TrainingScheduleController extends Controller
                                         'message' => 'A new training schedule has been created by ' . getUsername($trainingSchedule->created_by),
                                         'icon' =>  $img,
                                         'module' => 4,
+                                        'id'=> $id
                                     ]),
                                     'web_link' => 'training_schedule/view/' . encryptId($trainingSchedule->id),
                                     'assigned_user' => $assigned_users,
@@ -1096,6 +1099,7 @@ class TrainingScheduleController extends Controller
                                             'message' => 'Training rejected by EHS Head ' . getUsername(Auth::id()),
                                             'icon' => $img,
                                             'module' => 4,
+                                            'id'=> $id
                                         ]),
                                         'web_link' => 'training_schedule/view/' . encryptId($trainingSchedule->id),
                                         'assigned_user' => array_to_string($adminIds),
@@ -1151,7 +1155,7 @@ class TrainingScheduleController extends Controller
             }
             return view('master.training_schedule.nomination', $data);
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
         }
     }
 
@@ -1255,6 +1259,7 @@ class TrainingScheduleController extends Controller
                                 'message' => 'A training reschedule has been created by ' . getUsername($trainingSchedule->created_by),
                                 'icon' =>  $img,
                                 'module' => 4,
+                                'id'=> $id 
                             ]),
                             'web_link' => 'training_schedule/ehs_approval/' . encryptId($trainingSchedule->id),
                             'assigned_user' => array_to_string($ehsids),
