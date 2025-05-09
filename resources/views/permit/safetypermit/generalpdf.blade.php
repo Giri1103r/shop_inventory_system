@@ -34,7 +34,7 @@
                             {{ getLocationname($data->location_id)}}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ getUnitname($value->unit_id) }}
+                            {{ getUnitname($data->unit_id) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ Displaydateformat($value->date) }}
