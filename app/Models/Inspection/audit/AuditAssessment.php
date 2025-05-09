@@ -110,7 +110,8 @@ class AuditAssessment extends Model
         }
 
         if (isset($request->audit_id) && $request->audit_id) {
-            $query = $query->where('inspection_audit_assessment.audit_id', 'LIKE', '%' . $request->audit_id . '%');
+           
+            $query = $query->where('inspection_audit_assessment.audit_id', $request->audit_id );
         }
         if (isset($request->status) && $request->status) {
             $query = $query->where('inspection_audit_assessment.status', decryptId($request->status));
