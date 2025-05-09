@@ -149,7 +149,7 @@
                                                             class="form-label require">location</label>
                                                         <input type="text" name="location_id" id="location_id"
                                                             class="form-control form-control-sm"
-                                                            value="{{ getLocationame($employee->location_id) }}" readonly>
+                                                            value="{{ getLocationname($employee->location_id) }}" readonly>
                                                         <div class="text-danger"></div>
                                                     </div>
                                                 </div>
