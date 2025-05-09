@@ -584,7 +584,7 @@
                     <td width="50%" style="padding:5px;"><b>Responsibility</b></td>
                     <td width="2%" style="padding:5px;">:</td>
                     <td width="48%" style="padding:5px;">
-                        {{ $rcpa->responsibility }}
+                        {{ getUsername($rcpa->responsibility)}}
                     </td>
                 </tr>
                 <tr>
