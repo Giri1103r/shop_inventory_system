@@ -139,7 +139,7 @@
                                                         <label for="department" class="form-label require">Company</label>
                                                         <input type="text" name="company_id" id="company_id"
                                                             class="form-control form-control-sm"
-                                                            value="{{ getDepartment($employee->company_id) }}" readonly>
+                                                            value="{{ getCompanyname($employee->company_id) }}" readonly>
                                                         <div class="text-danger"></div>
                                                     </div>
                                                 </div>
@@ -149,7 +149,7 @@
                                                             class="form-label require">location</label>
                                                         <input type="text" name="location_id" id="location_id"
                                                             class="form-control form-control-sm"
-                                                            value="{{ getDepartment($employee->location_id) }}" readonly>
+                                                            value="{{ getLocationame($employee->location_id) }}" readonly>
                                                         <div class="text-danger"></div>
                                                     </div>
                                                 </div>
@@ -158,7 +158,7 @@
                                                         <label for="department" class="form-label require">Unit</label>
                                                         <input type="text" name="unit_id" id="unit_id"
                                                             class="form-control form-control-sm"
-                                                            value="{{ getDepartment($employee->unit_id) }}" readonly>
+                                                            value="{{ getUnitname($employee->unit_id) }}" readonly>
                                                         <div class="text-danger"></div>
                                                     </div>
                                                 </div>
