@@ -84,6 +84,7 @@ class PpeRequest extends Model
             $query->where('ppe_pperequest.unit_id',  decryptId($request->unit_id) );
         }
         if ($request->has('company_id') && $request->company_id) {
+           
             $query->where('ppe_pperequest.company_id',  decryptId($request->company_id) );
         }
         if ($request->has('location_id') && $request->location_id) {
@@ -92,7 +93,7 @@ class PpeRequest extends Model
         if ($request->has('department_id') && $request->department_id) {
             $query->where('ppe_pperequest.department',  decryptId($request->department_id) );
         }
-     
+
 
         if ($request->has('approve_status') && $request->approve_status) {
             $approveStatus = (int) $request->approve_status;

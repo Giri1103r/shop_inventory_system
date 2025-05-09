@@ -31,16 +31,20 @@
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ $value->emp_name }}
                         </td>
-
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ getDepartment($value->department) }}
+                            {{ getCompanyname($value->company) }}
+                        </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            {{ getLocationname($value->location_id) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ getUnitname($value->unit) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ getCompanyname($value->company) }}
+                            {{ getDepartment($value->department) }}
                         </td>
+
+
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ Displaydateformat($value->from_date) }}
                         </td>
