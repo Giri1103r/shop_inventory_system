@@ -81,8 +81,7 @@ class SafetyPermitController extends Controller
         $this->statuslog = new Statuslog();
         $this->employee = new Employee();
         $this->status = new SafetyPermitstatus();
-        $this->company = new Company
-        ();
+        $this->company = new Company();
     }
 
     public function index(Request $request)
@@ -1346,8 +1345,9 @@ class SafetyPermitController extends Controller
             $header = [
                 __("common.sno"),
                 __("Work Permit No"),
-                __("Unit"),
                 __("Company"),
+                __("Location"),
+                __("Unit"),
                 __("Date"),
                 __("To Date"),
                 __("Exact Job Location"),
@@ -1363,8 +1363,9 @@ class SafetyPermitController extends Controller
                 $export = [];
                 $export[] =  $i;
                 $export[] =  $data->permit_id;
-                $export[] = getUnitname($data->unit_id);
                 $export[] = getCompanyname($data->company_id);
+                $export[] = getLocationname($data->location_id);
+                $export[] = getUnitname($data->unit_id);
                 $export[] = Displaydateformat($data->date);
                 $export[] = Displaydateformat($data->to_date);
                 $export[] = $data->exact_location_job;
@@ -1408,8 +1409,9 @@ class SafetyPermitController extends Controller
             $header = [
                 __("common.sno"),
                 __("Work Permit No"),
-                __("Unit"),
                 __("Company"),
+                __("Location"),
+                __("Unit"),
                 __("Date"),
                 __("To Date"),
                 __("Exact Job Location"),
@@ -1602,7 +1604,7 @@ class SafetyPermitController extends Controller
     {
         $companyId = decryptId($companyId);
         $id = decryptId($request->id);
-        $unit = $this->unit->unitajaxList($id ,$companyId);
+        $unit = $this->unit->unitajaxList($id, $companyId);
 
         return response()->json($unit);
     }
