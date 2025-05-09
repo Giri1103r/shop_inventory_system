@@ -31,10 +31,10 @@
                             {{ getCompanyname($value->company_id) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ getLocationname($data->location_id)}}
+                            {{ getLocationname($value->location_id)}}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ getUnitname($data->unit_id) }}
+                            {{ getUnitname($value->unit_id) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ Displaydateformat($value->date) }}
