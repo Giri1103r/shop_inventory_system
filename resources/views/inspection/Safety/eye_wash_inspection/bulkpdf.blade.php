@@ -166,7 +166,7 @@
                     <th colspan="6" style="border: 1px solid black; text-align: center;">
                         <h3 style="margin: 0;">
                             <b>MONTHLY SAFETY SHOWER CUM EYE WASH INSPECTION CHECKLIST
-                                PN INTERNATIONAL PVT. LTD.</b>
+                              </b>
                         </h3>
                     </th>
                     <th colspan="3" style="border: 1px solid black; padding: 0;">
