@@ -783,7 +783,7 @@ class MonthlyEyeWashInspectionController extends Controller
                 }
 
                 $sheet->mergeCells("C{$startRow}:K" . ($startRow + 2));
-                $sheet->setCellValue("C{$startRow}", 'MONTHLY SAFETY SHOWER CUM EYE WASH INSPECTION CHECKLIST PN INTERNATIONAL PVT. LTD.');
+                $sheet->setCellValue("C{$startRow}", 'MONTHLY SAFETY SHOWER CUM EYE WASH INSPECTION CHECKLIST .');
                 $sheet->getStyle("C{$startRow}:K" . ($startRow + 2))->applyFromArray([
                     'font' => ['bold' => true, 'size' => 14],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
@@ -1102,7 +1102,7 @@ class MonthlyEyeWashInspectionController extends Controller
 
             $sheet->mergeCells('A1:B3');
             $sheet->mergeCells('C1:K3');
-            $sheet->setCellValue('C1', 'MONTHLY SAFETY SHOWER CUM EYE WASH INSPECTION CHECKLIST PN INTERNATIONAL PVT. LTD.');
+            $sheet->setCellValue('C1', 'MONTHLY SAFETY SHOWER CUM EYE WASH INSPECTION CHECKLIST .');
             $sheet->getStyle('C1:K3')->applyFromArray([
                 'font' => ['bold' => true, 'size' => 14],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],

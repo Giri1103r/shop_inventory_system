@@ -658,6 +658,7 @@
 
                     <form id="injuryform" autocomplete="off" enctype="multipart/form-data">
                         <input type="hidden" name="body_prim_id" id="body_prim_id" value="">
+                        <input type="hidden" name="incident_id" id="incident_id" value="">
                         <input type="hidden" name="injury_id" id="injury_id" value="">
                         <input type="hidden" name="bodypartimage" id="bodypartimage">
                         <input type="hidden" name="random_id" id="random_id" value="{{ $randomID }}">
@@ -2256,10 +2257,12 @@
                         $.each(data['empdata'], function(i, emp) {
                             $("#imgMapdata1").val(emp['imgMapdata']);
                             $("#body_prim_id").val(emp['id']);
+                            $("#incident_id").val(0);
                             $("#injury_id").val(inj_id);
                         });
                     } else {
                         $("#body_prim_id").val(0);
+                        $("#incident_id").val(0);
                         $("#injury_id").val(inj_id);
                     }
                 },

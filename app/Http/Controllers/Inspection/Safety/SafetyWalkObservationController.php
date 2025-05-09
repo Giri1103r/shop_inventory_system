@@ -410,7 +410,7 @@ class SafetyWalkObservationController extends Controller
                 ]);
 
                 $sheet->mergeCells("C{$row}:F" . ($row + 2));
-                $sheet->setCellValue("C{$row}", "Safety Walk Observation Sheet\nPN International Pvt Ltd");
+                $sheet->setCellValue("C{$row}", "Safety Walk Observation Sheet\n ");
                 $sheet->getStyle("C{$row}:F" . ($row + 2))->applyFromArray([
                     'font' => ['bold' => true, 'size' => 14],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
@@ -758,7 +758,7 @@ class SafetyWalkObservationController extends Controller
             ]);
 
             $sheet->mergeCells('C1:F3');
-            $sheet->setCellValue('C1', "Safety Walk Observation Sheet\nPN International Pvt Ltd");
+            $sheet->setCellValue('C1', "Safety Walk Observation Sheet\n");
             $sheet->getStyle('C1:F3')->applyFromArray([
                 'font' => ['bold' => true, 'size' => 14],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],

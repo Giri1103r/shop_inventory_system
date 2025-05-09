@@ -758,7 +758,7 @@ class SafetyGalleryInsepctionController extends Controller
                 ]);
 
                 $sheet->mergeCells("E{$currentRow}:K" . ($currentRow + 2));
-                $sheet->setCellValue("E{$currentRow}", "SAFETY GALLERY INSPECTION CHECKLIST PN INTERNATIONAL PVT. LTD.");
+                $sheet->setCellValue("E{$currentRow}", "SAFETY GALLERY INSPECTION CHECKLIST .");
                 $sheet->getStyle("E{$currentRow}")->applyFromArray([
                     'font' => ['bold' => true, 'size' => 14],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
@@ -1030,7 +1030,7 @@ class SafetyGalleryInsepctionController extends Controller
                 $drawing->setWorksheet($sheet);
             }
 
-            $sheet->mergeCells("D1:H3")->setCellValue("D1", "Safety Gallery Inspection CHECKLIST PN INTERNATIONAL PVT. LTD.");
+            $sheet->mergeCells("D1:H3")->setCellValue("D1", "Safety Gallery Inspection CHECKLIST .");
             $sheet->getStyle("D1")->applyFromArray([
                 'font' => ['bold' => true, 'size' => 14],
                 'alignment' => [

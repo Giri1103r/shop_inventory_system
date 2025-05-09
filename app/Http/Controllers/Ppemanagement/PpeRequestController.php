@@ -14,6 +14,7 @@ use App\Models\ApproveStatus;
 use App\Models\Master\Company;
 use App\Models\Master\Department;
 use App\Models\Master\Employee;
+use App\Models\Master\Location;
 use App\Models\Master\PpeRequest;
 use App\Models\Master\PpeStockinventory;
 use App\Models\Master\PpeType;
@@ -52,6 +53,7 @@ class PpeRequestController extends Controller
     private $work;
     private $unit;
     private $company;
+    private $location;
 
     public function __construct()
     {
@@ -68,6 +70,7 @@ class PpeRequestController extends Controller
         $this->work = new Work();
         $this->unit = new Unit();
         $this->company = new Company();
+        $this->location = new Location();
 
     }
     public function index(Request $request)
@@ -98,6 +101,15 @@ class PpeRequestController extends Controller
                         })
                         ->editColumn('department', function ($row) {
                             return $row->department_name;
+                        })
+                        ->editColumn('unit_id', function ($row) {
+                            return getUnitname($row->unit_id);
+                        })
+                        ->editColumn('location_id', function ($row) {
+                            return getLocationname($row->location_id);
+                        })
+                        ->editColumn('company_id', function ($row) {
+                            return getCompanyname($row->company_id);
                         })
                         ->editColumn('ppe_type', function ($row) {
                             return $row->ppe_type;
@@ -183,11 +195,15 @@ class PpeRequestController extends Controller
         }
 
         $ppetype = $this->ppetype->getPpetypedata();
+        $unit = $this->unit->getUnit();
+        $company = $this->company->getcompany();
         $approvestatus = $this->approvestatus->status();
 
         $ppename = $this->ppetypemaster->getppetypemaster();
         $data = [
             'ppetype' => $ppetype,
+            'unit' => $unit,
+            'company' => $company,
             'ppename' => $ppename,
             'approvestatus' => $approvestatus,
         ];
@@ -238,7 +254,7 @@ class PpeRequestController extends Controller
 
     public function fetchEmployeeDetails($emp_id)
     {
-        $employee = $this->work->select('emp_name', 'department','unit','company')
+        $employee = $this->work->select('emp_name', 'department','unit','company','location')
             ->where('emp_id', $emp_id)
             ->first();
 
@@ -265,11 +281,20 @@ class PpeRequestController extends Controller
                 ->first();
         }
 
+        $location = null;
+        if ($employee && $employee->location) {
+            $location = $this->location->select('id', 'location_name')
+                ->where('id', $employee->company)
+                ->where('status', '1')
+                ->first();
+        }
+
         return response()->json([
             'employee' => $employee,
             'departments' => $department,
             'units' => $unit,
-            'companys' => $company
+            'companys' => $company,
+            'location' => $location
         ]);
     }
 
@@ -394,6 +419,7 @@ class PpeRequestController extends Controller
                         'message' => $pperequest->emp_name . ' has a PPE request at ' . displaydateformat($pperequest->created_at) . ' on ' . getPpename($pperequest->ppe_name) . ' from ' . getDepartment($pperequest->department) . ' DEPARTMENT ',
                         'icon' => $img,
                         'module' => 1,
+                        'id'=> $id,
                         'style' => 'font-size: 1rem;'
                     ]),
                     'web_link' => admin_url('ppe_request/hodapproval/view/' . encryptId($id)),
@@ -617,6 +643,7 @@ class PpeRequestController extends Controller
                         'message' => getUsername($updateData['approved_by']) . " has " . removeUnderScore(getStatus($updateData['approve_status']))  . " a PPE request at " . displaydateformat($empDetails->created_at) . " on " . getPpename($empDetails->ppe_name) . " from " . getDepartment($empDetails->department) . " DEPARTMENT",
                         'icon' => $img,
                         'module' => 1,
+                        'id'=> $id,
                         'style' => 'font-size: 1rem;'
                     ]),
                     'web_link' => url('ppe_request/ehsapproval/view/' . encryptId($id)),
@@ -644,6 +671,7 @@ class PpeRequestController extends Controller
                         'message' => getUsername($updateData['approved_by']) . " has " . removeUnderScore(getStatus($updateData['approve_status']))  . " a PPE request at " . displaydateformat($empDetails->created_at) . " on " . getPpename($empDetails->ppe_name) . " from " . getDepartment($empDetails->department) . " DEPARTMENT",
                         'icon' => $img,
                         'module' => 1,
+                        'id'=> $id,
                         'style' => 'font-size: 1rem;'
                     ]),
                     'web_link' => url('ppe_request/ehsapproval/view/' . encryptId($id)),
@@ -803,6 +831,7 @@ class PpeRequestController extends Controller
                             'icon' => $img,
                             'style' => 'font-size: 1rem;',
                             'module' => 1,
+                            'id'=> $id,
                         ]),
                         'web_link' => admin_url('ppe_request/ehsapproval/view/' . encryptId($id)),
                         'assigned_user' => array_to_string($assignedUsers),
@@ -831,6 +860,7 @@ class PpeRequestController extends Controller
                         'icon' => $img,
                         'style' => 'font-size: 1rem;',
                         'module' => 1,
+                        'id'=> $id,
                     ]),
                     'web_link' => admin_url('ppe_request/view/' . encryptId($id)),
                     'assigned_user' => $assignedUserString,
@@ -863,6 +893,7 @@ class PpeRequestController extends Controller
                         'message' => getUsername($updateEhsData['approved_by']) . " has " . removeUnderScore(getStatus($updateEhsData['approve_status']))  . " a PPE request at " . displaydateformat($empDetails->created_at) . " on " . getPpename($empDetails->ppe_name) . " from " . getDepartment($empDetails->department) . " DEPARTMENT",
                         'icon' => $img,
                         'style' => 'font-size: 1rem;',
+                        'id'=> $id,
                     ]),
                     'web_link' => admin_url('ppe_request/view/' . encryptId($id)),
                     'assigned_user' =>  $assignedUserString,
@@ -1141,6 +1172,9 @@ class PpeRequestController extends Controller
                 __('Emp Name'),
                 __("Item Code"),
                 __("PPE Name"),
+                __("Company"),
+                __("Location"),
+                __("Unit"),
                 __("Department"),
                 __("From Status"),
                 __(" To Status"),
@@ -1161,6 +1195,9 @@ class PpeRequestController extends Controller
                 $export[] = $data->emp_name;
                 $export[] = getItemCode($data->item_code);
                 $export[] = getPpename($data->ppe_name);
+                $export[] = getCompanyname($data->company_id);
+                $export[] = getLocationname($data->location_id);
+                $export[] = getUnitname($data->unit_id);
                 $export[] = getDepartment($data->department);
                 if ($data->approve_status == STATUS_HOD_APPROVAL_PENDING) {
                     $export[] = 'User Applied';
@@ -1206,7 +1243,8 @@ class PpeRequestController extends Controller
                 ->addRows($exportData);
         } catch (Exception $ex) {
             report($ex);
-            return redirect()->back()->with('error', 'An error occurred while exporting the data.');
+            Session::flash('error',  'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ppe_request/list'));
         }
     }
 
@@ -1231,6 +1269,9 @@ class PpeRequestController extends Controller
                 __('Emp Name'),
                 __("Item Code"),
                 __("PPE Name"),
+                __("Company"),
+                __("Location"),
+                __("Unit"),
                 __("Department"),
                 __("From Status"),
                 __("To Status"),
@@ -1271,6 +1312,8 @@ class PpeRequestController extends Controller
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error',  'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ppe_request/list'));
         }
     }
 
