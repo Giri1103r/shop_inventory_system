@@ -1099,7 +1099,7 @@ class PpeRequestController extends Controller
 
                 $notificationData = [
                     'notification_type' => 1,
-                    'module_type' => 3,
+                    'module_type' => 1,
                     'notification_message' => $message,
                     'mobile_notification' => json_encode([
                         'title' => $message,
