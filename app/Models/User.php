@@ -253,7 +253,7 @@ class User extends Authenticatable
     public function getEmployeedata()
     {
         $user = Auth::user()->employee_id;
-        return User::select('employee_id', 'name', 'department_id')->where('employee_id', $user)->first();
+        return User::select('*')->where('employee_id', $user)->first();
     }
 
     public function findEhsofficer()

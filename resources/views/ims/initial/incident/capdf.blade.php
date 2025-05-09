@@ -138,7 +138,7 @@
                 <td width="50%" style="padding:5px;"><b>Name</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
-                    {{ $incident_report->reported_by }}
+                    {{ $incident_report->reported_name }}
                 </td>
             </tr>
             <tr>
@@ -584,7 +584,7 @@
                     <td width="50%" style="padding:5px;"><b>Responsibility</b></td>
                     <td width="2%" style="padding:5px;">:</td>
                     <td width="48%" style="padding:5px;">
-                        {{ $rcpa->responsibility }}
+                        {{ getUsername($rcpa->responsibility)}}
                     </td>
                 </tr>
                 <tr>
@@ -700,7 +700,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <td width="50%" style="padding:5px;"><b>Description of CA</b></td>
+                        <td width="50%" style="padding:5px;"><b>Description of Corrective Action & Preventive Action</b></td>
                         <td width="2%" style="padding:5px;">:</td>
                         <td width="48%" style="padding:5px;">
                             {{ $getrisklevel->description_ca }}

@@ -793,7 +793,7 @@
                                     </form>
                                 @endif
 
-                                @if ($inspection->inspection_status == WAITING_FOR_L1_VERIFICATION && (checkUserRole(ROLE_L2_MANAGER)|| isAdmin()))
+                                @if ($inspection->inspection_status == WAITING_FOR_L2_VERIFICATION && (checkUserRole(ROLE_L2_MANAGER)|| isAdmin()))
                                     <form method="POST" id="levelTwoManager"
                                         action="{{ admin_url('fire/emergency-light-inspection/level-two/verify/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">

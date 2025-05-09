@@ -764,7 +764,7 @@
                                         <div class="mb-3 col-md-4 form-input">
                                             <label class="form-label view_label">Responsibility</label>
                                             <div class="view_data">
-                                                {{ $rcpa->responsibility }}
+                                                {{ getUsername($rcpa->responsibility) }}
                                             </div>
                                         </div>
                                         <div class="mb-3 col-md-4 form-input">
@@ -878,7 +878,7 @@
                                                 </div>
                                             </div>
                                             <div class="mb-3 col-md-4 form-input">
-                                                <label class="form-label">Description of CA</label>
+                                                <label class="form-label">Description of Corrective Action & Preventive Action</label>
                                                 <div class="view_data">
                                                     {{ $getrisklevel->description_ca }}
                                                 </div>

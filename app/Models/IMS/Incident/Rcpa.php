@@ -212,10 +212,8 @@ class Rcpa extends Model
 
         $data = $this->select(
             'ims_rcpa_responsible.*',
-            'masters_employee.emp_name as responsibility',
         )
             ->where('ims_rcpa_responsible.id', $id)
-            ->leftJoin('masters_employee', 'masters_employee.id', '=', 'ims_rcpa_responsible.responsibility')
             ->first();
         return $data;
     }

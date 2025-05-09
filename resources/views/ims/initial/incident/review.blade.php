@@ -954,12 +954,12 @@
 
 
                                             </div>
-                                            <div class="mb-3 col-md-4 form-input">
+                                            {{-- <div class="mb-3 col-md-4 form-input">
                                                 <label class="form-label">Description of UAUC</label>
                                                 <div class="view_data">
                                                     {{ $incident_report->description_uauc }}
                                                 </div>
-                                            </div>
+                                            </div> --}}
                                         @endif
                                     </div>
 
@@ -983,7 +983,7 @@
                                                 </div>
                                             </div>
                                             <div class="mb-3 col-md-4 form-input">
-                                                <label class="form-label">Description of CA</label>
+                                                <label class="form-label">Description of Corrective Action & Preventive Action</label>
                                                 <div class="view_data">
                                                     {{ $getrisklevel->description_ca }}
                                                 </div>

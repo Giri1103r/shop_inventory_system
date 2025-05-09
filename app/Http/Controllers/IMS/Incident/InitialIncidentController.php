@@ -465,7 +465,6 @@ class InitialIncidentController extends Controller
                         ->orWhere('emp_id', 'like', '%' . $name . '%');
                 })
                 ->where('status', 1)
-                ->limit(10)
                 ->get();
 
             return response()->json(
@@ -484,7 +483,6 @@ class InitialIncidentController extends Controller
                         ->orWhere('emp_id', 'like', '%' . $name . '%');
                 })
                 ->where('status', 1)
-                ->limit(10)
                 ->get();
             return response()->json(
                 $workers->map(function ($worker) {

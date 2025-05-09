@@ -34,6 +34,7 @@ use App\Models\Master\EquipInvalve;
 use App\Models\Master\SafeWork;
 use App\Models\Master\Precaution;
 use App\Models\Master\Checklist;
+use App\Models\Master\Company;
 use App\Models\Master\Employee;
 use App\Models\Master\Work;
 use App\Models\Master\Department;
@@ -59,6 +60,7 @@ class SafetyPermitController extends Controller
     private $statuslog;
     private $employee;
     private $status;
+    private $company;
 
     public function __construct()
     {
@@ -79,6 +81,7 @@ class SafetyPermitController extends Controller
         $this->statuslog = new Statuslog();
         $this->employee = new Employee();
         $this->status = new SafetyPermitstatus();
+        $this->company = new Company();
     }
 
     public function index(Request $request)
@@ -211,11 +214,13 @@ class SafetyPermitController extends Controller
             }
         }
         $unitList  = $this->unit->select('id', 'unit_name')->where('status', '1')->get();
+        $companyList  = $this->company->select('id', 'company_name')->where('status', '1')->get();
         $status = $this->status->get();
         // $location = $this->location->select('id', 'location_type_name')->where('status', 1)->where('trash', 'NO')->get();
         $data = array(
             'unitList' => $unitList,
             'status' => $status,
+            'companyList' => $companyList,
             // 'location' => $location,
         );
         return view('permit.safetypermit.list', $data);
@@ -246,6 +251,9 @@ class SafetyPermitController extends Controller
             return view('permit.safetypermit.add', $data);
         } catch (Exception $ex) {
             report($ex);
+            report($ex);
+            Session::flash('error', 'Something went wrong Please try again after some time');
+            return redirect(admin_url('safetypermit/list'));
         }
     }
 
@@ -339,14 +347,14 @@ class SafetyPermitController extends Controller
 
                 $notificationData = array(
                     'notification_type' => 3,
-                    'module_type' => 1,
+                    'module_type' => 3,
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(
                         'title' => $mailsubject,
                         'message' => 'Safety Permit ' . $safetypermit->permit_id . ' submitted by ' . getUsername($safetypermit->created_by),
                         'icon' =>  admin_url('public/assets/icons/permit_to_work.png'),
                         'id' => $safetypermit->id,
-                        'module' => 1,
+                         'module' => 3,
                     )),
                     'web_link' =>  admin_url('safetypermit/approvereject/' . encryptId($safetypermit->id)),
                     'assigned_user' => array_to_string($userids),
@@ -586,14 +594,14 @@ class SafetyPermitController extends Controller
 
             $notificationData = array(
                 'notification_type' => 3,
-                'module_type' => 1,
+                'module_type' => 3,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
                     'message' => 'Safety Permit ' . $safetypermit->permit_id . ' submitted by ' . getUsername($safetypermit->created_by),
                     'icon' =>  admin_url('public/assets/icons/permit_to_work.png'),
                     'id' => $safetypermit->id,
-                    'module' => 1,
+                     'module' => 3,
                 )),
                 'web_link' =>  admin_url('safetypermit/approvereject/' . encryptId($safetypermit->id)),
                 'assigned_user' => array_to_string($userids),
@@ -736,14 +744,14 @@ class SafetyPermitController extends Controller
 
             $notificationData = array(
                 'notification_type' => 3,
-                'module_type' => 1,
+                'module_type' => 3,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
                     'message' => 'Safety Permit ' . $safetypermit->permit_id . ' verified by ' . getUsername($approve->created_by),
                     'icon' =>  admin_url('public/assets/icons/permit_to_work.png'),
                     'id' => $safetypermit->id,
-                    'module' => 1,
+                     'module' => 3,
                 )),
                 'web_link' =>  admin_url('safetypermit/approvereject/' . encryptId($safetypermit->id)),
                 'assigned_user' => $approve->created_by,
@@ -833,14 +841,14 @@ class SafetyPermitController extends Controller
                 $UserIdsCommaSeparated = implode(',', $UserIds);
                 $notificationData = array(
                     'notification_type' => 3,
-                    'module_type' => 1,
+                    'module_type' => 3,
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(
                         'title' => $mailsubject,
                         'message' => 'Safety Permit ' . $safetypermit->permit_id . $mailsubject . getUsername($approve->created_by),
                         'icon' =>  admin_url('public/assets/icons/permit_to_work.png'),
                         'id' => $safetypermit->id,
-                        'module' => 1,
+                         'module' => 3,
                     )),
                     'web_link' =>  admin_url('safetypermit/approvereject/' . encryptId($safetypermit->id)),
                     'assigned_user' => $UserIdsCommaSeparated,
@@ -879,14 +887,14 @@ class SafetyPermitController extends Controller
                 $UserIdsCommaSeparated = implode(',', $UserIds);
                 $notificationData = array(
                     'notification_type' => 3,
-                    'module_type' => 1,
+                    'module_type' => 3,
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(
                         'title' => $mailsubject,
                         'message' => 'Safety Permit ' . $safetypermit->permit_id . $mailsubject . getUsername($approve->created_by),
                         'icon' =>  admin_url('public/assets/icons/permit_to_work.png'),
                         'id' => $safetypermit->id,
-                        'module' => 1,
+                         'module' => 3,
                     )),
                     'web_link' =>  admin_url('safetypermit/approvereject/' . encryptId($safetypermit->id)),
                     'assigned_user' => $UserIdsCommaSeparated,
@@ -927,14 +935,14 @@ class SafetyPermitController extends Controller
 
                 $notificationData = array(
                     'notification_type' => 3,
-                    'module_type' => 1,
+                    'module_type' => 3,
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(
                         'title' => $mailsubject,
                         'message' => 'Safety Permit ' . $safetypermit->permit_id . $mailsubject . getUsername($approve->created_by),
                         'icon' =>  admin_url('public/assets/icons/permit_to_work.png'),
                         'id' => $safetypermit->id,
-                        'module' => 1,
+                         'module' => 3,
                     )),
                     'web_link' =>  admin_url('safetypermit/edit/' . encryptId($safetypermit->id)),
                     'assigned_user' => array_to_string($userids),
@@ -975,14 +983,14 @@ class SafetyPermitController extends Controller
 
                 $notificationData = array(
                     'notification_type' => 3,
-                    'module_type' => 1,
+                    'module_type' => 3,
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(
                         'title' => $mailsubject,
                         'message' => 'Safety Permit ' . $safetypermit->permit_id . $mailsubject . getUsername($approve->created_by),
                         'icon' =>  admin_url('public/assets/icons/permit_to_work.png'),
                         'id' => $safetypermit->id,
-                        'module' => 1,
+                         'module' => 3,
                     )),
                     'web_link' =>  admin_url('safetypermit/approvereject/' . encryptId($safetypermit->id)),
                     'assigned_user' => array_to_string($userids),
@@ -1025,14 +1033,14 @@ class SafetyPermitController extends Controller
 
                 $notificationData = array(
                     'notification_type' => 3,
-                    'module_type' => 1,
+                    'module_type' => 3,
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(
                         'title' => $mailsubject,
                         'message' => 'Safety Permit ' . $safetypermit->permit_id . $mailsubject . getUsername($approve->created_by),
                         'icon' =>  admin_url('public/assets/icons/permit_to_work.png'),
                         'id' => $safetypermit->id,
-                        'module' => 1,
+                         'module' => 3,
                     )),
                     'web_link' =>  admin_url('safetypermit/approvereject/' . encryptId($safetypermit->id)),
                     'assigned_user' => array_to_string($userids),
@@ -1124,14 +1132,14 @@ class SafetyPermitController extends Controller
 
             $notificationData = array(
                 'notification_type' => 3,
-                'module_type' => 1,
+                'module_type' => 3,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
                     'message' => 'Safety Permit ' . $safetypermit->permit_id . ' approved by ' . getUsername($approve->created_by),
                     'icon' =>  admin_url('public/assets/icons/permit_to_work.png'),
                     'id' => $safetypermit->id,
-                    'module' => 1,
+                     'module' => 3,
                 )),
                 'web_link' =>  admin_url('safetypermit/approvereject/' . encryptId($safetypermit->id)),
                 'assigned_user' => array_to_string($assigned_user),
@@ -1207,14 +1215,14 @@ class SafetyPermitController extends Controller
              */
             $notificationData = array(
                 'notification_type' => 3,
-                'module_type' => 1,
+                'module_type' => 3,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
                     'message' => 'Safety Permit ' . $safetypermit->permit_id . ' Cancelled by ' . getUsername($safetypermit->created_by),
                     'icon' => admin_url('public/assets/icons/permit_to_work.png'),
                     'id' => $safetypermit->id,
-                    'module' => 1,
+                     'module' => 3,
                 )),
                 'web_link' => admin_url('safetypermit/view/' . encryptId($safetypermit->id)),
                 'assigned_user' => implode(',', $userids), // Assign all user IDs
@@ -1289,14 +1297,14 @@ class SafetyPermitController extends Controller
              */
             $notificationData = array(
                 'notification_type' => 3,
-                'module_type' => 1,
+                'module_type' => 3,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
                     'message' => 'Safety Permit ' . $safetypermit->permit_id . ' Closed by ' . getUsername($safetypermit->created_by),
                     'icon' => admin_url('public/assets/icons/permit_to_work.png'),
                     'id' => $safetypermit->id,
-                    'module' => 1,
+                     'module' => 3,
                 )),
                 'web_link' => admin_url('safetypermit/view/' . encryptId($safetypermit->id)),
                 'assigned_user' => implode(',', $userids), // Assign all user IDs
@@ -1337,6 +1345,8 @@ class SafetyPermitController extends Controller
             $header = [
                 __("common.sno"),
                 __("Work Permit No"),
+                __("Company"),
+                __("Location"),
                 __("Unit"),
                 __("Date"),
                 __("To Date"),
@@ -1353,6 +1363,8 @@ class SafetyPermitController extends Controller
                 $export = [];
                 $export[] =  $i;
                 $export[] =  $data->permit_id;
+                $export[] = getCompanyname($data->company_id);
+                $export[] = getLocationname($data->location_id);
                 $export[] = getUnitname($data->unit_id);
                 $export[] = Displaydateformat($data->date);
                 $export[] = Displaydateformat($data->to_date);
@@ -1376,6 +1388,8 @@ class SafetyPermitController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
+            Session::flash('error', 'Something went wrong Please try again after some time');
+            return redirect(admin_url('safetypermit/list'));
         }
     }
 
@@ -1395,6 +1409,8 @@ class SafetyPermitController extends Controller
             $header = [
                 __("common.sno"),
                 __("Work Permit No"),
+                __("Company"),
+                __("Location"),
                 __("Unit"),
                 __("Date"),
                 __("To Date"),
@@ -1436,6 +1452,7 @@ class SafetyPermitController extends Controller
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong Please try again after some time');
+            return redirect(admin_url('safetypermit/list'));
         }
     }
 
@@ -1583,7 +1600,14 @@ class SafetyPermitController extends Controller
 
 
 
+    public function unitList(Request $request, $companyId)
+    {
+        $companyId = decryptId($companyId);
+        $id = decryptId($request->id);
+        $unit = $this->unit->unitajaxList($id, $companyId);
 
+        return response()->json($unit);
+    }
 
 
     public function reassignemployeename(Request $request)
@@ -1980,14 +2004,14 @@ class SafetyPermitController extends Controller
 
             $notificationData = array(
                 'notification_type' => 3,
-                'module_type' => 1,
+                'module_type' => 3,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
                     'message' => 'Safety Permit ' . $safetypermit->permit_id . ' submitted by ' . getUsername($safetypermit->created_by),
                     'icon' =>  admin_url('public/assets/icons/permit_to_work.png'),
                     'id' => $safetypermit->id,
-                    'module' => 1,
+                     'module' => 3,
                 )),
                 'web_link' =>  admin_url('safetypermit/approvereject/' . encryptId($safetypermit->id)),
                 'assigned_user' => array_to_string($userids),
@@ -2078,14 +2102,14 @@ class SafetyPermitController extends Controller
 
             $notificationData = array(
                 'notification_type' => 3,
-                'module_type' => 1,
+                'module_type' => 3,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
                     'message' => 'Safety Permit ' . $safetypermit->permit_id .  $mailsubject . getUsername($approve->created_by),
                     'icon' =>  admin_url('public/assets/icons/permit_to_work.png'),
                     'id' => $safetypermit->id,
-                    'module' => 1,
+                     'module' => 3,
                 )),
                 'web_link' =>  admin_url('safetypermit/approvereject/' . encryptId($safetypermit->id)),
                 'assigned_user' => array_to_string($userids),

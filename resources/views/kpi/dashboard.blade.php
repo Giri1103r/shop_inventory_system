@@ -302,6 +302,30 @@
                 </div>
             </div>
 
+            <div class="row">
+                <div class="col-xl-12 col-xxl-12">
+                    <div class="card view_card">
+                        <div class="card-header">
+                            <h4 class="text-white">Injury Report - Based On Body Parts</h4>
+                            <a class="fas fa-arrow-alt-circle-down chartdownload" id="loadinjurychart_download"></a>
+                        </div>
+                        <div class="card-body" id="loadinjurychart"></div>
+                    </div>
+                </div>
+            </div>
+
+            {{-- <div class="row">
+                <div class="col-xl-12 col-xxl-12">
+                    <div class="card view_card">
+                        <div class="card-header">
+                            <h4 class="text-white">RCA Distribution</h4>
+                            <a class="fas fa-arrow-alt-circle-down chartdownload" id="RCADistribution_download"></a>
+                        </div>
+                        <div id="RCADistributionCount"></div>
+                    </div>
+                </div>
+            </div> --}}
+
 
 
         </div>
@@ -383,9 +407,11 @@
             LoadChart19Count(Fromdate, Todate);
             LoadChart20Count(Fromdate, Todate);
             LoadChart21Count(Fromdate, Todate);
+            RCADistributionCount(Fromdate, Todate);
             LoadDepartmentCount(Fromdate, Todate);
             loadfmonthwisetraining(Fromdate, Todate);
             loadtraining_count_status(Fromdate, Todate);
+            loadinjurychart(Fromdate, Todate);
         }
 
         function LoadChart1Count(Fromdate = '', Todate = '') {
@@ -787,6 +813,25 @@
             });
         }
 
+        function RCADistributionCount(Fromdate = '', Todate = '') {
+            var url = "{{ admin_url('kpi/dashboard/RCADistributionCount') }}"
+            var data = {
+                Fromdate: Fromdate,
+                Todate: Todate,
+            };
+            $('#RCADistributionCount').html('');
+            $.ajax({
+                type: 'get',
+                url: url,
+                data: data,
+                cache: false,
+                success: function(dataAjx) {
+
+                    $('#RCADistributionCount').html(dataAjx);
+                }
+            });
+        }
+
         function LoadDepartmentCount(Fromdate = '', Todate = '') {
             var url = "{{ admin_url('training/dashboard/department') }}"
             var data = {
@@ -841,6 +886,25 @@
                 success: function(dataAjx) {
 
                     $('#trainingStatusPieChart').html(dataAjx);
+                }
+            });
+        }
+
+        function loadinjurychart(Fromdate = '', Todate = '') {
+            var url = "{{ admin_url('kpi/dashboard/injurypart') }}"
+            var data = {
+                Fromdate: Fromdate,
+                Todate: Todate,
+            };
+            $('#loadinjurychart').html('');
+            $.ajax({
+                type: 'get',
+                url: url,
+                data: data,
+                cache: false,
+                success: function(dataAjx) {
+
+                    $('#loadinjurychart').html(dataAjx);
                 }
             });
         }

@@ -184,7 +184,7 @@
                                     text: '{{ __('common.pdf') }}',
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
-                                        checklist = $('#checklist').val();
+                                        audit_id = $('#audit_id').val();
                                         status = $('#status').val();
 
                                         $(".dt-button").removeClass('processing');
@@ -192,7 +192,7 @@
                                         window.location.href =
                                             "{{ admin_url('audit/assessment/export/pdf') }}" +
                                             '?search=' + searchValue +
-                                            '&checklist=' + checklist +
+                                            '&audit_id=' + audit_id +
                                             '&status=' + status
                                     }
                                 },
@@ -201,14 +201,14 @@
                                     text: '{{ __('common.excel') }}',
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
-                                        checklist = $('#checklist').val();
+                                        audit_id = $('#audit_id').val();
                                         status = $('#status').val();
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
                                             "{{ admin_url('audit/assessment/export/excel') }}" +
                                             '?search=' + searchValue +
-                                            '&checklist=' + checklist +
+                                            '&audit_id=' + audit_id +
                                             '&status=' + status
                                     }
                                 },

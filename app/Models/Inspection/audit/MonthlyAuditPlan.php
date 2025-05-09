@@ -2,6 +2,7 @@
 
 namespace App\Models\Inspection\audit;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 
@@ -39,9 +40,9 @@ class MonthlyAuditPlan extends Model
         $request = request();
 
         $search = '';
-        $query = $this->select('inspection_audit_monthly_audit_plan.*','masters_unit.unit_name','inspection_audit_master_task.task_name')
-                      ->leftJoin('masters_unit','masters_unit.id','=','inspection_audit_monthly_audit_plan.unit_id')
-                      ->leftJoin('inspection_audit_master_task','inspection_audit_master_task.id','=','inspection_audit_monthly_audit_plan.task_id');
+        $query = $this->select('inspection_audit_monthly_audit_plan.*', 'masters_unit.unit_name', 'inspection_audit_master_task.task_name')
+            ->leftJoin('masters_unit', 'masters_unit.id', '=', 'inspection_audit_monthly_audit_plan.unit_id')
+            ->leftJoin('inspection_audit_master_task', 'inspection_audit_master_task.id', '=', 'inspection_audit_monthly_audit_plan.task_id');
         $org_total =  $query;
         $org_total_counts = $org_total->count();
         if ($request->search['value'] != null || $request->search['value'] != '') {
@@ -52,11 +53,21 @@ class MonthlyAuditPlan extends Model
                     ->orWhere('inspection_audit_monthly_audit_plan.auditee_name', 'LIKE', '%' . $search . '%')
                     ->orWhere('masters_unit.unit_name', 'LIKE', '%' . $search . '%')
                     ->orWhere('inspection_audit_master_task.task_name', 'LIKE', '%' . $search . '%');
-
-
             });
         }
-
+        if ($request->has('from_date') && !empty($request->from_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_audit_monthly_audit_plan.created_at', '>=', $startDate);
+        }
+        if ($request->has('to_date') && !empty($request->to_date)) {
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_audit_monthly_audit_plan.created_at', '<=', $endDate);
+        }
+        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->whereBetween('inspection_audit_monthly_audit_plan.created_at', [$startDate, $endDate]);
+        }
         if ($request->has('auditee_name') && $request->auditee_name) {
             $query = $query->where('inspection_audit_monthly_audit_plan.auditee_name', 'LIKE', '%' . $request->auditee_name . '%');
         }
@@ -72,7 +83,7 @@ class MonthlyAuditPlan extends Model
         if ($request->has('compliance_category') && $request->compliance_category) {
             $query = $query->where('inspection_audit_monthly_audit_plan.compliance_category_id', 'LIKE', '%' . decryptId($request->compliance_category) . '%');
         }
-     
+
 
 
         $data_count = $query;
@@ -92,7 +103,6 @@ class MonthlyAuditPlan extends Model
             'filter_records' => $total_records,
         );
         return $datas;
-        
     }
 
     public function store()
@@ -141,9 +151,9 @@ class MonthlyAuditPlan extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_audit_monthly_audit_plan.*','masters_unit.unit_name','inspection_audit_master_task.task_name')
-                      ->leftJoin('masters_unit','masters_unit.id','=','inspection_audit_monthly_audit_plan.unit_id')
-                      ->leftJoin('inspection_audit_master_task','inspection_audit_master_task.id','=','inspection_audit_monthly_audit_plan.task_id');
+        $query = $this->select('inspection_audit_monthly_audit_plan.*', 'masters_unit.unit_name', 'inspection_audit_master_task.task_name')
+            ->leftJoin('masters_unit', 'masters_unit.id', '=', 'inspection_audit_monthly_audit_plan.unit_id')
+            ->leftJoin('inspection_audit_master_task', 'inspection_audit_master_task.id', '=', 'inspection_audit_monthly_audit_plan.task_id');
 
 
         if ($request->search != null || $request->search != '') {
@@ -154,11 +164,21 @@ class MonthlyAuditPlan extends Model
                     ->orWhere('inspection_audit_monthly_audit_plan.auditee_name', 'LIKE', '%' . $search . '%')
                     ->orWhere('masters_unit.unit_name', 'LIKE', '%' . $search . '%')
                     ->orWhere('inspection_audit_master_task.task_name', 'LIKE', '%' . $search . '%');
-
-
             });
         }
-
+        if ($request->has('from_date') && !empty($request->from_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_audit_monthly_audit_plan.created_at', '>=', $startDate);
+        }
+        if ($request->has('to_date') && !empty($request->to_date)) {
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_audit_monthly_audit_plan.created_at', '<=', $endDate);
+        }
+        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->whereBetween('inspection_audit_monthly_audit_plan.created_at', [$startDate, $endDate]);
+        }
         if ($request->has('auditee_name') && $request->auditee_name) {
             $query = $query->where('inspection_audit_monthly_audit_plan.auditee_name', 'LIKE', '%' . $request->auditee_name . '%');
         }
@@ -174,7 +194,7 @@ class MonthlyAuditPlan extends Model
         if ($request->has('compliance_category') && $request->compliance_category) {
             $query = $query->where('inspection_audit_monthly_audit_plan.compliance_category_id', 'LIKE', '%' . decryptId($request->compliance_category) . '%');
         }
-        
+
         $query->orderBy('id', 'DESC');
 
         $data =  $query->get();
@@ -183,5 +203,4 @@ class MonthlyAuditPlan extends Model
 
         return $query;
     }
-    
 }
