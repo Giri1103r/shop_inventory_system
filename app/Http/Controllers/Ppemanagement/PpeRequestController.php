@@ -105,6 +105,12 @@ class PpeRequestController extends Controller
                         ->editColumn('unit_id', function ($row) {
                             return getUnitname($row->unit_id);
                         })
+                        ->editColumn('location_id', function ($row) {
+                            return getLocationname($row->location_id);
+                        })
+                        ->editColumn('company_id', function ($row) {
+                            return getCompanyname($row->company_id);
+                        })
                         ->editColumn('ppe_type', function ($row) {
                             return $row->ppe_type;
                         })
@@ -182,7 +188,7 @@ class PpeRequestController extends Controller
 
                     return response()->json($datatables->getData());
                 } catch (Exception $ex) {
-                    dd($ex);
+                    report($ex);
                     return response()->json(['status' => 'error', 'msg' => __('ppe.please_try_after_some_time')], 406);
                 }
             }
@@ -190,12 +196,14 @@ class PpeRequestController extends Controller
 
         $ppetype = $this->ppetype->getPpetypedata();
         $unit = $this->unit->getUnit();
+        $company = $this->company->getcompany();
         $approvestatus = $this->approvestatus->status();
 
         $ppename = $this->ppetypemaster->getppetypemaster();
         $data = [
             'ppetype' => $ppetype,
             'unit' => $unit,
+            'company' => $company,
             'ppename' => $ppename,
             'approvestatus' => $approvestatus,
         ];
@@ -1158,6 +1166,9 @@ class PpeRequestController extends Controller
                 __('Emp Name'),
                 __("Item Code"),
                 __("PPE Name"),
+                __("Company"),
+                __("Location"),
+                __("Unit"),
                 __("Department"),
                 __("From Status"),
                 __(" To Status"),
@@ -1178,6 +1189,9 @@ class PpeRequestController extends Controller
                 $export[] = $data->emp_name;
                 $export[] = getItemCode($data->item_code);
                 $export[] = getPpename($data->ppe_name);
+                $export[] = getCompanyname($data->company_id);
+                $export[] = getLocationname($data->location_id);
+                $export[] = getUnitname($data->unit_id);
                 $export[] = getDepartment($data->department);
                 if ($data->approve_status == STATUS_HOD_APPROVAL_PENDING) {
                     $export[] = 'User Applied';
@@ -1223,7 +1237,8 @@ class PpeRequestController extends Controller
                 ->addRows($exportData);
         } catch (Exception $ex) {
             report($ex);
-            return redirect()->back()->with('error', 'An error occurred while exporting the data.');
+            Session::flash('error',  'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ppe_request/list'));
         }
     }
 
@@ -1248,6 +1263,9 @@ class PpeRequestController extends Controller
                 __('Emp Name'),
                 __("Item Code"),
                 __("PPE Name"),
+                __("Company"),
+                __("Location"),
+                __("Unit"),
                 __("Department"),
                 __("From Status"),
                 __("To Status"),
@@ -1288,6 +1306,8 @@ class PpeRequestController extends Controller
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error',  'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ppe_request/list'));
         }
     }
 
