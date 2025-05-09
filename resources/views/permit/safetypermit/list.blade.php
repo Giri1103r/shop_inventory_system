@@ -10,11 +10,11 @@
                     <h4 class="card-title"></h4>
                     <div class="d-flex justify-content-end p-2 me-2">
                         <x-button-filter dataId="" class="search me-2" href=""></x-button-filter>
-                       
+
                         @if (CheckUserPermission('add'))
-                        <a data-id="" class="add btn btn-primary" href="{{ admin_url('safetypermit/add') }}">New
-                            Request</a>
-                    @endif
+                            <a data-id="" class="add btn btn-primary" href="{{ admin_url('safetypermit/add') }}">New
+                                Request</a>
+                        @endif
 
                     </div>
 
@@ -29,15 +29,25 @@
                                             <input type="text" name="permit_id" id="permit_id" class="form-control"
                                                 placeholder="Work Permit No">
                                         </div>
+
+                                        <div class="col-md-3 mb-3 form-input">
+                                            <label for="inspectiontype" class="form-label ">Company</label>
+                                            <select name="company_id" id="company_id" class=" form-control single-select"
+                                                style="width: 100%">
+                                                <option value="">Select Company</option>
+                                                @foreach ($companyList as $list)
+                                                    <option value="{{ encryptId($list->id) }}">
+                                                        {{ $list->company_name }}</option>
+                                                @endforeach
+
+                                            </select>
+                                        </div>
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="inspectiontype" class="form-label ">Unit</label>
                                             <select name="unit_id" id="unit_id" class=" form-control single-select"
                                                 style="width: 100%">
                                                 <option value="">Select Unit</option>
-                                                @foreach ($unitList as $unit)
-                                                    <option value="{{ encryptId($unit->id) }}">
-                                                        {{ $unit->unit_name }}</option>
-                                                @endforeach
+
 
                                             </select>
                                         </div>
@@ -116,6 +126,31 @@
 @stop
 @push('script')
     <script type="text/javascript" nonce="projectcab">
+        $(document).on("change", "#company_id", function() {
+            let companyId = $(this).val();
+            let unitSelect = $("#unit_id");
+
+            if (companyId) {
+                $.ajax({
+                    url: "{{ admin_url('safetypermit/unit/ajax-list') }}/" + companyId + "/0",
+                    type: "GET",
+                    dataType: "json",
+                    success: function(data) {
+                        unitSelect.empty().append('<option value="">Select Unit</option>');
+                        $.each(data, function(key, value) {
+                            unitSelect.append('<option value="' + value.id + '">' + value.name +
+                                '</option>');
+                        });
+                    },
+                    error: function() {
+                        alert("Error fetching unit. Please try again.");
+                    },
+                });
+            } else {
+                unitSelect.empty().append('<option value="">Select Unit</option>');
+            }
+        });
+
         $(document).ready(function() {
             var firstTh = $('.datatable-list thead th:first');
             firstTh.removeClass('sorting_asc');
@@ -173,6 +208,7 @@
                     data: function(d) {
                         d.permit_id = $('#permit_id').val();
                         d.unit_id = $('#unit_id').val();
+                        d.company_id = $('#company_id').val();
                         d.from_date = $('#from_date').val();
                         d.to_date = $('#to_date').val();
                         d.status = $('#status').val();
@@ -260,6 +296,7 @@
                                     permit_id = $('#permit_id').val();
                                     unit_id = $('#unit_id').val();
                                     from_date = $('#from_date').val();
+                                    company_id = $('#company_id').val();
                                     to_date = $('#to_date').val();
                                     status = $('#status').val();
 
@@ -269,6 +306,7 @@
                                         "{{ admin_url('safetypermit/export/pdf') }}" +
                                         '?search=' + searchValue +
                                         '&permit_id=' + permit_id +
+                                        '&company_id=' + company_id +
                                         '&unit_id=' + unit_id +
                                         '&from_date=' + from_date +
                                         '&to_date=' + to_date +
@@ -293,6 +331,7 @@
                                         "{{ admin_url('safetypermit/export/excel') }}" +
                                         '?search=' + searchValue +
                                         '&permit_id=' + permit_id +
+                                        '&company_id=' + company_id +
                                         '&unit_id=' + unit_id +
                                         '&from_date=' + from_date +
                                         '&to_date=' + to_date +

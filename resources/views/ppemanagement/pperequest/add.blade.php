@@ -79,6 +79,33 @@
                                                     <div class="text-danger"></div>
                                                 </div>
                                             </div>
+                                            <div class="col-md-4 mb-3">
+                                                <div class="form-group form-input">
+                                                    <label for="department"
+                                                        class="form-label require">Company</label>
+                                                    <input type="text" name="company_id" id="company_id"
+                                                        class="form-control form-control-sm" readonly>
+                                                    <div class="text-danger"></div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mb-3">
+                                                <div class="form-group form-input">
+                                                    <label for="department"
+                                                        class="form-label require">location</label>
+                                                    <input type="text" name="location_id" id="location_id"
+                                                        class="form-control form-control-sm" readonly>
+                                                    <div class="text-danger"></div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mb-3">
+                                                <div class="form-group form-input">
+                                                    <label for="department"
+                                                        class="form-label require">Unit</label>
+                                                    <input type="text" name="unit_id" id="unit_id"
+                                                        class="form-control form-control-sm" readonly>
+                                                    <div class="text-danger"></div>
+                                                </div>
+                                            </div>
 
                                             <div class="col-md-4 mb-3">
                                                 <div class="form-group form-input">
@@ -91,10 +118,7 @@
                                             </div>
 
 
-                                            <input type="hidden" name="unit" id="unit"
-                                                class="form-control form-control-sm" readonly>
-                                            <input type="hidden" name="company" id="company"
-                                                class="form-control form-control-sm" readonly>
+
                                         @else
                                             <div class="col-md-4 mb-3">
                                                 <div class="form-group form-input">
@@ -117,7 +141,33 @@
 
                                                 </div>
                                             </div>
-
+                                            <div class="col-md-4 mb-3">
+                                                <div class="form-group form-input">
+                                                    <label for="department"
+                                                        class="form-label require">Company</label>
+                                                    <input type="text" name="company_id" id="company_id"
+                                                        class="form-control form-control-sm"  value="{{ getDepartment($employee->company_id) }}" readonly>
+                                                    <div class="text-danger"></div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mb-3">
+                                                <div class="form-group form-input">
+                                                    <label for="department"
+                                                        class="form-label require">location</label>
+                                                    <input type="text" name="location_id" id="location_id"
+                                                        class="form-control form-control-sm" value="{{ getDepartment($employee->location_id) }}" readonly>
+                                                    <div class="text-danger"></div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mb-3">
+                                                <div class="form-group form-input">
+                                                    <label for="department"
+                                                        class="form-label require">Unit</label>
+                                                    <input type="text" name="unit_id" id="unit_id"
+                                                        class="form-control form-control-sm" value="{{ getDepartment($employee->unit_id) }}" readonly>
+                                                    <div class="text-danger"></div>
+                                                </div>
+                                            </div>
                                             <div class="col-md-4 mb-3">
                                                 <div class="form-group form-input">
                                                     <label for="department"
@@ -129,12 +179,7 @@
 
                                                 </div>
                                             </div>
-                                            <input type="hidden" name="company" id="company"
-                                                class="form-control form-control-sm"
-                                                value="{{ getCompanyname($employee->company_id) }}" readonly>
-                                            <input type="hidden" name="unit" id="unit"
-                                                class="form-control form-control-sm"
-                                                value="{{ getUnitname($employee->unit_id) }}" readonly>
+                                         
                                         @endif
                                             <div class="col-md-4 mb-3">
                                                 <div class="form-group form-input">
@@ -153,18 +198,7 @@
                                                     <div class="text-danger" id="ppe_type_error"></div>
                                                 </div>
                                             </div>
-                                            {{-- <div class="col-md-4 mb-3">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label require">PPE Type</label>
-                                                    <input type="text" name="ppe_type" id="ppe_type"
-                                                        class="form-control form-control-sm" readonly>
-                                                    <input type="hidden" name="ppe_type_id" id="ppe_type_id">
-                                                    @error('ppe_type')
-                                                        <div class="text-danger">{{ $message }}</div>
-                                                    @enderror
-                                                    <div class="text-danger" id="ppe_type_error"></div>
-                                                </div>
-                                            </div> --}}
+
                                             <div class="col-md-4 mb-3">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">PPE Name</label>
@@ -245,10 +279,15 @@
                 var requestFor = $(this).val();
                 var empIdContainer = $("#emp_id_container");
                 var authEmployeeId =
-                "{{ auth()->user()->employee_id }}"; // Authenticated user's employee ID
+                "{{ auth()->user()->employee_id }}";
                 var authDepartment =
-                "{{ getDepartment(auth()->user()->department_id) ?? 'N/A' }}"; // Authenticated user's department
-
+                "{{ getDepartment(auth()->user()->department_id) ?? 'N/A' }}";
+                var authCompany =
+                "{{ getCompanyname(auth()->user()->company_id) ?? 'N/A' }}";
+                  var authLocation =
+                "{{ getLocationname(auth()->user()->location_id) ?? 'N/A' }}";
+                var authUnit=
+                "{{ getUnitname(auth()->user()->unit_id) ?? 'N/A' }}";
                 if (requestFor === "1") {
                     // If "Myself" is selected
                     empIdContainer.html(`
@@ -258,7 +297,10 @@
             `);
 
                     $("#emp_name").val("{{ auth()->user()->name }}");
-                    $("#department").val(authDepartment); // Set auth user's department
+                    $("#department").val(authDepartment);
+                    $("#company_id").val(authCompany);
+                    $("#unit_id").val(authUnit);
+                    $("#location_id").val(authLocation);
                 } else if (requestFor === "2") {
                     empIdContainer.html(`
                 <label for="emp_id" class="form-label require">Employee ID</label>
@@ -311,7 +353,13 @@
                             if (data && data.employee) {
                                 $("#emp_name").val(data.employee.emp_name);
                                 $("#department").val(data.departments ? data.departments
-                                    .department_name : "No department available");
+                                    .department_name : "");
+                                    $("#unit_id").val(data.units ? data.units
+                                    .unit_name : "");
+                                    $("#company_id").val(data.companys ? data.companys
+                                    .company_name : "");
+                                    $("#location_id").val(data.location ? data.location
+                                    .location_name : "");
                             } else {
                                 Swal.fire({
                                     icon: "error",

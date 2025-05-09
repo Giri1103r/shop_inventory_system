@@ -14,6 +14,7 @@ use App\Models\ApproveStatus;
 use App\Models\Master\Company;
 use App\Models\Master\Department;
 use App\Models\Master\Employee;
+use App\Models\Master\Location;
 use App\Models\Master\PpeRequest;
 use App\Models\Master\PpeStockinventory;
 use App\Models\Master\PpeType;
@@ -52,6 +53,7 @@ class PpeRequestController extends Controller
     private $work;
     private $unit;
     private $company;
+    private $location;
 
     public function __construct()
     {
@@ -68,6 +70,7 @@ class PpeRequestController extends Controller
         $this->work = new Work();
         $this->unit = new Unit();
         $this->company = new Company();
+        $this->location = new Location();
 
     }
     public function index(Request $request)
@@ -98,6 +101,9 @@ class PpeRequestController extends Controller
                         })
                         ->editColumn('department', function ($row) {
                             return $row->department_name;
+                        })
+                        ->editColumn('unit_id', function ($row) {
+                            return getUnitname($row->unit_id);
                         })
                         ->editColumn('ppe_type', function ($row) {
                             return $row->ppe_type;
@@ -176,18 +182,20 @@ class PpeRequestController extends Controller
 
                     return response()->json($datatables->getData());
                 } catch (Exception $ex) {
-                    report($ex);
+                    dd($ex);
                     return response()->json(['status' => 'error', 'msg' => __('ppe.please_try_after_some_time')], 406);
                 }
             }
         }
 
         $ppetype = $this->ppetype->getPpetypedata();
+        $unit = $this->unit->getUnit();
         $approvestatus = $this->approvestatus->status();
 
         $ppename = $this->ppetypemaster->getppetypemaster();
         $data = [
             'ppetype' => $ppetype,
+            'unit' => $unit,
             'ppename' => $ppename,
             'approvestatus' => $approvestatus,
         ];
@@ -238,7 +246,7 @@ class PpeRequestController extends Controller
 
     public function fetchEmployeeDetails($emp_id)
     {
-        $employee = $this->work->select('emp_name', 'department','unit','company')
+        $employee = $this->work->select('emp_name', 'department','unit','company','location')
             ->where('emp_id', $emp_id)
             ->first();
 
@@ -265,11 +273,20 @@ class PpeRequestController extends Controller
                 ->first();
         }
 
+        $location = null;
+        if ($employee && $employee->location) {
+            $location = $this->location->select('id', 'location_name')
+                ->where('id', $employee->company)
+                ->where('status', '1')
+                ->first();
+        }
+
         return response()->json([
             'employee' => $employee,
             'departments' => $department,
             'units' => $unit,
-            'companys' => $company
+            'companys' => $company,
+            'location' => $location
         ]);
     }
 

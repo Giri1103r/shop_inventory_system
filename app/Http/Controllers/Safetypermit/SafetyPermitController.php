@@ -34,6 +34,7 @@ use App\Models\Master\EquipInvalve;
 use App\Models\Master\SafeWork;
 use App\Models\Master\Precaution;
 use App\Models\Master\Checklist;
+use App\Models\Master\Company;
 use App\Models\Master\Employee;
 use App\Models\Master\Work;
 use App\Models\Master\Department;
@@ -59,6 +60,7 @@ class SafetyPermitController extends Controller
     private $statuslog;
     private $employee;
     private $status;
+    private $company;
 
     public function __construct()
     {
@@ -79,6 +81,8 @@ class SafetyPermitController extends Controller
         $this->statuslog = new Statuslog();
         $this->employee = new Employee();
         $this->status = new SafetyPermitstatus();
+        $this->company = new Company
+        ();
     }
 
     public function index(Request $request)
@@ -211,11 +215,13 @@ class SafetyPermitController extends Controller
             }
         }
         $unitList  = $this->unit->select('id', 'unit_name')->where('status', '1')->get();
+        $companyList  = $this->company->select('id', 'company_name')->where('status', '1')->get();
         $status = $this->status->get();
         // $location = $this->location->select('id', 'location_type_name')->where('status', 1)->where('trash', 'NO')->get();
         $data = array(
             'unitList' => $unitList,
             'status' => $status,
+            'companyList' => $companyList,
             // 'location' => $location,
         );
         return view('permit.safetypermit.list', $data);
@@ -246,6 +252,9 @@ class SafetyPermitController extends Controller
             return view('permit.safetypermit.add', $data);
         } catch (Exception $ex) {
             report($ex);
+            report($ex);
+            Session::flash('error', 'Something went wrong Please try again after some time');
+            return redirect(admin_url('safetypermit/list'));
         }
     }
 
@@ -1338,6 +1347,7 @@ class SafetyPermitController extends Controller
                 __("common.sno"),
                 __("Work Permit No"),
                 __("Unit"),
+                __("Company"),
                 __("Date"),
                 __("To Date"),
                 __("Exact Job Location"),
@@ -1354,6 +1364,7 @@ class SafetyPermitController extends Controller
                 $export[] =  $i;
                 $export[] =  $data->permit_id;
                 $export[] = getUnitname($data->unit_id);
+                $export[] = getCompanyname($data->company_id);
                 $export[] = Displaydateformat($data->date);
                 $export[] = Displaydateformat($data->to_date);
                 $export[] = $data->exact_location_job;
@@ -1376,6 +1387,8 @@ class SafetyPermitController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
+            Session::flash('error', 'Something went wrong Please try again after some time');
+            return redirect(admin_url('safetypermit/list'));
         }
     }
 
@@ -1396,6 +1409,7 @@ class SafetyPermitController extends Controller
                 __("common.sno"),
                 __("Work Permit No"),
                 __("Unit"),
+                __("Company"),
                 __("Date"),
                 __("To Date"),
                 __("Exact Job Location"),
@@ -1436,6 +1450,7 @@ class SafetyPermitController extends Controller
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong Please try again after some time');
+            return redirect(admin_url('safetypermit/list'));
         }
     }
 
@@ -1583,7 +1598,14 @@ class SafetyPermitController extends Controller
 
 
 
+    public function unitList(Request $request, $companyId)
+    {
+        $companyId = decryptId($companyId);
+        $id = decryptId($request->id);
+        $unit = $this->unit->unitajaxList($id ,$companyId);
 
+        return response()->json($unit);
+    }
 
 
     public function reassignemployeename(Request $request)

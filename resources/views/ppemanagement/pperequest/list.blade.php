@@ -40,12 +40,33 @@
                                                 <option value="">Select the Employee ID</option>
                                             </select>
                                         </div>
+                                        <div class="col-md-3 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label require">Employee Name</label>
+                                                <input type="text" name="emp_name" id="emp_name" class="form-control"
+                                                    placeholder="Employee Name">
+                                            </div>
+                                        </div>
+
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="emp_name" class="form-label ">Emp Name</label>
-                                            <select name="emp_name" id="emp_name" class="form-control form-control-sm"
+                                            <label for="unit_id" class="form-label ">Unit</label>
+                                            <select name="unit_id" id="unit_id" class="form-control single-select form-control-sm"
                                                 style="width: 100%">
-                                                <option value="">Select the Employee Name</option>
+                                                <option value="">Select the Unit</option>
+                                                @foreach ($unit as $list)
+                                                    <option value="{{ encryptId($list->id) }}">
+                                                        {{ $list->unit_name }}</option>
+                                                @endforeach
                                             </select>
+                                        </div>
+                                        <div class="col-md-3 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label require">Department</label>
+                                                <select name="department_id" id="department_id"
+                                                    class="form-control single-select form-control-sm" style="width: 100%">
+                                                    <option value="">Select the department</option>
+                                                </select>
+                                            </div>
                                         </div>
 
                                         <div class="col-md-3 mb-3 form-input">
@@ -107,6 +128,7 @@
                                         <th>Employee / Worker Name</th>
                                         <th>Item Code</th>
                                         <th>PPE Name</th>
+                                        <th>Unit</th>
                                         <th>Department</th>
                                         <th data-priority="2">Approval Status</th>
                                         <th>{{ __('common.created_by') }}</th>
@@ -126,6 +148,31 @@
 @stop
 @push('script')
     <script type="text/javascript" nonce="projectcab">
+        $(document).on('change', '#unit_id', function() {
+            var unitId = $(this).val();
+            if (unitId) {
+                $.ajax({
+                    url: "{{ admin_url('department/ajax-list') }}/" + unitId + "/0",
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#department_id').empty().append(
+                            '<option value="">Select Department</option>');
+                        $.each(data, function(key, value) {
+                            $('#department_id').append('<option value="' + value
+                                .id + '">' + value.name + '</option>');
+                        });
+                        $('#department_id').trigger('change.');
+                    },
+                    error: function(xhr) {
+                        alert('Error fetching department. Please try again.');
+                    }
+                });
+            } else {
+                $('#department_id').empty().append('<option value="">Select Department</option>');
+                $('#department_id').trigger('change.');
+            }
+        });
         $(document).ready(function() {
 
             $('#resetform').on('click', function(e) {
@@ -135,33 +182,7 @@
 
             $('#emp_id').select2({
                 ajax: {
-                    url: '{{ admin_url('ppe_request/employeeid') }}',
-                    dataType: 'json',
-                    delay: 250,
-                    data: function(params) {
-                        return {
-                            search: params.term
-                        };
-                    },
-                    processResults: function(data) {
-                        return {
-                            results: $.map(data, function(item) {
-                                return {
-                                    id: item.text,
-                                    text: item.text
-                                };
-                            })
-                        };
-                    }
-                },
-                minimumInputLength: 1,
-                dropdownCssClass: 'form-control',
-                selectionCssClass: 'form-control'
-            });
-
-            $('#emp_name').select2({
-                ajax: {
-                    url: '{{ admin_url('ppe_request/employeename') }}',
+                    url: '{{ admin_url('ohc/employee-cum-patient/employeeid') }}',
                     dataType: 'json',
                     delay: 250,
                     data: function(params) {
@@ -174,7 +195,7 @@
                             results: $.map(data, function(item) {
                                 return {
                                     id: item.id,
-                                    text: item.id
+                                    text: item.text
                                 };
                             })
                         };
@@ -183,6 +204,33 @@
                 minimumInputLength: 1,
                 dropdownCssClass: 'form-control',
                 selectionCssClass: 'form-control'
+            });
+            $(document).on('change', '#emp_id', function() {
+                var empId = $(this).val();
+                if (empId) {
+                    $.ajax({
+                        url: "{{ admin_url('ohc/employee-cum-patient/employeename') }}",
+                        type: 'GET',
+                        data: {
+                            empId: empId
+                        },
+                        dataType: 'json',
+                        success: function(response) {
+                            if (response.employee) {
+                                $('#emp_name').val(response.employee.emp_name).prop('readonly',
+                                    true);
+
+                            } else {
+                                $('#emp_name').val('').prop('readonly', true);
+                            }
+                        },
+                        error: function(xhr) {
+                            alert('Error fetching employee name. Please try again.');
+                        }
+                    });
+                } else {
+                    $('#emp_name').val('').prop('readonly', true);
+                }
             });
 
 
@@ -242,6 +290,8 @@
                         d.emp_id = $('#emp_id').val();
                         d.emp_name = $('#emp_name').val();
                         d.from_date = $('#from_date').val();
+                        d.unit_id = $('#unit_id').val();
+                        d.department_id = $('#department_id').val();
                         d.to_date = $('#to_date').val();
                         d.approve_status = $('#approve_status').val();
                     },
@@ -272,6 +322,10 @@
                     {
                         data: 'ppe_name',
                         name: 'ppe_name'
+                    },
+                    {
+                        data: 'unit_id',
+                        name: 'unit_id'
                     },
                     {
                         data: 'department',
@@ -320,6 +374,10 @@
                                     var searchValue = $('#datatable-list_filter input').val();
                                     var emp_id = $('#emp_id').val();
                                     var emp_name = $('#emp_name').val();
+                                    var unit_id = $('#unit_id').val();
+                                    var company_id = $('#company_id').val();
+                                    var location_id = $('#location_id').val();
+                                    var department_id = $('#department_id').val();
                                     var from_date = $('#from_date').val();
                                     var to_date = $('#to_date').val();
                                     var approve_status = $('#approve_status').val();
@@ -331,6 +389,10 @@
                                         '?search=' + searchValue +
                                         '&emp_id=' + emp_id +
                                         '&emp_name=' + emp_name +
+                                        '&unit_id=' + unit_id +
+                                        '&company_id=' + company_id +
+                                        '&location_id=' + location_id +
+                                        '&department_id=' + department_id +
                                         '&from_date=' + from_date +
                                         '&to_date=' + to_date +
                                         '&approve_status=' + approve_status;
@@ -343,6 +405,10 @@
                                     var searchValue = $('#datatable-list_filter input').val();
                                     var emp_id = $('#emp_id').val();
                                     var emp_name = $('#emp_name').val();
+                                    var unit_id = $('#unit_id').val();
+                                    var company_id = $('#company_id').val();
+                                    var location_id = $('#location_id').val();
+                                    var department_id = $('#department_id').val();
                                     var from_date = $('#from_date').val();
                                     var to_date = $('#to_date').val();
                                     var approve_status = $('#approve_status').val();
@@ -354,6 +420,10 @@
                                         '?search=' + searchValue +
                                         '&emp_id=' + emp_id +
                                         '&emp_name=' + emp_name +
+                                        '&unit_id=' + unit_id +
+                                        '&company_id=' + company_id +
+                                        '&location_id=' + location_id +
+                                        '&department_id=' + department_id +
                                         '&from_date=' + from_date +
                                         '&to_date=' + to_date +
                                         '&approve_status=' + approve_status;

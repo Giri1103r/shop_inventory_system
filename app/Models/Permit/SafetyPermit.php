@@ -136,7 +136,13 @@ class SafetyPermit extends Model
         if ($request->has('unit_id') && $request->unit_id) {
 
             $unit_id = decryptId($request->unit_id);
-            $query = $query->where('ptw_safety.unit_id', 'LIKE', '%' . $unit_id . '%');
+            $query = $query->where('ptw_safety.unit_id',  $unit_id);
+        }
+
+        if ($request->has('company_id') && $request->company_id) {
+
+            $company_id = decryptId($request->company_id);
+            $query = $query->where('ptw_safety.company_id',  $company_id);
         }
 
         if ($request->has('from_date') && !empty($request->from_date)) {
@@ -1012,13 +1018,14 @@ class SafetyPermit extends Model
         $empId = $user->employee_id;
         $userRole = $user->role;
         $unit_id = $user->unit_id;
+        $company_id = $user->company_id;
         $id = $user->id;
 
         $userRole = string_to_array($userRole);
         if (isAdmin()) {
             $query = $this->select('ptw_safety.*', 'masters_unit.unit_name', 'ptw_status.status_name', 'ptw_status.to_status', 'ptw_status.bg_color')->leftJoin('masters_unit', 'masters_unit.id', '=', 'ptw_safety.unit_id')->leftJoin('ptw_status', 'ptw_status.id', '=', 'ptw_safety.permit_status');
         } elseif (in_array(ROLE_EHS_OFFICER, $userRole)) {
-            $query = $this->select('ptw_safety.*', 'masters_unit.unit_name', 'ptw_status.status_name', 'ptw_status.to_status', 'ptw_status.bg_color')->leftJoin('masters_unit', 'masters_unit.id', '=', 'ptw_safety.unit_id')->leftJoin('ptw_status', 'ptw_status.id', '=', 'ptw_safety.permit_status');
+            $query = $this->select('ptw_safety.*', 'masters_unit.unit_name', 'ptw_status.status_name', 'ptw_status.to_status', 'ptw_status.bg_color')->leftJoin('masters_unit', 'masters_unit.id', '=', 'ptw_safety.unit_id')->leftJoin('ptw_status', 'ptw_status.id', '=', 'ptw_safety.permit_status')->where('ptw_safety.company_id', $company_id);
         } elseif (in_array(ROLE_PLANT_HEAD, $userRole)) {
             $query = $this->select('ptw_safety.*', 'masters_unit.unit_name', 'ptw_status.status_name', 'ptw_status.to_status', 'ptw_status.bg_color')->leftJoin('masters_unit', 'masters_unit.id', '=', 'ptw_safety.unit_id')->leftJoin('ptw_status', 'ptw_status.id', '=', 'ptw_safety.permit_status')->where('ptw_safety.unit_id', $unit_id);
         } elseif (in_array(ROLE_EHS_HEAD, $userRole)) {
@@ -1042,9 +1049,13 @@ class SafetyPermit extends Model
         if ($request->has('unit_id') && $request->unit_id) {
 
             $unit_id = decryptId($request->unit_id);
-            $query = $query->where('ptw_safety.unit_id', 'LIKE', '%' . $unit_id . '%');
+            $query = $query->where('ptw_safety.unit_id', 'LIKE',  $unit_id);
         }
+        if ($request->has('company_id') && $request->company_id) {
 
+            $company_id = decryptId($request->company_id);
+            $query = $query->where('ptw_safety.company_id',  $company_id);
+        }
         if ($request->has('from_date') && !empty($request->from_date)) {
             $fromDate = $request->from_date;
             $query->where('ptw_safety.date', '>=', $fromDate);
