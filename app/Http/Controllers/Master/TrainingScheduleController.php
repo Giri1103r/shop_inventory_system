@@ -346,10 +346,11 @@ class TrainingScheduleController extends Controller
                             $img = admin_url('public/assets/icons/training.png');
                             $notificationData = [
                                 'notification_type' => 2,
-                               'module' => 4,
+                                'module_type' => 4,
                                 'notification_message' => $mailsubject,
                                 'mobile_notification' => json_encode([
                                     'title' => $mailsubject,
+
                                     'message' => 'A new training schedule has been created by ' . getUsername($trainingSchedule->created_by),
                                     'icon' => $img,
                                     'module' => 4,
@@ -367,14 +368,14 @@ class TrainingScheduleController extends Controller
                 }
                 Session::flash('success', 'Your data has been created successfully');
             } catch (Exception $ex) {
-                dd($ex);
+                report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
             return redirect(admin_url('training_schedule/list'));
         } catch (Exception $ex) {
 
-        dd($ex);
+        report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('training_schedule/list'));
         }
@@ -425,7 +426,7 @@ class TrainingScheduleController extends Controller
                     if (!empty($assignedUsers)) {
                         $notificationData = [
                             'notification_type' => 2,
-                           'module' => 4,
+                            'module_type' => 4,
                             'notification_message' => $mailsubject,
                             'mobile_notification' => json_encode([
                                 'title' => $mailsubject,
@@ -741,7 +742,7 @@ class TrainingScheduleController extends Controller
                             // Prepare a single notification
                             $notificationData = [
                                 'notification_type' => 2,
-                               'module' => 4,
+                               'module_type' => 4,
                                 'notification_message' => $mailSubject,
                                 'mobile_notification' => json_encode([
                                     'title' => $mailSubject,
@@ -1026,7 +1027,7 @@ class TrainingScheduleController extends Controller
                             if (!empty($assigned_users)) {
                                 $notificationData = [
                                     'notification_type' => 2,
-                                   'module' => 4,
+                                    'module_type' => 4,
                                     'notification_message' => $mailsubject,
                                     'mobile_notification' => json_encode([
                                         'title' => $mailsubject,
@@ -1093,7 +1094,7 @@ class TrainingScheduleController extends Controller
                                     $img = admin_url('public/assets/icons/training.png');
                                     $notificationData = [
                                         'notification_type' => 2,
-                                       'module' => 4,
+                                        'module_type' => 4,
                                         'notification_message' => $mailsubject,
                                         'mobile_notification' => json_encode([
                                             'title' => $mailsubject,
@@ -1253,7 +1254,7 @@ class TrainingScheduleController extends Controller
                         $img = admin_url('public/assets/icons/traning.png');
                         $notificationData = [
                             'notification_type' => 2,
-                           'module' => 4,
+                            'module_type' => 4,
                             'notification_message' => $mailsubject,
                             'mobile_notification' => json_encode([
                                 'title' => $mailsubject,

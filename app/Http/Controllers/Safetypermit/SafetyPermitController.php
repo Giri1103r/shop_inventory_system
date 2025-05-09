@@ -347,7 +347,7 @@ class SafetyPermitController extends Controller
 
                 $notificationData = array(
                     'notification_type' => 3,
-                    'module' => 3,
+                    'module_type' => 3,
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(
                         'title' => $mailsubject,
@@ -594,7 +594,7 @@ class SafetyPermitController extends Controller
 
             $notificationData = array(
                 'notification_type' => 3,
-                'module' => 3,
+                'module_type' => 3,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
@@ -744,7 +744,7 @@ class SafetyPermitController extends Controller
 
             $notificationData = array(
                 'notification_type' => 3,
-                'module' => 3,
+                'module_type' => 3,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
@@ -841,7 +841,7 @@ class SafetyPermitController extends Controller
                 $UserIdsCommaSeparated = implode(',', $UserIds);
                 $notificationData = array(
                     'notification_type' => 3,
-                    'module' => 3,
+                    'module_type' => 3,
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(
                         'title' => $mailsubject,
@@ -887,7 +887,7 @@ class SafetyPermitController extends Controller
                 $UserIdsCommaSeparated = implode(',', $UserIds);
                 $notificationData = array(
                     'notification_type' => 3,
-                    'module' => 3,
+                    'module_type' => 3,
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(
                         'title' => $mailsubject,
@@ -935,7 +935,7 @@ class SafetyPermitController extends Controller
 
                 $notificationData = array(
                     'notification_type' => 3,
-                    'module' => 3,
+                    'module_type' => 3,
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(
                         'title' => $mailsubject,
@@ -983,7 +983,7 @@ class SafetyPermitController extends Controller
 
                 $notificationData = array(
                     'notification_type' => 3,
-                    'module' => 3,
+                    'module_type' => 3,
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(
                         'title' => $mailsubject,
@@ -1033,7 +1033,7 @@ class SafetyPermitController extends Controller
 
                 $notificationData = array(
                     'notification_type' => 3,
-                    'module' => 3,
+                    'module_type' => 3,
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(
                         'title' => $mailsubject,
@@ -1132,7 +1132,7 @@ class SafetyPermitController extends Controller
 
             $notificationData = array(
                 'notification_type' => 3,
-                'module' => 3,
+                'module_type' => 3,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
@@ -1215,7 +1215,7 @@ class SafetyPermitController extends Controller
              */
             $notificationData = array(
                 'notification_type' => 3,
-                'module' => 3,
+                'module_type' => 3,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
@@ -1297,7 +1297,7 @@ class SafetyPermitController extends Controller
              */
             $notificationData = array(
                 'notification_type' => 3,
-                'module' => 3,
+                'module_type' => 3,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
@@ -2004,7 +2004,7 @@ class SafetyPermitController extends Controller
 
             $notificationData = array(
                 'notification_type' => 3,
-                'module' => 3,
+                'module_type' => 3,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
@@ -2102,7 +2102,7 @@ class SafetyPermitController extends Controller
 
             $notificationData = array(
                 'notification_type' => 3,
-                'module' => 3,
+                'module_type' => 3,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
