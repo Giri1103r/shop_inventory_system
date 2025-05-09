@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>WORK ZONE NOISE MONITORING SURVEY REPORT (EXTERNAL)| KARAM</title>
+    <title>WORK ZONE NOISE MONITORING | KARAM</title>
 
     <style>
         .badge {
@@ -150,7 +150,7 @@
             <tr>
                 <td
                     style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                    WORK ZONE NOISE MONITORING SURVEY REPORT (EXTERNAL)
+                    WORK ZONE NOISE MONITORING
 
                 </td>
             </tr>
@@ -160,16 +160,15 @@
 
         {{-- Header Row with Logo and Doc Info --}}
         <tr>
-            <th colspan="10" style="border:1px solid black;height:50px;">
+            <th colspan="12" style="border:1px solid black;height:50px;">
                 <img src="{{ url('public/assets/images/logo-dark.png') }}" style="width:125px;height:50px;">
             </th>
             <th colspan="14" style="border:1px solid black;">
                 <h3>
-                    <b>WORK ZONE NOISE MONITORING SURVEY REPORT (EXTERNAL)</b><br>
-                    <b>PN INTERNATIONAL PVT. LTD.</b>
+                    <b>WORK ZONE NOISE MONITORING</b><br>
                 </h3>
             </th>
-            <th colspan="10" style="border:1px solid black; padding:0;">
+            <th colspan="11" style="border:1px solid black; padding:0;">
                 <table style="width:100%; border-collapse: collapse;">
                     <tr>
                         <td style="border: 1px solid black; width:70px;">Doc.No</td>
@@ -198,6 +197,7 @@
             <th colspan="3" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">NOISE LEVEL (dBA)</th>
             <th colspan="3" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">DATE OF MONITORING</th>
             <th colspan="3" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">NEXT DUE DATE OF MONITORING</th>
+            <th colspan="3" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">LAST DUE DATE OF MONITORING</th>
             <th colspan="4" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">ACT/RULE</th>
             <th colspan="4" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">REMARKS</th>
         </tr>
@@ -214,6 +214,7 @@
                 <td colspan="3" style="border: 1px solid black; padding: 8px;">{{ $list->noise_level_dba_no  }}</td>
                 <td colspan="3" style="border: 1px solid black; padding: 8px;">{{ Displaydateformat($list->date_of_monitoring_date)}}</td>
                 <td colspan="3" style="border: 1px solid black; padding: 8px;">{{ Displaydateformat($list->next_due_date_of_monitoring_date) }}</td>
+                <td colspan="3" style="border: 1px solid black; padding: 8px;">{{ Displaydateformat($list->last_due_date_of_monitoring_date) }}</td>
                 <td colspan="4" style="border: 1px solid black; padding: 8px;">{{ $list->act_rule }}</td>
                 <td colspan="4" style="border: 1px solid black; padding: 8px;">{{ $list->remark }}</td>
             </tr>
