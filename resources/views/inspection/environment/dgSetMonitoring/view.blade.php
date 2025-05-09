@@ -158,6 +158,13 @@
                                                         </div>
                                                     </div>
                                                     <div class="col-md-4 form-input mt-2">
+                                                        <label class="form-label">Last Due Date of
+                                                            Monitoring</label>
+                                                        <div class="view_data">
+                                                            {{ Displaydateformat($DgSetData->last_due_date_of_monitoring) ?? '-' }}
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4 form-input mt-2">
                                                         <label class="form-label">Remark</label>
                                                         <div class="view_data">
                                                             {{ $DgSetData->remark ?? '-' }}

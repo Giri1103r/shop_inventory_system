@@ -176,7 +176,6 @@ class GembaWalkController extends Controller
 
     public function Store(Request $request)
     {
-        // dd($request->all());
         try {
             $rules = [
                 'document_no' => 'required',
@@ -403,7 +402,6 @@ class GembaWalkController extends Controller
                 $gembaWalk_approved_singnature = GetSignature($getUserId->created_by, $id, $type);
                 $gembaWalk_verified_singnature = GetSignature($getUserId->updated_by, $id, $type);
                 $status_log = $this->statusLog->getDetails($id);
-                // dd($status_log);
                 $gembaWalk_ehs_capa_details = $this->gembaWalkInspectionEhsAprroval->getEHSCapaReview($id);
                 $gembaWalk_ehs_floor_manager_details = $this->gembaWalkInspectionEhsAprroval->getEHSFloormanagerReview($id);
                 $gembaWalk_ehs_verificatioin_details = $this->gembaWalkInspectionEhsAprroval->getEHSOfficerReview($id);
@@ -424,7 +422,6 @@ class GembaWalkController extends Controller
 
                 );
             }
-            // dd($data);
             return view('inspection.gembaWalk.view', $data);
         } catch (Exception $ex) {
           report($ex);
@@ -457,7 +454,6 @@ class GembaWalkController extends Controller
 
 
                 );
-                // dd($data);
             }
             return view('inspection.gembaWalk.approval', $data);
         } catch (Exception $ex) {
@@ -787,7 +783,6 @@ class GembaWalkController extends Controller
 
             if (Auth::check()) {
                 $gembaWalk_details = $this->gembaWalk->selectOne($id);
-                // dd($gembaWalk_details);
                 $status_log = $this->statusLog->getDetails($id);
                 $getUserId = $this->gembaWalk->getUserId($id);
                 $type = GEMBA_WALK;
