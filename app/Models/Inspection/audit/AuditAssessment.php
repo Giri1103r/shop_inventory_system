@@ -109,11 +109,11 @@ class AuditAssessment extends Model
             });
         }
 
-        if (isset($request->category_name) && $request->category_name) {
-            $query = $query->where('inspection_audit_assessment.category_name', 'LIKE', '%' . $request->category_name . '%');
+        if (isset($request->audit_id) && $request->audit_id) {
+            $query = $query->where('inspection_audit_assessment.audit_id', 'LIKE', '%' . $request->audit_id . '%');
         }
-        if (isset($request->category_id) && $request->category_id) {
-            $query = $query->where('inspection_audit_assessment.category_id', 'LIKE', '%' . $request->category_id . '%');
+        if (isset($request->status) && $request->status) {
+            $query = $query->where('inspection_audit_assessment.status', decryptId($request->status));
         }
 
         if (isset($request->order) && count($request->order) > 0) {
