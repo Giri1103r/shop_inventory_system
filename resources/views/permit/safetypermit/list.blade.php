@@ -43,11 +43,19 @@
                                             </select>
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="inspectiontype" class="form-label ">Unit</label>
-                                            <select name="unit_id" id="unit_id" class=" form-control single-select"
-                                                style="width: 100%">
-                                                <option value="">Select Unit</option>
+                                            <label for="location_id" class="form-label ">Location</label>
+                                            <select name="location_id" id="location_id"
+                                                class="form-control single-select form-control-sm" style="width: 100%">
+                                                <option value="">Select the Location</option>
 
+                                            </select>
+                                        </div>
+
+                                        <div class="col-md-3 mb-3 form-input">
+                                            <label for="unit_id" class="form-label">Unit</label>
+                                            <select name="unit_id" id="unit_id"
+                                                class="form-control single-select form-control-sm" style="width: 100%">
+                                                <option value="">Select the Unit</option>
 
                                             </select>
                                         </div>
@@ -126,28 +134,81 @@
 @stop
 @push('script')
     <script type="text/javascript" nonce="projectcab">
-        $(document).on("change", "#company_id", function() {
-            let companyId = $(this).val();
-            let unitSelect = $("#unit_id");
-
+        $(document).on('change', '#company_id', function() {
+            var companyId = $(this).val();
             if (companyId) {
                 $.ajax({
-                    url: "{{ admin_url('safetypermit/unit/ajax-list') }}/" + companyId + "/0",
-                    type: "GET",
-                    dataType: "json",
+                    url: "{{ admin_url('location/ajax-list') }}/" + companyId + "/0",
+                    type: 'GET',
+                    dataType: 'json',
                     success: function(data) {
-                        unitSelect.empty().append('<option value="">Select Unit</option>');
+                        $('#location_id').empty().append(
+                            '<option value="">Select Location</option>');
                         $.each(data, function(key, value) {
-                            unitSelect.append('<option value="' + value.id + '">' + value.name +
-                                '</option>');
+                            $('#location_id').append('<option value="' + value
+                                .id + '">' + value.name + '</option>');
                         });
+                        $('#location_id').trigger('change.');
                     },
-                    error: function() {
-                        alert("Error fetching unit. Please try again.");
-                    },
+                    error: function(xhr) {
+                        alert('Error fetching location. Please try again.');
+                    }
                 });
             } else {
-                unitSelect.empty().append('<option value="">Select Unit</option>');
+                $('#location_id').empty().append('<option value="">Select Location</option>');
+                $('#location_id').trigger('change.');
+            }
+        });
+        // location
+
+        $(document).on('change', '#location_id', function() {
+            var locationId = $(this).val();
+            if (locationId) {
+                $.ajax({
+                    url: "{{ admin_url('unit/ajax-list') }}/" + locationId + "/0",
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#unit_id').empty().append(
+                            '<option value="">Select unit</option>');
+                        $.each(data, function(key, value) {
+                            $('#unit_id').append('<option value="' + value
+                                .id + '">' + value.name + '</option>');
+                        });
+                        $('#unit_id').trigger('change.');
+                    },
+                    error: function(xhr) {
+                        alert('Error fetching unit. Please try again.');
+                    }
+                });
+            } else {
+                $('#unit_id').empty().append('<option value="">Select unit</option>');
+                $('#unit_id').trigger('change.');
+            }
+        });
+        $(document).on('change', '#unit_id', function() {
+            var unitId = $(this).val();
+            if (unitId) {
+                $.ajax({
+                    url: "{{ admin_url('department/ajax-list') }}/" + unitId + "/0",
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#department_id').empty().append(
+                            '<option value="">Select Department</option>');
+                        $.each(data, function(key, value) {
+                            $('#department_id').append('<option value="' + value
+                                .id + '">' + value.name + '</option>');
+                        });
+                        $('#department_id').trigger('change.');
+                    },
+                    error: function(xhr) {
+                        alert('Error fetching unit. Please try again.');
+                    }
+                });
+            } else {
+                $('#department_id').empty().append('<option value="">Select Department</option>');
+                $('#department_id').trigger('change.');
             }
         });
 
@@ -209,6 +270,7 @@
                         d.permit_id = $('#permit_id').val();
                         d.unit_id = $('#unit_id').val();
                         d.company_id = $('#company_id').val();
+                        d.location_id = $('#location_id').val();
                         d.from_date = $('#from_date').val();
                         d.to_date = $('#to_date').val();
                         d.status = $('#status').val();
@@ -297,6 +359,7 @@
                                     unit_id = $('#unit_id').val();
                                     from_date = $('#from_date').val();
                                     company_id = $('#company_id').val();
+                                    location_id = $('#location_id').val();
                                     to_date = $('#to_date').val();
                                     status = $('#status').val();
 
@@ -307,6 +370,7 @@
                                         '?search=' + searchValue +
                                         '&permit_id=' + permit_id +
                                         '&company_id=' + company_id +
+                                        '&location_id=' + location_id +
                                         '&unit_id=' + unit_id +
                                         '&from_date=' + from_date +
                                         '&to_date=' + to_date +
@@ -320,6 +384,8 @@
                                 action: function(e, dt, button, config) {
                                     var searchValue = $('#datatable-list_filter input').val();
                                     permit_id = $('#permit_id').val();
+                                    company_id = $('#company_id').val();
+                                    location_id = $('#location_id').val();
                                     unit_id = $('#unit_id').val();
                                     from_date = $('#from_date').val();
                                     to_date = $('#to_date').val();
@@ -332,6 +398,7 @@
                                         '?search=' + searchValue +
                                         '&permit_id=' + permit_id +
                                         '&company_id=' + company_id +
+                                        '&location_id=' + location_id +
                                         '&unit_id=' + unit_id +
                                         '&from_date=' + from_date +
                                         '&to_date=' + to_date +

@@ -145,6 +145,11 @@ class SafetyPermit extends Model
             $company_id = decryptId($request->company_id);
             $query = $query->where('ptw_safety.company_id',  $company_id);
         }
+        if ($request->has('location_id') && $request->location_id) {
+
+            $location_id = decryptId($request->location_id);
+            $query = $query->where('ptw_safety.location_id',  $location_id);
+        }
 
         if ($request->has('from_date') && !empty($request->from_date)) {
             $fromDate = $request->from_date;
@@ -1060,6 +1065,11 @@ class SafetyPermit extends Model
 
             $company_id = decryptId($request->company_id);
             $query = $query->where('ptw_safety.company_id',  $company_id);
+        }
+        if ($request->has('location_id') && $request->location_id) {
+
+            $location_id = decryptId($request->location_id);
+            $query = $query->where('ptw_safety.location_id',  $location_id);
         }
         if ($request->has('from_date') && !empty($request->from_date)) {
             $fromDate = $request->from_date;
