@@ -20,6 +20,7 @@ class PpeExemption extends Model
         'request_for',
         'department',
         'unit',
+        'location_id',
         'from_date',
         'to_date',
         'company',
@@ -82,12 +83,21 @@ class PpeExemption extends Model
         if ($request->has('department') && $request->department) {
             $query->where('ppe_ppeexemption.department', 'LIKE', '%' . $request->department . '%');
         }
-        if ($request->has('unit') && $request->unit) {
-            $query->where('ppe_ppeexemption.unit', 'LIKE', '%' . $request->unit . '%');
+
+        if ($request->has('unit_id') && $request->unit_id) {
+            $query->where('ppe_ppeexemption.unit',  decryptId($request->unit_id) );
         }
-        if ($request->has('company') && $request->company) {
-            $query->where('ppe_ppeexemption.company', 'LIKE', '%' . $request->company . '%');
+        if ($request->has('company_id') && $request->company_id) {
+
+            $query->where('ppe_ppeexemption.company',  decryptId($request->company_id) );
         }
+        if ($request->has('location_id') && $request->location_id) {
+            $query->where('ppe_ppeexemption.location_id',  decryptId($request->location_id) );
+        }
+        if ($request->has('department_id') && $request->department_id) {
+            $query->where('ppe_ppeexemption.department',  decryptId($request->department_id) );
+        }
+
         if ($request->has('from_date') && !empty($request->from_date)) {
             $fromDate = $request->from_date;
             $query->where('ppe_ppeexemption.from_date', '>=', $fromDate);
@@ -136,25 +146,29 @@ class PpeExemption extends Model
         if ($request->request_for == 1) {
 
             $employee = User::where('employee_id', $request->emp_id)
-                ->select('unit_id', 'department_id', 'company_id')
+            ->select('*')
                 ->first();
 
             $unit = $employee->unit_id;
             $department = $employee->department_id;
 
+            $company = $employee->company_id;
+            $location = $employee->location_id;
 
-            $company = $employee->company_id ?? null;
         } elseif ($request->request_for == 2) {
             $work = Work::where('emp_id', $request->emp_id)
-                ->select('unit', 'department', 'company')
+                ->select('*')
                 ->first();
 
-            $unit = $work->unit ?? null;
+            $unit = $work->unit;
             $department = $work->department;
-            $company = $work->company ?? null;
+            $company = $work->company;
+            $location = $work->location;
+
         } else {
             $unit = Auth::user()->unit_id;
             $department = Auth::user()->department_id;
+            $location = Auth::user()->location_id;
             $company = Auth::user()->company_id;
         }
 
@@ -164,6 +178,7 @@ class PpeExemption extends Model
             'department' => $department,
             'unit' => $unit,
             'company' => $company,
+            'location_id' => $location,
             'request_for' => $request->request_for,
             'from_date' => $request->from_date,
             'to_date' => $request->to_date,
@@ -293,13 +308,6 @@ class PpeExemption extends Model
 
 
 
-        if ($request->search != null || $request->search != '') {
-            $search = $request->search;
-
-            $query =  $query->Where(function ($query) use ($search) {
-                $query->orWhereRaw('ppe_pperequest.emp_id LIKE "%' . $search . '%"');
-            });
-        }
 
         if ($request->has('emp_name') && $request->emp_name) {
             $query->where('ppe_ppeexemption.emp_name', 'LIKE', '%' . $request->emp_name . '%');
@@ -310,11 +318,18 @@ class PpeExemption extends Model
         if ($request->has('department') && $request->department) {
             $query->where('ppe_ppeexemption.department', 'LIKE', '%' . $request->department . '%');
         }
-        if ($request->has('unit') && $request->unit) {
-            $query->where('ppe_ppeexemption.unit', 'LIKE', '%' . $request->unit . '%');
+        if ($request->has('unit_id') && $request->unit_id) {
+            $query->where('ppe_ppeexemption.unit',  decryptId($request->unit_id) );
         }
-        if ($request->has('company') && $request->company) {
-            $query->where('ppe_ppeexemption.company', 'LIKE', '%' . $request->company . '%');
+        if ($request->has('company_id') && $request->company_id) {
+
+            $query->where('ppe_ppeexemption.company',  decryptId($request->company_id) );
+        }
+        if ($request->has('location_id') && $request->location_id) {
+            $query->where('ppe_ppeexemption.location_id',  decryptId($request->location_id) );
+        }
+        if ($request->has('department_id') && $request->department_id) {
+            $query->where('ppe_ppeexemption.department',  decryptId($request->department_id) );
         }
         if ($request->has('from_date') && !empty($request->from_date)) {
             $fromDate = $request->from_date;

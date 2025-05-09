@@ -80,7 +80,8 @@ class IncidentBodyParts extends Model
                 ->where('trash', 'NO')
                 ->where(function ($q) {
                     $q->where('status', 'Y')
-                        ->orWhere('status', 'N');
+                        ->orWhere('status', 'N')
+                        ->orWhere('status', 'T');
                 })
                 ->where(function ($q) use ($partyname) {
                     $q->where('injury_person_id', $partyname)
@@ -124,6 +125,12 @@ class IncidentBodyParts extends Model
         $random_id = $request->random_id;
         $folderPath = 'incident/body_parts/' . $random_id;
 
+        Storage::makeDirectory($folderPath);
+
+        // Set permission to 0777 (you must use chmod with full path)
+        $fullPath = storage_path("app/public/uploads/{$folderPath}");
+        chmod($fullPath, 0777);
+
         $base64String = $request->bodypartimage;
 
         if (preg_match('/^data:image\/(\w+);base64,/', $base64String, $matches)) {
@@ -145,7 +152,7 @@ class IncidentBodyParts extends Model
         }
 
 
-        if ($request['body_prim_id'] != 0) {
+        if ($request['body_prim_id'] != 0 && $request['incident_id'] != 0 ) {
             $locdatas = [
                 'incident_id' => $request->incident_id,
                 'random_id' => $random_id,
@@ -155,11 +162,36 @@ class IncidentBodyParts extends Model
                 'imgMapdata' => postData($request, 'imgMapdata'),
                 'body_part_image' => $storedImagePath,
                 'updated_by' => Auth::id(),
-                'status' => 'Y'
+                'status' => 'T'
             ];
             $updtBody =  $this->where('id', $request['body_prim_id'])->update($locdatas);
+        } elseif ($request['body_prim_id'] != 0 && $request['incident_id'] == 0) {
+            $locdatas = [
+                'incident_id' => $request->incident_id,
+                'random_id' => $random_id,
+                'injury_person_id' => decryptId($request->injuredPerson),
+                'injured_person_type' => decryptId($request->injury_person_type),
+                'injury_person_name' => $request->injuredPerson,
+                'imgMapdata' => postData($request, 'imgMapdata'),
+                'body_part_image' => $storedImagePath,
+                'updated_by' => Auth::id(),
+                'status' => 'T'
+            ];
+            $updtBody =  $this->where('id', $request['body_prim_id'])->update($locdatas);
+        } elseif ($request['body_prim_id'] == 0 && $request['incident_id'] != 0) {
+            $locdatas = [
+                'incident_id' => $request->incident_id,
+                'random_id' => $random_id,
+                'injury_person_id' => decryptId($request->injuredPerson),
+                'injured_person_type' => decryptId($request->injury_person_type),
+                'injury_person_name' => $request->injuredPerson,
+                'imgMapdata' => postData($request, 'imgMapdata'),
+                'body_part_image' => $storedImagePath,
+                'updated_by' => Auth::id(),
+                'status' => 'T'
+            ];
+            $updtBody =  $this->create($locdatas);
         } else {
-
             $locdatas = [
                 'incident_id' => decryptId($request->incident_id),
                 'random_id' => $random_id,

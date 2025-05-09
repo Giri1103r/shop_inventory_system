@@ -154,12 +154,6 @@
                     {{ isset($ppeexemption->to_date) ? $ppeexemption->to_date : '' }}</td>
             </tr>
             <tr>
-                <td width="50%" style="padding:5px;"><b>Department</b></td>
-                <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;">
-                    {{ getDepartment(isset($ppeexemption->department) ? $ppeexemption->department : '') }}</td>
-            </tr>
-            <tr>
                 <td width="50%" style="padding:5px;"><b>Company</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
@@ -168,12 +162,27 @@
 
             </tr>
             <tr>
+                <td width="50%" style="padding:5px;"><b>Location</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;">
+                    {{ getLocationname(isset($ppeexemption->location_id) ? $ppeexemption->location_id : '') }}
+                </td>
+            </tr>
+            <tr>
                 <td width="50%" style="padding:5px;"><b>Unit</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
                     {{ getUnitname(isset($ppeexemption->unit) ? $ppeexemption->unit : '') }}
                 </td>
             </tr>
+            <tr>
+                <td width="50%" style="padding:5px;"><b>Department</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;">
+                    {{ getDepartment(isset($ppeexemption->department) ? $ppeexemption->department : '') }}</td>
+            </tr>
+
+
 
             <tr>
                 <td width="50%" style="padding:5px;"><b>Reason</b></td>

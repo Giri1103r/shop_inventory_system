@@ -2605,11 +2605,13 @@
                         $.each(data['empdata'], function(i, emp) {
                             $("#imgMapdata1").val(emp['imgMapdata']);
                             $("#body_prim_id").val(emp['id']);
+                            $("#incident_id").val(incident_id);
                             $("#injury_id").val(injury_id);
                         });
                     } else {
                         // alert(injury_id);
                         $("#body_prim_id").val(0);
+                        $("#incident_id").val(incident_id);
                         $("#injury_id").val(injury_id);
                     }
                 },

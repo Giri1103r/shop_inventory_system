@@ -100,6 +100,12 @@ class PpeExemptionController extends Controller
                         ->editColumn('unit', function ($row) {
                             return $row->unit_name;
                         })
+                        ->editColumn('company', function ($row) {
+                            return getCompanyname($row->company);
+                        })
+                        ->editColumn('location_id', function ($row) {
+                            return getLocationname($row->location_id);
+                        })
                         ->addColumn('approve_status', function ($row) {
 
                             if ($row->approve_status ==  STATUS_EHS_APPROVAL_PENDING) {
@@ -256,7 +262,7 @@ class PpeExemptionController extends Controller
                         'message' => $ppeexemption->emp_name . ' has requested a PPE Exemption request on ' . displaydateformat($ppeexemption->created_at) . ' from ' .
                             displaydateformat($ppeexemption->from_date) . ' to ' . displaydateformat($ppeexemption->to_date),
                         'icon' => $img,
-                        'module' => 1,
+                       'module' => 2,
                         'style' => 'font-size: 1rem;'
                     )),
                     'web_link' => admin_url('ppe_exemption/approval/view/' . encryptId($id)),
@@ -499,7 +505,7 @@ class PpeExemptionController extends Controller
                         'title' => $message,
                         'message' => getUsername($updateData['approved_by']) .  " has"  . removeUnderScore(getStatus($updateData['approve_status']))  . " a PPE Exemption request on " . displaydateformat($emp_details->created_at) . " from " . displaydateformat($emp_details->from_date) . " to " . displaydateformat($emp_details->to_date),
                         'icon' => $img,
-                        'module' => 1,
+                       'module' => 2,
                         'style' => 'font-size: 1rem;'
                     )),
                     'web_link' => admin_url('ppe_exemption/approval/view/' . encryptId($id)),
@@ -521,13 +527,13 @@ class PpeExemptionController extends Controller
                 $img = admin_url('public/assets/images/ppe-management.jpg');
                 $notificationData = array(
                     'notification_type' => 1,
-                    'module_type' => 1,
+                    'module_type' => 2,
                     'notification_message' => $message,
                     'mobile_notification' => json_encode(array(
                         'title' => $message,
                         'message' => getUsername($updateData['approved_by']) .  " has"  . removeUnderScore(getStatus($updateData['approve_status']))  . " a PPE Exemption request on " . displaydateformat($emp_details->created_at) . " from " . displaydateformat($emp_details->from_date) . " to " . displaydateformat($emp_details->to_date),
                         'icon' => $img,
-                        'module' => 1,
+                       'module' => 2,
                         'style' => 'font-size: 1rem;'
                     )),
                     'web_link' => admin_url('ppe_exemption/approval/view/' . encryptId($id)),
@@ -563,9 +569,10 @@ class PpeExemptionController extends Controller
                 __("common.sno"),
                 __("Emp Id"),
                 __('Emp Name'),
-                __("Department"),
-                __("Unit"),
                 __("Company"),
+                __("Location"),
+                 __("Unit"),
+                __("Department"),
                 __("From Date"),
                 __("To Date"),
                 __("common.status"),
@@ -584,9 +591,10 @@ class PpeExemptionController extends Controller
                 $export[] =  $i;
                 $export[] =  $data->emp_id;
                 $export[] =  $data->emp_name;
-                $export[] = getDepartment($data->department);
+                $export[] =  getCompanyname($data->company);
+                $export[] =  getLocationname($data->location_id);
                 $export[] =  getUnitname($data->unit);
-                $export[] =  getcompanyname($data->company);
+                $export[] = getDepartment($data->department);
                 $export[] =  Displaydateformat($data->from_date);
                 $export[] =  Displaydateformat($data->to_date);
                 $export[] =  $data->status == 1 ? 'Active' : 'In-Active';
@@ -624,6 +632,9 @@ class PpeExemptionController extends Controller
                 );
         } catch (Exception $ex) {
             report($ex);
+
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ppe_exemption/list'));
         }
     }
 
@@ -646,9 +657,10 @@ class PpeExemptionController extends Controller
                 __("common.sno"),
                 __("Emp Id"),
                 __('Emp Name'),
-                __("Department"),
-                __("Unit"),
                 __("Company"),
+                __("Location"),
+                 __("Unit"),
+                __("Department"),
                 __("From Date"),
                 __("To Date"),
                 __("common.status"),
@@ -692,6 +704,9 @@ class PpeExemptionController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
+            report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ppe_exemption/list'));
         }
     }
 

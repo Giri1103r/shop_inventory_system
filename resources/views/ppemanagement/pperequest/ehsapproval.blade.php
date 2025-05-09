@@ -46,6 +46,24 @@
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('Company') }}</label>
+                                        <div class="view_data">
+                                            {{ getCompanyname(isset($pperequest->company_id) ? $pperequest->company_id : '') }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('Location') }}</label>
+                                        <div class="view_data">
+                                            {{ getLocationname(isset($pperequest->location_id) ? $pperequest->location_id : '') }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('Unit') }}</label>
+                                        <div class="view_data">
+                                            {{ getUnitname(isset($pperequest->unit_id) ? $pperequest->unit_id : '') }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('Department') }}</label>
                                         <div class="view_data">
                                             {{ getDepartment(isset($pperequest->department) ? $pperequest->department : '') }}

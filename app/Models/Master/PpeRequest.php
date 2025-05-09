@@ -23,6 +23,8 @@ class PpeRequest extends Model
         'department',
         'request_for',
         'unit_id',
+        'company_id',
+        'location_id',
         'item_code',
         'ppe_type',
         'approve_status',
@@ -48,10 +50,7 @@ class PpeRequest extends Model
         $query = $this->select('ppe_pperequest.*', 'ppe_pperequest.created_at as ppe_created_at', 'masters_department.department_name',  'inventory2.*', 'ppe_pperequest.id As ppe_request_id')
             ->join('masters_department', 'ppe_pperequest.department', '=', 'masters_department.id')
 
-            ->join('ppe_stock_inventory as inventory2', 'ppe_pperequest.item_code', '=', 'inventory2.id')
-
-            ->where('inventory2.trash', 'NO')
-            ->where('ppe_pperequest.trash', 'NO');
+            ->join('ppe_stock_inventory as inventory2', 'ppe_pperequest.item_code', '=', 'inventory2.id');
 
 
         if (in_array(ROLE_EHS_OFFICER, $userRole)) {
@@ -80,6 +79,21 @@ class PpeRequest extends Model
         if ($request->has('emp_name') && $request->emp_name) {
             $query->where('emp_name', 'LIKE', '%' . $request->emp_name . '%');
         }
+
+        if ($request->has('unit_id') && $request->unit_id) {
+            $query->where('ppe_pperequest.unit_id',  decryptId($request->unit_id) );
+        }
+        if ($request->has('company_id') && $request->company_id) {
+           
+            $query->where('ppe_pperequest.company_id',  decryptId($request->company_id) );
+        }
+        if ($request->has('location_id') && $request->location_id) {
+            $query->where('ppe_pperequest.location_id',  decryptId($request->location_id) );
+        }
+        if ($request->has('department_id') && $request->department_id) {
+            $query->where('ppe_pperequest.department',  decryptId($request->department_id) );
+        }
+
 
         if ($request->has('approve_status') && $request->approve_status) {
             $approveStatus = (int) $request->approve_status;
@@ -152,30 +166,38 @@ class PpeRequest extends Model
         if ($request->request_for == 1) {
 
             $employee = User::where('employee_id', $request->emp_id)
-                ->select('unit_id', 'department_id', 'company_id')
+            ->select('*')
                 ->first();
 
             $unit = $employee->unit_id;
             $department = $employee->department_id;
 
-
+            $company = $employee->company_id;
+            $location = $employee->location_id;
 
         } elseif ($request->request_for == 2) {
             $work = Work::where('emp_id', $request->emp_id)
-                ->select('unit', 'department', 'company')
+                ->select('*')
                 ->first();
 
             $unit = $work->unit;
             $department = $work->department;
+            $company = $work->company;
+            $location = $work->location;
+
         } else {
             $unit = Auth::user()->unit_id;
             $department = Auth::user()->department_id;
+            $location = Auth::user()->location_id;
+            $company = Auth::user()->company_id;
         }
         $insert_array = array(
             'emp_id' => $request->emp_id,
             'emp_name' => $request->emp_name,
             'department' => $department,
             'unit_id' => $unit,
+            'company_id' => $company,
+            'location_id' => $location,
             'request_for' => $request->request_for,
             'item_code' => $request->item_code,
             'ppe_type' => $request->ppe_type_id,
@@ -403,6 +425,19 @@ class PpeRequest extends Model
         } elseif ($request->has('to_date') && !empty($request->to_date)) {
             $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
             $query->where('created_at', '<=', $endDate);
+        }
+
+        if ($request->has('unit_id') && $request->unit_id) {
+            $query->where('ppe_pperequest.unit_id',  decryptId($request->unit_id) );
+        }
+        if ($request->has('company_id') && $request->company_id) {
+            $query->where('ppe_pperequest.company_id',  decryptId($request->company_id) );
+        }
+        if ($request->has('location_id') && $request->location_id) {
+            $query->where('ppe_pperequest.location_id',  decryptId($request->location_id) );
+        }
+        if ($request->has('department_id') && $request->department_id) {
+            $query->where('ppe_pperequest.department',  decryptId($request->department_id) );
         }
 
         return $query->orderBy('id', 'DESC')->get();
