@@ -50,7 +50,7 @@ use App\Http\Controllers\Inspection\Ohc\FirstAidMedicineInspectionController;
 use App\Http\Controllers\Inspection\Safety\SafetyGalleryInsepctionController;
 use App\Http\Controllers\Inspection\Environment\WorkNoiseMonitoringController;
 use App\Http\Controllers\Inspection\Ohc\HealthInstrumentCalibrationController;
-use App\Http\Controllers\Inspection\ohc\OHCHygieneCleaningChecklistController;
+use App\Http\Controllers\Inspection\Ohc\OHCHygieneCleaningChecklistController;
 use App\Http\Controllers\Inspection\Safety\MonthlyEyeWashInspectionController;
 use App\Http\Controllers\Inspection\Safety\MonthlyForkLiftInspectionController;
 use App\Http\Controllers\Inspection\Environment\WorkZoneAirMonitoringController;
