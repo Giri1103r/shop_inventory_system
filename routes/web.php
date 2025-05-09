@@ -223,6 +223,8 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('chart19', [KpiDashboardController::class, 'getChart19']);
                 Route::get('chart20', [KpiDashboardController::class, 'getChart20']);
                 Route::get('chart21', [KpiDashboardController::class, 'getChart21']);
+                Route::get('RCADistributionCount', [KpiDashboardController::class, 'getRCADistributionCount']);
+                Route::get('injurypart', [KpiDashboardController::class, 'getInjurypart']);
             });
 
             /**
