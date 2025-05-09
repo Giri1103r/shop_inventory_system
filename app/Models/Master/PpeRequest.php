@@ -83,15 +83,16 @@ class PpeRequest extends Model
         if ($request->has('unit_id') && $request->unit_id) {
             $query->where('ppe_pperequest.unit_id',  decryptId($request->unit_id) );
         }
+        if ($request->has('company_id') && $request->company_id) {
+            $query->where('ppe_pperequest.company_id',  decryptId($request->company_id) );
+        }
+        if ($request->has('location_id') && $request->location_id) {
+            $query->where('ppe_pperequest.location_id',  decryptId($request->location_id) );
+        }
         if ($request->has('department_id') && $request->department_id) {
             $query->where('ppe_pperequest.department',  decryptId($request->department_id) );
         }
-        // if ($request->has('company_id') && $request->company_id) {
-        //     $query->where('ppe_pperequest.company_id',  decryptId($request->company_id ));
-        // }
-        // if ($request->has('location_id') && $request->location_id) {
-        //     $query->where('ppe_pperequest.location_id',  decryptId($request->location_id ));
-        // }
+     
 
         if ($request->has('approve_status') && $request->approve_status) {
             $approveStatus = (int) $request->approve_status;
@@ -428,15 +429,15 @@ class PpeRequest extends Model
         if ($request->has('unit_id') && $request->unit_id) {
             $query->where('ppe_pperequest.unit_id',  decryptId($request->unit_id) );
         }
+        if ($request->has('company_id') && $request->company_id) {
+            $query->where('ppe_pperequest.company_id',  decryptId($request->company_id) );
+        }
+        if ($request->has('location_id') && $request->location_id) {
+            $query->where('ppe_pperequest.location_id',  decryptId($request->location_id) );
+        }
         if ($request->has('department_id') && $request->department_id) {
             $query->where('ppe_pperequest.department',  decryptId($request->department_id) );
         }
-        // if ($request->has('company_id') && $request->company_id) {
-        //     $query->where('ppe_pperequest.company_id',  decryptId($request->company_id ));
-        // }
-        // if ($request->has('location_id') && $request->location_id) {
-        //     $query->where('ppe_pperequest.location_id',  decryptId($request->location_id ));
-        // }
 
         return $query->orderBy('id', 'DESC')->get();
     }

@@ -145,6 +145,8 @@
                                         <th>Employee / Worker Name</th>
                                         <th>Item Code</th>
                                         <th>PPE Name</th>
+                                        <th>Company</th>
+                                        <th>Location</th>
                                         <th>Unit</th>
                                         <th>Department</th>
                                         <th data-priority="2">Approval Status</th>
@@ -392,7 +394,14 @@
                         data: 'ppe_name',
                         name: 'ppe_name'
                     },
-                  
+                    {
+                        data: 'company_id',
+                        name: 'company_id'
+                    },
+                    {
+                        data: 'location_id',
+                        name: 'location_id'
+                    },
                     {
                         data: 'unit_id',
                         name: 'unit_id'
