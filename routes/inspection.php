@@ -63,8 +63,10 @@ use App\Http\Controllers\Inspection\Environment\DgSetStackEmissionMonitoringCont
 use App\Http\Controllers\Inspection\Fire\FirePumpHouseController;
 use App\Http\Controllers\Inspection\Fire\FirePreNocController;
 use App\Http\Controllers\Inspection\Audit\InterUnitAuditController;
+use App\Http\Controllers\Inspection\Audit\Master\ComplianceCategoryController;
 use App\Http\Controllers\Inspection\Fire\ChecklistObservationFollowupController;
 use App\Http\Controllers\Inspection\Ohc\PhysicalMedicalExaminationController;
+use App\Http\Controllers\MSDS\Master\ChemicalController;
 
 Route::group(['prefix' => 'inspection/master/'], function () {
     Route::group(['prefix' => 'checklist-type'], function () {
@@ -186,6 +188,24 @@ Route::group(['prefix' => 'audit/'], function () {
         Route::post('import/Submit', [TaskMasterController::class, 'importSubmit']);
         Route::post('delete', [TaskMasterController::class, 'Delete']);
         Route::post('status', [TaskMasterController::class, 'StatusChange']);
+    });
+
+    Route::group(['prefix' => 'master/compliance_category'], function () {
+        Route::GET('/list', [ComplianceCategoryController::class, 'Index']);
+        Route::POST('/list', [ComplianceCategoryController::class, 'Index']);
+        Route::GET('/add', [ComplianceCategoryController::class, 'Add']);
+        Route::POST('/add/submit', [ComplianceCategoryController::class, 'Store']);
+        Route::POST('/unique', [ComplianceCategoryController::class, 'UniqueCheck']);
+        Route::GET('/edit/{id}', [ComplianceCategoryController::class, 'Edit']);
+        Route::POST('/edit/submit', [ComplianceCategoryController::class, 'Update']);
+        Route::GET('/view/{id}', [ComplianceCategoryController::class, 'View']);
+        Route::POST('/delete', [ComplianceCategoryController::class, 'Delete']);
+        Route::POST('/status', [ComplianceCategoryController::class, 'StatusChange']);
+        Route::GET('/export/excel', [ComplianceCategoryController::class, 'ExportExcel']);
+        Route::GET('/export/pdf', [ComplianceCategoryController::class, 'ExportPDF']);
+        Route::GET('/import', [ComplianceCategoryController::class, 'Import']);
+        Route::POST('/import/Submit', [ComplianceCategoryController::class, 'ImportSubmit']);
+        Route::GET('/sample_download', [ComplianceCategoryController::class, 'DownloadSample']);
     });
 
     Route::group(['prefix' => 'monthly-audit/audit-plan/'], function () {
@@ -467,8 +487,25 @@ Route::group(['prefix' => 'safety/'], function () {
     });
 });
 
-
 Route::group(['prefix' => 'msds/'], function () {
+    Route::group(['prefix' => 'master/chemicals'], function () {
+        Route::GET('/list', [ChemicalController::class, 'Index']);
+        Route::POST('/list', [ChemicalController::class, 'Index']);
+        Route::GET('/add', [ChemicalController::class, 'Add']);
+        Route::POST('/add/submit', [ChemicalController::class, 'Store']);
+        Route::POST('/unique', [ChemicalController::class, 'UniqueCheck']);
+        Route::GET('/edit/{id}', [ChemicalController::class, 'Edit']);
+        Route::POST('/edit/submit', [ChemicalController::class, 'Update']);
+        Route::GET('/view/{id}', [ChemicalController::class, 'View']);
+        Route::POST('/delete', [ChemicalController::class, 'Delete']);
+        Route::POST('/status', [ChemicalController::class, 'StatusChange']);
+        Route::GET('/export/excel', [ChemicalController::class, 'ExportExcel']);
+        Route::GET('/export/pdf', [ChemicalController::class, 'ExportPDF']);
+        Route::GET('/import', [ChemicalController::class, 'Import']);
+        Route::POST('/import/Submit', [ChemicalController::class, 'ImportSubmit']);
+        Route::GET('/sample_download', [ChemicalController::class, 'DownloadSample']);
+    });
+
     Route::get('list', [MSDSController::class, 'index']);
     Route::post('list', [MSDSController::class, 'index']);
     Route::get('add', [MSDSController::class, 'add']);
@@ -483,6 +520,8 @@ Route::group(['prefix' => 'msds/'], function () {
     Route::post('unique', [MSDSController::class, 'Uniquecheck']);
     Route::get('generalpdf/{id}', [MSDSController::class, 'generalpdf']);
     Route::GET('generalExcel/{id}', [MSDSController::class, 'generalExcel']);
+    Route::POST('getUnit', [MSDSController::class, 'GetUnit']);
+    Route::POST('getDepartment', [MSDSController::class, 'getDepartment']);
 });
 
 Route::group(['prefix' => 'rraa/ohc_fire_environment_compliance/'], function () {
