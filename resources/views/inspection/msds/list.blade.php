@@ -23,15 +23,42 @@
                             <div class="card-body">
                                 <div class="col-md-12">
                                     <div class="row">
-                                        <div class="col-md-4 mb-3 form-input">
-                                            <label for="item_code" class="form-label ">Item Code</label>
-                                            <input type="text" name="item_code" id="item_code" placeholder="Item Code"
-                                                class="form-control">
+                                        <div class="col-md-4">
+                                            <div class="form-group form-input">
+                                                <label for="location_id" class="form-label require">
+                                                    Location
+                                                </label>
+                                                <select name="location_id" id="location_id"
+                                                    class=" form-control single-select" style="width: 100%">
+                                                    <option value="">Select Location</option>
+                                                    @foreach ($locations as $location)
+                                                        <option value="{{ encryptId($location->id) }}">
+                                                            {{ $location->location_name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
                                         </div>
-                                        <div class="col-md-4 mb-3 form-input">
-                                            <label for="name_of_chemical" class="form-label ">Name of Chemical</label>
-                                            <input type="text" name="name_of_chemical" id="name_of_chemical"
-                                                placeholder="Name of Chemical" class="form-control">
+                                        <div class="col-md-4">
+                                            <div class="form-group form-input">
+                                                <label for="unit_id" class="form-label require">
+                                                    Unit
+                                                </label>
+                                                <select name="unit_id" id="unit_id" class=" form-control single-select"
+                                                    style="width: 100%">
+                                                    <option value="">Select Unit</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group form-input">
+                                                <label for="department_id" class="form-label require">
+                                                    Department
+                                                </label>
+                                                <select name="department_id" id="department_id"
+                                                    class=" form-control single-select" style="width: 100%">
+                                                    <option value="">Select Department</option>
+                                                </select>
+                                            </div>
                                         </div>
                                         <div class="col-md-3 mt-3">
                                             <x-button-search></x-button-search>
@@ -52,8 +79,9 @@
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
-                                        <th>Item Code</th>
-                                        <th>Name of Chemical</th>
+                                        <th>Location</th>
+                                        <th>Unit</th>
+                                        <th>Department</th>
                                         <th>{{ __('common.created_date') }}</th>
                                         <th>{{ __('common.action') }}</th>
                                     </tr>
@@ -71,160 +99,238 @@
 @stop
 
 @push('script')
-<script type="text/javascript">
-    $(document).ready(function() {
+    <script type="text/javascript">
+        $(document).ready(function() {
 
-        var firstTh = $('.datatable-list thead th:first');
-        firstTh.removeClass('sorting_asc');
+            var firstTh = $('.datatable-list thead th:first');
+            firstTh.removeClass('sorting_asc');
 
-    });
+            $('#location_id').on('change', function() {
+                var location_id = $(this).val();
+                $('#department_id').val("").trigger("change");
+                $('#unit_id').val("").trigger("change");
 
-    $(function() {
-        /* Datatable */
-        var table = $('.datatable-list').DataTable({
-            autoWidth: false,
-            responsive: true,
-            processing: false,
-            serverSide: true,
-            searching: true,
-            ordering: true,
-            dom: 'Bfrtip',
-            layout: {
-                top2Start: 'buttons',
-                top2End: {
-                    search: {
-                        placeholder: ''
+                var csrf_token = $('meta[name="csrf-token"]').attr('content');
+
+                $.ajax({
+                    url: '{{ admin_url('msds/getUnit') }}',
+                    type: 'POST',
+                    data: {
+                        location: location_id,
+                        _token: csrf_token
+                    },
+                    success: function(response) {
+                        let options = '<option value="">Select Unit</option>';
+                        if (response.unit && response.unit.length > 0) {
+                            response.unit.forEach(function(unit) {
+                                options +=
+                                    `<option value="${unit.id}">${unit.unit}</option>`;
+                            });
+                        } else {
+                            options = '<option value="">No Unit available</option>';
+                        }
+                        $('#unit_id').html(options);
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("AJAX Error:", error);
+                        $('#unit_id').html('<option value="">Error loading Unit</option>');
+                    }
+                });
+            });
+
+            $('#unit_id').on('change', function() {
+                $('#department_id').val("").trigger("change");
+
+                var location_id = $('#location_id').val();
+                var unit_id = $(this).val();
+                var csrf_token = $('meta[name="csrf-token"]').attr('content');
+
+                $.ajax({
+                    url: '{{ admin_url('msds/getDepartment') }}',
+                    type: 'POST',
+                    data: {
+                        unit: unit_id,
+                        location: location_id,
+                        _token: csrf_token
+                    },
+                    success: function(response) {
+                        let options = '<option value="">Select Department</option>';
+                        if (response.department && response.department.length > 0) {
+                            response.department.forEach(function(department) {
+                                options +=
+                                    `<option value="${department.id}">${department.department_name}</option>`;
+                            });
+                        } else {
+                            options = '<option value="">No Department available</option>';
+                        }
+                        $('#department_id').html(options);
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("AJAX Error:", error);
+                        $('#department_id').html(
+                            '<option value="">Error loading Unit</option>');
+                    }
+                });
+            });
+
+
+        });
+
+        $(function() {
+            /* Datatable */
+            var table = $('.datatable-list').DataTable({
+                autoWidth: false,
+                responsive: true,
+                processing: false,
+                serverSide: true,
+                searching: true,
+                ordering: true,
+                dom: 'Bfrtip',
+                layout: {
+                    top2Start: 'buttons',
+                    top2End: {
+                        search: {
+                            placeholder: ''
+                        }
+                    },
+                    topStart: '',
+                    topEnd: '',
+                    bottomStart: '',
+                    bottomEnd: '',
+                    bottom2Start: 'info',
+                    bottom2End: 'paging'
+                },
+
+                ajax: {
+                    url: "{{ admin_url('msds/list') }}",
+                    type: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
+                            .attr('content')
+                    },
+                    data: function(d) {
+                        d.location_id = $('#location_id').val();
+                        d.department_id = $('#department_id').val();
+                        d.unit_id = $('#unit_id').val();
+                    },
+                    error: function(xhr, error, code) {
+                        if (xhr.status === 419) {
+                            alert('Session has expired. You will be redirected to the login page.');
+                            window.location.href = "{{ url('') }}";
+                        }
                     }
                 },
-                topStart: '',
-                topEnd: '',
-                bottomStart: '',
-                bottomEnd: '',
-                bottom2Start: 'info',
-                bottom2End: 'paging'
-            },
+                columns: [{
+                        data: 'DT_RowIndex',
+                        orderable: false,
+                        searchable: true,
+                    },
+                    {
+                        data: 'location_name',
+                        name: 'location_name',
+                    },
+                    {
+                        data: 'department_name',
+                        name: 'department_name',
+                    },
+                    {
+                        data: 'unit_name',
+                        name: 'unit_name',
+                    },
+                    {
+                        data: 'created_date',
+                        name: 'created_date',
+                    },
+                    {
+                        data: 'action',
+                        name: 'action',
+                        orderable: false,
+                    },
+                ],
+                language: {
+                    paginate: {
+                        first: '<i title="{{ __('common.first') }}" class="fa fa-angle-double-left" aria-hidden="true"></i>',
+                        last: '<i title="{{ __('common.last') }}" title="Next" class="fa fa-angle-double-right" aria-hidden="true"></i>',
+                        next: '<i title="{{ __('common.next') }}" class="fa fa-angle-right" aria-hidden="true"></i>',
+                        previous: '<i title="{{ __('common.previous') }}" class="fa fa-angle-left" aria-hidden="true"></i>',
+                    },
+                    "info": "{{ __('common.dt_info') }}",
+                    "infoEmpty": "{{ __('common.dt_infoEmpty') }}",
+                    "infoFiltered": "{{ __('common.dt_infoFiltered') }}",
+                },
+                aLengthMenu: [
+                    [10, 25, 50, 100],
+                    [10, 25, 50, 100]
+                ],
+                buttons: [{
+                        extend: 'collection',
+                        text: '{{ __('common.export') }}',
+                        buttons: [{
+                                extend: 'pdf',
+                                text: '{{ __('common.pdf') }}',
+                                action: function(e, dt, button, config) {
+                                    var searchValue = $('#datatable-list_filter input').val();
+                                    location_id = $('#location_id').val();
+                                    unit_id = $('#unit_id').val();
+                                    department_id = $('#department_id').val();
 
-            ajax: {
-                url: "{{ admin_url('msds/list') }}",
-                type: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
-                        .attr('content')
-                },
-                data: function(d) {
-                    d.item_code = $('#item_code').val();
-                    d.name_of_chemical = $('#name_of_chemical').val();
-                },
-                error: function(xhr, error, code) {
-                    if (xhr.status === 419) {
-                        alert('Session has expired. You will be redirected to the login page.');
-                        window.location.href = "{{ url('') }}";
+                                    $(".dt-button").removeClass('processing');
+                                    $('body').click();
+                                    window.location.href =
+                                        "{{ admin_url('msds/export/pdf') }}" +
+                                        '?search=' + searchValue +
+                                        '&location_id=' + location_id +
+                                        '&unit_id=' + unit_id +
+                                        '&department_id=' + department_id
+                                }
+                            },
+                            {
+                                extend: 'excel',
+                                text: '{{ __('common.excel') }}',
+                                action: function(e, dt, button, config) {
+                                    var searchValue = $('#datatable-list_filter input').val();
+                                    location_id = $('#location_id').val();
+                                    unit_id = $('#unit_id').val();
+                                    department_id = $('#department_id').val();
+
+                                    $(".dt-button").removeClass('processing');
+                                    $('body').click();
+                                    window.location.href =
+                                        "{{ admin_url('msds/export/excel') }}" +
+                                        '?search=' + searchValue +
+                                        '&location_id=' + location_id +
+                                        '&unit_id=' + unit_id +
+                                        '&department_id=' + department_id
+                                }
+                            },
+                        ]
+                    },
+
+                    {
+                        "extend": 'pageLength',
+                        "text": '{{ __('common.show') }} 10 {{ __('common.records') }}'
                     }
-                }
-            },
-            columns: [{
-                    data: 'DT_RowIndex',
-                    orderable: false,
-                    searchable: true,
-                },
-                {
-                    data: 'item_code',
-                    name: 'item_code',
-                },
-                {
-                    data: 'name_of_chemical',
-                    name: 'name_of_chemical',
-                },
-                {
-                    data: 'created_date',
-                    name: 'created_date',
-                },
-                {
-                    data: 'action',
-                    name: 'action',
-                    orderable: false,
-                },
-            ],
-            language: {
-                paginate: {
-                    first: '<i title="{{ __('common.first') }}" class="fa fa-angle-double-left" aria-hidden="true"></i>',
-                    last: '<i title="{{ __('common.last') }}" title="Next" class="fa fa-angle-double-right" aria-hidden="true"></i>',
-                    next: '<i title="{{ __('common.next') }}" class="fa fa-angle-right" aria-hidden="true"></i>',
-                    previous: '<i title="{{ __('common.previous') }}" class="fa fa-angle-left" aria-hidden="true"></i>',
-                },
-                "info": "{{ __('common.dt_info') }}",
-                "infoEmpty": "{{ __('common.dt_infoEmpty') }}",
-                "infoFiltered": "{{ __('common.dt_infoFiltered') }}",
-            },
-            aLengthMenu: [
-                [10, 25, 50, 100],
-                [10, 25, 50, 100]
-            ],
-            buttons: [{
-                    extend: 'collection',
-                    text: '{{ __('common.export') }}',
-                    buttons: [{
-                            extend: 'pdf',
-                            text: '{{ __('common.pdf') }}',
-                            action: function(e, dt, button, config) {
-                                var searchValue = $('#datatable-list_filter input').val();
-                                item_code = $('#item_code').val();
-                                name_of_chemical = $('#name_of_chemical').val();
+                ],
 
-                                $(".dt-button").removeClass('processing');
-                                $('body').click();
-                                window.location.href =
-                                    "{{ admin_url('msds/export/pdf') }}" +
-                                    '?search=' + searchValue +
-                                    '&item_code=' + item_code +
-                                    '&name_of_chemical=' + name_of_chemical 
-                            }
-                        },
-                        {
-                            extend: 'excel',
-                            text: '{{ __('common.excel') }}',
-                            action: function(e, dt, button, config) {
-                                var searchValue = $('#datatable-list_filter input').val();
-                                item_code = $('#item_code').val();
-                                name_of_chemical = $('#name_of_chemical').val();
+            });
 
-                                $(".dt-button").removeClass('processing');
-                                $('body').click();
-                                window.location.href =
-                                    "{{ admin_url('msds/export/excel') }}" +
-                                    '?search=' + searchValue +
-                                    '&item_code=' + item_code +
-                                    '&name_of_chemical=' + name_of_chemical
-                            }
-                        },
-                    ]
-                },
+            table.on('length.dt', function(e, settings, len) {
+                var text = '{{ __('common.show') }} ' + len + ' {{ __('common.records') }}';
+                $('.buttons-page-length').find('span').text(text);
+            });
 
-                {
-                    "extend": 'pageLength',
-                    "text": '{{ __('common.show') }} 10 {{ __('common.records') }}'
-                }
-            ],
-
-        });
-
-        table.on('length.dt', function(e, settings, len) {
-            var text = '{{ __('common.show') }} ' + len + ' {{ __('common.records') }}';
-            $('.buttons-page-length').find('span').text(text);
-        });
-
-        $(document).on('click', '#searchform', function() {
-            table.draw();
-        });
-
-        $(document).on('click', '#resetform', function() {
-            $('#formsearch .single-select').val('');
-            $('#formsearch .single-select').trigger('change');
-            setTimeout(function() {
+            $(document).on('click', '#searchform', function() {
                 table.draw();
-            }, 150);
-        });
+            });
 
-    });
-</script>
+            $(document).on('click', '#resetform', function() {
+                $('#formsearch .single-select').val('');
+                $('#formsearch .single-select').trigger('change');
+                setTimeout(function() {
+                    table.draw();
+                }, 150);
+            });
+
+        });
+    </script>
 @endpush

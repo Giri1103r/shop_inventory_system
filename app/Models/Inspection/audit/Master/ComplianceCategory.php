@@ -1,0 +1,184 @@
+<?php
+
+namespace App\Models\Inspection\audit\Master;
+
+use App\Scopes\TrashScope;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Database\Eloquent\Model;
+
+class ComplianceCategory extends Model
+{
+    protected $table = 'inspection_audit_master_compliance_category';
+    protected $primaryKey = 'id';
+
+    protected $fillable = [
+        'id',
+        'compliance_category',
+        'status',
+        'trash',
+        'created_by',
+        'updated_by',
+        'created_at',
+        'updated_at',
+    ];
+
+    protected $attributes = [
+        'status' => 1,
+        'trash' => 'NO',
+    ];
+
+    public function list()
+    {
+        $request = request();
+        $search = '';
+        $query = $this->select('inspection_audit_master_compliance_category.*');
+        // dd($query);
+        $org_total =  $query;
+        $org_total_counts = $org_total->count();
+
+        if ($request->search['value'] != null || $request->search['value'] != '') {
+            $search = $request->search['value'];
+
+            $query->where(function ($query) use ($search) {
+                $query
+                    ->orWhere('compliance_category', 'LIKE', '%' . $search . '%');
+            });
+        }
+
+        if ($request->has('compliance_category') && $request->compliance_category) {
+            $query = $query->where('compliance_category', 'LIKE', '%' . $request->compliance_category . '%');
+        }
+        if ($request->has('status') && $request->status) {
+
+            $query = $query->where('status', decryptId($request->status));
+        }
+        $data_count = $query;
+        $total_records = $data_count->count();
+
+        $query->orderBy('id', 'DESC');
+
+        if ($request->length != -1) {
+            $query->offset($request->start)->limit($request->length);
+        }
+
+        $data = $query->get();
+
+        $datas = array(
+            'data' => $data,
+            'total_records' => $org_total_counts,
+            'filter_records' => $total_records,
+        );
+        return $datas;
+    }
+
+    public function UniqueCheck($data)
+    {
+
+        return $this->where('compliance_category',  $data)->get();
+    }
+
+    public function ExistuniqueCheck($data, $id)
+    {
+        return $this->where('compliance_category',  $data)
+            ->where('id', '!=', $id)
+            ->get();
+    }
+
+    public function store()
+    {
+        $request = request();
+
+        $insert_array = array(
+            'compliance_category' => $request->compliance_category,
+            'created_by' => Auth::id()
+        );
+        return $this->create($insert_array);
+    }
+
+    public function updates($id)
+    {
+
+        $request = request();
+
+        $update_array = array(
+            'compliance_category' => $request->compliance_category,
+            'updated_by' => Auth::id()
+        );
+        return $this->where('id', $id)->update($update_array);
+    }
+
+    public function statuschange($id)
+    {
+        $request = request();
+
+        $type = $request->types;
+        if ($type == 1) {
+            $update_data = array(
+                'status' => 0,
+            );
+        } else {
+            $update_data = array(
+                'status' => 1,
+            );
+        }
+
+        return $this->where('id', $id)->update($update_data);
+    }
+
+    public function deleterecord($id)
+    {
+
+        $update_data = array(
+            'status' => 0,
+            'trash' => 'YES',
+        );
+
+        return $this->where('id', $id)->update($update_data);
+    }
+
+    public function exportdata()
+    {
+        $request = request();
+        $search = '';
+        $query = $this->select('inspection_audit_master_compliance_category.*');
+        if ($request->search != null || $request->search != '') {
+            $search = $request->search;
+
+            $query =  $query->Where(function ($query) use ($search) {
+                $query->orWhereRaw('compliance_category LIKE "%' . $search . '%"');
+            });
+        }
+
+        if ($request->has('compliance_category') && $request->compliance_category) {
+            $query = $query->where('compliance_category', 'LIKE', '%' . $request->compliance_category . '%');
+        }
+        if ($request->has('status') && $request->status) {
+
+            $query = $query->where('inspection_audit_master_compliance_category.status', decryptId($request->status));
+        }
+        $query->orderBy('id', 'DESC');
+        return  $query->get();
+    }
+
+    public function selectOne($id)
+    {
+
+        $data = $this->select(
+            'inspection_audit_master_compliance_category.*'
+        )
+            ->where('inspection_audit_master_compliance_category.id', $id)
+            ->first();
+
+        return $data;
+    }
+
+    public function GetCategory()
+    {
+        $data =  $this->get();
+        return $data;
+    }
+    protected static function booted()
+    {
+        static::addGlobalScope(new TrashScope('inspection_audit_master_compliance_category'));
+    }
+}
