@@ -255,7 +255,7 @@ class PpeExemptionController extends Controller
                 $img = admin_url('public/assets/images/ppe-management.jpg');
                 $notificationData = array(
                     'notification_type' => 1,
-                    'module_type' => 1,
+                    'module' => 2,
                     'notification_message' => $message,
                     'mobile_notification' => json_encode(array(
                         'title' => $message,
@@ -499,7 +499,7 @@ class PpeExemptionController extends Controller
                 $img = admin_url('public/assets/images/ppe-management.jpg');
                 $notificationData = array(
                     'notification_type' => 1,
-                    'module_type' => 1,
+                    'module' => 2,
                     'notification_message' => $message,
                     'mobile_notification' => json_encode(array(
                         'title' => $message,

@@ -346,7 +346,7 @@ class TrainingScheduleController extends Controller
                             $img = admin_url('public/assets/icons/training.png');
                             $notificationData = [
                                 'notification_type' => 2,
-                                'module_type' => 2,
+                               'module' => 4,
                                 'notification_message' => $mailsubject,
                                 'mobile_notification' => json_encode([
                                     'title' => $mailsubject,
@@ -424,7 +424,7 @@ class TrainingScheduleController extends Controller
                     if (!empty($assignedUsers)) {
                         $notificationData = [
                             'notification_type' => 2,
-                            'module_type' => 2,
+                           'module' => 4,
                             'notification_message' => $mailsubject,
                             'mobile_notification' => json_encode([
                                 'title' => $mailsubject,
@@ -739,7 +739,7 @@ class TrainingScheduleController extends Controller
                             // Prepare a single notification
                             $notificationData = [
                                 'notification_type' => 2,
-                                'module_type' => 2,
+                               'module' => 4,
                                 'notification_message' => $mailSubject,
                                 'mobile_notification' => json_encode([
                                     'title' => $mailSubject,
@@ -1023,7 +1023,7 @@ class TrainingScheduleController extends Controller
                             if (!empty($assigned_users)) {
                                 $notificationData = [
                                     'notification_type' => 2,
-                                    'module_type' => 2,
+                                   'module' => 4,
                                     'notification_message' => $mailsubject,
                                     'mobile_notification' => json_encode([
                                         'title' => $mailsubject,
@@ -1089,7 +1089,7 @@ class TrainingScheduleController extends Controller
                                     $img = admin_url('public/assets/icons/training.png');
                                     $notificationData = [
                                         'notification_type' => 2,
-                                        'module_type' => 2,
+                                       'module' => 4,
                                         'notification_message' => $mailsubject,
                                         'mobile_notification' => json_encode([
                                             'title' => $mailsubject,
@@ -1248,7 +1248,7 @@ class TrainingScheduleController extends Controller
                         $img = admin_url('public/assets/icons/traning.png');
                         $notificationData = [
                             'notification_type' => 2,
-                            'module_type' => 2,
+                           'module' => 4,
                             'notification_message' => $mailsubject,
                             'mobile_notification' => json_encode([
                                 'title' => $mailsubject,
