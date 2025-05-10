@@ -488,7 +488,7 @@ class SafetyPermitController extends Controller
             return view('permit.safetypermit.edit', $data);
         } catch (Exception $ex) {
 
-            report($ex);
+            dd($ex);
             Session::flash('error', 'Something Went Wrong Please try again after some time');
             return redirect('safetypermit/list');
         }
@@ -628,7 +628,7 @@ class SafetyPermitController extends Controller
             Session::flash('success', __('Your data has been updated successfully'));
             return redirect(admin_url('safetypermit/list'));
         } catch (Exception $ex) {
-            report($ex);
+            dd($ex);
             Session::flash('error', 'Something went wrong Please try again after some time');
             return redirect(admin_url('safetypermit/list'));
         }
