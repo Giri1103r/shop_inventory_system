@@ -1307,9 +1307,9 @@
             noCalendar: true,
             dateFormat: "H:i",
             time_24hr: true,
-            onChange: function(selectedDates, dateStr, instance) {
-                validateReportingTime();
-            }
+            // onChange: function(selectedDates, dateStr, instance) {
+            //     validateReportingTime();
+            // }
         });
 
         function validateReportingTime() {
@@ -1327,15 +1327,15 @@
                 var reportingDateTime = moment(incidentDateOnly + " " + reportingTimeStr, "D-M-YYYY HH:mm");
 
                 // Check if reporting is BEFORE incident
-                if (reportingDateTime.isBefore(incidentDateTime)) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Invalid Time',
-                        text: 'Time of reporting cannot be before the Incident Date an  d Time.',
-                        confirmButtonText: 'OK'
-                    });
-                    $("#time_of_reporting").val('');
-                }
+                // if (reportingDateTime.isBefore(incidentDateTime)) {
+                //     Swal.fire({
+                //         icon: 'error',
+                //         title: 'Invalid Time',
+                //         text: 'Time of reporting cannot be before the Incident Date an  d Time.',
+                //         confirmButtonText: 'OK'
+                //     });
+                //     $("#time_of_reporting").val('');
+                // }
             }
         }
 
