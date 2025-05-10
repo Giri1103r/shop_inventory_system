@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>AMBIENT AIR MONITORING -YEARLY| KARAM</title>
+    <title>AMBIENT AIR MONITORING| KARAM</title>
 
     <style>
         .badge {
@@ -123,7 +123,7 @@
                 </td>
                 <td border="0"
                     style="width:50%;float:right;text-align:right;font-size: 24px;font-weight:bold;font-family: Georgia, serif;">
-                    AMBIENT AIR MONITORING -YEARLY
+                    AMBIENT AIR MONITORING
                 </td>
             </tr>
         </table>
@@ -150,7 +150,7 @@
             <tr>
                 <td
                     style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                    AMBIENT AIR MONITORING -YEARLY
+                    AMBIENT AIR MONITORING
 
                 </td>
             </tr>

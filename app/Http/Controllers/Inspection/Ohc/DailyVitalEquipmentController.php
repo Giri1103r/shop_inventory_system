@@ -236,7 +236,7 @@ class DailyVitalEquipmentController extends Controller
                 }
 
                 $sheet->mergeCells("D{$currentRow}:H" . ($currentRow + 2));
-                $sheet->setCellValue("D{$currentRow}", "OCCUPATIONAL HEALTH CENTER\nपारमर्शिक स्वास्थ्य केंद्र\nPN INTERNATIONAL PVT LTD");
+                $sheet->setCellValue("D{$currentRow}", "OCCUPATIONAL HEALTH CENTER\nपारमर्शिक स्वास्थ्य केंद्र\n");
                 $sheet->getStyle("D{$currentRow}")->applyFromArray([
                     'font' => ['bold' => true, 'size' => 14],
                     // 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
@@ -535,7 +535,7 @@ class DailyVitalEquipmentController extends Controller
             }
 
             $sheet->mergeCells("D1:H3");
-            $sheet->setCellValue("D1", "OCCUPATIONAL HEALTH CENTER\nपारमर्शिक स्वास्थ्य केंद्र\nPN INTERNATIONAL PVT LTD");
+            $sheet->setCellValue("D1", "OCCUPATIONAL HEALTH CENTER\nपारमर्शिक स्वास्थ्य केंद्र\n");
             $sheet->getStyle("D1")->applyFromArray([
                 'font' => ['bold' => true, 'size' => 14],
                 'alignment' => [

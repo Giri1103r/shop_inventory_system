@@ -3,6 +3,7 @@
 namespace App\Models\Inspection\audit;
 
 use App\Scopes\TrashScope;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 
@@ -49,6 +50,20 @@ class AuditAnalysisChecklist extends Model
             $query = $query->where(function ($query) use ($search) {
                 $query->orWhereRaw('floor_name LIKE "%' . $search . '%"');
             });
+        }
+
+        if ($request->has('from_date') && !empty($request->from_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_audit_analysis_checklist.created_at', '>=', $startDate);
+        }
+        if ($request->has('to_date') && !empty($request->to_date)) {
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_audit_analysis_checklist.created_at', '<=', $endDate);
+        }
+        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->whereBetween('inspection_audit_analysis_checklist.created_at', [$startDate, $endDate]);
         }
 
         // if (isset($request->category_name) && $request->category_name) {
@@ -159,7 +174,19 @@ class AuditAnalysisChecklist extends Model
         if (isset($request->category_id) && $request->category_id) {
             $query = $query->where('inspection_audit_analysis_checklist.category_id', 'LIKE', '%' . $request->category_id . '%');
         }
-
+        if ($request->has('from_date') && !empty($request->from_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_audit_analysis_checklist.created_at', '>=', $startDate);
+        }
+        if ($request->has('to_date') && !empty($request->to_date)) {
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_audit_analysis_checklist.created_at', '<=', $endDate);
+        }
+        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->whereBetween('inspection_audit_analysis_checklist.created_at', [$startDate, $endDate]);
+        }
         if (isset($request->order) && count($request->order) > 0) {
             $columnName = $request->order[0]['column'];
             $columnorder = $request->order[0]['dir'];

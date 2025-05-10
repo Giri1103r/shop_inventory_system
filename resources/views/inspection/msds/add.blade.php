@@ -42,7 +42,7 @@
                                             <div class="card-header-inner">
                                                 <h4 class="text-white">MSDS Details</h4>
                                             </div>
-                                            <div class="col-md-4">
+                                            <div class="col-md-4 mb-3">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Document Number</label>
                                                     <input type="text" name ="document_number" class="form-control"
@@ -50,7 +50,7 @@
                                                         readonly>
                                                 </div>
                                             </div>
-                                            <div class="col-md-4">
+                                            <div class="col-md-4 mb-3">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Issue Date</label>
                                                     <input type="text" name ="issue_date" id="issue_date"
@@ -59,7 +59,7 @@
                                                 </div>
                                             </div>
 
-                                            <div class="col-md-4">
+                                            <div class="col-md-4 mb-3">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Revision & Data</label>
                                                     <input type="text" name ="revision_date" class="form-control"
@@ -69,6 +69,43 @@
                                             </div>
                                             <input type="hidden" name="document_reference_id"
                                                 value="{{ encryptId($document_no->id) }}">
+                                            <div class="col-md-4">
+                                                <div class="form-group form-input">
+                                                    <label for="location_id" class="form-label require">
+                                                        Location
+                                                    </label>
+                                                    <select name="location_id" id="location_id"
+                                                        class=" form-control single-select" style="width: 100%">
+                                                        <option value="">Select Location</option>
+                                                        @foreach ($locations as $location)
+                                                            <option value="{{ encryptId($location->id) }}">
+                                                                {{ $location->location_name }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group form-input">
+                                                    <label for="unit_id" class="form-label require">
+                                                        Unit
+                                                    </label>
+                                                    <select name="unit_id" id="unit_id"
+                                                        class=" form-control single-select" style="width: 100%">
+                                                        <option value="">Select Unit</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group form-input">
+                                                    <label for="department_id" class="form-label require">
+                                                        Department
+                                                    </label>
+                                                    <select name="department_id" id="department_id"
+                                                        class=" form-control single-select" style="width: 100%">
+                                                        <option value="">Select Department</option>
+                                                    </select>
+                                                </div>
+                                            </div>
                                         </div>
 
                                         <div class="row mt-4">
@@ -94,7 +131,7 @@
                                                         </button>
                                                     </div>
                                                     <div class="row">
-                                                        <div class="col-md-4">
+                                                        <div class="col-md-4 mb-3">
                                                             <div class="form-group form-input">
                                                                 <label class="form-label require">Serial Number</label>
                                                                 <input type="text" name="serial_number[1]"
@@ -103,7 +140,7 @@
                                                             </div>
                                                         </div>
 
-                                                        <div class="col-md-4">
+                                                        <div class="col-md-4 mb-3">
                                                             <div class="form-group form-input">
                                                                 <label class="form-label require">Item Code</label>
                                                                 <input type="text" name="item_code[1]"
@@ -112,21 +149,73 @@
                                                             </div>
                                                         </div>
 
-                                                        <div class="col-md-4">
+
+                                                        <div class="col-md-4 mb-3">
                                                             <div class="form-group form-input">
-                                                                <label class="form-label require">Name of Chemical</label>
-                                                                <input type="text" name="name_of_chemical[1]"
-                                                                    class="form-control" placeholder="Name of Chemical"
+                                                                <label for="chemicals_1" class="form-label require">
+                                                                    Select Checmical
+                                                                </label>
+                                                                <select name="name_of_chemical[1]" id="chemicals_1"
+                                                                    class=" form-control single-select"
+                                                                    style="width: 100%">
+                                                                    <option value="">Select Chemicals</option>
+                                                                    @foreach ($chemicals as $chemical)
+                                                                        <option value="{{ encryptId($chemical->id) }}">
+                                                                            {{ $chemical->chemical }}</option>
+                                                                    @endforeach
+                                                                </select>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-md-4 mb-3">
+                                                            <div class="form-group form-input">
+                                                                <label class="form-label require">Storage Capacity</label>
+                                                                <input type="text" name="storage_capacity[1]"
+                                                                    class="form-control" placeholder="Storage Capacity"
                                                                     value="">
                                                             </div>
                                                         </div>
 
-                                                        <div class="col-md-4 mt-2">
+                                                        <div class="col-md-4 mb-3 mt-2">
+                                                            <div class="form-group form-input">
+                                                                <label class="form-label require">NFPA Rating
+                                                                </label>
+                                                                <select name="nfa_rating[1]"
+                                                                    class="form-control single-select"
+                                                                    style="width: 100%">
+                                                                    <option value="">Select NFPA Rating
+                                                                    </option>
+                                                                    @foreach ($nfaratings as $nfarating)
+                                                                        <option value="{{ encryptId($nfarating->id) }}">
+                                                                            {{ $nfarating->nfa_rating }}</option>
+                                                                    @endforeach
+                                                                </select>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-md-4 mb-3 mt-2 form-input">
+                                                            <div class="form-group form-input">
+                                                                <label class="form-label require">NFPA Rating Value</label>
+                                                                <select name="value_nfa_rating[1]"
+                                                                    class="form-control single-select"
+                                                                    style="width: 100%">
+                                                                    <option value="">NFPA Rating Value
+                                                                    </option>
+                                                                    @foreach ($nfaratingvalues as $nfaratingvalue)
+                                                                        <option
+                                                                            value="{{ encryptId($nfaratingvalue->id) }}">
+                                                                            {{ $nfaratingvalue->rating_value }}</option>
+                                                                    @endforeach
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-4 mb-3 mt-2">
                                                             <div class="form-group form-input">
                                                                 <label class="form-label require">MSDS Availability
                                                                     Status</label>
                                                                 <select name="msds_availability_status[1]"
-                                                                    class="form-control single-select" style="width: 100%">
+                                                                    class="form-control single-select"
+                                                                    style="width: 100%">
                                                                     <option value="">Select MSDS Availability Status
                                                                     </option>
                                                                     <option value="{{ encryptId(YES) }}">YES</option>
@@ -177,6 +266,74 @@
                 location.reload();
             });
 
+            $('#location_id').on('change', function() {
+                var location_id = $(this).val();
+                $('#department_id').val("").trigger("change");
+                $('#unit_id').val("").trigger("change");
+
+                var csrf_token = $('meta[name="csrf-token"]').attr('content');
+
+                $.ajax({
+                    url: '{{ admin_url('msds/getUnit') }}',
+                    type: 'POST',
+                    data: {
+                        location: location_id,
+                        _token: csrf_token
+                    },
+                    success: function(response) {
+                        let options = '<option value="">Select Unit</option>';
+                        if (response.unit && response.unit.length > 0) {
+                            response.unit.forEach(function(unit) {
+                                options +=
+                                    `<option value="${unit.id}">${unit.unit}</option>`;
+                            });
+                        } else {
+                            options = '<option value="">No Unit available</option>';
+                        }
+                        $('#unit_id').html(options);
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("AJAX Error:", error);
+                        $('#unit_id').html('<option value="">Error loading Unit</option>');
+                    }
+                });
+            });
+
+            $('#unit_id').on('change', function() {
+                $('#department_id').val("").trigger("change");
+
+                var location_id = $('#location_id').val();
+                var unit_id = $(this).val();
+                var csrf_token = $('meta[name="csrf-token"]').attr('content');
+
+                $.ajax({
+                    url: '{{ admin_url('msds/getDepartment') }}',
+                    type: 'POST',
+                    data: {
+                        unit: unit_id,
+                        location: location_id,
+                        _token: csrf_token
+                    },
+                    success: function(response) {
+                        let options = '<option value="">Select Department</option>';
+                        if (response.department && response.department.length > 0) {
+                            response.department.forEach(function(department) {
+                                options +=
+                                    `<option value="${department.id}">${department.department_name}</option>`;
+                            });
+                        } else {
+                            options = '<option value="">No Department available</option>';
+                        }
+                        $('#department_id').html(options);
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("AJAX Error:", error);
+                        $('#department_id').html(
+                            '<option value="">Error loading Unit</option>');
+                    }
+                });
+            });
+
             $.validator.addMethod("noSpaces", function(value, element) {
                 return this.optional(element) || value.trim().length > 0;
             }, "This field cannot contain only spaces");
@@ -190,7 +347,16 @@
                     issue_date: {
                         required: true,
                     },
-                    revision_date: {
+                    issue_date: {
+                        required: true,
+                    },
+                    location_id: {
+                        required: true,
+                    },
+                    unit_id: {
+                        required: true,
+                    },
+                    department_id: {
                         required: true,
                     },
                     'item_code[1]': {
@@ -211,20 +377,17 @@
                     },
                     'name_of_chemical[1]': {
                         required: true,
-                        minlength: 3,
-                        maxlength: 30,
-                        noSpaces: true,
-                        remote: {
-                            url: "{{ admin_url('msds/unique') }}",
-                            type: "post",
-                            data: {
-                                name_of_chemical: function() {
-                                    return $('[name="name_of_chemical[1]"]').val()
-                                }
-                            }
-                        },
                     },
                     'msds_availability_status[1]': {
+                        required: true,
+                    },
+                    'nfa_rating[1]': {
+                        required: true,
+                    },
+                    'storage_capacity[1]': {
+                        required: true,
+                    },
+                    'value_nfa_rating[1]': {
                         required: true,
                     },
                     'remark[1]': {
@@ -244,6 +407,15 @@
                     revision_date: {
                         required: "Please Select Revision Date",
                     },
+                    location_id: {
+                        required: "Please Select the Location",
+                    },
+                    unit_id: {
+                        required: "Please Select the Unit",
+                    },
+                    department_id: {
+                        required: "Please Select the Department",
+                    },
                     'item_code[1]': {
                         required: "Item Code is Required",
                         minlength: "Minimum Characters should be 3",
@@ -253,12 +425,18 @@
                     },
                     'name_of_chemical[1]': {
                         required: "Name of Chemical is Required",
-                        minlength: "Minimum Characters should be 3",
-                        maxlength: "Maximum Characters should not exceed 30",
-                        remote: "Name of Chemical must be unique",
                     },
                     'msds_availability_status[1]': {
                         required: "MSDS Availability Status is Required",
+                    },
+                    'nfa_rating[1]': {
+                        required: "NFPA Type is Required",
+                    },
+                    'storage_capacity[1]': {
+                        required: "Storage Capacity is Required",
+                    },
+                    'value_nfa_rating[1]': {
+                        required: "NFPA Value is Required",
                     },
                     'remark[1]': {
                         required: "Remark is Required",
@@ -352,11 +530,59 @@
                         <div class="col-md-4">
                             <div class="form-group form-input">
                                 <label class="form-label require">Name of Chemical</label>
-                                <input type="text" name="name_of_chemical[${form_set_count}]" class="form-control" placeholder="Name of Chemical" value="">
+                               <select name="name_of_chemical[${form_set_count}]" id="chemicals_${form_set_count}"
+                                        class=" form-control single-select"
+                                        style="width: 100%">
+                                        <option value="">Select Chemicals</option>
+                                    @foreach ($chemicals as $chemical)
+                                        <option value="{{ encryptId($chemical->id) }}">
+                                        {{ $chemical->chemical }}</option>
+                                    @endforeach
+                               </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4 form-input">
+                            <div class="form-group">
+                                <label class="form-label require">Storage Capacity</label>
+                                <input type="text" name="storage_capacity[${form_set_count}]" class="form-control" placeholder="Storage Capacity" value="">
                             </div>
                         </div>
 
-                        <div class="col-md-4 mt-2">
+                        <div class="col-md-4 mb-3 mt-2 form-input">
+                            <div class="form-group ">
+                                <label class="form-label require">NFPA Rating
+                                </label>
+                                <select name="nfa_rating[${form_set_count}]"
+                                    class="form-control single-select"
+                                    style="width: 100%">
+                                <option value="">Select NFPA Rating
+                                </option>
+                                   @foreach ($nfaratings as $nfarating)
+                                        <option value="{{ encryptId($nfarating->id) }}">
+                                            {{ $nfarating->nfa_rating }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                         </div>
+
+                        <div class="col-md-4 mb-3 mt-2 form-input">
+                            <div class="form-group form-input">
+                                 <label class="form-label require">NFPA Rating Value</label>
+                                    <select name="value_nfa_rating[${form_set_count}]"
+                                         class="form-control single-select"
+                                        style="width: 100%">
+                                    <option value="">NFPA Rating Value
+                                    </option>
+                                         @foreach ($nfaratingvalues as $nfaratingvalue)
+                                            <option
+                                             value="{{ encryptId($nfaratingvalue->id) }}">
+                                            {{ $nfaratingvalue->rating_value }}</option>
+                                        @endforeach
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4 mt-2 form-input">
                             <div class="form-group form-input">
                                 <label class="form-label require">MSDS Availability Status</label>
                                 <select name="msds_availability_status[${form_set_count}]" class="form-control single-select" style="width: 100%">
@@ -387,6 +613,8 @@
                     });
                 });
 
+                $('.single-select').select2();
+
                 var $input = $("input[name='item_code[" + form_set_count + "]']");
 
                 $input.rules('add', {
@@ -401,7 +629,7 @@
                         data: {
                             item_code: function() {
                                 return $input
-                                    .val(); // refer directly to the correct input element
+                                    .val();
                             }
                         }
                     },
@@ -417,31 +645,12 @@
 
 
 
-                var $input = $("input[name='name_of_chemical[" + form_set_count + "]']");
+                var $input = $("select[name='name_of_chemical[" + form_set_count + "]']");
 
                 $input.rules('add', {
                     required: true,
-
-                    noSpaces: true,
-                    minlength: 3,
-                    maxlength: 30,
-                    remote: {
-                        url: "{{ admin_url('msds/unique') }}",
-                        type: "post",
-                        data: {
-                            name_of_chemical: function() {
-                                return $input
-                                    .val();
-                            }
-                        }
-                    },
                     messages: {
                         required: 'Name of Chemical is required',
-                        minlength: "Minimum Characters should be 3",
-                        maxlength: "Maximum Characters should not exceed 30",
-                        noSpaces: 'Item Code cannot be empty or only spaces',
-                        remote: 'Item Code must be unique',
-
                     }
                 });
 
@@ -451,6 +660,36 @@
                         required: 'MSDS Availability Status is required',
                     }
                 });
+
+                $("select[name='nfa_rating[" + form_set_count + "]']").rules('add', {
+                    required: true,
+                    messages: {
+                        required: 'Select NFA Rating',
+                    }
+                });
+
+                $("select[name='value_nfa_rating[" + form_set_count + "]']").rules('add', {
+                    required: true,
+                    messages: {
+                        required: 'Select NFA Rating Value',
+                    }
+                });
+                var $input = $("input[name='storage_capacity[" + form_set_count + "]']");
+
+                $input.rules('add', {
+                    required: true,
+                    noSpaces: true,
+                    minlength: 2,
+                    maxlength: 30,
+
+                    messages: {
+                        required: 'Storage Capacity is required',
+                        minlength: "Minimum Characters should be 2",
+                        maxlength: "Maximum Characters should not exceed 30",
+                        noSpaces: 'Storage Capacity cannot be empty or only spaces'
+                    }
+                });
+
 
                 $("textarea[name='remark[" + form_set_count + "]']").rules('add', {
                     required: true,
@@ -492,10 +731,16 @@
                     $(this).find('input[name^="serial_number"]').attr('name', 'serial_number[' + (index +
                         1) + ']');
                     $(this).find('input[name^="item_code"]').attr('name', 'item_code[' + (index + 1) + ']');
-                    $(this).find('input[name^="name_of_chemical"]').attr('name', 'name_of_chemical[' + (
+                    $(this).find('input[name^="storage_capacity"]').attr('name', 'storage_capacity[' + (index +
+                        1) + ']');
+                    $(this).find('select[name^="name_of_chemical"]').attr('name', 'name_of_chemical[' + (
                         index + 1) + ']');
                     $(this).find('select[name^="msds_availability_status"]').attr('name',
                         'msds_availability_status[' + (index + 1) + ']');
+                    $(this).find('select[name^="nfa_rating"]').attr('name',
+                        'nfa_rating[' + (index + 1) + ']');
+                    $(this).find('select[name^="value_nfa_rating"]').attr('name',
+                        'value_nfa_rating[' + (index + 1) + ']');
                     $(this).find('textarea[name^="remark"]').attr('name', 'remark[' + (index + 1) + ']');
                 });
             }

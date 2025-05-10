@@ -242,6 +242,31 @@ class Unit extends Model
 
         return $list;
     }
+
+    public function unitajaxList($unit_id, $companyId = '')
+    {
+        $query = $this->select('id', 'unit_name')->where('status', 1);
+
+        if ($companyId != '') {
+            $query->where('company_id', $companyId);
+        }
+        if (!empty($companyId) && !empty($unit_id)) {
+            $query = $query->where('company_id', $companyId)->where('status', 1)->orWhere(function ($query) use ($unit_id, $companyId) {
+                $query->where('company_id', $companyId)->where('id', $unit_id);
+            });
+        }
+        $datas = $query->get();
+
+        $list = [];
+        foreach ($datas as $data) {
+            $listvalue = [];
+            $listvalue['id'] = encryptId($data->id);
+            $listvalue['name'] = $data->unit_name;
+            $list[] = $listvalue;
+        }
+
+        return $list;
+    }
     public function ajaxallList($locationId = '')
     {
         $query = $this->select('id', 'unit_name')->where('status', 1);
@@ -291,6 +316,11 @@ class Unit extends Model
     public function getUnitList()
     {
         return $this->select('id', 'unit_name')->where('status', 1)->get();
+    }
+
+    public function getUnitBasedLocation($id)
+    {
+        return $this->where('location_id', $id)->get();
     }
 
     public function getAllUnit()

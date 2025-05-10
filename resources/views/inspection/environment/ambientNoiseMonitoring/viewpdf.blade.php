@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Ambient Noise Monitoring KARAM</title>
+    <title>Ambient Noise Monitoring | KARAM</title>
 
     <style>
         .badge {
@@ -161,18 +161,18 @@
         style="width: 100%; border-collapse: collapse; font-family: Arial, sans-serif; text-align: center; border: 1px solid black;">
 
         <tr>
-            <th colspan="14" style="border:1px solid black;height:50;width:40">
+            <th colspan="16" style="border:1px solid black;height:50;width:40">
                 <img src="{{ url('public/assets/images/logo-dark.png') }}" style="width:125px;height:50px;">
             </th>
             <th colspan="14" style="border:1px solid black;">
                 <h3>
-                    <span><b>AMBIENT NOISE MONITORING SURVEY REPORT (EXTERNAL)</b></span>
-                    <br>
-                    <span><b>PN INTERNATIONAL PVT. LTD.</b></span>
+                    <span><b>AMBIENT NOISE MONITORING </b></span>
+
+
                 </h3>
             </th>
 
-            <th colspan="14" style="border:1px solid black;">
+            <th colspan="16" style="border:1px solid black;">
                 <table class="table table-bordered scrolldown">
                     <thead>
                         <tr>
@@ -220,6 +220,9 @@
             <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">NEXT DUE DATE
                 OF MONITORING
             </th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">LAST DUE DATE
+                OF MONITORING
+            </th>
             <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">ACT/RULE
             </th>
             <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">REMARKS
@@ -252,6 +255,9 @@
                 </td>
                 <td style="border: 1px solid black; padding: 8px;" colspan="4">
                     {{ Displaydateformat($list->next_due_date_of_monitoring_date) }}
+                </td>
+                <td style="border: 1px solid black; padding: 8px;" colspan="4">
+                    {{ Displaydateformat($list->last_due_date_of_monitoring_date) }}
                 </td>
                 <td style="border: 1px solid black; padding: 8px;" colspan="4">{{ $list->act_rule }}
                 </td>
