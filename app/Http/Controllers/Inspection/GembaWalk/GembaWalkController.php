@@ -624,6 +624,7 @@ class GembaWalkController extends Controller
                 $gembaWalk_status = GEMBA_WALK_INSPECTION_CLOSED;
 
                 $gembaWalk_ehs = $this->gembaWalkInspectionEhsAprroval->capaSubmit($gembaWalk_id, $capa_type);
+                $inspection_closed = $this->gembaWalk->updateAprrovel($gembaWalk_id);
 
                 $gembaWalk_singnature = $this->gembaWalkChecklistFile->storeVerifiedSignature($gembaWalk_id);
                 $gembaWalk_status = $this->gembaWalk->updateStatus($gembaWalk_id, $gembaWalk_status);
@@ -806,6 +807,7 @@ class GembaWalkController extends Controller
 
 
                 ];
+                // dd($data);
             }
 
             $property = [
@@ -826,7 +828,7 @@ class GembaWalkController extends Controller
             $filename = "Gemba Walk Details.pdf";
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-          report($ex);
+          dd($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('inspection/gemba-walk/list'));
         }

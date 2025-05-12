@@ -68,7 +68,7 @@ class RRAADetails extends Model
             $query = $query->where('inspection_rraa.category',  decryptId($request->category) );
         }
         if (isset($request->ohs_compliance_index) && $request->ohs_compliance_index) {
-            
+
             $query = $query->where('inspection_rraa.ohs_compliance_index',  $request->ohs_compliance_index );
         }
         if ($request->has('frequency') && $request->frequency) {
@@ -97,32 +97,63 @@ class RRAADetails extends Model
         return $datas;
     }
 
+    // public function store()
+    // {
+    //     $request = request();
+    //     $insertedData = [];
+
+    //     foreach ($request->scope as $index => $Scope) {
+    //         $insert_array = array(
+    //             'document_reference_id' => decryptId($request->document_reference_id),
+    //             'serial_number' =>$request->serial_number[$index],
+    //             'category' =>decryptId($request->category[$index]),
+    //             'ohs_compliance_index' =>$request->ohs_compliance_index[$index],
+    //             'frequency' =>decryptId($request->frequency[$index]),
+    //             'scope' => $Scope,
+    //             'responsibility' =>$request->emp_id[$index],
+    //             'authority' => $request->authority[$index],
+    //             'accountability' => $request->accountability[$index],
+    //             'remark' => $request->remark[$index],
+    //             'created_by' => Auth::id(),
+    //         );
+
+    //         $insertedData []=  $this->create($insert_array);
+
+    //     }
+
+    //     return $insertedData;
+    // }
+
     public function store()
     {
         $request = request();
         $insertedData = [];
 
         foreach ($request->scope as $index => $Scope) {
-            $insert_array = array(
+            $insert_array = [
                 'document_reference_id' => decryptId($request->document_reference_id),
-                'serial_number' =>$request->serial_number[$index],
-                'category' =>decryptId($request->category[$index]),
-                'ohs_compliance_index' =>$request->ohs_compliance_index[$index],
-                'frequency' =>decryptId($request->frequency[$index]),
+                'serial_number' => $request->serial_number[$index],
+                'category' => decryptId($request->category[$index]),
+                'ohs_compliance_index' => $request->ohs_compliance_index[$index],
+                'frequency' => decryptId($request->frequency[$index]),
                 'scope' => $Scope,
-                'responsibility' =>$request->emp_id[$index],
+                'responsibility' => $request->emp_id[$index],
                 'authority' => $request->authority[$index],
                 'accountability' => $request->accountability[$index],
                 'remark' => $request->remark[$index],
                 'created_by' => Auth::id(),
-            );
+            ];
 
-            $insertedData []=  $this->create($insert_array);
+            $record = $this->create($insert_array);  // create a single record
+            $insertedData[] = $record;               // store in results array
 
+            $safetyFiles = new RRAAFiles();
+            $safetyFiles->store($record->id, $index, $request->rraa_files);
         }
 
         return $insertedData;
     }
+
 
     public function selectOne($id)
     {
