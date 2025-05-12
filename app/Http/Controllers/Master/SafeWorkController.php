@@ -354,7 +354,7 @@ class SafeWorkController extends Controller
 
                 $export = [];
                 $export[] =  $i;
-                $export[] =  $data->equip_involve;
+                $export[] =  $data->safe_work;
                 $export[] =  $data->status == 1 ? 'Active' : 'In-Active';
                 $export[] =  getusername($data->created_by);
                 $export[] =  Displaydateformat($data->created_at);
