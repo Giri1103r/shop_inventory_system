@@ -848,6 +848,8 @@
                                                                         </option>
                                                                         <option value="{{ encryptId('2') }}">Minor
                                                                         </option>
+                                                                        <option value="{{ encryptId('3') }}">Fatal
+                                                                        </option>
                                                                     </select>
                                                                 </div>
                                                             </div>
