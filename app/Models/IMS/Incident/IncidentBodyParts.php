@@ -295,19 +295,6 @@ class IncidentBodyParts extends Model
             })->toArray();
         }
 
-        //remove it once it dynamic
-        if (!empty($mergedArray)) {
-            $body_parts_labels = DB::table('ims_accident_injury_parts')->pluck('part_name');
-
-            return $body_parts_labels->map(function ($part) {
-                return [
-                    'body_part' => $part,
-                    'count' => 0
-                ];
-            })->toArray();
-        }
-        //end code
-
         // Count matched body parts
         $body_parts = DB::table('ims_accident_injury_parts as t1')
             ->select('t1.part_name', DB::raw('COALESCE(COUNT(t2.body_parts_label), 0) as count'))
@@ -316,7 +303,7 @@ class IncidentBodyParts extends Model
             ->groupBy('t1.part_name')
             ->get();
 
-        dd($body_parts);
+        // dd($body_parts);
 
         $obserdata = $body_parts->keyBy('part_name')->map(function ($item) {
             return (array) $item;
