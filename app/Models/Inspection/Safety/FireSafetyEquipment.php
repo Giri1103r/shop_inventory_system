@@ -47,6 +47,7 @@ class FireSafetyEquipment extends Model
             'inspection_static_docno.*',
             'inspection_safety_master_equipment.*',
             'inspection_safety_equipment.id as inspection_id',
+            'inspection_safety_equipment.created_at as inspection_created_at',
             'inspection_safety_equipment.status as equipment_status',
         )
             ->leftJoin(

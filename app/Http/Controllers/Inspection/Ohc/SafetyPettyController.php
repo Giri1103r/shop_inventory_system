@@ -192,6 +192,7 @@ class SafetyPettyController extends Controller
         $name = $request->input('search');
 
         $employee_code = $this->employee->where('emp_id', 'like', '%' . $name . '%')
+            ->orWhere('emp_name', 'like', '%' . $name . '%')
             ->where('status', 1)
             ->limit(10)
             ->get();
@@ -363,12 +364,30 @@ class SafetyPettyController extends Controller
 
                 $headerRow = $currentRow + 3;
                 $headers = [
-                    'Sr. No', 'Employee Name', 'Employee Code', 'Department', 'Unit', 'Date',
-                    'Amount', 'Description', 'Amount Given By', 'Amount Received By ', 'Remark'
+                    'Sr. No',
+                    'Employee Name',
+                    'Employee Code',
+                    'Department',
+                    'Unit',
+                    'Date',
+                    'Amount',
+                    'Description',
+                    'Amount Given By',
+                    'Amount Received By ',
+                    'Remark'
                 ];
                 $mergeMap = [
-                    'A:B', 'C:D', 'E:F', 'G:H', 'I:J',
-                    'K:L', 'M:N', 'O:P', 'Q:R', 'S:T', 'U:V'
+                    'A:B',
+                    'C:D',
+                    'E:F',
+                    'G:H',
+                    'I:J',
+                    'K:L',
+                    'M:N',
+                    'O:P',
+                    'Q:R',
+                    'S:T',
+                    'U:V'
                 ];
                 foreach ($headers as $i => $label) {
                     [$start, $end] = explode(':', $mergeMap[$i]);
@@ -445,7 +464,6 @@ class SafetyPettyController extends Controller
                 ]);
 
                 $currentRow = $dataRow + 5;
-
             }
 
             $fileName = 'Safety Petty Logbook.xlsx';

@@ -60,6 +60,27 @@
                                                 </select>
                                             </div>
                                         </div>
+                                        <div class="col-md-4 mb-3 form-input">
+                                            <label for="emp_name" class="form-label ">From Date</label>
+                                            <div class="input-group date form-input custom-height">
+                                                <input type="text" class="form-control " name="from_date" id="from_date"
+                                                    autocomplete="off">
+                                                <div class="input-group-addon input-group-text">
+                                                    <span class="fa fa-calendar"></span>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="col-md-4 mb-3 form-input">
+                                            <label for="emp_name" class="form-label ">To Date</label>
+                                            <div class="input-group date form-input  custom-height">
+                                                <input type="text" class="form-control " name="to_date" id="to_date"
+                                                    autocomplete="off">
+                                                <div class="input-group-addon input-group-text">
+                                                    <span class="fa fa-calendar"></span>
+                                                </div>
+                                            </div>
+                                        </div>
                                         <div class="col-md-3 mt-3">
                                             <x-button-search></x-button-search>
                                             <x-button-reset></x-button-reset>
@@ -212,6 +233,8 @@
                         d.location_id = $('#location_id').val();
                         d.department_id = $('#department_id').val();
                         d.unit_id = $('#unit_id').val();
+                        d.from_date = $('#from_date').val();
+                        d.to_date = $('#to_date').val();
                     },
                     error: function(xhr, error, code) {
                         if (xhr.status === 419) {
@@ -273,7 +296,8 @@
                                     location_id = $('#location_id').val();
                                     unit_id = $('#unit_id').val();
                                     department_id = $('#department_id').val();
-
+                                    var from_date = $('#from_date').val();
+                                    var to_date = $('#to_date').val();
                                     $(".dt-button").removeClass('processing');
                                     $('body').click();
                                     window.location.href =
@@ -281,6 +305,8 @@
                                         '?search=' + searchValue +
                                         '&location_id=' + location_id +
                                         '&unit_id=' + unit_id +
+                                        '&from_date=' + from_date +
+                                        '&to_date=' + to_date +
                                         '&department_id=' + department_id
                                 }
                             },
@@ -292,7 +318,8 @@
                                     location_id = $('#location_id').val();
                                     unit_id = $('#unit_id').val();
                                     department_id = $('#department_id').val();
-
+                                    var from_date = $('#from_date').val();
+                                    var to_date = $('#to_date').val();
                                     $(".dt-button").removeClass('processing');
                                     $('body').click();
                                     window.location.href =
@@ -300,6 +327,8 @@
                                         '?search=' + searchValue +
                                         '&location_id=' + location_id +
                                         '&unit_id=' + unit_id +
+                                        '&from_date=' + from_date +
+                                        '&to_date=' + to_date +
                                         '&department_id=' + department_id
                                 }
                             },
