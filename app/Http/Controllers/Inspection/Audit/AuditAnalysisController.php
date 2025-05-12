@@ -283,7 +283,7 @@ class AuditAnalysisController extends Controller
                 $sheet->mergeCells('P'.$row.':Q'.($row+2));
 
                 $sheet->mergeCells('E'.$row.':O'.($row+2));
-                $sheet->setCellValue('E'.$row, "   6'S AUDIT ANALYSIS REPORT (FY FROM ….... TO ……) PN INTERNATIONAL PVT LTD");
+                $sheet->setCellValue('E'.$row, "   6'S AUDIT ANALYSIS REPORT");
                 $sheet->getStyle('E'.$row.':O'.($row+2))->applyFromArray([
                     'font' => ['bold' => true, 'size' => 14],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
@@ -570,7 +570,7 @@ class AuditAnalysisController extends Controller
             $sheet->mergeCells('P1:Q3');
 
             $sheet->mergeCells('E1:O3');
-            $sheet->setCellValue('E1', "   6'S AUDIT ANALYSIS REPORT (FY FROM ….... TO ……) PN INTERNATIONAL PVT LTD");
+            $sheet->setCellValue('E1', "6'S AUDIT ANALYSIS REPORT");
             $sheet->getStyle('E1:O3')->applyFromArray([
                 'font' => ['bold' => true, 'size' => 14],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
