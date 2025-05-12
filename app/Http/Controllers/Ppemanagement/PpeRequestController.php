@@ -96,8 +96,8 @@ class PpeRequestController extends Controller
                         ->editColumn('ppe_created_at', function ($row) {
                             return Displaydateformat($row->ppe_created_at);
                         })
-                        ->addColumn('created_by', function ($row) {
-                            return getUsername($row->created_by);
+                        ->addColumn('ppe_created_by', function ($row) {
+                            return getUsername($row->ppe_created_by);
                         })
                         ->editColumn('department', function ($row) {
                             return $row->department_name;

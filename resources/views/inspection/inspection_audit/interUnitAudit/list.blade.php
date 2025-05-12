@@ -82,6 +82,7 @@
                                         <th>{{ __('Name of Safety Officer') }}</th>
                                         <th>{{ __('Unit') }}</th>
                                         <th>{{ __('common.status') }}</th>
+                                        <th>{{ __('common.created_date') }}</th>
                                         <th>{{ __('common.action') }}</th>
                                     </tr>
                                 </thead>
@@ -189,6 +190,10 @@
                         {
                             data: 'status',
                             name: 'status'
+                        },
+                         {
+                            data: 'created_date',
+                            name: 'created_date'
                         },
                         {
                             data: 'action',
