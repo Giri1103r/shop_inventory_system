@@ -167,8 +167,7 @@
                 <th colspan="20" style="border:1px solid black;">
                     <h3>
                         <span><b>Monthly First Aid Box Audit Checklist</b></span>
-                        <br>
-                        <span><b>PN INTERNATIONAL PVT. LTD.</b></span>
+                        
                     </h3>
                 </th>
 

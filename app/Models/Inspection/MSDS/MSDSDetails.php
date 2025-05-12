@@ -49,7 +49,7 @@ class MSDSDetails extends Model
                 'serial_number' => $request->serial_number[$index],
                 'item_code' => $itemCode,
                 'msds_id' => $id,
-                'name_of_chemical' => decryptId($request->name_of_chemical[$index]),
+                'name_of_chemical' => ($request->name_of_chemical[$index]),
                 'storage_capacity' => ($request->storage_capacity[$index]),
                 'nfa_rating' => decryptId($request->nfa_rating[$index]),
                 'nfa_rating_value' => decryptId($request->value_nfa_rating[$index]),

@@ -530,7 +530,7 @@ $.validator.addMethod("validateFileType", function (value, element) {
 }, "Please select a valid file type: jpeg, jpg, png, pdf, doc, docx, mp4");
 
 $.validator.addMethod("validateFileSize", function (value, element) {
-    let maxSize = 5 * 1024 * 1024;
+    let maxSize = 15 * 1024 * 1024;
     let isValid = true;
 
     $.each(element.files, function (i, file) {
@@ -541,7 +541,7 @@ $.validator.addMethod("validateFileSize", function (value, element) {
     });
 
     return isValid;
-}, "Each file must be less than or equal to 5 MB");
+}, "Each file must be less than or equal to 15 MB");
 
 
 

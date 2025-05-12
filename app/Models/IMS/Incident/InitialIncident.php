@@ -153,7 +153,7 @@ class InitialIncident extends Model
         return $datas;
     }
 
-    
+
     public function investigationlist()
     {
         $request = request();
@@ -168,7 +168,7 @@ class InitialIncident extends Model
          */
         if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_ADMIN) || CheckUserRole(ROLE_EHS_HEAD)) {
             // $query->where('ims_initial_incident.status', '1');
-        }else {
+        } else {
             // $userId = Auth::id();
             // $userLoginId = Auth::user()->employee_id;
 
@@ -377,7 +377,7 @@ class InitialIncident extends Model
     public function investigationassigned($incident_Id)
     {
         $request = request();
-       
+
         $decryptedTeamMemberIds = is_array($request->team_member)
             ? array_map('decryptId', $request->team_member)
             : [];
@@ -617,25 +617,24 @@ class InitialIncident extends Model
             }
             $data->hira_moc = $mergedHiraMoc;
 
-          
+
 
             if (!empty($data->witness_id)) {
                 $witnessIds = explode(',', $data->witness_id);
                 $employeeNames = DB::table('masters_employee')
-                ->whereIn('emp_id', $witnessIds)
-                ->pluck('emp_name')
-                ->toArray();
-                
+                    ->whereIn('emp_id', $witnessIds)
+                    ->pluck('emp_name')
+                    ->toArray();
+
                 $workerNames = DB::table('masters_work')
-                ->whereIn('emp_id', $witnessIds)
-                ->pluck('emp_name')
-                ->toArray();
-            
+                    ->whereIn('emp_id', $witnessIds)
+                    ->pluck('emp_name')
+                    ->toArray();
+
                 $allNames = array_merge($employeeNames, $workerNames);
-            
+
                 $data->witness_name = implode(', ', $allNames);
             }
-            
         }
 
         return $data;
@@ -702,6 +701,113 @@ class InitialIncident extends Model
             ->first();
         return $data;
     }
+
+    public function getTypeofIIRCountData($request)
+    {
+        $query = DB::table('ims_initial_incident as iii')
+            ->join('ims_master_incident_type as imit', 'iii.iir_type', '=', 'imit.id')
+            ->select('imit.incident_type_name', DB::raw('COUNT(iii.id) as total'))
+            ->groupBy('imit.incident_type_name')
+            ->orderBy('imit.incident_type_name');
+
+        // Date Filters
+        if ($request->Fromdate && $request->Todate) {
+            $query->whereBetween('iii.created_at', [
+                DBdateformat($request->Fromdate),
+                DBdateformat($request->Todate)
+            ]);
+        } elseif ($request->Fromdate) {
+            $query->where('iii.created_at', '>=', DBdateformat($request->Fromdate));
+        } elseif ($request->Todate) {
+            $query->where('iii.created_at', '<=', DBdateformat($request->Todate));
+        }
+
+        // Role-based filter
+        if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_ADMIN)) {
+            // No restriction
+        } elseif (Auth::user()->role == ROLE_USER) {
+            $query->where('iii.created_by', Auth::id());
+        }
+
+        return $query->get(); // returns multiple rows
+    }
+
+    public function getAccidentReportUnitWiseCountData($request)
+    {
+        $query = DB::table('ims_initial_incident as iii')
+            ->join('masters_unit as unit', 'iii.unit_id', '=', 'unit.id')
+            ->join('ims_injury_details as imit', 'iii.id', '=', 'imit.incident_id')
+            ->select(
+                'unit.unit_name',
+                DB::raw("SUM(CASE WHEN imit.nature_of_injury = 1 THEN 1 ELSE 0 END) AS major"),
+                DB::raw("SUM(CASE WHEN imit.nature_of_injury = 2 THEN 1 ELSE 0 END) AS minor"),
+                DB::raw("SUM(CASE WHEN imit.nature_of_injury = 3 THEN 1 ELSE 0 END) AS fatal")
+            )
+            ->groupBy('unit.unit_name')
+            ->orderBy('unit.unit_name');
+
+        // Date Filters
+        if ($request->Fromdate && $request->Todate) {
+            $query->whereBetween('iii.created_at', [
+                DBdateformat($request->Fromdate),
+                DBdateformat($request->Todate)
+            ]);
+        } elseif ($request->Fromdate) {
+            $query->where('iii.created_at', '>=', DBdateformat($request->Fromdate));
+        } elseif ($request->Todate) {
+            $query->where('iii.created_at', '<=', DBdateformat($request->Todate));
+        }
+
+        // Role-based filter
+        if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_ADMIN)) {
+            // No restriction
+        } elseif (Auth::user()->role == ROLE_USER) {
+            $query->where('iii.created_by', Auth::id());
+        }
+
+        return $query->get();
+    }
+
+
+    public function getTypeofIIRRCPACountData($request)
+    {
+        $query = DB::table('ims_initial_incident as iii')
+            ->join('ims_master_incident_type as imit', 'iii.iir_type', '=', 'imit.id')
+            ->leftJoin('ims_rcpa_responsible as rcpa', function ($join) {
+                $join->on('iii.id', '=', 'rcpa.incident_id')
+                    ->whereNotNull('rcpa.id');
+            })
+            ->select(
+                'imit.incident_type_name',
+                DB::raw('COUNT(DISTINCT iii.id) as total_incident'),
+                DB::raw('COUNT(rcpa.id) as total_rcpa')
+            )
+            ->groupBy('imit.incident_type_name')
+            ->orderBy('imit.incident_type_name');
+
+
+        // Date Filters
+        if ($request->Fromdate && $request->Todate) {
+            $query->whereBetween('iii.created_at', [
+                DBdateformat($request->Fromdate),
+                DBdateformat($request->Todate)
+            ]);
+        } elseif ($request->Fromdate) {
+            $query->where('iii.created_at', '>=', DBdateformat($request->Fromdate));
+        } elseif ($request->Todate) {
+            $query->where('iii.created_at', '<=', DBdateformat($request->Todate));
+        }
+
+        // Role-based filter
+        if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_ADMIN)) {
+            // No restriction
+        } elseif (Auth::user()->role == ROLE_USER) {
+            $query->where('iii.created_by', Auth::id());
+        }
+
+        return $query->get(); // returns multiple rows
+    }
+
     protected static function booted()
     {
         static::addGlobalScope(new TrashScope('ims_initial_incident'));

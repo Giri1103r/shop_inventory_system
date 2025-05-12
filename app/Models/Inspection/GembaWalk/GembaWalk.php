@@ -206,6 +206,16 @@ class GembaWalk extends Model
         return $this->where('id', $gembaWalk_id)->update($update_array);
     }
 
+     public function updateAprrovel($gembaWalk_id)
+    {
+        $request = request();
+        $update_array = array(
+            'verified_by' => Auth::id(),
+            'updated_at' => now(),
+        );
+        return $this->where('id', $gembaWalk_id)->update($update_array);
+    }
+
     public function exportdata()
     {
         $request = request();

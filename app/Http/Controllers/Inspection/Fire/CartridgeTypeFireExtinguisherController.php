@@ -872,7 +872,7 @@ class CartridgeTypeFireExtinguisherController extends Controller
                 ]);
 
                 $sheet->mergeCells("C{$titleRow}:N" . ($titleRow + 2));
-                $sheet->setCellValue("C{$titleRow}", "FIRE EXTINGUISHER INSPECTION CHECKLIST (CARTIDGE TYPE) PN INTERNATIONAL PVT. LTD.");
+                $sheet->setCellValue("C{$titleRow}", "FIRE EXTINGUISHER INSPECTION CHECKLIST (CARTIDGE TYPE)");
 
                 $sheet->getStyle("C{$titleRow}:N" . ($titleRow + 2))->applyFromArray([
                     'font' => ['bold' => true, 'size' => 14],
@@ -1174,7 +1174,7 @@ class CartridgeTypeFireExtinguisherController extends Controller
             ]);
 
             $sheet->mergeCells("C1:N3");
-            $sheet->setCellValue("C1", "FIRE EXTINGUISHER INSPECTION CHECKLIST (CARTIDGE TYPE) PN INTERNATIONAL PVT. LTD.");
+            $sheet->setCellValue("C1", "FIRE EXTINGUISHER INSPECTION CHECKLIST (CARTIDGE TYPE)");
             $sheet->getStyle("C1:N3")->applyFromArray([
                 'font' => ['bold' => true, 'size' => 14],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
@@ -1380,7 +1380,7 @@ class CartridgeTypeFireExtinguisherController extends Controller
 
             return response()->download($filePath)->deleteFileAfterSend(true);
         } catch (\Exception $e) {
-            
+
             report($e);
             Session::flash('error', 'Something went wrong!');
             return redirect(admin_url('fire/fire-extinguisher/cartridge/list'));

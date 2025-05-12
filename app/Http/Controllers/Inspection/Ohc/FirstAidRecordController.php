@@ -260,7 +260,7 @@ class FirstAidRecordController extends Controller
                     $drawing->setWorksheet($sheet);
                 }
 
-                $sheet->mergeCells("C{$row}:F" . ($row + 2))->setCellValue("C{$row}", "OCCUPATIONAL HEALTH CENTER FIRST AID RECORD\nPN INTERNATIONAL PVT LTD");
+                $sheet->mergeCells("C{$row}:F" . ($row + 2))->setCellValue("C{$row}", "OCCUPATIONAL HEALTH CENTER FIRST AID RECORD");
                 $sheet->getStyle("C{$row}:F" . ($row + 2))->applyFromArray([
                     'font' => ['bold' => true, 'size' => 14],
                     'borders' => [
@@ -525,7 +525,7 @@ class FirstAidRecordController extends Controller
                 $drawing->setWorksheet($sheet);
             }
 
-            $sheet->mergeCells("C1:F3")->setCellValue("C1", "OCCUPATIONAL HEALTH CENTER FIRST AID RECORD\nPN INTERNATIONAL PVT LTD");
+            $sheet->mergeCells("C1:F3")->setCellValue("C1", "OCCUPATIONAL HEALTH CENTER FIRST AID RECORD");
             $sheet->getStyle("C1:F3")->applyFromArray([
                 'font' => ['bold' => true, 'size' => 14],
                 'borders' => [

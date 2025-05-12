@@ -157,8 +157,6 @@ class AmbientAirMonitoringYearlyController extends Controller
         }
     }
 
-
-
     public function View($id)
     {
         try {
@@ -184,7 +182,6 @@ class AmbientAirMonitoringYearlyController extends Controller
             return redirect(admin_url('environment/ambient-air/yearly/list'));
         }
     }
-
 
     public function StatusChange(Request $request)
     {
@@ -249,7 +246,7 @@ class AmbientAirMonitoringYearlyController extends Controller
 
                 // Title Section
                 $sheet->mergeCells("G{$currentRow}:O" . ($currentRow + 2));
-                $sheet->setCellValue("G{$currentRow}", "AMBIENT NOISE MONITORING ");
+                $sheet->setCellValue("G{$currentRow}", "AMBIENT NOISE MONITORING");
                 $sheet->getStyle("G{$currentRow}:O{$currentRow}")->applyFromArray([
                     'font' => ['bold' => true, 'size' => 14],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
@@ -485,7 +482,7 @@ class AmbientAirMonitoringYearlyController extends Controller
 
                 // Title Section
                 $sheet->mergeCells("G{$currentRow}:O" . ($currentRow + 2));
-                $sheet->setCellValue("G{$currentRow}", "AMBIENT NOISE MONITORING SURVEY REPORT(EXTERNAL) PN INTERNATIONAL PVT. LTD");
+                $sheet->setCellValue("G{$currentRow}", "AMBIENT NOISE MONITORING");
                 $sheet->getStyle("G{$currentRow}")->applyFromArray([
                     'font' => ['bold' => true, 'size' => 14],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],

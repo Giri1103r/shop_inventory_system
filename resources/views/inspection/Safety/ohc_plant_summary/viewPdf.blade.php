@@ -3,7 +3,7 @@
 <html>
 
 <head>
-    <title>OHC PLANT SUMMARY | KARAM</title>
+    <title>OHS PLANT SUMMARY | KARAM</title>
 
     <style>
         .badge {

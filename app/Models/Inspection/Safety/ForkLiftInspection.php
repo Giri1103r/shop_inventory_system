@@ -36,7 +36,7 @@ class ForkLiftInspection extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_safety_forklift_inspection.*', 'inspection_static_docno.*', 'inspection_safety_forklift_inspection.id as inspection_id')
+        $query = $this->select('inspection_safety_forklift_inspection.*', 'inspection_static_docno.*', 'inspection_safety_forklift_inspection.id as inspection_id', 'inspection_safety_forklift_inspection.created_at as inspection_created_at')
             ->leftJoin('inspection_static_docno', 'inspection_safety_forklift_inspection.document_reference_id', '=', 'inspection_static_docno.id');
 
         if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_HEAD)) {
@@ -60,7 +60,7 @@ class ForkLiftInspection extends Model
         if (isset($request->observation_status) && $request->observation_status) {
             $query = $query->where('inspection_safety_forklift_inspection.observation_status', decryptId($request->observation_status));
         }
-   if ($request->has('from_date') && !empty($request->from_date)) {
+        if ($request->has('from_date') && !empty($request->from_date)) {
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
             $query->where('inspection_safety_forklift_inspection.created_at', '>=', $startDate);
         }
@@ -158,7 +158,7 @@ class ForkLiftInspection extends Model
         if (isset($request->observation_status) && $request->observation_status) {
             $query = $query->where('inspection_safety_forklift_inspection.observation_status', decryptId($request->observation_status));
         }
-  if ($request->has('from_date') && !empty($request->from_date)) {
+        if ($request->has('from_date') && !empty($request->from_date)) {
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
             $query->where('inspection_safety_forklift_inspection.created_at', '>=', $startDate);
         }

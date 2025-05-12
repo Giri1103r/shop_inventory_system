@@ -800,7 +800,7 @@ class IsolationValveController extends Controller
                 ]);
 
                 $sheet->mergeCells("D{$titleRow}:K" . ($titleRow + 2));
-                $sheet->setCellValue("D{$titleRow}", "ISOLATION VALVE INSPECTION CHECKLIST PN INTERNATIONAL PVT. LTD.");
+                $sheet->setCellValue("D{$titleRow}", "ISOLATION VALVE INSPECTION CHECKLIST");
 
                 $sheet->getStyle("D{$titleRow}:K" . ($titleRow + 2))->applyFromArray([
                     'font' => ['bold' => true, 'size' => 14],
@@ -1153,7 +1153,7 @@ class IsolationValveController extends Controller
 
             $sheet->mergeCells('A1:C3');
             $sheet->mergeCells('D1:K3');
-            $sheet->setCellValue('D1', 'ISOLATION VALVE INSPECTION CHECKLIST PN INTERNATIONAL PVT. LTD.');
+            $sheet->setCellValue('D1', 'ISOLATION VALVE INSPECTION CHECKLIST');
             $sheet->getStyle('D1:K3')->applyFromArray([
                 'font'      => ['bold' => true, 'size' => 14],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],

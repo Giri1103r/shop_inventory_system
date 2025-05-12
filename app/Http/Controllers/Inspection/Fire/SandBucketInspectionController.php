@@ -799,7 +799,7 @@ class SandBucketInspectionController extends Controller
 
                 $sheet->mergeCells("A{$row}:B" . ($row + 2));
                 $sheet->mergeCells("C{$row}:I" . ($row + 2));
-                $sheet->setCellValue("C{$row}", 'FIRE SAND BUCKET & STAND INSPECTION CHECKLIST PN INTERNATIONAL PVT. LTD.');
+                $sheet->setCellValue("C{$row}", 'FIRE SAND BUCKET & STAND INSPECTION CHECKLIST');
                 $sheet->getStyle("C{$row}:I" . ($row + 2))->applyFromArray([
                     'font' => ['bold' => true, 'size' => 14],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
@@ -1117,7 +1117,7 @@ class SandBucketInspectionController extends Controller
 
             $sheet->mergeCells('A1:B3');
             $sheet->mergeCells('C1:I3');
-            $sheet->setCellValue('C1', 'FIRE SAND BUCKET & STAND INSPECTION CHECKLIST PN INTERNATIONAL PVT. LTD.');
+            $sheet->setCellValue('C1', 'FIRE SAND BUCKET & STAND INSPECTION CHECKLIST');
             $sheet->getStyle('C1:I3')->applyFromArray([
                 'font' => ['bold' => true, 'size' => 14],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],

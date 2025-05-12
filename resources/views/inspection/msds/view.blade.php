@@ -118,7 +118,7 @@
                                             <label
                                                 class="form-label view_label">{{ __('inspection.name_of_chemical') }}</label>
                                             <div class="view_data">
-                                                {{ isset($msdsDetails->name_of_chemical) ? getChemicalName($msdsDetails->name_of_chemical) : '' }}
+                                                {{ isset($msdsDetails->name_of_chemical) ? ($msdsDetails->name_of_chemical) : '' }}
                                             </div>
                                         </div>
                                         <div class="mb-3 col-md-4 form-input">

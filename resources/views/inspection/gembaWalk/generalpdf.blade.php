@@ -333,7 +333,7 @@
             @endif
             @if (isset($gembaWalk_ehs_capa_details->capa))
                 <tr>
-                    <td width="50%" style="padding:5px;"><b>CAPA</b></td>
+                    <td width="50%" style="padding:5px;"><b>Whether the Inspection has been passed Without the CAPA?</b></td>
                     <td width="2%" style="padding:5px;">:</td>
                     <td width="48%" style="padding:5px;">
                         @if ($gembaWalk_ehs_capa_details->capa == 1)
@@ -347,7 +347,7 @@
                 </tr>
             @else
                 <tr>
-                    <td width="50%" style="padding:5px;"><b>CAPA</b></td>
+                    <td width="50%" style="padding:5px;"><b>Whether the Inspection has been passed Without the CAPA?</b></td>
                     <td width="2%" style="padding:5px;">:</td>
                     <td width="48%" style="padding:5px;">N/A</td>
                 </tr>
@@ -404,7 +404,7 @@
                 @endif
                 @if (isset($gembaWalk_ehs_capa_details->capa))
                     <tr>
-                        <td width="50%" style="padding:5px;"><b>CAPA</b></td>
+                        <td width="50%" style="padding:5px;"><b>Whether the Inspection has been passed Without the CAPA?</b></td>
                         <td width="2%" style="padding:5px;">:</td>
                         <td width="48%" style="padding:5px;">
                             @if ($gembaWalk_ehs_capa_details->capa == 1)
@@ -418,7 +418,7 @@
                     </tr>
                 @else
                     <tr>
-                        <td width="50%" style="padding:5px;"><b>CAPA</b></td>
+                        <td width="50%" style="padding:5px;"><b>Whether the Inspection has been passed Without the CAPA?</b></td>
                         <td width="2%" style="padding:5px;">:</td>
                         <td width="48%" style="padding:5px;">-</td>
                     </tr>
@@ -536,7 +536,7 @@
                 @endif
                 @if (isset($gembaWalk_ehs_capa_details->capa))
                     <tr>
-                        <td width="50%" style="padding:5px;"><b>CAPA</b></td>
+                        <td width="50%" style="padding:5px;"><b>Whether the Inspection has been passed Without the CAPA?</b></td>
                         <td width="2%" style="padding:5px;">:</td>
                         <td width="48%" style="padding:5px;">
                             @if ($gembaWalk_ehs_capa_details->capa == 1)
@@ -550,9 +550,9 @@
                     </tr>
                 @else
                     <tr>
-                        <td width="50%" style="padding:5px;"><b>CAPA</b></td>
+                        <td width="50%" style="padding:5px;"><b>Whether the Inspection has been passed Without the CAPA?</b></td>
                         <td width="2%" style="padding:5px;">:</td>
-                        <td width="48%" style="padding:5px;">NO</td>
+                        <td width="48%" style="padding:5px;">Yes</td>
                     </tr>
                 @endif
                 @if (isset($gembaWalk_ehs_capa_details->remarks))

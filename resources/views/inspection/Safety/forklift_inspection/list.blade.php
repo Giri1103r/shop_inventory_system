@@ -24,13 +24,13 @@
                                 <div class="col-md-12">
                                     <div class="row">
 
-                                        <div class="col-md-3 mb-3 form-input">
+                                        <div class="col-md-4 mb-3 form-input">
                                             <label for="issue_date"
                                                 class="form-label ">{{ __('inspection.inspection_date') }}</label>
                                             <input type="text" name="issue_date" id="issue_date" class="form-control">
                                         </div>
 
-                                        <div class="col-md-3 mb-3 form-input">
+                                        <div class="col-md-4 mb-3 form-input">
                                             <label for="emp_name" class="form-label ">From Date</label>
                                             <div class="input-group date form-input custom-height">
                                                 <input type="text" class="form-control " name="from_date" id="from_date"
@@ -41,7 +41,7 @@
                                             </div>
 
                                         </div>
-                                        <div class="col-md-3 mb-3 form-input">
+                                        <div class="col-md-4 mb-3 form-input">
                                             <label for="emp_name" class="form-label ">To Date</label>
                                             <div class="input-group date form-input  custom-height">
                                                 <input type="text" class="form-control " name="to_date" id="to_date"
@@ -51,7 +51,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-md-3 mb-3 form-input">
+                                        <div class="col-md-4 mb-3 form-input">
                                             <label for="inspection_status"
                                                 class="form-label ">{{ __('common.status') }}</label>
                                             <select name="observation_status" id="observation_status" style="width: 100%"
@@ -62,7 +62,7 @@
                                                 <option value="{{ encryptId('2') }}">Observation Rejected</option>
                                             </select>
                                         </div>
-                                        <div class="col-md-3 mt-3">
+                                        <div class="col-md-4 mt-3">
                                             <x-button-search></x-button-search>
                                             <x-button-reset></x-button-reset>
 
@@ -84,6 +84,7 @@
                                         <th>{{ __('common.sno') }}</th>
                                         <th>{{ __('inspection.inspection_date') }}</th>
                                         <th>{{ __('common.status') }}</th>
+                                        <th>{{ __('common.created_date') }}</th>
                                         <th>{{ __('common.action') }}</th>
                                     </tr>
                                 </thead>
@@ -183,6 +184,10 @@
                         {
                             data: 'observation_status',
                             name: 'observation_status',
+                        },
+                         {
+                            data: 'inspection_created_at',
+                            name: 'inspection_created_at',
                         },
                         {
                             data: 'action',

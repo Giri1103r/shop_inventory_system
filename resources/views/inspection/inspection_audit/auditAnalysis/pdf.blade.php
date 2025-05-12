@@ -168,7 +168,7 @@
                 </th>
                 <th colspan="14" style="border:1px solid black;">
                     <h3>
-                        <span><b> 6'S AUDIT ANALYSIS REPORT</b></span>
+                        <span><b> 6'S AUDIT ANALYSIS REPORT ({{$fyText}})</b></span>
                         <br>
                     </h3>
                 </th>

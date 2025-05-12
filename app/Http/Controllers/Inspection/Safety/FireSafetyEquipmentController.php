@@ -72,8 +72,8 @@ class FireSafetyEquipmentController extends Controller
                         </a>';
                             return $btn;
                         })
-                        ->addColumn('created_date', function ($row) {
-                            return Displaydateformat($row->created_at);
+                        ->addColumn('inspection_created_at', function ($row) {
+                            return Displaydateformat($row->inspection_created_at);
                         })
                         ->addColumn('issue_date', function ($row) {
                             return Displaydateformat($row->issue_date);
@@ -145,14 +145,7 @@ class FireSafetyEquipmentController extends Controller
                 'economic_order_quantity.*' => 'required',
                 'observation_status.*' => 'required',
                 'remarks.*' => 'required',
-                'signature_upload' => [
-                    function ($attribute, $value, $fail) {
-                        $user = Auth::user();
-                        if (is_null($user->signature_upload)) {
-                            $fail('Signature is required.');
-                        }
-                    }
-                ],
+               
             ];
 
             $messages = [

@@ -120,24 +120,7 @@
 
                                                 </div>
 
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.department') }}</label>
-                                                        <select name="department[1]" id="department[1]"
-                                                            class=" form-control single-select" style="width: 100%">
-                                                            <option value="">Select department</option>
-                                                            @foreach ($departments as $department)
-                                                                <option value="{{ encryptId($department->id) }}"
-                                                                    {{ old('department.1') == encryptId($department->id) ? 'selected' : '' }}>
-                                                                    {{ $department->department_name }}</option>
-                                                            @endforeach
-                                                        </select>
-                                                        @error('department.1')
-                                                            <div class="error">{{ $message }}</div>
-                                                        @enderror
-                                                    </div>
-                                                </div>
+
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
@@ -152,6 +135,24 @@
                                                             @endforeach
                                                         </select>
                                                         @error('unit.1')
+                                                            <div class="error">{{ $message }}</div>
+                                                        @enderror
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label require">{{ __('inspection.department') }}</label>
+                                                        <select name="department[1]" id="department[1]"
+                                                            class=" form-control single-select" style="width: 100%">
+                                                            <option value="">Select department</option>
+                                                            @foreach ($departments as $department)
+                                                                <option value="{{ encryptId($department->id) }}"
+                                                                    {{ old('department.1') == encryptId($department->id) ? 'selected' : '' }}>
+                                                                    {{ $department->department_name }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                        @error('department.1')
                                                             <div class="error">{{ $message }}</div>
                                                         @enderror
                                                     </div>
@@ -518,16 +519,7 @@
                                                 </div>
 
 
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.department') }}</label>
-                                                        <select name="department[${form_set_count}]" id="department[${form_set_count}]"
-                                                            class=" form-control single-select department-select" style="width: 100%">
-                                                            <option value="">Select department</option>
-                                                        </select>
-                                                    </div>
-                                                </div>
+
                                                   <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
@@ -535,6 +527,16 @@
                                                         <select name="unit[${form_set_count}]" id="unit[${form_set_count}]"
                                                             class=" form-control single-select unit" style="width: 100%">
                                                             <option value="">Select Unit</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                 <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label require">{{ __('inspection.department') }}</label>
+                                                        <select name="department[${form_set_count}]" id="department[${form_set_count}]"
+                                                            class=" form-control single-select department-select" style="width: 100%">
+                                                            <option value="">Select department</option>
                                                         </select>
                                                     </div>
                                                 </div>

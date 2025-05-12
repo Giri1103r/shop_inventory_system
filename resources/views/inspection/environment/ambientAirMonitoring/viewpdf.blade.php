@@ -165,8 +165,7 @@
             </th>
             <th colspan="14" style="border:1px solid black;">
                 <h3>
-                    <b>AMBIENT AIR MONITORING -YEARLY</b><br>
-                    <b>PN INTERNATIONAL PVT. LTD.</b>
+                    <b>AMBIENT AIR MONITORING -YEARLY</b>
                 </h3>
             </th>
             <th colspan="13" style="border:1px solid black; padding:0;">

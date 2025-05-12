@@ -154,7 +154,7 @@ class IncidentBodyParts extends Model
         }
 
 
-        if ($request['body_prim_id'] != 0 && $request['incident_id'] != 0 ) {
+        if ($request['body_prim_id'] != 0 && $request['incident_id'] != 0) {
             $locdatas = [
                 'incident_id' => $request->incident_id,
                 'random_id' => $random_id,
@@ -276,7 +276,7 @@ class IncidentBodyParts extends Model
                 'inc.id as inveeid',
             ])
             ->leftJoin('ims_incident_body_parts as body', 'body.incident_id', '=', 'inc.id')
-            ->where('body.status', 'Y')
+            ->where('inc.trash', 'NO')
             ->get();
 
         // Collect body IDs
@@ -295,19 +295,6 @@ class IncidentBodyParts extends Model
             })->toArray();
         }
 
-        //remove it once it dynamic
-        if (!empty($mergedArray)) {
-            $body_parts_labels = DB::table('ims_accident_injury_parts')->pluck('part_name');
-
-            return $body_parts_labels->map(function ($part) {
-                return [
-                    'body_part' => $part,
-                    'count' => 0
-                ];
-            })->toArray();
-        }
-        //end code
-
         // Count matched body parts
         $body_parts = DB::table('ims_accident_injury_parts as t1')
             ->select('t1.part_name', DB::raw('COALESCE(COUNT(t2.body_parts_label), 0) as count'))
@@ -316,22 +303,28 @@ class IncidentBodyParts extends Model
             ->groupBy('t1.part_name')
             ->get();
 
-        dd($body_parts);
+        // dd($body_parts);
+        foreach ($body_parts as $key => $obsvalue) {
+            $obserdata[$obsvalue->part_name] = (array) $obsvalue;
+        }
 
-        $obserdata = $body_parts->keyBy('part_name')->map(function ($item) {
-            return (array) $item;
-        });
-
-        // Get all human body part labels
         $body_parts_labels = DB::table('ims_accident_injury_parts')->pluck('part_name');
 
-        // Prepare final result
-        $result = $body_parts_labels->map(function ($part) use ($obserdata) {
-            return [
-                'body_part' => $part,
-                'count' => $obserdata[$part]['count'] ?? 0
-            ];
-        })->toArray();
+        foreach ($body_parts_labels as $value) {
+            if (isset($obserdata[$value])) {
+                $result[] = [
+                    'body_part' => $obserdata[$value]['part_name'],
+                    'count' => $obserdata[$value]['count']
+                ];
+            } else {
+                $result[] = [
+                    'body_part' => $value,
+                    'count' => 0
+                ];
+            }
+        }
+
+        // dd($result);
 
         return $result;
     }

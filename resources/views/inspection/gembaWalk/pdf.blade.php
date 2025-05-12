@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Weekly Ambulance Inspection Checklist | KARAM</title>
+    <title>Gemba Walk Inspection | KARAM</title>
 
     <style>
         .badge {
@@ -165,12 +165,12 @@
                 <th colspan="2" style="text-align: center; vertical-align: middle; padding: 5px;">
                     <img src="{{ url('public/assets/images/logo-dark.png') }}" alt="Logo" style="height: 50px;">
                 </th>
-        
+
                 {{-- Title --}}
                 <th colspan="9" style="text-align: center; font-size: 18px;">
-                    <strong>DAILY GEMBA WALK OBSERVATION REPORT</strong>
+                    <strong>DAILY GEMBA WALK INSPECTION</strong>
                 </th>
-        
+
                 {{-- Doc Details --}}
                 <th colspan="2" style="padding: 0;">
                     <table style="width: 100%; border-collapse: collapse;" border="1">
@@ -189,7 +189,7 @@
                     </table>
                 </th>
             </tr>
-        
+
             {{-- Date & Shift --}}
             <tr>
                 <th colspan="6" style="text-align: left; font-size: 12px; padding: 5px;">
@@ -244,7 +244,7 @@
                     </tr>
                 @endforeach
             </tbody>
-        
+
             {{-- Footer Row for Signatures --}}
             <tr>
                 @php
@@ -252,7 +252,7 @@
                     $createdSignature = GetSignature($firstItem->inspection_created_by, $firstItem->inspection_id, GEMBA_WALK);
                     $verifiedSignature = GetSignature($firstItem->verified_by, $firstItem->inspection_id, GEMBA_WALK);
                 @endphp
-        
+
                 <th colspan="7" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">
                     <img src="{{ admin_url($createdSignature) }}" alt="Signature Upload"
                         style="width: 150px; margin-top: -10px;" />
@@ -265,8 +265,8 @@
                 </th>
             </tr>
         </table>
-        
-        
+
+
         <div class="page-break"></div>
     @endforeach
 

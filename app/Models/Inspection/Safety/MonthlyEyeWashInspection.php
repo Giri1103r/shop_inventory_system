@@ -51,7 +51,7 @@ class MonthlyEyeWashInspection extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_monthly_eyewash.*', 'inspection_shift_option.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*', 'inspection_monthly_eyewash.id as inspection_id')
+        $query = $this->select('inspection_monthly_eyewash.*', 'inspection_shift_option.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*', 'inspection_monthly_eyewash.id as inspection_id', 'inspection_monthly_eyewash.created_at as inspection_created_at')
             ->leftJoin('masters_location', 'inspection_monthly_eyewash.location', '=', 'masters_location.id')
             ->leftJoin('inspection_shift_option', 'inspection_monthly_eyewash.shift', '=', 'inspection_shift_option.id')
             ->leftJoin('masters_unit', 'inspection_monthly_eyewash.unit', '=', 'masters_unit.id')
@@ -92,7 +92,8 @@ class MonthlyEyeWashInspection extends Model
             $query = $query->where('inspection_monthly_eyewash.inspection_status', 'LIKE', '%' . decryptId($request->inspection_status) . '%');
         }
 
-  if ($request->has('from_date') && !empty($request->from_date)) {
+        if ($request->has('from_date') && !empty($request->from_date)) {
+          
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
             $query->where('inspection_monthly_eyewash.created_at', '>=', $startDate);
         }
@@ -272,7 +273,7 @@ class MonthlyEyeWashInspection extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_monthly_eyewash.*', 'inspection_shift_option.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*', 'inspection_monthly_eyewash.id as inspection_id','inspection_monthly_eyewash_details.*')
+        $query = $this->select('inspection_monthly_eyewash.*', 'inspection_shift_option.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*', 'inspection_monthly_eyewash.id as inspection_id', 'inspection_monthly_eyewash_details.*')
             ->leftJoin('masters_location', 'inspection_monthly_eyewash.location', '=', 'masters_location.id')
             ->leftJoin('inspection_shift_option', 'inspection_monthly_eyewash.shift', '=', 'inspection_shift_option.id')
             ->leftJoin('masters_unit', 'inspection_monthly_eyewash.unit', '=', 'masters_unit.id')
@@ -290,7 +291,7 @@ class MonthlyEyeWashInspection extends Model
             });
         }
 
-  if ($request->has('from_date') && !empty($request->from_date)) {
+        if ($request->has('from_date') && !empty($request->from_date)) {
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
             $query->where('inspection_monthly_eyewash.created_at', '>=', $startDate);
         }

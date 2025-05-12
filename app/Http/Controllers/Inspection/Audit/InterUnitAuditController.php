@@ -251,8 +251,7 @@ class InterUnitAuditController extends Controller
 
                 // Title Section
                 $sheet->mergeCells("G{$currentRow}:M" . ($currentRow + 2));
-                $sheet->setCellValue("G{$currentRow}", "Inter Unit Monthly Audit Checklist
-    PN International Pvt Ltd & PNSPL Pvt Ltd");
+                $sheet->setCellValue("G{$currentRow}", "Inter Unit Monthly Audit Checklist");
                 $sheet->getStyle("G{$currentRow}")->applyFromArray([
                     'font' => ['bold' => true, 'size' => 14],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
@@ -485,8 +484,7 @@ class InterUnitAuditController extends Controller
 
             // Title Section
             $sheet->mergeCells("G{$currentRow}:M" . ($currentRow + 2));
-            $sheet->setCellValue("G{$currentRow}", "Inter Unit Monthly Audit Checklist
-PN International Pvt Ltd & PNSPL Pvt Ltd");
+            $sheet->setCellValue("G{$currentRow}", "Inter Unit Monthly Audit Checklist");
             $sheet->getStyle("G{$currentRow}")->applyFromArray([
                 'font' => ['bold' => true, 'size' => 14],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],

@@ -273,7 +273,7 @@ class FloorStretcherController extends Controller
 
                 $sheet->mergeCells("A{$currentRow}:C" . ($currentRow + 2));
                 $sheet->mergeCells("D{$currentRow}:J" . ($currentRow + 2));
-                $sheet->setCellValue("D{$currentRow}", "Monthly Floor Patient Stretcher Checklist\nPN International Pvt. Ltd.");
+                $sheet->setCellValue("D{$currentRow}", "Monthly Floor Patient Stretcher Checklist");
                 $sheet->getStyle("D{$currentRow}")->applyFromArray([
                     'font' => ['bold' => true, 'size' => 14],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
@@ -525,7 +525,7 @@ class FloorStretcherController extends Controller
             $sheet->mergeCells('A1:C3');
 
             $sheet->mergeCells('D1:J3');
-            $sheet->setCellValue('D1', "Monthly Floor Patient Stretcher Checklist\nPN International Pvt. Ltd.");
+            $sheet->setCellValue('D1', "Monthly Floor Patient Stretcher Checklist");
             $sheet->getStyle('D1')->applyFromArray([
                 'font' => ['bold' => true, 'size' => 14],
                 'alignment' => [
