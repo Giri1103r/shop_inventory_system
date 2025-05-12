@@ -97,7 +97,7 @@
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('OHS Compliance Index') }}</label>
+                                        <label class="form-label view_label">{{ __('OHS Compliance Index(Role)') }}</label>
                                         <div class="view_data">
                                             {{ isset($rraa_details->ohs_compliance_index) ? $rraa_details->ohs_compliance_index : '' }}
                                         </div>

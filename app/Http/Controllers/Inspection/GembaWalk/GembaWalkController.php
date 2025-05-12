@@ -775,8 +775,6 @@ class GembaWalkController extends Controller
     }
 
 
-
-
     public function generalpdf(Request $request)
     {
         try {

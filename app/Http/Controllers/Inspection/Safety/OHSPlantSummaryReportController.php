@@ -486,7 +486,7 @@ class OHSPlantSummaryReportController extends Controller
 
             return response()->download($filePath)->deleteFileAfterSend(true);
         } catch (Exception $ex) {
-            dd($ex);
+        
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('safety/ohc-plant-summary/list'));

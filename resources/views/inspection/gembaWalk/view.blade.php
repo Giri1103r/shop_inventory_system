@@ -309,13 +309,13 @@
                                             <div class="form-group form-input">
                                                 <label class="form-label ">Remarks</label>
                                                 <div class="view_data">
-                                                    {{ $gembaWalk_ehs_capa_details->remarks }}
+                                                    {{ isset($gembaWalk_ehs_capa_details->remarks) ? $gembaWalk_ehs_capa_details->remarks : '-' }}
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
-                                                <label class="form-label">CAPA Action</label>
+                                                <label class="form-label">Whether the Inspection has been passed Without the CAPA?</label>
                                                 <div class="view_data">
                                                     @if (isset($gembaWalk_ehs_capa_details->capa))
                                                         {{ $gembaWalk_ehs_capa_details->capa == 1 ? 'YES' : 'NO' }}
@@ -390,7 +390,7 @@
 
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
-                                                <label class="form-label">CAPA Action</label>
+                                                <label class="form-label">Whether the Inspection has been passed Without the CAPA?</label>
                                                 <div class="view_data">
                                                     @if (isset($gembaWalk_ehs_capa_details->capa))
                                                         {{ $gembaWalk_ehs_capa_details->capa == 1 ? 'YES' : 'NO' }}
@@ -521,7 +521,7 @@
 
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label">CAPA Action</label>
+                                                    <label class="form-label">Whether the Inspection has been passed Without the CAPA?</label>
                                                     <div class="view_data">
                                                         @if (isset($gembaWalk_ehs_capa_details->capa))
                                                             {{ $gembaWalk_ehs_capa_details->capa == 1 ? 'YES' : 'NO' }}
@@ -638,7 +638,7 @@
                                             <div class="form-group form-input">
                                                 <label class="form-label ">Remarks</label>
                                                 <div class="view_data">
-                                                    {{ isset($gembaWalk_ehs_verificatioin_details->remarks) ? $gembaWalk_ehs_verificatioin_details->remarks : '' }}
+                                                    {{ isset($gembaWalk_ehs_verificatioin_details->remarks) ? $gembaWalk_ehs_verificatioin_details->remarks : '-' }}
 
                                                 </div>
                                             </div>

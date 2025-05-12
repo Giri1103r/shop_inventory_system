@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'OHC Plant Summary')
+@section('title', 'OHS Plant Summary')
 @section('pageurl', admin_url('safety/ohc-plant-summary/list'))
 
 
@@ -184,7 +184,7 @@
                             data: 'updated_frequency',
                             name: 'updated_frequency',
                         },
-                      
+
                          {
                             data: 'inspection_created_at',
                             name: 'inspection_created_at',

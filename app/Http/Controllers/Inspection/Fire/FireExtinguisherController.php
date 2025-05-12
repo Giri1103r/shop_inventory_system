@@ -802,7 +802,7 @@ class FireExtinguisherController extends Controller
                 ]);
 
                 $sheet->mergeCells("D{$titleRow}:K" . ($titleRow + 2));
-                $sheet->setCellValue("D{$titleRow}", "FIRE EXTINGUISHER INSPECTION CHECKLIST (STORE PRESSURE TYPE) PN INTERNATIONAL PVT. LTD.");
+                $sheet->setCellValue("D{$titleRow}", "FIRE EXTINGUISHER INSPECTION CHECKLIST (STORE PRESSURE TYPE)");
 
                 $sheet->getStyle("D{$titleRow}:K" . ($titleRow + 2))->applyFromArray([
                     'font' => ['bold' => true, 'size' => 14],
@@ -1146,7 +1146,7 @@ class FireExtinguisherController extends Controller
 
             $sheet->mergeCells('A1:C3');
             $sheet->mergeCells("D1:K3");
-            $sheet->setCellValue("D1", "FIRE EXTINGUISHER INSPECTION CHECKLIST (STORE PRESSURE TYPE) PN INTERNATIONAL PVT. LTD.");
+            $sheet->setCellValue("D1", "FIRE EXTINGUISHER INSPECTION CHECKLIST (STORE PRESSURE TYPE)");
             $sheet->getStyle("D1:K3")->applyFromArray([
                 'font'      => ['bold' => true, 'size' => 14],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],

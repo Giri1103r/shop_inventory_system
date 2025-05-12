@@ -153,17 +153,12 @@
                                                         <div class="col-md-4 mb-3">
                                                             <div class="form-group form-input">
                                                                 <label for="chemicals_1" class="form-label require">
-                                                                    Select Checmical
+                                                                   Name of Chemical
                                                                 </label>
-                                                                <select name="name_of_chemical[1]" id="chemicals_1"
-                                                                    class=" form-control single-select"
-                                                                    style="width: 100%">
-                                                                    <option value="">Select Chemicals</option>
-                                                                    @foreach ($chemicals as $chemical)
-                                                                        <option value="{{ encryptId($chemical->id) }}">
-                                                                            {{ $chemical->chemical }}</option>
-                                                                    @endforeach
-                                                                </select>
+                                                                <input type="text" name="name_of_chemical[1]"
+                                                                    class="form-control" placeholder="Enter the Chemicals"
+                                                                    value="">
+
                                                             </div>
                                                         </div>
 
@@ -377,6 +372,8 @@
                     },
                     'name_of_chemical[1]': {
                         required: true,
+                        minlength: 3,
+                        maxlength: 30,
                     },
                     'msds_availability_status[1]': {
                         required: true,
@@ -425,6 +422,8 @@
                     },
                     'name_of_chemical[1]': {
                         required: "Name of Chemical is Required",
+                        minlength: 'Chemical Name atlest contains 3 letters',
+                        maxlength: 'Chemical Name should not Exceed the 30 Characters',
                     },
                     'msds_availability_status[1]': {
                         required: "MSDS Availability Status is Required",
@@ -530,15 +529,9 @@
                         <div class="col-md-4">
                             <div class="form-group form-input">
                                 <label class="form-label require">Name of Chemical</label>
-                               <select name="name_of_chemical[${form_set_count}]" id="chemicals_${form_set_count}"
-                                        class=" form-control single-select"
-                                        style="width: 100%">
-                                        <option value="">Select Chemicals</option>
-                                    @foreach ($chemicals as $chemical)
-                                        <option value="{{ encryptId($chemical->id) }}">
-                                        {{ $chemical->chemical }}</option>
-                                    @endforeach
-                               </select>
+                             <input type="text" name="name_of_chemical[${form_set_count}]"
+                                                                    class="form-control" placeholder="Enter the Chemicals"
+                                                                    value="">
                             </div>
                         </div>
                         <div class="col-md-4 form-input">
@@ -649,8 +642,12 @@
 
                 $input.rules('add', {
                     required: true,
+                    minlength: 3,
+                    maxlength: 30,
                     messages: {
                         required: 'Name of Chemical is required',
+                        minlength: 'Chemical Name atlest contains 3 letters',
+                        maxlength: 'Chemical Name should not Exceed the 30 Characters'
                     }
                 });
 
@@ -731,7 +728,8 @@
                     $(this).find('input[name^="serial_number"]').attr('name', 'serial_number[' + (index +
                         1) + ']');
                     $(this).find('input[name^="item_code"]').attr('name', 'item_code[' + (index + 1) + ']');
-                    $(this).find('input[name^="storage_capacity"]').attr('name', 'storage_capacity[' + (index +
+                    $(this).find('input[name^="storage_capacity"]').attr('name', 'storage_capacity[' + (
+                        index +
                         1) + ']');
                     $(this).find('select[name^="name_of_chemical"]').attr('name', 'name_of_chemical[' + (
                         index + 1) + ']');

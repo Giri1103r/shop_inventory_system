@@ -413,4 +413,38 @@ class KpiDashboardController extends Controller
             report($ex);
         }
     }
+
+    public function injurybodycount(Request $request)
+    {
+        $request = request();
+        $parts = $request->input('part');
+
+        $listResp = DB::table('ims_initial_incident as inc')
+            ->select([
+                'body.id as bodyids',
+                'inc.id as inveeid',
+            ])
+            ->leftJoin('ims_injury_details as inj', 'inj.incident_id', '=', 'inc.id')
+            ->leftJoin('ims_incident_body_parts as body', 'body.injury_id', '=', 'inj.id')
+            ->where('inc.trash', 'NO')
+            ->where('body.body_parts_label', 'like', '%' . $parts . '%') // Correct LIKE usage
+            ->get();
+
+        $inveeid = [];
+        $response = [];
+
+        if (!$listResp->isEmpty()) {
+            foreach ($listResp as $lists) {
+                $inveeid[] = $lists->inveeid;
+            }
+
+            $response['count'] = count($listResp);
+            $response['inc_id'] = $inveeid;
+        } else {
+            $response['count'] = 0;
+            $response['inc_id'] = [];
+        }
+
+        return response()->json($response);
+    }
 }

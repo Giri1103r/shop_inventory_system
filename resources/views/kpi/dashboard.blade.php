@@ -307,7 +307,6 @@
                     <div class="card view_card">
                         <div class="card-header">
                             <h4 class="text-white">Injury Report - Based On Body Parts</h4>
-                            <a class="fas fa-arrow-alt-circle-down chartdownload" id="loadinjurychart_download"></a>
                         </div>
                         <div class="card-body" id="loadinjurychart"></div>
                     </div>

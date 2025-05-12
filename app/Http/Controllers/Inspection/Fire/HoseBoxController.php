@@ -801,7 +801,7 @@ class HoseBoxController extends Controller
                 ]);
 
                 $sheet->mergeCells("C{$titleRow}:I" . ($titleRow + 2));
-                $sheet->setCellValue("C{$titleRow}", "HOSE BOX INSPECTION CHECKLIST PN INTERNATIONAL PVT. LTD.");
+                $sheet->setCellValue("C{$titleRow}", "HOSE BOX INSPECTION CHECKLIST");
 
                 $sheet->getStyle("C{$titleRow}:I" . ($titleRow + 2))->applyFromArray([
                     'font' => ['bold' => true, 'size' => 14],
@@ -1153,7 +1153,7 @@ class HoseBoxController extends Controller
 
             $sheet->mergeCells('A1:B3');
             $sheet->mergeCells("C1:I3");
-            $sheet->setCellValue("C1", "HOSE BOX INSPECTION CHECKLIST PN INTERNATIONAL PVT. LTD.");
+            $sheet->setCellValue("C1", "HOSE BOX INSPECTION CHECKLIST");
             $sheet->getStyle("C1:I3")->applyFromArray([
                 'font'       => ['bold' => true, 'size' => 14],
                 'alignment'  => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
