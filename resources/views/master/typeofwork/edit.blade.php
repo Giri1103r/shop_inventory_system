@@ -206,7 +206,7 @@
 
                                                 <div class="table-container">
                                                     <h3>
-                                                        Manual List</h3>
+                                                       Precaution to be taken</h3>
 
                                                     <div>
                                                         <table class="table view_card" id = "manual">
@@ -269,7 +269,7 @@
 
                                                 <div class="table-container">
                                                     <h3>
-                                                        Check List</h3>
+                                                      Equipment Inspection</h3>
 
                                                     <div>
                                                         <table class="table view_card" id = "check">
@@ -338,7 +338,7 @@
                                             <div class="table-wrapper">
                                                 <div class="table-container">
                                                     <h3>
-                                                        Instruction List</h3>
+                                                      Safe Work Instructions </h3>
 
                                                     <div style="overflow-y: auto; max-height: 400px;">
                                                         <table class="table view_card" id=instruction>
