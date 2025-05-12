@@ -111,7 +111,7 @@
                                                     alt="Signature Upload" style="width: 150px; margin-top: -10px;" />
                                             </div>
                                         </div>
-                                    @elseif (!empty($signatureview) && !empty($signatureview->signature_upload))
+                                        @elseif (!empty($signatureview) && !empty($signatureview->signature_upload))
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
                                                 <label class="form-label" style="display: block;">
