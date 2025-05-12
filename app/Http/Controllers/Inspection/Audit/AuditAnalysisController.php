@@ -282,7 +282,15 @@ class AuditAnalysisController extends Controller
                 }
                 $sheet->mergeCells('P' . $row . ':Q' . ($row + 2));
                 $sheet->mergeCells('E' . $row . ':O' . ($row + 2));
-                $sheet->setCellValue('E' . $row, "   6'S AUDIT ANALYSIS REPORT (FY FROM ….... TO ……) PN INTERNATIONAL PVT LTD");
+                $currentMonth = date('n');
+                $currentYear = date('Y');
+                if ($currentMonth >= 4) {
+                    $fyText = "FY FROM APR $currentYear TO MAR " . ($currentYear + 1);
+                } else {
+                    $fyText = "FY FROM APR " . ($currentYear - 1) . " TO MAR $currentYear";
+                }
+                
+                $sheet->setCellValue('E' . $row, "   6'S AUDIT ANALYSIS REPORT ($fyText)");
                 $sheet->getStyle('E' . $row . ':O' . ($row + 2))->applyFromArray([
                     'font' => ['bold' => true, 'size' => 14],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
@@ -414,10 +422,18 @@ class AuditAnalysisController extends Controller
                 return redirect()->back()->with('error', __('inspection.excess_error'));
             }
 
+            $currentMonth = date('n');
+            $currentYear = date('Y');
+            if ($currentMonth >= 4) {
+                $fyText = "FY FROM APR $currentYear TO MAR " . ($currentYear + 1);
+            } else {
+                $fyText = "FY FROM APR " . ($currentYear - 1) . " TO MAR $currentYear";
+            }
             $data = array(
                 'content' => $allData,
                 'document_no' => $document_no,
                 'pagetitle' => "6'S AUDIT ANALYSIS REPORT",
+                'fyText' => $fyText,
             );
 
             $property = [
@@ -576,7 +592,7 @@ class AuditAnalysisController extends Controller
                 $fyText = "FY FROM APR " . ($currentYear - 1) . " TO MAR $currentYear";
             }
             
-            $sheet->setCellValue('E1', "   6'S AUDIT ANALYSIS REPORT ($fyText) PN INTERNATIONAL PVT LTD");
+            $sheet->setCellValue('E1', "   6'S AUDIT ANALYSIS REPORT ($fyText)");
             $sheet->getStyle('E1:O3')->applyFromArray([
                 'font' => ['bold' => true, 'size' => 14],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
