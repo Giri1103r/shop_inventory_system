@@ -205,7 +205,7 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('chart1', [KpiDashboardController::class, 'getChart1']);
                 Route::get('chart2', [KpiDashboardController::class, 'getChart2']);
                 Route::get('chart3', [KpiDashboardController::class, 'getChart3']);
-                Route::get('chart4', [KpiDashboardController::class, 'getChart4']);
+                Route::get('IIRTypeWiseRCPA', [KpiDashboardController::class, 'IIRTypeWiseRCPA']);
                 Route::get('chart5', [KpiDashboardController::class, 'getChart5']);
                 Route::get('chart6', [KpiDashboardController::class, 'getChart6']);
                 Route::get('chart7', [KpiDashboardController::class, 'getChart7']);

@@ -93,7 +93,7 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-xl-6 col-xxl-6">
+                <div class="col-xl-12 col-xxl-12">
                     <div class="card view_card">
                         <div class="card-header">
                             <h4 class="text-white">CHART3</h4>
@@ -103,13 +103,13 @@
 
                     </div>
                 </div>
-                <div class="col-xl-6 col-xxl-6">
+                <div class="col-xl-12 col-xxl-12">
                     <div class="card view_card">
                         <div class="card-header">
-                            <h4 class="text-white">CHART4</h4>
-                            <a class="fas fa-arrow-alt-circle-down chartdownload" id="LoadChart4_download"></a>
+                            <h4 class="text-white">IIR Type Wise RCPA</h4>
+                            <a class="fas fa-arrow-alt-circle-down chartdownload" id="iirTypewiseRCPA_download"></a>
                         </div>
-                        <div class="card-body px-0 pt-0 dlab-scroll height450" id="LoadChart4Count"> </div>
+                        <div class="card-body px-0 pt-0 dlab-scroll height450" id="iirTypewiseRCPACont"> </div>
 
                     </div>
                 </div>
@@ -425,7 +425,7 @@
             LoadChart1Count(Fromdate, Todate);
             LoadChart2Count(Fromdate, Todate);
             LoadChart3Count(Fromdate, Todate);
-            LoadChart4Count(Fromdate, Todate);
+            iirTypewiseRCPACont(Fromdate, Todate);
             LoadChart5Count(Fromdate, Todate);
             LoadChart6Count(Fromdate, Todate);
             LoadChart7Count(Fromdate, Todate);
@@ -510,13 +510,13 @@
             });
         }
 
-        function LoadChart4Count(Fromdate = '', Todate = '') {
-            var url = "{{ admin_url('kpi/dashboard/chart4') }}"
+        function iirTypewiseRCPACont(Fromdate = '', Todate = '') {
+            var url = "{{ admin_url('kpi/dashboard/IIRTypeWiseRCPA') }}"
             var data = {
                 Fromdate: Fromdate,
                 Todate: Todate,
             };
-            $('#LoadChart4Count').html('');
+            $('#iirTypewiseRCPACont').html('');
             $.ajax({
                 type: 'get',
                 url: url,
@@ -524,7 +524,7 @@
                 cache: false,
                 success: function(dataAjx) {
 
-                    $('#LoadChart4Count').html(dataAjx);
+                    $('#iirTypewiseRCPACont').html(dataAjx);
                 }
             });
         }

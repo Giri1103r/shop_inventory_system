@@ -83,15 +83,15 @@ class KpiDashboardController extends Controller
             report($ex);
         }
     }
-    public function getChart4(Request $request)
+    public function IIRTypeWiseRCPA(Request $request)
     {
         try {
-
+            $chartData = $this->ims_incident->getTypeofIIRRCPACountData($request);
             $data = [
-                'getdashdata' => $request,
+                'chartData' => $chartData,
             ];
 
-            return view('kpi.chartData4', $data);
+            return view('kpi.iir_wise_rcpa', $data);
         } catch (\Exception $ex) {
             report($ex);
         }
