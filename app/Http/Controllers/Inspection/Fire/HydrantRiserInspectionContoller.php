@@ -829,7 +829,7 @@ class HydrantRiserInspectionContoller extends Controller
                 ]);
 
                 $sheet->mergeCells("D{$titleRow}:K" . ($titleRow + 2));
-                $sheet->setCellValue("D{$titleRow}", "HYDRANT & RISER INSPECTION CHECKLIST PN INTERNATIONAL PVT. LTD.");
+                $sheet->setCellValue("D{$titleRow}", "HYDRANT & RISER INSPECTION CHECKLIST");
                 $sheet->getStyle("C{$titleRow}:K" . ($titleRow + 2))->applyFromArray([
                     'font' => ['bold' => true, 'size' => 14],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
@@ -1184,7 +1184,7 @@ class HydrantRiserInspectionContoller extends Controller
             // Header and Document Info
             $sheet->mergeCells('A1:B3');
             $sheet->mergeCells("C1:K3");
-            $sheet->setCellValue("C1", "HYDRANT & RISER INSPECTION CHECKLIST PN INTERNATIONAL PVT. LTD.");
+            $sheet->setCellValue("C1", "HYDRANT & RISER INSPECTION CHECKLIST");
             $sheet->getStyle("C1:K3")->applyFromArray([
                 'font' => ['bold' => true, 'size' => 14],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],

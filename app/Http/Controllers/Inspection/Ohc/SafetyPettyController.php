@@ -338,7 +338,7 @@ class SafetyPettyController extends Controller
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                 ]);
                 $sheet->mergeCells("D{$currentRow}:P" . ($currentRow + 2));
-                $sheet->setCellValue("D{$currentRow}", "Safety Petty Log book PN International Pvt Ltd");
+                $sheet->setCellValue("D{$currentRow}", "Safety Petty Log Book");
                 $sheet->getStyle("D{$currentRow}")->applyFromArray([
                     'font' => ['bold' => true, 'size' => 14],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
@@ -571,7 +571,7 @@ class SafetyPettyController extends Controller
             ]);
 
             $sheet->mergeCells('D1:P3');
-            $sheet->setCellValue('D1', "Safety Petty Log book PN International Pvt Ltd");
+            $sheet->setCellValue('D1', "Safety Petty Log Book");
             $sheet->getStyle('D1')->applyFromArray([
                 'font' => ['bold' => true, 'size' => 14],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],

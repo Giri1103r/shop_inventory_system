@@ -313,7 +313,7 @@ class EmergencyBuyerFirstAidBagChecklistController extends Controller
             ]);
 
             $sheet->mergeCells("C1:F3");
-            $sheet->setCellValue("C1", "BUYER'S FIRST AID BAG INSPECTION CHECKLIST PN INTERNATIONAL PNT. LTD.");
+            $sheet->setCellValue("C1", "BUYER'S FIRST AID BAG INSPECTION CHECKLIST");
             $sheet->getStyle("C1:F3")->applyFromArray([
                 'font' => ['bold' => true, 'size' => 14],
                 'alignment' => [
@@ -490,7 +490,7 @@ class EmergencyBuyerFirstAidBagChecklistController extends Controller
                 // Title
                 $sheet->mergeCells("A{$headerRowStart}:B" . ($headerRowStart + 2));
                 $sheet->mergeCells("C{$headerRowStart}:F" . ($headerRowStart + 2));
-                $sheet->setCellValue("C{$headerRowStart}", "BUYER'S FIRST AID BAG INSPECTION CHECKLIST PN INTERNATIONAL PNT. LTD.");
+                $sheet->setCellValue("C{$headerRowStart}", "BUYER'S FIRST AID BAG INSPECTION CHECKLIST");
                 $sheet->getStyle("A{$headerRowStart}:F" . ($headerRowStart + 2))->applyFromArray([
                     'font' => ['bold' => true, 'size' => 14],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],

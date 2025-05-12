@@ -267,7 +267,7 @@ class CertifiedFireFighterController extends Controller
                 $sheet->mergeCells("H{$currentRow}:I" . ($currentRow + 2));
 
                 $sheet->mergeCells("C{$currentRow}:G" . ($currentRow + 2));
-                $sheet->setCellValue("C{$currentRow}", "Certified Fire Fighter List\nPN International Pvt Ltd");
+                $sheet->setCellValue("C{$currentRow}", "Certified Fire Fighter List");
                 $sheet->getStyle("C{$currentRow}:G" . ($currentRow + 2))->applyFromArray([
                     'font' => ['bold' => true, 'size' => 14],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
@@ -510,7 +510,7 @@ class CertifiedFireFighterController extends Controller
             $sheet->mergeCells('H1:I3');
 
             $sheet->mergeCells('C1:G3');
-            $sheet->setCellValue('C1', "Certified Fire Fighter List\nPN International Pvt Ltd");
+            $sheet->setCellValue('C1', "Certified Fire Fighter List");
             $sheet->getStyle('C1:G3')->applyFromArray([
                 'font' => ['bold' => true, 'size' => 14],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],

@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>FIRE SAFETY EQUIPMENT | KARAM</title>
+    <title> SAFETY EQUIPMENT | KARAM</title>
 
     <style>
         .badge {
