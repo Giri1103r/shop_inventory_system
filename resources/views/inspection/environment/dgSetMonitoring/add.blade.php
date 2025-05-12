@@ -92,40 +92,48 @@
                                                     </div>
 
                                                     <div class="col-md-4 form-input">
-                                                        <label class="form-label">D.G Set Resource Code</label>
+                                                        <label class="form-label require">D.G Set Resource Code</label>
                                                         <input type="text" class="form-control"
                                                             name="monitoring[1][dg_no]" id="dg_no_1">
 
                                                     </div>
                                                     <div class="col-md-4 form-input">
-                                                        <label class="form-label">KVA Rating</label>
+                                                        <label class="form-label require">KVA Rating</label>
                                                         <input type="text" class="form-control"
                                                             name="monitoring[1][kva_rating]" id="kva_rating_1">
 
                                                     </div>
                                                     <div class="col-md-4 form-input mt-2">
-                                                        <label class="form-label">Installation Location</label>
+                                                        <label class="form-label require">Installation Location</label>
                                                         <input type="text" class="form-control"
                                                             name="monitoring[1][location]" id="location_1">
 
                                                     </div>
                                                     <div class="col-md-4 form-input mt-2">
-                                                        <label class="form-label">Engine Sr. No.</label>
+                                                        <label class="form-label require">Engine Sr. No.</label>
                                                         <input type="text" class="form-control"
                                                             name="monitoring[1][engine_srno]" id="engine_srno_1">
 
                                                     </div>
                                                     <div class="col-md-4 form-input mt-2">
-                                                        <label class="form-label">Date of Monitoring</label>
+                                                        <label class="form-label require">Date of Monitoring</label>
                                                         <input type="text" name="monitoring[1][date_of_monitoring]"
                                                             class="form-control" id="date_of_monitoring_1">
                                                     </div>
                                                     <div class="col-md-4 form-input mt-2">
-                                                        <label class="form-label">Next Due Date of
+                                                        <label class="form-label require">Next Due Date of
                                                             Monitoring</label>
                                                         <input type="text"
                                                             name="monitoring[1][next_due_date_of_monitoring]"
                                                             class="form-control" id="next_due_date_of_monitoring_1">
+                                                    </div>
+
+                                                    <div class="col-md-4 form-input mt-2">
+                                                        <label class="form-label require">Last Due Date of
+                                                            Monitoring</label>
+                                                        <input type="text"
+                                                            name="monitoring[1][last_due_date_of_monitoring]"
+                                                            class="form-control" id="last_due_date_of_monitoring_1">
                                                     </div>
 
                                                     <div class="col-md-4 form-input mt-2">
@@ -177,6 +185,9 @@
 
         document.addEventListener("DOMContentLoaded", function() {
             function initializeFlatpickr() {
+                flatpickr("input[id^='last_due_date_of_monitoring_']", {
+                    dateFormat: "d-m-Y"
+                });
                 $("input[id^='date_of_monitoring_']").flatpickr({
                     dateFormat: "d-m-Y",
                     onChange: function(selectedDates, dateStr, instance) {
@@ -322,6 +333,14 @@
                     }
                 });
 
+                newRow.find("input[name$='[last_due_date_of_monitoring]']").rules("add", {
+
+                    required: true,
+                    messages: {
+                        required: "Please select the Date.",
+                    }
+                    });
+
                 initializeFlatpickr();
                 $('.single-select').select2();
             });
@@ -447,6 +466,9 @@
                 'monitoring[1][next_due_date_of_monitoring]': {
                     required: true,
                 },
+                'monitoring[1][last_due_date_of_monitoring]': {
+                    required: true,
+                },
             },
             messages: {
                 'monitoring[1][kva_rating]': {
@@ -471,6 +493,9 @@
                     required: "Please Select the date.",
                 },
                 'monitoring[1][next_due_date_of_monitoring]': {
+                    required: "Please Select the date.",
+                },
+                'monitoring[1][last_due_date_of_monitoring]': {
                     required: "Please Select the date.",
                 },
             },

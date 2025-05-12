@@ -248,9 +248,9 @@ class AmbientAirMonitoringYearlyController extends Controller
                 }
 
                 // Title Section
-                $sheet->mergeCells("G{$currentRow}:M" . ($currentRow + 2));
-                $sheet->setCellValue("G{$currentRow}", "AMBIENT NOISE MONITORING SURVEY REPORT(EXTERNAL) PN INTERNATIONAL PVT. LTD");
-                $sheet->getStyle("G{$currentRow}:M{$currentRow}")->applyFromArray([
+                $sheet->mergeCells("G{$currentRow}:O" . ($currentRow + 2));
+                $sheet->setCellValue("G{$currentRow}", "AMBIENT NOISE MONITORING ");
+                $sheet->getStyle("G{$currentRow}:O{$currentRow}")->applyFromArray([
                     'font' => ['bold' => true, 'size' => 14],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
@@ -260,15 +260,15 @@ class AmbientAirMonitoringYearlyController extends Controller
                 // document number
 
 
-                $sheet->mergeCells("N$currentRow:P$currentRow")->setCellValue("N$currentRow", 'Doc. No.');
-                $sheet->mergeCells("N" . ($currentRow + 1) . ":P" . ($currentRow + 1))->setCellValue("N" . ($currentRow + 1), 'Issue Dt.');
-                $sheet->mergeCells("N" . ($currentRow + 2) . ":P" . ($currentRow + 2))->setCellValue("N" . ($currentRow + 2), 'Rev. & Dt.');
+                $sheet->mergeCells("P$currentRow:R$currentRow")->setCellValue("P$currentRow", 'Doc. No.');
+                $sheet->mergeCells("P" . ($currentRow + 1) . ":R" . ($currentRow + 1))->setCellValue("P" . ($currentRow + 1), 'Issue Dt.');
+                $sheet->mergeCells("P" . ($currentRow + 2) . ":R" . ($currentRow + 2))->setCellValue("P" . ($currentRow + 2), 'Rev. & Dt.');
 
-                $sheet->mergeCells("Q$currentRow:S$currentRow")->setCellValue("Q$currentRow", $document_no->doc_no);
-                $sheet->mergeCells("Q" . ($currentRow + 1) . ":S" . ($currentRow + 1))->setCellValue("Q" . ($currentRow + 1), Displaydateformat($document_no->issue_date));
-                $sheet->mergeCells("Q" . ($currentRow + 2) . ":S" . ($currentRow + 2))->setCellValue("Q" . ($currentRow + 2), $document_no->rev_dt);
+                $sheet->mergeCells("S$currentRow:U$currentRow")->setCellValue("S$currentRow", $document_no->doc_no);
+                $sheet->mergeCells("S" . ($currentRow + 1) . ":U" . ($currentRow + 1))->setCellValue("S" . ($currentRow + 1), Displaydateformat($document_no->issue_date));
+                $sheet->mergeCells("S" . ($currentRow + 2) . ":U" . ($currentRow + 2))->setCellValue("S" . ($currentRow + 2), $document_no->rev_dt);
 
-                $sheet->getStyle("N$currentRow:S" . ($currentRow + 2))->applyFromArray([
+                $sheet->getStyle("P$currentRow:U" . ($currentRow + 2))->applyFromArray([
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                     'font' => ['bold' => true],
@@ -276,50 +276,51 @@ class AmbientAirMonitoringYearlyController extends Controller
 
                 $headerRow = $currentRow + 3;
 
+
                 $sheet->mergeCells("A$headerRow:B$headerRow")->setCellValue("A$headerRow", "SERIAL NO");
                 $sheet->mergeCells("C$headerRow:D$headerRow")->setCellValue("C$headerRow", "Location");
                 $sheet->mergeCells("E$headerRow:F$headerRow")->setCellValue("E$headerRow", "Unit");
                 $sheet->mergeCells("G$headerRow:H$headerRow")->setCellValue("G$headerRow", "Date of Monitoring");
                 $sheet->mergeCells("I$headerRow:J$headerRow")->setCellValue("I$headerRow", "Next Due Date Of Monitoring");
-                $sheet->mergeCells("K$headerRow:L$headerRow")->setCellValue("K$headerRow", "PM 10");
-                $sheet->mergeCells("M$headerRow:M$headerRow")->setCellValue("M$headerRow", "PM 25");
-                $sheet->mergeCells("N$headerRow:N$headerRow")->setCellValue("N$headerRow", "SO2");
-                $sheet->mergeCells("O$headerRow:O$headerRow")->setCellValue("O$headerRow", "NO2");
-                $sheet->mergeCells("P$headerRow:P$headerRow")->setCellValue("P$headerRow", "CO");
-                $sheet->mergeCells("Q$headerRow:Q$headerRow")->setCellValue("Q$headerRow", "Act/Rule");
-                $sheet->mergeCells("R$headerRow:S$headerRow")->setCellValue("R$headerRow", "Remark");
+                $sheet->mergeCells("K$headerRow:L$headerRow")->setCellValue("K$headerRow", "Last Due Date Of Monitoring");
+                $sheet->mergeCells("M$headerRow:N$headerRow")->setCellValue("M$headerRow", "PM 10");
+                $sheet->setCellValue("O$headerRow", "PM 25");
+                $sheet->setCellValue("P$headerRow", "SO2");
+                $sheet->setCellValue("Q$headerRow", "NO2");
+                $sheet->setCellValue("R$headerRow", "CO");
+                $sheet->setCellValue("S$headerRow", "Act/Rule");
+                $sheet->mergeCells("T$headerRow:U$headerRow")->setCellValue("T$headerRow", "Remark");
 
-
-
-                $sheet->getStyle("A$headerRow:S$headerRow")->applyFromArray([
+                $sheet->getStyle("A$headerRow:U$headerRow")->applyFromArray([
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                     'font' => ['bold' => true],
                 ]);
 
+
                 $inspectionRow = $headerRow + 1;
-                foreach ($ambientAirDataList as $index => $detail) {
+               foreach ($ambientAirDataList as $index => $detail) {
+                        $sheet->mergeCells("A$inspectionRow:B$inspectionRow")->setCellValue("A$inspectionRow", $detail->sr_no);
+                        $sheet->mergeCells("C$inspectionRow:D$inspectionRow")->setCellValue("C$inspectionRow", getLocationname($detail->location_id));
+                        $sheet->mergeCells("E$inspectionRow:F$inspectionRow")->setCellValue("E$inspectionRow", $detail->unit_name);
+                        $sheet->mergeCells("G$inspectionRow:H$inspectionRow")->setCellValue("G$inspectionRow", Displaydateformat($detail->date_of_monitoring));
+                        $sheet->mergeCells("I$inspectionRow:J$inspectionRow")->setCellValue("I$inspectionRow", Displaydateformat($detail->next_due_date_of_monitoring));
+                        $sheet->mergeCells("K$inspectionRow:L$inspectionRow")->setCellValue("K$inspectionRow", Displaydateformat($detail->last_due_date_of_monitoring));
+                        $sheet->mergeCells("M$inspectionRow:N$inspectionRow")->setCellValue("M$inspectionRow", ($detail->pm10));
+                        $sheet->setCellValue("O$inspectionRow", $detail->pm25);
+                        $sheet->setCellValue("P$inspectionRow", $detail->so2);
+                        $sheet->setCellValue("Q$inspectionRow", ($detail->no2));
+                        $sheet->setCellValue("R$inspectionRow", ($detail->co));
+                        $sheet->setCellValue("S$inspectionRow", $detail->act_rule);
+                        $sheet->mergeCells("T$inspectionRow:U$inspectionRow")->setCellValue("T$inspectionRow", $detail->remark);
 
-                    $sheet->mergeCells("A$inspectionRow:B$inspectionRow")->setCellValue("A$inspectionRow", $detail->sr_no);
-                    $sheet->mergeCells("C$inspectionRow:D$inspectionRow")->setCellValue("C$inspectionRow", getLocationname($detail->location_id));
-                    $sheet->mergeCells("E$inspectionRow:F$inspectionRow")->setCellValue("E$inspectionRow", $detail->unit_name);
-                    $sheet->mergeCells("G$inspectionRow:H$inspectionRow")->setCellValue("G$inspectionRow", Displaydateformat($detail->date_of_monitoring));
-                    $sheet->mergeCells("I$inspectionRow:J$inspectionRow")->setCellValue("I$inspectionRow", Displaydateformat($detail->next_due_date_of_monitoring));
-                    $sheet->mergeCells("K$inspectionRow:L$inspectionRow")->setCellValue("K$inspectionRow", ($detail->pm10));
-                    $sheet->mergeCells("M$inspectionRow:M$inspectionRow")->setCellValue("M$inspectionRow", $detail->pm25);
-                    $sheet->mergeCells("N$inspectionRow:N$inspectionRow")->setCellValue("N$inspectionRow", $detail->so2);
-                    $sheet->mergeCells("O$inspectionRow:O$inspectionRow")->setCellValue("O$inspectionRow", ($detail->no2));
-                    $sheet->mergeCells("P$inspectionRow:P$inspectionRow")->setCellValue("P$inspectionRow", ($detail->co));
-                    $sheet->mergeCells("Q$inspectionRow:Q$inspectionRow")->setCellValue("Q$inspectionRow", $detail->act_rule);
-                    $sheet->mergeCells("R$inspectionRow:S$inspectionRow")->setCellValue("R$inspectionRow", $detail->remark);
+                        $sheet->getStyle("A$inspectionRow:U$inspectionRow")->applyFromArray([
+                            'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                            'alignment' => ['horizontal' => Alignment::HORIZONTAL_LEFT, 'vertical' => Alignment::VERTICAL_CENTER],
+                        ]);
 
-                    $sheet->getStyle("A$inspectionRow:S$inspectionRow")->applyFromArray([
-                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_LEFT, 'vertical' => Alignment::VERTICAL_CENTER],
-                    ]);
-
-                    $inspectionRow++;
-                }
+                        $inspectionRow++;
+                    }
                 $row =  $inspectionRow+4;
             }
             $fileName = 'ambientAir.xlsx';
@@ -400,7 +401,7 @@ class AmbientAirMonitoringYearlyController extends Controller
             if (Auth::check()) {
                 $type = AMBIENT_AIR;
                 $environmentData =   $this->environment->selectOne($id, $type);
-                
+
                 $ambientAirDataList = $this->ambient_air_monitoring->selectOne($id);
 
                 $document_no  = $this->static_docno->select('id', 'doc_no', 'issue_date', 'rev_dt')->where([
@@ -483,7 +484,7 @@ class AmbientAirMonitoringYearlyController extends Controller
                 }
 
                 // Title Section
-                $sheet->mergeCells("G{$currentRow}:M" . ($currentRow + 2));
+                $sheet->mergeCells("G{$currentRow}:O" . ($currentRow + 2));
                 $sheet->setCellValue("G{$currentRow}", "AMBIENT NOISE MONITORING SURVEY REPORT(EXTERNAL) PN INTERNATIONAL PVT. LTD");
                 $sheet->getStyle("G{$currentRow}")->applyFromArray([
                     'font' => ['bold' => true, 'size' => 14],
@@ -495,15 +496,15 @@ class AmbientAirMonitoringYearlyController extends Controller
                 // document number
 
 
-                $sheet->mergeCells("N$currentRow:P$currentRow")->setCellValue("N$currentRow", 'Doc. No.');
-                $sheet->mergeCells("N" . ($currentRow + 1) . ":P" . ($currentRow + 1))->setCellValue("N" . ($currentRow + 1), 'Issue Dt.');
-                $sheet->mergeCells("N" . ($currentRow + 2) . ":P" . ($currentRow + 2))->setCellValue("N" . ($currentRow + 2), 'Rev. & Dt.');
+                $sheet->mergeCells("P$currentRow:R$currentRow")->setCellValue("P$currentRow", 'Doc. No.');
+                $sheet->mergeCells("P" . ($currentRow + 1) . ":R" . ($currentRow + 1))->setCellValue("P" . ($currentRow + 1), 'Issue Dt.');
+                $sheet->mergeCells("P" . ($currentRow + 2) . ":R" . ($currentRow + 2))->setCellValue("P" . ($currentRow + 2), 'Rev. & Dt.');
 
-                $sheet->mergeCells("Q$currentRow:S$currentRow")->setCellValue("Q$currentRow", $document_no->doc_no);
-                $sheet->mergeCells("Q" . ($currentRow + 1) . ":S" . ($currentRow + 1))->setCellValue("Q" . ($currentRow + 1), Displaydateformat($document_no->issue_date));
-                $sheet->mergeCells("Q" . ($currentRow + 2) . ":S" . ($currentRow + 2))->setCellValue("Q" . ($currentRow + 2), $document_no->rev_dt);
+                $sheet->mergeCells("S$currentRow:U$currentRow")->setCellValue("S$currentRow", $document_no->doc_no);
+                $sheet->mergeCells("S" . ($currentRow + 1) . ":U" . ($currentRow + 1))->setCellValue("S" . ($currentRow + 1), Displaydateformat($document_no->issue_date));
+                $sheet->mergeCells("S" . ($currentRow + 2) . ":U" . ($currentRow + 2))->setCellValue("S" . ($currentRow + 2), $document_no->rev_dt);
 
-                $sheet->getStyle("N$currentRow:S" . ($currentRow + 2))->applyFromArray([
+                $sheet->getStyle("P$currentRow:U" . ($currentRow + 2))->applyFromArray([
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                     'font' => ['bold' => true],
@@ -516,17 +517,18 @@ class AmbientAirMonitoringYearlyController extends Controller
                 $sheet->mergeCells("E$headerRow:F$headerRow")->setCellValue("E$headerRow", "Unit");
                 $sheet->mergeCells("G$headerRow:H$headerRow")->setCellValue("G$headerRow", "Date of Monitoring");
                 $sheet->mergeCells("I$headerRow:J$headerRow")->setCellValue("I$headerRow", "Next Due Date Of Monitoring");
-                $sheet->mergeCells("K$headerRow:L$headerRow")->setCellValue("K$headerRow", "PM 10");
-                $sheet->mergeCells("M$headerRow:M$headerRow")->setCellValue("M$headerRow", "PM 25");
-                $sheet->mergeCells("N$headerRow:N$headerRow")->setCellValue("N$headerRow", "SO2");
-                $sheet->mergeCells("O$headerRow:O$headerRow")->setCellValue("O$headerRow", "NO2");
-                $sheet->mergeCells("P$headerRow:P$headerRow")->setCellValue("P$headerRow", "CO");
-                $sheet->mergeCells("Q$headerRow:Q$headerRow")->setCellValue("Q$headerRow", "Act/Rule");
-                $sheet->mergeCells("R$headerRow:S$headerRow")->setCellValue("R$headerRow", "Remark");
+                $sheet->mergeCells("K$headerRow:L$headerRow")->setCellValue("K$headerRow", "Last Due Date Of Monitoring");
+                $sheet->mergeCells("M$headerRow:N$headerRow")->setCellValue("M$headerRow", "PM 10");
+                $sheet->mergeCells("O$headerRow:O$headerRow")->setCellValue("O$headerRow", "PM 25");
+                $sheet->mergeCells("P$headerRow:P$headerRow")->setCellValue("P$headerRow", "SO2");
+                $sheet->mergeCells("Q$headerRow:Q$headerRow")->setCellValue("Q$headerRow", "NO2");
+                $sheet->mergeCells("R$headerRow:R$headerRow")->setCellValue("R$headerRow", "CO");
+                $sheet->mergeCells("S$headerRow:S$headerRow")->setCellValue("S$headerRow", "Act/Rule");
+                $sheet->mergeCells("T$headerRow:U$headerRow")->setCellValue("T$headerRow", "Remark");
 
 
 
-                $sheet->getStyle("A$headerRow:S$headerRow")->applyFromArray([
+                $sheet->getStyle("A$headerRow:U$headerRow")->applyFromArray([
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                     'font' => ['bold' => true],
@@ -540,15 +542,16 @@ class AmbientAirMonitoringYearlyController extends Controller
                     $sheet->mergeCells("E$inspectionRow:F$inspectionRow")->setCellValue("E$inspectionRow", $detail->unit_name);
                     $sheet->mergeCells("G$inspectionRow:H$inspectionRow")->setCellValue("G$inspectionRow", Displaydateformat($detail->date_of_monitoring));
                     $sheet->mergeCells("I$inspectionRow:J$inspectionRow")->setCellValue("I$inspectionRow", Displaydateformat($detail->next_due_date_of_monitoring));
-                    $sheet->mergeCells("K$inspectionRow:L$inspectionRow")->setCellValue("K$inspectionRow", ($detail->pm10));
-                    $sheet->mergeCells("M$inspectionRow:M$inspectionRow")->setCellValue("M$inspectionRow", $detail->pm25);
-                    $sheet->mergeCells("N$inspectionRow:N$inspectionRow")->setCellValue("N$inspectionRow", $detail->so2);
-                    $sheet->mergeCells("O$inspectionRow:O$inspectionRow")->setCellValue("O$inspectionRow", ($detail->no2));
-                    $sheet->mergeCells("P$inspectionRow:P$inspectionRow")->setCellValue("P$inspectionRow", ($detail->co));
-                    $sheet->mergeCells("Q$inspectionRow:Q$inspectionRow")->setCellValue("Q$inspectionRow", $detail->act_rule);
-                    $sheet->mergeCells("R$inspectionRow:S$inspectionRow")->setCellValue("R$inspectionRow", $detail->remark);
+                    $sheet->mergeCells("K$inspectionRow:L$inspectionRow")->setCellValue("K$inspectionRow", Displaydateformat($detail->next_due_date_of_monitoring));
+                    $sheet->mergeCells("M$inspectionRow:N$inspectionRow")->setCellValue("M$inspectionRow", ($detail->pm10));
+                    $sheet->mergeCells("O$inspectionRow:O$inspectionRow")->setCellValue("O$inspectionRow", $detail->pm25);
+                    $sheet->mergeCells("P$inspectionRow:P$inspectionRow")->setCellValue("P$inspectionRow", $detail->so2);
+                    $sheet->mergeCells("Q$inspectionRow:Q$inspectionRow")->setCellValue("Q$inspectionRow", ($detail->no2));
+                    $sheet->mergeCells("R$inspectionRow:R$inspectionRow")->setCellValue("R$inspectionRow", ($detail->co));
+                    $sheet->mergeCells("S$inspectionRow:S$inspectionRow")->setCellValue("S$inspectionRow", $detail->act_rule);
+                    $sheet->mergeCells("T$inspectionRow:U$inspectionRow")->setCellValue("T$inspectionRow", $detail->remark);
 
-                    $sheet->getStyle("A$inspectionRow:S$inspectionRow")->applyFromArray([
+                    $sheet->getStyle("A$inspectionRow:U$inspectionRow")->applyFromArray([
                         'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                         'alignment' => ['horizontal' => Alignment::HORIZONTAL_LEFT, 'vertical' => Alignment::VERTICAL_CENTER],
                     ]);

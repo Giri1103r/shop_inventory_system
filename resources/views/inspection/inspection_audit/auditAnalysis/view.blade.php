@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', '6S Audit Analysis View')
+@section('title', '6S Audit Analysis')
 @section('pageurl', admin_url('audit/6s-analysis/list'))
 
 @section('content')
@@ -149,16 +149,16 @@
                                                                 $monthWithMark = collect($marks)->filter(function ($value) {
                                                                     return $value != 0;
                                                                 })->first();
-                                                    
+
                                                                 $monthName = collect($marks)->filter(function ($value) {
                                                                     return $value != 0;
                                                                 })->keys()->first();
                                                             @endphp
-                                                    
+
                                                             {{ $monthName ? ucfirst($monthName) . ' - ' . $monthWithMark : '-' }}
                                                         </div>
                                                     </div>
-                                                    
+
 
                                                     <div class="col-md-4 form-input mt-2">
                                                         <label class="form-label">Total No's of Audit</label>
@@ -180,12 +180,12 @@
                                                         </div>
                                                     </div>
                                                     <div class="col-md-4 form-input mt-2">
-                                                        <label class="form-label">%</label>
+                                                        <label class="form-label">Percentage %</label>
                                                         <div class="view_data">
                                                             {{ $analysisData->percentage ?? '-' }}
                                                         </div>
                                                     </div>
-                                                   
+
 
                                                 </div>
                                                 <hr>

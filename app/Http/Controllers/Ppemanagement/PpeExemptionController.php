@@ -255,7 +255,7 @@ class PpeExemptionController extends Controller
                 $img = admin_url('public/assets/images/ppe-management.jpg');
                 $notificationData = array(
                     'notification_type' => 1,
-                    'module_type' => 1,
+                    'module_type' => 2,
                     'notification_message' => $message,
                     'mobile_notification' => json_encode(array(
                         'title' => $message,
@@ -263,6 +263,7 @@ class PpeExemptionController extends Controller
                             displaydateformat($ppeexemption->from_date) . ' to ' . displaydateformat($ppeexemption->to_date),
                         'icon' => $img,
                        'module' => 2,
+                       'id'=> $id,
                         'style' => 'font-size: 1rem;'
                     )),
                     'web_link' => admin_url('ppe_exemption/approval/view/' . encryptId($id)),
@@ -499,13 +500,14 @@ class PpeExemptionController extends Controller
                 $img = admin_url('public/assets/images/ppe-management.jpg');
                 $notificationData = array(
                     'notification_type' => 1,
-                    'module_type' => 1,
+                     'module_type' => 2,
                     'notification_message' => $message,
                     'mobile_notification' => json_encode(array(
                         'title' => $message,
                         'message' => getUsername($updateData['approved_by']) .  " has"  . removeUnderScore(getStatus($updateData['approve_status']))  . " a PPE Exemption request on " . displaydateformat($emp_details->created_at) . " from " . displaydateformat($emp_details->from_date) . " to " . displaydateformat($emp_details->to_date),
                         'icon' => $img,
                        'module' => 2,
+                       'id'=> $id,
                         'style' => 'font-size: 1rem;'
                     )),
                     'web_link' => admin_url('ppe_exemption/approval/view/' . encryptId($id)),
@@ -534,6 +536,7 @@ class PpeExemptionController extends Controller
                         'message' => getUsername($updateData['approved_by']) .  " has"  . removeUnderScore(getStatus($updateData['approve_status']))  . " a PPE Exemption request on " . displaydateformat($emp_details->created_at) . " from " . displaydateformat($emp_details->from_date) . " to " . displaydateformat($emp_details->to_date),
                         'icon' => $img,
                        'module' => 2,
+                       'id'=> $id,
                         'style' => 'font-size: 1rem;'
                     )),
                     'web_link' => admin_url('ppe_exemption/approval/view/' . encryptId($id)),

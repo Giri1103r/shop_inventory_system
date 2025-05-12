@@ -25,6 +25,7 @@ class WorkNoiseMonitoring extends Model
         'noise_level_dba_no',
         'date_of_monitoring_date',
         'next_due_date_of_monitoring_date',
+        'last_due_date_of_monitoring_date',
         'act_rule',
         'remark',
         'status',
@@ -60,6 +61,7 @@ class WorkNoiseMonitoring extends Model
                     'noise_level_dba_no' =>  $monitorData['noise_level_dba_no'],
                     'date_of_monitoring_date' => DBdateformat($monitorData['date_of_monitoring_date']),
                     'next_due_date_of_monitoring_date' => DBdateformat($monitorData['next_due_date_of_monitoring_date']),
+                    'last_due_date_of_monitoring_date' => DBdateformat($monitorData['last_due_date_of_monitoring_date']),
                     'act_rule' =>  $monitorData['act_rule'],
                     'remark' =>  $monitorData['remark'],
                     'created_by' => Auth::id(),
@@ -88,7 +90,7 @@ class WorkNoiseMonitoring extends Model
             ->leftJoin('masters_location', 'inspection_environment_work_noise_monitoring.location_id', '=', 'masters_location.id')->leftJoin('inspection_environment_table', 'inspection_environment_work_noise_monitoring.environment_id', '=', 'inspection_environment_table.id')
             ->leftJoin('masters_unit', 'inspection_environment_work_noise_monitoring.unit_id', '=', 'masters_unit.id')->where('inspection_environment_work_noise_monitoring.environment_id', $envId)
             ->get();
-            
+
         return $data;
     }
 

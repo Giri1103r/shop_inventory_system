@@ -23,7 +23,7 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 use App\Models\Inspection\InspectionStaticDocno;
 use App\Models\Inspection\Ohc\Master\FamilyHistory;
 use App\Models\Inspection\Ohc\Master\PersonalDetails;
-use App\Models\Inspection\ohc\OHCHygieneCleaningChecklist;
+use App\Models\Inspection\Ohc\OHCHygieneCleaningChecklist;
 use App\Models\Inspection\Ohc\PhysicalHealthExamination;
 use Illuminate\Support\Facades\Mail;
 use Mpdf\Tag\Dd;

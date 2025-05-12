@@ -101,26 +101,26 @@
                                         </div>
                                     </div>
                                     @if (!empty($requestorsignature) && !empty($requestorsignature->requestor_file_path))
-                                    <div class="col-md-4 mb-2">
-                                        <div class="form-group form-input">
-                                            <label class="form-label" style="display: block;">
-                                                {{ __('inspection.signature') }}
-                                            </label>
-                                            <img src="{{ admin_url($requestorsignature->requestor_file_path) }}"
-                                                alt="Signature Upload" style="width: 150px; margin-top: -10px;" />
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label" style="display: block;">
+                                                    {{ __('inspection.signature') }}
+                                                </label>
+                                                <img src="{{ admin_url($requestorsignature->requestor_file_path) }}"
+                                                    alt="Signature Upload" style="width: 150px; margin-top: -10px;" />
+                                            </div>
                                         </div>
-                                    </div>
-                                @else
-                                <div class="col-md-4 mb-2">
-                                    <div class="form-group form-input">
-                                        <label class="form-label" style="display: block;">
-                                            {{ __('inspection.signature') }}
-                                        </label>
-                                        <img src="{{ admin_url($signatureview->signature_upload) }}"
-                                            alt="Signature Upload" style="width: 150px; margin-top: -10px;" />
-                                    </div>
-                                </div>
-                                @endif
+                                    @elseif (!empty($signatureview) && !empty($signatureview->signature_upload))
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label" style="display: block;">
+                                                    {{ __('inspection.signature') }}
+                                                </label>
+                                                <img src="{{ admin_url($signatureview->signature_upload) }}"
+                                                    alt="Signature Upload" style="width: 150px; margin-top: -10px;" />
+                                            </div>
+                                        </div>
+                                    @endif
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('common.created_by') }}</label>
                                         <div class="view_data">
@@ -190,32 +190,38 @@
                                                             </td>
 
                                                             @foreach ($getoption as $option)
-                                                            <td style="text-align: center;">
-                                                                @if ($option == 'YES')
-                                                                    @if (isset($statuses[$checkPoint]) && $statuses[$checkPoint] == 'YES')
-                                                                        <i class="fa-solid fa-check" style="color: #267709; width: 15px;"></i>
-                                                                    @else
-                                                                        <i class="fa-solid fa-times" style="color: #d40a0a; width: 15px;"></i>
+                                                                <td style="text-align: center;">
+                                                                    @if ($option == 'YES')
+                                                                        @if (isset($statuses[$checkPoint]) && $statuses[$checkPoint] == 'YES')
+                                                                            <i class="fa-solid fa-check"
+                                                                                style="color: #267709; width: 15px;"></i>
+                                                                        @else
+                                                                            <i class="fa-solid fa-times"
+                                                                                style="color: #d40a0a; width: 15px;"></i>
+                                                                        @endif
+                                                                    @elseif ($option == 'NO')
+                                                                        @if (isset($statuses[$checkPoint]) && $statuses[$checkPoint] == 'NO')
+                                                                            <i class="fa-solid fa-check"
+                                                                                style="color: #267709; width: 15px;"></i>
+                                                                        @else
+                                                                            <i class="fa-solid fa-times"
+                                                                                style="color: #d40a0a; width: 15px;"></i>
+                                                                        @endif
+                                                                    @elseif ($option == 'N/A')
+                                                                        @if (isset($statuses[$checkPoint]) && $statuses[$checkPoint] == 'N/A')
+                                                                            <i class="fa-solid fa-check"
+                                                                                style="color: #267709; width: 15px;"></i>
+                                                                        @else
+                                                                            <i class="fa-solid fa-times"
+                                                                                style="color: #d40a0a; width: 15px;"></i>
+                                                                        @endif
                                                                     @endif
-                                                                @elseif ($option == 'NO')
-                                                                    @if (isset($statuses[$checkPoint]) && $statuses[$checkPoint] == 'NO')
-                                                                        <i class="fa-solid fa-check" style="color: #267709; width: 15px;"></i>
-                                                                    @else
-                                                                        <i class="fa-solid fa-times" style="color: #d40a0a; width: 15px;"></i>
-                                                                    @endif
-                                                                @elseif ($option == 'N/A')
-                                                                    @if (isset($statuses[$checkPoint]) && $statuses[$checkPoint] == 'N/A')
-                                                                        <i class="fa-solid fa-check" style="color: #267709; width: 15px;"></i>
-                                                                    @else
-                                                                        <i class="fa-solid fa-times" style="color: #d40a0a; width: 15px;"></i>
-                                                                    @endif
-                                                                @endif
-                                                            </td>
-                                                        @endforeach
+                                                                </td>
+                                                            @endforeach
 
-                                                        <td >
-                                                            {{ $quantity[$checkPoint] ?? 'No Quantity Available' }}
-                                                        </td>
+                                                            <td>
+                                                                {{ $quantity[$checkPoint] ?? 'No Quantity Available' }}
+                                                            </td>
 
 
                                                             <td colspan="3">
