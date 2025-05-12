@@ -243,7 +243,7 @@
                     </td>
                     <td colspan="4"
                         style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
-                        {{ isset($msdsDetail->name_of_chemical) ? getChemicalName($msdsDetail->name_of_chemical) : '' }}
+                        {{ isset($msdsDetail->name_of_chemical) ? ($msdsDetail->name_of_chemical) : '' }}
                     </td>
                     <td colspan="4"
                         style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">

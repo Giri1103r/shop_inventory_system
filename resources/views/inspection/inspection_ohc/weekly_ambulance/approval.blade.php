@@ -56,7 +56,7 @@
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">Document Number</label>
                                         <div class="view_data">
-                                            {{ isset( $document_no->doc_no) ? $document_no->doc_no : '' }}
+                                            {{ isset($document_no->doc_no) ? $document_no->doc_no : '' }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
@@ -102,26 +102,26 @@
                                         </div>
                                     </div>
                                     @if (!empty($requestorsignature) && !empty($requestorsignature->requestor_file_path))
-                                    <div class="col-md-4 mb-2">
-                                        <div class="form-group form-input">
-                                            <label class="form-label" style="display: block;">
-                                                {{ __('inspection.signature') }}
-                                            </label>
-                                            <img src="{{ admin_url($requestorsignature->requestor_file_path) }}"
-                                                alt="Signature Upload" style="width: 150px; margin-top: -10px;" />
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label" style="display: block;">
+                                                    {{ __('inspection.signature') }}
+                                                </label>
+                                                <img src="{{ admin_url($requestorsignature->requestor_file_path) }}"
+                                                    alt="Signature Upload" style="width: 150px; margin-top: -10px;" />
+                                            </div>
                                         </div>
-                                    </div>
-                                @else
-                                <div class="col-md-4 mb-2">
-                                    <div class="form-group form-input">
-                                        <label class="form-label" style="display: block;">
-                                            {{ __('inspection.signature') }}
-                                        </label>
-                                        <img src="{{ admin_url($signatureview->signature_upload) }}"
-                                            alt="Signature Upload" style="width: 150px; margin-top: -10px;" />
-                                    </div>
-                                </div>
-                                @endif
+                                    @elseif (!empty($signatureview) && !empty($signatureview->signature_upload))
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label" style="display: block;">
+                                                    {{ __('inspection.signature') }}
+                                                </label>
+                                                <img src="{{ admin_url($signatureview->signature_upload) }}"
+                                                    alt="Signature Upload" style="width: 150px; margin-top: -10px;" />
+                                            </div>
+                                        </div>
+                                    @endif
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('common.created_by') }}</label>
                                         <div class="view_data">
@@ -230,10 +230,8 @@
                                     </div>
                                 </div>
                                 @if (
-                                    ($weekAmbualance->approve_status == WAITING_FOR_EHS_OFFICER_VERIFICATION &&
-                                        CheckUserRole(ROLE_EHS_OFFICER)) ||
-                                        ($weekAmbualance->approve_status == WAITING_FOR_EHS_OFFICER_VERIFICATION &&
-                                            CheckUserRole(ROLE_SUPERADMIN)))
+                                    ($weekAmbualance->approve_status == WAITING_FOR_EHS_OFFICER_VERIFICATION && CheckUserRole(ROLE_EHS_OFFICER)) ||
+                                        ($weekAmbualance->approve_status == WAITING_FOR_EHS_OFFICER_VERIFICATION && CheckUserRole(ROLE_SUPERADMIN)))
                                     <div class="row mt-3">
                                         <div class="card-header-inner">
                                             <h4 class="text-white">{{ __('inspection.ehs_officer_verify') }}</h4>
@@ -481,11 +479,11 @@
                                     </div>
 
                                     @if (isset($weekAmbualance->level_one_manager_remarks))
-                                    <div class="row">
-                                        <div class="card-header-inner">
-                                            <h4 class="text-white">Level One Manager Action</h4>
+                                        <div class="row">
+                                            <div class="card-header-inner">
+                                                <h4 class="text-white">Level One Manager Action</h4>
+                                            </div>
                                         </div>
-                                    </div>
                                         <div class="row">
 
                                             <div class="col-md-4 mb-2">
@@ -557,27 +555,27 @@
                                                 </div>
                                             </div>
                                             @php
-                                            $signature = GetOHCSignature(
-                                                $weekAmbualance->l2_manager_verified_by,
-                                                $weekAmbualance->id,
-                                                OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST,
-                                            );
-                                        @endphp
-                                        @if (isset(Auth::user()->signature_upload))
-                                            <label class="form-label"
-                                                style="display: block; ">{{ __('inspection.signature') }}</label>
-                                            <img src="{{ (Auth::user()->signature_upload) }}"
-                                                alt="Signature Upload" style="width: 150px; margin-top:-10px">
-                                        @elseif(isset($signature))
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label"
-                                                        style="display: block;">{{ __('inspection.signature') }}</label>
-                                                    <img src="{{ admin_url($signature) }}" alt="Signature Upload"
-                                                        style="width: 150px; margin-top: -10px;" />
+                                                $signature = GetOHCSignature(
+                                                    $weekAmbualance->l2_manager_verified_by,
+                                                    $weekAmbualance->id,
+                                                    OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST,
+                                                );
+                                            @endphp
+                                            @if (isset(Auth::user()->signature_upload))
+                                                <label class="form-label"
+                                                    style="display: block; ">{{ __('inspection.signature') }}</label>
+                                                <img src="{{ Auth::user()->signature_upload }}" alt="Signature Upload"
+                                                    style="width: 150px; margin-top:-10px">
+                                            @elseif(isset($signature))
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label"
+                                                            style="display: block;">{{ __('inspection.signature') }}</label>
+                                                        <img src="{{ admin_url($signature) }}" alt="Signature Upload"
+                                                            style="width: 150px; margin-top: -10px;" />
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        @endif
+                                            @endif
                                             <div class="col-md-12 mb-2">
                                                 <div class="form-group form-input">
                                                     <label
@@ -593,11 +591,11 @@
                                 @endif
 
                                 @if (
-                                    ($weekAmbualance->approve_status == WAITING_FOR_CAPA_ACTION ||
+                                    $weekAmbualance->approve_status == WAITING_FOR_CAPA_ACTION ||
                                         $weekAmbualance->approve_status == L2_MANAGER_REJECTED ||
                                         $weekAmbualance->approve_status == EHS_OFFICER_REJECTED ||
-                                        ($weekAmbualance->approve_status == L1_MANAGER_REJECTED && CheckUserRole(ROLE_FIRE_ASSOCIATES)))||(
-                                        $weekAmbualance->approve_status == WAITING_FOR_CAPA_ACTION ||
+                                        ($weekAmbualance->approve_status == L1_MANAGER_REJECTED && CheckUserRole(ROLE_FIRE_ASSOCIATES)) ||
+                                        ($weekAmbualance->approve_status == WAITING_FOR_CAPA_ACTION ||
                                             $weekAmbualance->approve_status == L2_MANAGER_REJECTED ||
                                             $weekAmbualance->approve_status == EHS_OFFICER_REJECTED ||
                                             ($weekAmbualance->approve_status == L1_MANAGER_REJECTED && CheckUserRole(ROLE_SUPERADMIN))))
@@ -656,8 +654,7 @@
 
                                 @if (
                                     ($weekAmbualance->approve_status == WAITING_FOR_CAPA_VERIFICATION && CheckUserRole(ROLE_EHS_OFFICER)) ||
-                                        ($weekAmbualance->approve_status == WAITING_FOR_CAPA_VERIFICATION &&
-                                            CheckUserRole(ROLE_SUPERADMIN)))
+                                        ($weekAmbualance->approve_status == WAITING_FOR_CAPA_VERIFICATION && CheckUserRole(ROLE_SUPERADMIN)))
                                     <form method="POST" id="forklistassessmentAdd"
                                         action="{{ admin_url('ohc/weekly-ambulance/inspection/checklist/capa/reverify/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
@@ -708,7 +705,9 @@
                                     </form>
                                 @endif
 
-                                @if (($weekAmbualance->approve_status == WAITING_FOR_L1_VERIFICATION && CheckUserRole(ROLE_L1_MANAGER)) || ($weekAmbualance->approve_status == WAITING_FOR_L1_VERIFICATION && CheckUserRole(ROLE_SUPERADMIN)))
+                                @if (
+                                    ($weekAmbualance->approve_status == WAITING_FOR_L1_VERIFICATION && CheckUserRole(ROLE_L1_MANAGER)) ||
+                                        ($weekAmbualance->approve_status == WAITING_FOR_L1_VERIFICATION && CheckUserRole(ROLE_SUPERADMIN)))
                                     <form method="POST" id="levelOneManager"
                                         action="{{ admin_url('ohc/weekly-ambulance/inspection/checklist/level-one/verify/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
@@ -760,7 +759,9 @@
                                     </form>
                                 @endif
 
-                                @if (($weekAmbualance->approve_status == WAITING_FOR_L2_VERIFICATION&& CheckUserRole(ROLE_L2_MANAGER)) || ($weekAmbualance->approve_status == WAITING_FOR_L2_VERIFICATION && CheckUserRole(ROLE_SUPERADMIN)))
+                                @if (
+                                    ($weekAmbualance->approve_status == WAITING_FOR_L2_VERIFICATION && CheckUserRole(ROLE_L2_MANAGER)) ||
+                                        ($weekAmbualance->approve_status == WAITING_FOR_L2_VERIFICATION && CheckUserRole(ROLE_SUPERADMIN)))
                                     <form method="POST" id="levelTwoManager"
                                         action="{{ admin_url('ohc/weekly-ambulance/inspection/checklist/level-two/verify/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
@@ -822,181 +823,181 @@
 
     @stop
     @push('script')
-    <script>
-        $('#forklistassessmentAdd').validate({
-            rules: {
-                remarks: {
-                    required: true,
-                    minlength: 3,
-                    maxlength: 100,
-                    noSpaces: true,
+        <script>
+            $('#forklistassessmentAdd').validate({
+                rules: {
+                    remarks: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 100,
+                        noSpaces: true,
+                    },
+                    signature_image: {
+                        required: true,
+                    }
                 },
-                signature_image: {
-                    required: true,
-                }
-            },
-            messages: {
-                remarks: {
-                    required: "Remarks is Required",
-                    minlength: "Minimum Characters should be 3",
-                    maxlength: "Maximum Characters should not exceed 100",
+                messages: {
+                    remarks: {
+                        required: "Remarks is Required",
+                        minlength: "Minimum Characters should be 3",
+                        maxlength: "Maximum Characters should not exceed 100",
+                    },
+                    signature_image: {
+                        required: "Signature is Required",
+                    }
                 },
-                signature_image: {
-                    required: "Signature is Required",
+                errorElement: 'div',
+                errorPlacement: function(error, element) {
+                    error.addClass('invalid-feedback');
+                    element.closest('.form-input').append(error);
+                },
+                highlight: function(element) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function(element) {
+                    $(element).removeClass('is-invalid');
+                    $(element).closest('.form-input').find('.invalid-feedback').remove();
+                },
+                submitHandler: function(form) {
+                    form.submit();
+                },
+                invalidHandler: function(event, validator) {
+                    var errors = validator.numberOfInvalids();
+                    validator.errorList.forEach(function(error) {});
                 }
-            },
-            errorElement: 'div',
-            errorPlacement: function(error, element) {
-                error.addClass('invalid-feedback');
-                element.closest('.form-input').append(error);
-            },
-            highlight: function(element) {
-                $(element).addClass('is-invalid');
-            },
-            unhighlight: function(element) {
-                $(element).removeClass('is-invalid');
-                $(element).closest('.form-input').find('.invalid-feedback').remove();
-            },
-            submitHandler: function(form) {
-                form.submit();
-            },
-            invalidHandler: function(event, validator) {
-                var errors = validator.numberOfInvalids();
-                validator.errorList.forEach(function(error) {});
-            }
-        });
+            });
 
-        $.validator.addMethod("noSpaces", function(value) {
-            return value.trim().length > 0;
-        }, "Spaces are not allowed");
+            $.validator.addMethod("noSpaces", function(value) {
+                return value.trim().length > 0;
+            }, "Spaces are not allowed");
 
-        $('#capaAction').validate({
-            rules: {
-                capa_remarks: {
-                    required: true,
-                    minlength: 3,
-                    maxlength: 100,
-                    noSpaces: true,
+            $('#capaAction').validate({
+                rules: {
+                    capa_remarks: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 100,
+                        noSpaces: true,
+                    },
+                    signature_image: {
+                        required: true,
+                    }
                 },
-                signature_image: {
-                    required: true,
-                }
-            },
-            messages: {
-                capa_remarks: {
-                    required: "Remarks is Required",
-                    minlength: "Minimum Characters should be 3",
-                    maxlength: "Maximum Characters should not exceed 100",
+                messages: {
+                    capa_remarks: {
+                        required: "Remarks is Required",
+                        minlength: "Minimum Characters should be 3",
+                        maxlength: "Maximum Characters should not exceed 100",
+                    },
+                    signature_image: {
+                        required: "Signature is Required",
+                    }
                 },
-                signature_image: {
-                    required: "Signature is Required",
+                errorElement: 'div',
+                errorPlacement: function(error, element) {
+                    error.addClass('invalid-feedback');
+                    element.closest('.form-input').append(error);
+                },
+                highlight: function(element) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function(element) {
+                    $(element).removeClass('is-invalid');
+                    $(element).closest('.form-input').find('.invalid-feedback').remove();
+                },
+                submitHandler: function(form) {
+                    form.submit();
+                },
+                invalidHandler: function(event, validator) {
+                    var errors = validator.numberOfInvalids();
+                    validator.errorList.forEach(function(error) {});
                 }
-            },
-            errorElement: 'div',
-            errorPlacement: function(error, element) {
-                error.addClass('invalid-feedback');
-                element.closest('.form-input').append(error);
-            },
-            highlight: function(element) {
-                $(element).addClass('is-invalid');
-            },
-            unhighlight: function(element) {
-                $(element).removeClass('is-invalid');
-                $(element).closest('.form-input').find('.invalid-feedback').remove();
-            },
-            submitHandler: function(form) {
-                form.submit();
-            },
-            invalidHandler: function(event, validator) {
-                var errors = validator.numberOfInvalids();
-                validator.errorList.forEach(function(error) {});
-            }
-        });
+            });
 
-        $('#levelOneManager').validate({
-            rules: {
-                level_one_manager: {
-                    required: true,
-                    minlength: 3,
-                    maxlength: 100,
-                    noSpaces: true,
+            $('#levelOneManager').validate({
+                rules: {
+                    level_one_manager: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 100,
+                        noSpaces: true,
+                    },
+                    signature_image: {
+                        required: true,
+                    }
                 },
-                signature_image: {
-                    required: true,
-                }
-            },
-            messages: {
-                level_one_manager: {
-                    required: "Remarks is Required",
-                    minlength: "Minimum Characters should be 3",
-                    maxlength: "Maximum Characters should not exceed 100",
+                messages: {
+                    level_one_manager: {
+                        required: "Remarks is Required",
+                        minlength: "Minimum Characters should be 3",
+                        maxlength: "Maximum Characters should not exceed 100",
+                    },
+                    signature_image: {
+                        required: "Signature is Required",
+                    }
                 },
-                signature_image: {
-                    required: "Signature is Required",
+                errorElement: 'div',
+                errorPlacement: function(error, element) {
+                    error.addClass('invalid-feedback');
+                    element.closest('.form-input').append(error);
+                },
+                highlight: function(element) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function(element) {
+                    $(element).removeClass('is-invalid');
+                    $(element).closest('.form-input').find('.invalid-feedback').remove();
+                },
+                submitHandler: function(form) {
+                    form.submit();
+                },
+                invalidHandler: function(event, validator) {
+                    var errors = validator.numberOfInvalids();
+                    validator.errorList.forEach(function(error) {});
                 }
-            },
-            errorElement: 'div',
-            errorPlacement: function(error, element) {
-                error.addClass('invalid-feedback');
-                element.closest('.form-input').append(error);
-            },
-            highlight: function(element) {
-                $(element).addClass('is-invalid');
-            },
-            unhighlight: function(element) {
-                $(element).removeClass('is-invalid');
-                $(element).closest('.form-input').find('.invalid-feedback').remove();
-            },
-            submitHandler: function(form) {
-                form.submit();
-            },
-            invalidHandler: function(event, validator) {
-                var errors = validator.numberOfInvalids();
-                validator.errorList.forEach(function(error) {});
-            }
-        });
+            });
 
-        $('#levelTwoManager').validate({
-            rules: {
-                level_two_manager: {
-                    required: true,
-                    minlength: 3,
-                    maxlength: 100,
-                    noSpaces: true,
+            $('#levelTwoManager').validate({
+                rules: {
+                    level_two_manager: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 100,
+                        noSpaces: true,
+                    },
+                    signature_image: {
+                        required: true,
+                    }
                 },
-                signature_image: {
-                    required: true,
-                }
-            },
-            messages: {
-                level_two_manager: {
-                    required: "Remarks is Required",
-                    minlength: "Minimum Characters should be 3",
-                    maxlength: "Maximum Characters should not exceed 100",
+                messages: {
+                    level_two_manager: {
+                        required: "Remarks is Required",
+                        minlength: "Minimum Characters should be 3",
+                        maxlength: "Maximum Characters should not exceed 100",
+                    },
+                    signature_image: {
+                        required: "Signature is Required",
+                    }
                 },
-                signature_image: {
-                    required: "Signature is Required",
+                errorElement: 'div',
+                errorPlacement: function(error, element) {
+                    error.addClass('invalid-feedback');
+                    element.closest('.form-input').append(error);
+                },
+                highlight: function(element) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function(element) {
+                    $(element).removeClass('is-invalid');
+                    $(element).closest('.form-input').find('.invalid-feedback').remove();
+                },
+                submitHandler: function(form) {
+                    form.submit();
+                },
+                invalidHandler: function(event, validator) {
+                    var errors = validator.numberOfInvalids();
+                    validator.errorList.forEach(function(error) {});
                 }
-            },
-            errorElement: 'div',
-            errorPlacement: function(error, element) {
-                error.addClass('invalid-feedback');
-                element.closest('.form-input').append(error);
-            },
-            highlight: function(element) {
-                $(element).addClass('is-invalid');
-            },
-            unhighlight: function(element) {
-                $(element).removeClass('is-invalid');
-                $(element).closest('.form-input').find('.invalid-feedback').remove();
-            },
-            submitHandler: function(form) {
-                form.submit();
-            },
-            invalidHandler: function(event, validator) {
-                var errors = validator.numberOfInvalids();
-                validator.errorList.forEach(function(error) {});
-            }
-        });
-    </script>
-@endpush
+            });
+        </script>
+    @endpush

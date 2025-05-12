@@ -266,7 +266,7 @@
                         {{ isset($msdsDetails->item_code) ? $msdsDetails->item_code : '' }}
                     </td>
                     <td style="border: 2px solid black; padding: 8px;">
-                        {{ isset($msdsDetails->name_of_chemical) ? getChemicalName($msdsDetails->name_of_chemical) : '' }}
+                        {{ isset($msdsDetails->name_of_chemical) ? ($msdsDetails->name_of_chemical) : '' }}
                     </td>
                     <td style="border: 2px solid black; padding: 8px;">
                         {{ isset($msdsDetails->storage_capacity) ? ($msdsDetails->storage_capacity) : '' }}
