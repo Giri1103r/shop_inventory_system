@@ -75,6 +75,7 @@ class MSDS extends Model
             $query = $query->where('inspection_msds.unit_id', 'LIKE', '%' . decryptId($request->unit_id) . '%');
         }
         if ($request->has('from_date') && !empty($request->from_date)) {
+            
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
             $query->where('inspection_msds.created_at', '>=', $startDate);
         }
