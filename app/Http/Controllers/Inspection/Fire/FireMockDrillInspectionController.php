@@ -94,8 +94,8 @@ class FireMockDrillInspectionController extends Controller
                         ->addColumn('inspection_date', function ($row) {
                             return Displaydateformat($row->inspection_date);
                         })
-                        ->addColumn('created_by', function ($row) {
-                            return getUsername($row->created_by);
+                        ->addColumn('inspection_created_by', function ($row) {
+                            return getUsername($row->inspection_created_by);
                         })
                         ->addColumn('inspection_status', function ($row) {
                             $text = '';

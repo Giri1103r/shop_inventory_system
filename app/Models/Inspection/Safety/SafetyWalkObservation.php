@@ -60,10 +60,22 @@ class SafetyWalkObservation extends Model
             });
         }
         if (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole)) {
-        }  elseif (in_array(ROLE_INSPECTION_CREATOR, $userRole)) {
-            $query->where('inspection_safety_walk_observation.created_by',Auth::user()->id);
+        } elseif (in_array(ROLE_INSPECTION_CREATOR, $userRole)) {
+            $query->where('inspection_safety_walk_observation.created_by', Auth::user()->id);
         }
-
+        if ($request->has('from_date') && !empty($request->from_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_safety_walk_observation.created_at', '>=', $startDate);
+        }
+        if ($request->has('to_date') && !empty($request->to_date)) {
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_safety_walk_observation.created_at', '<=', $endDate);
+        }
+        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->whereBetween('inspection_safety_walk_observation.created_at', [$startDate, $endDate]);
+        }
         if (isset($request->month) && $request->month) {
             $query = $query->where('inspection_safety_walk_observation.month', 'LIKE', '%' . $request->month . '%');
         }
@@ -179,7 +191,19 @@ class SafetyWalkObservation extends Model
             $query = $query->where('inspection_safety_walk_observation.shift_id', decryptId($request->shift));
         }
 
-
+        if ($request->has('from_date') && !empty($request->from_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_safety_walk_observation.created_at', '>=', $startDate);
+        }
+        if ($request->has('to_date') && !empty($request->to_date)) {
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_safety_walk_observation.created_at', '<=', $endDate);
+        }
+        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->whereBetween('inspection_safety_walk_observation.created_at', [$startDate, $endDate]);
+        }
         $query->orderBy('inspection_safety_walk_observation.id', 'DESC');
 
         $results = $query->get();
