@@ -56,9 +56,9 @@
                                             </div>
                                             <div class="col-md-4 form-input">
                                                 <label class="form-label require">Image</label>
-                                                <input type="file" name="typeofwork_upload" id="typeofwork_upload"   accept="image/png, image/jpeg, image/jpg"
-                                                    value="{{ $file->file_path }}" class="form-control"
-                                                    placeholder="Signature">
+                                                <input type="file" name="typeofwork_upload" id="typeofwork_upload"
+                                                    accept="image/png, image/jpeg, image/jpg" value="{{ $file->file_path }}"
+                                                    class="form-control" placeholder="Signature">
                                                 @if (isset($file->file_path))
                                                     <div>
                                                         <a href="{{ asset($file->file_path) }}" target="_blank">
@@ -94,16 +94,17 @@
                                                                 @foreach ($protectivequip_checklist as $detail)
                                                                     <tr>
                                                                         <input type="hidden"
-                                                                            name="protective[record_id][{{ isset($protective[$detail->id]) ? $protective[$detail->id]->id : '' }}]"
+                                                                            name="protectiveequipment[{{ $detail->id }}][checklist_id]"
+                                                                            value="{{ $detail->id }}">
+                                                                        <input type="hidden"
+                                                                            name="protectiveequipment[{{ $detail->id }}][record_id]"
                                                                             value="{{ isset($protective[$detail->id]) ? $protective[$detail->id]->id : '' }}">
 
                                                                         <td>{{ $index }}</td>
                                                                         <td>
-                                                                            <input type="hidden"
-                                                                                name="protective[protective_check][type1][{{ $detail->id }}]"
-                                                                                value="0">
+                                                                        
                                                                             <input type="checkbox"
-                                                                                name="protective[protective_check][type1][{{ $detail->id }}]"
+                                                                                name="protectiveequipment[{{ $detail->id }}][left_check]"
                                                                                 class="row-checkbox "
                                                                                 value="1"{{ isset($protective[$detail->id]) && $protective[$detail->id]->checked == '1' ? ' checked' : '' }}>
                                                                         </td>
@@ -114,13 +115,11 @@
                                                                             {{ $detail->protective_equip }}
                                                                         </td>
                                                                         <td class="form-input">
-                                                                            <input type="hidden"
-                                                                                name="protective[protectivequip_checklist][type1][{{ $detail->id }}]"
-                                                                                value="0">
+                                                                          
                                                                             <input type="checkbox"
-                                                                                name="protective[protectivequip_checklist][type1][{{ $detail->id }}]"
-                                                                                class=""
-                                                                                value="1"{{ isset($protective[$detail->id]) && $protective[$detail->id]->default_enable == '1' ? ' checked' : '' }}>
+                                                                                name="protectiveequipment[{{ $detail->id }}][right_check]"
+                                                                                class="" value="1"
+                                                                                {{ isset($protective[$detail->id]) && $protective[$detail->id]->default_enable == '1' ? ' checked' : '' }}>
                                                                         </td>
                                                                     </tr>
                                                                     @php
@@ -157,19 +156,22 @@
                                                                 @foreach ($equipinvalve_checklist as $equipinvalve_checklist)
                                                                     <tr>
                                                                         <input type="hidden"
-                                                                            name="equipment[equipmentrecord_id][{{ isset($equipment[$equipinvalve_checklist->id]) ? $equipment[$equipinvalve_checklist->id]->id : '' }}]"
+                                                                            name="equipmentinvolved[{{ $equipinvalve_checklist->id }}][checklist_id]"
+                                                                            value="{{ $equipinvalve_checklist->id }}">
+
+                                                                        <input type="hidden"
+                                                                            name="equipmentinvolved[{{ $equipinvalve_checklist->id }}][record_id]"
                                                                             value="{{ isset($equipment[$equipinvalve_checklist->id]) ? $equipment[$equipinvalve_checklist->id]->id : '' }}">
 
                                                                         <td>{{ $index }}</td>
 
                                                                         <td>
-                                                                            <input type="hidden"
-                                                                                name="equipment[equipinvalve_check][type2][{{ $equipinvalve_checklist->id }}]"
-                                                                                value="0">
+                                                                         
                                                                             <input type="checkbox"
-                                                                                name="equipment[equipinvalve_check][type2][{{ $equipinvalve_checklist->id }}]"
-                                                                                class="row-checkbox1 "
-                                                                                value="1"{{ isset($equipment[$equipinvalve_checklist->id]) && $equipment[$equipinvalve_checklist->id]->checked == '1' ? ' checked' : '' }}>
+                                                                                name="equipmentinvolved[{{ $equipinvalve_checklist->id }}][left_check]"
+                                                                                class="row-checkbox1" value="1"
+                                                                                {{ isset($equipment[$equipinvalve_checklist->id]) && $equipment[$equipinvalve_checklist->id]->checked == '1' ? ' checked' : '' }}>
+
                                                                         </td>
 
                                                                         <td>
@@ -180,13 +182,11 @@
                                                                         </td>
 
                                                                         <td class="form-input">
-                                                                            <input type="hidden"
-                                                                                name="equipment[equipinvalve_checklist][type2][{{ $equipinvalve_checklist->id }}]"
-                                                                                value="0">
+                                                                         
                                                                             <input type="checkbox"
-                                                                                name="equipment[equipinvalve_checklist][type2][{{ $equipinvalve_checklist->id }}]"
-                                                                                class=""
-                                                                                value="1"{{ isset($equipment[$equipinvalve_checklist->id]) && $equipment[$equipinvalve_checklist->id]->default_enable == '1' ? ' checked' : '' }}>
+                                                                                name="equipmentinvolved[{{ $equipinvalve_checklist->id }}][right_check]"
+                                                                                class="" value="1"
+                                                                                {{ isset($equipment[$equipinvalve_checklist->id]) && $equipment[$equipinvalve_checklist->id]->default_enable == '1' ? ' checked' : '' }}>
                                                                         </td>
                                                                     </tr>
                                                                     @php
@@ -226,19 +226,20 @@
                                                                 @foreach ($precaution_checklist as $precaution_checklist)
                                                                     <tr>
                                                                         <input type="hidden"
-                                                                            name="manual[manualrecord_id][{{ isset($manual[$precaution_checklist->id]) ? $manual[$precaution_checklist->id]->id : '' }}]"
+                                                                            name="manuallist[{{ $precaution_checklist->id }}][checklist_id]"
+                                                                            value="{{ $precaution_checklist->id }}">
+                                                                        <input type="hidden"
+                                                                            name="manuallist[{{ $precaution_checklist->id }}][record_id]"
                                                                             value="{{ isset($manual[$precaution_checklist->id]) ? $manual[$precaution_checklist->id]->id : '' }}">
 
                                                                         <td>{{ $index }}</td>
 
                                                                         <td>
-                                                                            <input type="hidden"
-                                                                                name="manual[precaution_check][type3][{{ $precaution_checklist->id }}]"
-                                                                                value="0">
+                                                                          
                                                                             <input type="checkbox"
-                                                                                name="manual[precaution_check][type3][{{ $precaution_checklist->id }}]"
-                                                                                class="row-checkbox2 "
-                                                                                value="1"{{ isset($manual[$precaution_checklist->id]) && $manual[$precaution_checklist->id]->checked == '1' ? ' checked' : '' }}>
+                                                                                name="manuallist[{{ $precaution_checklist->id }}][left_check]"
+                                                                                class="row-checkbox2 " value="1"
+                                                                                {{ isset($manual[$precaution_checklist->id]) && $manual[$precaution_checklist->id]->checked == '1' ? ' checked' : '' }}>
                                                                         </td>
 
                                                                         <td>
@@ -249,13 +250,11 @@
                                                                         </td>
 
                                                                         <td class="form-input">
-                                                                            <input type="hidden"
-                                                                                name="manual[precaution_checklist][type3][{{ $precaution_checklist->id }}]"
-                                                                                value="0">
+                                                                           
                                                                             <input type="checkbox"
-                                                                                name="manual[precaution_checklist][type3][{{ $precaution_checklist->id }}]"
-                                                                                class=""
-                                                                                value="1"{{ isset($manual[$precaution_checklist->id]) && $manual[$precaution_checklist->id]->default_enable == '1' ? ' checked' : '' }}>
+                                                                                name="manuallist[{{ $precaution_checklist->id }}][right_check]"
+                                                                                class="" value="1"
+                                                                                {{ isset($manual[$precaution_checklist->id]) && $manual[$precaution_checklist->id]->default_enable == '1' ? ' checked' : '' }}>
                                                                         </td>
                                                                     </tr>
                                                                     @php
@@ -291,19 +290,21 @@
                                                                 @foreach ($equipchecklist_checklist as $equipchecklist_checklist)
                                                                     <tr>
                                                                         <input type="hidden"
-                                                                            name="check[checkrecord_id][{{ isset($check[$equipchecklist_checklist->id]) ? $check[$equipchecklist_checklist->id]->id : '' }}]"
+                                                                            name="checklist[{{ $equipchecklist_checklist->id }}][checklist_id]"
+                                                                            value="{{ $equipchecklist_checklist->id }}">
+
+                                                                        <input type="hidden"
+                                                                            name="checklist[{{ $equipchecklist_checklist->id }}][record_id]"
                                                                             value="{{ isset($check[$equipchecklist_checklist->id]) ? $check[$equipchecklist_checklist->id]->id : '' }}">
 
                                                                         <td>{{ $index }}</td>
 
                                                                         <td>
-                                                                            <input type="hidden"
-                                                                                name="check[equipchecklist_check][type4][{{ $equipchecklist_checklist->id }}]"
-                                                                                value="0">
+                                                                           
                                                                             <input type="checkbox"
-                                                                                name="check[equipchecklist_check][type4][{{ $equipchecklist_checklist->id }}]"
-                                                                                class="row-checkbox3 "
-                                                                                value="1"{{ isset($check[$equipchecklist_checklist->id]) && $check[$equipchecklist_checklist->id]->checked == '1' ? ' checked' : '' }}>
+                                                                                name="checklist[{{ $equipchecklist_checklist->id }}][left_check]"
+                                                                                class="row-checkbox3 " value="1"
+                                                                                {{ isset($check[$equipchecklist_checklist->id]) && $check[$equipchecklist_checklist->id]->checked == '1' ? ' checked' : '' }}>
                                                                         </td>
 
                                                                         <td>
@@ -314,13 +315,11 @@
                                                                         </td>
 
                                                                         <td class="form-input">
-                                                                            <input type="hidden"
-                                                                                name="check[equipchecklist_checklist][type4][{{ $equipchecklist_checklist->id }}]"
-                                                                                value="0">
+                                                                        
                                                                             <input type="checkbox"
-                                                                                name="check[equipchecklist_checklist][type4][{{ $equipchecklist_checklist->id }}]"
-                                                                                class=""
-                                                                                value="1"{{ isset($check[$equipchecklist_checklist->id]) && $check[$equipchecklist_checklist->id]->default_enable == '1' ? ' checked' : '' }}>
+                                                                                name="checklist[{{ $equipchecklist_checklist->id }}][right_check]"
+                                                                                class="" value="1"
+                                                                                {{ isset($check[$equipchecklist_checklist->id]) && $check[$equipchecklist_checklist->id]->default_enable == '1' ? ' checked' : '' }}>
                                                                         </td>
                                                                     </tr>
                                                                     @php
@@ -356,22 +355,26 @@
                                                                 @php
                                                                     $index = 1;
                                                                 @endphp
+
                                                                 @foreach ($safework_checklist as $safework_checklist)
                                                                     <tr>
+
                                                                         <input type="hidden"
-                                                                            name="instruction[instructionrecord_id][{{ isset($instruction[$safework_checklist->id]) ? $instruction[$safework_checklist->id]->id : '' }}]"
+                                                                            name="instructionList[{{ $safework_checklist->id }}][checklist_id]"
+                                                                            value="{{ $safework_checklist->id }}">
+
+                                                                        <input type="hidden"
+                                                                            name="instructionList[{{ $safework_checklist->id }}][record_id]"
                                                                             value="{{ isset($instruction[$safework_checklist->id]) ? $instruction[$safework_checklist->id]->id : '' }}">
 
                                                                         <td>{{ $index }}</td>
 
                                                                         <td>
-                                                                            <input type="hidden"
-                                                                                name="instruction[safework_check][type5][{{ $safework_checklist->id }}]"
-                                                                                value="0">
+                                                                            
                                                                             <input type="checkbox"
-                                                                                name="instruction[safework_check][type5][{{ $safework_checklist->id }}]"
-                                                                                class="row-checkbox4 "
-                                                                                value="1"{{ isset($instruction[$safework_checklist->id]) && $instruction[$safework_checklist->id]->checked == '1' ? ' checked' : '' }}>
+                                                                                name="instructionList[{{ $safework_checklist->id }}][left_check]"
+                                                                                class="row-checkbox4 " value="1"
+                                                                                {{ isset($instruction[$safework_checklist->id]) && $instruction[$safework_checklist->id]->checked == '1' ? ' checked' : '' }}>
                                                                         </td>
 
                                                                         <td>
@@ -382,13 +385,11 @@
                                                                         </td>
 
                                                                         <td class="form-input">
-                                                                            <input type="hidden"
-                                                                                name="instruction[safework_checklist][type5][{{ $safework_checklist->id }}]"
-                                                                                value="0">
+                                                                         
                                                                             <input type="checkbox"
-                                                                                name="instruction[safework_checklist][type5][{{ $safework_checklist->id }}]"
-                                                                                class=""
-                                                                                value="1"{{ isset($instruction[$safework_checklist->id]) && $instruction[$safework_checklist->id]->default_enable == '1' ? ' checked' : '' }}>
+                                                                                name="instructionList[{{ $safework_checklist->id }}][right_check]"
+                                                                                class="" value="1"
+                                                                                {{ isset($instruction[$safework_checklist->id]) && $instruction[$safework_checklist->id]->default_enable == '1' ? ' checked' : '' }}>
                                                                         </td>
                                                                     </tr>
                                                                     @php
