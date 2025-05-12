@@ -39,7 +39,8 @@ class OHSPlantSummaryReport extends Model
         $query = $this->select(
             'inspection_safety_ohs_report.*',
             'inspection_static_docno.*',
-            'inspection_safety_ohs_report.id as inspection_id'
+            'inspection_safety_ohs_report.id as inspection_id',
+             'inspection_safety_ohs_report.created_at as inspection_created_at'
         )
             ->leftJoin(
                 'inspection_static_docno',

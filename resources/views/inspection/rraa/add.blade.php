@@ -117,7 +117,7 @@
 
                                                         <div class="col-md-4">
                                                             <div class="form-group form-input">
-                                                                <label class="form-label require">OHC Compliance Index</label>
+                                                                <label class="form-label require">OHS Compliance Index(Role)</label>
                                                                 <input type="text" name="ohs_compliance_index[1]"
                                                                     class="form-control" placeholder="OHC Compliance Index"
                                                                     value="">
@@ -471,7 +471,7 @@
 
                         <div class="col-md-4">
                             <div class="form-group form-input">
-                                <label class="form-label require">OHC Compliance Index</label>
+                                <label class="form-label require">OHS Compliance Index(Role)</label>
                                 <input type="text" name="ohs_compliance_index[${form_set_count}]"
                                     class="form-control" placeholder="OHC Compliance Index"
                                     value="">

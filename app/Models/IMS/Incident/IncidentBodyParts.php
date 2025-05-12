@@ -154,7 +154,7 @@ class IncidentBodyParts extends Model
         }
 
 
-        if ($request['body_prim_id'] != 0 && $request['incident_id'] != 0 ) {
+        if ($request['body_prim_id'] != 0 && $request['incident_id'] != 0) {
             $locdatas = [
                 'incident_id' => $request->incident_id,
                 'random_id' => $random_id,
@@ -276,7 +276,7 @@ class IncidentBodyParts extends Model
                 'inc.id as inveeid',
             ])
             ->leftJoin('ims_incident_body_parts as body', 'body.incident_id', '=', 'inc.id')
-            ->where('body.status', 'Y')
+            ->where('inc.trash', 'NO')
             ->get();
 
         // Collect body IDs
@@ -304,21 +304,27 @@ class IncidentBodyParts extends Model
             ->get();
 
         // dd($body_parts);
+        foreach ($body_parts as $key => $obsvalue) {
+            $obserdata[$obsvalue->part_name] = (array) $obsvalue;
+        }
 
-        $obserdata = $body_parts->keyBy('part_name')->map(function ($item) {
-            return (array) $item;
-        });
-
-        // Get all human body part labels
         $body_parts_labels = DB::table('ims_accident_injury_parts')->pluck('part_name');
 
-        // Prepare final result
-        $result = $body_parts_labels->map(function ($part) use ($obserdata) {
-            return [
-                'body_part' => $part,
-                'count' => $obserdata[$part]['count'] ?? 0
-            ];
-        })->toArray();
+        foreach ($body_parts_labels as $value) {
+            if (isset($obserdata[$value])) {
+                $result[] = [
+                    'body_part' => $obserdata[$value]['part_name'],
+                    'count' => $obserdata[$value]['count']
+                ];
+            } else {
+                $result[] = [
+                    'body_part' => $value,
+                    'count' => 0
+                ];
+            }
+        }
+
+        // dd($result);
 
         return $result;
     }

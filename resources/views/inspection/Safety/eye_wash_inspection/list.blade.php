@@ -91,7 +91,7 @@
                                                 </select>
                                             </div>
                                         </div>
-                                        <div class="col-md-3 mb-3 form-input">
+                                        <div class="col-md-4 mb-3 form-input">
                                             <label for="emp_name" class="form-label ">From Date</label>
                                             <div class="input-group date form-input custom-height">
                                                 <input type="text" class="form-control " name="from_date" id="from_date"
@@ -102,7 +102,7 @@
                                             </div>
 
                                         </div>
-                                        <div class="col-md-3 mb-3 form-input">
+                                        <div class="col-md-4 mb-3 form-input">
                                             <label for="emp_name" class="form-label ">To Date</label>
                                             <div class="input-group date form-input  custom-height">
                                                 <input type="text" class="form-control " name="to_date" id="to_date"
@@ -131,7 +131,7 @@
                                                 <option value="{{ encryptId('9') }}">L2 MANAGER REJECTED</option>
                                             </select>
                                         </div>
-                                        <div class="col-md-3 mt-3">
+                                        <div class="col-md-4 mt-3">
                                             <x-button-search></x-button-search>
                                             <x-button-reset></x-button-reset>
 
@@ -158,6 +158,7 @@
                                         <th>{{ __('inspection.unit') }}</th>
                                         <th>{{ __('inspection.frequency') }}</th>
                                         <th>{{ __('common.status') }}</th>
+                                        <th>{{ __('common.created_date') }}</th>
                                         <th>{{ __('common.action') }}</th>
                                     </tr>
                                 </thead>
@@ -244,6 +245,8 @@
                             d.location = $('#location').val();
                             d.shift = $('#shift').val();
                             d.unit = $('#unit').val();
+                            d.from_date = $('#from_date').val();
+                            d.to_date = $('#to_date').val();
                             d.frequency = $('#frequency').val();
                             d.inspection_status = $('#inspection_status').val();
                         },
@@ -287,6 +290,10 @@
                         {
                             data: 'inspection_status',
                             name: 'inspection_status',
+                        },
+                        {
+                            data: 'inspection_created_at',
+                            name: 'inspection_created_at',
                         },
                         {
                             data: 'action',

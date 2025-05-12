@@ -194,7 +194,7 @@
                 <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="2">SR. NO</th>
                 <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">CATEGORY
                 </th>
-                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">OHC COMPLIANCE INDEX
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">OHS Compliance Index(Role)
                 </th>
                 <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4"> FREQUENCY
                 </th>

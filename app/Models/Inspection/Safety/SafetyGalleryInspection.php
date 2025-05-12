@@ -52,7 +52,7 @@ class SafetyGalleryInspection extends Model
         $request = request();
         $search = '';
 
-        $query = $this->select('inspection_safety_gallery.*', 'masters_unit.*', 'masters_location.*', 'inspection_safety_gallery.id as inspection_id')
+        $query = $this->select('inspection_safety_gallery.*', 'masters_unit.*', 'masters_location.*', 'inspection_safety_gallery.id as inspection_id', 'inspection_safety_gallery.created_at as inspection_created_at')
             ->leftJoin('masters_location', 'inspection_safety_gallery.location', '=', 'masters_location.id')
             ->leftJoin('masters_unit', 'inspection_safety_gallery.unit', '=', 'masters_unit.id')
             ->leftJoin('inspection_static_docno', 'inspection_safety_gallery.document_reference_id', '=', 'inspection_static_docno.id');

@@ -3,6 +3,7 @@
 namespace App\Models\Inspection\MSDS;
 
 use App\Scopes\TrashScope;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 
@@ -73,6 +74,20 @@ class MSDS extends Model
         if ($request->has('unit_id') && $request->unit_id) {
             $query = $query->where('inspection_msds.unit_id', 'LIKE', '%' . decryptId($request->unit_id) . '%');
         }
+        if ($request->has('from_date') && !empty($request->from_date)) {
+            
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_msds.created_at', '>=', $startDate);
+        }
+        if ($request->has('to_date') && !empty($request->to_date)) {
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_msds.created_at', '<=', $endDate);
+        }
+        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->whereBetween('inspection_msds.created_at', [$startDate, $endDate]);
+        }
         $data_count = $query;
         $total_records = $data_count->count();
 
@@ -130,11 +145,23 @@ class MSDS extends Model
         if ($request->has('unit_id') && $request->unit_id) {
             $query = $query->where('inspection_msds.unit_id', 'LIKE', '%' . decryptId($request->unit_id) . '%');
         }
-
+        if ($request->has('from_date') && !empty($request->from_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_msds.created_at', '>=', $startDate);
+        }
+        if ($request->has('to_date') && !empty($request->to_date)) {
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_msds.created_at', '<=', $endDate);
+        }
+        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->whereBetween('inspection_msds.created_at', [$startDate, $endDate]);
+        }
         $query->orderBy('inspection_msds.id', 'DESC');
 
         $data =   $query->get();
-        if($data){
+        if ($data) {
             return $data->groupBy('msds_id');
         }
     }

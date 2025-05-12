@@ -298,7 +298,7 @@ class RRAAController extends Controller
                 $sheet->mergeCells("R" . ($currentRow + 1) . ":T" . ($currentRow + 1));
                 $sheet->mergeCells("R" . ($currentRow + 2) . ":T" . ($currentRow + 2));
 
-                $sheet->setCellValue("D{$currentRow}", "Occupational Health Safety, Fire & Environmental Compliance Sheet\nPN International Pvt Ltd");
+                $sheet->setCellValue("D{$currentRow}", "Occupational Health Safety, Fire & Environmental Compliance Sheet\n");
                 $sheet->setCellValue("O{$currentRow}", 'Doc. No.');
                 $sheet->setCellValue("O" . ($currentRow + 1), 'Issue Dt.');
                 $sheet->setCellValue("O" . ($currentRow + 2), 'Rev. & Dt.');
@@ -480,7 +480,7 @@ class RRAAController extends Controller
 
             $sheet->mergeCells('A1:C3');
             $sheet->mergeCells('D1:N3');
-            $sheet->setCellValue('D1', "Occupational Health Safety, Fire & Environmental Compliance Sheet\nPN International Pvt Ltd");
+            $sheet->setCellValue('D1', "Occupational Health Safety, Fire & Environmental Compliance Sheet\n");
             $sheet->getStyle('D1')->applyFromArray([
                 'font' => ['bold' => true, 'size' => 14],
                 'alignment' => [
