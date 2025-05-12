@@ -354,7 +354,7 @@ class SafeWorkController extends Controller
 
                 $export = [];
                 $export[] =  $i;
-                $export[] =  $data->equip_involve;
+                $export[] =  $data->safe_work;
                 $export[] =  $data->status == 1 ? 'Active' : 'In-Active';
                 $export[] =  getusername($data->created_by);
                 $export[] =  Displaydateformat($data->created_at);
@@ -371,6 +371,8 @@ class SafeWorkController extends Controller
                 );
         } catch (Exception $ex) {
             report($ex);
+             Session::flash('error', __('Safe Work Instruction upload failed'));
+            return redirect(admin_url('ptw/safeworkmaster/list'));
         }
     }
 
@@ -401,13 +403,22 @@ class SafeWorkController extends Controller
                 'pagetitle' => "Safe Work Instructions",
             );
 
-            $property = [
+          $property = [
                 'tempDir' => 'public/pdf/temp/',
-                'mode' => 'utf-8',
+                // 'mode' => 'c',
                 'margin_left' => 10,
                 'margin_right' => 10,
                 'margin_top' => 10,
-
+                'fontDir' => array_merge((new \Mpdf\Config\ConfigVariables())->getDefaults()['fontDir'], [
+                    public_path('assets/fonts/Noto_Sans_Devanagari'),
+                ]),
+                'fontdata' => array_merge((new \Mpdf\Config\FontVariables())->getDefaults()['fontdata'], [
+                    'NotoSansDevanagari' => [
+                        'R' => 'NotoSansDevanagari-Regular.ttf',
+                        'B' => 'NotoSansDevanagari-Bold.ttf',
+                    ],
+                ]),
+                'default_font' => 'NotoSansDevanagari',
 
             ];
 
@@ -425,6 +436,8 @@ class SafeWorkController extends Controller
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);
+             Session::flash('error', __('Safe Work Instruction upload failed'));
+            return redirect(admin_url('ptw/safeworkmaster/list'));
         }
     }
 
