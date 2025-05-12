@@ -812,7 +812,7 @@ class CoTypeFireExtinguisherController extends Controller
 
                     $sheet->mergeCells("A{$row}:B" . ($row + 2));
                     $sheet->mergeCells("C{$row}:M" . ($row + 2));
-                    $sheet->setCellValue("C{$row}", "FIRE EXTINGUISHER INSPECTION CHECKLIST (CO2 TYPE) PN INTERNATIONAL PVT. LTD.");
+                    $sheet->setCellValue("C{$row}", "FIRE EXTINGUISHER INSPECTION CHECKLIST (CO2 TYPE)");
                     $sheet->getStyle("C{$row}:M" . ($row + 2))->applyFromArray([
                         'font' => ['bold' => true, 'size' => 14],
                         'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
@@ -1159,7 +1159,7 @@ class CoTypeFireExtinguisherController extends Controller
 
             $sheet->mergeCells('A1:B3');
             $sheet->mergeCells("C1:M3");
-            $sheet->setCellValue("C1", "FIRE EXTINGUISHER INSPECTION CHECKLIST (CO2 TYPE) PN INTERNATIONAL PVT. LTD.");
+            $sheet->setCellValue("C1", "FIRE EXTINGUISHER INSPECTION CHECKLIST (CO2 TYPE)");
             $sheet->getStyle("C1:M3")->applyFromArray([
                 'font' => ['bold' => true, 'size' => 14],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],

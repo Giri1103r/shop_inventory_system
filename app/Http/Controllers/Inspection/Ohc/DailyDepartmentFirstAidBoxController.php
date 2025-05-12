@@ -645,7 +645,7 @@ class DailyDepartmentFirstAidBoxController extends Controller
 
                 // Title Section
                 $sheet->mergeCells("G{$currentRow}:M" . ($currentRow + 2));
-                $sheet->setCellValue("G{$currentRow}", "OCCUPATIONAL HEALTH CENTER ");
+                $sheet->setCellValue("G{$currentRow}", "OCCUPATIONAL HEALTH CENTER");
                 $sheet->getStyle("G{$currentRow}")->applyFromArray([
                     'font' => ['bold' => true, 'size' => 14],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],

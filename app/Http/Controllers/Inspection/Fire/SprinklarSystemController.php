@@ -795,7 +795,7 @@ class SprinklarSystemController extends Controller
                 ]);
 
                 $sheet->mergeCells("D{$titleRow}:K" . ($titleRow + 2));
-                $sheet->setCellValue("D{$titleRow}", "SPRINKLAR SYSTEM INSPECTION CHECKLIST PN INTERNATIONAL PVT. LTD.");
+                $sheet->setCellValue("D{$titleRow}", "SPRINKLAR SYSTEM INSPECTION CHECKLIST");
 
                 $sheet->getStyle("D{$titleRow}:K" . ($titleRow + 2))->applyFromArray([
                     'font' => ['bold' => true, 'size' => 14],
@@ -995,7 +995,6 @@ class SprinklarSystemController extends Controller
 
             return response()->download($tempFile)->deleteFileAfterSend(true);
         } catch (\Exception $e) {
-           
             report($e);
             Session::flash('error', 'Something went wrong!');
             return redirect(admin_url('fire/sprinkler-inspection/list'));
@@ -1138,7 +1137,7 @@ class SprinklarSystemController extends Controller
 
             $sheet->mergeCells('A1:C3');
             $sheet->mergeCells('D1:K3');
-            $sheet->setCellValue('D1', 'SPRINKLAR SYSTEM INSPECTION CHECKLIST PN INTERNATIONAL PVT. LTD.');
+            $sheet->setCellValue('D1', 'SPRINKLAR SYSTEM INSPECTION CHECKLIST');
             $sheet->getStyle('D1:K3')->applyFromArray([
                 'font'      => ['bold' => true, 'size' => 14],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],

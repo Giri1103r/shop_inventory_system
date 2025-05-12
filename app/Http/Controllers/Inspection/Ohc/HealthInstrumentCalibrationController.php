@@ -305,7 +305,7 @@ class HealthInstrumentCalibrationController extends Controller
             ]);
 
             $sheet->mergeCells("D1:I3");
-            $sheet->setCellValue("D1", "Fire & Safety Equipment Instrument Calibration Track Sheet\nPN International Pvt Ltd");
+            $sheet->setCellValue("D1", "Fire & Safety Equipment Instrument Calibration Track Sheet");
             $sheet->getStyle("D1:I3")->applyFromArray([
                 'font' => ['bold' => true, 'size' => 16],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
@@ -534,7 +534,7 @@ class HealthInstrumentCalibrationController extends Controller
 
             // Title (Center)
             $sheet->mergeCells("D1:I3");
-            $sheet->setCellValue("D1", "Fire & Safety Equipment Instrument Calibration Track Sheet\nPN International Pvt Ltd");
+            $sheet->setCellValue("D1", "Fire & Safety Equipment Instrument Calibration Track Sheet");
             $sheet->getStyle("D1:I3")->applyFromArray([
                 'font' => ['bold' => true, 'size' => 16],
                 'alignment' => [

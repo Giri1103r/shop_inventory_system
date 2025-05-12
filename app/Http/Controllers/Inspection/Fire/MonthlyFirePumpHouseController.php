@@ -703,7 +703,7 @@ class MonthlyFirePumpHouseController extends Controller
                 ]);
 
                 $sheet->mergeCells("E{$currentRow}:K" . ($currentRow + 2));
-                $sheet->setCellValue("E{$currentRow}", "MONTHLY FIRE PUMP HOUSE PHYSICAL INSPECTION CHECKLIST PN INTERNATIONAL PVT LTD 100% EOU");
+                $sheet->setCellValue("E{$currentRow}", "MONTHLY FIRE PUMP HOUSE PHYSICAL INSPECTION CHECKLIST");
                 $sheet->getStyle("E{$currentRow}")->applyFromArray([
                     'font' => ['bold' => true, 'size' => 14],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
@@ -980,7 +980,7 @@ class MonthlyFirePumpHouseController extends Controller
             }
 
             // Title Area
-            $sheet->mergeCells("D1:H3")->setCellValue("D1", "MONTHLY FIRE PUMP HOUSE PHYSICAL INSPECTION CHECKLIST PN INTERNATIONAL PVT LTD 100% EOU");
+            $sheet->mergeCells("D1:H3")->setCellValue("D1", "MONTHLY FIRE PUMP HOUSE PHYSICAL INSPECTION CHECKLIST");
             $sheet->getStyle("D1")->applyFromArray([
                 'font' => ['bold' => true, 'size' => 14],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],

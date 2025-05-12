@@ -167,8 +167,6 @@
                     <h3>
                         <span><b>DAILY DEPARTMENTAL FIRST-AID BOX INSPECTION CHECKLIST
                             </b></span>
-                        <br>
-                       
                     </h3>
                 </th>
 
@@ -200,7 +198,7 @@
                 </th>
                 <th colspan="6"
                     style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
-                    FIRST AID BOX NO: {{ ($details->first_aid_box_no) ?? 'N/A' }}
+                    FIRST AID BOX NO: {{ $details->first_aid_box_no ?? 'N/A' }}
                 </th>
                 <th colspan="6"
                     style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
@@ -231,9 +229,11 @@
                 <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="2">FREEZE
                     QUANTITY
                 </th>
-                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="2">AVAILABLE QUANTITY
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="2">AVAILABLE
+                    QUANTITY
                 </th>
-                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">MATERIAL EXPIRY
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">MATERIAL
+                    EXPIRY
                 </th>
                 <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">REMARKS
                 </th>
@@ -257,7 +257,7 @@
                     <td colspan="2"
                         style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
                         {{ $medicineRequisitionDetails->available_quantity }}</td>
-                        <td colspan="4"
+                    <td colspan="4"
                         style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
                         {{ DisplayDateformat($medicineRequisitionDetails->material_expiry) }}</td>
                     <td colspan="4"
