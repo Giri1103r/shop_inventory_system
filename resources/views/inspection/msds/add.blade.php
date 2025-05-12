@@ -153,7 +153,7 @@
                                                         <div class="col-md-4 mb-3">
                                                             <div class="form-group form-input">
                                                                 <label for="chemicals_1" class="form-label require">
-                                                                    Select Checmical
+                                                                   Name of Chemical
                                                                 </label>
                                                                 <input type="text" name="name_of_chemical[1]"
                                                                     class="form-control" placeholder="Enter the Chemicals"
@@ -423,7 +423,7 @@
                     'name_of_chemical[1]': {
                         required: "Name of Chemical is Required",
                         minlength: 'Chemical Name atlest contains 3 letters',
-                        maxlength: 'Chemical Name should not Exceed the 30 Characters'
+                        maxlength: 'Chemical Name should not Exceed the 30 Characters',
                     },
                     'msds_availability_status[1]': {
                         required: "MSDS Availability Status is Required",
@@ -643,7 +643,7 @@
                 $input.rules('add', {
                     required: true,
                     minlength: 3,
-                    maxlength: 30
+                    maxlength: 30,
                     messages: {
                         required: 'Name of Chemical is required',
                         minlength: 'Chemical Name atlest contains 3 letters',

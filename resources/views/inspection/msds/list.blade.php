@@ -23,7 +23,7 @@
                             <div class="card-body">
                                 <div class="col-md-12">
                                     <div class="row">
-                                        <div class="col-md-4">
+                                        <div class="col-md-4 mb-3">
                                             <div class="form-group form-input">
                                                 <label for="location_id" class="form-label require">
                                                     Location
@@ -38,7 +38,7 @@
                                                 </select>
                                             </div>
                                         </div>
-                                        <div class="col-md-4">
+                                        <div class="col-md-4 mb-3">
                                             <div class="form-group form-input">
                                                 <label for="unit_id" class="form-label require">
                                                     Unit
@@ -49,7 +49,7 @@
                                                 </select>
                                             </div>
                                         </div>
-                                        <div class="col-md-4">
+                                        <div class="col-md-4 mb-3">
                                             <div class="form-group form-input">
                                                 <label for="department_id" class="form-label require">
                                                     Department
@@ -125,7 +125,21 @@
 
             var firstTh = $('.datatable-list thead th:first');
             firstTh.removeClass('sorting_asc');
+ var fromDatepicker = flatpickr("#from_date", {
+            dateFormat: "d-m-Y",
+            onChange: function(selectedDates) {
+                if (selectedDates.length > 0) {
+                    var startDate = selectedDates[0];
+                    toDatepicker.set('minDate', startDate);
+                    toDatepicker.clear();
+                }
+            }
+        });
 
+        var toDatepicker = flatpickr("#to_date", {
+            dateFormat: "d-m-Y",
+
+        });
             $('#location_id').on('change', function() {
                 var location_id = $(this).val();
                 $('#department_id').val("").trigger("change");
