@@ -1318,7 +1318,7 @@
                 var titlestr = $(area).attr("title");
                 $('table.injtable tr').css('background-color', 'white');
                 var partcount = 0;
-                var urls = "{{ admin_url('dashboard/getbodycount') }}";
+                var urls = "{{ admin_url('kpi/dashboard/getbodycount') }}";
 
                 $.ajax({
                     type: 'POST',
@@ -1328,7 +1328,7 @@
                         _token: '{{ csrf_token() }}'
                     },
                     success: function(data) {
-                        var datas = JSON.parse(data);
+                        var datas = data;
                         if (datas['count']) {
                             partcount = datas['count'];
                         }
@@ -1357,17 +1357,16 @@
                     // $(txtarea).text(desc).val(desc);
                 }
             }
-            // $(document).on('click', '.count-label', function() {
-            //     var count_lab = $(this).text();
+            $(document).on('click', '.count-label', function() {
+                var count_lab = $(this).text();
+                if (parseInt(count_lab) !== 0) {
+                    var inc_generate_ids = $('#inc_ids').val();
+                    var count_url = "{{ admin_url('kpi/dashboard/getbodycount') }}" +
+                        "&inc_generate_ids=" + encodeURIComponent(inc_generate_ids);
 
-            //     if (parseInt(count_lab) !== 0) {
-            //         var inc_generate_ids = $('#inc_ids').val();
-            //         var count_url : "{{ admin_url('dashboard/getbodycount') }}" +
-            //             "&inc_generate_ids=" + encodeURIComponent(inc_generate_ids);
-
-            //         window.location.href = count_url;
-            //     }
-            // });
+                    window.location.href = count_url;
+                }
+            });
 
 
             function initDescriptionJs() {
