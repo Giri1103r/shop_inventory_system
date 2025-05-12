@@ -281,7 +281,6 @@ class AuditAnalysisController extends Controller
                     $rightAuditDrawing->setWorksheet($sheet);
                 }
                 $sheet->mergeCells('P' . $row . ':Q' . ($row + 2));
-
                 $sheet->mergeCells('E' . $row . ':O' . ($row + 2));
                 $sheet->setCellValue('E' . $row, "   6'S AUDIT ANALYSIS REPORT (FY FROM ….... TO ……) PN INTERNATIONAL PVT LTD");
                 $sheet->getStyle('E' . $row . ':O' . ($row + 2))->applyFromArray([

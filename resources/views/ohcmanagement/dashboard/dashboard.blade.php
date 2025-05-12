@@ -453,40 +453,7 @@
 
             </div>
 
-            <div class="card shadow-lg border-0">
-                <div class="card-body">
-                    <h4 class="card-title text-dark mb-3">Medicine Status</h4>
-                    <div class="table-responsive">
-                        <table class="table table-striped table-bordered" id="medicine-table">
-
-
-                            <thead class="bg-secondary" style="color: #ffff">
-                                <tr>
-                                    <th>Medicine</th>
-                                    <th>Quantity</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($medicines as $medicine)
-                                    <tr>
-                                        <td class="">{{ $medicine->medicine }}</td>
-                                        <td>
-                                            <span
-                                                class="badge
-                                                @if ($medicine->balance > 50) bg-success
-                                                @elseif ($medicine->balance > 10) bg-warning text-dark
-                                                @else bg-danger @endif
-                                                px-3 py-2">
-                                                {{ $medicine->balance }}
-                                            </span>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
+           
 
 
         </div>
