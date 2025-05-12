@@ -405,6 +405,7 @@
                                                         <th>Injury Person Employee ID</th>
                                                         <th>Injury Person Designation</th>
                                                         <th>Injury Person Department</th>
+                                                        <th>Nature of Injury</th>
                                                         <th>Injury Body Parts</th>
                                                         <th>Description</th>
                                                     </tr>
@@ -430,6 +431,9 @@
                                                             @else --}}
                                                                 {{ $injury->injury_person_department_id }}
                                                                 {{-- @endif --}}
+                                                            </td>
+                                                            <td>
+                                                                {{ $injury->nature_of_injury == 1 ? 'Major' : ($injury->injury_person_type == 2 ? 'Minor' : 'Fatal') }}
                                                             </td>
                                                             <td>
                                                                 @if ($injury->body_part_image)
@@ -561,7 +565,7 @@
                                                 </div>
                                             </div>
 
-                                            <div class="col-md-2 mt-2">
+                                            {{-- <div class="col-md-2 mt-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label">HIRA</label>
 
@@ -608,7 +612,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>
+                                            </div> --}}
                                             <div class="col-md-4 mt-2">
                                                 <div class="form-group form-input">
                                                     <label for="root_cause_analysis" class="form-label require">Possible

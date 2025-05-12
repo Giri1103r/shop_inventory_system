@@ -325,6 +325,7 @@
                                                         <th>Injury Person Employee ID</th>
                                                         <th>Injury Person Designation</th>
                                                         <th>Injury Person Department</th>
+                                                        <th>Nature of Injury</th>
                                                         <th>Injury Body Parts</th>
                                                         <th>Description</th>
                                                     </tr>
@@ -350,6 +351,9 @@
                                                             @else --}}
                                                                 {{ $injury->injury_person_department_id }}
                                                                 {{-- @endif --}}
+                                                            </td>
+                                                            <td>
+                                                                {{ $injury->nature_of_injury == 1 ? 'Major' : ($injury->injury_person_type == 2 ? 'Minor' : 'Fatal') }}
                                                             </td>
                                                             <td>
                                                                 @if ($injury->body_part_image)

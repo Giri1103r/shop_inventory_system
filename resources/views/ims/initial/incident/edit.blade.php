@@ -725,6 +725,9 @@
                                                                             <option value="{{ encryptId('2') }}"
                                                                                 {{ $injury->nature_of_injury == 2 ? 'selected' : '' }}>
                                                                                 Minor</option>
+                                                                                <option value="{{ encryptId('3') }}"
+                                                                                {{ $injury->nature_of_injury == 3 ? 'selected' : '' }}>
+                                                                                Fatal</option>
                                                                         </select>
                                                                     </div>
                                                                 </div>

@@ -599,6 +599,7 @@
                                                                     <option value="">Select Nature of Injury</option>
                                                                     <option value="{{ encryptId('1') }}">Major</option>
                                                                     <option value="{{ encryptId('2') }}">Minor</option>
+                                                                    <option value="{{ encryptId('3') }}">Fatal</option>
                                                                 </select>
                                                             </div>
                                                         </div>
