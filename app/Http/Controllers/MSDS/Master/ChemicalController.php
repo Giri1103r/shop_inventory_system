@@ -6,7 +6,7 @@ use Exception;
 use App\Models\UploadLog;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\MSDS\Master\Chemical;
+use App\Models\Inspection\MSDS\Master\Chemical;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Response;
