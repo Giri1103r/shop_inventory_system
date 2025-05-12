@@ -347,27 +347,7 @@ class ChecklistObservationFollowupController extends Controller
         }
     }
 
-    // public function employeename(Request $request)
-    // {
-    //     $name = $request->input('search');
-
-    //     $employees = Employee::where('emp_name', 'like', '%' . $name . '%')
-    //         ->orWhere('emp_id', 'like', '%' . $name . '%')
-    //         ->where('status', 1)
-    //         ->where('user_role',18)
-    //         ->limit(10)
-    //         ->get();
-
-
-    //     return response()->json(
-    //         $employees->map(function ($employee) {
-    //             return [
-    //                 'id' => encryptId($employee->login_id),
-    //                 'text' => $employee->emp_name . ' - ' . $employee->emp_id,
-    //             ];
-    //         })
-    //     );
-    // }
+ 
 
     public function employeename(Request $request)
     {
@@ -377,9 +357,8 @@ class ChecklistObservationFollowupController extends Controller
             $query->where('emp_name', 'like', '%' . $name . '%')
                 ->orWhere('emp_id', 'like', '%' . $name . '%');
         })
+            ->whereRaw('FIND_IN_SET(?, user_role)', [18])
             ->where('status', 1)
-            ->where('user_role', 18)
-           
             ->limit(10)
             ->get();
 
