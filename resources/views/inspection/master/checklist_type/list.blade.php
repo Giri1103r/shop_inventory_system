@@ -14,25 +14,46 @@
 
                         <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
                         {{-- @if (CheckUserPermission('import')) --}}
-                            {{-- <x-button-import href="{{ admin_url('inspection/master/checklist-type/import') }}"></x-button-import> --}}
+                        {{-- <x-button-import href="{{ admin_url('inspection/master/checklist-type/import') }}"></x-button-import> --}}
                         {{-- @endif --}}
                         {{-- @if (CheckUserPermission('add')) --}}
-                            <x-button-add dataId="" class="add btn btn-primary ms-1"
-                                href="{{ admin_url('inspection/master/checklist-type/add') }}">Add</x-button-add>
+                        <x-button-add dataId="" class="add btn btn-primary ms-1"
+                            href="{{ admin_url('inspection/master/checklist-type/add') }}">Add</x-button-add>
                         {{-- @endif --}}
                     </div>
                     <div id="search" class="collapse">
                         <form action="" id="formsearch">
                             <div class="card-body">
-                                <div class="col-md-12">
+
                                     <div class="row">
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="checklist" class="form-label ">{{__('inspection.checklist_type_name')}}</label>
+                                        <div class="col-md-4 mb-3 form-input">
+                                            <label for="checklist"
+                                                class="form-label ">{{ __('inspection.checklist_type_name') }}</label>
                                             <input type="text" name="category_name" id="category_name"
                                                 class="form-control">
                                         </div>
+                                        <div class="col-md-4 mb-3 form-input">
+                                            <label for="emp_name" class="form-label ">From Date</label>
+                                            <div class="input-group date form-input custom-height">
+                                                <input type="text" class="form-control " name="from_date" id="from_date"
+                                                    autocomplete="off">
+                                                <div class="input-group-addon input-group-text">
+                                                    <span class="fa fa-calendar"></span>
+                                                </div>
+                                            </div>
 
-                                        <div class="col-md-3 mb-3 form-input">
+                                        </div>
+                                        <div class="col-md-4 mb-3 form-input">
+                                            <label for="emp_name" class="form-label ">To Date</label>
+                                            <div class="input-group date form-input  custom-height">
+                                                <input type="text" class="form-control " name="to_date" id="to_date"
+                                                    autocomplete="off">
+                                                <div class="input-group-addon input-group-text">
+                                                    <span class="fa fa-calendar"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 mb-3 form-input">
                                             <label for="status" class="form-label ">{{ __('common.status') }}</label>
                                             <select name="status" id="status" style="width: 100%"
                                                 class="form-control single-select">
@@ -41,13 +62,13 @@
                                                 <option value="{{ encryptId(0) }}">In-Active</option>
                                             </select>
                                         </div>
-                                        <div class="col-md-3 mt-3">
+                                        <div class="col-md-4 mt-3">
                                             <x-button-search></x-button-search>
                                             <x-button-reset></x-button-reset>
 
                                         </div>
                                     </div>
-                                </div>
+                             
                             </div>
                         </form>
                         <hr>
@@ -61,8 +82,8 @@
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
-                                        <th>{{__('inspection.checklist_type_id')}}</th>
-                                        <th>{{__('inspection.checklist_type_name')}}</th>
+                                        <th>{{ __('inspection.checklist_type_id') }}</th>
+                                        <th>{{ __('inspection.checklist_type_name') }}</th>
                                         <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.created_date') }}</th>
                                         <th>{{ __('common.action') }}</th>
@@ -86,7 +107,21 @@
                 var firstTh = $('.datatable-list thead th:first');
                 firstTh.removeClass('sorting_asc');
             });
+            var fromDatepicker = flatpickr("#from_date", {
+                dateFormat: "d-m-Y",
+                onChange: function(selectedDates) {
+                    if (selectedDates.length > 0) {
+                        var startDate = selectedDates[0];
+                        toDatepicker.set('minDate', startDate);
+                        toDatepicker.clear();
+                    }
+                }
+            });
 
+            var toDatepicker = flatpickr("#to_date", {
+                dateFormat: "d-m-Y",
+
+            });
             $(function() {
                 /* Datatable */
                 var table = $('.datatable-list').DataTable({
@@ -122,7 +157,8 @@
                         data: function(d) {
                             d.category_name = $('#category_name').val();
                             d.status = $('#status').val();
-
+                            d.from_date = $('#from_date').val();
+                            d.to_date = $('#to_date').val();
                         },
                         error: function(xhr, error, code) {
                             if (xhr.status === 419) {
@@ -184,13 +220,16 @@
                                         var searchValue = $('#datatable-list_filter input').val();
                                         checklist = $('#category_name').val();
                                         status = $('#status').val();
-
+                                        var from_date = $('#from_date').val();
+                                        var to_date = $('#to_date').val();
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
                                             "{{ admin_url('inspection/master/checklist-type/export/pdf') }}" +
                                             '?search=' + searchValue +
                                             '&category_name=' + checklist +
+                                            '&from_date=' + from_date +
+                                            '&to_date=' + to_date +
                                             '&status=' + status
                                     }
                                 },
@@ -201,12 +240,16 @@
                                         var searchValue = $('#datatable-list_filter input').val();
                                         checklist = $('#category_name').val();
                                         status = $('#status').val();
+                                        var from_date = $('#from_date').val();
+                                        var to_date = $('#to_date').val();
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
                                             "{{ admin_url('inspection/master/checklist-type/export/excel') }}" +
                                             '?search=' + searchValue +
                                             '&category_name=' + checklist +
+                                            '&from_date=' + from_date +
+                                            '&to_date=' + to_date +
                                             '&status=' + status
                                     }
                                 },

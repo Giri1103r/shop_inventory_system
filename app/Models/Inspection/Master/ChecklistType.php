@@ -3,6 +3,7 @@
 namespace App\Models\Inspection\Master;
 
 use App\Scopes\TrashScope;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 
@@ -56,7 +57,20 @@ class ChecklistType extends Model
         if ($request->has('status') && $request->status) {
             $query = $query->where('inspection_master_checklist_type.status', decryptId($request->status));
         }
+        if ($request->has('from_date') && !empty($request->from_date)) {
 
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_master_checklist_type.created_at', '>=', $startDate);
+        }
+        if ($request->has('to_date') && !empty($request->to_date)) {
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_master_checklist_type.created_at', '<=', $endDate);
+        }
+        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->whereBetween('inspection_master_checklist_type.created_at', [$startDate, $endDate]);
+        }
         if (isset($request->order) && count($request->order) > 0) {
             $columnName = $request->order[0]['column'];
             $columnorder = $request->order[0]['dir'];
@@ -155,7 +169,20 @@ class ChecklistType extends Model
         if ($request->has('status') && $request->status) {
             $query = $query->where('inspection_master_checklist_type.status', decryptId($request->status));
         }
+        if ($request->has('from_date') && !empty($request->from_date)) {
 
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_master_checklist_type.created_at', '>=', $startDate);
+        }
+        if ($request->has('to_date') && !empty($request->to_date)) {
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_master_checklist_type.created_at', '<=', $endDate);
+        }
+        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->whereBetween('inspection_master_checklist_type.created_at', [$startDate, $endDate]);
+        }
         if (isset($request->order) && count($request->order) > 0) {
             $columnName = $request->order[0]['column'];
             $columnorder = $request->order[0]['dir'];
@@ -237,7 +264,7 @@ class ChecklistType extends Model
 
     public function getAll()
     {
-        return $this->where('status','1')->get();
+        return $this->where('status', '1')->get();
     }
 
     protected static function booted()

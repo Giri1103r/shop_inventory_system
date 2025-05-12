@@ -24,13 +24,13 @@
                             <div class="card-body">
                                 <div class="col-md-12">
                                     <div class="row">
-                                        <div class="col-md-3 mb-3 form-input">
+                                        <div class="col-md-4 mb-3 form-input">
                                             <label for="subcategory_id" class="form-label ">Checklist Sub-Type ID</label>
                                             <input type="text" name="subcategory_id" id="subcategory_id"
                                                 class="form-control">
                                         </div>
 
-                                        <div class="col-md-3 mb-3 form-input">
+                                        <div class="col-md-4 mb-3 form-input">
                                             <label for="category_id" class="form-label ">Checklist Type Name</label>
                                             <select name="category_id" id="category_id" class=" form-control single-select"
                                                 style="width: 100%">
@@ -41,13 +41,34 @@
                                                 @endforeach
                                             </select>
                                         </div>
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="subcategory_name" class="form-label ">Checklist Sub Type Name</label>
+                                        <div class="col-md-4 mb-3 form-input">
+                                            <label for="subcategory_name" class="form-label ">Checklist Sub Type
+                                                Name</label>
                                             <input type="text" name="subcategory_name" id="subcategory_name"
                                                 class="form-control">
                                         </div>
+                                        <div class="col-md-4 mb-3 form-input">
+                                            <label for="emp_name" class="form-label ">From Date</label>
+                                            <div class="input-group date form-input custom-height">
+                                                <input type="text" class="form-control " name="from_date" id="from_date"
+                                                    autocomplete="off">
+                                                <div class="input-group-addon input-group-text">
+                                                    <span class="fa fa-calendar"></span>
+                                                </div>
+                                            </div>
 
-                                        <div class="col-md-3 mb-3 form-input">
+                                        </div>
+                                        <div class="col-md-4 mb-3 form-input">
+                                            <label for="emp_name" class="form-label ">To Date</label>
+                                            <div class="input-group date form-input  custom-height">
+                                                <input type="text" class="form-control " name="to_date" id="to_date"
+                                                    autocomplete="off">
+                                                <div class="input-group-addon input-group-text">
+                                                    <span class="fa fa-calendar"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 mb-3 form-input">
                                             <label for="status" class="form-label ">{{ __('common.status') }}</label>
                                             <select name="status" id="status" style="width: 100%"
                                                 class="form-control single-select">
@@ -56,7 +77,7 @@
                                                 <option value="{{ encryptId(0) }}">In-Active</option>
                                             </select>
                                         </div>
-                                        <div class="col-md-3 mt-3">
+                                        <div class="col-md-4 mt-3">
                                             <x-button-search></x-button-search>
                                             <x-button-reset></x-button-reset>
 
@@ -102,7 +123,21 @@
                 var firstTh = $('.datatable-list thead th:first');
                 firstTh.removeClass('sorting_asc');
             });
+            var fromDatepicker = flatpickr("#from_date", {
+                dateFormat: "d-m-Y",
+                onChange: function(selectedDates) {
+                    if (selectedDates.length > 0) {
+                        var startDate = selectedDates[0];
+                        toDatepicker.set('minDate', startDate);
+                        toDatepicker.clear();
+                    }
+                }
+            });
 
+            var toDatepicker = flatpickr("#to_date", {
+                dateFormat: "d-m-Y",
+
+            });
             $(function() {
                 /* Datatable */
                 var table = $('.datatable-list').DataTable({
@@ -140,7 +175,8 @@
                             d.category_id = $('#category_id').val();
                             d.subcategory_name = $('#subcategory_name').val();
                             d.status = $('#status').val();
-
+                            d.from_date = $('#from_date').val();
+                            d.to_date = $('#to_date').val();
                         },
                         error: function(xhr, error, code) {
                             if (xhr.status === 419) {
@@ -208,7 +244,8 @@
                                         category_id = $('#category_id').val();
                                         subcategory_name = $('#subcategory_name').val();
                                         status = $('#status').val();
-
+                                        var from_date = $('#from_date').val();
+                                        var to_date = $('#to_date').val();
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
@@ -216,6 +253,8 @@
                                             '?search=' + searchValue +
                                             '&subcategory_id=' + subcategory_id +
                                             '&category_id=' + category_id +
+                                            '&from_date=' + from_date +
+                                            '&to_date=' + to_date +
                                             '&subcategory_name=' + subcategory_name +
                                             '&status=' + status
                                     }
@@ -229,6 +268,8 @@
                                         category_id = $('#category_id').val();
                                         subcategory_name = $('#subcategory_name').val();
                                         status = $('#status').val();
+                                        var from_date = $('#from_date').val();
+                                        var to_date = $('#to_date').val();
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
@@ -236,6 +277,8 @@
                                             '?search=' + searchValue +
                                             '&subcategory_id=' + subcategory_id +
                                             '&category_id=' + category_id +
+                                            '&from_date=' + from_date +
+                                            '&to_date=' + to_date +
                                             '&subcategory_name=' + subcategory_name +
                                             '&status=' + status
                                     }
