@@ -768,6 +768,46 @@ class InitialIncident extends Model
         return $query->get();
     }
 
+
+    public function getTypeofIIRRCPACountData($request)
+    {
+        $query = DB::table('ims_initial_incident as iii')
+            ->join('ims_master_incident_type as imit', 'iii.iir_type', '=', 'imit.id')
+            ->leftJoin('ims_rcpa_responsible as rcpa', function ($join) {
+                $join->on('iii.id', '=', 'rcpa.incident_id')
+                    ->whereNotNull('rcpa.id');
+            })
+            ->select(
+                'imit.incident_type_name',
+                DB::raw('COUNT(DISTINCT iii.id) as total_incident'),
+                DB::raw('COUNT(rcpa.id) as total_rcpa')
+            )
+            ->groupBy('imit.incident_type_name')
+            ->orderBy('imit.incident_type_name');
+
+
+        // Date Filters
+        if ($request->Fromdate && $request->Todate) {
+            $query->whereBetween('iii.created_at', [
+                DBdateformat($request->Fromdate),
+                DBdateformat($request->Todate)
+            ]);
+        } elseif ($request->Fromdate) {
+            $query->where('iii.created_at', '>=', DBdateformat($request->Fromdate));
+        } elseif ($request->Todate) {
+            $query->where('iii.created_at', '<=', DBdateformat($request->Todate));
+        }
+
+        // Role-based filter
+        if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_ADMIN)) {
+            // No restriction
+        } elseif (Auth::user()->role == ROLE_USER) {
+            $query->where('iii.created_by', Auth::id());
+        }
+
+        return $query->get(); // returns multiple rows
+    }
+
     protected static function booted()
     {
         static::addGlobalScope(new TrashScope('ims_initial_incident'));

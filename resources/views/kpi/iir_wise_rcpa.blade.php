@@ -1,17 +1,25 @@
 <div id="chartData4"></div>
 
 <script>
+
+    var chartData = {!! json_encode($chartData) !!};
+
+
+    var series = [{
+            name: 'Total Incidents',
+            data: chartData.map(item => item.total_incident)
+        },
+        {
+            name: 'Total RCPA',
+            data: chartData.map(item => item.total_rcpa)
+        }
+    ];
+
+
+    var categories = chartData.map(item => item.incident_type_name);
+
     var options = {
-        series: [{
-            name: 'Net Profit',
-            data: [44, 55, 57, 56, 61, 58, 63, 60, 66]
-        }, {
-            name: 'Revenue',
-            data: [76, 85, 101, 98, 87, 105, 91, 114, 94]
-        }, {
-            name: 'Free Cash Flow',
-            data: [35, 41, 36, 26, 45, 48, 52, 53, 41]
-        }],
+        series: series,
         chart: {
             type: 'bar',
             height: 350,
@@ -36,12 +44,20 @@
             colors: ['transparent']
         },
         xaxis: {
-            categories: ['Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'],
+            categories: categories,
+            labels: {
+
+                rotate: -45,
+                style: {
+                    fontSize: '12px'
+                }
+            }
         },
         yaxis: {
             title: {
-                text: '$ (thousands)'
-            }
+                text: 'Count'
+            },
+            min: 0
         },
         fill: {
             opacity: 1
@@ -49,16 +65,20 @@
         tooltip: {
             y: {
                 formatter: function(val) {
-                    return "$ " + val + " thousands"
+                    return val
                 }
             }
+        },
+        colors: ['#008FFB', '#00E396'], 
+        legend: {
+            position: 'bottom'
         }
     };
+
     var chartData4 = new ApexCharts(document.querySelector("#chartData4"), options);
     chartData4.render();
 
-    // Download button functionality
-    $("#LoadChart4_download").off("click").on("click", function() {
+    $("#iirTypewiseRCPA_download").off("click").on("click", function() {
         chartData4.dataURI().then(({
             imgURI
         }) => {
@@ -78,7 +98,7 @@
                 // Header text
                 ctx.fillStyle = '#203669';
                 ctx.font = '20px Arial';
-                ctx.fillText('CHART', 10, 30);
+                ctx.fillText('IIR Type wise RCPA', 10, 30);
 
                 // Optional filter text
                 let yPos = 60;
@@ -114,7 +134,7 @@
                 newCanvas.toBlob(function(blob) {
                     var link = document.createElement('a');
                     link.href = URL.createObjectURL(blob);
-                    link.download = 'CHART.png';
+                    link.download = 'IIR Type wise RCPA.png';
                     link.click();
                 });
             };
