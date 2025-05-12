@@ -163,9 +163,6 @@
 
                                                                         <td>
 
-                                                                            <input type="hidden"
-                                                                                name="equipment[equipinvalve_check][type2][{{ $equipinvalve_checklist->id }}]"
-                                                                                value="0">
                                                                             <input type="checkbox"
                                                                                 name="equipmentinvolved[{{ $equipinvalve_checklist->id }}][left_check]"
                                                                                 class="row-checkbox1 " value="1">
@@ -181,9 +178,6 @@
                                                                         <td class="form-input">
 
 
-                                                                            <input type="hidden"
-                                                                                name="equipment[equipinvalve_checklist][type2][{{ $equipinvalve_checklist->id }}]"
-                                                                                value="0">
                                                                             <input type="checkbox"
                                                                                 name="equipmentinvolved[{{ $equipinvalve_checklist->id }}][right_check]"
                                                                                 class="" value="1">
@@ -231,9 +225,6 @@
 
                                                                         <td>
 
-                                                                            <input type="hidden"
-                                                                                name="manual[precaution_check][type3][{{ $precaution_checklist->id }}]"
-                                                                                value="0">
                                                                             <input type="checkbox"
                                                                                name="manuallist[{{ $precaution_checklist->id }}][left_check]"
                                                                                 class="row-checkbox2 " value="1">
@@ -249,10 +240,6 @@
                                                                         </td>
                                                                         <td class="form-input">
 
-
-                                                                            <input type="hidden"
-                                                                                name="manual[precaution_checklist][type3][{{ $precaution_checklist->id }}]"
-                                                                                value="0">
                                                                             <input type="checkbox"
                                                                               name="manuallist[{{ $precaution_checklist->id }}][right_check]"
                                                                                 class="" value="1">
@@ -296,9 +283,6 @@
 
                                                                         <td>
 
-                                                                            <input type="hidden"
-                                                                                name="check[equipchecklist_check][type4][{{ $equipchecklist_checklist->id }}]"
-                                                                                value="0">
                                                                             <input type="checkbox"
                                                                             name="checklist[{{ $equipchecklist_checklist->id }}][left_check]"
                                                                                 class="row-checkbox3" value="1">
@@ -313,9 +297,6 @@
                                                                         <td class="form-input">
 
 
-                                                                            <input type="hidden"
-                                                                                name="check[equipchecklist_checklist][type4][{{ $equipchecklist_checklist->id }}]"
-                                                                                value="0">
                                                                             <input type="checkbox"
                                                                                 name="checklist[{{ $equipchecklist_checklist->id }}][right_check]"
                                                                                 class=" " value="1">
@@ -361,9 +342,7 @@
                                                                         <td>{{ $index }}</td>
 
                                                                         <td>
-                                                                            <input type="hidden"
-                                                                                name="instruction[safework_check][type5][{{ $safework_checklist->id }}]"
-                                                                                value="0">
+                                                                          
                                                                             <input type="checkbox"
                                                                                name="instructionList[{{ $safework_checklist->id }}][left_check]"
                                                                                 class="row-checkbox4 " value="1">
@@ -378,9 +357,7 @@
                                                                         </td>
                                                                         <td class="form-input">
 
-                                                                            <input type="hidden"
-                                                                                name="instruction[safework_checklist][type5][{{ $safework_checklist->id }}]"
-                                                                                value="0">
+                                                                           
                                                                             <input type="checkbox"
                                                                               name="instructionList[{{ $safework_checklist->id }}][right_check]"
                                                                                 class="" value="1">
