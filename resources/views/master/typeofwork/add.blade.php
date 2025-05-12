@@ -103,9 +103,7 @@
                                                                         <td>{{ $index }}</td>
                                                                         <td>
                                                                             
-                                                                            <input type="hidden"
-                                                                                name="protective[protective_check][type1][{{ $detail->id }}]"
-                                                                                value="0">
+                                                                         
                                                                             <input type="checkbox"
                                                                                name="protectiveequipment[{{ $detail->id }}][left_check]"
                                                                                 class="row-checkbox " value="1">
@@ -120,9 +118,6 @@
                                                                         </td>
                                                                         <td class="form-input">
 
-                                                                            <input type="hidden"
-                                                                                name="protective[protectivequip_checklist][type1][{{ $detail->id }}]"
-                                                                                value="0">
                                                                             <input type="checkbox"
                                                                                 name="protectiveequipment[{{ $detail->id }}][right_check]"
                                                                                 class="" value="1">
