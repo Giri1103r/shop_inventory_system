@@ -314,6 +314,42 @@
                 </div>
             </div>
 
+            <div class="row">
+                <div class="col-xl-12 col-xxl-12">
+                    <div class="card view_card">
+                        <div class="card-header">
+                            <h4 class="text-white">Training Completion</h4>
+                            <a class="fas fa-arrow-alt-circle-down chartdownload" id="TrainingCompletion_download"></a>
+                        </div>
+                        <div id="TrainingCompletionCount"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-xl-12 col-xxl-12">
+                    <div class="card view_card">
+                        <div class="card-header">
+                            <h4 class="text-white">Type of IIR</h4>
+                            <a class="fas fa-arrow-alt-circle-down chartdownload" id="TypeofIIR_download"></a>
+                        </div>
+                        <div id="TypeofIIRCount"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-xl-12 col-xxl-12">
+                    <div class="card view_card">
+                        <div class="card-header">
+                            <h4 class="text-white">Accident Report Unit Wise</h4>
+                            <a class="fas fa-arrow-alt-circle-down chartdownload" id="AccidentReportUnitWise_download"></a>
+                        </div>
+                        <div id="AccidentReportUnitWiseCount"></div>
+                    </div>
+                </div>
+            </div>
+
             {{-- <div class="row">
                 <div class="col-xl-12 col-xxl-12">
                     <div class="card view_card">
@@ -408,6 +444,9 @@
             LoadChart20Count(Fromdate, Todate);
             LoadChart21Count(Fromdate, Todate);
             RCADistributionCount(Fromdate, Todate);
+            TrainingCompletionCount(Fromdate, Todate);
+            TypeofIIRCount(Fromdate, Todate);
+            AccidentReportUnitWiseCount(Fromdate, Todate);
             LoadDepartmentCount(Fromdate, Todate);
             loadfmonthwisetraining(Fromdate, Todate);
             loadtraining_count_status(Fromdate, Todate);
@@ -828,6 +867,61 @@
                 success: function(dataAjx) {
 
                     $('#RCADistributionCount').html(dataAjx);
+                }
+            });
+        }
+
+        function TrainingCompletionCount(Fromdate = '', Todate = '') {
+            var url = "{{ admin_url('kpi/dashboard/TrainingCompletionCount') }}"
+            var data = {
+                Fromdate: Fromdate,
+                Todate: Todate,
+            };
+            $('#TrainingCompletionCount').html('');
+            $.ajax({
+                type: 'get',
+                url: url,
+                data: data,
+                cache: false,
+                success: function(dataAjx) {
+
+                    $('#TrainingCompletionCount').html(dataAjx);
+                }
+            });
+        }
+        function TypeofIIRCount(Fromdate = '', Todate = '') {
+            var url = "{{ admin_url('kpi/dashboard/TypeofIIRCount') }}"
+            var data = {
+                Fromdate: Fromdate,
+                Todate: Todate,
+            };
+            $('#TypeofIIRCount').html('');
+            $.ajax({
+                type: 'get',
+                url: url,
+                data: data,
+                cache: false,
+                success: function(dataAjx) {
+
+                    $('#TypeofIIRCount').html(dataAjx);
+                }
+            });
+        }
+        function AccidentReportUnitWiseCount(Fromdate = '', Todate = '') {
+            var url = "{{ admin_url('kpi/dashboard/AccidentReportUnitWiseCount') }}"
+            var data = {
+                Fromdate: Fromdate,
+                Todate: Todate,
+            };
+            $('#AccidentReportUnitWiseCount').html('');
+            $.ajax({
+                type: 'get',
+                url: url,
+                data: data,
+                cache: false,
+                success: function(dataAjx) {
+
+                    $('#AccidentReportUnitWiseCount').html(dataAjx);
                 }
             });
         }

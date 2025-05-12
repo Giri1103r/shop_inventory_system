@@ -4,7 +4,9 @@ namespace App\Http\Controllers\KPI;
 
 use App\Http\Controllers\Controller;
 use App\Models\IMS\Incident\IncidentBodyParts;
+use App\Models\IMS\Incident\InitialIncident;
 use App\Models\Master\Employee;
+use App\Models\Master\TrainingSchedule;
 use DB;
 use Exception;
 
@@ -19,10 +21,15 @@ use App\Models\User;
 class KpiDashboardController extends Controller
 {
     private $bodyparts;
+    private $training_schedule;
+    private $ims_incident;
 
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->bodyparts = new IncidentBodyParts();
+        $this->training_schedule = new TrainingSchedule();
+        $this->ims_incident = new InitialIncident();
     }
 
 
@@ -321,6 +328,76 @@ class KpiDashboardController extends Controller
             return view('kpi.rca_distribution', $data);
         } catch (\Exception $ex) {
             report($ex);
+        }
+    }
+
+    public function getTrainingCompletionCount(Request $request)
+    {
+        try {
+            $chartData = $this->training_schedule->getTrainigCompletionCountData($request);
+
+            if (empty($chartData) || $chartData->training_total_count == 0) {
+                return response()->json('<div class="border-0 pb-3" style="margin-top: 166px;"><h4 style="text-align: center;">No data Found.</h4></div>');
+            }
+
+            $formattedData = [
+                'total' => $chartData->training_total_count,
+                'closed' => $chartData->closed_count,
+                'open' => $chartData->open_count,
+                'closed_percentage' => $chartData->closed_percentage,
+                'open_percentage' => $chartData->open_percentage,
+            ];
+
+            return view('kpi.training_completion', [
+                'formattedData' => $formattedData,
+                'getdashdata' => $request,
+            ]);
+        } catch (\Exception $ex) {
+            report($ex);
+            return back()->with('error', 'Failed to load training completion data.');
+        }
+    }
+
+    public function getTypeofIIRCount(Request $request)
+    {
+        try {
+            $chartData = $this->ims_incident->getTypeofIIRCountData($request);
+
+            // Format data for chart: separate arrays for names and counts
+            $formattedData = [
+                'labels' => $chartData->pluck('incident_type_name'),
+                'counts' => $chartData->pluck('total'),
+            ];
+
+            return view('kpi.type_of_irr', [
+                'formattedData' => $formattedData,
+                'getdashdata' => $request,
+            ]);
+        } catch (\Exception $ex) {
+            report($ex);
+            return back()->with('error', 'Failed to load Type of IIR data.');
+        }
+    }
+
+    public function getAccidentReportUnitWiseCount(Request $request)
+    {
+        try {
+            $chartData = $this->ims_incident->getAccidentReportUnitWiseCountData($request);
+
+            $formattedData = [
+                'labels' => $chartData->pluck('unit_name'),
+                'major' => $chartData->pluck('major'),
+                'minor' => $chartData->pluck('minor'),
+                'fatal' => $chartData->pluck('fatal'),
+            ];
+
+            return view('kpi.accident_report_unit_wise', [
+                'formattedData' => $formattedData,
+                'getdashdata' => $request,
+            ]);
+        } catch (\Exception $ex) {
+            report($ex);
+            return back()->with('error', 'Failed to load unit-wise accident data.');
         }
     }
 

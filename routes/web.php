@@ -224,6 +224,9 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('chart20', [KpiDashboardController::class, 'getChart20']);
                 Route::get('chart21', [KpiDashboardController::class, 'getChart21']);
                 Route::get('RCADistributionCount', [KpiDashboardController::class, 'getRCADistributionCount']);
+                Route::get('TrainingCompletionCount', [KpiDashboardController::class, 'getTrainingCompletionCount']);
+                Route::get('TypeofIIRCount', [KpiDashboardController::class, 'getTypeofIIRCount']);
+                Route::get('AccidentReportUnitWiseCount', [KpiDashboardController::class, 'getAccidentReportUnitWiseCount']);
                 Route::get('injurypart', [KpiDashboardController::class, 'getInjurypart']);
             });
 

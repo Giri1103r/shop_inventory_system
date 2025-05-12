@@ -175,6 +175,18 @@
                                                             </div>
                                                         </div>
 
+                                                         <div class="col-md-4 mt-2 file-upload-block form-input"
+                                                                id="file-upload-0">
+                                                                <label for="rraa_files"
+                                                                    class="form-label require ">Upload File</label>
+                                                                <input type="file" class="form-control"
+                                                                    name="rraa_files[1]" id="rraa_files">
+                                                                <div class="text-danger"></div>
+                                                              <span>Supported file formats: Excel, PDF, DOC</span>
+
+
+                                                            </div>
+
                                                         <div class="col-md-12 mt-2">
                                                             <div class="form-group form-input">
                                                                 <label class="form-label require">Remark</label>
@@ -328,6 +340,10 @@
                     minlength: 3,
                     maxlength: 300,
                 },
+                 "rraa_files[1]": {
+                    required: true,
+                    extension: "pdf|doc|docx|xls|xlsx"
+                }
             },
             messages: {
                 document_number: {
@@ -373,6 +389,10 @@
                     minlength: " Minimum 3 characters ofRemark is Required",
                     maxlength: "Minimum 300 characters ofRemark is Required",
                 },
+                "rraa_files[1]": {
+                    required: "Please upload a file.",
+                    extension: "Only Excel, PDF, and DOC formats are allowed."
+                }
             },
             errorElement: 'span',
             errorPlacement: function(error, element) {
@@ -509,6 +529,18 @@
                             </div>
                         </div>
 
+                        <div class="col-md-4 mt-2 file-upload-block form-input">
+
+                                <label for="rraa_files"
+                                    class="form-label require">Upload File</label>
+                                <input type="file" class="form-control"
+                                    name="rraa_files[${form_set_count}]" id="rraa_files[${form_set_count}]">
+                                    <span>Supported file formats: Excel, PDF, DOC</span>
+
+
+
+                        </div>
+
                         <div class="col-md-12 mt-2">
                             <div class="form-group form-input">
                                 <label class="form-label require">Remark</label>
@@ -578,6 +610,16 @@
                     required: 'Frequency is required',
                 }
             });
+
+          $("input[name='rraa_files[" + form_set_count + "]']").rules('add', {
+                required: true,
+                extension: "pdf|doc|docx|xls|xlsx",
+                messages: {
+                    required: "Please upload a file.",
+                    extension: "Only Excel, PDF, and DOC formats are allowed."
+                }
+            });
+
 
             $("input[name='scope[" + form_set_count + "]']").rules('add', {
                 required: true,
