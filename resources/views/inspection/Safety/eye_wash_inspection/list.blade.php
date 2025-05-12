@@ -91,7 +91,27 @@
                                                 </select>
                                             </div>
                                         </div>
+                                        <div class="col-md-3 mb-3 form-input">
+                                            <label for="emp_name" class="form-label ">From Date</label>
+                                            <div class="input-group date form-input custom-height">
+                                                <input type="text" class="form-control " name="from_date" id="from_date"
+                                                    autocomplete="off">
+                                                <div class="input-group-addon input-group-text">
+                                                    <span class="fa fa-calendar"></span>
+                                                </div>
+                                            </div>
 
+                                        </div>
+                                        <div class="col-md-3 mb-3 form-input">
+                                            <label for="emp_name" class="form-label ">To Date</label>
+                                            <div class="input-group date form-input  custom-height">
+                                                <input type="text" class="form-control " name="to_date" id="to_date"
+                                                    autocomplete="off">
+                                                <div class="input-group-addon input-group-text">
+                                                    <span class="fa fa-calendar"></span>
+                                                </div>
+                                            </div>
+                                        </div>
                                         <div class="col-md-4 mb-3 form-input">
                                             <label for="inspection_status"
                                                 class="form-label ">{{ __('common.status') }}</label>
@@ -101,7 +121,8 @@
                                                 <option value="{{ encryptId('1') }}">WAITING FOR EHS OFFICER VERIFICATION
                                                 </option>
                                                 <option value="{{ encryptId('2') }}">WAITING FOR CAPA ACTION</option>
-                                                <option value="{{ encryptId('3') }}">WAITING FOR CAPA VERIFICATION</option>
+                                                <option value="{{ encryptId('3') }}">WAITING FOR CAPA VERIFICATION
+                                                </option>
                                                 <option value="{{ encryptId('4') }}">WAITING FOR L1 VERIFICATION</option>
                                                 <option value="{{ encryptId('5') }}">WAITING FOR L2 VERIFICATION</option>
                                                 <option value="{{ encryptId('6') }}">CLOSED</option>
@@ -170,6 +191,21 @@
                 // minDate: new Date(),
             });
 
+            var fromDatepicker = flatpickr("#from_date", {
+                dateFormat: "d-m-Y",
+                onChange: function(selectedDates) {
+                    if (selectedDates.length > 0) {
+                        var startDate = selectedDates[0];
+                        toDatepicker.set('minDate', startDate);
+                        toDatepicker.clear();
+                    }
+                }
+            });
+
+            var toDatepicker = flatpickr("#to_date", {
+                dateFormat: "d-m-Y",
+
+            });
             $(function() {
                 /* Datatable */
                 var table = $('.datatable-list').DataTable({
@@ -286,6 +322,8 @@
                                         location = $('#location').val();
                                         shift = $('#shift').val();
                                         unit = $('#unit').val();
+                                        var from_date = $('#from_date').val();
+                                        var to_date = $('#to_date').val();
                                         frequency = $('#frequency').val();
                                         inspection_status = $('#inspection_status').val();
 
@@ -297,6 +335,8 @@
                                             '&inspection_date=' + inspection_date +
                                             '&next_due=' + next_due +
                                             '&location=' + location +
+                                            '&from_date=' + from_date +
+                                            '&to_date=' + to_date +
                                             '&shift=' + shift +
                                             '&unit=' + unit +
                                             '&frequency=' + frequency +
@@ -312,6 +352,8 @@
                                         next_due = $('#next_due').val();
                                         location = $('#location').val();
                                         shift = $('#shift').val();
+                                        var from_date = $('#from_date').val();
+                                        var to_date = $('#to_date').val();
                                         unit = $('#unit').val();
                                         frequency = $('#frequency').val();
                                         inspection_status = $('#inspection_status').val();
@@ -324,6 +366,8 @@
                                             '&inspection_date=' + inspection_date +
                                             '&next_due=' + next_due +
                                             '&location=' + location +
+                                            '&from_date=' + from_date +
+                                            '&to_date=' + to_date +
                                             '&shift=' + shift +
                                             '&unit=' + unit +
                                             '&frequency=' + frequency +

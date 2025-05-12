@@ -81,17 +81,20 @@
         <htmlpageheader name="myHeader1" style="display:block;">
             <table border="0" style="width:100%;border:0;border-bottom: 4px solid #000;background-color: #FFF;">
                 <tr style="">
-                    <td border="0" style="width:50%;float:left;text-align:left;">
+                    <td border="0" style="width:35%;float:left;text-align:left;">
                         <img src="{{ url('public/assets/images/logo-dark.png') }}" style="width:125px;height:50px;">
                     </td>
+                    
                     <td border="0"
-                        style="width:50%;float:right;text-align:right;font-size: 24px;font-weight:bold;font-family: Georgia, serif;">
+                        style="width:30%;float:right;text-align:center;font-size: 24px;font-weight:bold;font-family: Georgia, serif;">
                         {{ $incident_report->sr_no }}
+                    </td>
+                    <td border="0"
+                        style="width:35%;float:right;text-align:right;font-size: 24px;font-weight:bold;font-family: Georgia, serif;">
+                        {{ $incident_report->incident_type_name }}
                     </td>
                 </tr>
             </table>
-
-
         </htmlpageheader>
 
 
@@ -290,6 +293,7 @@
                         <th class="form-label required">Injury Person Employee ID</th>
                         <th class="form-label required">Injury Person Designation</th>
                         <th class="form-label required">Injury Person Department</th>
+                        <th class="form-label required">Nature of Injury</th>
                         <th class="form-label required">Injury Body Parts</th>
                         <th class="form-label required">Description</th>
                     </tr>
@@ -317,6 +321,9 @@
                                 @else --}}
                                 {{ $injury->injury_person_department_id }}
                                 {{-- @endif --}}
+                            </td>
+                            <td>
+                                {{ $injury->nature_of_injury == 1 ? 'Major' : ($injury->injury_person_type == 2 ? 'Minor' : 'Fatal') }}
                             </td>
                             <td>
                                 @if ($injury->body_part_image)

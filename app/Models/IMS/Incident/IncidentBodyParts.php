@@ -29,6 +29,8 @@ class IncidentBodyParts extends Model
         'injured_person_type',
         'injury_person_name',
         'imgMapdata',
+        'body_parts',
+        'body_parts_label',
         'body_part_image',
         'status',
         'trash',
@@ -160,6 +162,8 @@ class IncidentBodyParts extends Model
                 'injured_person_type' => decryptId($request->injury_person_type),
                 'injury_person_name' => $request->injuredPerson,
                 'imgMapdata' => postData($request, 'imgMapdata'),
+                'body_parts' => $request->humanbodyinjury,
+                'body_parts_label' => $request->humanbodyinjurylabel,
                 'body_part_image' => $storedImagePath,
                 'updated_by' => Auth::id(),
                 'status' => 'T'
@@ -173,6 +177,8 @@ class IncidentBodyParts extends Model
                 'injured_person_type' => decryptId($request->injury_person_type),
                 'injury_person_name' => $request->injuredPerson,
                 'imgMapdata' => postData($request, 'imgMapdata'),
+                'body_parts' => $request->humanbodyinjury,
+                'body_parts_label' => $request->humanbodyinjurylabel,
                 'body_part_image' => $storedImagePath,
                 'updated_by' => Auth::id(),
                 'status' => 'T'
@@ -186,6 +192,8 @@ class IncidentBodyParts extends Model
                 'injured_person_type' => decryptId($request->injury_person_type),
                 'injury_person_name' => $request->injuredPerson,
                 'imgMapdata' => postData($request, 'imgMapdata'),
+                'body_parts' => $request->humanbodyinjury,
+                'body_parts_label' => $request->humanbodyinjurylabel,
                 'body_part_image' => $storedImagePath,
                 'updated_by' => Auth::id(),
                 'status' => 'T'
@@ -199,6 +207,8 @@ class IncidentBodyParts extends Model
                 'injured_person_type' => decryptId($request->injury_person_type),
                 'injury_person_name' => $request->injuredPerson,
                 'imgMapdata' => postData($request, 'imgMapdata'),
+                'body_parts' => $request->humanbodyinjury,
+                'body_parts_label' => $request->humanbodyinjurylabel,
                 'body_part_image' => $storedImagePath,
                 'created_by' => Auth::id(),
                 'status' => 'T'
