@@ -453,8 +453,6 @@ class KpiDashboardController extends Controller
     {
         try {
             $chartData = $this->ims_incident->getTypeofIIRUAUCCountData($request);
-
-            // dd($chartData);
             $data = [
                 'chartData' => $chartData,
             ];
