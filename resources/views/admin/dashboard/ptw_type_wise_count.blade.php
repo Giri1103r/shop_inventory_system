@@ -5,6 +5,7 @@
 
     var options = {
         series: [{
+            name: 'Work Count',
             data: Object.values(type_wise)
         }],
         chart: {
@@ -18,24 +19,13 @@
             bar: {
                 borderRadius: 10,
                 dataLabels: {
-                    position: 'top',
+                    position: 'bottom',
                 },
             }
         },
-        // dataLabels: {
-        //     enabled: true,
-        //     formatter: function(val) {
-        //         return val + "%";
-        //     },
-        //     offsetY: -20,
-        //     style: {
-        //         fontSize: '12px',
-        //         colors: ["#304758"]
-        //     }
-        // },
         xaxis: {
             categories: Object.keys(type_wise),
-            position: 'top',
+            position: 'bottom',
             axisBorder: {
                 show: false
             },
@@ -55,7 +45,7 @@
                 }
             },
             tooltip: {
-                enabled: true,
+                enabled: false,
             }
         },
         yaxis: {
@@ -79,6 +69,14 @@
             align: 'center',
             style: {
                 color: '#444'
+            }
+        },
+        tooltip: {
+            y: {
+                formatter: function(val, opts) {
+                    const category = opts.w.globals.labels[opts.dataPointIndex];
+                    return category + ": " + val;
+                }
             }
         }
     };

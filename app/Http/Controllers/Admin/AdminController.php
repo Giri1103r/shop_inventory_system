@@ -41,7 +41,7 @@ class AdminController extends Controller
         $this->training_schedule = new TrainingSchedule();
     }
 
-    public function index()
+    public function index(Request $request)
     {
         if (Auth::check()) {
             $user = Auth::user();
@@ -303,6 +303,7 @@ class AdminController extends Controller
             return back()->with('error', 'Failed to load incident type chart data.');
         }
     }
+
     public function getHeatmapImsData(Request $request)
     {
         try {
@@ -364,6 +365,7 @@ class AdminController extends Controller
             return back()->with('error', 'Failed to load heatmap incident data.');
         }
     }
+
     public function InspectionWiseCount(Request $request)
     {
         try {
