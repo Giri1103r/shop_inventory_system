@@ -364,17 +364,19 @@
                     </div>
                 </div>
             </div>
+
             <div class="row">
                 <div class="col-xl-12 col-xxl-12">
                     <div class="card view_card">
                         <div class="card-header">
-                            <h4 class="text-white">Near Miss Freqeuncy Rate</h4>
-                            <a class="fas fa-arrow-alt-circle-down chartdownload" id="NearMiss_download"></a>
+                            <h4 class="text-white">Near Miss Frequency Rate</h4>
+                            <a class="fas fa-arrow-alt-circle-down chartdownload" id="nearMiss_download"></a>
                         </div>
-                        <div id="NearMissCount"></div>
+                        <div class="card-body px-0 pt-0 dlab-scroll height450" id="nearMissCount"> </div>
                     </div>
                 </div>
             </div>
+          
             {{-- <div class="row">
                 <div class="col-xl-12 col-xxl-12">
                     <div class="card view_card">
@@ -450,10 +452,10 @@
             InspectionWiseCount(Fromdate, Todate);
             PTWOpenClose(Fromdate, Todate);
             PTWTypeWiseCount(Fromdate, Todate);
-            LoadChart4Count(Fromdate, Todate);
-            LoadChart1Count(Fromdate, Todate);
-            LoadChart2Count(Fromdate, Todate);
-            LoadChart3Count(Fromdate, Todate);
+            // LoadChart4Count(Fromdate, Todate);
+            // LoadChart1Count(Fromdate, Todate);
+            // LoadChart2Count(Fromdate, Todate);
+            // LoadChart3Count(Fromdate, Todate);
             LoadiirTypewiseRCPACount(Fromdate, Todate);
             LoadChart5Count(Fromdate, Todate);
             LoadChart6Count(Fromdate, Todate);
@@ -476,12 +478,12 @@
             TrainingCompletionCount(Fromdate, Todate);
             TypeofIIRCount(Fromdate, Todate);
             AccidentReportUnitWiseCount(Fromdate, Todate);
-            NearMissCount(Fromdate, Todate);
             LoadDepartmentCount(Fromdate, Todate);
             loadfmonthwisetraining(Fromdate, Todate);
             loadtraining_count_status(Fromdate, Todate);
             loadinjurychart(Fromdate, Todate);
             LoadiirTypewiseUAUCCount(Fromdate, Todate);
+            LoadnearMissCount(Fromdate, Todate);
         }
 
         function InspectionWiseCount(Fromdate = '', Todate = '') {
@@ -958,25 +960,6 @@
                 }
             });
         }
-        function NearMissCount(Fromdate = '', Todate = '') {
-            var url = "{{ admin_url('kpi/dashboard/NearMissCount') }}"
-            var data = {
-                Fromdate: Fromdate,
-                Todate: Todate,
-            };
-            $('#NearMissCount').html('');
-            $.ajax({
-                type: 'get',
-                url: url,
-                data: data,
-                cache: false,
-                success: function(dataAjx) {
-
-                    $('#NearMissCount').html(dataAjx);
-                }
-            });
-        }
-
         function LoadDepartmentCount(Fromdate = '', Todate = '') {
             var url = "{{ admin_url('training/dashboard/department') }}"
             var data = {
@@ -1069,6 +1052,24 @@
                 success: function(dataAjx) {
 
                     $('#iirTypewiseUAUCCount').html(dataAjx);
+                }
+            });
+        }
+        function LoadnearMissCount(Fromdate = '', Todate = '') {
+            var url = "{{ admin_url('kpi/dashboard/nearMissFrequency') }}"
+            var data = {
+                Fromdate: Fromdate,
+                Todate: Todate,
+            };
+            $('#nearMissCount').html('');
+            $.ajax({
+                type: 'get',
+                url: url,
+                data: data,
+                cache: false,
+                success: function(dataAjx) {
+
+                    $('#nearMissCount').html(dataAjx);
                 }
             });
         }
