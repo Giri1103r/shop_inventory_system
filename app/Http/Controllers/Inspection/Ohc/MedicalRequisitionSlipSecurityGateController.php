@@ -85,8 +85,8 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
                             }
                             return $text;
                         })
-                        ->addColumn('created_date', function ($row) {
-                            return Displaydateformat($row->created_at);
+                        ->addColumn('inspection_created_at', function ($row) {
+                            return Displaydateformat($row->inspection_created_at);
                         })
                         ->addColumn('unit', function ($row) {
                             return ($row->unit_name);
@@ -94,8 +94,8 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
                         ->addColumn('department', function ($row) {
                             return ($row->department_name);
                         })
-                        ->addColumn('created_by', function ($row) {
-                            return getUsername($row->created_by);
+                        ->addColumn('inspection_created_by', function ($row) {
+                            return getUsername($row->inspection_created_by);
                         })
                         ->addColumn('approve_status', function ($row) {
                             $text = '';

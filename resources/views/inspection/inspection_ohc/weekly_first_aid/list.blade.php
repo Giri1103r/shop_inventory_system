@@ -24,13 +24,12 @@
                             <div class="card-body">
                                 <div class="col-md-12">
                                     <div class="row">
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="document_number"
-                                                class="form-label ">First Aid Box No</label>
+                                        <div class="col-md-4 mb-3 form-input">
+                                            <label for="document_number" class="form-label ">First Aid Box No</label>
                                             <input type="text" name="first_aid_box_no" id="first_aid_box_no"
                                                 class="form-control">
                                         </div>
-                                        <div class="col-md-3 mb-2">
+                                        <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
                                                 <label class="form-label require">Shift</label>
                                                 <select name="shift" id="shift" style="width: 100%"
@@ -44,7 +43,7 @@
                                             </div>
                                         </div>
 
-                                        <div class="col-md-3">
+                                        <div class="col-md-4">
                                             <div class="form-group form-input">
                                                 <label for="location_id" class="form-label">
                                                     Location</label>
@@ -59,7 +58,7 @@
                                             </div>
                                         </div>
 
-                                        <div class="col-md-3 mb-2">
+                                        <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
                                                 <label class="form-label require">Unit</label>
                                                 <select name="unit_id" id="unit_id" class="form-control single-select"
@@ -72,8 +71,28 @@
                                                 </select>
                                             </div>
                                         </div>
+                                        <div class="col-md-4 mb-3 form-input">
+                                            <label for="emp_name" class="form-label ">From Date</label>
+                                            <div class="input-group date form-input custom-height">
+                                                <input type="text" class="form-control " name="from_date" id="from_date"
+                                                    autocomplete="off">
+                                                <div class="input-group-addon input-group-text">
+                                                    <span class="fa fa-calendar"></span>
+                                                </div>
+                                            </div>
 
-                                        <div class="col-md-3 mb-2">
+                                        </div>
+                                        <div class="col-md-4 mb-3 form-input">
+                                            <label for="emp_name" class="form-label ">To Date</label>
+                                            <div class="input-group date form-input  custom-height">
+                                                <input type="text" class="form-control " name="to_date" id="to_date"
+                                                    autocomplete="off">
+                                                <div class="input-group-addon input-group-text">
+                                                    <span class="fa fa-calendar"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
                                                 <label class="form-label require">First Aider Name</label>
                                                 <select name="first_aider" id="first_aider"
@@ -86,8 +105,8 @@
                                                 </select>
                                             </div>
                                         </div>
-                                       
-                                        <div class="col-md-3 mt-3">
+
+                                        <div class="col-md-4 mt-3">
                                             <x-button-search></x-button-search>
                                             <x-button-reset></x-button-reset>
 
@@ -138,12 +157,12 @@
             firstTh.removeClass('sorting_asc');
 
             var fromDatepicker = flatpickr("#issue_date", {
-            dateFormat: "d-m-Y",
-        });
+                dateFormat: "d-m-Y",
+            });
 
-        var fromDatepicker = flatpickr("#revision_date", {
-            dateFormat: "d-m-Y",
-        });
+            var fromDatepicker = flatpickr("#revision_date", {
+                dateFormat: "d-m-Y",
+            });
         });
         $(document).ready(function() {
             var fromDatepicker = flatpickr("#from_date", {
@@ -159,7 +178,7 @@
 
             var toDatepicker = flatpickr("#to_date", {
                 dateFormat: "d-m-Y",
-                minDate: "today"
+
             });
         });
 
@@ -193,7 +212,7 @@
                     type: 'POST',
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
-                        .attr('content')
+                            .attr('content')
                     },
                     data: function(d) {
                         d.first_aid_box_no = $('#first_aid_box_no').val();
@@ -201,11 +220,13 @@
                         d.location = $('#location_id').val();
                         d.unit = $('#unit_id').val();
                         d.first_aider = $('#first_aider').val();
+                        d.from_date = $('#from_date').val();
+                        d.to_date = $('#to_date').val();
                     },
                     error: function(xhr, error, code) {
                         if (xhr.status === 419) {
                             alert('Session has expired. You will be redirected to the login page.');
-                            window.location.href = "{{ url('') }}"; 
+                            window.location.href = "{{ url('') }}";
                         }
                     }
                 },
@@ -264,28 +285,31 @@
                     [10, 25, 50, 100]
                 ],
                 buttons: [{
-                    extend: 'collection',
-                    text: '{{ __('common.export') }}',
-                    buttons: [{
-                        extend: 'pdf',
-                        text: '{{ __('common.pdf') }}',
-                        action: function(e, dt, button, config) {
+                        extend: 'collection',
+                        text: '{{ __('common.export') }}',
+                        buttons: [{
+                                extend: 'pdf',
+                                text: '{{ __('common.pdf') }}',
+                                action: function(e, dt, button, config) {
                                     var searchValue = $('#datatable-list_filter input').val();
                                     first_aid_box_no = $('#first_aid_box_no').val();
                                     shift = $('#shift').val();
                                     loc = $('#location_id').val();
                                     unit = $('#unit_id').val();
                                     first_aider = $('#first_aider').val();
+                                    var from_date = $('#from_date').val();
+                                    var to_date = $('#to_date').val();
 
-                                    
                                     $(".dt-button").removeClass('processing');
                                     $('body').click();
                                     window.location.href =
                                         "{{ admin_url('ohc/first-aid-box/weekly-inspection/export/pdf') }}" +
                                         '?search=' + searchValue +
-                                       '&first_aid_box_no=' + first_aid_box_no +
+                                        '&first_aid_box_no=' + first_aid_box_no +
                                         '&shift=' + shift +
                                         '&location_id=' + loc +
+                                        '&from_date=' + from_date +
+                                        '&to_date=' + to_date +
                                         '&unit_id=' + unit +
                                         '&first_aider' + first_aider
 
@@ -295,23 +319,26 @@
                                 extend: 'excel',
                                 text: '{{ __('common.excel') }}',
                                 action: function(e, dt, button, config) {
-                                    
+
                                     var searchValue = $('#datatable-list_filter input').val();
                                     doc_no = $('#document_number').val();
                                     issue_date = $('#issue_date').val();
                                     loc = $('#location_id').val();
                                     unit = $('#unit_id').val();
-
+                                    var from_date = $('#from_date').val();
+                                    var to_date = $('#to_date').val();
                                     $(".dt-button").removeClass('processing');
                                     $('body').click();
                                     window.location.href =
                                         "{{ admin_url('ohc/first-aid-box/weekly-inspection/export/excel') }}" +
                                         '?search=' + searchValue +
-                                       '&document_number=' + doc_no +
+                                        '&document_number=' + doc_no +
                                         '&issue_date=' + issue_date +
+                                        '&from_date=' + from_date +
+                                        '&to_date=' + to_date +
                                         '&location_id=' + loc +
-                                        '&unit_id=' + unit 
- 
+                                        '&unit_id=' + unit
+
 
                                 }
                             },
@@ -343,7 +370,7 @@
                 }, 150);
             });
 
-           
+
 
         });
     </script>

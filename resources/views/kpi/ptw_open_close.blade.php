@@ -1,28 +1,20 @@
-<div id="chartData8"></div>
+<div id="ptw_open_close"></div>
 
 <script>
+    var open_close = @json($active_close_count);
     var options = {
-        series: [44, 55, 41, 17, 15],
+        series: [{
+            data: Object.values(open_close)
+        }],
         chart: {
             width: 380,
-            type: 'donut',
-            toolbar: {
-                show: false 
-            },
+            type: 'pie',
+          
         },
+        labels: Object.keys(open_close),
         legend: {
             position: 'bottom' 
         },
-        responsive: [{
-            breakpoint: 480,
-            options: {
-                legend: {
-                    position: 'bottom',
-                    offsetX: 0,
-                    offsetY: 0
-                }
-            }
-        }],
         responsive: [{
             breakpoint: 480,
             options: {
@@ -36,12 +28,12 @@
         }]
     };
 
-    var chartData8 = new ApexCharts(document.querySelector("#chartData8"), options);
-    chartData8.render();
+    var ptw_open_close = new ApexCharts(document.querySelector("#ptw_open_close"), options);
+    ptw_open_close.render();
 
-    // Download button functionality
-    $("#LoadChart8_download").off("click").on("click", function() {
-        chartData8.dataURI().then(({
+    // Download chart as image
+    $("#ptw_open_close_download").off("click").on("click", function() {
+        ptw_open_close.dataURI().then(({
             imgURI
         }) => {
             var newCanvas = document.createElement('canvas');
@@ -53,22 +45,22 @@
                 let headerHeight = 120;
                 newCanvas.height = image.height + headerHeight;
 
-                // White background
+                // Background
                 ctx.fillStyle = 'white';
                 ctx.fillRect(0, 0, newCanvas.width, newCanvas.height);
 
-                // Header text
+                // Header
                 ctx.fillStyle = '#203669';
                 ctx.font = '20px Arial';
                 ctx.fillText('CHART', 10, 30);
 
-                // Optional filter text
+                // Optional filter info
                 let yPos = 60;
 
-                @if (isset($getdashdata))
+                @if (isset($dates))
                     @php
-                        $from = $getdashdata->Fromdate ?? null;
-                        $to = $getdashdata->Todate ?? null;
+                        $from = $dates['from_date'] ?? null;
+                        $to = $dates['to_date'] ?? null;
                     @endphp
 
                     @if ($from || $to)
@@ -89,10 +81,10 @@
                     @endif
                 @endif
 
-                // Draw chart image below header
+                // Draw image
                 ctx.drawImage(image, 0, headerHeight);
 
-                // Save as image
+                // Download
                 newCanvas.toBlob(function(blob) {
                     var link = document.createElement('a');
                     link.href = URL.createObjectURL(blob);

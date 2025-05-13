@@ -42,7 +42,27 @@
                                                 </select>
                                             </div>
                                         </div>
+                                        <div class="col-md-4 mb-3 form-input">
+                                            <label for="emp_name" class="form-label ">From Date</label>
+                                            <div class="input-group date form-input custom-height">
+                                                <input type="text" class="form-control " name="from_date" id="from_date"
+                                                    autocomplete="off">
+                                                <div class="input-group-addon input-group-text">
+                                                    <span class="fa fa-calendar"></span>
+                                                </div>
+                                            </div>
 
+                                        </div>
+                                        <div class="col-md-4 mb-3 form-input">
+                                            <label for="emp_name" class="form-label ">To Date</label>
+                                            <div class="input-group date form-input  custom-height">
+                                                <input type="text" class="form-control " name="to_date" id="to_date"
+                                                    autocomplete="off">
+                                                <div class="input-group-addon input-group-text">
+                                                    <span class="fa fa-calendar"></span>
+                                                </div>
+                                            </div>
+                                        </div>
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
                                                 <label class="form-label require">{{ __('inspection.unit') }}</label>
@@ -57,7 +77,7 @@
                                             </div>
                                         </div>
 
-                                        <div class="col-md-3 mt-3">
+                                        <div class="col-md-4 mt-3">
                                             <x-button-search></x-button-search>
                                             <x-button-reset></x-button-reset>
 
@@ -80,6 +100,7 @@
                                         <th>{{ __('inspection.inspection_date') }}</th>
                                         <th>{{ __('inspection.shifts') }}</th>
                                         <th>{{ __('inspection.unit') }}</th>
+                                        <th>{{ __('common.created_date') }}</th>
                                         <th>{{ __('common.action') }}</th>
                                     </tr>
                                 </thead>
@@ -104,6 +125,25 @@
             flatpickr("#date_of_inspection", {
                 dateFormat: "d-m-Y",
             });
+
+            $(document).ready(function() {
+                var fromDatepicker = flatpickr("#from_date", {
+                    dateFormat: "d-m-Y",
+                    onChange: function(selectedDates) {
+                        if (selectedDates.length > 0) {
+                            var startDate = selectedDates[0];
+                            toDatepicker.set('minDate', startDate);
+                            toDatepicker.clear();
+                        }
+                    }
+                });
+
+                var toDatepicker = flatpickr("#to_date", {
+                    dateFormat: "d-m-Y",
+
+                });
+            });
+
 
             $(function() {
                 var table = $('.datatable-list').DataTable({
@@ -140,6 +180,8 @@
                             d.date_of_inspection = $('#date_of_inspection').val();
                             d.shift = $('#shift').val();
                             d.unit = $('#unit').val();
+                            d.from_date = $('#from_date').val();
+                            d.to_date = $('#to_date').val();
                         },
                         error: function(xhr, error, code) {
                             if (xhr.status === 419) {
@@ -165,6 +207,10 @@
                         {
                             data: 'unit_name',
                             name: 'unit_name',
+                        },
+                          {
+                            data: 'inspected_created_at',
+                            name: 'inspected_created_at',
                         },
                         {
                             data: 'action',
@@ -198,6 +244,8 @@
                                         date_of_inspection = $('#date_of_inspection').val();
                                         shift = $('#shift').val();
                                         unit = $('#unit').val();
+                                        var from_date = $('#from_date').val();
+                                        var to_date = $('#to_date').val();
 
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
@@ -205,6 +253,8 @@
                                             "{{ admin_url('ohc/daily-vital-equipment/export/pdf') }}" +
                                             '?search=' + searchValue +
                                             '&date_of_inspection=' + date_of_inspection +
+                                            '&from_date=' + from_date +
+                                            '&to_date=' + to_date +
                                             '&shift=' + shift +
                                             '&unit=' + unit
                                     }
@@ -217,6 +267,8 @@
                                         date_of_inspection = $('#date_of_inspection').val();
                                         shift = $('#shift').val();
                                         unit = $('#unit').val();
+                                        var from_date = $('#from_date').val();
+                                        var to_date = $('#to_date').val();
 
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
@@ -224,6 +276,8 @@
                                             "{{ admin_url('ohc/daily-vital-equipment/export/excel') }}" +
                                             '?search=' + searchValue +
                                             '&date_of_inspection=' + date_of_inspection +
+                                            '&from_date=' + from_date +
+                                            '&to_date=' + to_date +
                                             '&shift=' + shift +
                                             '&unit=' + unit
                                     }

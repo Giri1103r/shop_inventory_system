@@ -2,6 +2,7 @@
 
 namespace App\Models\Inspection\Ohc;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -38,7 +39,7 @@ class WeeklyFirstAidBox extends Model
         $request = request();
         $search = '';
 
-        $query = $this->select('inspection_ohc_weekly_first_aid_box_inspection_checklist_details.*', 'masters_location.location_name', 'masters_unit.unit_name','inspection_shift_option.shift','ohc_master_certified_first_aider.certifier_name','inspection_ohc_weekly_first_aid_box_inspection_checklist_details.shift as shift_id')
+        $query = $this->select('inspection_ohc_weekly_first_aid_box_inspection_checklist_details.*', 'masters_location.location_name', 'masters_unit.unit_name', 'inspection_shift_option.shift', 'ohc_master_certified_first_aider.certifier_name', 'inspection_ohc_weekly_first_aid_box_inspection_checklist_details.shift as shift_id')
             ->leftJoin('masters_location', 'masters_location.id', '=', 'inspection_ohc_weekly_first_aid_box_inspection_checklist_details.location')
             ->leftJoin('masters_unit', 'masters_unit.id', '=', 'inspection_ohc_weekly_first_aid_box_inspection_checklist_details.unit')
             ->leftJoin('ohc_master_certified_first_aider', 'ohc_master_certified_first_aider.id', '=', 'inspection_ohc_weekly_first_aid_box_inspection_checklist_details.first_aider')
@@ -58,13 +59,25 @@ class WeeklyFirstAidBox extends Model
                     ->orWhere('masters_location.location_name', 'LIKE', '%' . $search . '%')
                     ->orWhere('masters_unit.unit_name', 'LIKE', '%' . $search . '%')
                     ->orWhere('ohc_master_certified_first_aider.certifier_name', 'LIKE', '%' . $search . '%');
-
             });
         }
         if ($request->has('first_aid_box_no') && $request->first_aid_box_no) {
             $query = $query->where('inspection_ohc_weekly_first_aid_box_inspection_checklist_details.first_aid_box_no', 'LIKE', '%' . $request->first_aid_box_no . '%');
         }
+        if ($request->has('from_date') && !empty($request->from_date)) {
 
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_ohc_weekly_first_aid_box_inspection_checklist_details.created_at', '>=', $startDate);
+        }
+        if ($request->has('to_date') && !empty($request->to_date)) {
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_ohc_weekly_first_aid_box_inspection_checklist_details.created_at', '<=', $endDate);
+        }
+        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->whereBetween('inspection_ohc_weekly_first_aid_box_inspection_checklist_details.created_at', [$startDate, $endDate]);
+        }
         if ($request->has('shift') && $request->shift) {
             $query = $query->where('inspection_ohc_weekly_first_aid_box_inspection_checklist_details.shift', 'LIKE', '%' . decryptId($request->shift) . '%');
         }
@@ -119,7 +132,7 @@ class WeeklyFirstAidBox extends Model
         $updated_medicine_checklist = json_encode($updated_medicine_checklist);
         $data = [
 
-            'document_reference_id'=>$request->document_reference_id,
+            'document_reference_id' => $request->document_reference_id,
             'date_of_inspection' =>  DBdateformat($request->date_of_inspection),
             'location' => decryptId($request->location_id),
             'first_aid_box_no' => $request->first_aid_box_no,
@@ -144,16 +157,23 @@ class WeeklyFirstAidBox extends Model
         $request = request();
         // dd($request);
         $search = '';
-        $query = $this->select('inspection_ohc_weekly_first_aid_box_inspection_checklist_details.*', 'masters_location.location_name', 'masters_unit.unit_name','inspection_shift_option.shift','ohc_master_certified_first_aider.certifier_name','inspection_ohc_weekly_first_aid_box_inspection_checklist_details.shift as shift_id',
-        'inspection_ohc_weekly_first_aid_box_inspection_checklist_details.id as checklist_id',
-        'inspection_static_docno.*')
+        $query = $this->select(
+            'inspection_ohc_weekly_first_aid_box_inspection_checklist_details.*',
+            'masters_location.location_name',
+            'masters_unit.unit_name',
+            'inspection_shift_option.shift',
+            'ohc_master_certified_first_aider.certifier_name',
+            'inspection_ohc_weekly_first_aid_box_inspection_checklist_details.shift as shift_id',
+            'inspection_ohc_weekly_first_aid_box_inspection_checklist_details.id as checklist_id',
+            'inspection_static_docno.*'
+        )
             ->leftJoin('masters_location', 'masters_location.id', '=', 'inspection_ohc_weekly_first_aid_box_inspection_checklist_details.location')
             ->leftJoin('masters_unit', 'masters_unit.id', '=', 'inspection_ohc_weekly_first_aid_box_inspection_checklist_details.unit')
             ->leftJoin('ohc_master_certified_first_aider', 'ohc_master_certified_first_aider.id', '=', 'inspection_ohc_weekly_first_aid_box_inspection_checklist_details.first_aider')
             ->leftJoin('inspection_shift_option', 'inspection_shift_option.id', '=', 'inspection_ohc_weekly_first_aid_box_inspection_checklist_details.shift')
             ->leftJoin('inspection_static_docno', 'inspection_ohc_weekly_first_aid_box_inspection_checklist_details.document_reference_id', '=', 'inspection_static_docno.id');
 
-            if ($request->search != null || $request->search != '') {
+        if ($request->search != null || $request->search != '') {
             $search = $request->search;
 
             $query->where(function ($query) use ($search) {
@@ -163,10 +183,22 @@ class WeeklyFirstAidBox extends Model
                     ->orWhere('masters_location.location_name', 'LIKE', '%' . $search . '%')
                     ->orWhere('masters_unit.unit_name', 'LIKE', '%' . $search . '%')
                     ->orWhere('ohc_master_certified_first_aider.certifier_name', 'LIKE', '%' . $search . '%');
-
             });
         }
+        if ($request->has('from_date') && !empty($request->from_date)) {
 
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_ohc_weekly_first_aid_box_inspection_checklist_details.created_at', '>=', $startDate);
+        }
+        if ($request->has('to_date') && !empty($request->to_date)) {
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_ohc_weekly_first_aid_box_inspection_checklist_details.created_at', '<=', $endDate);
+        }
+        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->whereBetween('inspection_ohc_weekly_first_aid_box_inspection_checklist_details.created_at', [$startDate, $endDate]);
+        }
         if ($request->has('first_aid_box_no') && $request->first_aid_box_no) {
             $query = $query->where('inspection_ohc_weekly_first_aid_box_inspection_checklist_details.first_aid_box_no', 'LIKE', '%' . $request->first_aid_box_no . '%');
         }

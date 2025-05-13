@@ -101,8 +101,8 @@ class WeeklyAmbulanceController extends Controller
                         ->addColumn('created_date', function ($row) {
                             return Displaydateformat($row->created_at);
                         })
-                        ->addColumn('created_date', function ($row) {
-                            return Displaydateformat($row->created_at);
+                        ->addColumn('inspection_created_at', function ($row) {
+                            return Displaydateformat($row->inspection_created_at);
                         })
                         ->addColumn('unit', function ($row) {
                             return ($row->unit_name);

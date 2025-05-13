@@ -26,8 +26,8 @@
                                         <div class="col-md-4 mb-3">
                                             <div class="form-group form-input">
                                                 <label class="form-label require">Unit</label>
-                                                <select name="unit_id" id="unit_id"
-                                                    class="form-control single-select" style="width: 100%">
+                                                <select name="unit_id" id="unit_id" class="form-control single-select"
+                                                    style="width: 100%">
                                                     <option value="">Select Unit</option>
                                                     @foreach ($units as $list)
                                                         <option value="{{ encryptId($list->id) }}">
@@ -50,23 +50,42 @@
                                         <div class="col-md-4 mb-3">
                                             <div class="form-group form-input">
                                                 <label class="form-label require">Employee Name </label>
-                                                <select name="emp_id" id="emp_id"
-                                                    class="form-control single-select" style="width: 100%">
+                                                <select name="emp_id" id="emp_id" class="form-control single-select"
+                                                    style="width: 100%">
                                                     <option value="">Select Employee Name</option>
                                                 </select>
                                             </div>
                                         </div>
+                                        <div class="col-md-4 mb-3 form-input">
+                                            <label for="emp_name" class="form-label ">From Date</label>
+                                            <div class="input-group date form-input custom-height">
+                                                <input type="text" class="form-control " name="from_date" id="from_date"
+                                                    autocomplete="off">
+                                                <div class="input-group-addon input-group-text">
+                                                    <span class="fa fa-calendar"></span>
+                                                </div>
+                                            </div>
 
+                                        </div>
+                                        <div class="col-md-4 mb-3 form-input">
+                                            <label for="emp_name" class="form-label ">To Date</label>
+                                            <div class="input-group date form-input  custom-height">
+                                                <input type="text" class="form-control " name="to_date" id="to_date"
+                                                    autocomplete="off">
+                                                <div class="input-group-addon input-group-text">
+                                                    <span class="fa fa-calendar"></span>
+                                                </div>
+                                            </div>
+                                        </div>
                                         <div class="col-md-4 mb-3">
                                             <div class="form-group form-input">
                                                 <label class="form-label require">Employee Code</label>
-                                                <input type="text" name="employee_code"
-                                                    id="employee_code" class="form-control"
-                                                    placeholder="Employee Code" value="">
+                                                <input type="text" name="employee_code" id="employee_code"
+                                                    class="form-control" placeholder="Employee Code" value="">
                                             </div>
                                         </div>
 
-                                        <div class="col-md-3 mt-3">
+                                        <div class="col-md-4 mt-3">
                                             <x-button-search></x-button-search>
                                             <x-button-reset></x-button-reset>
 
@@ -107,232 +126,257 @@
 @stop
 
 @push('script')
-<script type="text/javascript">
-    $(document).ready(function() {
+    <script type="text/javascript">
+        $(document).ready(function() {
+            var fromDatepicker = flatpickr("#from_date", {
+                dateFormat: "d-m-Y",
+                onChange: function(selectedDates) {
+                    if (selectedDates.length > 0) {
+                        var startDate = selectedDates[0];
+                        toDatepicker.set('minDate', startDate);
+                        toDatepicker.clear();
+                    }
+                }
+            });
 
-        var firstTh = $('.datatable-list thead th:first');
-        firstTh.removeClass('sorting_asc');
+            var toDatepicker = flatpickr("#to_date", {
+                dateFormat: "d-m-Y",
 
-        $(document).on('change', '#unit_id', function() {
-            var unitId = $(this).val();
-            if (unitId) {
-                $.ajax({
-                    url: "{{ admin_url('department/ajax-list') }}/" + unitId + "/0",
-                    type: 'GET',
+            });
+        });
+        $(document).ready(function() {
+
+            var firstTh = $('.datatable-list thead th:first');
+            firstTh.removeClass('sorting_asc');
+
+            $(document).on('change', '#unit_id', function() {
+                var unitId = $(this).val();
+                if (unitId) {
+                    $.ajax({
+                        url: "{{ admin_url('department/ajax-list') }}/" + unitId + "/0",
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(data) {
+                            $('#department_id').empty().append(
+                                '<option value="">Select Department</option>');
+                            $.each(data, function(key, value) {
+                                $('#department_id').append('<option value="' + value
+                                    .id + '">' + value.name + '</option>');
+                            });
+                            $('#department_id').trigger('change.');
+                        },
+                        error: function(xhr) {
+                            alert('Error fetching department. Please try again.');
+                        }
+                    });
+                } else {
+                    $('#department_id').empty().append('<option value="">Select Department</option>');
+                    $('#department_id').trigger('change.');
+                }
+            });
+
+            $('#emp_id').select2({
+                ajax: {
+                    url: '{{ admin_url('ohc/safety-petty-logbook/employeeid') }}',
                     dataType: 'json',
-                    success: function(data) {
-                        $('#department_id').empty().append(
-                            '<option value="">Select Department</option>');
-                        $.each(data, function(key, value) {
-                            $('#department_id').append('<option value="' + value
-                                .id + '">' + value.name + '</option>');
-                        });
-                        $('#department_id').trigger('change.');
+                    delay: 250,
+                    data: function(params) {
+                        return {
+                            search: params.term
+                        };
                     },
-                    error: function(xhr) {
-                        alert('Error fetching department. Please try again.');
-                    }
-                });
-            } else {
-                $('#department_id').empty().append('<option value="">Select Department</option>');
-                $('#department_id').trigger('change.');
-            }
-        });
-
-        $('#emp_id').select2({
-            ajax: {
-                url: '{{ admin_url('ohc/safety-petty-logbook/employeeid') }}',
-                dataType: 'json',
-                delay: 250,
-                data: function(params) {
-                    return {
-                        search: params.term
-                    };
-                },
-                processResults: function(data) {
-                    return {
-                        results: $.map(data, function(item) {
-                            return {
-                                id: item.id,
-                                text: item.text
-                            };
-                        })
-                    };
-                }
-            },
-            minimumInputLength: 1,
-            dropdownCssClass: 'form-control',
-            selectionCssClass: 'form-control'
-        });
-
-    });
-
-    $(function() {
-        var table = $('.datatable-list').DataTable({
-            autoWidth: false,
-            responsive: true,
-            processing: false,
-            serverSide: true,
-            searching: true,
-            ordering: true,
-            dom: 'Bfrtip',
-            layout: {
-                top2Start: 'buttons',
-                top2End: {
-                    search: {
-                        placeholder: ''
+                    processResults: function(data) {
+                        return {
+                            results: $.map(data, function(item) {
+                                return {
+                                    id: item.id,
+                                    text: item.text
+                                };
+                            })
+                        };
                     }
                 },
-                topStart: '',
-                topEnd: '',
-                bottomStart: '',
-                bottomEnd: '',
-                bottom2Start: 'info',
-                bottom2End: 'paging'
-            },
+                minimumInputLength: 1,
+                dropdownCssClass: 'form-control',
+                selectionCssClass: 'form-control'
+            });
 
-            ajax: {
-                url: "{{ admin_url('ohc/safety-petty-logbook/list') }}",
-                type: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
-                        .attr('content')
-                },
-                data: function(d) {
-                    d.unit_id = $('#unit_id').val();
-                    d.department_id = $('#department_id').val();
-                    d.emp_id = $('#emp_id').val();
-                    d.employee_code = $('#employee_code').val();
+        });
 
+        $(function() {
+            var table = $('.datatable-list').DataTable({
+                autoWidth: false,
+                responsive: true,
+                processing: false,
+                serverSide: true,
+                searching: true,
+                ordering: true,
+                dom: 'Bfrtip',
+                layout: {
+                    top2Start: 'buttons',
+                    top2End: {
+                        search: {
+                            placeholder: ''
+                        }
+                    },
+                    topStart: '',
+                    topEnd: '',
+                    bottomStart: '',
+                    bottomEnd: '',
+                    bottom2Start: 'info',
+                    bottom2End: 'paging'
                 },
-                error: function(xhr, error, code) {
-                    if (xhr.status === 419) {
-                        alert('Session has expired. You will be redirected to the login page.');
-                        window.location.href = "{{ url('') }}";
+
+                ajax: {
+                    url: "{{ admin_url('ohc/safety-petty-logbook/list') }}",
+                    type: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
+                            .attr('content')
+                    },
+                    data: function(d) {
+                        d.unit_id = $('#unit_id').val();
+                        d.department_id = $('#department_id').val();
+                        d.emp_id = $('#emp_id').val();
+                        d.from_date = $('#from_date').val();
+                        d.to_date = $('#to_date').val();
+                        d.employee_code = $('#employee_code').val();
+
+                    },
+                    error: function(xhr, error, code) {
+                        if (xhr.status === 419) {
+                            alert('Session has expired. You will be redirected to the login page.');
+                            window.location.href = "{{ url('') }}";
+                        }
                     }
-                }
-            },
-            columns: [{
-                    data: 'DT_RowIndex',
-                    orderable: false,
-                    searchable: true,
                 },
+                columns: [{
+                        data: 'DT_RowIndex',
+                        orderable: false,
+                        searchable: true,
+                    },
 
-                {
-                    data: 'unit_name',
-                    name: 'unit_name'
+                    {
+                        data: 'unit_name',
+                        name: 'unit_name'
+                    },
+                    {
+                        data: 'department_name',
+                        name: 'department_name'
+                    },
+                    {
+                        data: 'emp_name',
+                        name: 'emp_name'
+                    },
+                    {
+                        data: 'employee_code',
+                        name: 'employee_code'
+                    },
+                    {
+                        data: 'created_date',
+                        name: 'created_date'
+                    },
+                    {
+                        data: 'action',
+                        name: 'action',
+                        orderable: false,
+                    },
+                ],
+                language: {
+                    paginate: {
+                        first: '<i title="{{ __('common.first') }}" class="fa fa-angle-double-left" aria-hidden="true"></i>',
+                        last: '<i title="{{ __('common.last') }}" title="Next" class="fa fa-angle-double-right" aria-hidden="true"></i>',
+                        next: '<i title="{{ __('common.next') }}" class="fa fa-angle-right" aria-hidden="true"></i>',
+                        previous: '<i title="{{ __('common.previous') }}" class="fa fa-angle-left" aria-hidden="true"></i>',
+                    },
+                    "info": "{{ __('common.dt_info') }}",
+                    "infoEmpty": "{{ __('common.dt_infoEmpty') }}",
+                    "infoFiltered": "{{ __('common.dt_infoFiltered') }}",
                 },
-                {
-                    data: 'department_name',
-                    name: 'department_name'
-                },
-                {
-                    data: 'emp_name',
-                    name: 'emp_name'
-                },
-                {
-                    data: 'employee_code',
-                    name: 'employee_code'
-                },
-                {
-                    data: 'created_date',
-                    name: 'created_date'
-                },
-                {
-                    data: 'action',
-                    name: 'action',
-                    orderable: false,
-                },
-            ],
-            language: {
-                paginate: {
-                    first: '<i title="{{ __('common.first') }}" class="fa fa-angle-double-left" aria-hidden="true"></i>',
-                    last: '<i title="{{ __('common.last') }}" title="Next" class="fa fa-angle-double-right" aria-hidden="true"></i>',
-                    next: '<i title="{{ __('common.next') }}" class="fa fa-angle-right" aria-hidden="true"></i>',
-                    previous: '<i title="{{ __('common.previous') }}" class="fa fa-angle-left" aria-hidden="true"></i>',
-                },
-                "info": "{{ __('common.dt_info') }}",
-                "infoEmpty": "{{ __('common.dt_infoEmpty') }}",
-                "infoFiltered": "{{ __('common.dt_infoFiltered') }}",
-            },
-            aLengthMenu: [
-                [10, 25, 50, 100],
-                [10, 25, 50, 100]
-            ],
-            buttons: [{
-                    extend: 'collection',
-                    text: '{{ __('common.export') }}',
-                    buttons: [{
-                            extend: 'pdf',
-                            text: '{{ __('common.pdf') }}',
-                            action: function(e, dt, button, config) {
-                                var searchValue = $('#datatable-list_filter input').val();
-                                unit_id = $('#unit_id').val();
-                                department_id = $('#department_id').val();
-                                emp_id = $('#emp_id').val();
-                                employee_code = $('#employee_code').val();
+                aLengthMenu: [
+                    [10, 25, 50, 100],
+                    [10, 25, 50, 100]
+                ],
+                buttons: [{
+                        extend: 'collection',
+                        text: '{{ __('common.export') }}',
+                        buttons: [{
+                                extend: 'pdf',
+                                text: '{{ __('common.pdf') }}',
+                                action: function(e, dt, button, config) {
+                                    var searchValue = $('#datatable-list_filter input').val();
+                                    unit_id = $('#unit_id').val();
+                                    department_id = $('#department_id').val();
+                                    emp_id = $('#emp_id').val();
+                                    employee_code = $('#employee_code').val();
+                                    var from_date = $('#from_date').val();
+                                    var to_date = $('#to_date').val();
+                                    $(".dt-button").removeClass('processing');
+                                    $('body').click();
+                                    window.location.href =
+                                        "{{ admin_url('ohc/safety-petty-logbook/export/pdf') }}" +
+                                        '?search=' + searchValue +
+                                        '&unit_id=' + unit_id +
+                                        '&department_id=' + department_id +
+                                        '&emp_id=' + emp_id +
+                                        '&from_date=' + from_date +
+                                        '&to_date=' + to_date +
+                                        '&employee_code=' + employee_code
+                                }
+                            },
+                            {
+                                extend: 'excel',
+                                text: '{{ __('common.excel') }}',
+                                action: function(e, dt, button, config) {
+                                    var searchValue = $('#datatable-list_filter input').val();
+                                    unit_id = $('#unit_id').val();
+                                    department_id = $('#department_id').val();
+                                    emp_id = $('#emp_id').val();
+                                    employee_code = $('#employee_code').val();
+                                    var from_date = $('#from_date').val();
+                                    var to_date = $('#to_date').val();
+                                    $(".dt-button").removeClass('processing');
+                                    $('body').click();
+                                    window.location.href =
+                                        "{{ admin_url('ohc/safety-petty-logbook/export/excel') }}" +
+                                        '?search=' + searchValue +
+                                        '&unit_id=' + unit_id +
+                                        '&department_id=' + department_id +
+                                        '&emp_id=' + emp_id +
+                                        '&from_date=' + from_date +
+                                        '&to_date=' + to_date +
+                                        '&employee_code=' + employee_code
+                                }
+                            },
+                        ]
+                    },
 
-                                $(".dt-button").removeClass('processing');
-                                $('body').click();
-                                window.location.href =
-                                    "{{ admin_url('ohc/safety-petty-logbook/export/pdf') }}" +
-                                    '?search=' + searchValue +
-                                    '&unit_id=' + unit_id +
-                                    '&department_id=' + department_id +
-                                    '&emp_id=' + emp_id +
-                                    '&employee_code=' + employee_code
-                            }
-                        },
-                        {
-                            extend: 'excel',
-                            text: '{{ __('common.excel') }}',
-                            action: function(e, dt, button, config) {
-                                var searchValue = $('#datatable-list_filter input').val();
-                                unit_id = $('#unit_id').val();
-                                department_id = $('#department_id').val();
-                                emp_id = $('#emp_id').val();
-                                employee_code = $('#employee_code').val();
+                    {
+                        "extend": 'pageLength',
+                        "text": '{{ __('common.show') }} 10 {{ __('common.records') }}'
+                    }
+                ],
 
-                                $(".dt-button").removeClass('processing');
-                                $('body').click();
-                                window.location.href =
-                                    "{{ admin_url('ohc/safety-petty-logbook/export/excel') }}" +
-                                    '?search=' + searchValue +
-                                   '&unit_id=' + unit_id +
-                                    '&department_id=' + department_id +
-                                    '&emp_id=' + emp_id +
-                                    '&employee_code=' + employee_code
-                            }
-                        },
-                    ]
-                },
+            });
 
-                {
-                    "extend": 'pageLength',
-                    "text": '{{ __('common.show') }} 10 {{ __('common.records') }}'
-                }
-            ],
+            table.on('length.dt', function(e, settings, len) {
+                var text = '{{ __('common.show') }} ' + len + ' {{ __('common.records') }}';
+                $('.buttons-page-length').find('span').text(text);
+            });
 
-        });
-
-        table.on('length.dt', function(e, settings, len) {
-            var text = '{{ __('common.show') }} ' + len + ' {{ __('common.records') }}';
-            $('.buttons-page-length').find('span').text(text);
-        });
-
-        $(document).on('click', '#searchform', function() {
-            table.draw();
-        });
-
-        $(document).on('click', '#resetform', function() {
-            $('#formsearch .single-select').val('');
-            $('#formsearch .single-select').trigger('change');
-            setTimeout(function() {
+            $(document).on('click', '#searchform', function() {
                 table.draw();
-            }, 150);
+            });
+
+            $(document).on('click', '#resetform', function() {
+                $('#formsearch .single-select').val('');
+                $('#formsearch .single-select').trigger('change');
+                setTimeout(function() {
+                    table.draw();
+                }, 150);
+            });
+
+
         });
-
-
-    });
-</script>
+    </script>
 @endpush

@@ -2,6 +2,7 @@
 
 namespace App\Models\Inspection\Ohc;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 
@@ -32,11 +33,11 @@ class CurrentNewExtCodeDialing extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_ohc_current_new_ext_code_dailing.*', 'masters_department.department_name','masters_unit.unit_name','masters_employee.emp_name')
-                        ->leftJoin('masters_department', 'masters_department.id', '=', 'inspection_ohc_current_new_ext_code_dailing.department_id')
-                        ->leftJoin('masters_unit', 'masters_unit.id', '=', 'inspection_ohc_current_new_ext_code_dailing.unit_id')
-                        ->leftJoin('masters_employee', 'masters_employee.id', '=', 'inspection_ohc_current_new_ext_code_dailing.emp_name_id')
-                        ->where('inspection_ohc_current_new_ext_code_dailing.trash', 'NO');
+        $query = $this->select('inspection_ohc_current_new_ext_code_dailing.*', 'masters_department.department_name', 'masters_unit.unit_name', 'masters_employee.emp_name')
+            ->leftJoin('masters_department', 'masters_department.id', '=', 'inspection_ohc_current_new_ext_code_dailing.department_id')
+            ->leftJoin('masters_unit', 'masters_unit.id', '=', 'inspection_ohc_current_new_ext_code_dailing.unit_id')
+            ->leftJoin('masters_employee', 'masters_employee.id', '=', 'inspection_ohc_current_new_ext_code_dailing.emp_name_id')
+            ->where('inspection_ohc_current_new_ext_code_dailing.trash', 'NO');
 
         $org_total =  $query;
         $org_total_counts = $org_total->count();
@@ -73,7 +74,20 @@ class CurrentNewExtCodeDialing extends Model
 
             $query = $query->where('inspection_ohc_current_new_ext_code_dailing.status', decryptId($request->status));
         }
+        if ($request->has('from_date') && !empty($request->from_date)) {
 
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_ohc_current_new_ext_code_dailing.created_at', '>=', $startDate);
+        }
+        if ($request->has('to_date') && !empty($request->to_date)) {
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_ohc_current_new_ext_code_dailing.created_at', '<=', $endDate);
+        }
+        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->whereBetween('inspection_ohc_current_new_ext_code_dailing.created_at', [$startDate, $endDate]);
+        }
         $data_count = $query;
         $total_records = $data_count->count();
 
@@ -114,12 +128,12 @@ class CurrentNewExtCodeDialing extends Model
         }
     }
 
-    public function selectOne($id){
-        return $this->select('inspection_ohc_current_new_ext_code_dailing.*', 'masters_department.department_name','masters_unit.unit_name','masters_employee.emp_name')
-                        ->leftJoin('masters_department', 'masters_department.id', '=', 'inspection_ohc_current_new_ext_code_dailing.department_id')
-                        ->leftJoin('masters_unit', 'masters_unit.id', '=', 'inspection_ohc_current_new_ext_code_dailing.unit_id')
-                        ->leftJoin('masters_employee', 'masters_employee.id', '=', 'inspection_ohc_current_new_ext_code_dailing.emp_name_id')->where('inspection_ohc_current_new_ext_code_dailing.id',$id)->first();
-
+    public function selectOne($id)
+    {
+        return $this->select('inspection_ohc_current_new_ext_code_dailing.*', 'masters_department.department_name', 'masters_unit.unit_name', 'masters_employee.emp_name')
+            ->leftJoin('masters_department', 'masters_department.id', '=', 'inspection_ohc_current_new_ext_code_dailing.department_id')
+            ->leftJoin('masters_unit', 'masters_unit.id', '=', 'inspection_ohc_current_new_ext_code_dailing.unit_id')
+            ->leftJoin('masters_employee', 'masters_employee.id', '=', 'inspection_ohc_current_new_ext_code_dailing.emp_name_id')->where('inspection_ohc_current_new_ext_code_dailing.id', $id)->first();
     }
 
     public function updates($id)
@@ -140,10 +154,10 @@ class CurrentNewExtCodeDialing extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_ohc_current_new_ext_code_dailing.*', 'masters_department.department_name','masters_unit.unit_name','masters_employee.emp_name')
-        ->leftJoin('masters_department', 'masters_department.id', '=', 'inspection_ohc_current_new_ext_code_dailing.department_id')
-        ->leftJoin('masters_unit', 'masters_unit.id', '=', 'inspection_ohc_current_new_ext_code_dailing.unit_id')
-        ->leftJoin('masters_employee', 'masters_employee.id', '=', 'inspection_ohc_current_new_ext_code_dailing.emp_name_id');
+        $query = $this->select('inspection_ohc_current_new_ext_code_dailing.*', 'masters_department.department_name', 'masters_unit.unit_name', 'masters_employee.emp_name')
+            ->leftJoin('masters_department', 'masters_department.id', '=', 'inspection_ohc_current_new_ext_code_dailing.department_id')
+            ->leftJoin('masters_unit', 'masters_unit.id', '=', 'inspection_ohc_current_new_ext_code_dailing.unit_id')
+            ->leftJoin('masters_employee', 'masters_employee.id', '=', 'inspection_ohc_current_new_ext_code_dailing.emp_name_id');
 
         if ($request->search != null || $request->search != '') {
             $search = $request->search;
@@ -177,7 +191,20 @@ class CurrentNewExtCodeDialing extends Model
 
             $query = $query->where('inspection_ohc_current_new_ext_code_dailing.status', decryptId($request->status));
         }
+        if ($request->has('from_date') && !empty($request->from_date)) {
 
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_ohc_current_new_ext_code_dailing.created_at', '>=', $startDate);
+        }
+        if ($request->has('to_date') && !empty($request->to_date)) {
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_ohc_current_new_ext_code_dailing.created_at', '<=', $endDate);
+        }
+        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->whereBetween('inspection_ohc_current_new_ext_code_dailing.created_at', [$startDate, $endDate]);
+        }
         $query->orderBy('id', 'DESC');
         $data = $query->get();
 
@@ -186,12 +213,12 @@ class CurrentNewExtCodeDialing extends Model
         return  $query;
     }
 
-    public function UniqueCheck($unit_id,$department_id,$emp_name_id,$number)
+    public function UniqueCheck($unit_id, $department_id, $emp_name_id, $number)
     {
         return $this->where('unit_id', $unit_id)->where('department_id', $department_id)->where('emp_name_id', $emp_name_id)->where('number', $number)->get();
     }
 
-    public function ExistuniqueCheck($unit_id,$department_id,$emp_name_id,$number,$id)
+    public function ExistuniqueCheck($unit_id, $department_id, $emp_name_id, $number, $id)
     {
         return $this->where('unit_id', $unit_id)->where('department_id', $department_id)->where('emp_name_id', $emp_name_id)->where('number', $number)
             ->where('id', '!=', $id)

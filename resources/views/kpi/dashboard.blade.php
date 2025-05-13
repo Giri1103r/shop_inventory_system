@@ -74,20 +74,20 @@
                 <div class="col-xl-6 col-xxl-6">
                     <div class="card view_card">
                         <div class="card-header">
-                            <h4 class="text-white">CHART1</h4>
-                            <a class="fas fa-arrow-alt-circle-down chartdownload" id="LoadChart1_download"></a>
+                            <h4 class="text-white">Inspection Type Wise Count</h4>
+                            <a class="fas fa-arrow-alt-circle-down chartdownload" id="inspection_wise_count_download"></a>
                         </div>
-                        <div class="card-body px-0 pt-0 dlab-scroll height450" id="LoadChart1Count"> </div>
+                        <div class="card-body px-0 pt-0 dlab-scroll height450" id="inspection_wise_count"> </div>
 
                     </div>
                 </div>
                 <div class="col-xl-6 col-xxl-6">
                     <div class="card view_card">
                         <div class="card-header">
-                            <h4 class="text-white">CHART2</h4>
-                            <a class="fas fa-arrow-alt-circle-down chartdownload" id="LoadChart2_download"></a>
+                            <h4 class="text-white">PTW Open Close</h4>
+                            <a class="fas fa-arrow-alt-circle-down chartdownload" id="ptw_open_close_download"></a>
                         </div>
-                        <div class="card-body px-0 pt-0 dlab-scroll height450" id="LoadChart2Count"> </div>
+                        <div class="card-body px-0 pt-0 dlab-scroll height450" id="ptw_open_close_count"> </div>
 
                     </div>
                 </div>
@@ -96,10 +96,10 @@
                 <div class="col-xl-12 col-xxl-12">
                     <div class="card view_card">
                         <div class="card-header">
-                            <h4 class="text-white">CHART3</h4>
-                            <a class="fas fa-arrow-alt-circle-down chartdownload" id="LoadChart3_download"></a>
+                            <h4 class="text-white">PTW Type Wise Count</h4>
+                            <a class="fas fa-arrow-alt-circle-down chartdownload" id="ptw_type_wise_download"></a>
                         </div>
-                        <div class="card-body px-0 pt-0 dlab-scroll height450" id="LoadChart3Count"> </div>
+                        <div class="card-body px-0 pt-0 dlab-scroll height450" id="ptw_type_wise_count"></div>
 
                     </div>
                 </div>
@@ -140,37 +140,28 @@
             </div>
             <div class="row">
 
-                <div class="col-xl-6 col-xxl-6">
+                <div class="col-xl-12 col-xxl-12">
                     <div class="card view_card">
                         <div class="card-header">
-                            <h4 class="text-white">CHART7</h4>
-                            <a class="fas fa-arrow-alt-circle-down chartdownload" id="LoadChart7_download"></a>
+                            <h4 class="text-white">PTW Average time between initial to closed</h4>
+                            <a class="fas fa-arrow-alt-circle-down chartdownload" id="LoadPTWAvgTimeChart_download"></a>
                         </div>
-                        <div id="LoadChart7Count"></div>
-                    </div>
-                </div>
-                <div class="col-xl-6 col-xxl-6">
-                    <div class="card view_card">
-                        <div class="card-header">
-                            <h4 class="text-white">CHART8</h4>
-                            <a class="fas fa-arrow-alt-circle-down chartdownload" id="LoadChart8_download"></a>
-                        </div>
-                        <div id="LoadChart8Count"></div>
+                        <div id="LoadPTWAvgTimeChartCount"></div>
                     </div>
                 </div>
             </div>
 
             <div class="row">
-
                 <div class="col-xl-6 col-xxl-6">
                     <div class="card view_card">
                         <div class="card-header">
-                            <h4 class="text-white">CHART9</h4>
-                            <a class="fas fa-arrow-alt-circle-down chartdownload" id="LoadChart9_download"></a>
+                            <h4 class="text-white">PPE Availability Chart</h4>
+                            <a class="fas fa-arrow-alt-circle-down chartdownload" id="LoadPPEAvailabilityChart_download"></a>
                         </div>
-                        <div id="LoadChart9Count"></div>
+                        <div id="LoadPPEAvailabilityChartCount"></div>
                     </div>
                 </div>
+
                 <div class="col-xl-6 col-xxl-6">
                     <div class="card view_card">
                         <div class="card-header">
@@ -181,6 +172,19 @@
                     </div>
                 </div>
             </div>
+
+            <div class="row">
+                <div class="col-xl-12 col-xxl-12">
+                    <div class="card view_card">
+                        <div class="card-header">
+                            <h4 class="text-white">PPE Issuance Group Wise</h4>
+                            <a class="fas fa-arrow-alt-circle-down chartdownload" id="LoadPPEIssuanceGroupWise_download"></a>
+                        </div>
+                        <div id="LoadPPEIssuanceGroupWiseCount"></div>
+                    </div>
+                </div>
+            </div>
+
             <div class="row">
 
                 <div class="col-xl-6 col-xxl-6">
@@ -357,7 +361,17 @@
                             <a class="fas fa-arrow-alt-circle-down chartdownload" id="iirTypewiseUAUC_download"></a>
                         </div>
                         <div class="card-body px-0 pt-0 dlab-scroll height450" id="iirTypewiseUAUCCount"> </div>
-
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xl-12 col-xxl-12">
+                    <div class="card view_card">
+                        <div class="card-header">
+                            <h4 class="text-white">Near Miss Freqeuncy Rate</h4>
+                            <a class="fas fa-arrow-alt-circle-down chartdownload" id="NearMiss_download"></a>
+                        </div>
+                        <div id="NearMissCount"></div>
                     </div>
                 </div>
             </div>
@@ -433,15 +447,19 @@
             Factory = $("#factory").val()
             Fromdate = $("#fromDate").val();
             Todate = $("#toDate").val();
+            InspectionWiseCount(Fromdate, Todate);
+            PTWOpenClose(Fromdate, Todate);
+            PTWTypeWiseCount(Fromdate, Todate);
+            LoadChart4Count(Fromdate, Todate);
             LoadChart1Count(Fromdate, Todate);
             LoadChart2Count(Fromdate, Todate);
             LoadChart3Count(Fromdate, Todate);
             LoadiirTypewiseRCPACount(Fromdate, Todate);
             LoadChart5Count(Fromdate, Todate);
             LoadChart6Count(Fromdate, Todate);
-            LoadChart7Count(Fromdate, Todate);
-            LoadChart8Count(Fromdate, Todate);
-            LoadChart9Count(Fromdate, Todate);
+            LoadPPEIssuanceGroupWiseCount(Fromdate, Todate);
+            LoadPTWAvgTimeChartCount(Fromdate, Todate);
+            LoadPPEAvailabilityChartCount(Fromdate, Todate);
             LoadChart10Count(Fromdate, Todate);
             LoadChart11Count(Fromdate, Todate);
             LoadChart12Count(Fromdate, Todate);
@@ -458,6 +476,7 @@
             TrainingCompletionCount(Fromdate, Todate);
             TypeofIIRCount(Fromdate, Todate);
             AccidentReportUnitWiseCount(Fromdate, Todate);
+            NearMissCount(Fromdate, Todate);
             LoadDepartmentCount(Fromdate, Todate);
             loadfmonthwisetraining(Fromdate, Todate);
             loadtraining_count_status(Fromdate, Todate);
@@ -465,13 +484,13 @@
             LoadiirTypewiseUAUCCount(Fromdate, Todate);
         }
 
-        function LoadChart1Count(Fromdate = '', Todate = '') {
-            var url = "{{ admin_url('kpi/dashboard/chart1') }}"
+        function InspectionWiseCount(Fromdate = '', Todate = '') {
+            var url = "{{ admin_url('kpi/dashboard/inspection-count') }}"
             var data = {
                 Fromdate: Fromdate,
                 Todate: Todate,
             };
-            $('#LoadChart1Count').html('');
+            $('#inspection_wise_count').html('');
             $.ajax({
                 type: 'get',
                 url: url,
@@ -479,18 +498,18 @@
                 cache: false,
                 success: function(dataAjx) {
 
-                    $('#LoadChart1Count').html(dataAjx);
+                    $('#inspection_wise_count').html(dataAjx);
                 }
             });
         }
 
-        function LoadChart2Count(Fromdate = '', Todate = '') {
-            var url = "{{ admin_url('kpi/dashboard/chart2') }}"
+        function PTWOpenClose(Fromdate = '', Todate = '') {
+            var url = "{{ admin_url('kpi/dashboard/ptw-open-close') }}"
             var data = {
                 Fromdate: Fromdate,
                 Todate: Todate,
             };
-            $('#LoadChart2Count').html('');
+            $('#ptw_open_close_count').html('');
             $.ajax({
                 type: 'get',
                 url: url,
@@ -498,18 +517,18 @@
                 cache: false,
                 success: function(dataAjx) {
 
-                    $('#LoadChart2Count').html(dataAjx);
+                    $('#ptw_open_close_count').html(dataAjx);
                 }
             });
         }
 
-        function LoadChart3Count(Fromdate = '', Todate = '') {
-            var url = "{{ admin_url('kpi/dashboard/chart3') }}"
+        function PTWTypeWiseCount(Fromdate = '', Todate = '') {
+            var url = "{{ admin_url('kpi/dashboard/ptw-type-wise-count') }}"
             var data = {
                 Fromdate: Fromdate,
                 Todate: Todate,
             };
-            $('#LoadChart3Count').html('');
+            $('#ptw_type_wise_count').html('');
             $.ajax({
                 type: 'get',
                 url: url,
@@ -517,7 +536,7 @@
                 cache: false,
                 success: function(dataAjx) {
 
-                    $('#LoadChart3Count').html(dataAjx);
+                    $('#ptw_type_wise_count').html(dataAjx);
                 }
             });
         }
@@ -579,13 +598,13 @@
             });
         }
 
-        function LoadChart7Count(Fromdate = '', Todate = '') {
-            var url = "{{ admin_url('kpi/dashboard/chart7') }}"
+        function LoadPPEIssuanceGroupWiseCount(Fromdate = '', Todate = '') {
+            var url = "{{ admin_url('kpi/dashboard/PPEIssuanceGroupWise') }}"
             var data = {
                 Fromdate: Fromdate,
                 Todate: Todate,
             };
-            $('#LoadChart7Count').html('');
+            $('#LoadPPEIssuanceGroupWiseCount').html('');
             $.ajax({
                 type: 'get',
                 url: url,
@@ -593,18 +612,18 @@
                 cache: false,
                 success: function(dataAjx) {
 
-                    $('#LoadChart7Count').html(dataAjx);
+                    $('#LoadPPEIssuanceGroupWiseCount').html(dataAjx);
                 }
             });
         }
 
-        function LoadChart8Count(Fromdate = '', Todate = '') {
-            var url = "{{ admin_url('kpi/dashboard/chart8') }}"
+        function LoadPTWAvgTimeChartCount(Fromdate = '', Todate = '') {
+            var url = "{{ admin_url('kpi/dashboard/PTWAvgTimeChart') }}"
             var data = {
                 Fromdate: Fromdate,
                 Todate: Todate,
             };
-            $('#LoadChart8Count').html('');
+            $('#LoadPTWAvgTimeChartCount').html('');
             $.ajax({
                 type: 'get',
                 url: url,
@@ -612,18 +631,18 @@
                 cache: false,
                 success: function(dataAjx) {
 
-                    $('#LoadChart8Count').html(dataAjx);
+                    $('#LoadPTWAvgTimeChartCount').html(dataAjx);
                 }
             });
         }
 
-        function LoadChart9Count(Fromdate = '', Todate = '') {
-            var url = "{{ admin_url('kpi/dashboard/chart9') }}"
+        function LoadPPEAvailabilityChartCount(Fromdate = '', Todate = '') {
+            var url = "{{ admin_url('kpi/dashboard/PPEAvailabilityChart') }}"
             var data = {
                 Fromdate: Fromdate,
                 Todate: Todate,
             };
-            $('#LoadChart9Count').html('');
+            $('#LoadPPEAvailabilityChartCount').html('');
             $.ajax({
                 type: 'get',
                 url: url,
@@ -631,7 +650,7 @@
                 cache: false,
                 success: function(dataAjx) {
 
-                    $('#LoadChart9Count').html(dataAjx);
+                    $('#LoadPPEAvailabilityChartCount').html(dataAjx);
                 }
             });
         }
@@ -936,6 +955,24 @@
                 success: function(dataAjx) {
 
                     $('#AccidentReportUnitWiseCount').html(dataAjx);
+                }
+            });
+        }
+        function NearMissCount(Fromdate = '', Todate = '') {
+            var url = "{{ admin_url('kpi/dashboard/NearMissCount') }}"
+            var data = {
+                Fromdate: Fromdate,
+                Todate: Todate,
+            };
+            $('#NearMissCount').html('');
+            $.ajax({
+                type: 'get',
+                url: url,
+                data: data,
+                cache: false,
+                success: function(dataAjx) {
+
+                    $('#NearMissCount').html(dataAjx);
                 }
             });
         }
