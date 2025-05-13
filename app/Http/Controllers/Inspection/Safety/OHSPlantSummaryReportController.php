@@ -51,8 +51,8 @@ class OHSPlantSummaryReportController extends Controller
                             // }
                             return $text;
                         })
-                        ->addColumn('created_date', function ($row) {
-                            return Displaydateformat($row->created_at);
+                        ->addColumn('inspection_created_at', function ($row) {
+                            return Displaydateformat($row->inspection_created_at);
                         })
                         ->addColumn('issue_date', function ($row) {
                             return Displaydateformat($row->issue_date);
@@ -287,7 +287,7 @@ class OHSPlantSummaryReportController extends Controller
                 $titleEndLetter = Coordinate::stringFromColumnIndex($titleEndColIndex);
 
                 $sheet->mergeCells("{$titleStartLetter}{$row}:{$titleEndLetter}" . ($row + 2));
-                $sheet->setCellValue("D{$row}", 'OHS PLANT SUMMARY REPORT PN INTERNATIONAL PVT. LTD.');
+                $sheet->setCellValue("D{$row}", 'OHS PLANT SUMMARY REPORT .');
                 $sheet->getStyle("D{$row}:H" . ($row + 2))->applyFromArray([
                     'font' => ['bold' => true, 'size' => 14],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
@@ -486,7 +486,7 @@ class OHSPlantSummaryReportController extends Controller
 
             return response()->download($filePath)->deleteFileAfterSend(true);
         } catch (Exception $ex) {
-            dd($ex);
+        
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('safety/ohc-plant-summary/list'));
@@ -641,7 +641,7 @@ class OHSPlantSummaryReportController extends Controller
             $titleEndLetter = Coordinate::stringFromColumnIndex($titleEndColIndex);
 
             $sheet->mergeCells("{$titleStartLetter}1:{$titleEndLetter}3");
-            $sheet->setCellValue("{$titleStartLetter}1", 'OHS PLANT SUMMARY REPORT PN INTERNATIONAL PVT. LTD.');
+            $sheet->setCellValue("{$titleStartLetter}1", 'OHS PLANT SUMMARY REPORT .');
             $sheet->getStyle("{$titleStartLetter}1:{$titleEndLetter}3")->applyFromArray([
                 'font' => ['bold' => true, 'size' => 14],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],

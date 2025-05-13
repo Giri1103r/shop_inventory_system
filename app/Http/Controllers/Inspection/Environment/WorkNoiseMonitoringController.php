@@ -275,11 +275,11 @@ class WorkNoiseMonitoringController extends Controller
                 $sheet->mergeCells("N" . ($currentRow + 1) . ":P" . ($currentRow + 1))->setCellValue("N" . ($currentRow + 1), 'Issue Dt.');
                 $sheet->mergeCells("N" . ($currentRow + 2) . ":P" . ($currentRow + 2))->setCellValue("N" . ($currentRow + 2), 'Rev. & Dt.');
 
-                $sheet->mergeCells("Q$currentRow:S$currentRow")->setCellValue("Q$currentRow", $document_no->doc_no);
-                $sheet->mergeCells("Q" . ($currentRow + 1) . ":S" . ($currentRow + 1))->setCellValue("Q" . ($currentRow + 1), Displaydateformat($document_no->issue_date));
-                $sheet->mergeCells("Q" . ($currentRow + 2) . ":S" . ($currentRow + 2))->setCellValue("Q" . ($currentRow + 2), $document_no->rev_dt);
+                $sheet->mergeCells("Q$currentRow:T$currentRow")->setCellValue("Q$currentRow", $document_no->doc_no);
+                $sheet->mergeCells("Q" . ($currentRow + 1) . ":T" . ($currentRow + 1))->setCellValue("Q" . ($currentRow + 1), Displaydateformat($document_no->issue_date));
+                $sheet->mergeCells("Q" . ($currentRow + 2) . ":T" . ($currentRow + 2))->setCellValue("Q" . ($currentRow + 2), $document_no->rev_dt);
 
-                $sheet->getStyle("N$currentRow:S" . ($currentRow + 2))->applyFromArray([
+                $sheet->getStyle("N$currentRow:T" . ($currentRow + 2))->applyFromArray([
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                     'font' => ['bold' => true],
@@ -296,12 +296,13 @@ class WorkNoiseMonitoringController extends Controller
                 $sheet->mergeCells("M$headerRow:M$headerRow")->setCellValue("M$headerRow", "NOISE LEVEL (dBA)");
                 $sheet->mergeCells("N$headerRow:N$headerRow")->setCellValue("N$headerRow", "Date of Monitoring");
                 $sheet->mergeCells("O$headerRow:O$headerRow")->setCellValue("O$headerRow", "Next Due Date Of monitoring");
-                $sheet->mergeCells("P$headerRow:Q$headerRow")->setCellValue("P$headerRow", "Act/Rule");
-                $sheet->mergeCells("R$headerRow:S$headerRow")->setCellValue("R$headerRow", "Remark");
+                $sheet->mergeCells("P$headerRow:P$headerRow")->setCellValue("P$headerRow", "Last Due Date Of monitoring");
+                $sheet->mergeCells("Q$headerRow:R$headerRow")->setCellValue("Q$headerRow", "Act/Rule");
+                $sheet->mergeCells("S$headerRow:T$headerRow")->setCellValue("S$headerRow", "Remark");
 
 
 
-                $sheet->getStyle("A$headerRow:S$headerRow")->applyFromArray([
+                $sheet->getStyle("A$headerRow:T$headerRow")->applyFromArray([
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                     'font' => ['bold' => true],
@@ -319,10 +320,11 @@ class WorkNoiseMonitoringController extends Controller
                     $sheet->mergeCells("M$inspectionRow:M$inspectionRow")->setCellValue("M$inspectionRow", $detail->noise_level_dba_no);
                     $sheet->mergeCells("N$inspectionRow:N$inspectionRow")->setCellValue("N$inspectionRow",  Displaydateformat($detail->date_of_monitoring_date));
                     $sheet->mergeCells("O$inspectionRow:O$inspectionRow")->setCellValue("O$inspectionRow",  Displaydateformat($detail->next_due_date_of_monitoring_date));
-                    $sheet->mergeCells("P$inspectionRow:Q$inspectionRow")->setCellValue("P$inspectionRow", $detail->act_rule);
-                    $sheet->mergeCells("R$inspectionRow:S$inspectionRow")->setCellValue("R$inspectionRow", $detail->remark);
+                    $sheet->mergeCells("P$inspectionRow:P$inspectionRow")->setCellValue("P$inspectionRow",  Displaydateformat($detail->last_due_date_of_monitoring_date));
+                    $sheet->mergeCells("Q$inspectionRow:R$inspectionRow")->setCellValue("Q$inspectionRow", $detail->act_rule);
+                    $sheet->mergeCells("S$inspectionRow:T$inspectionRow")->setCellValue("S$inspectionRow", $detail->remark);
 
-                    $sheet->getStyle("A$inspectionRow:S$inspectionRow")->applyFromArray([
+                    $sheet->getStyle("A$inspectionRow:T$inspectionRow")->applyFromArray([
                         'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                         'alignment' => ['horizontal' => Alignment::HORIZONTAL_LEFT, 'vertical' => Alignment::VERTICAL_CENTER],
                     ]);
@@ -433,7 +435,6 @@ class WorkNoiseMonitoringController extends Controller
                     'workNoiseDataList' => $workNoiseDataList,
                     'document_no' => $document_no,
                 ];
-                // dd( $data);
                 $mpdf = new \Mpdf\Mpdf($property);
                 $mpdf->setAutoTopMargin = 'stretch';
 
@@ -512,11 +513,11 @@ class WorkNoiseMonitoringController extends Controller
                 $sheet->mergeCells("N" . ($currentRow + 1) . ":P" . ($currentRow + 1))->setCellValue("N" . ($currentRow + 1), 'Issue Dt.');
                 $sheet->mergeCells("N" . ($currentRow + 2) . ":P" . ($currentRow + 2))->setCellValue("N" . ($currentRow + 2), 'Rev. & Dt.');
 
-                $sheet->mergeCells("Q$currentRow:S$currentRow")->setCellValue("Q$currentRow", $document_no->doc_no);
-                $sheet->mergeCells("Q" . ($currentRow + 1) . ":S" . ($currentRow + 1))->setCellValue("Q" . ($currentRow + 1), Displaydateformat($document_no->issue_date));
-                $sheet->mergeCells("Q" . ($currentRow + 2) . ":S" . ($currentRow + 2))->setCellValue("Q" . ($currentRow + 2), $document_no->rev_dt);
+                $sheet->mergeCells("Q$currentRow:T$currentRow")->setCellValue("Q$currentRow", $document_no->doc_no);
+                $sheet->mergeCells("Q" . ($currentRow + 1) . ":T" . ($currentRow + 1))->setCellValue("Q" . ($currentRow + 1), Displaydateformat($document_no->issue_date));
+                $sheet->mergeCells("Q" . ($currentRow + 2) . ":T" . ($currentRow + 2))->setCellValue("Q" . ($currentRow + 2), $document_no->rev_dt);
 
-                $sheet->getStyle("N$currentRow:S" . ($currentRow + 2))->applyFromArray([
+                $sheet->getStyle("N$currentRow:T" . ($currentRow + 2))->applyFromArray([
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                     'font' => ['bold' => true],
@@ -533,12 +534,13 @@ class WorkNoiseMonitoringController extends Controller
                 $sheet->mergeCells("M$headerRow:M$headerRow")->setCellValue("M$headerRow", "NOISE LEVEL (dBA)");
                 $sheet->mergeCells("N$headerRow:N$headerRow")->setCellValue("N$headerRow", "Date of Monitoring");
                 $sheet->mergeCells("O$headerRow:O$headerRow")->setCellValue("O$headerRow", "Next Due Date Of monitoring");
-                $sheet->mergeCells("P$headerRow:Q$headerRow")->setCellValue("P$headerRow", "Act/Rule");
-                $sheet->mergeCells("R$headerRow:S$headerRow")->setCellValue("R$headerRow", "Remark");
+                $sheet->mergeCells("P$headerRow:P$headerRow")->setCellValue("P$headerRow", "Last Due Date Of monitoring");
+                $sheet->mergeCells("Q$headerRow:R$headerRow")->setCellValue("Q$headerRow", "Act/Rule");
+                $sheet->mergeCells("S$headerRow:T$headerRow")->setCellValue("S$headerRow", "Remark");
 
 
 
-                $sheet->getStyle("A$headerRow:S$headerRow")->applyFromArray([
+                $sheet->getStyle("A$headerRow:T$headerRow")->applyFromArray([
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                     'font' => ['bold' => true],
@@ -556,10 +558,11 @@ class WorkNoiseMonitoringController extends Controller
                     $sheet->mergeCells("M$inspectionRow:M$inspectionRow")->setCellValue("M$inspectionRow", $detail->noise_level_dba_no);
                     $sheet->mergeCells("N$inspectionRow:N$inspectionRow")->setCellValue("N$inspectionRow",  Displaydateformat($detail->date_of_monitoring_date));
                     $sheet->mergeCells("O$inspectionRow:O$inspectionRow")->setCellValue("O$inspectionRow",  Displaydateformat($detail->next_due_date_of_monitoring_date));
-                    $sheet->mergeCells("P$inspectionRow:Q$inspectionRow")->setCellValue("P$inspectionRow", $detail->act_rule);
-                    $sheet->mergeCells("R$inspectionRow:S$inspectionRow")->setCellValue("R$inspectionRow", $detail->remark);
+                    $sheet->mergeCells("P$inspectionRow:P$inspectionRow")->setCellValue("P$inspectionRow",  Displaydateformat($detail->last_due_date_of_monitoring_date));
+                    $sheet->mergeCells("Q$inspectionRow:R$inspectionRow")->setCellValue("Q$inspectionRow", $detail->act_rule);
+                    $sheet->mergeCells("S$inspectionRow:T$inspectionRow")->setCellValue("S$inspectionRow", $detail->remark);
 
-                    $sheet->getStyle("A$inspectionRow:S$inspectionRow")->applyFromArray([
+                    $sheet->getStyle("A$inspectionRow:T$inspectionRow")->applyFromArray([
                         'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                         'alignment' => ['horizontal' => Alignment::HORIZONTAL_LEFT, 'vertical' => Alignment::VERTICAL_CENTER],
                     ]);

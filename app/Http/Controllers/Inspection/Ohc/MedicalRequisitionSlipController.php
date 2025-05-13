@@ -236,38 +236,41 @@ class MedicalRequisitionSlipController extends Controller
                 $this->inspection_ohc_status_log->store($data);
 
                 $getfloormanager = getFloormanager();
-                $getfloormanagers = $getfloormanager->pluck('id')->toArray();
-                $details = $this->medicine_requisition_floor_details->Selectone($id);
-                $mailsubject = 'Medicine Requistion Slip Floor';
-                $notificationData = array(
-                    'notification_type' => OHC_INSPECTION,
-                    'module_type' => 2,
-                    'notification_message' => $mailsubject,
-                    'mobile_notification' => json_encode(array(
-                        'title' => $mailsubject,
-                        'message' => "Medicine Requistion Slip floor ",
-                        'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
-                        'id' => $id,
-                        'module' => 1,
-                    )),
-                    'web_link' =>  admin_url('ohc/medical-requisition-slip/approval/view/' . encryptId($id)),
-                    'assigned_user' => array_to_string($getfloormanagers),
-                    'created_by' => Auth::id(),
-                );
-                notificationSave($notificationData);
-                foreach ($getfloormanagers as $user) {
-                    $email_id = getUseremail($user);
-                    $title = "Medicine Requistion Slip Floor";
-                    $details = array(
-                        'ohc_type' => 'medicine requisition slip floor',
-                        'email' => $email_id,
-                        'mail_subject' => $mailsubject,
-                        'title' => $title,
-                        'data' => $details,
-
+                if(!empty($getfloormanager)){
+                    $getfloormanagers = $getfloormanager->pluck('id')->toArray();
+                    $details = $this->medicine_requisition_floor_details->Selectone($id);
+                    $mailsubject = 'Medicine Requistion Slip Floor';
+                    $notificationData = array(
+                        'notification_type' => OHC_INSPECTION,
+                        'module_type' => 2,
+                        'notification_message' => $mailsubject,
+                        'mobile_notification' => json_encode(array(
+                            'title' => $mailsubject,
+                            'message' => "Medicine Requistion Slip floor ",
+                            'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
+                            'id' => $id,
+                            'module' => 1,
+                        )),
+                        'web_link' =>  admin_url('ohc/medical-requisition-slip/approval/view/' . encryptId($id)),
+                        'assigned_user' => array_to_string($getfloormanagers),
+                        'created_by' => Auth::id(),
                     );
-                    Mail::to($email_id)->queue(new OccupationalHealthEmail($details));
+                    notificationSave($notificationData);
+                    foreach ($getfloormanagers as $user) {
+                        $email_id = getUseremail($user);
+                        $title = "Medicine Requistion Slip Floor";
+                        $details = array(
+                            'ohc_type' => 'medicine requisition slip floor',
+                            'email' => $email_id,
+                            'mail_subject' => $mailsubject,
+                            'title' => $title,
+                            'data' => $details,
+
+                        );
+                        Mail::to($email_id)->queue(new OccupationalHealthEmail($details));
+                    }
                 }
+
 
                 Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
@@ -343,7 +346,9 @@ class MedicalRequisitionSlipController extends Controller
             }
             return view('inspection.inspection_ohc.medical_requisition_slip.view', $data);
         } catch (Exception $ex) {
-             report($ex);
+            report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/medical-requisition-slip/list'));
         }
     }
 
@@ -406,7 +411,9 @@ class MedicalRequisitionSlipController extends Controller
             }
             return view('inspection.inspection_ohc.medical_requisition_slip.approval', $data);
         } catch (Exception $ex) {
-             report($ex);
+            report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/medical-requisition-slip/list'));
         }
     }
 
@@ -487,8 +494,9 @@ class MedicalRequisitionSlipController extends Controller
             $filename = "Medicine Requisition Slip Floor.pdf";
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-             report($ex);
-            return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
+            report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/medical-requisition-slip/list'));
         }
     }
 
@@ -534,35 +542,38 @@ class MedicalRequisitionSlipController extends Controller
                     $getmedicalassistants = $getmedicalassistant->pluck('id')->toArray();
                     $details = $this->medicine_requisition_floor_details->Selectone($id);
                     $mailsubject = 'Medicine Requistion Slip Floor approved';
-                    $notificationData = array(
-                        'notification_type' => OHC_INSPECTION,
-                        'module_type' => 3,
-                        'notification_message' => $mailsubject,
-                        'mobile_notification' => json_encode(array(
-                            'title' => $mailsubject,
-                            'message' => "Floor manager Approved the medicine requistion slip floor",
-                            'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
-                            'id' => $id,
-                            'module' => 1,
-                        )),
-                        'web_link' =>  admin_url('ohc/medical-requisition-slip/approval/view/' . encryptId($id)),
-                        'assigned_user' => array_to_string(array_merge($getmedicalassistants, $getsafetyofficers)), // Fixed missing parenthesis
-                        'created_by' => Auth::id(),
-                    );
-                    notificationSave($notificationData);
-                    $title = "Medicine Requisition slip floor";
-                    $mailsubject = "Medicine Requisition slip floor was Approved";
-                    $details = array(
-                        'ohc_type' => 'Medicine Requisition slip floor Floor manager was Approved',
+                    if(!empty( $getmedicalassistant)){
+                        $notificationData = array(
+                            'notification_type' => OHC_INSPECTION,
+                            'module_type' => 3,
+                            'notification_message' => $mailsubject,
+                            'mobile_notification' => json_encode(array(
+                                'title' => $mailsubject,
+                                'message' => "Floor manager Approved the medicine requistion slip floor",
+                                'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
+                                'id' => $id,
+                                'module' => 1,
+                            )),
+                            'web_link' =>  admin_url('ohc/medical-requisition-slip/approval/view/' . encryptId($id)),
+                            'assigned_user' => array_to_string(array_merge($getmedicalassistants, $getsafetyofficers)), // Fixed missing parenthesis
+                            'created_by' => Auth::id(),
+                        );
+                        notificationSave($notificationData);
+                        $title = "Medicine Requisition slip floor";
+                        $mailsubject = "Medicine Requisition slip floor was Approved";
+                        $details = array(
+                            'ohc_type' => 'Medicine Requisition slip floor Floor manager was Approved',
 
-                        'mail_subject' => $mailsubject,
-                        'title' => $title,
-                        'data' => $details
-                    );
-                    $recipients = array_merge($getsafetyofficerEmail, $getmedicalassistantEmail);
-                    if (!empty($recipients)) {
-                        Mail::to($recipients)->queue(new OccupationalHealthEmail($details));
+                            'mail_subject' => $mailsubject,
+                            'title' => $title,
+                            'data' => $details
+                        );
+                        $recipients = array_merge($getsafetyofficerEmail, $getmedicalassistantEmail);
+                        if (!empty($recipients)) {
+                            Mail::to($recipients)->queue(new OccupationalHealthEmail($details));
+                        }
                     }
+
                 } else if ($request->action == "reject") {
                     $details = $this->medicine_requisition_floor_details->Selectone($id);
                     $userIds = [
@@ -784,7 +795,7 @@ class MedicalRequisitionSlipController extends Controller
                 // Title Section
                 $sheet->mergeCells("G{$currentRow}:M" . ($currentRow + 2));
                 $sheet->setCellValue("G{$currentRow}", "MEDICAL REQUISITION SLIP (मेडिकल मांग-पर्ची)
-PN INTERNATIONAL PVT. LTD.");
+");
                 $sheet->getStyle("G{$currentRow}")->applyFromArray([
                     'font' => ['bold' => true, 'size' => 14],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
@@ -1052,7 +1063,7 @@ PN INTERNATIONAL PVT. LTD.");
             // Title Section
             $sheet->mergeCells("G{$currentRow}:M" . ($currentRow + 2));
             $sheet->setCellValue("G{$currentRow}", "MEDICAL REQUISITION SLIP (मेडिकल मांग-पर्ची)
-PN INTERNATIONAL PVT. LTD.");
+");
             $sheet->getStyle("G{$currentRow}")->applyFromArray([
                 'font' => ['bold' => true, 'size' => 14],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],

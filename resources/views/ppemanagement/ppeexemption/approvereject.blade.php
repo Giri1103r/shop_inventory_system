@@ -48,9 +48,15 @@
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Department') }}</label>
+                                        <label class="form-label view_label">{{ __('Company') }}</label>
                                         <div class="view_data">
-                                            {{ getDepartment(isset($ppeexemption->department) ? $ppeexemption->department : '') }}
+                                            {{ getCompanyname(isset($ppeexemption->company) ? $ppeexemption->company : '') }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('Location') }}</label>
+                                        <div class="view_data">
+                                            {{ getLocationname(isset($ppeexemption->location_id) ? $ppeexemption->location_id : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
@@ -60,9 +66,9 @@
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Company') }}</label>
+                                        <label class="form-label view_label">{{ __('Department') }}</label>
                                         <div class="view_data">
-                                            {{ getCompanyname(isset($ppeexemption->company) ? $ppeexemption->company : '') }}
+                                            {{ getDepartment(isset($ppeexemption->department) ? $ppeexemption->department : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">

@@ -21,6 +21,7 @@ use App\Models\Inspection\RRAA\RRAAStatusLog;
 use App\Http\Controllers\Admin\AdminController;
 use App\Models\Inspection\Master\ChecklistType;
 use App\Models\Inspection\InspectionStaticDocno;
+use App\Models\Inspection\RRAA\RRAAFiles;
 use App\Models\Inspection\RRAA\RRAASignatureUpload;
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -44,6 +45,7 @@ class RRAAController extends Controller
     private $statusLog;
     private $signature;
     private $document_reference;
+    private $rraa_files;
 
     public function __construct()
     {
@@ -56,6 +58,7 @@ class RRAAController extends Controller
         $this->statusLog = new RRAAStatusLog();
         $this->signature = new RRAASignatureUpload();
         $this->document_reference = new InspectionStaticDocno();
+        $this->rraa_files = new RRAAFiles();
     }
 
     public function Index(Request $request)
@@ -168,7 +171,7 @@ class RRAAController extends Controller
 
             return redirect(admin_url('rraa/ohc_fire_environment_compliance/list'));
         } catch (Exception $ex) {
-            report($ex);
+            dd($ex);
             Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('rraa/ohc_fire_environment_compliance/list'));
         }
@@ -200,10 +203,12 @@ class RRAAController extends Controller
             if (Auth::check()) {
                 $rraa_details = $this->rraa_details->find($id);
                 $document_no = $this->document_reference->selectOne($rraa_details->document_reference_id);
+                $get_rraa_file = $this->rraa_files->get_rraa_file($rraa_details->id);
 
                 $data = array(
                     'rraa_details' => $rraa_details,
                     'document_no' => $document_no,
+                    'get_rraa_file'=>$get_rraa_file
                 );
             }
             return view('inspection.rraa.view', $data);
@@ -293,7 +298,7 @@ class RRAAController extends Controller
                 $sheet->mergeCells("R" . ($currentRow + 1) . ":T" . ($currentRow + 1));
                 $sheet->mergeCells("R" . ($currentRow + 2) . ":T" . ($currentRow + 2));
 
-                $sheet->setCellValue("D{$currentRow}", "Occupational Health Safety, Fire & Environmental Compliance Sheet\nPN International Pvt Ltd");
+                $sheet->setCellValue("D{$currentRow}", "Occupational Health Safety, Fire & Environmental Compliance Sheet\n");
                 $sheet->setCellValue("O{$currentRow}", 'Doc. No.');
                 $sheet->setCellValue("O" . ($currentRow + 1), 'Issue Dt.');
                 $sheet->setCellValue("O" . ($currentRow + 2), 'Rev. & Dt.');
@@ -475,7 +480,7 @@ class RRAAController extends Controller
 
             $sheet->mergeCells('A1:C3');
             $sheet->mergeCells('D1:N3');
-            $sheet->setCellValue('D1', "Occupational Health Safety, Fire & Environmental Compliance Sheet\nPN International Pvt Ltd");
+            $sheet->setCellValue('D1', "Occupational Health Safety, Fire & Environmental Compliance Sheet\n");
             $sheet->getStyle('D1')->applyFromArray([
                 'font' => ['bold' => true, 'size' => 14],
                 'alignment' => [

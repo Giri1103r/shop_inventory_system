@@ -362,6 +362,8 @@
                         d.emp_name = $('#emp_name').val();
                         d.from_date = $('#from_date').val();
                         d.unit_id = $('#unit_id').val();
+                        d.company_id = $('#company_id').val();
+                        d.location_id = $('#location_id').val();
                         d.department_id = $('#department_id').val();
                         d.to_date = $('#to_date').val();
                         d.approve_status = $('#approve_status').val();
@@ -415,8 +417,8 @@
                         name: 'approve_status'
                     },
                     {
-                        data: 'created_by',
-                        name: 'created_by'
+                        data: 'ppe_created_by',
+                        name: 'ppe_created_by'
                     },
                     {
                         data: 'ppe_created_at',

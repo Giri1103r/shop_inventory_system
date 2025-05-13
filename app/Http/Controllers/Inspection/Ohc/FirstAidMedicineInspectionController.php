@@ -304,7 +304,7 @@ class FirstAidMedicineInspectionController extends Controller
                 }
 
                 $sheet->mergeCells("G{$currentRow}:N" . ($currentRow + 2));
-                $sheet->setCellValue("G{$currentRow}", "Monthly OHC First-Aid Medicine Inspection Checklist PN International Pvt.Ltd");
+                $sheet->setCellValue("G{$currentRow}", "Monthly OHC First-Aid Medicine Inspection Checklist");
                 $sheet->getStyle("G{$currentRow}")->applyFromArray([
                     'font' => ['bold' => true, 'size' => 14],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
@@ -668,7 +668,7 @@ class FirstAidMedicineInspectionController extends Controller
             }
 
             $sheet->mergeCells("G1:M3");
-            $sheet->setCellValue("G1", "Monthly OHC First-Aid Medicine Inspection Checklist PN International Pvt.Ltd");
+            $sheet->setCellValue("G1", "Monthly OHC First-Aid Medicine Inspection Checklist");
             $sheet->getStyle("G1")->applyFromArray([
                 'font' => ['bold' => true, 'size' => 14],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],

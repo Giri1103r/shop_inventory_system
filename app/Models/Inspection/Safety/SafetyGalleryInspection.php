@@ -3,6 +3,7 @@
 namespace App\Models\Inspection\Safety;
 
 use App\Scopes\TrashScope;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 
@@ -51,7 +52,7 @@ class SafetyGalleryInspection extends Model
         $request = request();
         $search = '';
 
-        $query = $this->select('inspection_safety_gallery.*', 'masters_unit.*', 'masters_location.*', 'inspection_safety_gallery.id as inspection_id')
+        $query = $this->select('inspection_safety_gallery.*', 'masters_unit.*', 'masters_location.*', 'inspection_safety_gallery.id as inspection_id', 'inspection_safety_gallery.created_at as inspection_created_at')
             ->leftJoin('masters_location', 'inspection_safety_gallery.location', '=', 'masters_location.id')
             ->leftJoin('masters_unit', 'inspection_safety_gallery.unit', '=', 'masters_unit.id')
             ->leftJoin('inspection_static_docno', 'inspection_safety_gallery.document_reference_id', '=', 'inspection_static_docno.id');
@@ -73,7 +74,19 @@ class SafetyGalleryInspection extends Model
             });
         }
 
-
+        if ($request->has('from_date') && !empty($request->from_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_safety_gallery.created_at', '>=', $startDate);
+        }
+        if ($request->has('to_date') && !empty($request->to_date)) {
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_safety_gallery.created_at', '<=', $endDate);
+        }
+        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->whereBetween('inspection_safety_gallery.created_at', [$startDate, $endDate]);
+        }
         if (isset($request->location) && $request->location) {
             $query = $query->where('inspection_safety_gallery.location', 'LIKE', '%' . decryptId($request->location) . '%');
         }
@@ -307,7 +320,19 @@ class SafetyGalleryInspection extends Model
                 $query->where('masters_unit.resource_code LIKE "%' . $search . '%"');
             });
         }
-
+        if ($request->has('from_date') && !empty($request->from_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_safety_gallery.created_at', '>=', $startDate);
+        }
+        if ($request->has('to_date') && !empty($request->to_date)) {
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_safety_gallery.created_at', '<=', $endDate);
+        }
+        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->whereBetween('inspection_safety_gallery.created_at', [$startDate, $endDate]);
+        }
 
         if (isset($request->location) && $request->location) {
             $query = $query->where('inspection_safety_gallery.location', 'LIKE', '%' . decryptId($request->location) . '%');

@@ -435,7 +435,7 @@ class TrainingSheducleController extends BaseController
 
             return $this->sendResponse($success, 'Attendance Stored Successfully');
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
         }
     }

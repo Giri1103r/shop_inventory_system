@@ -111,6 +111,7 @@
         .table-container {
             padding: 20px;
         }
+
         .page-break {
             page-break-before: always;
         }
@@ -160,17 +161,20 @@
         <table
             style="width: 100%; border-collapse: collapse; font-family: Arial, sans-serif; text-align: center; border: 1px solid black;">
             <tr>
-                <th colspan="4" style="border:1px solid black;height:50;width:40">
+                <th colspan="8" style="border:1px solid black;height:50;width:40">
                     <img src="{{ url('public/assets/images/logo-dark.png') }}" style="width:125px;height:50px;">
                 </th>
-                <th colspan="6" style="border:1px solid black;">
+                <th colspan="9" style="border:1px solid black;">
                     <h3>
                         <span><b>{{ __('title.msds') }}</b></span>
                         <br>
                     </h3>
                 </th>
+                @php
+                    $fist_data = $msdsDetails->first();
+                @endphp
 
-                <th colspan="9" style="border:1px solid black;">
+                <th colspan="14" style="border:1px solid black;">
                     <table class="table table-bordered scrolldown">
                         <thead>
                             <tr>
@@ -179,59 +183,102 @@
                             </tr>
                             <tr>
                                 <td style="border: 1px solid black;width:70;">Issue Dt.</td>
-                                <td style="border: 1px solid black;">{{ Displaydateformat($document_no->issue_date) }}</td>
+                                <td style="border: 1px solid black;">{{ Displaydateformat($document_no->issue_date) }}
+                                </td>
                             </tr>
                             <tr>
                                 <td style="border: 1px solid black;width:70;">Rev.& Dt.</td>
                                 <td style="border: 1px solid black;">{{ $document_no->rev_dt }}</td>
                             </tr>
+
                         </thead>
                     </table>
 
                 </th>
             </tr>
+            <tr>
+                <td colspan="10" style="border: 1px solid black; text-align: left;">
+                    <strong>Location:</strong> {{ $fist_data->location_name ?? '' }}
+                </td>
+                <td colspan="10" style="border: 1px solid black; text-align: left;">
+                    <strong>Unit:</strong> {{ $fist_data->unit_name ?? '' }}
+                </td>
+                <td colspan="11" style="border: 1px solid black; text-align: left;">
+                    <strong>Department:</strong> {{ $fist_data->department_name ?? '' }}
+                </td>
+            </tr>
+
 
             <tr>
                 <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="2">SR. NO</th>
                 <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">ITEM CODE
                 </th>
-                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">NAME OF CHEMICAL
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">NAME OF
+                    CHEMICAL
                 </th>
-                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4"> MSDS AVAILABILITY STATUS
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">Storage
+                    Capacity
+                </th>
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">NPFS Rating
+                    Type
+                </th>
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">NPFA Rating
+                </th>
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4"> MSDS
+                    AVAILABILITY STATUS
                 </th>
                 <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="5">REMARKS
                 </th>
 
             </tr>
 
-            <tr>
-                <td colspan="2"  style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">{{ $loop->iteration }}</td>
-                <td colspan="4"  style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
-                    {{ isset($msdsDetails->item_code) ? $msdsDetails->item_code : '' }}
-                </td>
-                <td colspan="4"  style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
-                    {{ isset($msdsDetails->name_of_chemical) ? $msdsDetails->name_of_chemical : '' }}
-                </td>
-                <td colspan="4" style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
-                    @if ($msdsDetails->msds_availability_status == YES)
-                        <span style="color: green; font-size: 20px;">✓</span>
-                    @elseif ($msdsDetails->msds_availability_status == NO)
-                        <span style="color: red; font-size: 20px;">X</span>
-                    @elseif ($msdsDetails->msds_availability_status == 'N/A')
-                        <span style="color: gray; font-size: 20px;">N/A</span>
-                    @else
-                        <span style="color: gray; font-size: 20px;">-</span>
-                    @endif
-                </td >
-                <td colspan="5" style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
-                    {{ isset($msdsDetails->remark) ? $msdsDetails->remark : '' }}
-                </td>
-            </tr>
+            @foreach ($msdsDetails as $msdsDetail)
+                <tr>
+                    <td colspan="2"
+                        style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
+                        {{ $loop->iteration }}</td>
+                    <td colspan="4"
+                        style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
+                        {{ isset($msdsDetail->item_code) ? $msdsDetail->item_code : '' }}
+                    </td>
+                    <td colspan="4"
+                        style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
+                        {{ isset($msdsDetail->name_of_chemical) ? ($msdsDetail->name_of_chemical) : '' }}
+                    </td>
+                    <td colspan="4"
+                        style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
+                        {{ isset($msdsDetail->storage_capacity) ? $msdsDetail->storage_capacity : '' }}
+                    </td>
+                    <td colspan="4"
+                        style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
+                        {{ isset($msdsDetail->nfa_rating) ? getNFARating($msdsDetail->nfa_rating) : '' }}
+                    </td>
+                    <td colspan="4"
+                        style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
+                        {{ isset($msdsDetail->nfa_rating_value) ? $msdsDetail->nfa_rating_value : '' }}
+                    </td>
+                    <td colspan="4"
+                        style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
+                        @if ($msdsDetail->msds_availability_status == YES)
+                            <span style="color: green; font-size: 20px;">✓</span>
+                        @elseif ($msdsDetail->msds_availability_status == NO)
+                            <span style="color: red; font-size: 20px;">X</span>
+                        @elseif ($msdsDetail->msds_availability_status == 'N/A')
+                            <span style="color: gray; font-size: 20px;">N/A</span>
+                        @else
+                            <span style="color: gray; font-size: 20px;">-</span>
+                        @endif
+                    </td>
+                    <td colspan="5"
+                        style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
+                        {{ isset($msdsDetail->remark) ? $msdsDetail->remark : '' }}
+                    </td>
+                </tr>
+            @endforeach
 
         </table>
 
         <div class="page-break"></div>
-
     @endforeach
 
 

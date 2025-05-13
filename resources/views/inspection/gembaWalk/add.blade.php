@@ -38,7 +38,7 @@
                                             <div class="row">
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label class="form-label ">Gemba Walk ID</label>
+                                                        <label class="form-label require ">Gemba Walk ID</label>
                                                         <input type="text" name="gemba_walk_id" id="gemba_walk_id"
                                                             class="form-control" placeholder=""
                                                             value = "{{ getsequence('gembaWalk') }}" readonly>
@@ -48,7 +48,7 @@
 
                                                 <div class="col-md-4">
                                                     <div class="form-group form-input">
-                                                        <label class="form-label">Document No </label>
+                                                        <label class="form-label require">Document No </label>
                                                         <input type="text" name="document_no" id="document_no"
                                                             class="form-control" placeholder=" Enter Document Number "
                                                             value="{{ $document_no->doc_no }}" readonly>
@@ -70,7 +70,7 @@
 
                                                 <div class="col-md-4">
                                                     <div class="form-group form-input">
-                                                        <label class="form-label ">Document Revision Date</label>
+                                                        <label class="form-label require">Document Revision Date</label>
                                                         <input type="text" name="document_revision_date"
                                                             id="document_revision_date" value="{{ $document_no->rev_dt }}"
                                                             readonly class="form-control">
@@ -79,7 +79,7 @@
 
                                                 <div class="col-md-4">
                                                     <div class="form-group form-input">
-                                                        <label class="form-label ">Date</label>
+                                                        <label class="form-label require ">Date</label>
                                                         <input type="text" name="document_upload_date"
                                                             id="document_upload_date" class="form-control">
                                                     </div>
@@ -140,8 +140,8 @@
                                                         <div class="row">
 
                                                             <div class="col-md-4">
-                                                                <div class="form-group form-input">
-                                                                    <label for="location_id" class="form-label">
+                                                                <div class="form-group  form-input">
+                                                                    <label for="location_id" class="require form-label">
                                                                         Location</label>
                                                                     <select name="gemba_walk[0][location_id]"
                                                                         id="location_id_0"
@@ -157,8 +157,8 @@
                                                             </div>
 
                                                             <div class="col-md-4">
-                                                                <div class="form-group form-input">
-                                                                    <label for="unit_id" class="form-label">
+                                                                <div class="form-group form-input ">
+                                                                    <label for="unit_id" class=" require form-label">
                                                                         Unit</label>
                                                                     <select name="gemba_walk[0][unit_id]" id="unit_id_0"
                                                                         class=" form-control single-select"
@@ -173,8 +173,8 @@
                                                             </div>
 
                                                             <div class="col-md-4 mt-2">
-                                                                <div class="form-group form-input">
-                                                                    <label class="form-label">Date of
+                                                                <div class="form-group form-input ">
+                                                                    <label class="form-label require">Date of
                                                                         Observation</label>
                                                                     <input type="text"
                                                                         name="gemba_walk[0][date_of_observation]"
@@ -183,8 +183,8 @@
                                                             </div>
 
                                                             <div class="col-md-4 mt-2">
-                                                                <div class="form-group form-input">
-                                                                    <label for="observation_type" class="form-label">
+                                                                <div class="form-group form-input ">
+                                                                    <label for="observation_type" class=" require form-label">
                                                                         Observation Type </label>
                                                                     <select name="gemba_walk[0][observation_type]"
                                                                         id="observation_type_0"
@@ -199,8 +199,8 @@
                                                             </div>
 
                                                             <div class="col-md-4 mt-2">
-                                                                <div class="form-group form-input">
-                                                                    <label class="form-label">Description</label>
+                                                                <div class="form-group form-input ">
+                                                                    <label class="form-label require">Description</label>
                                                                     <textarea class="form-control" name="gemba_walk[0][checklist_description]" id="checklist_description_0"></textarea>
 
                                                                 </div>
@@ -208,8 +208,8 @@
 
 
                                                             <div class="col-md-4 mt-2">
-                                                                <div class="form-group form-input">
-                                                                    <label class="form-label">Hazard</label>
+                                                                <div class="form-group form-input ">
+                                                                    <label class="form-label require">Hazard</label>
                                                                     <input type="text" name="gemba_walk[0][hazard]"
                                                                         id="hazard_0" class="form-control"
                                                                         placeholder=" Enter Hazard Observation">
@@ -220,7 +220,7 @@
                                                             <div class="col-md-4 mt-2 file-upload-block"
                                                                 id="file-upload-0">
                                                                 <label for="evidence_0"
-                                                                    class="form-label">Evidence</label>
+                                                                    class="form-label require ">Evidence</label>
                                                                 <input type="file" class="form-control"
                                                                     name="gemba_walk[0][evidence]" id="evidence_0">
                                                                 <div class="text-danger"></div>
@@ -229,7 +229,7 @@
 
                                                             <div class="col-md-4 mt-2">
                                                                 <div class="form-group form-input">
-                                                                    <label class="form-label">CAPA</label>
+                                                                    <label class="form-label require">CAPA</label>
                                                                     <input type="text"
                                                                         name="gemba_walk[0][checklist_capa]"
                                                                         id="checklist_capa" class="form-control"
@@ -239,7 +239,7 @@
 
                                                             <div class="col-md-4 mt-2">
                                                                 <div class="form-group form-input">
-                                                                    <label class="form-label">Date of Compliance
+                                                                    <label class="form-label require">Date of Compliance
                                                                     </label>
                                                                     <input type="text"
                                                                         name="gemba_walk[0][date_of_compliance]"
@@ -249,7 +249,7 @@
 
                                                             <div class="col-md-4 mt-2">
                                                                 <div class="form-group form-input">
-                                                                    <label for="unit_id" class="form-label">
+                                                                    <label for="unit_id" class=" require form-label">
                                                                         Responsibility </label>
                                                                     <select name="gemba_walk[0][responsibility_id]"
                                                                         id="responsibility_id_0"
@@ -266,8 +266,8 @@
                                                             </div>
 
                                                             <div class="col-md-4 mt-2">
-                                                                <div class="form-group form-input">
-                                                                    <label for="" class="form-label">
+                                                                <div class="form-group  form-input">
+                                                                    <label for="" class=" require form-label">
                                                                         Status </label>
                                                                     <select name="gemba_walk[0][current_status]"
                                                                         id="current_status_0"
@@ -283,7 +283,7 @@
 
                                                             <div class="col-md-4 mt-2">
                                                                 <div class="form-group form-input">
-                                                                    <label class="form-label">Remark</label>
+                                                                    <label class="form-label require">Remark</label>
                                                                     <textarea class="form-control" name="gemba_walk[0][checklist_remark]" id="checklist_remark_0"></textarea>
 
                                                                 </div>
@@ -362,14 +362,21 @@
                                                         </div>
                                                     </div>
                                                 </div>
-
                                                 <div class="col-md-4 mb-2" id="verified_by" style="display: none;">
-                                                    <div class="form-group form-input">
-                                                        <label for="gemba_walk_verified_by" class="form-label">Signature Upload</label>
-                                                        <input type="file"
-                                                            class="form-control validate-file-accept validate-file-required"
-                                                            name="gemba_walk_verified_by" id="gemba_walk_verified_by">
-                                                    </div>
+                                                        @if (isset(Auth::user()->signature_upload))
+                                                            <label class="form-label"
+                                                                style="display: block; ">{{ __('inspection.signature') }}</label>
+                                                            <img src="{{ admin_url(Auth::user()->signature_upload) }}"
+                                                                alt="Signature Upload" style="width: 150px; margin-top:10px">
+                                                        @else
+
+                                                            <div class="form-group form-input">
+                                                                <label for="gemba_walk_verified_by" class="form-label">Signature Upload</label>
+                                                                <input type="file"
+                                                                    class="form-control validate-file-accept validate-file-required"
+                                                                    name="gemba_walk_verified_by" id="gemba_walk_verified_by">
+                                                            </div>
+                                                        @endif
                                                 </div>
 
                                                 <div class="col-md-4 mt-2" id="remark_section" style="display: none;">
@@ -718,7 +725,7 @@
                             required: true,
                             minlength: 3,
                             maxlength: 2000,
-                            customPattern: /^[a-zA-Z0-9\s\-_'"()]+$/
+
                         },
                         "gemba_walk[0][hazard]": {
                             required: true,
@@ -780,7 +787,7 @@
                             required: "Please enter a description.",
                             minlength: "Checklist Description must be at least 3 characters.",
                             maxlength: "Checklist Description cannot exceed 2000 characters.",
-                            customPattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed."
+
                         },
                         "gemba_walk[0][hazard]": {
                             required: "Please enter a hazard observation.",
@@ -910,12 +917,12 @@
                     required: true,
                     minlength: 3,
                     maxlength: 2000,
-                    pattern: /^[a-zA-Z0-9\s\-_'"()]+$/,
+
                     messages: {
                         required: "Please Enter a Descripotion",
                         minlength: "Checklist Description must be at least 3 characters.",
                         maxlength: "Checklist Description cannot exceed 2000 characters.",
-                        pattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed."
+                       
                     }
                 });
 

@@ -159,8 +159,8 @@
                             name: 'inspection_status',
                         },
                         {
-                            data: 'created_by',
-                            name: 'created_by',
+                            data: 'inspection_created_by',
+                            name: 'inspection_created_by',
                         },
                         {
                             data: 'created_at',

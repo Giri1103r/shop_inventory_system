@@ -26,8 +26,7 @@
 
                                         <div class="col-md-3 mb-2">
                                             <div class="form-group form-input">
-                                                <label
-                                                    class="form-label require">{{ __('inspection.location') }}</label>
+                                                <label class="form-label require">{{ __('inspection.location') }}</label>
                                                 <select name="location_id" id="location_id"
                                                     class=" form-control single-select" style="width: 100%">
                                                     <option value="">Select {{ __('inspection.location') }}
@@ -41,21 +40,21 @@
                                         </div>
 
                                         <div class="col-md-3 mb-3 form-input">
-                                                <label class="form-label require">Shift</label>
-                                                <select name="shift_id" id="shift_id"
-                                                    class=" form-control single-select" style="width: 100%">
-                                                    <option value="">Select Shift</option>
-                                                    @foreach ($shifts as $shift)
-                                                        <option value="{{ encryptId($shift->id) }}">
-                                                            {{ $shift->shift }}</option>
-                                                    @endforeach
-                                                </select>
+                                            <label class="form-label require">Shift</label>
+                                            <select name="shift_id" id="shift_id" class=" form-control single-select"
+                                                style="width: 100%">
+                                                <option value="">Select Shift</option>
+                                                @foreach ($shifts as $shift)
+                                                    <option value="{{ encryptId($shift->id) }}">
+                                                        {{ $shift->shift }}</option>
+                                                @endforeach
+                                            </select>
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
 
                                             <label class="form-label require">{{ __('inspection.unit') }}</label>
-                                            <select name="unit_id" id="unit_id"
-                                                class=" form-control single-select" style="width: 100%">
+                                            <select name="unit_id" id="unit_id" class=" form-control single-select"
+                                                style="width: 100%">
                                                 <option value="">Select Unit</option>
                                                 @foreach ($units as $unit)
                                                     <option value="{{ encryptId($unit->id) }}">
@@ -65,34 +64,58 @@
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
 
-                                            <label
-                                            class="form-label require">{{ __('inspection.frequency') }}</label>
-                                        <select name="frequency_id" id="frequency_id"
-                                            class=" form-control single-select" style="width: 100%">
-                                            <option value="">Select Frequency</option>
-                                            @foreach ($frequency as $frequency)
-                                                <option value="{{ encryptId($frequency->id) }}">
-                                                    {{ $frequency->frequency_name }}</option>
-                                            @endforeach
-                                        </select>
+                                            <label class="form-label require">{{ __('inspection.frequency') }}</label>
+                                            <select name="frequency_id" id="frequency_id"
+                                                class=" form-control single-select" style="width: 100%">
+                                                <option value="">Select Frequency</option>
+                                                @foreach ($frequency as $frequency)
+                                                    <option value="{{ encryptId($frequency->id) }}">
+                                                        {{ $frequency->frequency_name }}</option>
+                                                @endforeach
+                                            </select>
                                         </div>
 
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="inspection_status" class="form-label ">{{ __('common.status') }}</label>
+                                            <label for="inspection_status"
+                                                class="form-label ">{{ __('common.status') }}</label>
                                             <select name="inspection_status" id="inspection_status" style="width: 100%"
                                                 class="form-control single-select">
                                                 <option value="">Select Status</option>
-                                                <option value="{{encryptId('1')}}">WAITING FOR EHS OFFICER VERIFICATION</option>
-                                                <option value="{{encryptId('2')}}">WAITING FOR CAPA ACTION</option>
-                                                <option value="{{encryptId('3')}}">WAITING FOR CAPA VERIFICATION</option>
-                                                <option value="{{encryptId('4')}}">WAITING FOR L1 VERIFICATION</option>
-                                                <option value="{{encryptId('5')}}">WAITING FOR L2 VERIFICATION</option>
-                                                <option value="{{encryptId('6')}}">CLOSED</option>
-                                                <option value="{{encryptId('7')}}">EHS OFFICER REJECTED</option>
-                                                <option value="{{encryptId('8')}}">L1 MANAGER REJECTED</option>
-                                                <option value="{{encryptId('9')}}">L2 MANAGER REJECTED</option>
+                                                <option value="{{ encryptId('1') }}">WAITING FOR EHS OFFICER VERIFICATION
+                                                </option>
+                                                <option value="{{ encryptId('2') }}">WAITING FOR CAPA ACTION</option>
+                                                <option value="{{ encryptId('3') }}">WAITING FOR CAPA VERIFICATION</option>
+                                                <option value="{{ encryptId('4') }}">WAITING FOR L1 VERIFICATION</option>
+                                                <option value="{{ encryptId('5') }}">WAITING FOR L2 VERIFICATION</option>
+                                                <option value="{{ encryptId('6') }}">CLOSED</option>
+                                                <option value="{{ encryptId('7') }}">EHS OFFICER REJECTED</option>
+                                                <option value="{{ encryptId('8') }}">L1 MANAGER REJECTED</option>
+                                                <option value="{{ encryptId('9') }}">L2 MANAGER REJECTED</option>
                                             </select>
                                         </div>
+
+                                        <div class="col-md-4 mb-3 form-input">
+                                            <label for="emp_name" class="form-label ">From Date</label>
+                                            <div class="input-group date form-input custom-height">
+                                                <input type="text" class="form-control " name="from_date" id="from_date"
+                                                    autocomplete="off">
+                                                <div class="input-group-addon input-group-text">
+                                                    <span class="fa fa-calendar"></span>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="col-md-4 mb-3 form-input">
+                                            <label for="emp_name" class="form-label ">To Date</label>
+                                            <div class="input-group date form-input  custom-height">
+                                                <input type="text" class="form-control " name="to_date" id="to_date"
+                                                    autocomplete="off">
+                                                <div class="input-group-addon input-group-text">
+                                                    <span class="fa fa-calendar"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+
                                         <div class="col-md-3 mt-3">
                                             <x-button-search></x-button-search>
                                             <x-button-reset></x-button-reset>
@@ -113,10 +136,10 @@
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
-                                       <th>Location</th>
-                                       <th>Shift</th>
-                                       <th>Unit</th>
-                                       <th>Frequency</th>
+                                        <th>Location</th>
+                                        <th>Shift</th>
+                                        <th>Unit</th>
+                                        <th>Frequency</th>
                                         <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.action') }}</th>
                                     </tr>
@@ -137,6 +160,24 @@
             $(document).ready(function() {
                 var firstTh = $('.datatable-list thead th:first');
                 firstTh.removeClass('sorting_asc');
+
+                var fromDatepicker = flatpickr("#from_date", {
+                    dateFormat: "d-m-Y",
+                    onChange: function(selectedDates) {
+                        if (selectedDates.length > 0) {
+                            var startDate = selectedDates[0];
+                            toDatepicker.set('minDate', startDate);
+                            toDatepicker.clear();
+                        }
+                    }
+
+                })
+
+                var toDatepicker = flatpickr("#to_date", {
+                    dateFormat: "d-m-Y",
+
+                });
+
             });
 
             $(function() {
@@ -177,6 +218,8 @@
                             d.unit_id = $('#unit_id').val();
                             d.frequency_id = $('#frequency_id').val();
                             d.inspection_status = $('#inspection_status').val();
+                            d.from_date = $('#from_date').val();
+                            d.to_date = $('#to_date').val();
                         },
                         error: function(xhr, error, code) {
                             if (xhr.status === 419) {
@@ -245,6 +288,8 @@
                                         unit_id = $('#unit_id').val();
                                         frequency_id = $('#frequency_id').val();
                                         inspection_status = $('#inspection_status').val();
+                                        var from_date = $('#from_date').val();
+                                        var to_date = $('#to_date').val();
 
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
@@ -255,6 +300,8 @@
                                             '&shift_id=' + shift_id +
                                             '&unit_id=' + unit_id +
                                             '&frequency_id=' + frequency_id +
+                                            '&from_date=' + from_date +
+                                            '&to_date=' + to_date +
                                             '&inspection_status=' + inspection_status
                                     }
                                 },
@@ -268,6 +315,8 @@
                                         unit_id = $('#unit_id').val();
                                         frequency_id = $('#frequency_id').val();
                                         inspection_status = $('#inspection_status').val();
+                                        var from_date = $('#from_date').val();
+                                        var to_date = $('#to_date').val();
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
@@ -277,6 +326,8 @@
                                             '&shift_id=' + shift_id +
                                             '&unit_id=' + unit_id +
                                             '&frequency_id=' + frequency_id +
+                                            '&from_date=' + from_date +
+                                            '&to_date=' + to_date +
                                             '&inspection_status=' + inspection_status
                                     }
                                 },

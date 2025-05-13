@@ -58,8 +58,28 @@
                                                 </select>
                                             </div>
                                         </div>
+                                        <div class="col-md-4 mb-3 form-input">
+                                            <label for="emp_name" class="form-label ">From Date</label>
+                                            <div class="input-group date form-input custom-height">
+                                                <input type="text" class="form-control " name="from_date" id="from_date"
+                                                    autocomplete="off">
+                                                <div class="input-group-addon input-group-text">
+                                                    <span class="fa fa-calendar"></span>
+                                                </div>
+                                            </div>
 
-                                        <div class="col-md-3 mb-3 form-input">
+                                        </div>
+                                        <div class="col-md-4 mb-3 form-input">
+                                            <label for="emp_name" class="form-label ">To Date</label>
+                                            <div class="input-group date form-input  custom-height">
+                                                <input type="text" class="form-control " name="to_date" id="to_date"
+                                                    autocomplete="off">
+                                                <div class="input-group-addon input-group-text">
+                                                    <span class="fa fa-calendar"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 mb-3 form-input">
                                             <label for="inspection_status"
                                                 class="form-label ">{{ __('common.status') }}</label>
                                             <select name="status" id="status" style="width: 100%"
@@ -70,7 +90,7 @@
 
                                             </select>
                                         </div>
-                                        <div class="col-md-3 mt-3">
+                                        <div class="col-md-4 mt-3">
                                             <x-button-search></x-button-search>
                                             <x-button-reset></x-button-reset>
 
@@ -94,6 +114,7 @@
                                         <th>{{ __('inspection.item_code') }}</th>
                                         <th>{{ __('inspection.standard_norms') }}</th>
                                         <th>{{ __('common.status') }}</th>
+                                        <th>{{ __('common.created_date') }}</th>
                                         <th>{{ __('common.action') }}</th>
                                     </tr>
                                 </thead>
@@ -119,6 +140,21 @@
                 dateFormat: "d-m-Y",
             });
 
+            var fromDatepicker = flatpickr("#from_date", {
+                dateFormat: "d-m-Y",
+                onChange: function(selectedDates) {
+                    if (selectedDates.length > 0) {
+                        var startDate = selectedDates[0];
+                        toDatepicker.set('minDate', startDate);
+                        toDatepicker.clear();
+                    }
+                }
+            });
+
+            var toDatepicker = flatpickr("#to_date", {
+                dateFormat: "d-m-Y",
+
+            });
             $(function() {
                 /* Datatable */
                 var table = $('.datatable-list').DataTable({
@@ -156,6 +192,8 @@
                             d.item_code = $('#item_code').val();
                             d.standard_norms = $('#standard_norms').val();
                             d.status = $('#status').val();
+                            d.from_date = $('#from_date').val();
+                            d.to_date = $('#to_date').val();
                         },
                         error: function(xhr, error, code) {
                             if (xhr.status === 419) {
@@ -185,6 +223,10 @@
                         {
                             data: 'status',
                             name: 'status',
+                        },
+                         {
+                            data: 'inspection_created_at',
+                            name: 'inspection_created_at',
                         },
                         {
                             data: 'action',
@@ -219,7 +261,8 @@
                                         item_code = $('#item_code').val();
                                         standard_norms = $('#standard_norms').val();
                                         status = $('#status').val();
-
+                                        var from_date = $('#from_date').val();
+                                        var to_date = $('#to_date').val();
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
@@ -227,6 +270,8 @@
                                             '?search=' + searchValue +
                                             '&equipment_name=' + equipment_name +
                                             '&item_code=' + item_code +
+                                            '&from_date=' + from_date +
+                                            '&to_date=' + to_date +
                                             '&standard_norms=' + standard_norms +
                                             '&status=' + status
                                     }
@@ -240,6 +285,8 @@
                                         item_code = $('#item_code').val();
                                         standard_norms = $('#standard_norms').val();
                                         status = $('#status').val();
+                                        var from_date = $('#from_date').val();
+                                        var to_date = $('#to_date').val();
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
@@ -247,6 +294,8 @@
                                             '?search=' + searchValue +
                                             '&equipment_name=' + equipment_name +
                                             '&item_code=' + item_code +
+                                            '&from_date=' + from_date +
+                                            '&to_date=' + to_date +
                                             '&standard_norms=' + standard_norms +
                                             '&status=' + status
                                     }

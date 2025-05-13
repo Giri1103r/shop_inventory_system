@@ -318,6 +318,11 @@ class Unit extends Model
         return $this->select('id', 'unit_name')->where('status', 1)->get();
     }
 
+    public function getUnitBasedLocation($id)
+    {
+        return $this->where('location_id', $id)->get();
+    }
+
     public function getAllUnit()
     {
         $data =  $this->get();

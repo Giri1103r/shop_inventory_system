@@ -97,13 +97,15 @@
                                                                 @endphp
                                                                 @foreach ($protectivequip_checklist as $detail)
                                                                     <tr>
+                                                                        <input type="hidden"
+                                                                        name="protectiveequipment[{{ $detail->id }}][checklist_id]"
+                                                                        value="{{ $detail->id }}">
                                                                         <td>{{ $index }}</td>
                                                                         <td>
-                                                                            <input type="hidden"
-                                                                                name="protective[protective_check][type1][{{ $detail->id }}]"
-                                                                                value="0">
+                                                                            
+                                                                         
                                                                             <input type="checkbox"
-                                                                                name="protective[protective_check][type1][{{ $detail->id }}]"
+                                                                               name="protectiveequipment[{{ $detail->id }}][left_check]"
                                                                                 class="row-checkbox " value="1">
 
                                                                         </td>
@@ -116,11 +118,8 @@
                                                                         </td>
                                                                         <td class="form-input">
 
-                                                                            <input type="hidden"
-                                                                                name="protective[protectivequip_checklist][type1][{{ $detail->id }}]"
-                                                                                value="0">
                                                                             <input type="checkbox"
-                                                                                name="protective[protectivequip_checklist][type1][{{ $detail->id }}]"
+                                                                                name="protectiveequipment[{{ $detail->id }}][right_check]"
                                                                                 class="" value="1">
                                                                         </td>
                                                                     </tr>
@@ -156,15 +155,16 @@
                                                                 @endphp
                                                                 @foreach ($equipinvalve_checklist as $equipinvalve_checklist)
                                                                     <tr>
+                                                                        <input type="hidden"
+                                                                        name="equipmentinvolved[{{ $equipinvalve_checklist->id }}][checklist_id]"
+                                                                        value="{{ $equipinvalve_checklist->id }}">
+
                                                                         <td>{{ $index }}</td>
 
                                                                         <td>
 
-                                                                            <input type="hidden"
-                                                                                name="equipment[equipinvalve_check][type2][{{ $equipinvalve_checklist->id }}]"
-                                                                                value="0">
                                                                             <input type="checkbox"
-                                                                                name="equipment[equipinvalve_check][type2][{{ $equipinvalve_checklist->id }}]"
+                                                                                name="equipmentinvolved[{{ $equipinvalve_checklist->id }}][left_check]"
                                                                                 class="row-checkbox1 " value="1">
 
                                                                         </td>
@@ -178,11 +178,8 @@
                                                                         <td class="form-input">
 
 
-                                                                            <input type="hidden"
-                                                                                name="equipment[equipinvalve_checklist][type2][{{ $equipinvalve_checklist->id }}]"
-                                                                                value="0">
                                                                             <input type="checkbox"
-                                                                                name="equipment[equipinvalve_checklist][type2][{{ $equipinvalve_checklist->id }}]"
+                                                                                name="equipmentinvolved[{{ $equipinvalve_checklist->id }}][right_check]"
                                                                                 class="" value="1">
                                                                         </td>
                                                                     </tr>
@@ -202,7 +199,7 @@
 
                                                 <div class="table-container">
                                                     <h3>
-                                                        Manual List</h3>
+                                                       Precaution to be taken</h3>
 
                                                     <div>
                                                         <table class="table view_card">
@@ -221,15 +218,15 @@
                                                                 @endphp
                                                                 @foreach ($precaution_checklist as $precaution_checklist)
                                                                     <tr>
+                                                                        <input type="hidden"
+                                                                        name="manuallist[{{ $precaution_checklist->id }}][checklist_id]"
+                                                                        value="{{ $precaution_checklist->id }}">
                                                                         <td>{{ $index }}</td>
 
                                                                         <td>
 
-                                                                            <input type="hidden"
-                                                                                name="manual[precaution_check][type3][{{ $precaution_checklist->id }}]"
-                                                                                value="0">
                                                                             <input type="checkbox"
-                                                                                name="manual[precaution_check][type3][{{ $precaution_checklist->id }}]"
+                                                                               name="manuallist[{{ $precaution_checklist->id }}][left_check]"
                                                                                 class="row-checkbox2 " value="1">
 
 
@@ -243,12 +240,8 @@
                                                                         </td>
                                                                         <td class="form-input">
 
-
-                                                                            <input type="hidden"
-                                                                                name="manual[precaution_checklist][type3][{{ $precaution_checklist->id }}]"
-                                                                                value="0">
                                                                             <input type="checkbox"
-                                                                                name="manual[precaution_checklist][type3][{{ $precaution_checklist->id }}]"
+                                                                              name="manuallist[{{ $precaution_checklist->id }}][right_check]"
                                                                                 class="" value="1">
                                                                         </td>
                                                                     </tr>
@@ -263,7 +256,7 @@
 
                                                 <div class="table-container">
                                                     <h3>
-                                                        Check List</h3>
+                                                       Equipment Inspection</h3>
 
                                                     <div>
                                                         <table class="table view_card">
@@ -281,17 +274,17 @@
                                                                     $index = 1;
                                                                 @endphp
                                                                 @foreach ($equipchecklist_checklist as $equipchecklist_checklist)
+                                                                <input type="hidden"
+                                                                        name="checklist[{{ $equipchecklist_checklist->id }}][checklist_id]"
+                                                                        value="{{ $equipchecklist_checklist->id }}">
                                                                     <tr>
                                                                         <td>{{ $index }}</td>
 
 
                                                                         <td>
 
-                                                                            <input type="hidden"
-                                                                                name="check[equipchecklist_check][type4][{{ $equipchecklist_checklist->id }}]"
-                                                                                value="0">
                                                                             <input type="checkbox"
-                                                                                name="check[equipchecklist_check][type4][{{ $equipchecklist_checklist->id }}]"
+                                                                            name="checklist[{{ $equipchecklist_checklist->id }}][left_check]"
                                                                                 class="row-checkbox3" value="1">
 
                                                                         </td>
@@ -304,11 +297,8 @@
                                                                         <td class="form-input">
 
 
-                                                                            <input type="hidden"
-                                                                                name="check[equipchecklist_checklist][type4][{{ $equipchecklist_checklist->id }}]"
-                                                                                value="0">
                                                                             <input type="checkbox"
-                                                                                name="check[equipchecklist_checklist][type4][{{ $equipchecklist_checklist->id }}]"
+                                                                                name="checklist[{{ $equipchecklist_checklist->id }}][right_check]"
                                                                                 class=" " value="1">
                                                                         </td>
                                                                     </tr>
@@ -327,7 +317,7 @@
                                             <div class="table-wrapper">
                                                 <div class="table-container">
                                                     <h3>
-                                                        Instruction List</h3>
+                                                       Safe Work Instructions </h3>
 
                                                     <div style="overflow-y: auto; max-height: 400px;">
                                                         <table class="table view_card">
@@ -346,14 +336,15 @@
                                                                 @endphp
                                                                 @foreach ($safework_checklist as $safework_checklist)
                                                                     <tr>
+                                                                        <input type="hidden"
+                                                                        name="instructionList[{{ $safework_checklist->id }}][checklist_id]"
+                                                                        value="{{ $safework_checklist->id }}">
                                                                         <td>{{ $index }}</td>
 
                                                                         <td>
-                                                                            <input type="hidden"
-                                                                                name="instruction[safework_check][type5][{{ $safework_checklist->id }}]"
-                                                                                value="0">
+                                                                          
                                                                             <input type="checkbox"
-                                                                                name="instruction[safework_check][type5][{{ $safework_checklist->id }}]"
+                                                                               name="instructionList[{{ $safework_checklist->id }}][left_check]"
                                                                                 class="row-checkbox4 " value="1">
 
                                                                         </td>
@@ -366,11 +357,9 @@
                                                                         </td>
                                                                         <td class="form-input">
 
-                                                                            <input type="hidden"
-                                                                                name="instruction[safework_checklist][type5][{{ $safework_checklist->id }}]"
-                                                                                value="0">
+                                                                           
                                                                             <input type="checkbox"
-                                                                                name="instruction[safework_checklist][type5][{{ $safework_checklist->id }}]"
+                                                                              name="instructionList[{{ $safework_checklist->id }}][right_check]"
                                                                                 class="" value="1">
 
                                                                         </td>

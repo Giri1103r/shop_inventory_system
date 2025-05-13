@@ -258,9 +258,9 @@ class WorkZoneAirMonitoringController extends Controller
                 }
 
                 // Title Section
-                $sheet->mergeCells("G{$currentRow}:P" . ($currentRow + 2));
-                $sheet->setCellValue("G{$currentRow}", " WORK ZONE AIR MONITORING (YEARLY) PN INTERNATIONAL PVT. LTD");
-                $sheet->getStyle("G{$currentRow}:p{$currentRow}")->applyFromArray([
+                $sheet->mergeCells("G{$currentRow}:Q" . ($currentRow + 2));
+                $sheet->setCellValue("G{$currentRow}", " WORK ZONE AIR MONITORING ");
+                $sheet->getStyle("G{$currentRow}:Q{$currentRow}")->applyFromArray([
                     'font' => ['bold' => true, 'size' => 14],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
@@ -270,15 +270,15 @@ class WorkZoneAirMonitoringController extends Controller
                 // document number
 
 
-                $sheet->mergeCells("Q$currentRow:S$currentRow")->setCellValue("Q$currentRow", 'Doc. No.');
-                $sheet->mergeCells("Q" . ($currentRow + 1) . ":S" . ($currentRow + 1))->setCellValue("Q" . ($currentRow + 1), 'Issue Dt.');
-                $sheet->mergeCells("Q" . ($currentRow + 2) . ":S" . ($currentRow + 2))->setCellValue("Q" . ($currentRow + 2), 'Rev. & Dt.');
+                $sheet->mergeCells("R$currentRow:U$currentRow")->setCellValue("R$currentRow", 'Doc. No.');
+                $sheet->mergeCells("R" . ($currentRow + 1) . ":U" . ($currentRow + 1))->setCellValue("R" . ($currentRow + 1), 'Issue Dt.');
+                $sheet->mergeCells("R" . ($currentRow + 2) . ":U" . ($currentRow + 2))->setCellValue("R" . ($currentRow + 2), 'Rev. & Dt.');
 
-                $sheet->mergeCells("T$currentRow:W$currentRow")->setCellValue("T$currentRow", $document_no->doc_no);
-                $sheet->mergeCells("T" . ($currentRow + 1) . ":W" . ($currentRow + 1))->setCellValue("T" . ($currentRow + 1), Displaydateformat($document_no->issue_date));
-                $sheet->mergeCells("T" . ($currentRow + 2) . ":W" . ($currentRow + 2))->setCellValue("T" . ($currentRow + 2), $document_no->rev_dt);
+                $sheet->mergeCells("V$currentRow:X$currentRow")->setCellValue("V$currentRow", $document_no->doc_no);
+                $sheet->mergeCells("V" . ($currentRow + 1) . ":X" . ($currentRow + 1))->setCellValue("V" . ($currentRow + 1), Displaydateformat($document_no->issue_date));
+                $sheet->mergeCells("V" . ($currentRow + 2) . ":X" . ($currentRow + 2))->setCellValue("V" . ($currentRow + 2), $document_no->rev_dt);
 
-                $sheet->getStyle("Q$currentRow:W" . ($currentRow + 2))->applyFromArray([
+                $sheet->getStyle("R$currentRow:X" . ($currentRow + 2))->applyFromArray([
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                     'font' => ['bold' => true],
@@ -308,10 +308,12 @@ class WorkZoneAirMonitoringController extends Controller
                 $sheet->setCellValue("R$headerRow", "SPM");
                 $sheet->setCellValue("S$headerRow", "SO2");
                 $sheet->setCellValue("T$headerRow", "NO2");
+                $sheet->setCellValue("U$headerRow", "Last Due Date Of Monitoring");
+
 
                 // Other fields
-                $sheet->setCellValue("U$headerRow", "Act/Rule");
-                $sheet->mergeCells("V$headerRow:W$headerRow")->setCellValue("V$headerRow", "Remark");
+                $sheet->setCellValue("V$headerRow", "Act/Rule");
+                $sheet->mergeCells("W$headerRow:X$headerRow")->setCellValue("W$headerRow", "Remark");
 
 
                 $borderStyle = [
@@ -321,8 +323,8 @@ class WorkZoneAirMonitoringController extends Controller
                         ],
                     ],
                 ];
-                
-                $sheet->getStyle("A$headerRow:W$headerRow")->applyFromArray($borderStyle);
+
+                $sheet->getStyle("A$headerRow:X$headerRow")->applyFromArray($borderStyle);
 
                 // Optional styling
                 $sheet->getStyle("A$headerRow:W$headerRow")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
@@ -348,14 +350,15 @@ class WorkZoneAirMonitoringController extends Controller
                     $sheet->setCellValue("R$inspectionRow", $detail->spm_session2);
                     $sheet->setCellValue("S$inspectionRow",  $detail->so2_session2);
                     $sheet->setCellValue("T$inspectionRow",  $detail->no2_session2);
+                    $sheet->setCellValue("U$inspectionRow",  Displaydateformat($detail->last_due_date_of_monitoring));
 
                     // Other fields
-                    $sheet->setCellValue("U$inspectionRow", "Act/Rule");
-                    $sheet->mergeCells("V$inspectionRow:W$inspectionRow")->setCellValue("V$inspectionRow", "Remark");
+                    $sheet->setCellValue("V$inspectionRow", "Act/Rule");
+                    $sheet->mergeCells("W$inspectionRow:X$inspectionRow")->setCellValue("W$inspectionRow", "Remark");
 
 
 
-                    $sheet->getStyle("A$inspectionRow:W$inspectionRow")->applyFromArray([
+                    $sheet->getStyle("A$inspectionRow:X$inspectionRow")->applyFromArray([
                         'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                         'alignment' => ['horizontal' => Alignment::HORIZONTAL_LEFT, 'vertical' => Alignment::VERTICAL_CENTER],
                     ]);
@@ -465,7 +468,6 @@ class WorkZoneAirMonitoringController extends Controller
                     'workZoneAirDataList' => $workZoneAirDataList,
                     'document_no' => $document_no,
                 ];
-                // dd( $data);
                 $mpdf = new \Mpdf\Mpdf($property);
                 $mpdf->setAutoTopMargin = 'stretch';
 
@@ -526,8 +528,8 @@ class WorkZoneAirMonitoringController extends Controller
                     ]);
                 }
 
-                $sheet->mergeCells("G{$currentRow}:P" . ($currentRow + 2));
-                $sheet->setCellValue("G{$currentRow}", " WORK ZONE AIR MONITORING (YEARLY) PN INTERNATIONAL PVT. LTD");
+                $sheet->mergeCells("G{$currentRow}:R" . ($currentRow + 2));
+                $sheet->setCellValue("G{$currentRow}", " WORK ZONE AIR MONITORING");
                 $sheet->getStyle("G{$currentRow}")->applyFromArray([
                     'font' => ['bold' => true, 'size' => 14],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
@@ -538,15 +540,15 @@ class WorkZoneAirMonitoringController extends Controller
                 // document number
 
 
-                $sheet->mergeCells("Q$currentRow:S$currentRow")->setCellValue("Q$currentRow", 'Doc. No.');
-                $sheet->mergeCells("Q" . ($currentRow + 1) . ":S" . ($currentRow + 1))->setCellValue("Q" . ($currentRow + 1), 'Issue Dt.');
-                $sheet->mergeCells("Q" . ($currentRow + 2) . ":S" . ($currentRow + 2))->setCellValue("Q" . ($currentRow + 2), 'Rev. & Dt.');
+                $sheet->mergeCells("S$currentRow:U$currentRow")->setCellValue("S$currentRow", 'Doc. No.');
+                $sheet->mergeCells("S" . ($currentRow + 1) . ":U" . ($currentRow + 1))->setCellValue("S" . ($currentRow + 1), 'Issue Dt.');
+                $sheet->mergeCells("S" . ($currentRow + 2) . ":U" . ($currentRow + 2))->setCellValue("S" . ($currentRow + 2), 'Rev. & Dt.');
 
-                $sheet->mergeCells("T$currentRow:W$currentRow")->setCellValue("T$currentRow", $document_no->doc_no);
-                $sheet->mergeCells("T" . ($currentRow + 1) . ":W" . ($currentRow + 1))->setCellValue("T" . ($currentRow + 1), Displaydateformat($document_no->issue_date));
-                $sheet->mergeCells("T" . ($currentRow + 2) . ":W" . ($currentRow + 2))->setCellValue("T" . ($currentRow + 2), $document_no->rev_dt);
+                $sheet->mergeCells("V$currentRow:X$currentRow")->setCellValue("V$currentRow", $document_no->doc_no);
+                $sheet->mergeCells("V" . ($currentRow + 1) . ":X" . ($currentRow + 1))->setCellValue("V" . ($currentRow + 1), Displaydateformat($document_no->issue_date));
+                $sheet->mergeCells("V" . ($currentRow + 2) . ":X" . ($currentRow + 2))->setCellValue("V" . ($currentRow + 2), $document_no->rev_dt);
 
-                $sheet->getStyle("Q$currentRow:W" . ($currentRow + 2))->applyFromArray([
+                $sheet->getStyle("S$currentRow:X" . ($currentRow + 2))->applyFromArray([
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                     'font' => ['bold' => true],
@@ -555,7 +557,7 @@ class WorkZoneAirMonitoringController extends Controller
                 $headerRow = $currentRow + 3;
 
                 $equalWidth = 15; // Adjust as needed
-                foreach (range('A', 'W') as $col) {
+                foreach (range('A', 'X') as $col) {
                     $sheet->getColumnDimension($col)->setWidth($equalWidth);
                 }
 
@@ -576,10 +578,12 @@ class WorkZoneAirMonitoringController extends Controller
                 $sheet->setCellValue("R$headerRow", "SPM");
                 $sheet->setCellValue("S$headerRow", "SO2");
                 $sheet->setCellValue("T$headerRow", "NO2");
+                $sheet->setCellValue("U$headerRow", "Next Due Date Of Monitoring");
+
 
                 // Other fields
-                $sheet->setCellValue("U$headerRow", "Act/Rule");
-                $sheet->mergeCells("V$headerRow:W$headerRow")->setCellValue("V$headerRow", "Remark");
+                $sheet->setCellValue("V$headerRow", "Act/Rule");
+                $sheet->mergeCells("W$headerRow:X$headerRow")->setCellValue("W$headerRow", "Remark");
 
                 $borderStyle = [
                     'borders' => [
@@ -588,14 +592,14 @@ class WorkZoneAirMonitoringController extends Controller
                         ],
                     ],
                 ];
-                
+
                 // Apply border to header row A to W
-                $sheet->getStyle("A$headerRow:W$headerRow")->applyFromArray($borderStyle);
-                
-              
+                $sheet->getStyle("A$headerRow:X$headerRow")->applyFromArray($borderStyle);
+
+
                 // Optional styling
-                $sheet->getStyle("A$headerRow:W$headerRow")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
-                $sheet->getStyle("A$headerRow:W$headerRow")->getFont()->setBold(true);
+                $sheet->getStyle("A$headerRow:X$headerRow")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+                $sheet->getStyle("A$headerRow:X$headerRow")->getFont()->setBold(true);
 
 
                 $inspectionRow = $headerRow + 1;
@@ -617,14 +621,15 @@ class WorkZoneAirMonitoringController extends Controller
                     $sheet->setCellValue("R$inspectionRow", $detail->spm_session2);
                     $sheet->setCellValue("S$inspectionRow",  $detail->so2_session2);
                     $sheet->setCellValue("T$inspectionRow",  $detail->no2_session2);
+                    $sheet->setCellValue("U$inspectionRow",  Displaydateformat($detail->next_due_date_of_monitoring2));
 
                     // Other fields
-                    $sheet->setCellValue("U$inspectionRow", "Act/Rule");
-                    $sheet->mergeCells("V$inspectionRow:W$inspectionRow")->setCellValue("V$inspectionRow", "Remark");
+                    $sheet->setCellValue("V$inspectionRow", "Act/Rule");
+                    $sheet->mergeCells("W$inspectionRow:X$inspectionRow")->setCellValue("W$inspectionRow", "Remark");
 
 
 
-                    $sheet->getStyle("A$inspectionRow:W$inspectionRow")->applyFromArray([
+                    $sheet->getStyle("A$inspectionRow:X$inspectionRow")->applyFromArray([
                         'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                         'alignment' => ['horizontal' => Alignment::HORIZONTAL_LEFT, 'vertical' => Alignment::VERTICAL_CENTER],
                     ]);

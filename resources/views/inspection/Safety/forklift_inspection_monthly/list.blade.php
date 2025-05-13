@@ -91,7 +91,27 @@
                                                 </select>
                                             </div>
                                         </div>
+                                        <div class="col-md-4 mb-3 form-input">
+                                            <label for="emp_name" class="form-label ">From Date</label>
+                                            <div class="input-group date form-input custom-height">
+                                                <input type="text" class="form-control " name="from_date" id="from_date"
+                                                    autocomplete="off">
+                                                <div class="input-group-addon input-group-text">
+                                                    <span class="fa fa-calendar"></span>
+                                                </div>
+                                            </div>
 
+                                        </div>
+                                        <div class="col-md-4 mb-3 form-input">
+                                            <label for="emp_name" class="form-label ">To Date</label>
+                                            <div class="input-group date form-input  custom-height">
+                                                <input type="text" class="form-control " name="to_date" id="to_date"
+                                                    autocomplete="off">
+                                                <div class="input-group-addon input-group-text">
+                                                    <span class="fa fa-calendar"></span>
+                                                </div>
+                                            </div>
+                                        </div>
                                         <div class="col-md-4 mb-3 form-input">
                                             <label for="inspection_status"
                                                 class="form-label ">{{ __('common.status') }}</label>
@@ -101,7 +121,8 @@
                                                 <option value="{{ encryptId('1') }}">WAITING FOR EHS OFFICER VERIFICATION
                                                 </option>
                                                 <option value="{{ encryptId('2') }}">WAITING FOR CAPA ACTION</option>
-                                                <option value="{{ encryptId('3') }}">WAITING FOR CAPA VERIFICATION</option>
+                                                <option value="{{ encryptId('3') }}">WAITING FOR CAPA VERIFICATION
+                                                </option>
                                                 <option value="{{ encryptId('4') }}">WAITING FOR L1 VERIFICATION</option>
                                                 <option value="{{ encryptId('5') }}">WAITING FOR L2 VERIFICATION</option>
                                                 <option value="{{ encryptId('6') }}">CLOSED</option>
@@ -110,7 +131,7 @@
                                                 <option value="{{ encryptId('9') }}">L2 MANAGER REJECTED</option>
                                             </select>
                                         </div>
-                                        <div class="col-md-3 mt-3">
+                                        <div class="col-md-4 mt-3">
                                             <x-button-search></x-button-search>
                                             <x-button-reset></x-button-reset>
 
@@ -137,6 +158,7 @@
                                         <th>{{ __('inspection.unit') }}</th>
                                         <th>{{ __('inspection.frequency') }}</th>
                                         <th>{{ __('common.status') }}</th>
+                                         <th>{{ __('common.created_date') }}</th>
                                         <th>{{ __('common.action') }}</th>
                                     </tr>
                                 </thead>
@@ -165,6 +187,21 @@
                 dateFormat: "d-m-Y",
             });
 
+            var fromDatepicker = flatpickr("#from_date", {
+                dateFormat: "d-m-Y",
+                onChange: function(selectedDates) {
+                    if (selectedDates.length > 0) {
+                        var startDate = selectedDates[0];
+                        toDatepicker.set('minDate', startDate);
+                        toDatepicker.clear();
+                    }
+                }
+            });
+
+            var toDatepicker = flatpickr("#to_date", {
+                dateFormat: "d-m-Y",
+
+            });
             $(function() {
                 /* Datatable */
                 var table = $('.datatable-list').DataTable({
@@ -203,6 +240,8 @@
                             d.location = $('#location').val();
                             d.shift = $('#shift').val();
                             d.unit = $('#unit').val();
+                            d.from_date = $('#from_date').val();
+                            d.to_date = $('#to_date').val();
                             d.frequency = $('#frequency').val();
                             d.inspection_status = $('#inspection_status').val();
                         },
@@ -247,6 +286,10 @@
                             data: 'inspection_status',
                             name: 'inspection_status',
                         },
+                         {
+                            data: 'inspection_created_at',
+                            name: 'inspection_created_at',
+                        },
                         {
                             data: 'action',
                             name: 'action',
@@ -281,6 +324,8 @@
                                         location_id = $('#location').val();
                                         shift = $('#shift').val();
                                         unit = $('#unit').val();
+                                        var from_date = $('#from_date').val();
+                                        var to_date = $('#to_date').val();
                                         frequency = $('#frequency').val();
                                         inspection_status = $('#inspection_status').val();
 
@@ -294,6 +339,8 @@
                                             '&location=' + location_id +
                                             '&shift=' + shift +
                                             '&unit=' + unit +
+                                                 '&from_date=' + from_date +
+                                            '&to_date=' + to_date +
                                             '&frequency=' + frequency +
                                             '&inspection_status=' + inspection_status
                                     }
@@ -307,6 +354,8 @@
                                         next_due = $('#next_due').val();
                                         location_id = $('#location').val();
                                         shift = $('#shift').val();
+                                        var from_date = $('#from_date').val();
+                                        var to_date = $('#to_date').val();
                                         unit = $('#unit').val();
                                         frequency = $('#frequency').val();
                                         inspection_status = $('#inspection_status').val();
@@ -321,6 +370,8 @@
                                             '&location=' + location_id +
                                             '&shift=' + shift +
                                             '&unit=' + unit +
+                                                 '&from_date=' + from_date +
+                                            '&to_date=' + to_date +
                                             '&frequency=' + frequency +
                                             '&inspection_status=' + inspection_status
                                     }

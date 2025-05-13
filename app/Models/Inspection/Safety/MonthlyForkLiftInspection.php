@@ -3,6 +3,7 @@
 namespace App\Models\Inspection\Safety;
 
 use App\Scopes\TrashScope;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 
@@ -56,7 +57,7 @@ class MonthlyForkLiftInspection extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_forklift_inpsection_monthly.*', 'inspection_shift_option.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*', 'inspection_forklift_inpsection_monthly.id as inspection_id')
+        $query = $this->select('inspection_forklift_inpsection_monthly.*', 'inspection_shift_option.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*', 'inspection_forklift_inpsection_monthly.id as inspection_id' , 'inspection_forklift_inpsection_monthly.created_at as inspection_created_at')
             ->leftJoin('masters_location', 'inspection_forklift_inpsection_monthly.location', '=', 'masters_location.id')
             ->leftJoin('inspection_shift_option', 'inspection_forklift_inpsection_monthly.shift', '=', 'inspection_shift_option.id')
             ->leftJoin('masters_unit', 'inspection_forklift_inpsection_monthly.unit', '=', 'masters_unit.id')
@@ -81,7 +82,19 @@ class MonthlyForkLiftInspection extends Model
                 $query->orWhereRaw('inspection_frequency_option.frequency_name LIKE "%' . $search . '%"');
             });
         }
-
+        if ($request->has('from_date') && !empty($request->from_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_forklift_inpsection_monthly.created_at', '>=', $startDate);
+        }
+        if ($request->has('to_date') && !empty($request->to_date)) {
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_forklift_inpsection_monthly.created_at', '<=', $endDate);
+        }
+        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->whereBetween('inspection_forklift_inpsection_monthly.created_at', [$startDate, $endDate]);
+        }
         if (isset($request->location) && $request->location) {
             $query = $query->where('inspection_forklift_inpsection_monthly.location', 'LIKE', '%' . decryptId($request->location) . '%');
         }
@@ -303,7 +316,19 @@ class MonthlyForkLiftInspection extends Model
             });
         }
 
-
+   if ($request->has('from_date') && !empty($request->from_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_forklift_inpsection_monthly.created_at', '>=', $startDate);
+        }
+        if ($request->has('to_date') && !empty($request->to_date)) {
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_forklift_inpsection_monthly.created_at', '<=', $endDate);
+        }
+        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->whereBetween('inspection_forklift_inpsection_monthly.created_at', [$startDate, $endDate]);
+        }
         if (isset($request->location) && $request->location) {
             $query = $query->where('inspection_forklift_inpsection_monthly.location', 'LIKE', '%' . decryptId($request->location) . '%');
         }

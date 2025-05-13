@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', '6S Audit Analysis Add')
+@section('title', '6S Audit Analysis')
 @section('pageurl', admin_url('audit/6s-analysis/list'))
 
 @section('content')
@@ -181,9 +181,9 @@
                                                         </div>
                                                         <div class="col-md-3">
                                                             <div class="form-group form-input">
-                                                                <label class="form-label require">%</label>
+                                                                <label class="form-label require"> Percentage %</label>
                                                                 <input type="text" name="audit[1][percentage]"
-                                                                    id="percentage_1" class="form-control">
+                                                                    id="percentage_1" readonly class="form-control">
                                                             </div>
                                                         </div>
                                                     </div>
@@ -390,7 +390,6 @@
                 initializeFlatpickr();
             });
 
-
             function addValidationRules(row) {
                 row.find("select[name$='[department_id]']").rules("add", {
                     required: true,
@@ -460,6 +459,24 @@
                 });
             }
 
+            function calculatePercentage(row) {
+                const totalMarks = parseFloat(row.find("input[name$='[total_marks]']").val());
+                const marksObtained = parseFloat(row.find("input[name$='[marks_obtained]']").val());
+                let percentage = 0;
+
+                if (!isNaN(totalMarks) && !isNaN(marksObtained) && totalMarks > 0) {
+                    percentage = (marksObtained / totalMarks) * 100;
+                    row.find("input[name$='[percentage]']").val(percentage.toFixed(2));
+                } else {
+                    row.find("input[name$='[percentage]']").val('');
+                }
+            }
+
+            $(document).on("input", "input[name$='[total_marks]'], input[name$='[marks_obtained]']", function() {
+                const row = $(this).closest(".lesson_learned_row");
+                calculatePercentage(row);
+            });
+
             $(function() {
                 $.validator.setDefaults({
                     highlight: function(element) {
@@ -528,456 +545,4 @@
             initializeFlatpickr();
         });
     </script>
-
-    {{-- <script type="text/javascript" nonce="projectcab">
-        function checkSelections(row) {
-            const departmentId = row.find("input[id^='department_id_']").val();
-            const unitId = row.find("input[id^='unit_id_']").val();
-            const year = row.find("input[id^='year_']").val();
-            const month = row.find("input[id^='month_']").val();
-
-            if (departmentId && unitId && year && month) {
-                $.ajax({
-                    url: "{{ url('audit/6s-analysis/ajax-list') }}",
-                    type: 'GET',
-                    dataType: 'json',
-                    data: {
-                        departmentId: departmentId,
-                        unitId: unitId,
-                        year: year,
-                        month: month
-                    },
-                    success: function(response) {
-                        row.find('.text-danger').remove();
-                        if (response.conflicts && Object.keys(response.conflicts).length > 0) {
-                            row.find("input[id^='month_']").closest(".form-group").append(
-                                `<div><span class="text-danger">${response.conflicts.exists}</span></div>`
-                            );
-                        }
-                    },
-                    error: function() {
-                        alert('Uniqueness check failed.');
-                    }
-                });
-            }
-        }
-
-        $('#resetform').on('click', function(e) {
-            e.preventDefault();
-            location.reload();
-        });
-
-        document.addEventListener("DOMContentLoaded", function() {
-            function initializeFlatpickr() {
-                $("input[id^='year_']").datepicker({
-                    format: 'yyyy',
-                    minViewMode: 'years',
-                    viewMode: 'years',
-                    autoclose: true
-                });
-
-                $("input[id^='month_']").datepicker({
-                    format: 'M',
-                    minViewMode: 'months',
-                    viewMode: 'months',
-                    autoclose: true
-                });
-
-            }
-
-            function updateRowIndexes() {
-                $("#lesson_learned_block .lesson_learned_row").each(function(index) {
-                    let newIndex = index + 1;
-                    let srNoValue = "SN-" + String(newIndex).padStart(4, '0');
-
-                    $(this).find("input, select, textarea").each(function() {
-                        const name = $(this).attr("name");
-                        const id = $(this).attr("id");
-
-                        if (name) {
-                            $(this).attr("name", name.replace(/\[\d+\]/, "[" + newIndex + "]"));
-                        }
-                        if (id) {
-                            $(this).attr("id", id.replace(/\d+$/, newIndex));
-                        }
-                    });
-
-                    $(this).find(".sr-no").val(srNoValue);
-                });
-
-                initializeFlatpickr();
-                $('.single-select').select2();
-            }
-
-
-            // $("#dynamic-add-more").on("click", function() {
-            //     let rowCount = $("#lesson_learned_block .lesson_learned_row").length;
-            //     if (rowCount >= 200) {
-            //         Swal.fire({
-            //             icon: "error",
-            //             title: "Sorry!",
-            //             text: "Maximum 200 records only."
-            //         });
-            //         return;
-            //     }
-
-            //     let newRow = $(".lesson_learned_row").first().clone();
-            //     newRow.find("input, select, textarea").each(function() {
-            //         let oldName = $(this).attr("name");
-            //         let oldId = $(this).attr("id");
-
-            //         if (oldName) {
-            //             let newName = oldName.replace(/\[\d+\]/, "[" + (rowCount + 1) +
-            //                 "]");
-            //             $(this).attr("name", newName);
-            //         }
-            //         if (oldId) {
-            //             let newId = oldId.replace(/\d+$/, rowCount + 1);
-            //             $(this).attr("id", newId);
-            //         }
-            //         if ($(this).is("input[type='text'], textarea")) {
-            //             $(this).val("");
-            //         }
-            //         if ($(this).is("select")) {
-            //             $(this).val("").trigger("change");
-            //         }
-            //     });
-            //     newRow.find("input[name*='[serial_number]']").val("SN-" + String(rowCount + 1)
-            //         .padStart(4,
-            //             '0'));
-
-            //     newRow.find(".invalid-feedback").remove();
-            //     newRow.find(".is-invalid").removeClass("is-invalid");
-            //     newRow.find(".select2-container").remove();
-            //     newRow.find(".single-select").select2();
-
-            //     $("#lesson_learned_block").append(newRow);
-            //     newRow.find("input[name*='[spm]']").rules("add", {
-            //         number: true,
-            //         range: [0, 1000],
-            //         messages: {
-            //             number: "Only numeric values are allowed.",
-            //             range: "Value must be between 0 and 1000 µg/m³."
-            //         }
-            //     });
-
-            //     newRow.find("select[name$='[department_id]']").rules("add", {
-            //         required: true,
-            //         messages: {
-            //             required: "Please select a department."
-            //         }
-            //     });
-            //     newRow.find("select[name$='[unit_id]']").rules("add", {
-            //         required: true,
-            //         messages: {
-            //             required: "Please select a unit."
-            //         }
-            //     });
-            //     newRow.find("input[name$='[year]']").rules("add", {
-            //         required: true,
-            //         number: true,
-            //         messages: {
-            //             required: "Please enter the year."
-            //         }
-            //     });
-            //     newRow.find("input[name$='[month]']").rules("add", {
-            //         required: true,
-            //         messages: {
-            //             required: "Please select a month."
-            //         }
-            //     });
-            //     newRow.find("input[name$='[mark]']").rules("add", {
-            //         required: true,
-            //         number: true,
-            //         messages: {
-            //             required: "Please enter the mark."
-            //         }
-            //     });
-            //     newRow.find("input[name$='[no_of_audit]']").rules("add", {
-            //         required: true,
-            //         number: true,
-            //         messages: {
-            //             required: "Please enter the number of audits."
-            //         }
-            //     });
-            //     newRow.find("input[name$='[total_marks]']").rules("add", {
-            //         required: true,
-            //         number: true,
-            //         messages: {
-            //             required: "Please enter the total marks."
-            //         }
-            //     });
-            //     newRow.find("input[name$='[marks_obtained]']").rules("add", {
-            //         required: true,
-            //         number: true,
-            //         messages: {
-            //             required: "Please enter the marks obtained."
-            //         }
-            //     });
-            //     newRow.find("input[name$='[percentage]']").rules("add", {
-            //         required: true,
-            //         number: true,
-            //         messages: {
-            //             required: "Please enter the percentage."
-            //         }
-            //     });
-
-            //     // ✅ Also add the SPM field validation (if needed)
-            //     newRow.find("input[name$='[spm]']").rules("add", {
-            //         number: true,
-            //         range: [0, 1000],
-            //         messages: {
-            //             number: "Only numeric values are allowed.",
-            //             range: "Value must be between 0 and 1000 µg/m³."
-            //         }
-            //     });
-
-            //     initializeFlatpickr();
-            //     $('.single-select').select2();
-            // });
-            $("#dynamic-add-more").on("click", function() {
-                let rowCount = $("#lesson_learned_block .lesson_learned_row").length;
-                if (rowCount >= 200) {
-                    Swal.fire({
-                        icon: "error",
-                        title: "Sorry!",
-                        text: "Maximum 200 records only."
-                    });
-                    return;
-                }
-
-                // Clone first row
-                let newRow = $(".lesson_learned_row").first().clone();
-                let newRowNumber = rowCount + 1;
-
-                newRow.find("input, select, textarea, button").each(function() {
-                    let oldName = $(this).attr("name");
-                    let oldId = $(this).attr("id");
-
-                    // Update name
-                    if (oldName) {
-                        let newName = oldName.replace(/\[\d+\]/, "[" + newRowNumber + "]");
-                        $(this).attr("name", newName);
-                    }
-
-                    // Update id
-                    if (oldId) {
-                        let newId = oldId.replace(/_\d+$/, "_" + newRowNumber);
-                        $(this).attr("id", newId);
-                    }
-
-                    // Clear input/select values
-                    if ($(this).is("input[type='text'], textarea, input[type='number']")) {
-                        $(this).val("");
-                    }
-                    if ($(this).is("select")) {
-                        $(this).val("").trigger("change");
-                    }
-                });
-
-                // Update Serial Number
-                newRow.find("input[name*='[serial_number]']").val("SN-" + String(newRowNumber).padStart(4,
-                    '0'));
-
-                // Clear old validation error messages
-                newRow.find(".invalid-feedback").remove();
-                newRow.find(".is-invalid").removeClass("is-invalid");
-
-                // Reset Select2 (if used)
-                newRow.find(".select2-container").remove();
-                newRow.find(".single-select").select2();
-
-                // Append the new row
-                $("#lesson_learned_block").append(newRow);
-
-                // Only add validation rules for new row fields
-                newRow.find("input[name$='[spm]']").rules("add", {
-                    number: true,
-                    range: [0, 1000],
-                    messages: {
-                        number: "Only numeric values are allowed.",
-                        range: "Value must be between 0 and 1000 µg/m³."
-                    }
-                });
-                newRow.find("select[name$='[department_id]']").rules("add", {
-                    required: true,
-                    messages: {
-                        required: "Please select a department."
-                    }
-                });
-                newRow.find("select[name$='[unit_id]']").rules("add", {
-                    required: true,
-                    messages: {
-                        required: "Please select a unit."
-                    }
-                });
-                newRow.find("input[name$='[year]']").rules("add", {
-                    required: true,
-                    number: true,
-                    messages: {
-                        required: "Please enter the year.",
-                        number: "Only numbers are allowed."
-                    }
-                });
-                newRow.find("input[name$='[month]']").rules("add", {
-                    required: true,
-                    messages: {
-                        required: "Please select a month."
-                    }
-                });
-                newRow.find("input[name$='[mark]']").rules("add", {
-                    required: true,
-                    number: true,
-                    messages: {
-                        required: "Please enter the mark.",
-                        number: "Only numbers are allowed."
-                    }
-                });
-                newRow.find("input[name$='[no_of_audit]']").rules("add", {
-                    required: true,
-                    number: true,
-                    messages: {
-                        required: "Please enter the number of audits.",
-                        number: "Only numbers are allowed."
-                    }
-                });
-                newRow.find("input[name$='[total_marks]']").rules("add", {
-                    required: true,
-                    number: true,
-                    messages: {
-                        required: "Please enter the total marks.",
-                        number: "Only numbers are allowed."
-                    }
-                });
-                newRow.find("input[name$='[marks_obtained]']").rules("add", {
-                    required: true,
-                    number: true,
-                    messages: {
-                        required: "Please enter the marks obtained.",
-                        number: "Only numbers are allowed."
-                    }
-                });
-                newRow.find("input[name$='[percentage]']").rules("add", {
-                    required: true,
-                    number: true,
-                    messages: {
-                        required: "Please enter the percentage.",
-                        number: "Only numbers are allowed."
-                    }
-                });
-
-                // Reinitialize flatpickr if you have date fields
-                initializeFlatpickr();
-            });
-
-
-            $(function() {
-            $.validator.addMethod("noSpaces", function(value, element) {
-                return this.optional(element) || value.trim().length > 0;
-            }, "This field cannot contain only spaces");
-
-            $('#auditAnalysisAdd').validate({
-                rules: {
-                    audit_analysis: {
-                        required: true,
-                    },
-                    'audit[1][department_id]': {
-                        required: true,
-                    },
-                    'audit[1][unit_id]': {
-                        required: true,
-                    },
-                    'audit[1][year]': {
-                        required: true,
-                    },
-                    'audit[1][month]': {
-                        required: true,
-                    },
-                    'audit[1][mark]': {
-                        required: true,
-                    },
-                    'audit[1][no_of_audit]': {
-                        required: true,
-                    },
-                    'audit[1][total_marks]': {
-                        required: true,
-                    },
-                    'audit[1][marks_obtained]': {
-                        required: true,
-                    },
-                    'audit[1][percentage]': {
-                        required: true,
-                    },
-                },
-                messages: {
-                    audit_analysis: {
-                        required: "Audit Analysis Report is required",
-                    },
-                    'audit[1][department_id]': {
-                        required: "Department is required",
-                    },
-                    'audit[1][unit_id]': {
-                        required: "Unit is required",
-                    },
-                    'audit[1][year]': {
-                        required: "Year is required",
-                    },
-                    'audit[1][month]': {
-                        required: "Month is required",
-                    },
-                    'audit[1][mark]': {
-                        required: "Mark is required",
-                    },
-                    'audit[1][no_of_audit]': {
-                        required: "Total No's of Audit is required",
-                    },
-                    'audit[1][total_marks]': {
-                        required: "Total Marks is required",
-                    },
-                    'audit[1][marks_obtained]': {
-                        required: "Total Marks Obtained is required",
-                    },
-                    'audit[1][percentage]': {
-                        required: " % is required",
-                    },
-
-                },
-                errorElement: 'span',
-                errorPlacement: function(error, element) {
-                    error.addClass('invalid-feedback');
-                    element.closest('.form-input').append(error);
-                },
-                highlight: function(element, errorClass, validClass) {
-                    $(element).addClass('is-invalid');
-                },
-                unhighlight: function(element, errorClass, validClass) {
-                    $(element).removeClass('is-invalid');
-                },
-                submitHandler: function(form) {
-                    form.submit();
-
-                },
-                invalidHandler: function(event, validator) {
-                    var errors = validator.numberOfInvalids();
-                }
-            });
-        });
-
-            $(document).on("click", ".removerowdata", function() {
-                let rowCount = $("#lesson_learned_block .lesson_learned_row").length;
-                if (rowCount > 1) {
-                    $(this).closest(".lesson_learned_row").remove();
-                    updateRowIndexes();
-                } else {
-                    Swal.fire({
-                        icon: "error",
-                        title: "Sorry!",
-                        text: "At least one record is required."
-                    });
-                }
-            });
-
-            initializeFlatpickr();
-        });
-    </script> --}}
 @endpush

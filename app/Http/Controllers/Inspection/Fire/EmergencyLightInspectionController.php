@@ -766,7 +766,7 @@ class EmergencyLightInspectionController extends Controller
                 ]);
             }
             $sheet->mergeCells("G{$currentRow}:M" . ($currentRow + 2));
-            $sheet->setCellValue("G{$currentRow}", "EMERGENCY LIGHT INSPECTION CHECKLIST PN INTERNATIONAL PVT LTD");
+            $sheet->setCellValue("G{$currentRow}", "EMERGENCY LIGHT INSPECTION CHECKLIST");
             $sheet->getStyle("G{$currentRow}")->applyFromArray([
                 'font' => ['bold' => true, 'size' => 14],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
@@ -1112,7 +1112,7 @@ class EmergencyLightInspectionController extends Controller
                     ]);
                 }
                 $sheet->mergeCells("G{$currentRow}:M" . ($currentRow + 2));
-                $sheet->setCellValue("G{$currentRow}", "EMERGENCY LIGHT INSPECTION CHECKLIST PN INTERNATIONAL PVT LTD");
+                $sheet->setCellValue("G{$currentRow}", "EMERGENCY LIGHT INSPECTION CHECKLIST");
                 $sheet->getStyle("G{$currentRow}:M{$currentRow}")->applyFromArray([
                     'font' => ['bold' => true, 'size' => 14],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],

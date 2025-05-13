@@ -3,6 +3,7 @@
 namespace App\Models\Inspection\audit;
 
 use App\Scopes\TrashScope;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 
@@ -50,7 +51,19 @@ class InterUnitAudit extends Model
                 $query->orWhereRaw('masters_unit.unit_name LIKE "%' . $search . '%"');
             });
         }
-
+        if ($request->has('from_date') && !empty($request->from_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_audit_inter_unit.created_at', '>=', $startDate);
+        }
+        if ($request->has('to_date') && !empty($request->to_date)) {
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_audit_inter_unit.created_at', '<=', $endDate);
+        }
+        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->whereBetween('inspection_audit_inter_unit.created_at', [$startDate, $endDate]);
+        }
         if (isset($request->audit_id) && $request->audit_id) {
             $query = $query->where('inspection_audit_inter_unit.audit_id', 'LIKE', '%' . $request->audit_id . '%');
         }
@@ -126,6 +139,20 @@ class InterUnitAudit extends Model
         }
         if (isset($request->category_id) && $request->category_id) {
             $query = $query->where('inspection_audit_assessment.category_id', 'LIKE', '%' . $request->category_id . '%');
+        }
+
+         if ($request->has('from_date') && !empty($request->from_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_audit_inter_unit.created_at', '>=', $startDate);
+        }
+        if ($request->has('to_date') && !empty($request->to_date)) {
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_audit_inter_unit.created_at', '<=', $endDate);
+        }
+        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->whereBetween('inspection_audit_inter_unit.created_at', [$startDate, $endDate]);
         }
 
         if (isset($request->order) && count($request->order) > 0) {

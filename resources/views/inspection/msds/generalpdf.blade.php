@@ -178,15 +178,36 @@
             </td>
         </tr>
         <tr>
+            <td width="50%" style="padding:5px;"><b>Location</b></td>
+            <td width="2%" style="padding:5px;">:</td>
+            <td width="48%" style="padding:5px;">
+                {{ isset($msds->location_id) ? getLocationname($msds->location_id) : '' }}
+            </td>
+        </tr>
+        <tr>
+            <td width="50%" style="padding:5px;"><b>Unit</b></td>
+            <td width="2%" style="padding:5px;">:</td>
+            <td width="48%" style="padding:5px;">
+                {{ isset($msds->unit_id) ? getUnitname($msds->unit_id) : '' }}
+            </td>
+        </tr>
+        <tr>
+            <td width="50%" style="padding:5px;"><b>Department</b></td>
+            <td width="2%" style="padding:5px;">:</td>
+            <td width="48%" style="padding:5px;">
+                {{ isset($msds->department_id) ? getDepartment($msds->department_id) : '' }}
+            </td>
+        </tr>
+        <tr>
             <td width="50%" style="padding:5px;"><b>Created By</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
-                {{ getUsername(isset($msdsDetails->created_by) ? $msdsDetails->created_by : '') }}</td>
+                {{ getUsername(isset($msds->created_by) ? $msds->created_by : '') }}</td>
         </tr>
         <tr>
             <td width="50%" style="padding:5px;"><b>Created Date</b></td>
             <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;"> {{ displayDateformat($msdsDetails->created_at) }}</td>
+            <td width="48%" style="padding:5px;"> {{ displayDateformat($msds->created_at) }}</td>
         </tr>
     </table>
 
@@ -216,6 +237,15 @@
                 <th rowspan="2" style="border: 2px solid black; padding: 8px; background-color: #ddd;">
                     NAME OF CHEMICAL
                 </th>
+                <th rowspan="2" style="border: 2px solid black; padding: 8px; background-color: #ddd;">
+                    STORAGE CAPACITY
+                </th>
+                <th rowspan="2" style="border: 2px solid black; padding: 8px; background-color: #ddd;">
+                    NPFA RATING TYPE
+                </th>
+                <th rowspan="2" style="border: 2px solid black; padding: 8px; background-color: #ddd;">
+                    NPFA RATING
+                </th>
             </tr>
             <tr>
                 <th style="border: 2px solid black; padding: 8px; background-color: #eee; font-weight: bold;">
@@ -227,6 +257,7 @@
             </tr>
         </thead>
         <tbody>
+            @foreach ($inspection_details as $msdsDetails)
                 <tr>
                     <td style="border: 2px solid black; padding: 8px;">
                         {{ isset($msdsDetails->serial_number) ? $msdsDetails->serial_number : '' }}
@@ -235,7 +266,16 @@
                         {{ isset($msdsDetails->item_code) ? $msdsDetails->item_code : '' }}
                     </td>
                     <td style="border: 2px solid black; padding: 8px;">
-                        {{ isset($msdsDetails->name_of_chemical) ? $msdsDetails->name_of_chemical : '' }}
+                        {{ isset($msdsDetails->name_of_chemical) ? ($msdsDetails->name_of_chemical) : '' }}
+                    </td>
+                    <td style="border: 2px solid black; padding: 8px;">
+                        {{ isset($msdsDetails->storage_capacity) ? ($msdsDetails->storage_capacity) : '' }}
+                    </td>
+                    <td style="border: 2px solid black; padding: 8px;">
+                        {{ isset($msdsDetails->nfa_rating) ? getNFARating($msdsDetails->nfa_rating) : '' }}
+                    </td>
+                    <td style="border: 2px solid black; padding: 8px;">
+                        {{ isset($msdsDetails->nfa_rating_value) ? ($msdsDetails->nfa_rating_value) : '' }}
                     </td>
                     <td style="border: 2px solid black; padding: 8px; text-align: center;">
                         @if ($msdsDetails->msds_availability_status == YES)
@@ -252,6 +292,7 @@
                         {{ isset($msdsDetails->remark) ? $msdsDetails->remark : '' }}
                     </td>
                 </tr>
+            @endforeach
         </tbody>
     </table>
     <br>

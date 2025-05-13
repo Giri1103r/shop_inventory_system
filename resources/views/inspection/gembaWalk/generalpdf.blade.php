@@ -170,7 +170,7 @@
                 <td width="50%" style="padding:5px;"><b>Document No</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
-                    {{ ($document_no->doc_no ?? '') }}
+                    {{ $document_no->doc_no ?? '' }}
                 </td>
             </tr>
             <tr>
@@ -184,7 +184,7 @@
                 <td width="50%" style="padding:5px;"><b>Revision Date</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
-                    {{ ($document_no->rev_dt ?? '') }}
+                    {{ $document_no->rev_dt ?? '' }}
                 </td>
             </tr>
             <tr>
@@ -261,7 +261,8 @@
                                 <td>{{ $gembaWalk->hazard ?? 'N/A' }}</td>
                                 <td>
                                     @if (!empty($gembaWalk->file_path))
-                                        <img src="{{ public_path($gembaWalk->file_path) }}" style="width: 100px; height: auto;">
+                                        <img src="{{ public_path($gembaWalk->file_path) }}"
+                                            style="width: 100px; height: auto;">
                                     @else
                                         N/A
                                     @endif
@@ -332,12 +333,12 @@
             @endif
             @if (isset($gembaWalk_ehs_capa_details->capa))
                 <tr>
-                    <td width="50%" style="padding:5px;"><b>CAPA</b></td>
+                    <td width="50%" style="padding:5px;"><b>Whether the Inspection has been passed Without the CAPA?</b></td>
                     <td width="2%" style="padding:5px;">:</td>
                     <td width="48%" style="padding:5px;">
                         @if ($gembaWalk_ehs_capa_details->capa == 1)
                             Yes
-                        @elseif ($gembaWalk_ehs_capa_details->capa == 0)
+                        @elseif ($gembaWalk_ehs_capa_details->capa == 2)
                             No
                         @else
                             {{ $gembaWalk_ehs_capa_details->capa }}
@@ -346,7 +347,7 @@
                 </tr>
             @else
                 <tr>
-                    <td width="50%" style="padding:5px;"><b>CAPA</b></td>
+                    <td width="50%" style="padding:5px;"><b>Whether the Inspection has been passed Without the CAPA?</b></td>
                     <td width="2%" style="padding:5px;">:</td>
                     <td width="48%" style="padding:5px;">N/A</td>
                 </tr>
@@ -361,7 +362,7 @@
                 <tr>
                     <td width="50%" style="padding:5px;"><b>Remarks</b></td>
                     <td width="2%" style="padding:5px;">:</td>
-                    <td width="48%" style="padding:5px;">N/A</td> <!-- Displaying 'N/A' if Remarks is not set -->
+                    <td width="48%" style="padding:5px;">-</td> <!-- Displaying 'N/A' if Remarks is not set -->
                 </tr>
             @endif
         </table>
@@ -403,12 +404,12 @@
                 @endif
                 @if (isset($gembaWalk_ehs_capa_details->capa))
                     <tr>
-                        <td width="50%" style="padding:5px;"><b>CAPA</b></td>
+                        <td width="50%" style="padding:5px;"><b>Whether the Inspection has been passed Without the CAPA?</b></td>
                         <td width="2%" style="padding:5px;">:</td>
                         <td width="48%" style="padding:5px;">
                             @if ($gembaWalk_ehs_capa_details->capa == 1)
                                 Yes
-                            @elseif ($gembaWalk_ehs_capa_details->capa == 0)
+                            @elseif ($gembaWalk_ehs_capa_details->capa == 2)
                                 No
                             @else
                                 {{ $gembaWalk_ehs_capa_details->capa }}
@@ -417,9 +418,9 @@
                     </tr>
                 @else
                     <tr>
-                        <td width="50%" style="padding:5px;"><b>CAPA</b></td>
+                        <td width="50%" style="padding:5px;"><b>Whether the Inspection has been passed Without the CAPA?</b></td>
                         <td width="2%" style="padding:5px;">:</td>
-                        <td width="48%" style="padding:5px;">N/A</td>
+                        <td width="48%" style="padding:5px;">-</td>
                     </tr>
                 @endif
 
@@ -433,7 +434,7 @@
                     <tr>
                         <td width="50%" style="padding:5px;"><b>Remarks</b></td>
                         <td width="2%" style="padding:5px;">:</td>
-                        <td width="48%" style="padding:5px;">N/A</td>
+                        <td width="48%" style="padding:5px;">-</td>
                         <!-- Displaying 'N/A' if Remarks is not set -->
                     </tr>
                 @endif
@@ -471,7 +472,7 @@
                             {{ Displaydateformat($gembaWalk_ehs_floor_manager_details->created_at) }}</td>
                     </tr>
                 @endif
-                @if (isset($gembaWalk_ehs_floor_manager_details->capa))
+                {{-- @if (isset($gembaWalk_ehs_floor_manager_details->capa))
                     <tr>
                         <td width="50%" style="padding:5px;"><b>CAPA</b></td>
                         <td width="2%" style="padding:5px;">:</td>
@@ -483,7 +484,7 @@
                         <td width="2%" style="padding:5px;">:</td>
                         <td width="48%" style="padding:5px;">N/A</td>
                     </tr>
-                @endif
+                @endif --}}
                 @if (isset($gembaWalk_ehs_floor_manager_details->remarks))
                     <tr>
                         <td width="50%" style="padding:5px;"><b>Remarks</b></td>
@@ -495,7 +496,7 @@
                     <tr>
                         <td width="50%" style="padding:5px;"><b>Remarks</b></td>
                         <td width="2%" style="padding:5px;">:</td>
-                        <td width="48%" style="padding:5px;">N/A</td>
+                        <td width="48%" style="padding:5px;">-</td>
                     </tr>
                 @endif
             </table>
@@ -535,12 +536,12 @@
                 @endif
                 @if (isset($gembaWalk_ehs_capa_details->capa))
                     <tr>
-                        <td width="50%" style="padding:5px;"><b>CAPA</b></td>
+                        <td width="50%" style="padding:5px;"><b>Whether the Inspection has been passed Without the CAPA?</b></td>
                         <td width="2%" style="padding:5px;">:</td>
                         <td width="48%" style="padding:5px;">
                             @if ($gembaWalk_ehs_capa_details->capa == 1)
                                 Yes
-                            @elseif ($gembaWalk_ehs_capa_details->capa == 0)
+                            @elseif ($gembaWalk_ehs_capa_details->capa == 2)
                                 No
                             @else
                                 {{ $gembaWalk_ehs_capa_details->capa }}
@@ -549,9 +550,9 @@
                     </tr>
                 @else
                     <tr>
-                        <td width="50%" style="padding:5px;"><b>CAPA</b></td>
+                        <td width="50%" style="padding:5px;"><b>Whether the Inspection has been passed Without the CAPA?</b></td>
                         <td width="2%" style="padding:5px;">:</td>
-                        <td width="48%" style="padding:5px;">N/A</td>
+                        <td width="48%" style="padding:5px;">Yes</td>
                     </tr>
                 @endif
                 @if (isset($gembaWalk_ehs_capa_details->remarks))
@@ -564,7 +565,7 @@
                     <tr>
                         <td width="50%" style="padding:5px;"><b>Remarks</b></td>
                         <td width="2%" style="padding:5px;">:</td>
-                        <td width="48%" style="padding:5px;">N/A</td>
+                        <td width="48%" style="padding:5px;">-</td>
                         <!-- Displaying 'N/A' if Remarks is not set -->
                     </tr>
                 @endif
@@ -602,7 +603,7 @@
                                 {{ Displaydateformat($gembaWalk_ehs_floor_manager_details->created_at) }}</td>
                         </tr>
                     @endif
-                    @if (isset($gembaWalk_ehs_floor_manager_details->capa))
+                    {{-- @if (isset($gembaWalk_ehs_floor_manager_details->capa))
                         <tr>
                             <td width="50%" style="padding:5px;"><b>CAPA</b></td>
                             <td width="2%" style="padding:5px;">:</td>
@@ -615,7 +616,7 @@
                             <td width="2%" style="padding:5px;">:</td>
                             <td width="48%" style="padding:5px;">N/A</td>
                         </tr>
-                    @endif
+                    @endif --}}
                     @if (isset($gembaWalk_ehs_floor_manager_details->remarks))
                         <tr>
                             <td width="50%" style="padding:5px;"><b>Remarks</b></td>
@@ -628,7 +629,7 @@
                         <tr>
                             <td width="50%" style="padding:5px;"><b>Remarks</b></td>
                             <td width="2%" style="padding:5px;">:</td>
-                            <td width="48%" style="padding:5px;">N/A</td>
+                            <td width="48%" style="padding:5px;">-</td>
                         </tr>
                     @endif
                 </table>
@@ -678,7 +679,7 @@
                     <tr>
                         <td width="50%" style="padding:5px;"><b>Remarks</b></td>
                         <td width="2%" style="padding:5px;">:</td>
-                        <td width="48%" style="padding:5px;">N/A</td>
+                        <td width="48%" style="padding:5px;">-</td>
                     </tr>
                 @endif
                 {{-- <tr>

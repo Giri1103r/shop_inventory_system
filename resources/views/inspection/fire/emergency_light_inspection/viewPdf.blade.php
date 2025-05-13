@@ -169,8 +169,6 @@
             <th colspan="4" style="border:1px solid black;">
                 <h3>
                     <span><b>EMERGENCY LIGHT INSPECTION CHECKLIST</b></span>
-                    <br>
-                    <span><b>PN International Pvt Ltd. </b></span>
                 </h3>
             </th>
 

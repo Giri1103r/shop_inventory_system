@@ -94,8 +94,8 @@ class FireMockDrillInspectionController extends Controller
                         ->addColumn('inspection_date', function ($row) {
                             return Displaydateformat($row->inspection_date);
                         })
-                        ->addColumn('created_by', function ($row) {
-                            return getUsername($row->created_by);
+                        ->addColumn('inspection_created_by', function ($row) {
+                            return getUsername($row->inspection_created_by);
                         })
                         ->addColumn('inspection_status', function ($row) {
                             $text = '';
@@ -796,7 +796,7 @@ class FireMockDrillInspectionController extends Controller
                 ]);
 
                 $sheet->mergeCells("C{$titleRow}:J" . ($titleRow + 2));
-                $sheet->setCellValue("C{$titleRow}", "MOCK DRILL OBSERVATION FOLLOW UP SHEET PN INTERNATIONAL PVT. LTD.");
+                $sheet->setCellValue("C{$titleRow}", "MOCK DRILL OBSERVATION FOLLOW UP SHEET");
                 $sheet->getStyle("C{$titleRow}:J" . ($titleRow + 2))->applyFromArray([
                     'font' => ['bold' => true, 'size' => 14],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
@@ -1112,7 +1112,7 @@ class FireMockDrillInspectionController extends Controller
             ]);
 
             $sheet->mergeCells("C1:J3");
-            $sheet->setCellValue("C1", "MOCK DRILL OBSERVATION FOLLOW UP SHEET PN INTERNATIONAL PVT. LTD.");
+            $sheet->setCellValue("C1", "MOCK DRILL OBSERVATION FOLLOW UP SHEET");
             $sheet->getStyle("C1:J3")->applyFromArray([
                 'font' => ['bold' => true, 'size' => 14],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],

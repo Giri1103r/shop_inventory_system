@@ -21,7 +21,7 @@ use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\RichText\RichText;
 use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 use App\Models\Inspection\InspectionStaticDocno;
-use App\Models\Inspection\ohc\OHCHygieneCleaningChecklist;
+use App\Models\Inspection\Ohc\OHCHygieneCleaningChecklist;
 use Illuminate\Support\Facades\Mail;
 use Mpdf\Tag\Dd;
 
@@ -366,7 +366,7 @@ class OHCHygieneCleaningChecklistController extends Controller
                 $drawing->setWorksheet($sheet);
             }
 
-            $sheet->setCellValue("G1", "DAILY OHC HYGIENE CLEANING CHECKLIST - PN INTERNATIONAL PNT. LTD.");
+            $sheet->setCellValue("G1", "DAILY OHC HYGIENE CLEANING CHECKLIST");
             $sheet->getStyle("G1")->applyFromArray([
                 'font' => ['bold' => true, 'size' => 14],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
@@ -506,7 +506,7 @@ class OHCHygieneCleaningChecklistController extends Controller
                 $drawing->setWorksheet($sheet);
             }
 
-            $sheet->setCellValue("G1", "DAILY OHC HYGIENE CLEANING CHECKLIST - PN INTERNATIONAL PNT. LTD.");
+            $sheet->setCellValue("G1", "DAILY OHC HYGIENE CLEANING CHECKLIST");
             $sheet->getStyle("G1")->applyFromArray([
                 'font' => ['bold' => true, 'size' => 14],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],

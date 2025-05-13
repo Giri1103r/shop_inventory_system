@@ -3,6 +3,7 @@
 namespace App\Models\Inspection\Safety;
 
 use App\Scopes\TrashScope;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 
@@ -38,7 +39,8 @@ class OHSPlantSummaryReport extends Model
         $query = $this->select(
             'inspection_safety_ohs_report.*',
             'inspection_static_docno.*',
-            'inspection_safety_ohs_report.id as inspection_id'
+            'inspection_safety_ohs_report.id as inspection_id',
+             'inspection_safety_ohs_report.created_at as inspection_created_at'
         )
             ->leftJoin(
                 'inspection_static_docno',
@@ -57,7 +59,19 @@ class OHSPlantSummaryReport extends Model
             $query = $query->where(function ($query) use ($search) {});
         }
 
-
+        if ($request->has('from_date') && !empty($request->from_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_safety_ohs_report.created_at', '>=', $startDate);
+        }
+        if ($request->has('to_date') && !empty($request->to_date)) {
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_safety_ohs_report.created_at', '<=', $endDate);
+        }
+        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->whereBetween('inspection_safety_ohs_report.created_at', [$startDate, $endDate]);
+        }
         if (isset($request->inspection_date) && $request->inspection_date) {
             $query = $query->whereDate('inspection_safety_ohs_report.inspection_date', '=', DBdateformat($request->inspection_date));
         }
@@ -179,7 +193,19 @@ class OHSPlantSummaryReport extends Model
             $search = $request->search['value'];
             $query = $query->where(function ($query) use ($search) {});
         }
-
+  if ($request->has('from_date') && !empty($request->from_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_safety_ohs_report.created_at', '>=', $startDate);
+        }
+        if ($request->has('to_date') && !empty($request->to_date)) {
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_safety_ohs_report.created_at', '<=', $endDate);
+        }
+        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->whereBetween('inspection_safety_ohs_report.created_at', [$startDate, $endDate]);
+        }
 
         if (isset($request->inspection_date) && $request->inspection_date) {
             $query = $query->whereDate('inspection_safety_ohs_report.issue_date', '=', DBdateformat($request->inspection_date));

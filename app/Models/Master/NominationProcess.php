@@ -115,62 +115,6 @@ class NominationProcess extends Model
         return $datas;
     }
 
-    // public function storeOrUpdate()
-    // {
-    //     $request = request();
-    //     $employees = $request->input('employee');
-    //     if (!empty($employees) && is_array($employees)) {
-    //         foreach ($employees as $employeeData) {
-    //             $topic_id = DB::table('training_masters_topic')->select('id')
-    //                 ->where('topic_name', $employeeData['last_training_topic'])
-    //                 ->first();
-
-
-    //             $lastTrainingAttendedOn = ($employeeData['last_training_attended_on'] === 'No data' || empty($employeeData['last_training_attended_on']))
-    //                 ? null
-    //                 : DBdateformat($employeeData['last_training_attended_on']);
-
-    //             $lastTrainingTopic = ($employeeData['last_training_topic'] === 'No data') ? null : $employeeData['last_training_topic'];
-    //             if (!empty($employeeData)) {
-    //                 if (empty($employeeData['id'])) {
-    //                     $insertArray = [
-    //                         'training_schedule_id' => decryptId($request->training_schedule_id),
-    //                         'emp_worker' => $employeeData['emp_worker'],
-    //                         'employee_id' => $employeeData['emp_id'],
-    //                         'emp_name' => $employeeData['emp_name'],
-    //                         'email' => $employeeData['email'],
-    //                         'department_id' => $employeeData['department_id'],
-    //                         'employee_type' => $employeeData['employee_type'],
-    //                         'last_training_attended_on' => $lastTrainingAttendedOn,
-    //                         'topic_id' => $topic_id->id ?? null,
-    //                         'created_by' => Auth::id(),
-    //                     ];
-    //                     $this->create($insertArray);
-    //                 } else {
-    //                     $trainingScheduleId = decryptId($request->training_schedule_id);
-    //                     dd($employeeData, $trainingScheduleId, $employeeData['id']);
-    //                     $conditions = [
-    //                         'id' => $employeeData['id'],
-    //                         'training_schedule_id' => $trainingScheduleId,
-    //                     ];
-
-    //                     $updateArray = [
-    //                         'employee_id' => $employeeData['emp_id'],
-    //                         'emp_worker' => $employeeData['emp_worker'],
-    //                         'emp_name' => $employeeData['emp_name'],
-    //                         'email' => $employeeData['email'],
-    //                         'department_id' => $employeeData['department_id'],
-    //                         'employee_type' => $employeeData['employee_type'],
-    //                         'last_training_attended_on' => $lastTrainingAttendedOn ?? null,
-    //                         'topic_id' => $topic_id->id ?? null,
-    //                         'updated_by' => Auth::id(),
-    //                     ];
-    //                     $this->where($conditions)->update($updateArray);
-    //                 }
-    //             }
-    //         }
-    //     }
-    // }
     public function storeOrUpdate()
     {
         $request = request();

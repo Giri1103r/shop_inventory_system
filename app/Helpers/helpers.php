@@ -69,6 +69,8 @@ use App\Models\Inspection\Ohc\MedicineRequistionFdoChecklist;
 use App\Models\Inspection\Safety\MonthlyPhysicalEquipmentList;
 use App\Models\Inspection\Fire\EmergencyLightInspectionDetails;
 use App\Models\Inspection\Fire\MonthlyPhysicalInspectionFileUpload;
+use App\Models\Inspection\MSDS\Master\Chemical;
+use App\Models\Inspection\MSDS\Master\NFARating;
 use App\Models\Inspection\Safety\SafetyWalkObservationDetails;
 use App\Models\Master\PpeStockinventory;
 
@@ -2906,6 +2908,26 @@ if (!function_exists('getValveTypeName')) {
         $data = IsolatingValveType::where('id', $id)->first();
         if ($data) {
             return $data->name;
+        }
+        return null;
+    }
+}
+if (!function_exists('getNFARating')) {
+    function getNFARating($id)
+    {
+        $data = NFARating::where('id', $id)->first();
+        if ($data) {
+            return $data->nfa_rating;
+        }
+        return null;
+    }
+}
+if (!function_exists('getChemicalName')) {
+    function getChemicalName($id)
+    {
+        $data = Chemical::where('id', $id)->first();
+        if ($data) {
+            return $data->chemical;
         }
         return null;
     }

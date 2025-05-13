@@ -43,7 +43,6 @@ class TypeofWorkChecklist extends Model
         $request = request();
         $search = '';
         $query = $this->select('ptw_masters_safe_work.*');
-        // dd($query);
         $org_total =  $query;
         $org_total_counts = $org_total->count();
 
@@ -94,451 +93,391 @@ class TypeofWorkChecklist extends Model
             ->where('id', '!=', $id)
             ->get();
     }
-
-    public function store1($id)
+    public function storeProtectiveEquipment($id)
     {
         $request = request();
-        if (isset($request->protective['protective_check'])) {
-            foreach ($request->protective['protective_check'] as $type => $checkedItems) {
-                foreach ($checkedItems as $checked => $value) {
+        if (isset($request->protectiveequipment)) {
 
-                    $checkPoint = isset($request->protective['protective_equip'][$type][$checked])
-                        ? $request->protective['protective_equip'][$type][$checked]
-                        : null;
+            foreach ($request->protectiveequipment as $key => $record) {
+
+                $typeofwork_id = $id;
+                $type = 'type1';
+                $checked =  isset($record['left_check']) ?  $record['left_check'] : 0;
+                $check_points = $record['checklist_id'];
+                $default_enable = isset($record['right_check']) ?  $record['right_check'] : 0;;
+                $created_by =   Auth::id();
+
+                $data = [
+                    'typeofwork_id' => $typeofwork_id,
+                    'type' => $type,
+                    'checked' => $checked,
+                    'check_points' => $check_points,
+                    'default_enable' => $default_enable,
+                    'created_by' => $created_by,
+
+                ];
+                $this->create($data);
+            }
+        }
+        return true;
+    }
+    public function storeEquipmentInvolved($id)
+    {
+        $request = request();
+
+        if (isset($request->equipmentinvolved)) {
+
+            foreach ($request->equipmentinvolved as $key => $record) {
+
+                $typeofwork_id = $id;
+                $type = 'type2';
+                $checked =  isset($record['left_check']) ?  $record['left_check'] : 0;
+                $check_points = $record['checklist_id'];
+                $default_enable = isset($record['right_check']) ?  $record['right_check'] : 0;;
+                $created_by =   Auth::id();
 
 
-                    $defaultEnable = isset($request->protective['protectivequip_checklist'][$type][$checked])
-                        ? $request->protective['protectivequip_checklist'][$type][$checked]
-                        : 0;
+                $data = [
+                    'typeofwork_id' => $typeofwork_id,
+                    'type' => $type,
+                    'checked' => $checked,
+                    'check_points' => $check_points,
+                    'default_enable' => $default_enable,
+                    'created_by' => $created_by,
 
-                    $insert_array = [
-                        'typeofwork_id' => $id,
-                        'type' => $type,
-                        'checked' => $value,
-                        'check_points' => $checkPoint,
-                        'default_enable' => $defaultEnable,
-                        'created_by' => Auth::id(),
-                    ];
+                ];
+                $this->create($data);
+            }
+        }
+        return true;
+    }
 
-                    $this->create($insert_array);
+    public function storeManualList($id)
+    {
+        $request = request();
+
+        if (isset($request->manuallist)) {
+
+            foreach ($request->manuallist as $key => $record) {
+
+                $typeofwork_id = $id;
+                $type = 'type3';
+                $checked =  isset($record['left_check']) ?  $record['left_check'] : 0;
+                $check_points = $record['checklist_id'];
+                $default_enable = isset($record['right_check']) ?  $record['right_check'] : 0;;
+                $created_by =  Auth::id();
+
+                $data = [
+                    'typeofwork_id' => $typeofwork_id,
+                    'type' => $type,
+                    'checked' => $checked,
+                    'check_points' => $check_points,
+                    'default_enable' => $default_enable,
+                    'created_by' => $created_by,
+
+                ];
+
+                $this->create($data);
+            }
+        }
+
+        return true;
+    }
+    public function storeCheckList($id)
+    {
+        $request = request();
+
+        if (isset($request->checklist)) {
+
+            foreach ($request->checklist as $key => $record) {
+
+                $typeofwork_id = $id;
+                $type = 'type4';
+                $checked =  isset($record['left_check']) ?  $record['left_check'] : 0;
+                $check_points = $record['checklist_id'];
+                $default_enable = isset($record['right_check']) ?  $record['right_check'] : 0;;
+                $created_by =  Auth::id();
+
+
+                $data = [
+                    'typeofwork_id' => $typeofwork_id,
+                    'type' => $type,
+                    'checked' => $checked,
+                    'check_points' => $check_points,
+                    'default_enable' => $default_enable,
+                    'created_by' => $created_by,
+
+                ];
+                $this->create($data);
+            }
+        }
+
+
+        return true;
+    }
+    public function storeInstructionList($id)
+    {
+        $request = request();
+
+        if (isset($request->instructionList)) {
+
+            foreach ($request->instructionList as $key => $record) {
+
+                $typeofwork_id = $id;
+                $type = 'type5';
+                $checked =  isset($record['left_check']) ?  $record['left_check'] : 0;
+                $check_points = $record['checklist_id'];
+                $default_enable = isset($record['right_check']) ?  $record['right_check'] : 0;;
+                $created_by =  Auth::id();
+
+
+
+                $data = [
+                    'typeofwork_id' => $typeofwork_id,
+                    'type' => $type,
+                    'checked' => $checked,
+                    'check_points' => $check_points,
+                    'default_enable' => $default_enable,
+                    'created_by' => $created_by,
+
+                ];
+                $this->create($data);
+            }
+        }
+
+
+        return true;
+    }
+
+    public function updateProtectiveEquipment($id)
+    {
+        $request = request();
+
+        if (isset($request->protectiveequipment)) {
+
+            foreach ($request->protectiveequipment as $key => $record) {
+
+                $typeofwork_id = $id;
+                $type = 'type1';
+                $checked =  isset($record['left_check']) ?  $record['left_check'] : 0;
+                $check_points = $record['checklist_id'];
+                $default_enable = isset($record['right_check']) ?  $record['right_check'] : 0;;
+                $created_by =   $updated_by  = Auth::id();
+
+                $recordId =  $record['record_id'];
+
+                $data = [
+                    'typeofwork_id' => $typeofwork_id,
+                    'type' => $type,
+                    'checked' => $checked,
+                    'check_points' => $check_points,
+                    'default_enable' => $default_enable,
+
+                ];
+
+                if ($recordId != null && $recordId != '') {
+                    /**
+                     * Update query
+                     */
+
+                    $data['updated_by'] = $updated_by;
+                    $this->where('id', $recordId)->update($data);
+                } else {
+                    /**
+                     * Insert Query
+                     */
+                    $data['created_by'] = $created_by;
+                    $this->create($data);
+                }
+            }
+        }
+
+
+
+        return true;
+    }
+    public function updateEquipmentInvolved($id)
+    {
+        $request = request();
+
+        if (isset($request->equipmentinvolved)) {
+
+            foreach ($request->equipmentinvolved as $key => $record) {
+
+                $typeofwork_id = $id;
+                $type = 'type2';
+                $checked =  isset($record['left_check']) ?  $record['left_check'] : 0;
+                $check_points = $record['checklist_id'];
+                $default_enable = isset($record['right_check']) ?  $record['right_check'] : 0;;
+                $created_by =   $updated_by  = Auth::id();
+
+                $recordId =  $record['record_id'];
+
+                $data = [
+                    'typeofwork_id' => $typeofwork_id,
+                    'type' => $type,
+                    'checked' => $checked,
+                    'check_points' => $check_points,
+                    'default_enable' => $default_enable,
+
+                ];
+
+                if ($recordId != null && $recordId != '') {
+                    /**
+                     * Update query
+                     */
+
+                    $data['updated_by'] = $updated_by;
+                    $this->where('id', $recordId)->update($data);
+                } else {
+                    /**
+                     * Insert Query
+                     */
+                    $data['created_by'] = $created_by;
+                    $this->create($data);
+                }
+            }
+        }
+        return true;
+    }
+    public function updateManualList($id)
+    {
+        $request = request();
+
+        if (isset($request->manuallist)) {
+
+            foreach ($request->manuallist as $key => $record) {
+
+                $typeofwork_id = $id;
+                $type = 'type3';
+                $checked =  isset($record['left_check']) ?  $record['left_check'] : 0;
+                $check_points = $record['checklist_id'];
+                $default_enable = isset($record['right_check']) ?  $record['right_check'] : 0;;
+                $created_by =   $updated_by  = Auth::id();
+
+                $recordId =  $record['record_id'];
+
+                $data = [
+                    'typeofwork_id' => $typeofwork_id,
+                    'type' => $type,
+                    'checked' => $checked,
+                    'check_points' => $check_points,
+                    'default_enable' => $default_enable,
+
+                ];
+
+                if ($recordId != null && $recordId != '') {
+                    /**
+                     * Update query
+                     */
+
+                    $data['updated_by'] = $updated_by;
+                    $this->where('id', $recordId)->update($data);
+                } else {
+                    /**
+                     * Insert Query
+                     */
+                    $data['created_by'] = $created_by;
+                    $this->create($data);
                 }
             }
         }
 
         return true;
     }
-
-    public function store2($id)
+    public function updateCheckList($id)
     {
         $request = request();
 
-        if (isset($request->equipment['equipinvalve_check'])) {
-            foreach ($request->equipment['equipinvalve_check'] as $type => $checkedItems) {
-                foreach ($checkedItems as $checked => $value) {
+        if (isset($request->checklist)) {
 
-                    $checkPoint = isset($request->equipment['equip_involve'][$type][$checked])
-                        ? $request->equipment['equip_involve'][$type][$checked]
-                        : null;
+            foreach ($request->checklist as $key => $record) {
 
+                $typeofwork_id = $id;
+                $type = 'type4';
+                $checked =  isset($record['left_check']) ?  $record['left_check'] : 0;
+                $check_points = $record['checklist_id'];
+                $default_enable = isset($record['right_check']) ?  $record['right_check'] : 0;;
+                $created_by =   $updated_by  = Auth::id();
 
-                    $defaultEnable = isset($request->equipment['equipinvalve_checklist'][$type][$checked])
-                        ? $request->equipment['equipinvalve_checklist'][$type][$checked]
-                        : 0;
+                $recordId =  $record['record_id'];
 
-                    $insert_array = [
-                        'typeofwork_id' => $id,
-                        'type' => $type,
-                        'checked' => $value,
-                        'check_points' => $checkPoint,
-                        'default_enable' => $defaultEnable,
-                        'created_by' => Auth::id(),
-                    ];
+                $data = [
+                    'typeofwork_id' => $typeofwork_id,
+                    'type' => $type,
+                    'checked' => $checked,
+                    'check_points' => $check_points,
+                    'default_enable' => $default_enable,
 
-                    $this->create($insert_array);
+                ];
+
+                if ($recordId != null && $recordId != '') {
+                    /**
+                     * Update query
+                     */
+
+                    $data['updated_by'] = $updated_by;
+                    $this->where('id', $recordId)->update($data);
+                } else {
+                    /**
+                     * Insert Query
+                     */
+                    $data['created_by'] = $created_by;
+                    $this->create($data);
                 }
             }
         }
 
+
         return true;
     }
-
-
-    public function store3($id)
+    public function updateInstructionList($id)
     {
         $request = request();
 
-        if (isset($request->manual['precaution_check'])) {
-            foreach ($request->manual['precaution_check'] as $type => $checkedItems) {
-                foreach ($checkedItems as $checked => $value) {
+        if (isset($request->instructionList)) {
 
+            foreach ($request->instructionList as $key => $record) {
 
-                    $checkPoint = isset($request->manual['precaution'][$type][$checked])
-                        ? $request->manual['precaution'][$type][$checked]
-                        : null;
+                $typeofwork_id = $id;
+                $type = 'type5';
+                $checked =  isset($record['left_check']) ?  $record['left_check'] : 0;
+                $check_points = $record['checklist_id'];
+                $default_enable = isset($record['right_check']) ?  $record['right_check'] : 0;;
+                $created_by =   $updated_by  = Auth::id();
 
+                $recordId =  $record['record_id'];
 
-                    $defaultEnable = isset($request->manual['precaution_checklist'][$type][$checked])
-                        ? $request->manual['precaution_checklist'][$type][$checked]
-                        : 0;
+                $data = [
+                    'typeofwork_id' => $typeofwork_id,
+                    'type' => $type,
+                    'checked' => $checked,
+                    'check_points' => $check_points,
+                    'default_enable' => $default_enable,
 
-                    $insert_array = [
-                        'typeofwork_id' => $id,
-                        'type' => $type,
-                        'checked' => $value,
-                        'check_points' => $checkPoint,
-                        'default_enable' => $defaultEnable,
-                        'created_by' => Auth::id(),
-                    ];
+                ];
 
-                    $this->create($insert_array);
+                if ($recordId != null && $recordId != '') {
+                    /**
+                     * Update query
+                     */
+
+                    $data['updated_by'] = $updated_by;
+                    $this->where('id', $recordId)->update($data);
+                } else {
+                    /**
+                     * Insert Query
+                     */
+                    $data['created_by'] = $created_by;
+                    $this->create($data);
                 }
             }
         }
 
-        return true;
-    }
-
-
-
-    public function store4($id)
-    {
-        $request = request();
-
-        if (isset($request->check['equipchecklist_check'])) {
-            foreach ($request->check['equipchecklist_check'] as $type => $checkedItems) {
-                foreach ($checkedItems as $checked => $value) {
-
-                    $checkPoint = isset($request->check['checklist'][$type][$checked])
-                        ? $request->check['checklist'][$type][$checked]
-                        : null;
-
-
-                    $defaultEnable = isset($request->check['equipchecklist_checklist'][$type][$checked])
-                        ? $request->check['equipchecklist_checklist'][$type][$checked]
-                        : 0;
-
-                    $insert_array = [
-                        'typeofwork_id' => $id,
-                        'type' => $type,
-                        'checked' => $value,
-                        'check_points' => $checkPoint,
-                        'default_enable' => $defaultEnable,
-                        'created_by' => Auth::id(),
-                    ];
-
-                    $this->create($insert_array);
-                }
-            }
-        }
 
         return true;
     }
 
-
-    public function store5($id)
-    {
-        $request = request();
-
-        if (isset($request->instruction['safework_check'])) {
-            foreach ($request->instruction['safework_check'] as $type => $checkedItems) {
-                foreach ($checkedItems as $checked => $value) {
-                    $checkPoint = isset($request->instruction['safe_work'][$type][$checked])
-                        ? $request->instruction['safe_work'][$type][$checked]
-                        : null;
-
-
-                    $defaultEnable = isset($request->instruction['safework_checklist'][$type][$checked])
-                        ? $request->instruction['safework_checklist'][$type][$checked]
-                        : 0;
-
-                    $insert_array = [
-                        'typeofwork_id' => $id,
-                        'type' => $type,
-                        'checked' => $value,
-                        'check_points' => $checkPoint,
-                        'default_enable' => $defaultEnable,
-                        'created_by' => Auth::id(),
-                    ];
-
-                    $this->create($insert_array);
-                }
-            }
-        }
-
-        return true;
-    }
-
-
-    public function update1($id)
-    {
-        $request = request();
-
-        if (isset($request->protective['protective_check'])) {
-
-            foreach ($request->protective['protective_check'] as $type => $checkedItems) {
-
-                foreach ($checkedItems as $checked => $value) {
-
-                    $checkPoint = isset($request->protective['protective_equip'][$type][$checked])
-                        ? $request->protective['protective_equip'][$type][$checked]
-                        : null;
-
-                    $defaultEnable = isset($request->protective['protectivequip_checklist'][$type][$checked])
-                        ? $request->protective['protectivequip_checklist'][$type][$checked]
-                        : 0;
-
-                    foreach ($request->protective['record_id'] as $name => $recordId) {
-
-                        $recordIds = $this->where('id', $recordId)->exists();
-
-                        $data = [
-                            'typeofwork_id' => $id,
-                            'type' => $type,
-                            'checked' => $value,
-                            'check_points' => $checkPoint,
-                            'default_enable' => $defaultEnable,
-                            'updated_by' => Auth::id(),
-                        ];
-                        if ($recordIds) {
-                            $existingRecord = $this->where('id', $recordId)->where('typeofwork_id', $id)
-                                ->where('type', $type)
-                                ->where('check_points', $checkPoint)
-                                ->first();
-
-                            if ($existingRecord) {
-
-                                $existingRecord->update($data);
-                            }
-                        } else {
-                            if (!$recordIds) {
-                                $data['created_by'] = Auth::id();
-                                $this->create($data);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        return true;
-    }
-
-    public function update2($id)
-    {
-        $request = request();
-
-        if (isset($request->equipment['equipinvalve_check'])) {
-            foreach ($request->equipment['equipinvalve_check'] as $type => $checkedItems) {
-
-                foreach ($checkedItems as $checked => $value) {
-
-                    $checkPoint = isset($request->equipment['equip_involve'][$type][$checked])
-                        ? $request->equipment['equip_involve'][$type][$checked]
-                        : null;
-
-                    $defaultEnable = isset($request->equipment['equipinvalve_checklist'][$type][$checked])
-                        ? $request->equipment['equipinvalve_checklist'][$type][$checked]
-                        : 0;
-
-                    foreach ($request->equipment['equipmentrecord_id'] as $name => $equipmentrecord_id) {
-
-                        $recordId = $this->where('id', $equipmentrecord_id)->exists();
-
-                        $data = [
-                            'typeofwork_id' => $id,
-                            'type' => $type,
-                            'checked' => $value,
-                            'check_points' => $checkPoint,
-                            'default_enable' => $defaultEnable,
-                            'updated_by' => Auth::id(),
-                        ];
-                        if ($recordId) {
-                            $existingRecord = $this->where('id', $equipmentrecord_id)->where('typeofwork_id', $id)
-                                ->where('type', $type)
-                                ->where('check_points', $checkPoint)
-                                ->first();
-
-                            if ($existingRecord) {
-
-                                $existingRecord->update($data);
-                            }
-                        } else {
-                            if (!$recordId) {
-                                $data['created_by'] = Auth::id();
-                                $this->create($data);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        return true;
-    }
-
-    public function update3($id)
-    {
-        $request = request();
-
-        if (isset($request->manual['precaution_check'])) {
-            foreach ($request->manual['precaution_check'] as $type => $checkedItems) {
-
-                foreach ($checkedItems as $checked => $value) {
-
-                    $checkPoint = isset($request->manual['precaution'][$type][$checked])
-                        ? $request->manual['precaution'][$type][$checked]
-                        : null;
-
-                    $defaultEnable = isset($request->manual['precaution_checklist'][$type][$checked])
-                        ? $request->manual['precaution_checklist'][$type][$checked]
-                        : 0;
-
-                    foreach ($request->manual['manualrecord_id'] as $name => $manualrecord_id) {
-
-
-                        $recordId = $this->where('id', $manualrecord_id)->exists();
-                        $data = [
-                            'typeofwork_id' => $id,
-                            'type' => $type,
-                            'checked' => $value,
-                            'check_points' => $checkPoint,
-                            'default_enable' => $defaultEnable,
-                            'updated_by' => Auth::id(),
-                        ];
-                        if ($recordId) {
-                            $existingRecord = $this->where('id', $manualrecord_id)->where('typeofwork_id', $id)
-                                ->where('type', $type)
-                                ->where('check_points', $checkPoint)
-                                ->first();
-
-
-
-                            if ($existingRecord) {
-
-                                $existingRecord->update($data);
-                            }
-                        } else {
-                            if (!$recordId) {
-                                $data['created_by'] = Auth::id();
-                                $this->create($data);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        return true;
-    }
-
-    public function update4($id)
-    {
-        $request = request();
-
-        if (isset($request->check['equipchecklist_check'])) {
-            foreach ($request->check['equipchecklist_check'] as $type => $checkedItems) {
-
-                foreach ($checkedItems as $checked => $value) {
-
-                    $checkPoint = isset($request->check['checklist'][$type][$checked])
-                        ? $request->check['checklist'][$type][$checked]
-                        : null;
-
-                    $defaultEnable = isset($request->check['equipchecklist_checklist'][$type][$checked])
-                        ? $request->check['equipchecklist_checklist'][$type][$checked]
-                        : 0;
-
-                    foreach ($request->check['checkrecord_id'] as $name => $checkrecord_id) {
-
-                        $recordId = $this->where('id', $checkrecord_id)->exists();
-                        $data = [
-                            'typeofwork_id' => $id,
-                            'type' => $type,
-                            'checked' => $value,
-                            'check_points' => $checkPoint,
-                            'default_enable' => $defaultEnable,
-                            'updated_by' => Auth::id(),
-                        ];
-
-                        if ($recordId) {
-                            $existingRecord = $this->where('id', $checkrecord_id)->where('typeofwork_id', $id)
-                                ->where('type', $type)
-                                ->where('check_points', $checkPoint)
-                                ->first();
-
-                            if ($existingRecord) {
-
-                                $existingRecord->update($data);
-                            }
-                        } else {
-                            if (!$recordId) {
-                                $data['created_by'] = Auth::id();
-                                $this->create($data);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        return true;
-    }
-
-    public function update5($id)
-    {
-        $request = request();
-
-        if (isset($request->instruction['safework_check'])) {
-            foreach ($request->instruction['safework_check'] as $type => $checkedItems) {
-
-                foreach ($checkedItems as $checked => $value) {
-
-                    $checkPoint = isset($request->instruction['safe_work'][$type][$checked])
-                        ? $request->instruction['safe_work'][$type][$checked]
-                        : null;
-
-                    $defaultEnable = isset($request->instruction['safework_checklist'][$type][$checked])
-                        ? $request->instruction['safework_checklist'][$type][$checked]
-                        : 0;
-
-                    foreach ($request->instruction['instructionrecord_id'] as $name => $instructionrecord_id) {
-
-                        $recordId = $this->where('id', $instructionrecord_id)->exists();
-
-                        $data = [
-                            'typeofwork_id' => $id,
-                            'type' => $type,
-                            'checked' => $value,
-                            'check_points' => $checkPoint,
-                            'default_enable' => $defaultEnable,
-                            'updated_by' => Auth::id(),
-                        ];
-
-
-                        if ($recordId) {
-
-                            $existingRecord = $this->where('id', $instructionrecord_id)
-                                ->where('typeofwork_id', $id)
-                                ->where('type', $type)
-                                ->where('check_points', $checkPoint)
-                                ->first();
-
-                            if ($existingRecord) {
-
-                                $existingRecord->update($data);
-                            }
-                        } else {
-
-                            $data['created_by'] = Auth::id();
-                            $this->create($data);
-                        }
-                    }
-                }
-            }
-        }
-
-        return true;
-    }
 
 
 
@@ -550,7 +489,6 @@ class TypeofWorkChecklist extends Model
             ->where('ptw_masters_typeofwork_checklist.type', $type)
             ->get();
 
-        // dd($data);
 
         return $data;
     }
@@ -563,7 +501,6 @@ class TypeofWorkChecklist extends Model
             ->where('ptw_masters_typeofwork_checklist.type', $type)
             ->get();
 
-        // dd($data);
 
         return $data;
     }
@@ -577,7 +514,6 @@ class TypeofWorkChecklist extends Model
             ->where('ptw_masters_typeofwork_checklist.type', $type)
             ->get();
 
-        // dd($data);
 
         return $data;
     }
@@ -590,7 +526,6 @@ class TypeofWorkChecklist extends Model
             ->where('ptw_masters_typeofwork_checklist.type', $type)
             ->get();
 
-        // dd($data);
 
         return $data;
     }
@@ -604,7 +539,6 @@ class TypeofWorkChecklist extends Model
             ->where('ptw_masters_typeofwork_checklist.type', $type)
             ->get();
 
-        // dd($data);
 
         return $data;
     }

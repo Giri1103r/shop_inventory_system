@@ -319,6 +319,11 @@ class Department extends Model
         return $decryptedArray;
     }
 
+    public function getDepartmentBasedUnit($location, $unit)
+    {
+        return $this->where('location_id', $location)->where('unit_id', $unit)->get();
+    }
+
 
     protected static function booted()
     {

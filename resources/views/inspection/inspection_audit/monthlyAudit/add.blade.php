@@ -100,10 +100,10 @@
                                                         <select name="compliance_category[1]" id="compliance_category[1]"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Category</option>
-                                                            <option value="{{ encryptId(FIRE) }}">Fire</option>
-                                                            <option value="{{ encryptId(HEALTH) }}">Health</option>
-                                                            <option value="{{ encryptId(SAFETY) }}">Saftey</option>
-                                                            <option value="{{ encryptId(MIS) }}">MIS</option>
+                                                            @foreach ($categories as $category)
+                                                                <option value="{{ encryptId($category->id) }}">
+                                                                    {{ $category->compliance_category }}</option>
+                                                            @endforeach
                                                         </select>
                                                     </div>
                                                 </div>
@@ -330,7 +330,7 @@
                                                         style="min-width: 130px;">
                                                         Add
                                                     </button>
-                                        
+
                                                     <button type="button"
                                                         class="btn btn-danger remove-row d-flex align-items-center"
                                                         style="min-width: 130px;">
@@ -561,7 +561,8 @@
                 $(this).find('input[name^="auditee_name"]').attr('name', 'auditee_name[' + idx + ']');
                 $(this).find('select[name^="unit_id"]').attr('name', 'unit_id[' + idx + ']');
                 $(this).find('select[name^="task_name"]').attr('name', 'task_name[' + idx + ']');
-                $(this).find('select[name^="compliance_category"]').attr('name', 'compliance_category[' + idx + ']');
+                $(this).find('select[name^="compliance_category"]').attr('name', 'compliance_category[' + idx +
+                    ']');
                 $(this).find('input[name^="reference_doc_no"]').attr('name', 'reference_doc_no[' + idx + ']');
                 $(this).find('select[name^="frequency_id"]').attr('name', 'frequency_id[' + idx + ']');
                 $(this).find('select[name^="direct_in_direct"]').attr('name', 'direct_in_direct[' + idx + ']');

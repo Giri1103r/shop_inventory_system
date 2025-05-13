@@ -84,8 +84,8 @@ class ForkLiftInspectionController extends Controller
                             }
                             return $btn;
                         })
-                        ->addColumn('created_date', function ($row) {
-                            return Displaydateformat($row->created_at);
+                        ->addColumn('inspection_created_at', function ($row) {
+                            return Displaydateformat($row->inspection_created_at);
                         })
                         ->addColumn('issue_date', function ($row) {
                             return Displaydateformat($row->issue_date);
@@ -313,7 +313,7 @@ class ForkLiftInspectionController extends Controller
                 }
 
                 $sheet->mergeCells("D{$row}:H" . ($row + 2));
-                $sheet->setCellValue("D{$row}", 'FORKLIFT INSPECTION CHECKLIST PN INTERNATIONAL PVT. LTD.');
+                $sheet->setCellValue("D{$row}", 'FORKLIFT INSPECTION CHECKLIST .');
                 $sheet->getStyle("D{$row}:H" . ($row + 2))->applyFromArray([
                     'font' => ['bold' => true, 'size' => 14],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
@@ -657,7 +657,7 @@ class ForkLiftInspectionController extends Controller
             }
 
             $sheet->mergeCells('D1:H3');
-            $sheet->setCellValue('D1', 'FORKLIFT INSPECTION CHECKLIST PN INTERNATIONAL PVT. LTD.');
+            $sheet->setCellValue('D1', 'FORKLIFT INSPECTION CHECKLIST .');
             $sheet->getStyle('D1:H3')->applyFromArray([
                 'font' => ['bold' => true, 'size' => 14],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],

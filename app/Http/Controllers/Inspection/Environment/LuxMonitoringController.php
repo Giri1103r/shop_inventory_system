@@ -260,9 +260,9 @@ class LuxMonitoringController extends Controller
                 }
 
                 // Title Section
-                $sheet->mergeCells("G{$currentRow}:M" . ($currentRow + 2));
-                $sheet->setCellValue("G{$currentRow}", " LUX EMISSION MONITORING MASTER SHEET PN INTERNATIONAL PVT. LTD");
-                $sheet->getStyle("G{$currentRow}:M{$currentRow}")->applyFromArray([
+                $sheet->mergeCells("G{$currentRow}:N" . ($currentRow + 2));
+                $sheet->setCellValue("G{$currentRow}", "WORK PLACE LUX MONITORING");
+                $sheet->getStyle("G{$currentRow}:N{$currentRow}")->applyFromArray([
                     'font' => ['bold' => true, 'size' => 14],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
@@ -272,15 +272,15 @@ class LuxMonitoringController extends Controller
                 // document number
 
 
-                $sheet->mergeCells("N$currentRow:P$currentRow")->setCellValue("N$currentRow", 'Doc. No.');
-                $sheet->mergeCells("N" . ($currentRow + 1) . ":P" . ($currentRow + 1))->setCellValue("N" . ($currentRow + 1), 'Issue Dt.');
-                $sheet->mergeCells("N" . ($currentRow + 2) . ":P" . ($currentRow + 2))->setCellValue("N" . ($currentRow + 2), 'Rev. & Dt.');
+                $sheet->mergeCells("O$currentRow:Q$currentRow")->setCellValue("O$currentRow", 'Doc. No.');
+                $sheet->mergeCells("O" . ($currentRow + 1) . ":Q" . ($currentRow + 1))->setCellValue("O" . ($currentRow + 1), 'Issue Dt.');
+                $sheet->mergeCells("O" . ($currentRow + 2) . ":Q" . ($currentRow + 2))->setCellValue("O" . ($currentRow + 2), 'Rev. & Dt.');
 
-                $sheet->mergeCells("Q$currentRow:S$currentRow")->setCellValue("Q$currentRow", $document_no->doc_no);
-                $sheet->mergeCells("Q" . ($currentRow + 1) . ":S" . ($currentRow + 1))->setCellValue("Q" . ($currentRow + 1), Displaydateformat($document_no->issue_date));
-                $sheet->mergeCells("Q" . ($currentRow + 2) . ":S" . ($currentRow + 2))->setCellValue("Q" . ($currentRow + 2), $document_no->rev_dt);
+                $sheet->mergeCells("R$currentRow:T$currentRow")->setCellValue("R$currentRow", $document_no->doc_no);
+                $sheet->mergeCells("R" . ($currentRow + 1) . ":T" . ($currentRow + 1))->setCellValue("R" . ($currentRow + 1), Displaydateformat($document_no->issue_date));
+                $sheet->mergeCells("R" . ($currentRow + 2) . ":T" . ($currentRow + 2))->setCellValue("R" . ($currentRow + 2), $document_no->rev_dt);
 
-                $sheet->getStyle("N$currentRow:S" . ($currentRow + 2))->applyFromArray([
+                $sheet->getStyle("O$currentRow:T" . ($currentRow + 2))->applyFromArray([
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                     'font' => ['bold' => true],
@@ -299,10 +299,11 @@ class LuxMonitoringController extends Controller
                 $sheet->mergeCells("O$headerRow:O$headerRow")->setCellValue("O$headerRow", "Date of Monitoring");
                 $sheet->mergeCells("P$headerRow:P$headerRow")->setCellValue("P$headerRow", "Next Due Date Of Monitoring");
                 $sheet->mergeCells("Q$headerRow:Q$headerRow")->setCellValue("Q$headerRow", "Act/Rule");
-                $sheet->mergeCells("R$headerRow:S$headerRow")->setCellValue("R$headerRow", "Remark");
+                $sheet->mergeCells("R$headerRow:R$headerRow")->setCellValue("R$headerRow", "Last Due Date Of Monitoring");
+                $sheet->mergeCells("S$headerRow:T$headerRow")->setCellValue("S$headerRow", "Remark");
 
 
-                $sheet->getStyle("A$headerRow:S$headerRow")->applyFromArray([
+                $sheet->getStyle("A$headerRow:T$headerRow")->applyFromArray([
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                     'font' => ['bold' => true],
@@ -322,11 +323,12 @@ class LuxMonitoringController extends Controller
                     $sheet->mergeCells("O$inspectionRow:O$inspectionRow")->setCellValue("O$inspectionRow", Displaydateformat($detail->date_of_monitoring));
                     $sheet->mergeCells("P$inspectionRow:P$inspectionRow")->setCellValue("P$inspectionRow", Displaydateformat($detail->next_due_date_of_monitoring2));
                     $sheet->mergeCells("Q$inspectionRow:Q$inspectionRow")->setCellValue("Q$inspectionRow", $detail->act_rule);
-                    $sheet->mergeCells("R$inspectionRow:S$inspectionRow")->setCellValue("R$inspectionRow", $detail->remark);
+                    $sheet->mergeCells("R$inspectionRow:R$inspectionRow")->setCellValue("R$inspectionRow", Displaydateformat($detail->last_due_date_of_monitoring));
+                    $sheet->mergeCells("S$inspectionRow:T$inspectionRow")->setCellValue("S$inspectionRow", $detail->remark);
 
 
 
-                    $sheet->getStyle("A$inspectionRow:S$inspectionRow")->applyFromArray([
+                    $sheet->getStyle("A$inspectionRow:t$inspectionRow")->applyFromArray([
                         'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                         'alignment' => ['horizontal' => Alignment::HORIZONTAL_LEFT, 'vertical' => Alignment::VERTICAL_CENTER],
                     ]);
@@ -436,7 +438,6 @@ class LuxMonitoringController extends Controller
                     'luxDataList' => $luxDataList,
                     'document_no' => $document_no,
                 ];
-                // dd( $data);
                 $mpdf = new \Mpdf\Mpdf($property);
                 $mpdf->setAutoTopMargin = 'stretch';
 
@@ -498,8 +499,8 @@ class LuxMonitoringController extends Controller
                 }
 
                 // Title Section
-                $sheet->mergeCells("G{$currentRow}:M" . ($currentRow + 2));
-                $sheet->setCellValue("G{$currentRow}", " LUX EMISSION MONITORING MASTER SHEET PN INTERNATIONAL PVT. LTD");
+                $sheet->mergeCells("G{$currentRow}:N" . ($currentRow + 2));
+                $sheet->setCellValue("G{$currentRow}", "WORK PLACE LUX MONITORING");
                 $sheet->getStyle("G{$currentRow}")->applyFromArray([
                     'font' => ['bold' => true, 'size' => 14],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
@@ -510,15 +511,15 @@ class LuxMonitoringController extends Controller
                 // document number
 
 
-                $sheet->mergeCells("N$currentRow:P$currentRow")->setCellValue("N$currentRow", 'Doc. No.');
-                $sheet->mergeCells("N" . ($currentRow + 1) . ":P" . ($currentRow + 1))->setCellValue("N" . ($currentRow + 1), 'Issue Dt.');
-                $sheet->mergeCells("N" . ($currentRow + 2) . ":P" . ($currentRow + 2))->setCellValue("N" . ($currentRow + 2), 'Rev. & Dt.');
+                $sheet->mergeCells("O$currentRow:Q$currentRow")->setCellValue("O$currentRow", 'Doc. No.');
+                $sheet->mergeCells("O" . ($currentRow + 1) . ":Q" . ($currentRow + 1))->setCellValue("O" . ($currentRow + 1), 'Issue Dt.');
+                $sheet->mergeCells("O" . ($currentRow + 2) . ":Q" . ($currentRow + 2))->setCellValue("O" . ($currentRow + 2), 'Rev. & Dt.');
 
-                $sheet->mergeCells("Q$currentRow:S$currentRow")->setCellValue("Q$currentRow", $document_no->doc_no);
-                $sheet->mergeCells("Q" . ($currentRow + 1) . ":S" . ($currentRow + 1))->setCellValue("Q" . ($currentRow + 1), Displaydateformat($document_no->issue_date));
-                $sheet->mergeCells("Q" . ($currentRow + 2) . ":S" . ($currentRow + 2))->setCellValue("Q" . ($currentRow + 2), $document_no->rev_dt);
+                $sheet->mergeCells("R$currentRow:T$currentRow")->setCellValue("R$currentRow", $document_no->doc_no);
+                $sheet->mergeCells("R" . ($currentRow + 1) . ":T" . ($currentRow + 1))->setCellValue("R" . ($currentRow + 1), Displaydateformat($document_no->issue_date));
+                $sheet->mergeCells("R" . ($currentRow + 2) . ":T" . ($currentRow + 2))->setCellValue("R" . ($currentRow + 2), $document_no->rev_dt);
 
-                $sheet->getStyle("N$currentRow:S" . ($currentRow + 2))->applyFromArray([
+                $sheet->getStyle("N$currentRow:T" . ($currentRow + 2))->applyFromArray([
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                     'font' => ['bold' => true],
@@ -536,11 +537,12 @@ class LuxMonitoringController extends Controller
                 $sheet->mergeCells("N$headerRow:N$headerRow")->setCellValue("N$headerRow", "Lux Level");
                 $sheet->mergeCells("O$headerRow:O$headerRow")->setCellValue("O$headerRow", "Date of Monitoring");
                 $sheet->mergeCells("P$headerRow:P$headerRow")->setCellValue("P$headerRow", "Next Due Date Of Monitoring");
-                $sheet->mergeCells("Q$headerRow:Q$headerRow")->setCellValue("Q$headerRow", "Act/Rule");
-                $sheet->mergeCells("R$headerRow:S$headerRow")->setCellValue("R$headerRow", "Remark");
+                $sheet->mergeCells("Q$headerRow:Q$headerRow")->setCellValue("Q$headerRow", "Last Due Date Of Monitoring");
+                $sheet->mergeCells("R$headerRow:R$headerRow")->setCellValue("R$headerRow", "Act/Rule");
+                $sheet->mergeCells("S$headerRow:T$headerRow")->setCellValue("S$headerRow", "Remark");
 
 
-                $sheet->getStyle("A$headerRow:S$headerRow")->applyFromArray([
+                $sheet->getStyle("A$headerRow:T$headerRow")->applyFromArray([
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                     'font' => ['bold' => true],
@@ -559,12 +561,13 @@ class LuxMonitoringController extends Controller
                     $sheet->mergeCells("N$inspectionRow:N$inspectionRow")->setCellValue("N$inspectionRow", $detail->lux_level2);
                     $sheet->mergeCells("O$inspectionRow:O$inspectionRow")->setCellValue("O$inspectionRow", Displaydateformat($detail->date_of_monitoring));
                     $sheet->mergeCells("P$inspectionRow:P$inspectionRow")->setCellValue("P$inspectionRow", Displaydateformat($detail->next_due_date_of_monitoring2));
-                    $sheet->mergeCells("Q$inspectionRow:Q$inspectionRow")->setCellValue("Q$inspectionRow", $detail->act_rule);
-                    $sheet->mergeCells("R$inspectionRow:S$inspectionRow")->setCellValue("R$inspectionRow", $detail->remark);
+                    $sheet->mergeCells("Q$inspectionRow:Q$inspectionRow")->setCellValue("Q$inspectionRow", Displaydateformat($detail->last_due_date_of_monitoring));
+                    $sheet->mergeCells("R$inspectionRow:R$inspectionRow")->setCellValue("R$inspectionRow", $detail->act_rule);
+                    $sheet->mergeCells("S$inspectionRow:T$inspectionRow")->setCellValue("S$inspectionRow", $detail->remark);
 
 
 
-                    $sheet->getStyle("A$inspectionRow:S$inspectionRow")->applyFromArray([
+                    $sheet->getStyle("A$inspectionRow:T$inspectionRow")->applyFromArray([
                         'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                         'alignment' => ['horizontal' => Alignment::HORIZONTAL_LEFT, 'vertical' => Alignment::VERTICAL_CENTER],
                     ]);

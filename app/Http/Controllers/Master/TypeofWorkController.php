@@ -92,15 +92,15 @@ class TypeofWorkController extends Controller
                         ->addColumn('action', function ($row) {
                             $btn = '';
                             if (CheckUserPermission('view')) {
-                            $btn = '<a href="' . admin_url('ptw/typeofworkmaster/view/' . encryptId($row->typeid)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
+                                $btn = '<a href="' . admin_url('ptw/typeofworkmaster/view/' . encryptId($row->typeid)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
                             }
                             if (CheckUserPermission('edit')) {
-                            $btn .= '<a href="' . admin_url('ptw/typeofworkmaster/edit/' . encryptId($row->typeid)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
+                                $btn .= '<a href="' . admin_url('ptw/typeofworkmaster/edit/' . encryptId($row->typeid)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
                             }
                             // $btn .= '<a href="javascript:void(0);"  data-id="' . encryptId($row->id) . '" class="recordDelete" title="Delete"><i class="fa-solid fa-trash text-danger" ></i></i></a> ';
                             return $btn;
                         })
-                        ->rawColumns(['action', 'created_date', 'created_by', 'status','image'])
+                        ->rawColumns(['action', 'created_date', 'created_by', 'status', 'image'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -145,28 +145,15 @@ class TypeofWorkController extends Controller
     public function Store(Request $request)
     {
         try {
-            // $rules = [
-            //     'checklist' => 'required',
-
-            // ];
-            // $messages = [
-            //     'checklist.required' => __('Type of work is required'),
-
-            // ];
-            // $validator = Validator::make($request->all(), $rules, $messages);
-            // if ($validator->fails()) {
-            //     return redirect()->back()->withErrors($validator)->withInput();
-            // }
-
+            
             try {
-
                 $typeofwork =    $this->typeofwork->store();
                 $this->typeofworkupload->store($typeofwork->id);
-                $this->typeofworkchecklist->store1($typeofwork->id);
-                $this->typeofworkchecklist->store2($typeofwork->id);
-                $this->typeofworkchecklist->store3($typeofwork->id);
-                $this->typeofworkchecklist->store4($typeofwork->id);
-                $this->typeofworkchecklist->store5($typeofwork->id);
+                $this->typeofworkchecklist->storeProtectiveEquipment($typeofwork->id);
+                $this->typeofworkchecklist->storeEquipmentInvolved($typeofwork->id);
+                $this->typeofworkchecklist->storeManualList($typeofwork->id);
+                $this->typeofworkchecklist->storeCheckList($typeofwork->id);
+                $this->typeofworkchecklist->storeInstructionList($typeofwork->id);
 
                 Session::flash('success', __('Type of work added successfully'));
             } catch (Exception $ex) {
@@ -247,7 +234,6 @@ class TypeofWorkController extends Controller
         try {
             $id = decryptId($request->id);
 
-
             $typeofwork = $this->typeofwork->selectone($id);
             $protectivequip_checklist = $this->protective->selectchecklist();
             $equipinvalve_checklist = $this->equipinvalve->selectchecklist();
@@ -255,8 +241,6 @@ class TypeofWorkController extends Controller
             $precaution_checklist = $this->precaution->selectchecklist();
             $equipchecklist_checklist = $this->checklist->selectchecklist();
             $file = $this->typeofworkupload->where('typeofwork_id', $id)->first();
-
-
             $protective = $this->typeofworkchecklist->where('typeofwork_id', $id)->where('type', 'type1')->get()->KeyBy('check_points');
             $equipment = $this->typeofworkchecklist->where('typeofwork_id', $id)->where('type', 'type2')->get()->KeyBy('check_points');
             $manual = $this->typeofworkchecklist->where('typeofwork_id', $id)->where('type', 'type3')->get()->KeyBy('check_points');
@@ -294,18 +278,14 @@ class TypeofWorkController extends Controller
         try {
             $id = decryptId($request->id);
 
-
-
-
             $typeofwork =  $this->typeofwork->updates($id);
             $updatedRecord = $this->typeofwork->find($id);
-
             $this->typeofworkupload->updates($updatedRecord->id);
-            $this->typeofworkchecklist->update1($updatedRecord->id);
-            $this->typeofworkchecklist->update2($updatedRecord->id);
-            $this->typeofworkchecklist->update3($updatedRecord->id);
-            $this->typeofworkchecklist->update4($updatedRecord->id);
-            $this->typeofworkchecklist->update5($updatedRecord->id);
+            $this->typeofworkchecklist->updateProtectiveEquipment($updatedRecord->id);
+            $this->typeofworkchecklist->updateEquipmentInvolved($updatedRecord->id);
+            $this->typeofworkchecklist->updateManualList($updatedRecord->id);
+            $this->typeofworkchecklist->updateCheckList($updatedRecord->id);
+            $this->typeofworkchecklist->updateInstructionList($updatedRecord->id);
 
             Session::flash('success', __('Type of work updated successfully'));
             return redirect(admin_url('ptw/typeofworkmaster/list'));
