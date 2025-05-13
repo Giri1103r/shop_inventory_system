@@ -148,7 +148,7 @@
                         </div>
                         <div id="LoadPTWAvgTimeChartCount"></div>
                     </div>
-                </div>                
+                </div>
             </div>
 
             <div class="row">
@@ -161,7 +161,7 @@
                         <div id="LoadPPEAvailabilityChartCount"></div>
                     </div>
                 </div>
-                
+
                 <div class="col-xl-6 col-xxl-6">
                     <div class="card view_card">
                         <div class="card-header">
@@ -184,7 +184,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <div class="row">
 
                 <div class="col-xl-6 col-xxl-6">
@@ -361,7 +361,17 @@
                             <a class="fas fa-arrow-alt-circle-down chartdownload" id="iirTypewiseUAUC_download"></a>
                         </div>
                         <div class="card-body px-0 pt-0 dlab-scroll height450" id="iirTypewiseUAUCCount"> </div>
-
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xl-12 col-xxl-12">
+                    <div class="card view_card">
+                        <div class="card-header">
+                            <h4 class="text-white">Near Miss Freqeuncy Rate</h4>
+                            <a class="fas fa-arrow-alt-circle-down chartdownload" id="NearMiss_download"></a>
+                        </div>
+                        <div id="NearMissCount"></div>
                     </div>
                 </div>
             </div>
@@ -466,6 +476,7 @@
             TrainingCompletionCount(Fromdate, Todate);
             TypeofIIRCount(Fromdate, Todate);
             AccidentReportUnitWiseCount(Fromdate, Todate);
+            NearMissCount(Fromdate, Todate);
             LoadDepartmentCount(Fromdate, Todate);
             loadfmonthwisetraining(Fromdate, Todate);
             loadtraining_count_status(Fromdate, Todate);
@@ -944,6 +955,24 @@
                 success: function(dataAjx) {
 
                     $('#AccidentReportUnitWiseCount').html(dataAjx);
+                }
+            });
+        }
+        function NearMissCount(Fromdate = '', Todate = '') {
+            var url = "{{ admin_url('kpi/dashboard/NearMissCount') }}"
+            var data = {
+                Fromdate: Fromdate,
+                Todate: Todate,
+            };
+            $('#NearMissCount').html('');
+            $.ajax({
+                type: 'get',
+                url: url,
+                data: data,
+                cache: false,
+                success: function(dataAjx) {
+
+                    $('#NearMissCount').html(dataAjx);
                 }
             });
         }

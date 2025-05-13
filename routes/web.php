@@ -231,6 +231,7 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('TrainingCompletionCount', [KpiDashboardController::class, 'getTrainingCompletionCount']);
                 Route::get('TypeofIIRCount', [KpiDashboardController::class, 'getTypeofIIRCount']);
                 Route::get('AccidentReportUnitWiseCount', [KpiDashboardController::class, 'getAccidentReportUnitWiseCount']);
+                Route::get('NearMissCount', [KpiDashboardController::class, 'getNearMissCount']);
                 Route::get('injurypart', [KpiDashboardController::class, 'getInjurypart']);
                 Route::post('getbodycount', [KpiDashboardController::class, 'injurybodycount']);
                 Route::get('IIRTypeWiseUAUC', [KpiDashboardController::class, 'IIRTypeWiseUAUC']);
