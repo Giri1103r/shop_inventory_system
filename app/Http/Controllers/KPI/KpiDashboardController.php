@@ -400,6 +400,27 @@ class KpiDashboardController extends Controller
             return back()->with('error', 'Failed to load unit-wise accident data.');
         }
     }
+    public function getNearMissCount(Request $request)
+    {
+        try {
+            $chartData = $this->ims_incident->getNearMissCountData($request);
+
+            $formattedData = [
+                'labels' => $chartData->pluck('unit_name'),
+                'major' => $chartData->pluck('major'),
+                'minor' => $chartData->pluck('minor'),
+                'fatal' => $chartData->pluck('fatal'),
+            ];
+
+            return view('kpi.near_miss', [
+                'formattedData' => $formattedData,
+                'getdashdata' => $request,
+            ]);
+        } catch (\Exception $ex) {
+            report($ex);
+            return back()->with('error', 'Failed to load unit-wise accident data.');
+        }
+    }
 
     public function getInjurypart(Request $request)
     {

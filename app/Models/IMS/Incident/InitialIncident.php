@@ -768,6 +768,42 @@ class InitialIncident extends Model
         return $query->get();
     }
 
+    public function getNearMissCountData($request)
+    {
+        $query = DB::table('ims_initial_incident as iii')
+            ->join('masters_unit as unit', 'iii.unit_id', '=', 'unit.id')
+            ->join('ims_injury_details as imit', 'iii.id', '=', 'imit.incident_id')
+            ->select(
+                'unit.unit_name',
+                DB::raw("SUM(CASE WHEN imit.nature_of_injury = 1 THEN 1 ELSE 0 END) AS major"),
+                DB::raw("SUM(CASE WHEN imit.nature_of_injury = 2 THEN 1 ELSE 0 END) AS minor"),
+                DB::raw("SUM(CASE WHEN imit.nature_of_injury = 3 THEN 1 ELSE 0 END) AS fatal")
+            )
+            ->groupBy('unit.unit_name')
+            ->orderBy('unit.unit_name');
+
+        // Date Filters
+        if ($request->Fromdate && $request->Todate) {
+            $query->whereBetween('iii.created_at', [
+                DBdateformat($request->Fromdate),
+                DBdateformat($request->Todate)
+            ]);
+        } elseif ($request->Fromdate) {
+            $query->where('iii.created_at', '>=', DBdateformat($request->Fromdate));
+        } elseif ($request->Todate) {
+            $query->where('iii.created_at', '<=', DBdateformat($request->Todate));
+        }
+
+        // Role-based filter
+        if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_ADMIN)) {
+            // No restriction
+        } elseif (Auth::user()->role == ROLE_USER) {
+            $query->where('iii.created_by', Auth::id());
+        }
+
+        return $query->get();
+    }
+
     protected static function booted()
     {
         static::addGlobalScope(new TrashScope('ims_initial_incident'));
