@@ -37,7 +37,7 @@
                             {{ getItemCode($value->item_code) }}
                         </td>
                         <td style='padding: 7px; border: 0.5px solid'>
-                            {{ getPpename($value->ppe_name) }}
+                            {{ ($value->ppe_name) }}
                         </td>
                         <td style='padding: 7px; border: 0.5px solid'>
                             {{ getCompanyname($value->company_id) }}
