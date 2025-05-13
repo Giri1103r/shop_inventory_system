@@ -14,7 +14,7 @@
 
                         <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
                         {{-- @if (CheckUserPermission('add')) --}}
-                            {{-- <x-button-add dataId="" class="add btn btn-primary ms-1"
+                        {{-- <x-button-add dataId="" class="add btn btn-primary ms-1"
                                 href="{{ admin_url('fire/checklist-observation/add') }}">Add</x-button-add> --}}
                         {{-- @endif --}}
                     </div>
@@ -23,13 +23,13 @@
                             <div class="card-body">
                                 <div class="col-md-12">
                                     <div class="row">
-                                        <div class="col-md-3 mb-3 form-input">
+                                        <div class="col-md-4 mb-3 form-input">
                                             <label for="inspection_id" class="form-label ">Observation Id</label>
                                             <input type="text" name="observation_id" id="observation_id"
                                                 class="form-control">
                                         </div>
 
-                                        <div class="col-md-3 mb-3 form-input">
+                                        <div class="col-md-4 mb-3 form-input">
                                             <label for="status" class="form-label ">{{ __('common.status') }}</label>
                                             <select name="inspection_status" id="inspection_status" style="width: 100%"
                                                 class="form-control single-select">
@@ -48,7 +48,7 @@
                                             </select>
                                         </div>
 
-                                        <div class="col-md-3 mb-3 form-input">
+                                        <div class="col-md-4 mb-3 form-input">
                                             <label for="status" class="form-label ">{{ __('Inspection Type') }}</label>
                                             <select name="inspection_type" id="inspection_type" style="width: 100%"
                                                 class="form-control single-select">
@@ -66,9 +66,11 @@
                                                 <option value="{{ encryptId('10') }}">HOSE REEL INSPECTION</option>
                                                 <option value="{{ encryptId('11') }}">DETECTOR INSPECTION</option>
                                                 <option value="{{ encryptId('12') }}">FIRE PA SYSTEM INSPECTION</option>
-                                                <option value="{{ encryptId('13') }}">CO TYPE FIRE EXTINGUISHER INSPECTION</option>
+                                                <option value="{{ encryptId('13') }}">CO TYPE FIRE EXTINGUISHER INSPECTION
+                                                </option>
                                                 <option value="{{ encryptId('14') }}">MONTHLY FIRE PUMP</option>
-                                                <option value="{{ encryptId('15') }}">CARTRIDGE TYPE FIRE EXTINGUISHER INSPECTION</option>
+                                                <option value="{{ encryptId('15') }}">CARTRIDGE TYPE FIRE EXTINGUISHER
+                                                    INSPECTION</option>
                                                 <option value="{{ encryptId('17') }}">OBSERVATION FOLLOW-UP</option>
                                                 <option value="{{ encryptId('18') }}">FIRE MOCK DRILL INSPECTION</option>
                                                 <option value="{{ encryptId('19') }}">DAILY FIRE PUMP</option>
@@ -76,6 +78,29 @@
 
 
                                             </select>
+                                        </div>
+
+                                        <div class="col-md-4 mb-3 form-input">
+                                            <label for="emp_name" class="form-label ">From Date</label>
+                                            <div class="input-group date form-input custom-height">
+                                                <input type="text" class="form-control " name="from_date" id="from_date"
+                                                    autocomplete="off">
+                                                <div class="input-group-addon input-group-text">
+                                                    <span class="fa fa-calendar"></span>
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                        <div class="col-md-4 mb-3 form-input">
+                                            <label for="emp_name" class="form-label ">To Date</label>
+                                            <div class="input-group date form-input  custom-height">
+                                                <input type="text" class="form-control " name="to_date" id="to_date"
+                                                    autocomplete="off">
+                                                <div class="input-group-addon input-group-text">
+                                                    <span class="fa fa-calendar"></span>
+                                                </div>
+                                            </div>
                                         </div>
 
                                         <div class="col-md-3 mt-3">
@@ -124,6 +149,23 @@
             $(document).ready(function() {
                 var firstTh = $('.datatable-list thead th:first');
                 firstTh.removeClass('sorting_asc');
+
+                var fromDatepicker = flatpickr("#from_date", {
+                    dateFormat: "d-m-Y",
+                    onChange: function(selectedDates) {
+                        if (selectedDates.length > 0) {
+                            var startDate = selectedDates[0];
+                            toDatepicker.set('minDate', startDate);
+                            toDatepicker.clear();
+                        }
+                    }
+
+                })
+
+                var toDatepicker = flatpickr("#to_date", {
+                    dateFormat: "d-m-Y",
+
+                });
             });
 
             $(function() {
@@ -162,6 +204,8 @@
                             d.observation_id = $('#observation_id').val();
                             d.inspection_type = $('#inspection_type').val();
                             d.inspection_status = $('#inspection_status').val();
+                            d.from_date = $('#from_date').val();
+                            d.to_date = $('#to_date').val();
 
                         },
                         error: function(xhr, error, code) {
@@ -230,6 +274,8 @@
                                         observation_id = $('#observation_id').val();
                                         inspection_type = $('#inspection_type').val();
                                         inspection_status = $('#inspection_status').val();
+                                        var from_date = $('#from_date').val();
+                                        var to_date = $('#to_date').val();
 
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
@@ -238,6 +284,8 @@
                                             '?search=' + searchValue +
                                             '&observation_id=' + observation_id +
                                             '&inspection_type=' + inspection_type +
+                                            '&from_date=' + from_date +
+                                            '&to_date=' + to_date +
                                             '&inspection_status=' + inspection_status
                                     }
                                 },
@@ -249,6 +297,9 @@
                                         observation_id = $('#observation_id').val();
                                         inspection_type = $('#inspection_type').val();
                                         inspection_status = $('#inspection_status').val();
+                                        var from_date = $('#from_date').val();
+                                        var to_date = $('#to_date').val();
+                                        
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
@@ -256,6 +307,8 @@
                                             '?search=' + searchValue +
                                             '&observation_id=' + observation_id +
                                             '&inspection_type=' + inspection_type +
+                                            '&from_date=' + from_date +
+                                            '&to_date=' + to_date +
                                             '&inspection_status=' + inspection_status
                                     }
                                 },

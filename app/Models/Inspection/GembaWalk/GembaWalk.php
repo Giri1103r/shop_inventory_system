@@ -4,7 +4,7 @@ namespace App\Models\Inspection\GembaWalk;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Scopes\TrashScope;
-
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -43,7 +43,7 @@ class GembaWalk extends Model
         $request = request();
 
         $search = '';
-        $query = $this->select('inspection_gemba_walk.*', 'inspection_gemba_walk_status.status_name', 'inspection_gemba_walk_status.bg_color', 'inspection_shift_option.shift','inspection_gemba_walk.id as gemba_walk_id')
+        $query = $this->select('inspection_gemba_walk.*', 'inspection_gemba_walk_status.status_name', 'inspection_gemba_walk_status.bg_color', 'inspection_shift_option.shift', 'inspection_gemba_walk.id as gemba_walk_id')
             ->leftJoin('inspection_shift_option', 'inspection_shift_option.id', '=', 'inspection_gemba_walk.shift_id')
             ->leftJoin('inspection_gemba_walk_status', 'inspection_gemba_walk_status.id', '=', 'inspection_gemba_walk.gemba_walk_status');
 
@@ -78,6 +78,20 @@ class GembaWalk extends Model
         if ($request->has('shift') && $request->shift) {
             $query = $query->where('inspection_gemba_walk.shift_id',  decryptId($request->shift));
         }
+        if ($request->has('from_date') && !empty($request->from_date)) {
+
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_gemba_walk.created_at', '>=', $startDate);
+        }
+        if ($request->has('to_date') && !empty($request->to_date)) {
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_gemba_walk.created_at', '<=', $endDate);
+        }
+        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->whereBetween('inspection_gemba_walk.created_at', [$startDate, $endDate]);
+        }
 
 
         $data_count = $query;
@@ -110,21 +124,21 @@ class GembaWalk extends Model
                 'document_reference_id' => $request->document_reference_id,
                 'date' => DBdateformat($request->document_upload_date),
                 'shift_id' => decryptId($request->shift),
-                'observation_needed'=>decryptId($request->observation_needed),
-                'capa_needed'=>decryptId($request->is_passed),
+                'observation_needed' => decryptId($request->observation_needed),
+                'capa_needed' => decryptId($request->is_passed),
                 'gemba_walk_status' => GEMBA_WALK_INSPECTION_WAITING_FOR_FLOOR_MANAGER_VERIFICATION,
                 'created_by' => Auth::id(),
             );
-        }else{
+        } else {
             $insert_array = array(
                 'document_reference_id' => $request->document_reference_id,
                 'date' => DBdateformat($request->document_upload_date),
                 'shift_id' => decryptId($request->shift),
-                'observation_needed'=>decryptId($request->observation_needed),
-                'capa_needed'=>decryptId($request->is_passed),
+                'observation_needed' => decryptId($request->observation_needed),
+                'capa_needed' => decryptId($request->is_passed),
                 'gemba_walk_status' => GEMBA_WALK_INSPECTION_CLOSED,
                 'created_by' => Auth::id(),
-                'verified_by'=>Auth::id()
+                'verified_by' => Auth::id()
             );
         }
 
@@ -146,7 +160,7 @@ class GembaWalk extends Model
             ->leftJoin('inspection_gemba_walk_checklist', 'inspection_gemba_walk_checklist.gemba_walk_id', '=', 'inspection_gemba_walk.id')
             ->leftJoin('inspection_gemba_walk_checklist_files', function ($join) {
                 $join->on('inspection_gemba_walk_checklist_files.gemba_walk_checklist_id', '=', 'inspection_gemba_walk_checklist.id')
-                     ->where('inspection_gemba_walk_checklist_files.file_type', '=', 3);
+                    ->where('inspection_gemba_walk_checklist_files.file_type', '=', 3);
             })
             ->where('inspection_gemba_walk.id', $id)
             ->get();
@@ -206,7 +220,7 @@ class GembaWalk extends Model
         return $this->where('id', $gembaWalk_id)->update($update_array);
     }
 
-     public function updateAprrovel($gembaWalk_id)
+    public function updateAprrovel($gembaWalk_id)
     {
         $request = request();
         $update_array = array(
@@ -234,14 +248,14 @@ class GembaWalk extends Model
             'inspection_static_docno.*',
             'inspection_gemba_walk_checklist_files.file_path'
         )
-        ->leftJoin('inspection_gemba_walk_checklist', 'inspection_gemba_walk_checklist.gemba_walk_id', '=', 'inspection_gemba_walk.id')
-        ->leftJoin('inspection_gemba_walk_checklist_files', function ($join) {
-            $join->on('inspection_gemba_walk_checklist_files.gemba_walk_checklist_id', '=', 'inspection_gemba_walk_checklist.id')
-                 ->where('inspection_gemba_walk_checklist_files.file_type', '=', 3);
-        })
-        ->leftJoin('inspection_shift_option', 'inspection_shift_option.id', '=', 'inspection_gemba_walk.shift_id')
-        ->leftJoin('inspection_gemba_walk_status', 'inspection_gemba_walk_status.id', '=', 'inspection_gemba_walk.gemba_walk_status')
-        ->leftJoin('inspection_static_docno', 'inspection_gemba_walk.document_reference_id', '=', 'inspection_static_docno.id');
+            ->leftJoin('inspection_gemba_walk_checklist', 'inspection_gemba_walk_checklist.gemba_walk_id', '=', 'inspection_gemba_walk.id')
+            ->leftJoin('inspection_gemba_walk_checklist_files', function ($join) {
+                $join->on('inspection_gemba_walk_checklist_files.gemba_walk_checklist_id', '=', 'inspection_gemba_walk_checklist.id')
+                    ->where('inspection_gemba_walk_checklist_files.file_type', '=', 3);
+            })
+            ->leftJoin('inspection_shift_option', 'inspection_shift_option.id', '=', 'inspection_gemba_walk.shift_id')
+            ->leftJoin('inspection_gemba_walk_status', 'inspection_gemba_walk_status.id', '=', 'inspection_gemba_walk.gemba_walk_status')
+            ->leftJoin('inspection_static_docno', 'inspection_gemba_walk.document_reference_id', '=', 'inspection_static_docno.id');
 
         if ($request->search != null || $request->search != '') {
             $search = $request->search;
@@ -269,6 +283,21 @@ class GembaWalk extends Model
 
         if ($request->has('shift') && $request->shift) {
             $query = $query->where('inspection_gemba_walk.shift_id',  decryptId($request->shift));
+        }
+
+        if ($request->has('from_date') && !empty($request->from_date)) {
+
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_gemba_walk.created_at', '>=', $startDate);
+        }
+        if ($request->has('to_date') && !empty($request->to_date)) {
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_gemba_walk.created_at', '<=', $endDate);
+        }
+        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->whereBetween('inspection_gemba_walk.created_at', [$startDate, $endDate]);
         }
         $query->orderBy('inspection_gemba_walk.id', 'DESC');
         $results = $query->get();
