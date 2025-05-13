@@ -93,15 +93,7 @@
                         <div id="IncidentTypeChart"></div>
                     </div>
                 </div>
-                <div class="col-xl-6 col-xxl-6">
-                    <div class="card view_card">
-                        <div class="card-header">
-                            <h4 class="text-white">CHART8</h4>
-                            <a class="fas fa-arrow-alt-circle-down chartdownload" id="LoadChart8_download"></a>
-                        </div>
-                        <div id="LoadChart8Count"></div>
-                    </div>
-                </div>
+             
             </div>
             <div class="row">
                 <div class="col-xl-12 col-xxl-12">

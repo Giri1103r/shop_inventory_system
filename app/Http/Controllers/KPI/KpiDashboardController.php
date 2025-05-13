@@ -26,23 +26,6 @@ use Nette\Schema\DynamicParameter;
 
 class KpiDashboardController extends Controller
 {
-    private $bodyparts;
-    private $training_schedule;
-    private $ims_incident;
-    private $ptw;
-
-    private $incident_ims;
-
-    public function __construct()
-    {
-        $this->bodyparts = new IncidentBodyParts();
-        $this->incident_ims = new InitialIncident();
-        $this->training_schedule = new TrainingSchedule();
-        $this->ims_incident = new InitialIncident();
-        $this->ptw = new SafetyPermit();
-        $this->training_schedule = new TrainingSchedule();
-    }
-
 
     public function index(Request $request)
     {
@@ -55,259 +38,54 @@ class KpiDashboardController extends Controller
     }
 
 
-    public function getTotalIncident(Request $request)
+  
+    public function getChart1(Request $request)
     {
         try {
-            $chartData = $this->incident_ims->getTotalIncidentCountData($request);
 
-            if ($chartData->isEmpty()) {
-                return response()->json('<div class="border-0 pb-3" style="margin-top: 166px;"><h4 style="text-align: center;">No data Found.</h4></div>');
-            }
-
-            $formattedData = [];
-            foreach ($chartData as $row) {
-                $unit = $row->unit_name ?? 'Unknown Unit';
-                $type = $row->incident_type_name ?? 'Unknown Type';
-
-                if (!isset($formattedData[$type])) {
-                    $formattedData[$type] = [];
-                }
-
-                if (!isset($formattedData[$type][$unit])) {
-                    $formattedData[$type][$unit] = 0;
-                }
-
-                $formattedData[$type][$unit]++;
-            }
-            return view('kpi.totalIncidentsCount', [
-                'formattedData' => $formattedData,
+            $data = [
                 'getdashdata' => $request,
-            ]);
+            ];
+
+            return view('kpi.chartData1', $data);
         } catch (\Exception $ex) {
             report($ex);
-            return back()->with('error', 'Failed to load unit-wise incident data.');
         }
     }
-
-    public function getIncidentTypeChart(Request $request)
+  
+    public function getChart2(Request $request)
     {
         try {
-            $chartData = $this->incident_ims->getIncidentTypeCountData($request);
 
-            if ($chartData->isEmpty()) {
-                return response()->json('<div class="border-0 pb-3" style="margin-top: 166px;"><h4 style="text-align: center;">No data Found.</h4></div>');
-            }
-
-            // Format data for the chart
-            $formattedData = [];
-            foreach ($chartData as $row) {
-                $type = $row->incident_type_name ?? 'Unknown Type';
-                $formattedData[$type] = (int) $row->incident_count;
-            }
-
-            return view('kpi.incidentTypeconut', [ // Make sure your blade file name matches
-                'formattedData' => $formattedData,
+            $data = [
                 'getdashdata' => $request,
-            ]);
-        } catch (\Exception $ex) {
-            report($ex);
-            return back()->with('error', 'Failed to load incident type chart data.');
-        }
-    }
-    public function getHeatmapImsData(Request $request)
-    {
-        try {
-            $chartData = $this->incident_ims->getHeatmapImsCountData($request);
-
-            if ($chartData->isEmpty()) {
-                return response()->json('<div class="border-0 pb-3" style="margin-top: 166px;"><h4 style="text-align: center;">No data Found.</h4></div>');
-            }
-
-            // Map injury codes to readable labels
-            $injuryMap = [
-                1 => 'Major',
-                2 => 'Minor',
-                3 => 'Fatal',
             ];
 
-            // Initialize all month slots for each injury type
-            $monthlyCounts = [];
-            foreach (range(1, 12) as $month) {
-                foreach ($injuryMap as $label) {
-                    $monthlyCounts[$label][$month] = 0;
-                }
-            }
+            return view('kpi.chartData2', $data);
+        } catch (\Exception $ex) {
+            report($ex);
+        }
+    }
+  
+    public function getChart3(Request $request)
+    {
+        try {
 
-            // Populate the monthly counts from DB results
-            foreach ($chartData as $row) {
-                if (!isset($row->nature_of_injury) || !isset($injuryMap[$row->nature_of_injury])) {
-                    continue; // Skip null or unknown injury types
-                }
-
-                $month = (int) $row->month;
-                $type = $injuryMap[$row->nature_of_injury];
-                $monthlyCounts[$type][$month] = (int) $row->incident_count;
-            }
-
-            // Format for ApexCharts
-            $formattedData = [];
-            foreach ($monthlyCounts as $type => $months) {
-                $data = [];
-                foreach ($months as $month => $count) {
-                    $data[] = [
-                        'x' => date('M', mktime(0, 0, 0, $month, 10)), // e.g. Jan, Feb
-                        'y' => $count,
-                    ];
-                }
-
-                $formattedData[] = [
-                    'name' => $type,
-                    'data' => $data,
-                ];
-            }
-
-            return view('kpi.heatmapImsData', [
-                'formattedData' => $formattedData,
+            $data = [
                 'getdashdata' => $request,
-            ]);
+            ];
+
+            return view('kpi.chartData3', $data);
         } catch (\Exception $ex) {
             report($ex);
-            return back()->with('error', 'Failed to load heatmap incident data.');
         }
     }
-
-
-
-
-    public function InspectionWiseCount(Request $request)
+    public function getChart4(Request $request)
     {
         try {
-            $from_date = $request->input('Fromdate');
-            $to_date = $request->input('Todate');
-
-            $inspection_wise_count = InspectionCount($from_date, $to_date);
 
             $data = [
-                'inspection_wise_count' => $inspection_wise_count,
-                'from_date' => $from_date,
-                'to_date' => $to_date,
-            ];
-
-            return view('kpi.inspection_wise_count', $data);
-        } catch (\Exception $ex) {
-            report($ex);
-        }
-    }
-
-    public function PTWActiveVsClose(Request $request)
-    {
-        try {
-
-            $dates = [
-                'from_date' => $request->input('FromDate'),
-                'to_date' =>  $request->input('ToDate')
-            ];
-            $active_close_count = $this->ptw->ActiveVsClose();
-
-            if ($active_close_count == null) {
-                return response()->json('<div class="border-0 pb-3" style="margin-top: 150px;"><h4 style="text-align: center;">No data Found.</h4></div>');
-            }
-
-            $data = [
-                'active_close_count' => $active_close_count,
-                'dates' => $dates,
-            ];
-
-            return view('kpi.ptw_open_close', $data);
-        } catch (\Exception $ex) {
-            report($ex);
-        }
-    }
-
-
-    public function PTWTypeWiseCount(Request $request)
-    {
-        try {
-
-            $dates = [
-                'from_date' => $request->input('FromDate'),
-                'to_date' =>  $request->input('ToDate')
-            ];
-
-            $work_wise_count = $this->ptw->GetTypeWiseCount();
-
-            $data = [
-                'work_wise_count' => $work_wise_count,
-                'dates' => $dates,
-            ];
-
-            return view('kpi.ptw_type_wise_count', $data);
-        } catch (\Exception $ex) {
-            report($ex);
-        }
-    }
-
-    public function TrainingHoursSafetyDepartmentWise(Request $request)
-    {
-        try {
-            $dates = [
-                'from_date' => $request->input('FromDate'),
-                'to_date' =>  $request->input('ToDate')
-            ];
-
-            $training_data = $this->training_schedule->GetTrainingHoursDepartmentData($request);
-
-            $chartData = [
-                'labels' => [],
-                'series' => [],
-                'departments' => []
-            ];
-
-            foreach ($training_data as $item) {
-                $chartData['labels'][] = $item->topic_name;
-                $chartData['series'][] = (float) $item->total_hours;
-                $chartData['departments'][] = $item->department_name;
-            }
-
-            return view('kpi.training_hour_department_wise', [
-                'training_data' => $training_data,
-                'chartData' => $chartData,
-                'getdashdata' => (object) $dates
-            ]);
-        } catch (\Exception $ex) {
-            report($ex);
-        }
-    }
-
-    public function ptwholdviolation(Request $request)
-    {
-        try {
-
-            $dates = [
-                'from_date' => $request->input('FromDate'),
-                'to_date' =>  $request->input('ToDate')
-            ];
-
-            $hold_count = $this->ptw->getHoldStatus($request);
-
-            $data = [
-                'hold_count' => $hold_count,
-                'dates' => $dates,
-            ];
-
-            return view('kpi.ptw_hold_wise_count', $data);
-        } catch (\Exception $ex) {
-            report($ex);
-        }
-    }
-    public function TrainingHours(Request $request)
-    {
-        try {
-
-            $training_data = $this->training_schedule->GetTrainingData();
-
-            $data = [
-                'training_data' => $training_data,
+                'getdashdata' => $request,
             ];
 
             return view('kpi.chartData4', $data);
@@ -315,6 +93,7 @@ class KpiDashboardController extends Controller
             report($ex);
         }
     }
+  
     public function getChart5(Request $request)
     {
         try {
@@ -341,59 +120,46 @@ class KpiDashboardController extends Controller
             report($ex);
         }
     }
-    public function getPPEIssuanceGroupWise(Request $request)
+    public function getChart7(Request $request)
     {
         try {
-            $form_date = $request->input('Fromdate');
-            $to_date = $request->input('Todate');
-            $chartData = getPPERequestChartData($form_date, $to_date);
 
             $data = [
                 'getdashdata' => $request,
             ];
 
-            return view('kpi.chartPPEIssuanceGroupWise', [
-                'getdashdata' => $request,
-                'chartData' => $chartData,
-            ]);
+            return view('kpi.chartData7', $data);
         } catch (\Exception $ex) {
             report($ex);
         }
     }
-
-    public function getPTWAvgTimeChart(Request $request)
+    public function getChart8(Request $request)
     {
         try {
 
-            $form_date = $request->input('Fromdate');
-            $to_date = $request->input('Todate');
-            $chartData = getPTWAvgTimeChartData($form_date, $to_date);
-
-            return view('kpi.chartPTWAvgTimeChart', [
+            $data = [
                 'getdashdata' => $request,
-                'chartData' => $chartData,
-            ]);
+            ];
+
+            return view('kpi.chartData8', $data);
         } catch (\Exception $ex) {
             report($ex);
         }
     }
-
-    public function getPPEAvailabilityChart(Request $request)
+    public function getChart9(Request $request)
     {
         try {
 
-            $form_date = $request->input('Fromdate');
-            $to_date = $request->input('Todate');
-            $chartData = getPPEAvailabilityChartData($form_date, $to_date);
-
-            return view('kpi.chartPPEAvailability', [
+            $data = [
                 'getdashdata' => $request,
-                'chartData' => $chartData,
-            ]);
+            ];
+
+            return view('kpi.chartData9', $data);
         } catch (\Exception $ex) {
             report($ex);
         }
     }
+ 
     public function getChart10(Request $request)
     {
         try {
@@ -550,19 +316,7 @@ class KpiDashboardController extends Controller
             report($ex);
         }
     }
-    public function getRCADistributionCount(Request $request)
-    {
-        try {
-
-            $data = [
-                'getdashdata' => $request,
-            ];
-
-            return view('kpi.rca_distribution', $data);
-        } catch (\Exception $ex) {
-            report($ex);
-        }
-    }
+ 
 
     public function getTrainingCompletionCount(Request $request)
     {
