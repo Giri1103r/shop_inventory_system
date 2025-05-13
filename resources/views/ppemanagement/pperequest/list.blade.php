@@ -417,12 +417,12 @@
                         name: 'approve_status'
                     },
                     {
-                        data: 'ppe_created_by',
-                        name: 'ppe_created_by'
+                        data: 'created_by',
+                        name: 'created_by'
                     },
                     {
-                        data: 'ppe_created_at',
-                        name: 'ppe_created_at'
+                        data: 'created_at',
+                        name: 'created_at'
                     },
                     {
                         data: 'action',

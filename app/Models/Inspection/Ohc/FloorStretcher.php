@@ -3,6 +3,7 @@
 namespace App\Models\Inspection\Ohc;
 
 use App\Scopes\TrashScope;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 
@@ -31,10 +32,10 @@ class FloorStretcher extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_ohc_floorstretcher_checklist.*','masters_unit.*','inspection_frequency_option.*','inspection_shift_option.*','inspection_ohc_floorstretcher_checklist.id as checklist_id')
-                    ->leftJoin('masters_unit','inspection_ohc_floorstretcher_checklist.unit','=','masters_unit.id')
-                    ->leftJoin('inspection_frequency_option','inspection_ohc_floorstretcher_checklist.frequency','=','inspection_frequency_option.id')
-                    ->leftJoin('inspection_shift_option','inspection_ohc_floorstretcher_checklist.shift','=','inspection_shift_option.id');
+        $query = $this->select('inspection_ohc_floorstretcher_checklist.*', 'masters_unit.*', 'inspection_frequency_option.*', 'inspection_shift_option.*', 'inspection_ohc_floorstretcher_checklist.id as checklist_id' ,  'inspection_ohc_floorstretcher_checklist.created_at as inspection_created_at')
+            ->leftJoin('masters_unit', 'inspection_ohc_floorstretcher_checklist.unit', '=', 'masters_unit.id')
+            ->leftJoin('inspection_frequency_option', 'inspection_ohc_floorstretcher_checklist.frequency', '=', 'inspection_frequency_option.id')
+            ->leftJoin('inspection_shift_option', 'inspection_ohc_floorstretcher_checklist.shift', '=', 'inspection_shift_option.id');
         $org_total =  $query;
         $org_total_counts = $org_total->count();
 
@@ -46,18 +47,31 @@ class FloorStretcher extends Model
                 $query->orWhereRaw('inspection_shift_option.shift LIKE "%' . $search . '%"');
             });
         }
+        if ($request->has('from_date') && !empty($request->from_date)) {
 
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_ohc_floorstretcher_checklist.created_at', '>=', $startDate);
+        }
+        if ($request->has('to_date') && !empty($request->to_date)) {
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_ohc_floorstretcher_checklist.created_at', '<=', $endDate);
+        }
+        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->whereBetween('inspection_ohc_floorstretcher_checklist.created_at', [$startDate, $endDate]);
+        }
         if (isset($request->frequency) && $request->frequency) {
-            $query = $query->where('inspection_ohc_floorstretcher_checklist.frequency',decryptId( $request->frequency) );
+            $query = $query->where('inspection_ohc_floorstretcher_checklist.frequency', decryptId($request->frequency));
         }
         if (isset($request->issue_date) && $request->issue_date) {
-            $query = $query->where('inspection_ohc_floorstretcher_checklist.issue_date',DBdateformat( $request->issue_date) );
+            $query = $query->where('inspection_ohc_floorstretcher_checklist.issue_date', DBdateformat($request->issue_date));
         }
         if (isset($request->unit) && $request->unit) {
-            $query = $query->where('inspection_ohc_floorstretcher_checklist.unit',decryptId( $request->unit) );
+            $query = $query->where('inspection_ohc_floorstretcher_checklist.unit', decryptId($request->unit));
         }
         if (isset($request->shift_id) && $request->shift_id) {
-            $query = $query->where('inspection_ohc_floorstretcher_checklist.shift', decryptId($request->shift_id) );
+            $query = $query->where('inspection_ohc_floorstretcher_checklist.shift', decryptId($request->shift_id));
         }
 
         if (isset($request->inspection_status) && $request->inspection_status) {
@@ -130,7 +144,7 @@ class FloorStretcher extends Model
 
     public function selectOne($id)
     {
-        return $this->where('id',$id)->where('status',1)->where('trash','NO')->first();
+        return $this->where('id', $id)->where('status', 1)->where('trash', 'NO')->first();
     }
 
     public function exportdata()
@@ -148,16 +162,30 @@ class FloorStretcher extends Model
         }
 
         if (isset($request->frequency) && $request->frequency) {
-            $query = $query->where('inspection_ohc_floorstretcher_checklist.frequency',decryptId( $request->frequency) );
+            $query = $query->where('inspection_ohc_floorstretcher_checklist.frequency', decryptId($request->frequency));
         }
         if (isset($request->issue_date) && $request->issue_date) {
-            $query = $query->where('inspection_ohc_floorstretcher_checklist.issue_date',DBdateformat( $request->issue_date) );
+            $query = $query->where('inspection_ohc_floorstretcher_checklist.issue_date', DBdateformat($request->issue_date));
         }
         if (isset($request->unit) && $request->unit) {
-            $query = $query->where('inspection_ohc_floorstretcher_checklist.unit',decryptId( $request->unit) );
+            $query = $query->where('inspection_ohc_floorstretcher_checklist.unit', decryptId($request->unit));
         }
         if (isset($request->shift_id) && $request->shift_id) {
-            $query = $query->where('inspection_ohc_floorstretcher_checklist.shift', decryptId($request->shift_id) );
+            $query = $query->where('inspection_ohc_floorstretcher_checklist.shift', decryptId($request->shift_id));
+        }
+        if ($request->has('from_date') && !empty($request->from_date)) {
+
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_ohc_floorstretcher_checklist.created_at', '>=', $startDate);
+        }
+        if ($request->has('to_date') && !empty($request->to_date)) {
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_ohc_floorstretcher_checklist.created_at', '<=', $endDate);
+        }
+        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->whereBetween('inspection_ohc_floorstretcher_checklist.created_at', [$startDate, $endDate]);
         }
         $query->orderBy('id', 'DESC');
 

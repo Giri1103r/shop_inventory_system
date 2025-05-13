@@ -2,6 +2,7 @@
 
 namespace App\Models\Inspection\Ohc;
 
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 use Google\Rpc\Context\AttributeContext\Request;
@@ -35,7 +36,7 @@ class OHCHygieneCleaningChecklist extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_ohc_hygiene_checklist.*', 'inspection_shift_option.*', 'inspection_ohc_hygiene_checklist.id as inspection_id', 'inspection_ohc_hygiene_checklist.created_by as checked_by', 'inspection_ohc_hygiene_checklist.updated_by as verified_by')
+        $query = $this->select('inspection_ohc_hygiene_checklist.*', 'inspection_shift_option.*', 'inspection_ohc_hygiene_checklist.id as inspection_id', 'inspection_ohc_hygiene_checklist.created_by as checked_by', 'inspection_ohc_hygiene_checklist.updated_by as verified_by' , 'inspection_ohc_hygiene_checklist.created_at as inspection_created_at',)
             ->leftjoin('inspection_shift_option', 'inspection_shift_option.id', '=', 'inspection_ohc_hygiene_checklist.shift_id');
 
 
@@ -56,7 +57,20 @@ class OHCHygieneCleaningChecklist extends Model
                     ->orWhere('shift', 'LIKE', '%' . $search . '%');
             });
         }
+        if ($request->has('from_date') && !empty($request->from_date)) {
 
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_ohc_hygiene_checklist.created_at', '>=', $startDate);
+        }
+        if ($request->has('to_date') && !empty($request->to_date)) {
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_ohc_hygiene_checklist.created_at', '<=', $endDate);
+        }
+        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->whereBetween('inspection_ohc_hygiene_checklist.created_at', [$startDate, $endDate]);
+        }
         if ($request->has('shift_id') && $request->shift_id) {
             $query = $query->where('shift_id', 'LIKE', '%' . decryptId($request->shift_id) . '%');
         }
@@ -114,7 +128,6 @@ class OHCHygieneCleaningChecklist extends Model
 
         if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_NURSING_OFFICER)) {
         } else if (CheckUserRole(ROLE_CLEANER)) {
-
         }
 
         if ($request->has('shift_id') && $request->shift_id) {

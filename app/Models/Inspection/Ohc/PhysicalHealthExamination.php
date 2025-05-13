@@ -4,6 +4,7 @@ namespace App\Models\Inspection\Ohc;
 
 use App\Models\Master\Employee;
 use App\Models\Master\Work;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 
@@ -79,7 +80,20 @@ class PhysicalHealthExamination extends Model
                     ->orWhere('masters_location.location_name', 'LIKE', '%' . $search . '%');
             });
         }
+        if ($request->has('from_date') && !empty($request->from_date)) {
 
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_ohc_hygiene_checklist.created_at', '>=', $startDate);
+        }
+        if ($request->has('to_date') && !empty($request->to_date)) {
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_ohc_hygiene_checklist.created_at', '<=', $endDate);
+        }
+        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->whereBetween('inspection_ohc_hygiene_checklist.created_at', [$startDate, $endDate]);
+        }
         if (isset($request->status) && $request->status) {
             $query = $query->where('inspection_ohc_physical_health_examination.approve_status', decryptId($request->status));
         }
@@ -190,15 +204,15 @@ class PhysicalHealthExamination extends Model
             'address' => $request->address,
             'past_history' => $request->past_history,
             'present_complaint' => $request->present_complaints,
-            'personal_details'=>json_encode( $responses),
-            'family_history'=>json_encode( $request->family_remarks),
+            'personal_details' => json_encode($responses),
+            'family_history' => json_encode($request->family_remarks),
             'vital_checkpoints' => json_encode($request->reading_value),
             'near_with_glass' => $request->near_with_glasses,
             'near_without_glass' => $request->near_without_glasses,
             'near_without_glass_yes' => $request->near_without_glasses_yes,
             'distance_with_glass' => $request->distance_with_glasses,
             'distance_without_glass' => decryptId($request->distance_with_out_glasses),
-            'distance_without_glass_yes' =>decryptId( $request->distance_with_out_glasses_yes),
+            'distance_without_glass_yes' => decryptId($request->distance_with_out_glasses_yes),
             'remarks' => $request->remarks,
 
             'created_by' => Auth::id(),
@@ -328,7 +342,20 @@ class PhysicalHealthExamination extends Model
         if (isset($request->location_id) && $request->location_id) {
             $query = $query->where('inspection_ohc_physical_health_examination.location', decryptId($request->location_id));
         }
+ if ($request->has('from_date') && !empty($request->from_date)) {
 
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_ohc_hygiene_checklist.created_at', '>=', $startDate);
+        }
+        if ($request->has('to_date') && !empty($request->to_date)) {
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_ohc_hygiene_checklist.created_at', '<=', $endDate);
+        }
+        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->whereBetween('inspection_ohc_hygiene_checklist.created_at', [$startDate, $endDate]);
+        }
         if (isset($request->order) && count($request->order) > 0) {
             $columnName = $request->order[0]['column'];
             $columnorder = $request->order[0]['dir'];

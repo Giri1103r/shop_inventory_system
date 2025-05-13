@@ -807,6 +807,43 @@ class InitialIncident extends Model
 
         return $query->get(); // returns multiple rows
     }
+    public function getTypeofIIRUAUCCountData($request)
+    {
+        $query = DB::table('ims_initial_incident as iii')
+        ->join('ims_master_incident_type as imit', 'iii.iir_type', '=', 'imit.id')
+        ->where('iii.ua_uc_yes_no', 1)
+        ->select(
+            'imit.incident_type_name',
+            DB::raw('COUNT(DISTINCT iii.id) as total_incident'),
+            DB::raw('SUM(CASE WHEN FIND_IN_SET("1", iii.ua_or_uc) > 0 THEN 1 ELSE 0 END) as unsafe_act'),
+            DB::raw('SUM(CASE WHEN FIND_IN_SET("2", iii.ua_or_uc) > 0 THEN 1 ELSE 0 END) as unsafe_condition'),
+            DB::raw('SUM(CASE WHEN FIND_IN_SET("3", iii.ua_or_uc) > 0 THEN 1 ELSE 0 END) as natural_causes'),
+        )
+        ->groupBy('imit.incident_type_name')
+        ->orderBy('imit.incident_type_name');
+
+
+        // Date Filters
+        if ($request->Fromdate && $request->Todate) {
+            $query->whereBetween('iii.created_at', [
+                DBdateformat($request->Fromdate),
+                DBdateformat($request->Todate)
+            ]);
+        } elseif ($request->Fromdate) {
+            $query->where('iii.created_at', '>=', DBdateformat($request->Fromdate));
+        } elseif ($request->Todate) {
+            $query->where('iii.created_at', '<=', DBdateformat($request->Todate));
+        }
+
+        // Role-based filter
+        if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_ADMIN)) {
+            // No restriction
+        } elseif (Auth::user()->role == ROLE_USER) {
+            $query->where('iii.created_by', Auth::id());
+        }
+
+        return $query->get(); // returns multiple rows
+    }
 
     protected static function booted()
     {

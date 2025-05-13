@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', ' Medical Requisition Slip- Floor' )
+@section('title', ' Medical Requisition Slip- Floor')
 @section('pageurl', admin_url('ohc/medical-requisition-slip/list'))
 
 
@@ -15,8 +15,8 @@
                         <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
 
                         {{-- @if (CheckUserPermission('add')) --}}
-                            <x-button-add dataId="" class="add btn btn-primary ms-1"
-                                href="{{ admin_url('ohc/medical-requisition-slip/add') }}">Add</x-button-add>
+                        <x-button-add dataId="" class="add btn btn-primary ms-1"
+                            href="{{ admin_url('ohc/medical-requisition-slip/add') }}">Add</x-button-add>
                         {{-- @endif --}}
                     </div>
                     <div id="search" class="collapse">
@@ -24,7 +24,7 @@
                             <div class="card-body">
                                 <div class="col-md-12">
                                     <div class="row">
-                                        <div class="col-md-3 mb-3 form-input">
+                                        <div class="col-md-4 mb-3 form-input">
                                             <label class="form-label require">Unit</label>
                                             <select name="unit_id" id="unit_id" class="form-control single-select"
                                                 style="width: 100%">
@@ -35,7 +35,7 @@
                                                 @endforeach
                                             </select>
                                         </div>
-                                        <div class="col-md-3 mb-3 form-input">
+                                        <div class="col-md-4 mb-3 form-input">
                                             <label class="form-label require">Department</label>
                                             <select name="department_id" id="department_id"
                                                 class=" form-control single-select" style="width: 100%">
@@ -43,9 +43,30 @@
 
                                             </select>
                                         </div>
+                                        <div class="col-md-4 mb-3 form-input">
+                                            <label for="emp_name" class="form-label ">From Date</label>
+                                            <div class="input-group date form-input custom-height">
+                                                <input type="text" class="form-control " name="from_date" id="from_date"
+                                                    autocomplete="off">
+                                                <div class="input-group-addon input-group-text">
+                                                    <span class="fa fa-calendar"></span>
+                                                </div>
+                                            </div>
 
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="approve_status" class="form-label ">{{ __('common.status') }}</label>
+                                        </div>
+                                        <div class="col-md-4 mb-3 form-input">
+                                            <label for="emp_name" class="form-label ">To Date</label>
+                                            <div class="input-group date form-input  custom-height">
+                                                <input type="text" class="form-control " name="to_date" id="to_date"
+                                                    autocomplete="off">
+                                                <div class="input-group-addon input-group-text">
+                                                    <span class="fa fa-calendar"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 mb-3 form-input">
+                                            <label for="approve_status"
+                                                class="form-label ">{{ __('common.status') }}</label>
                                             <select name="approve_status" id="approve_status" style="width: 100%"
                                                 class="form-control single-select">
                                                 <option value="">Select Status</option>
@@ -57,7 +78,7 @@
                                                 <option value="{{ encryptId(7) }}">Safety officer Rejected</option>
                                             </select>
                                         </div>
-                                        <div class="col-md-3 mt-3">
+                                        <div class="col-md-4 mt-3">
                                             <x-button-search></x-button-search>
                                             <x-button-reset></x-button-reset>
 
@@ -109,6 +130,23 @@
 
             });
 
+            $(document).ready(function() {
+                var fromDatepicker = flatpickr("#from_date", {
+                    dateFormat: "d-m-Y",
+                    onChange: function(selectedDates) {
+                        if (selectedDates.length > 0) {
+                            var startDate = selectedDates[0];
+                            toDatepicker.set('minDate', startDate);
+                            toDatepicker.clear();
+                        }
+                    }
+                });
+
+                var toDatepicker = flatpickr("#to_date", {
+                    dateFormat: "d-m-Y",
+
+                });
+            });
             $(document).on('change', '#unit_id', function() {
                 var unitId = $(this).val();
                 if (unitId) {
@@ -171,6 +209,8 @@
                             d.unit_id = $('#unit_id').val();
                             d.rev_date = $('#rev_date').val();
                             d.approve_status = $('#approve_status').val();
+                            d.from_date = $('#from_date').val();
+                            d.to_date = $('#to_date').val();
                         },
                         error: function(xhr, error, code) {
                             if (xhr.status === 419) {
@@ -198,8 +238,8 @@
                             name: 'approve_status'
                         },
                         {
-                            data: 'created_date',
-                            name: 'created_date'
+                            data: 'inspection_created_at',
+                            name: 'inspection_created_at'
                         },
                         {
                             data: 'action',
@@ -235,7 +275,8 @@
                                         unit_id = $('#unit_id').val();
                                         rev_date = $('#rev_date').val();
                                         approve_status = $('#approve_status').val();
-
+                                        var from_date = $('#from_date').val();
+                                        var to_date = $('#to_date').val();
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
@@ -244,6 +285,8 @@
                                             '&department_id=' + department_id +
                                             '&unit_id=' + unit_id +
                                             '&rev_date=' + rev_date +
+                                            '&from_date=' + from_date +
+                                            '&to_date=' + to_date +
                                             '&approve_status=' + approve_status
                                     }
                                 },
@@ -255,6 +298,8 @@
                                         department_id = $('#department_id').val();
                                         unit_id = $('#unit_id').val();
                                         rev_date = $('#rev_date').val();
+                                        var from_date = $('#from_date').val();
+                                        var to_date = $('#to_date').val();
                                         approve_status = $('#approve_status').val();
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
@@ -263,6 +308,8 @@
                                             '?search=' + searchValue +
                                             '&department_id=' + department_id +
                                             '&unit_id=' + unit_id +
+                                            '&from_date=' + from_date +
+                                            '&to_date=' + to_date +
                                             '&rev_date=' + rev_date +
                                             '&approve_status=' + approve_status
                                     }

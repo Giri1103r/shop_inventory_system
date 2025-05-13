@@ -766,7 +766,6 @@ class DetectorInspectionController extends Controller
     {
         try {
             $allData = $this->detector->exportdata();
-            // dd($allData);
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
             }
@@ -965,7 +964,6 @@ class DetectorInspectionController extends Controller
                 $signatureRowStart = $dataRow;
                 $sheet->getRowDimension($signatureRowStart)->setRowHeight(80);
 
-                // Prepared By
                 $sheet->mergeCells("A{$signatureRowStart}:C{$signatureRowStart}");
                 $sheet->getStyle("A{$signatureRowStart}:C{$signatureRowStart}")->applyFromArray([
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],

@@ -2,6 +2,7 @@
 
 namespace App\Models\Inspection\Ohc;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 
@@ -14,7 +15,7 @@ class OccupationHealthInspection extends Model
 
     protected $fillable = [
         'checklist',
-       'document_reference_id',
+        'document_reference_id',
         'date_of_inspection',
         'location',
         'shift',
@@ -63,11 +64,12 @@ class OccupationHealthInspection extends Model
             'masters_location.*',
             'inspection_shift_option.*',
             'inspection_ohc_occupational_health_inspection.id as inspection_id',
+            'inspection_ohc_occupational_health_inspection.created_at as inspection_created_at',
             'inspection_ohc_occupational_health_inspection.status as inspection_status',
         )
-        ->leftJoin('masters_unit', 'inspection_ohc_occupational_health_inspection.unit', '=', 'masters_unit.id')
-        ->leftJoin('masters_location', 'inspection_ohc_occupational_health_inspection.location', '=', 'masters_location.id')
-        ->leftJoin('inspection_shift_option', 'inspection_ohc_occupational_health_inspection.shift', '=', 'inspection_shift_option.id')
+            ->leftJoin('masters_unit', 'inspection_ohc_occupational_health_inspection.unit', '=', 'masters_unit.id')
+            ->leftJoin('masters_location', 'inspection_ohc_occupational_health_inspection.location', '=', 'masters_location.id')
+            ->leftJoin('inspection_shift_option', 'inspection_ohc_occupational_health_inspection.shift', '=', 'inspection_shift_option.id')
 
             ->leftJoin(
                 'inspection_static_docno',
@@ -90,9 +92,22 @@ class OccupationHealthInspection extends Model
                     ->orWhere('masters_location.location_name', 'LIKE', '%' . $search . '%');
             });
         }
+        if ($request->has('from_date') && !empty($request->from_date)) {
 
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_ohc_occupational_health_inspection.created_at', '>=', $startDate);
+        }
+        if ($request->has('to_date') && !empty($request->to_date)) {
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_ohc_occupational_health_inspection.created_at', '<=', $endDate);
+        }
+        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->whereBetween('inspection_ohc_occupational_health_inspection.created_at', [$startDate, $endDate]);
+        }
         if (isset($request->status) && $request->status) {
-            $query = $query->where('inspection_ohc_occupational_health_inspection.approve_status',decryptId( $request->status));
+            $query = $query->where('inspection_ohc_occupational_health_inspection.approve_status', decryptId($request->status));
         }
         if (isset($request->unit_id) && $request->unit_id) {
             $query = $query->where('inspection_ohc_occupational_health_inspection.unit', decryptId($request->unit_id));
@@ -166,7 +181,7 @@ class OccupationHealthInspection extends Model
             'next_due' => DBdateformat($request->next_due_on),
             'document_reference_id' => decryptId($request->document_reference_id),
             'date_of_inspection' => DBdateformat($request->date_of_inspection),
-            'approve_status'=>WAITING_FOR_EHS_OFFICER_VERIFICATION,
+            'approve_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,
             'created_by' => Auth::id(),
         ];
 
@@ -280,20 +295,34 @@ class OccupationHealthInspection extends Model
         $search = '';
 
         $query = $this->select(
-            'inspection_ohc_occupational_health_inspection.*');
-            if (isset($request->status) && $request->status) {
-                $query = $query->where('inspection_ohc_occupational_health_inspection.approve_status',decryptId( $request->status));
-            }
-            if (isset($request->unit_id) && $request->unit_id) {
-                $query = $query->where('inspection_ohc_occupational_health_inspection.unit', decryptId($request->unit_id));
-            }
-            if (isset($request->shift) && $request->shift) {
-                $query = $query->where('inspection_ohc_occupational_health_inspection.shift', decryptId($request->shift));
-            }
-            if (isset($request->location_id) && $request->location_id) {
-                $query = $query->where('inspection_ohc_occupational_health_inspection.location', decryptId($request->location_id));
-            }
+            'inspection_ohc_occupational_health_inspection.*'
+        );
+        if (isset($request->status) && $request->status) {
+            $query = $query->where('inspection_ohc_occupational_health_inspection.approve_status', decryptId($request->status));
+        }
+        if (isset($request->unit_id) && $request->unit_id) {
+            $query = $query->where('inspection_ohc_occupational_health_inspection.unit', decryptId($request->unit_id));
+        }
+        if (isset($request->shift) && $request->shift) {
+            $query = $query->where('inspection_ohc_occupational_health_inspection.shift', decryptId($request->shift));
+        }
+        if (isset($request->location_id) && $request->location_id) {
+            $query = $query->where('inspection_ohc_occupational_health_inspection.location', decryptId($request->location_id));
+        }
+        if ($request->has('from_date') && !empty($request->from_date)) {
 
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_ohc_occupational_health_inspection.created_at', '>=', $startDate);
+        }
+        if ($request->has('to_date') && !empty($request->to_date)) {
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_ohc_occupational_health_inspection.created_at', '<=', $endDate);
+        }
+        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->whereBetween('inspection_ohc_occupational_health_inspection.created_at', [$startDate, $endDate]);
+        }
         if (isset($request->order) && count($request->order) > 0) {
             $columnName = $request->order[0]['column'];
             $columnorder = $request->order[0]['dir'];
@@ -348,4 +377,3 @@ class OccupationHealthInspection extends Model
         return $this->where('id', $id)->first();
     }
 }
-

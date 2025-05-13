@@ -58,6 +58,7 @@ class MedicineRequistionSlipfdodetails extends Model
             'masters_unit.*',
             'masters_department.*',
             'inspection_ohc_medicine_requisition_slip_fdo_details.id as inspection_id',
+            'inspection_ohc_medicine_requisition_slip_fdo_details.created_at as inspection_created_at',
             'inspection_ohc_medicine_requisition_slip_fdo_details.created_by as inspection_created_by',
         )
             ->leftJoin('masters_unit', 'inspection_ohc_medicine_requisition_slip_fdo_details.unit', '=', 'masters_unit.id')
@@ -95,6 +96,20 @@ class MedicineRequistionSlipfdodetails extends Model
         }
         if (isset($request->department_id) && $request->department_id) {
             $query = $query->where('inspection_ohc_medicine_requisition_slip_fdo_details.department', decryptId($request->department_id));
+        }
+        if ($request->has('from_date') && !empty($request->from_date)) {
+
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_ohc_medicine_requisition_slip_fdo_details.created_at', '>=', $startDate);
+        }
+        if ($request->has('to_date') && !empty($request->to_date)) {
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_ohc_medicine_requisition_slip_fdo_details.created_at', '<=', $endDate);
+        }
+        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->whereBetween('inspection_ohc_medicine_requisition_slip_fdo_details.created_at', [$startDate, $endDate]);
         }
         if (isset($request->status) && $request->status) {
             $query = $query->where('inspection_ohc_medicine_requisition_slip_fdo_details.approve_status',  decryptId($request->status));
@@ -189,7 +204,8 @@ class MedicineRequistionSlipfdodetails extends Model
         $search = '';
         $request = Request();
         $query = $this->select(
-            'inspection_ohc_medicine_requisition_slip_fdo_details.*') ;
+            'inspection_ohc_medicine_requisition_slip_fdo_details.*'
+        );
 
 
         $user = Auth::user();
@@ -222,9 +238,20 @@ class MedicineRequistionSlipfdodetails extends Model
         if (isset($request->status) && $request->status) {
             $query = $query->where('inspection_ohc_medicine_requisition_slip_fdo_details.approve_status',  decryptId($request->status));
         }
+        if ($request->has('from_date') && !empty($request->from_date)) {
 
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_ohc_medicine_requisition_slip_fdo_details.created_at', '>=', $startDate);
+        }
+        if ($request->has('to_date') && !empty($request->to_date)) {
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_ohc_medicine_requisition_slip_fdo_details.created_at', '<=', $endDate);
+        }
+        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->whereBetween('inspection_ohc_medicine_requisition_slip_fdo_details.created_at', [$startDate, $endDate]);
+        }
         return $query->orderBy('inspection_ohc_medicine_requisition_slip_fdo_details.id', 'DESC')->get();
-
-
     }
 }

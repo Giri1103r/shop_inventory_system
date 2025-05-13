@@ -202,15 +202,19 @@ Route::middleware(['securityheader'])->group(function () {
 
             Route::group(['prefix' => 'kpi/dashboard/'], function () {
                 Route::get('', [KpiDashboardController::class, 'index']);
+                Route::get('inspection-count', [KpiDashboardController::class, 'InspectionWiseCount']);
+                Route::get('ptw-open-close', [KpiDashboardController::class, 'PTWActiveVsClose']);
+                Route::get('ptw-type-wise-count', [KpiDashboardController::class, 'PTWTypeWiseCount']);
+                Route::get('chart4', [KpiDashboardController::class, 'getChart4']);
                 Route::get('chart1', [KpiDashboardController::class, 'getChart1']);
                 Route::get('chart2', [KpiDashboardController::class, 'getChart2']);
                 Route::get('chart3', [KpiDashboardController::class, 'getChart3']);
                 Route::get('IIRTypeWiseRCPA', [KpiDashboardController::class, 'IIRTypeWiseRCPA']);
                 Route::get('chart5', [KpiDashboardController::class, 'getChart5']);
                 Route::get('chart6', [KpiDashboardController::class, 'getChart6']);
-                Route::get('chart7', [KpiDashboardController::class, 'getChart7']);
-                Route::get('chart8', [KpiDashboardController::class, 'getChart8']);
-                Route::get('chart9', [KpiDashboardController::class, 'getChart9']);
+                Route::get('PPEIssuanceGroupWise', [KpiDashboardController::class, 'getPPEIssuanceGroupWise']);
+                Route::get('PTWAvgTimeChart', [KpiDashboardController::class, 'getPTWAvgTimeChart']);
+                Route::get('PPEAvailabilityChart', [KpiDashboardController::class, 'getPPEAvailabilityChart']);
                 Route::get('chart10', [KpiDashboardController::class, 'getChart10']);
                 Route::get('chart11', [KpiDashboardController::class, 'getChart11']);
                 Route::get('chart12', [KpiDashboardController::class, 'getChart12']);
@@ -227,8 +231,10 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('TrainingCompletionCount', [KpiDashboardController::class, 'getTrainingCompletionCount']);
                 Route::get('TypeofIIRCount', [KpiDashboardController::class, 'getTypeofIIRCount']);
                 Route::get('AccidentReportUnitWiseCount', [KpiDashboardController::class, 'getAccidentReportUnitWiseCount']);
+                Route::get('NearMissCount', [KpiDashboardController::class, 'getNearMissCount']);
                 Route::get('injurypart', [KpiDashboardController::class, 'getInjurypart']);
                 Route::post('getbodycount', [KpiDashboardController::class, 'injurybodycount']);
+                Route::get('IIRTypeWiseUAUC', [KpiDashboardController::class, 'IIRTypeWiseUAUC']);
             });
 
             /**

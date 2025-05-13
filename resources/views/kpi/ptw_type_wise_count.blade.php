@@ -1,55 +1,94 @@
-<div id="chartData2"></div>
+<div id="ptw_type_wise"></div>
 
 <script>
+    var type_wise = @json($work_wise_count);
+
     var options = {
         series: [{
-            data: [44, 55, 41, 64, 22, 43, 21]
-        }, {
-            data: [53, 32, 33, 52, 13, 44, 32]
+            data: Object.values(type_wise)
         }],
         chart: {
-            type: 'bar',
             height: 350,
+            type: 'bar',
             toolbar: {
                 show: false
             },
         },
         plotOptions: {
             bar: {
-                horizontal: true,
+                borderRadius: 10,
                 dataLabels: {
                     position: 'top',
                 },
             }
         },
-        dataLabels: {
-            enabled: true,
-            offsetX: -6,
-            style: {
-                fontSize: '12px',
-                colors: ['#fff']
+        // dataLabels: {
+        //     enabled: true,
+        //     formatter: function(val) {
+        //         return val + "%";
+        //     },
+        //     offsetY: -20,
+        //     style: {
+        //         fontSize: '12px',
+        //         colors: ["#304758"]
+        //     }
+        // },
+        xaxis: {
+            categories: Object.keys(type_wise),
+            position: 'top',
+            axisBorder: {
+                show: false
+            },
+            axisTicks: {
+                show: false
+            },
+            crosshairs: {
+                fill: {
+                    type: 'gradient',
+                    gradient: {
+                        colorFrom: '#D8E3F0',
+                        colorTo: '#BED1E6',
+                        stops: [0, 100],
+                        opacityFrom: 0.4,
+                        opacityTo: 0.5,
+                    }
+                }
+            },
+            tooltip: {
+                enabled: true,
             }
         },
-        stroke: {
-            show: true,
-            width: 1,
-            colors: ['#fff']
+        yaxis: {
+            axisBorder: {
+                show: false
+            },
+            axisTicks: {
+                show: false,
+            },
+            labels: {
+                show: false,
+                formatter: function(val) {
+                    return val;
+                }
+            }
         },
-        tooltip: {
-            shared: true,
-            intersect: false
-        },
-        xaxis: {
-            categories: [2001, 2002, 2003, 2004, 2005],
-        },
+        title: {
+            text: 'Work Type Wise Summary',
+            floating: true,
+            offsetY: 330,
+            align: 'center',
+            style: {
+                color: '#444'
+            }
+        }
     };
 
-    var chartData2 = new ApexCharts(document.querySelector("#chartData2"), options);
-    chartData2.render();
+    var ptw_type_wise = new ApexCharts(document.querySelector("#ptw_type_wise"), options);
+    ptw_type_wise.render();
 
     // Download button functionality
-    $("#LoadChart2_download").off("click").on("click", function() {
-        chartData2.dataURI().then(({
+    $("#ptw_type_wise_download").off("click").on("click", function() {
+        ptw_type_wise.dataURI().then(({
             imgURI
         }) => {
             var newCanvas = document.createElement('canvas');
@@ -73,10 +112,10 @@
                 // Optional filter text
                 let yPos = 60;
 
-                @if (isset($getdashdata))
+                @if (isset($dates))
                     @php
-                        $from = $getdashdata->Fromdate ?? null;
-                        $to = $getdashdata->Todate ?? null;
+                        $from = $dates['from_date'] ?? null;
+                        $to = $dates['to_date'] ?? null;
                     @endphp
 
                     @if ($from || $to)
