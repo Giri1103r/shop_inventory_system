@@ -1,17 +1,21 @@
-<div id="chartData8"></div>
+<div id="chartPTWAvgTimeChart"></div>
 
 <script>
     var options = {
-        series: [44, 55, 41, 17, 15],
+        series: [{
+            name: 'Avg Time (in mins)',
+            data: {!! json_encode($chartData['series']) !!}
+        }],
         chart: {
-            width: 380,
-            type: 'donut',
+            type: 'bar',
+            height: 350,
             toolbar: {
-                show: false 
+                show: false
             },
-        },
-        legend: {
-            position: 'bottom' 
+            stacked: false,
+            zoom: {
+                enabled: false
+            }
         },
         responsive: [{
             breakpoint: 480,
@@ -23,25 +27,48 @@
                 }
             }
         }],
-        responsive: [{
-            breakpoint: 480,
-            options: {
-                chart: {
-                    width: 200
-                },
-                legend: {
-                    position: 'bottom'
+        plotOptions: {
+            bar: {
+                horizontal: false,
+                borderRadius: 10,
+                dataLabels: {
+                    total: {
+                        enabled: true,
+                        style: {
+                            fontSize: '13px',
+                            fontWeight: 900
+                        }
+                    }
+                }
+            },
+        },
+        xaxis: {
+            categories: {!! json_encode($chartData['labels']) !!}
+        },
+        tooltip: {
+            y: {
+                formatter: function(val) {
+                    return val + ' mins';
                 }
             }
-        }]
+        },
+        legend: {
+            position: 'bottom',
+            horizontalAlign: 'center',
+            offsetY: 10
+        },
+        fill: {
+            opacity: 1
+        }
     };
 
-    var chartData8 = new ApexCharts(document.querySelector("#chartData8"), options);
-    chartData8.render();
+
+    var chartPTWAvgTimeChart = new ApexCharts(document.querySelector("#chartPTWAvgTimeChart"), options);
+    chartPTWAvgTimeChart.render();
 
     // Download button functionality
-    $("#LoadChart8_download").off("click").on("click", function() {
-        chartData8.dataURI().then(({
+    $("#LoadPTWAvgTimeChart_download").off("click").on("click", function() {
+        chartPTWAvgTimeChart.dataURI().then(({
             imgURI
         }) => {
             var newCanvas = document.createElement('canvas');
@@ -60,7 +87,7 @@
                 // Header text
                 ctx.fillStyle = '#203669';
                 ctx.font = '20px Arial';
-                ctx.fillText('CHART', 10, 30);
+                ctx.fillText('chartPTWAvgTimeChart', 10, 30);
 
                 // Optional filter text
                 let yPos = 60;
@@ -96,7 +123,7 @@
                 newCanvas.toBlob(function(blob) {
                     var link = document.createElement('a');
                     link.href = URL.createObjectURL(blob);
-                    link.download = 'CHART.png';
+                    link.download = 'chartPTWAvgTimeChart.png';
                     link.click();
                 });
             };

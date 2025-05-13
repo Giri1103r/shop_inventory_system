@@ -212,9 +212,9 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('IIRTypeWiseRCPA', [KpiDashboardController::class, 'IIRTypeWiseRCPA']);
                 Route::get('chart5', [KpiDashboardController::class, 'getChart5']);
                 Route::get('chart6', [KpiDashboardController::class, 'getChart6']);
-                Route::get('chart7', [KpiDashboardController::class, 'getChart7']);
-                Route::get('chart8', [KpiDashboardController::class, 'getChart8']);
-                Route::get('chart9', [KpiDashboardController::class, 'getChart9']);
+                Route::get('PPEIssuanceGroupWise', [KpiDashboardController::class, 'getPPEIssuanceGroupWise']);
+                Route::get('PTWAvgTimeChart', [KpiDashboardController::class, 'getPTWAvgTimeChart']);
+                Route::get('PPEAvailabilityChart', [KpiDashboardController::class, 'getPPEAvailabilityChart']);
                 Route::get('chart10', [KpiDashboardController::class, 'getChart10']);
                 Route::get('chart11', [KpiDashboardController::class, 'getChart11']);
                 Route::get('chart12', [KpiDashboardController::class, 'getChart12']);

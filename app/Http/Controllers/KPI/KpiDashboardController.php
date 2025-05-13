@@ -5,6 +5,7 @@ use App\Http\Controllers\Controller;
 use App\Models\IMS\Incident\IncidentBodyParts;
 use App\Models\IMS\Incident\InitialIncident;
 use App\Models\Master\Employee;
+use App\Models\Master\PpeRequest;
 use App\Models\Master\TrainingSchedule;
 use DB;
 use Exception;
@@ -160,41 +161,57 @@ class KpiDashboardController extends Controller
             report($ex);
         }
     }
-    public function getChart7(Request $request)
+    public function getPPEIssuanceGroupWise(Request $request)
     {
         try {
+            $form_date = $request->input('Fromdate');
+            $to_date = $request->input('Todate');
+            $chartData = getPPERequestChartData($form_date, $to_date);
 
             $data = [
                 'getdashdata' => $request,
             ];
 
-            return view('kpi.chartData7', $data);
+            return view('kpi.chartPPEIssuanceGroupWise', [
+                'getdashdata' => $request,
+                'chartData' => $chartData,
+            ]);
         } catch (\Exception $ex) {
             report($ex);
         }
     }
-    public function getChart8(Request $request)
+
+    public function getPTWAvgTimeChart(Request $request)
     {
         try {
 
-            $data = [
-                'getdashdata' => $request,
-            ];
+            $form_date = $request->input('Fromdate');
+            $to_date = $request->input('Todate');
+            $chartData = getPTWAvgTimeChartData($form_date, $to_date);
 
-            return view('kpi.chartData8', $data);
+            return view('kpi.chartPTWAvgTimeChart', [
+                'getdashdata' => $request,
+                'chartData' => $chartData,
+            ]);
+
         } catch (\Exception $ex) {
             report($ex);
         }
     }
-    public function getChart9(Request $request)
+
+    public function getPPEAvailabilityChart(Request $request)
     {
         try {
 
-            $data = [
-                'getdashdata' => $request,
-            ];
+            $form_date = $request->input('Fromdate');
+            $to_date = $request->input('Todate');
+            $chartData = getPPEAvailabilityChartData($form_date, $to_date);
 
-            return view('kpi.chartData9', $data);
+            return view('kpi.chartPPEAvailability', [
+                'getdashdata' => $request,
+                'chartData' => $chartData,
+            ]);
+
         } catch (\Exception $ex) {
             report($ex);
         }
