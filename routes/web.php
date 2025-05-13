@@ -202,9 +202,9 @@ Route::middleware(['securityheader'])->group(function () {
 
             Route::group(['prefix' => 'kpi/dashboard/'], function () {
                 Route::get('', [KpiDashboardController::class, 'index']);
-                Route::get('chart1', [KpiDashboardController::class, 'getChart1']);
-                Route::get('chart2', [KpiDashboardController::class, 'getChart2']);
-                Route::get('chart3', [KpiDashboardController::class, 'getChart3']);
+                Route::get('inspection-count', [KpiDashboardController::class, 'InspectionWiseCount']);
+                Route::get('ptw-open-close', [KpiDashboardController::class, 'PTWActiveVsClose']);
+                Route::get('ptw-type-wise-count', [KpiDashboardController::class, 'PTWTypeWiseCount']);
                 Route::get('chart4', [KpiDashboardController::class, 'getChart4']);
                 Route::get('chart5', [KpiDashboardController::class, 'getChart5']);
                 Route::get('chart6', [KpiDashboardController::class, 'getChart6']);

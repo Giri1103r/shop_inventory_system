@@ -104,13 +104,13 @@ class SafetyPermit extends Model
         $userRole = $user->role;
         $unit_id = $user->unit_id;
         $empid = $user->id;
-        $companyId= $user->company_id;
+        $companyId = $user->company_id;
 
         $userRole = string_to_array($userRole);
         if (isAdmin()) {
             $query = $this->select('ptw_safety.*', 'masters_unit.unit_name', 'ptw_status.status_name', 'ptw_status.bg_color')->leftJoin('masters_unit', 'masters_unit.id', '=', 'ptw_safety.unit_id')->leftJoin('ptw_status', 'ptw_status.id', '=', 'ptw_safety.permit_status');
         } elseif (in_array(ROLE_EHS_OFFICER, $userRole)) {
-            $query = $this->select('ptw_safety.*', 'masters_unit.unit_name', 'ptw_status.status_name', 'ptw_status.bg_color')->leftJoin('masters_unit', 'masters_unit.id', '=', 'ptw_safety.unit_id')->leftJoin('ptw_status', 'ptw_status.id', '=', 'ptw_safety.permit_status')->where('ptw_safety.company_id',$companyId);;
+            $query = $this->select('ptw_safety.*', 'masters_unit.unit_name', 'ptw_status.status_name', 'ptw_status.bg_color')->leftJoin('masters_unit', 'masters_unit.id', '=', 'ptw_safety.unit_id')->leftJoin('ptw_status', 'ptw_status.id', '=', 'ptw_safety.permit_status')->where('ptw_safety.company_id', $companyId);;
         } elseif (in_array(ROLE_PLANT_HEAD, $userRole)) {
             $query = $this->select('ptw_safety.*', 'masters_unit.unit_name', 'ptw_status.status_name', 'ptw_status.bg_color')->leftJoin('masters_unit', 'masters_unit.id', '=', 'ptw_safety.unit_id')->leftJoin('ptw_status', 'ptw_status.id', '=', 'ptw_safety.permit_status')->where('ptw_safety.unit_id', $unit_id);
         } elseif (in_array(ROLE_EHS_HEAD, $userRole)) {
@@ -1139,5 +1139,85 @@ class SafetyPermit extends Model
         ];
 
         return $this->where('id', $id)->update($reassignto);
+    }
+
+    public function ActiveVsClose()
+    {
+        $request = request();
+        $from_date = $request->input('Fromdate');
+        $to_date = $request->input('Todate');
+
+        $openQuery = $this->where('permit_status', STATUS_PLANT_HEAD_APPROVED)
+            ->where('status', 1)
+            ->where('trash', 'NO');
+
+        $closeQuery = $this->where('permit_status', STATUS_CLOSED)
+            ->where('status', 1)
+            ->where('trash', 'NO');
+
+        if (!empty($from_date)) {
+            $openQuery->whereDate('created_at', '>=', DBDateformat($from_date));
+            $closeQuery->whereDate('created_at', '>=', DBDateformat($from_date));
+        }
+
+        if (!empty($to_date)) {
+            $openQuery->whereDate('created_at', '<=', DBDateformat($to_date));
+            $closeQuery->whereDate('created_at', '<=', DBDateformat($to_date));
+        }
+
+        $open_count = $openQuery->count();
+        $close_count = $closeQuery->count();
+
+        if (($open_count > 0) && ($close_count > 0)) {
+            return [
+                'PTW Open Count' => $open_count,
+                'PTW Close Count' => $close_count
+            ];
+        }
+
+        return null;
+    }
+
+    public function GetTypeWiseCount()
+    {
+        $request = request();
+        $from_date = $request->input('Fromdate');
+        $to_date = $request->input('Todate');
+
+        
+        $query = $this->where('status', 1)->where('trash', 'NO');
+
+        
+        if (!empty($from_date)) {
+            $query->whereDate('created_at', '>=', $from_date);
+        }
+        if (!empty($to_date)) {
+            $query->whereDate('created_at', '<=', $to_date);
+        }
+
+        $data = $query->get(); 
+
+        $type_of_work = GetPTWTypes();
+
+        $idToWorkNameMap = [];
+        $workCounts = [];
+        
+        foreach ($type_of_work as $type) {
+            $idToWorkNameMap[$type['id']] = $type['work_name'];
+            $workCounts[$type['work_name']] = 0;
+        }
+
+        
+        foreach ($data as $details) {
+            $subpermits = string_to_array($details->sub_permit); 
+            foreach ($subpermits as $subpermit) {
+                if ($subpermit && isset($idToWorkNameMap[$subpermit])) {
+                    $workName = $idToWorkNameMap[$subpermit];
+                    $workCounts[$workName]++;
+                }
+            }
+        }
+
+        return $workCounts;
     }
 }

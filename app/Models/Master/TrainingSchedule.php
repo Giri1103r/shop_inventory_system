@@ -706,11 +706,29 @@ class TrainingSchedule extends Model
     public function selectOne($id)
     {
 
-        $data = $this->select('training_schedule.*', 'masters_unit.unit_name', 'masters_employee.emp_name','masters_employee.login_id', 'masters_employee.email', 'masters_department.department_name', 'training_masters_topic.topic_name', 'training_masters_venue.name_of_the_conference_hall')->leftJoin('masters_unit', 'training_schedule.unit_id', '=', 'masters_unit.id')->leftJoin('training_masters_topic', 'training_schedule.topic_id', '=', 'training_masters_topic.id')->leftJoin('masters_department', 'training_schedule.department_id', '=', 'masters_department.id')->leftJoin('masters_employee', 'training_schedule.trainer_id', '=', 'masters_employee.id')->leftJoin('training_masters_venue', 'training_schedule.venue_id', '=', 'training_masters_venue.id')
+        $data = $this->select('training_schedule.*', 'masters_unit.unit_name', 'masters_employee.emp_name', 'masters_employee.login_id', 'masters_employee.email', 'masters_department.department_name', 'training_masters_topic.topic_name', 'training_masters_venue.name_of_the_conference_hall')->leftJoin('masters_unit', 'training_schedule.unit_id', '=', 'masters_unit.id')->leftJoin('training_masters_topic', 'training_schedule.topic_id', '=', 'training_masters_topic.id')->leftJoin('masters_department', 'training_schedule.department_id', '=', 'masters_department.id')->leftJoin('masters_employee', 'training_schedule.trainer_id', '=', 'masters_employee.id')->leftJoin('training_masters_venue', 'training_schedule.venue_id', '=', 'training_masters_venue.id')
             ->where('training_schedule.id', $id)
             ->first();
 
         return $data;
+    }
+
+    public function GetTrainingData()
+    {
+        $request = request();
+        $from_date = $request->input('Fromdate');
+        $to_date = $request->input('Todate');
+
+
+        $query = $this->where('status', 1)->where('trash', 'NO');
+
+
+        if (!empty($from_date)) {
+            $query->whereDate('created_at', '>=', $from_date);
+        }
+        if (!empty($to_date)) {
+            $query->whereDate('created_at', '<=', $to_date);
+        }
     }
 
 
