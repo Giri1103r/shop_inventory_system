@@ -68,6 +68,7 @@ class SafetyPermit extends Model
         'permit_status',
         'permit_extension_status',
         'reference_id',
+        'pdf_download',
         'select_employee_shut_down',
         'select_employee_loto_takenby',
         'status',
@@ -1259,7 +1260,7 @@ class SafetyPermit extends Model
 
         $results = $query->get();
 
-       
+
         return $results->pluck('hold_count', 'unit_name')->toArray();
     }
 }
