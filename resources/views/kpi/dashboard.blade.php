@@ -109,7 +109,7 @@
                             <h4 class="text-white">IIR Type Wise RCPA</h4>
                             <a class="fas fa-arrow-alt-circle-down chartdownload" id="iirTypewiseRCPA_download"></a>
                         </div>
-                        <div class="card-body px-0 pt-0 dlab-scroll height450" id="iirTypewiseRCPACont"> </div>
+                        <div class="card-body px-0 pt-0 dlab-scroll height450" id="iirTypewiseRCPACount"> </div>
 
                     </div>
                 </div>
@@ -342,13 +342,25 @@
                     <div class="card view_card">
                         <div class="card-header">
                             <h4 class="text-white">Accident Report Unit Wise</h4>
-                            <a class="fas fa-arrow-alt-circle-down chartdownload" id="AccidentReportUnitWise_download"></a>
+                            <a class="fas fa-arrow-alt-circle-down chartdownload"
+                                id="AccidentReportUnitWise_download"></a>
                         </div>
                         <div id="AccidentReportUnitWiseCount"></div>
                     </div>
                 </div>
             </div>
+            <div class="row">
+                <div class="col-xl-12 col-xxl-12">
+                    <div class="card view_card">
+                        <div class="card-header">
+                            <h4 class="text-white">IIR Type Wise UAUC</h4>
+                            <a class="fas fa-arrow-alt-circle-down chartdownload" id="iirTypewiseUAUC_download"></a>
+                        </div>
+                        <div class="card-body px-0 pt-0 dlab-scroll height450" id="iirTypewiseUAUCCount"> </div>
 
+                    </div>
+                </div>
+            </div>
             {{-- <div class="row">
                 <div class="col-xl-12 col-xxl-12">
                     <div class="card view_card">
@@ -424,7 +436,7 @@
             LoadChart1Count(Fromdate, Todate);
             LoadChart2Count(Fromdate, Todate);
             LoadChart3Count(Fromdate, Todate);
-            iirTypewiseRCPACont(Fromdate, Todate);
+            LoadiirTypewiseRCPACount(Fromdate, Todate);
             LoadChart5Count(Fromdate, Todate);
             LoadChart6Count(Fromdate, Todate);
             LoadChart7Count(Fromdate, Todate);
@@ -450,6 +462,7 @@
             loadfmonthwisetraining(Fromdate, Todate);
             loadtraining_count_status(Fromdate, Todate);
             loadinjurychart(Fromdate, Todate);
+            LoadiirTypewiseUAUCCount(Fromdate, Todate);
         }
 
         function LoadChart1Count(Fromdate = '', Todate = '') {
@@ -509,13 +522,13 @@
             });
         }
 
-        function iirTypewiseRCPACont(Fromdate = '', Todate = '') {
+        function LoadiirTypewiseRCPACount(Fromdate = '', Todate = '') {
             var url = "{{ admin_url('kpi/dashboard/IIRTypeWiseRCPA') }}"
             var data = {
                 Fromdate: Fromdate,
                 Todate: Todate,
             };
-            $('#iirTypewiseRCPACont').html('');
+            $('#iirTypewiseRCPACount').html('');
             $.ajax({
                 type: 'get',
                 url: url,
@@ -523,7 +536,7 @@
                 cache: false,
                 success: function(dataAjx) {
 
-                    $('#iirTypewiseRCPACont').html(dataAjx);
+                    $('#iirTypewiseRCPACount').html(dataAjx);
                 }
             });
         }
@@ -888,6 +901,7 @@
                 }
             });
         }
+
         function TypeofIIRCount(Fromdate = '', Todate = '') {
             var url = "{{ admin_url('kpi/dashboard/TypeofIIRCount') }}"
             var data = {
@@ -906,6 +920,7 @@
                 }
             });
         }
+
         function AccidentReportUnitWiseCount(Fromdate = '', Todate = '') {
             var url = "{{ admin_url('kpi/dashboard/AccidentReportUnitWiseCount') }}"
             var data = {
@@ -998,6 +1013,25 @@
                 success: function(dataAjx) {
 
                     $('#loadinjurychart').html(dataAjx);
+                }
+            });
+        }
+
+        function LoadiirTypewiseUAUCCount(Fromdate = '', Todate = '') {
+            var url = "{{ admin_url('kpi/dashboard/IIRTypeWiseUAUC') }}"
+            var data = {
+                Fromdate: Fromdate,
+                Todate: Todate,
+            };
+            $('#iirTypewiseUAUCCount').html('');
+            $.ajax({
+                type: 'get',
+                url: url,
+                data: data,
+                cache: false,
+                success: function(dataAjx) {
+
+                    $('#iirTypewiseUAUCCount').html(dataAjx);
                 }
             });
         }

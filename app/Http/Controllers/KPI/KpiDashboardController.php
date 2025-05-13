@@ -447,4 +447,21 @@ class KpiDashboardController extends Controller
 
         return response()->json($response);
     }
+
+
+    public function IIRTypeWiseUAUC(Request $request)
+    {
+        try {
+            $chartData = $this->ims_incident->getTypeofIIRUAUCCountData($request);
+
+            // dd($chartData);
+            $data = [
+                'chartData' => $chartData,
+            ];
+
+            return view('kpi.iir_wise_uauc', $data);
+        } catch (\Exception $ex) {
+            report($ex);
+        }
+    }
 }

@@ -1,4 +1,4 @@
-<div id="iirWiseRcpa"></div>
+<div id="iirWiseUAUC"></div>
 
 <script>
 
@@ -75,11 +75,11 @@
         }
     };
 
-    var iirWiseRcpa = new ApexCharts(document.querySelector("#iirWiseRcpa"), options);
-    iirWiseRcpa.render();
+    var iirWiseUAUC = new ApexCharts(document.querySelector("#iirWiseUAUC"), options);
+    iirWiseUAUC.render();
 
     $("#iirTypewiseRCPA_download").off("click").on("click", function() {
-        iirWiseRcpa.dataURI().then(({
+        iirWiseUAUC.dataURI().then(({
             imgURI
         }) => {
             var newCanvas = document.createElement('canvas');
