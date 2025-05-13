@@ -1,42 +1,62 @@
-<div id="chartData9"></div>
+<div id="PPEAvailabilityChart"></div>
 
 <script>
+    var chartLabels9 = @json($chartData['labels']);
+    var chartSeries9 = @json($chartData['series']);
+    var totalQuantity = chartSeries9.reduce((a, b) => a + b, 0);
+
     var options = {
-        series: [44, 55, 67, 83],
+        series: chartSeries9,
         chart: {
-            height: 350,
-            type: 'radialBar',
+            type: 'donut',
+            height: 350
         },
+        labels: chartLabels9,
         plotOptions: {
-            radialBar: {
-                dataLabels: {
-                    name: {
-                        fontSize: '22px',
-                    },
-                    value: {
-                        fontSize: '16px',
-                    },
-                    total: {
+            pie: {
+                donut: {
+                    size: '70%',
+                    labels: {
                         show: true,
-                        label: 'Total',
-                        formatter: function(w) {
-                            // By default this function returns the average of all series. The below is just an example to show the use of custom formatter function
-                            return 249
+                        name: {
+                            show: true,
+                            fontSize: '16px'
+                        },
+                        value: {
+                            show: true,
+                            fontSize: '14px'
+                        },
+                        total: {
+                            show: true,
+                            label: 'Total',
+                            fontSize: '18px',
+                            formatter: function() {
+                                return totalQuantity;
+                            }
                         }
                     }
                 }
             }
         },
-        labels: ['Apples', 'Oranges', 'Bananas', 'Berries'],
+        tooltip: {
+            y: {
+                formatter: function(val) {
+                    return val + ' Units';
+                }
+            }
+        },
+        legend: {
+            position: 'bottom'
+        }
     };
 
+    var PPEAvailabilityChart = new ApexCharts(document.querySelector("#PPEAvailabilityChart"), options);
+    PPEAvailabilityChart.render();
 
-    var chartData9 = new ApexCharts(document.querySelector("#chartData9"), options);
-    chartData9.render();
 
-    // Download button functionality
-    $("#LoadChart9_download").off("click").on("click", function() {
-        chartData9.dataURI().then(({
+    // Download button
+    $("#LoadPPEAvailabilityChart_download").off("click").on("click", function() {
+        PPEAvailabilityChart.dataURI().then(({
             imgURI
         }) => {
             var newCanvas = document.createElement('canvas');
@@ -52,12 +72,12 @@
                 ctx.fillStyle = 'white';
                 ctx.fillRect(0, 0, newCanvas.width, newCanvas.height);
 
-                // Header text
+                // Header
                 ctx.fillStyle = '#203669';
                 ctx.font = '20px Arial';
-                ctx.fillText('CHART', 10, 30);
+                ctx.fillText('PPE Availability Chart', 10, 30);
 
-                // Optional filter text
+                // Filters (if present)
                 let yPos = 60;
 
                 @if (isset($getdashdata))
@@ -84,14 +104,13 @@
                     @endif
                 @endif
 
-                // Draw chart image below header
+                // Chart
                 ctx.drawImage(image, 0, headerHeight);
 
-                // Save as image
                 newCanvas.toBlob(function(blob) {
                     var link = document.createElement('a');
                     link.href = URL.createObjectURL(blob);
-                    link.download = 'CHART.png';
+                    link.download = 'PPE_Availability_Chart.png';
                     link.click();
                 });
             };

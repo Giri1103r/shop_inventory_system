@@ -1,36 +1,74 @@
-<div id="chartData7"></div>
+<div id="chartPTWAvgTimeChart"></div>
 
 <script>
     var options = {
-        series: [44, 55, 13, 43, 22],
+        series: [{
+            name: 'Avg Time (in mins)',
+            data: {!! json_encode($chartData['series']) !!}
+        }],
         chart: {
-            width: 380,
-            type: 'pie',
-          
-        },
-        labels: ['Team A', 'Team B', 'Team C', 'Team D', 'Team E'],
-        legend: {
-            position: 'bottom' 
+            type: 'bar',
+            height: 350,
+            toolbar: {
+                show: false
+            },
+            stacked: false,
+            zoom: {
+                enabled: false
+            }
         },
         responsive: [{
             breakpoint: 480,
             options: {
-                chart: {
-                    width: 200
-                },
                 legend: {
-                    position: 'bottom'
+                    position: 'bottom',
+                    offsetX: 0,
+                    offsetY: 0
                 }
             }
-        }]
+        }],
+        plotOptions: {
+            bar: {
+                horizontal: false,
+                borderRadius: 10,
+                dataLabels: {
+                    total: {
+                        enabled: true,
+                        style: {
+                            fontSize: '13px',
+                            fontWeight: 900
+                        }
+                    }
+                }
+            },
+        },
+        xaxis: {
+            categories: {!! json_encode($chartData['labels']) !!}
+        },
+        tooltip: {
+            y: {
+                formatter: function(val) {
+                    return val + ' mins';
+                }
+            }
+        },
+        legend: {
+            position: 'bottom',
+            horizontalAlign: 'center',
+            offsetY: 10
+        },
+        fill: {
+            opacity: 1
+        }
     };
 
-    var chartData7 = new ApexCharts(document.querySelector("#chartData7"), options);
-    chartData7.render();
 
-    // Download chart as image
-    $("#LoadChart7_download").off("click").on("click", function() {
-        chartData7.dataURI().then(({
+    var chartPTWAvgTimeChart = new ApexCharts(document.querySelector("#chartPTWAvgTimeChart"), options);
+    chartPTWAvgTimeChart.render();
+
+    // Download button functionality
+    $("#LoadPTWAvgTimeChart_download").off("click").on("click", function() {
+        chartPTWAvgTimeChart.dataURI().then(({
             imgURI
         }) => {
             var newCanvas = document.createElement('canvas');
@@ -42,16 +80,16 @@
                 let headerHeight = 120;
                 newCanvas.height = image.height + headerHeight;
 
-                // Background
+                // White background
                 ctx.fillStyle = 'white';
                 ctx.fillRect(0, 0, newCanvas.width, newCanvas.height);
 
-                // Header
+                // Header text
                 ctx.fillStyle = '#203669';
                 ctx.font = '20px Arial';
-                ctx.fillText('CHART', 10, 30);
+                ctx.fillText('chartPTWAvgTimeChart', 10, 30);
 
-                // Optional filter info
+                // Optional filter text
                 let yPos = 60;
 
                 @if (isset($getdashdata))
@@ -78,14 +116,14 @@
                     @endif
                 @endif
 
-                // Draw image
+                // Draw chart image below header
                 ctx.drawImage(image, 0, headerHeight);
 
-                // Download
+                // Save as image
                 newCanvas.toBlob(function(blob) {
                     var link = document.createElement('a');
                     link.href = URL.createObjectURL(blob);
-                    link.download = 'CHART.png';
+                    link.download = 'chartPTWAvgTimeChart.png';
                     link.click();
                 });
             };

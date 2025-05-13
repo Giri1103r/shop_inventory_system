@@ -1,40 +1,48 @@
 <?php
 
 namespace App\Http\Controllers\KPI;
-
 use App\Http\Controllers\Controller;
 use App\Models\IMS\Incident\IncidentBodyParts;
 use App\Models\IMS\Incident\InitialIncident;
 use App\Models\Master\Employee;
+use App\Models\Master\PpeRequest;
 use App\Models\Master\TrainingSchedule;
 use DB;
 use Exception;
-
+use App\Models\User;
 use Illuminate\Support\Str;
+
 use Illuminate\Http\Request;
+use App\Models\Master\Employee;
+use App\Models\Permit\SafetyPermit;
+use App\Http\Controllers\Controller;
+use App\Models\Master\TrainingSchedule;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Facades\File;
-use App\Models\User;
 
 class KpiDashboardController extends Controller
 {
     private $bodyparts;
     private $training_schedule;
     private $ims_incident;
-
+    private $ptw;
+    private $training_schedule;
 
     public function __construct()
     {
         $this->bodyparts = new IncidentBodyParts();
         $this->training_schedule = new TrainingSchedule();
         $this->ims_incident = new InitialIncident();
+        $this->ptw = new SafetyPermit();
+        $this->training_schedule = new TrainingSchedule();
     }
 
 
-    public function index()
+    public function index(Request $request)
     {
+        
         if (Auth::check()) {
             $user = Auth::user();
             $data = [];
@@ -44,51 +52,82 @@ class KpiDashboardController extends Controller
     }
 
 
-    public function getChart1(Request $request)
+    public function InspectionWiseCount(Request $request)
     {
         try {
+            $from_date = $request->input('Fromdate');
+            $to_date = $request->input('Todate');
+
+            $inspection_wise_count = InspectionCount($from_date, $to_date);
 
             $data = [
-                'getdashdata' => $request,
+                'inspection_wise_count' => $inspection_wise_count,
+                'from_date' => $from_date,
+                'to_date' => $to_date,
             ];
 
-            return view('kpi.chartData1', $data);
+            return view('kpi.inspection_wise_count', $data);
         } catch (\Exception $ex) {
             report($ex);
         }
     }
-    public function getChart2(Request $request)
+
+    public function PTWActiveVsClose(Request $request)
     {
         try {
 
+            $dates = [
+                'from_date' => $request->input('FromDate'),
+                'to_date' =>  $request->input('ToDate')
+            ];
+            $active_close_count = $this->ptw->ActiveVsClose();
+
+            if($active_close_count == null){
+                return response()->json('<div class="border-0 pb-3" style="margin-top: 150px;"><h4 style="text-align: center;">No data Found.</h4></div>');
+            }
+
             $data = [
-                'getdashdata' => $request,
+                'active_close_count' => $active_close_count,
+                'dates' => $dates,
             ];
 
-            return view('kpi.chartData2', $data);
+            return view('kpi.ptw_open_close', $data);
         } catch (\Exception $ex) {
             report($ex);
         }
     }
-    public function getChart3(Request $request)
+
+
+    public function PTWTypeWiseCount(Request $request)
     {
         try {
 
+            $dates = [
+                'from_date' => $request->input('FromDate'),
+                'to_date' =>  $request->input('ToDate')
+            ];
+            
+            $work_wise_count = $this->ptw->GetTypeWiseCount();
+
             $data = [
-                'getdashdata' => $request,
+                'work_wise_count' => $work_wise_count,
+                'dates' => $dates,
             ];
 
-            return view('kpi.chartData3', $data);
+            return view('kpi.ptw_type_wise_count', $data);
         } catch (\Exception $ex) {
             report($ex);
         }
     }
-    public function IIRTypeWiseRCPA(Request $request)
+
+    public function TrainingHours(Request $request)
     {
         try {
-            $chartData = $this->ims_incident->getTypeofIIRRCPACountData($request);
+
+            $training_data = $this->training_schedule->GetTrainingData();
+
             $data = [
-                'chartData' => $chartData,
+                'training_data' => $training_data,
             ];
 
             return view('kpi.iir_wise_rcpa', $data);
@@ -122,41 +161,57 @@ class KpiDashboardController extends Controller
             report($ex);
         }
     }
-    public function getChart7(Request $request)
+    public function getPPEIssuanceGroupWise(Request $request)
     {
         try {
+            $form_date = $request->input('Fromdate');
+            $to_date = $request->input('Todate');
+            $chartData = getPPERequestChartData($form_date, $to_date);
 
             $data = [
                 'getdashdata' => $request,
             ];
 
-            return view('kpi.chartData7', $data);
+            return view('kpi.chartPPEIssuanceGroupWise', [
+                'getdashdata' => $request,
+                'chartData' => $chartData,
+            ]);
         } catch (\Exception $ex) {
             report($ex);
         }
     }
-    public function getChart8(Request $request)
+
+    public function getPTWAvgTimeChart(Request $request)
     {
         try {
 
-            $data = [
-                'getdashdata' => $request,
-            ];
+            $form_date = $request->input('Fromdate');
+            $to_date = $request->input('Todate');
+            $chartData = getPTWAvgTimeChartData($form_date, $to_date);
 
-            return view('kpi.chartData8', $data);
+            return view('kpi.chartPTWAvgTimeChart', [
+                'getdashdata' => $request,
+                'chartData' => $chartData,
+            ]);
+
         } catch (\Exception $ex) {
             report($ex);
         }
     }
-    public function getChart9(Request $request)
+
+    public function getPPEAvailabilityChart(Request $request)
     {
         try {
 
-            $data = [
-                'getdashdata' => $request,
-            ];
+            $form_date = $request->input('Fromdate');
+            $to_date = $request->input('Todate');
+            $chartData = getPPEAvailabilityChartData($form_date, $to_date);
 
-            return view('kpi.chartData9', $data);
+            return view('kpi.chartPPEAvailability', [
+                'getdashdata' => $request,
+                'chartData' => $chartData,
+            ]);
+
         } catch (\Exception $ex) {
             report($ex);
         }
@@ -315,6 +370,7 @@ class KpiDashboardController extends Controller
             return view('kpi.chartData21', $data);
         } catch (\Exception $ex) {
             report($ex);
+
         }
     }
     public function getRCADistributionCount(Request $request)
@@ -446,5 +502,22 @@ class KpiDashboardController extends Controller
         }
 
         return response()->json($response);
+    }
+
+
+    public function IIRTypeWiseUAUC(Request $request)
+    {
+        try {
+            $chartData = $this->ims_incident->getTypeofIIRUAUCCountData($request);
+
+            // dd($chartData);
+            $data = [
+                'chartData' => $chartData,
+            ];
+
+            return view('kpi.iir_wise_uauc', $data);
+        } catch (\Exception $ex) {
+            report($ex);
+        }
     }
 }

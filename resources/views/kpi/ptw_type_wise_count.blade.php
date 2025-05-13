@@ -1,85 +1,94 @@
-<div id="iirWiseRcpa"></div>
+<div id="ptw_type_wise"></div>
 
 <script>
-
-    var chartData = {!! json_encode($chartData) !!};
-
-
-    var series = [{
-            name: 'Total Incidents',
-            data: chartData.map(item => item.total_incident)
-        },
-        {
-            name: 'Total RCPA',
-            data: chartData.map(item => item.total_rcpa)
-        }
-    ];
-
-
-    var categories = chartData.map(item => item.incident_type_name);
+    var type_wise = @json($work_wise_count);
 
     var options = {
-        series: series,
+        series: [{
+            data: Object.values(type_wise)
+        }],
         chart: {
-            type: 'bar',
             height: 350,
+            type: 'bar',
             toolbar: {
                 show: false
             },
         },
         plotOptions: {
             bar: {
-                horizontal: false,
-                columnWidth: '55%',
-                borderRadius: 5,
-                borderRadiusApplication: 'end'
-            },
+                borderRadius: 10,
+                dataLabels: {
+                    position: 'top',
+                },
+            }
         },
-        dataLabels: {
-            enabled: false
-        },
-        stroke: {
-            show: true,
-            width: 2,
-            colors: ['transparent']
-        },
+        // dataLabels: {
+        //     enabled: true,
+        //     formatter: function(val) {
+        //         return val + "%";
+        //     },
+        //     offsetY: -20,
+        //     style: {
+        //         fontSize: '12px',
+        //         colors: ["#304758"]
+        //     }
+        // },
         xaxis: {
-            categories: categories,
-            labels: {
-
-                rotate: -45,
-                style: {
-                    fontSize: '12px'
+            categories: Object.keys(type_wise),
+            position: 'top',
+            axisBorder: {
+                show: false
+            },
+            axisTicks: {
+                show: false
+            },
+            crosshairs: {
+                fill: {
+                    type: 'gradient',
+                    gradient: {
+                        colorFrom: '#D8E3F0',
+                        colorTo: '#BED1E6',
+                        stops: [0, 100],
+                        opacityFrom: 0.4,
+                        opacityTo: 0.5,
+                    }
                 }
+            },
+            tooltip: {
+                enabled: true,
             }
         },
         yaxis: {
-            title: {
-                text: 'Count'
+            axisBorder: {
+                show: false
             },
-            min: 0
-        },
-        fill: {
-            opacity: 1
-        },
-        tooltip: {
-            y: {
+            axisTicks: {
+                show: false,
+            },
+            labels: {
+                show: false,
                 formatter: function(val) {
-                    return val
+                    return val;
                 }
             }
         },
-        colors: ['#008FFB', '#00E396'], 
-        legend: {
-            position: 'bottom'
+        title: {
+            text: 'Work Type Wise Summary',
+            floating: true,
+            offsetY: 330,
+            align: 'center',
+            style: {
+                color: '#444'
+            }
         }
     };
 
-    var iirWiseRcpa = new ApexCharts(document.querySelector("#iirWiseRcpa"), options);
-    iirWiseRcpa.render();
+    var ptw_type_wise = new ApexCharts(document.querySelector("#ptw_type_wise"), options);
+    ptw_type_wise.render();
 
-    $("#iirTypewiseRCPA_download").off("click").on("click", function() {
-        iirWiseRcpa.dataURI().then(({
+    // Download button functionality
+    $("#ptw_type_wise_download").off("click").on("click", function() {
+        ptw_type_wise.dataURI().then(({
             imgURI
         }) => {
             var newCanvas = document.createElement('canvas');
@@ -98,15 +107,15 @@
                 // Header text
                 ctx.fillStyle = '#203669';
                 ctx.font = '20px Arial';
-                ctx.fillText('IIR Type wise RCPA', 10, 30);
+                ctx.fillText('CHART', 10, 30);
 
                 // Optional filter text
                 let yPos = 60;
 
-                @if (isset($getdashdata))
+                @if (isset($dates))
                     @php
-                        $from = $getdashdata->Fromdate ?? null;
-                        $to = $getdashdata->Todate ?? null;
+                        $from = $dates['from_date'] ?? null;
+                        $to = $dates['to_date'] ?? null;
                     @endphp
 
                     @if ($from || $to)
@@ -134,7 +143,7 @@
                 newCanvas.toBlob(function(blob) {
                     var link = document.createElement('a');
                     link.href = URL.createObjectURL(blob);
-                    link.download = 'IIR Type wise RCPA.png';
+                    link.download = 'CHART.png';
                     link.click();
                 });
             };

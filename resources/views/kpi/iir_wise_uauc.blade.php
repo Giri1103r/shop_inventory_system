@@ -1,12 +1,25 @@
-<div id="chartData2"></div>
+<div id="iirWiseUAUC"></div>
 
 <script>
+
+    var chartData = {!! json_encode($chartData) !!};
+
+
+    var series = [{
+            name: 'Total Incidents',
+            data: chartData.map(item => item.total_incident)
+        },
+        {
+            name: 'Total RCPA',
+            data: chartData.map(item => item.total_rcpa)
+        }
+    ];
+
+
+    var categories = chartData.map(item => item.incident_type_name);
+
     var options = {
-        series: [{
-            data: [44, 55, 41, 64, 22, 43, 21]
-        }, {
-            data: [53, 32, 33, 52, 13, 44, 32]
-        }],
+        series: series,
         chart: {
             type: 'bar',
             height: 350,
@@ -16,40 +29,57 @@
         },
         plotOptions: {
             bar: {
-                horizontal: true,
-                dataLabels: {
-                    position: 'top',
-                },
-            }
+                horizontal: false,
+                columnWidth: '55%',
+                borderRadius: 5,
+                borderRadiusApplication: 'end'
+            },
         },
         dataLabels: {
-            enabled: true,
-            offsetX: -6,
-            style: {
-                fontSize: '12px',
-                colors: ['#fff']
-            }
+            enabled: false
         },
         stroke: {
             show: true,
-            width: 1,
-            colors: ['#fff']
-        },
-        tooltip: {
-            shared: true,
-            intersect: false
+            width: 2,
+            colors: ['transparent']
         },
         xaxis: {
-            categories: [2001, 2002, 2003, 2004, 2005],
+            categories: categories,
+            labels: {
+
+                rotate: -45,
+                style: {
+                    fontSize: '12px'
+                }
+            }
         },
+        yaxis: {
+            title: {
+                text: 'Count'
+            },
+            min: 0
+        },
+        fill: {
+            opacity: 1
+        },
+        tooltip: {
+            y: {
+                formatter: function(val) {
+                    return val
+                }
+            }
+        },
+        colors: ['#008FFB', '#00E396'], 
+        legend: {
+            position: 'bottom'
+        }
     };
 
-    var chartData2 = new ApexCharts(document.querySelector("#chartData2"), options);
-    chartData2.render();
+    var iirWiseUAUC = new ApexCharts(document.querySelector("#iirWiseUAUC"), options);
+    iirWiseUAUC.render();
 
-    // Download button functionality
-    $("#LoadChart2_download").off("click").on("click", function() {
-        chartData2.dataURI().then(({
+    $("#iirTypewiseRCPA_download").off("click").on("click", function() {
+        iirWiseUAUC.dataURI().then(({
             imgURI
         }) => {
             var newCanvas = document.createElement('canvas');
@@ -68,7 +98,7 @@
                 // Header text
                 ctx.fillStyle = '#203669';
                 ctx.font = '20px Arial';
-                ctx.fillText('CHART', 10, 30);
+                ctx.fillText('IIR Type wise RCPA', 10, 30);
 
                 // Optional filter text
                 let yPos = 60;
@@ -104,7 +134,7 @@
                 newCanvas.toBlob(function(blob) {
                     var link = document.createElement('a');
                     link.href = URL.createObjectURL(blob);
-                    link.download = 'CHART.png';
+                    link.download = 'IIR Type wise RCPA.png';
                     link.click();
                 });
             };
