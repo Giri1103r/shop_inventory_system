@@ -691,6 +691,9 @@
                         required: true,
                         minlength: 3,
                         maxlength: 600,
+                    },
+                    signature_image:{
+                       filesize: 10485760,
                     }
 
                 },
@@ -746,6 +749,9 @@
                         minlength: 'Minimum 3 character is required',
                         maxlength: 'Remarks should not exceed more than the 600 characters',
 
+                    },
+                    signature_image:{
+                        filesize: "File size must be less than 10MB."
                     }
                 },
                 errorElement: 'span',

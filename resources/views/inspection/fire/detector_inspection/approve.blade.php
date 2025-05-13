@@ -275,7 +275,9 @@
                                     <hr>
                                 </div>
 
-                                @if ($inspection->inspection_status == WAITING_FOR_EHS_OFFICER_VERIFICATION &&(checkUserRole(ROLE_EHS_OFFICER) || isAdmin()))
+                                @if (
+                                    $inspection->inspection_status == WAITING_FOR_EHS_OFFICER_VERIFICATION &&
+                                        (checkUserRole(ROLE_EHS_OFFICER) || isAdmin()))
                                     <div class="row mt-3">
                                         <div class="card-header-inner">
                                             <h4 class="text-white">{{ __('inspection.ehs_officer_verify') }}</h4>
@@ -892,6 +894,7 @@
                     },
                     signature_image: {
                         required: true,
+                        filesize: 10485760,
                     }
                 },
                 messages: {
@@ -902,6 +905,7 @@
                     },
                     signature_image: {
                         required: "Signature is Required",
+                        filesize: "File size should not exceed 10MB",
                     }
                 },
                 errorElement: 'div',
@@ -939,6 +943,7 @@
                     },
                     signature_image: {
                         required: true,
+                        filesize: 10485760,
                     }
                 },
                 messages: {
@@ -949,6 +954,7 @@
                     },
                     signature_image: {
                         required: "Signature is Required",
+                        filesize: "File size should not exceed 10MB",
                     }
                 },
                 errorElement: 'div',
@@ -982,6 +988,7 @@
                     },
                     signature_image: {
                         required: true,
+                        filesize: 10485760,
                     }
                 },
                 messages: {
@@ -992,6 +999,7 @@
                     },
                     signature_image: {
                         required: "Signature is Required",
+                        filesize: "File size should not exceed 10MB",
                     }
                 },
                 errorElement: 'div',
@@ -1025,6 +1033,7 @@
                     },
                     signature_image: {
                         required: true,
+                        filesize: 10485760,
                     }
                 },
                 messages: {
@@ -1035,6 +1044,7 @@
                     },
                     signature_image: {
                         required: "Signature is Required",
+                        filesize: "File size should not exceed 10MB",
                     }
                 },
                 errorElement: 'div',

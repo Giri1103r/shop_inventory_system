@@ -141,7 +141,7 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">{{ __('inspection.obs') }}</label>
                                                     <div class="view_data">
-                                                        {{ $inspection->observation }}
+                                                        {{ $inspection->observation == 1 ? 'Yes' : ' No' }}
                                                     </div>
 
                                                 </div>
@@ -903,6 +903,7 @@
                     },
                     signature_image: {
                         required: true,
+                         filesize: 10485760,
                     }
                 },
                 messages: {
@@ -913,6 +914,7 @@
                     },
                     signature_image: {
                         required: "Signature is Required",
+                        filesize: "File size should not exceed 10MB",
                     }
                 },
                 errorElement: 'div',
@@ -950,6 +952,7 @@
                     },
                     signature_image: {
                         required: true,
+                         filesize: 10485760,
                     }
                 },
                 messages: {
@@ -960,6 +963,7 @@
                     },
                     signature_image: {
                         required: "Signature is Required",
+                         filesize: "File size should not exceed 10MB",
                     }
                 },
                 errorElement: 'div',
@@ -993,6 +997,7 @@
                     },
                     signature_image: {
                         required: true,
+                         filesize: 10485760,
                     }
                 },
                 messages: {
@@ -1003,6 +1008,7 @@
                     },
                     signature_image: {
                         required: "Signature is Required",
+                         filesize: "File size should not exceed 10MB",
                     }
                 },
                 errorElement: 'div',
@@ -1036,6 +1042,7 @@
                     },
                     signature_image: {
                         required: true,
+                         filesize: 10485760,
                     }
                 },
                 messages: {
@@ -1046,6 +1053,7 @@
                     },
                     signature_image: {
                         required: "Signature is Required",
+                         filesize: "File size should not exceed 10MB",
                     }
                 },
                 errorElement: 'div',

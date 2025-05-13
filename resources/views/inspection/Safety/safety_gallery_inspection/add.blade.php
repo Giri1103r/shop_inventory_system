@@ -275,6 +275,7 @@
                         },
                         signature_image: {
                             required: true,
+                             filesize: 10485760,
                         },
                         resource_code: {
                             required: true,
@@ -304,6 +305,7 @@
                         },
                         signature_image: {
                             required: "Signature is required",
+                             filesize: "File size must be less than 10MB."
                         },
                         resource_code: {
                             required: 'Resource Code is required',

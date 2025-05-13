@@ -266,7 +266,7 @@
                                                     );
                                                 @endphp
                                             @endif
-                                           
+
                                             @if (isset($inspection_details->created_at))
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
@@ -794,6 +794,7 @@
                         },
                         signature_image: {
                             required: true,
+                             filesize: 10485760,
                         }
                     },
                     messages: {
@@ -804,6 +805,7 @@
                         },
                         signature_image: {
                             required: "Signature is Required",
+                            filesize: "File size should not exceed 10MB",
                         }
                     },
                     errorElement: 'div',
@@ -841,6 +843,7 @@
                         },
                         signature_image: {
                             required: true,
+                             filesize: 10485760,
                         }
                     },
                     messages: {
@@ -851,6 +854,7 @@
                         },
                         signature_image: {
                             required: "Signature is Required",
+                            filesize: "File size should not exceed 10MB",
                         }
                     },
                     errorElement: 'div',
@@ -884,6 +888,7 @@
                         },
                         signature_image: {
                             required: true,
+                             filesize: 10485760,
                         }
                     },
                     messages: {
@@ -894,6 +899,7 @@
                         },
                         signature_image: {
                             required: "Signature is Required",
+                             filesize: "File size must be less than 10MB."
                         }
                     },
                     errorElement: 'div',
@@ -927,6 +933,7 @@
                         },
                         signature_image: {
                             required: true,
+                            filesize: 10485760,
                         }
                     },
                     messages: {
@@ -937,6 +944,7 @@
                         },
                         signature_image: {
                             required: "Signature is Required",
+                            filesize: "File size must be less than 10MB."
                         }
                     },
                     errorElement: 'div',

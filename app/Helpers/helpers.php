@@ -3054,7 +3054,7 @@ if (!function_exists('InspectionCount')) {
                 App\Models\Inspection\Ohc\WeeklyFirstAidBox::class,
             ]
         ];
-        
+
         $applyDateFilter = function ($query) use ($from_date, $to_date) {
             if (!empty($from_date)) {
                 $query->whereDate('created_at', '>=', DBDateformat($from_date));
@@ -3086,7 +3086,7 @@ if (!function_exists('InspectionCount')) {
 }
 
 
-// Get PTW Types 
+// Get PTW Types
 if(!function_exists('GetPTWTypes'))
 {
     function GetPTWTypes()
@@ -3103,7 +3103,7 @@ if(!function_exists('GetPTWTypes'))
         }
 
         return $details;
-        
+
     }
 }
 function getPPERequestChartData($form_date, $to_date)
@@ -3142,15 +3142,15 @@ function getPTWAvgTimeChartData($form_date, $to_date)
     if (!empty($form_date)) {
         $query->whereDate('created_at', '>=', DBdateformat($form_date));
     }
-    
+
     if (!empty($to_date)) {
         $query->whereDate('created_at', '<=', DBdateformat($to_date));
     }
-    
+
     $rawData = $query->selectRaw('unit_id, AVG(TIMESTAMPDIFF(SECOND, created_at, updated_at)) as avg_duration')
         ->groupBy('unit_id')
         ->get();
-    
+
 
     $labels = [];
     $series = [];

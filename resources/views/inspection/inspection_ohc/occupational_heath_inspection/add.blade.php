@@ -290,7 +290,7 @@
                                     <x-button-submit class="submit"></x-button-submit>
                                     <x-button-reset class="submit"></x-button-reset>
                                     <x-button-cancel
-                                        href="{{ admin_url('ohc/weekly-ambulance/inspection/checklist') }}"></x-button-cancel>
+                                        href="{{ admin_url('ohc/inspection/list') }}"></x-button-cancel>
                                 </div>
 
                                 </form>
@@ -364,7 +364,7 @@
                     signature_image: {
                         required: true,
                         extension: "png|jpeg|jpg",
-                        filesize: 5242880
+                       filesize: 10485760,
                     },
                     date_of_inspection: {
                         required: true
@@ -389,7 +389,7 @@
                     signature_image: {
                         required: "Please upload your signature image.",
                         extension: "Allowed file types: PNG, JPEG, JPG.",
-                        filesize: "File must be less than 5 MB."
+                        filesize: "File must be less than 10 MB."
                     },
 
                     date_of_inspection: {

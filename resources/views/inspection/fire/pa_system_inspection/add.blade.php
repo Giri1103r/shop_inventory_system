@@ -410,19 +410,21 @@
                         },
                         device_image: {
                             required: true,
-                            filesize: 2097152
+                             filesize: 10485760,
                         },
                         observation: {
                             required: true,
                         },
                         signature_image: {
                             required: true,
+                             filesize: 10485760,
                         },
 
                     },
                     messages: {
                         signature_image: {
                             required: 'Please upload your signature',
+                             filesize: "File size should not exceed 10MB",
                         },
                         rev_date: {
                             required: "Revision Date required",
@@ -476,7 +478,7 @@
                         },
                         device_image: {
                             required: "Please upload an image.",
-                            filesize: "Image must be under 2MB."
+                            filesize: "File size should not exceed 10MB",
                         },
                         observation: {
                             required: "Please add observation",

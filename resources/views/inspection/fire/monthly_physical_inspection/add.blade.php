@@ -225,7 +225,7 @@
                                                 <x-button-submit class="submit"></x-button-submit>
                                                 <x-button-reset class="submit"></x-button-reset>
                                                 <x-button-cancel
-                                                    href="{{ admin_url('safety/forklift-inspection/monthly/list') }}"></x-button-cancel>
+                                                    href="{{ admin_url('fire/equipment-monthly-physical-inspection/list') }}"></x-button-cancel>
                                             </div>
 
                                         </form>
@@ -347,9 +347,11 @@
                             $(this).rules('add', {
                                 required: true,
                                 accept: "image/jpeg, image/png, image/jpg",
+                                 filesize: 10485760,
                                 messages: {
                                     required: "Please upload an image.",
-                                    accept: "Only JPG, JPEG, and PNG files are allowed."
+                                    accept: "Only JPG, JPEG, and PNG files are allowed.",
+                                     filesize: "File size should not exceed 10MB",
                                 }
                             });
                         });

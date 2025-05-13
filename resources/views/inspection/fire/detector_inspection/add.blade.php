@@ -382,11 +382,13 @@
                                                         <div class="mb-2">
                                                             <label class="me-3">
                                                                 <input type="radio" name="observation_needed"
-                                                                    value="{{encryptId(1)}}" class="validate-radio-required"> Yes
+                                                                    value="{{ encryptId(1) }}"
+                                                                    class="validate-radio-required"> Yes
                                                             </label>
                                                             <label>
                                                                 <input type="radio" name="observation_needed"
-                                                                    value="{{encryptId(2)}}" class="validate-radio-required"> No
+                                                                    value="{{ encryptId(2) }}"
+                                                                    class="validate-radio-required"> No
                                                             </label>
                                                         </div>
 
@@ -402,7 +404,7 @@
                                             <x-button-submit class="submit"></x-button-submit>
                                             <x-button-reset class="submit"></x-button-reset>
                                             <x-button-cancel
-                                                href="{{ admin_url('safety/forklift-inspection/monthly/list') }}"></x-button-cancel>
+                                                href="{{ admin_url('fire/detector-inspection/list') }}"></x-button-cancel>
                                         </div>
 
                                     </form>
@@ -519,13 +521,14 @@
                         },
                         device_image: {
                             required: true,
-                            filesize: 2097152
+                            filesize: 10485760,
                         },
                         observation: {
                             required: true,
                         },
                         signature_image: {
                             required: true,
+                            filesize: 10485760,
                         },
 
                     },
@@ -537,6 +540,7 @@
                         },
                         signature_image: {
                             required: 'Please upload your signature',
+                            filesize: 'File size should not exceed 10MB',
                         },
                         issue_date: {
                             required: "Date Of Audit is required",
@@ -585,7 +589,7 @@
                         },
                         device_image: {
                             required: "Please upload an image.",
-                            filesize: "Image must be under 2MB."
+                            filesize: "File size should not exceed 10MB",
                         },
                         observation: {
                             required: "Please add observation",

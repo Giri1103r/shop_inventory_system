@@ -290,6 +290,7 @@
                         },
                         signature_image: {
                             required: true,
+                             filesize: 10485760,
                         },
                         date: {
                             required: true,
@@ -320,6 +321,7 @@
                         },
                         signature_image: {
                             required: "Signature is required",
+                             filesize: "File size should not exceed 10MB",
                         },
                         date: {
                             required: "Date is required",

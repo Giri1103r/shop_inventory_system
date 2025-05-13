@@ -184,7 +184,7 @@
                                             <x-button-submit class="submit"></x-button-submit>
                                             <x-button-reset class="submit"></x-button-reset>
                                             <x-button-cancel
-                                                href="{{ admin_url('fire/hydrant-riser-inspection/list') }}"></x-button-cancel>
+                                                href="{{ admin_url('audit/monthly-audit/audit-plan/list') }}"></x-button-cancel>
                                         </div>
 
                                     </div>

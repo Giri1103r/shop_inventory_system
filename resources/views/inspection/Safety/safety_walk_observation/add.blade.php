@@ -392,6 +392,7 @@
                             },
                             signature_image: {
                                 required: true,
+                                 filesize: 10485760,
                             },
                             "inspection_date": {
                                 required: true,
@@ -412,6 +413,7 @@
                             },
                             "checklist_file[1]": {
                                 required: true,
+                                filesize: 10485760,
                             },
 
 
@@ -469,6 +471,7 @@
                             },
                             signature_image: {
                                 required: "Signature is required",
+                                 filesize: "File size must be less than 10MB."
                             },
                             "inspection_date": {
                                 required: "Inspection Date is required",
@@ -531,6 +534,7 @@
                             },
                             "checklist_file[1]": {
                                 required: "Image is Required",
+                                 filesize: "File size must be less than 10MB."
                             },
 
                             "emp_id[1]": {
@@ -650,7 +654,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label">{{ __('inspection.date_of_observation') }}</label>
-                                                        <input type="text" name="date_of_observation[${form_set_count}]"
+                                                        <input type="text" name="date_of_observation[${form_set_count}]" id = "date_of_observation[${form_set_count}]"
                                                             class="form-control date_of_observation" >
                                                     </div>
                                                 </div>
@@ -658,13 +662,13 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.observation') }}</label>
-                                                        <input type="text" name="observation[${form_set_count}]" id = "observation"
+                                                        <input type="text" name="observation[${form_set_count}]" id = "observation[${form_set_count}]"
                                                             class="form-control" placeholder="Observation">
                                                     </div>
                                                 </div>
                                                 <div class="form-input col-md-4 mb-2">
                                                     <label class="form-label">Image</label>
-                                                    <input type="file" name="checklist_file[${form_set_count}]" id="checklist_file"
+                                                    <input type="file" name="checklist_file[${form_set_count}]" id="checklist_file[${form_set_count}]"
                                                         class="form-control form-control-sm"  accept="image/jpeg, image/png"
                                                         placeholder="Enter the image">
                                                     <small>Allowed file types: jpg</small>
@@ -676,7 +680,7 @@
                                                         <label
                                                             class="form-label require">{{ __('inspection.recomended_action') }}</label>
                                                         <input type="text" name="recomended_action[${form_set_count}]"
-                                                            id = "unit_of_measurement" class="form-control">
+                                                            id = "unit_of_measurement[${form_set_count}]" class="form-control">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 mb-2">
@@ -694,7 +698,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.date_of_compliance') }}</label>
-                                                        <input type="text" name="date_of_compliance[${form_set_count}]"
+                                                        <input type="text" name="date_of_compliance[${form_set_count}]"  id="date_of_compliance[${form_set_count}]"
                                                              class="form-control date_of_compliance">
                                                     </div>
                                                 </div>
@@ -714,7 +718,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.remarks') }}</label>
-                                                        <textarea name="remarks[${form_set_count}]" id="remarks" class="form-control" style="resize: none;"></textarea>
+                                                        <textarea name="remarks[${form_set_count}]" id="remarks[${form_set_count}]" class="form-control" style="resize: none;"></textarea>
 
                                                     </div>
                                                 </div>
@@ -735,7 +739,16 @@
                     }
                 });
 
-                $("input[name='observation[" + form_set_current_count + "]']").rules('add', {
+                $("input[name='checklist_file[" + form_set_current_count + "]']").rules('add', {
+                    required: true,
+                     filesize: 10485760,
+                    messages: {
+                        required: 'Image is Required',
+                         filesize: "File size must be less than 10MB."
+                    }
+                });
+
+                 $("input[name='observation[" + form_set_current_count + "]']").rules('add', {
                     required: true,
                     uniqueItemCode: true,
                     minlength:3,
@@ -779,7 +792,7 @@
                     }
                 });
 
-                $("input[name='remarks[" + form_set_current_count + "]']").rules('add', {
+                $("textarea[name='remarks[" + form_set_current_count + "]']").rules('add', {
                     required: true,
                     minlength:3,
                     maxlength:600,
@@ -867,7 +880,7 @@
                         ']');
                     $(this).find('input[name^="observation_status"]').attr('name', 'observation_status[' + idx +
                         ']');
-                    $(this).find('input[name^="remarks"]').attr('name', 'remarks[' + idx + ']');
+                    $(this).find('textarea[name^="remarks"]').attr('name', 'remarks[' + idx + ']');
 
                     $(this).find('select').select2();
                 });

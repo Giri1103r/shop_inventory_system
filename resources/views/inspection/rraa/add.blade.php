@@ -342,7 +342,7 @@
                 },
                  "rraa_files[1]": {
                     required: true,
-                    extension: "pdf|doc|docx|xls|xlsx"
+                    extension: "pdf|doc|docx|xls|xlsx",
                 }
             },
             messages: {
