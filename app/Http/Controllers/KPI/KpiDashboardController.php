@@ -4,9 +4,7 @@ namespace App\Http\Controllers\KPI;
 
 use App\Http\Controllers\Controller;
 use App\Models\IMS\Incident\IncidentBodyParts;
-use App\Models\IMS\Incident\InitialIncident;
 use App\Models\Master\Employee;
-use App\Models\Master\TrainingSchedule;
 use DB;
 use Exception;
 
@@ -17,19 +15,19 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\File;
 use App\Models\User;
+use App\Models\IMS\Incident\InitialIncident;
+use Nette\Schema\DynamicParameter;
 
 class KpiDashboardController extends Controller
 {
     private $bodyparts;
-    private $training_schedule;
-    private $ims_incident;
 
+    private $incident_ims;
 
     public function __construct()
     {
         $this->bodyparts = new IncidentBodyParts();
-        $this->training_schedule = new TrainingSchedule();
-        $this->ims_incident = new InitialIncident();
+        $this->incident_ims = new InitialIncident();
     }
 
 
@@ -38,10 +36,133 @@ class KpiDashboardController extends Controller
         if (Auth::check()) {
             $user = Auth::user();
             $data = [];
-
             return view('kpi.dashboard', $data);
         }
     }
+
+
+    public function getTotalIncident(Request $request)
+    {
+        try {
+            $chartData = $this->incident_ims->getTotalIncidentCountData($request);
+
+            if ($chartData->isEmpty()) {
+                return response()->json('<div class="border-0 pb-3" style="margin-top: 166px;"><h4 style="text-align: center;">No data Found.</h4></div>');
+            }
+
+            $formattedData = [];
+            foreach ($chartData as $row) {
+                $unit = $row->unit_name ?? 'Unknown Unit';
+                $type = $row->incident_type_name ?? 'Unknown Type';
+
+                if (!isset($formattedData[$type])) {
+                    $formattedData[$type] = [];
+                }
+
+                if (!isset($formattedData[$type][$unit])) {
+                    $formattedData[$type][$unit] = 0;
+                }
+
+                $formattedData[$type][$unit]++;
+            }
+            return view('kpi.totalIncidentsCount', [
+                'formattedData' => $formattedData,
+                'getdashdata' => $request,
+            ]);
+        } catch (\Exception $ex) {
+            report($ex);
+            return back()->with('error', 'Failed to load unit-wise incident data.');
+        }
+    }
+
+    public function getIncidentTypeChart(Request $request)
+    {
+        try {
+            $chartData = $this->incident_ims->getIncidentTypeCountData($request);
+
+            if ($chartData->isEmpty()) {
+                return response()->json('<div class="border-0 pb-3" style="margin-top: 166px;"><h4 style="text-align: center;">No data Found.</h4></div>');
+            }
+
+            // Format data for the chart
+            $formattedData = [];
+            foreach ($chartData as $row) {
+                $type = $row->incident_type_name ?? 'Unknown Type';
+                $formattedData[$type] = (int) $row->incident_count;
+            }
+
+            return view('kpi.incidentTypeconut', [ // Make sure your blade file name matches
+                'formattedData' => $formattedData,
+                'getdashdata' => $request,
+            ]);
+        } catch (\Exception $ex) {
+            report($ex);
+            return back()->with('error', 'Failed to load incident type chart data.');
+        }
+    }
+    public function getHeatmapImsData(Request $request)
+    {
+        try {
+            $chartData = $this->incident_ims->getHeatmapImsCountData($request);
+
+            if ($chartData->isEmpty()) {
+                return response()->json('<div class="border-0 pb-3" style="margin-top: 166px;"><h4 style="text-align: center;">No data Found.</h4></div>');
+            }
+
+            // Map injury codes to readable labels
+            $injuryMap = [
+                1 => 'Major',
+                2 => 'Minor',
+                3 => 'Fatal',
+            ];
+
+            // Initialize all month slots for each injury type
+            $monthlyCounts = [];
+            foreach (range(1, 12) as $month) {
+                foreach ($injuryMap as $label) {
+                    $monthlyCounts[$label][$month] = 0;
+                }
+            }
+
+            // Populate the monthly counts from DB results
+            foreach ($chartData as $row) {
+                if (!isset($row->nature_of_injury) || !isset($injuryMap[$row->nature_of_injury])) {
+                    continue; // Skip null or unknown injury types
+                }
+
+                $month = (int) $row->month;
+                $type = $injuryMap[$row->nature_of_injury];
+                $monthlyCounts[$type][$month] = (int) $row->incident_count;
+            }
+
+            // Format for ApexCharts
+            $formattedData = [];
+            foreach ($monthlyCounts as $type => $months) {
+                $data = [];
+                foreach ($months as $month => $count) {
+                    $data[] = [
+                        'x' => date('M', mktime(0, 0, 0, $month, 10)), // e.g. Jan, Feb
+                        'y' => $count,
+                    ];
+                }
+
+                $formattedData[] = [
+                    'name' => $type,
+                    'data' => $data,
+                ];
+            }
+
+            return view('kpi.heatmapImsData', [
+                'formattedData' => $formattedData,
+                'getdashdata' => $request,
+            ]);
+        } catch (\Exception $ex) {
+            report($ex);
+            return back()->with('error', 'Failed to load heatmap incident data.');
+        }
+    }
+
+
 
 
     public function getChart1(Request $request)
@@ -83,15 +204,15 @@ class KpiDashboardController extends Controller
             report($ex);
         }
     }
-    public function IIRTypeWiseRCPA(Request $request)
+    public function getChart4(Request $request)
     {
         try {
-            $chartData = $this->ims_incident->getTypeofIIRRCPACountData($request);
+
             $data = [
-                'chartData' => $chartData,
+                'getdashdata' => $request,
             ];
 
-            return view('kpi.iir_wise_rcpa', $data);
+            return view('kpi.chartData4', $data);
         } catch (\Exception $ex) {
             report($ex);
         }
@@ -331,76 +452,6 @@ class KpiDashboardController extends Controller
         }
     }
 
-    public function getTrainingCompletionCount(Request $request)
-    {
-        try {
-            $chartData = $this->training_schedule->getTrainigCompletionCountData($request);
-
-            if (empty($chartData) || $chartData->training_total_count == 0) {
-                return response()->json('<div class="border-0 pb-3" style="margin-top: 166px;"><h4 style="text-align: center;">No data Found.</h4></div>');
-            }
-
-            $formattedData = [
-                'total' => $chartData->training_total_count,
-                'closed' => $chartData->closed_count,
-                'open' => $chartData->open_count,
-                'closed_percentage' => $chartData->closed_percentage,
-                'open_percentage' => $chartData->open_percentage,
-            ];
-
-            return view('kpi.training_completion', [
-                'formattedData' => $formattedData,
-                'getdashdata' => $request,
-            ]);
-        } catch (\Exception $ex) {
-            report($ex);
-            return back()->with('error', 'Failed to load training completion data.');
-        }
-    }
-
-    public function getTypeofIIRCount(Request $request)
-    {
-        try {
-            $chartData = $this->ims_incident->getTypeofIIRCountData($request);
-
-            // Format data for chart: separate arrays for names and counts
-            $formattedData = [
-                'labels' => $chartData->pluck('incident_type_name'),
-                'counts' => $chartData->pluck('total'),
-            ];
-
-            return view('kpi.type_of_irr', [
-                'formattedData' => $formattedData,
-                'getdashdata' => $request,
-            ]);
-        } catch (\Exception $ex) {
-            report($ex);
-            return back()->with('error', 'Failed to load Type of IIR data.');
-        }
-    }
-
-    public function getAccidentReportUnitWiseCount(Request $request)
-    {
-        try {
-            $chartData = $this->ims_incident->getAccidentReportUnitWiseCountData($request);
-
-            $formattedData = [
-                'labels' => $chartData->pluck('unit_name'),
-                'major' => $chartData->pluck('major'),
-                'minor' => $chartData->pluck('minor'),
-                'fatal' => $chartData->pluck('fatal'),
-            ];
-
-            return view('kpi.accident_report_unit_wise', [
-                'formattedData' => $formattedData,
-                'getdashdata' => $request,
-            ]);
-        } catch (\Exception $ex) {
-            report($ex);
-            return back()->with('error', 'Failed to load unit-wise accident data.');
-        }
-    }
-
     public function getInjurypart(Request $request)
     {
         try {
@@ -409,57 +460,6 @@ class KpiDashboardController extends Controller
                 'countBodyPart' => $countBodyPart
             );
             return view('kpi.injurypartchart', $data);
-        } catch (\Exception $ex) {
-            report($ex);
-        }
-    }
-
-    public function injurybodycount(Request $request)
-    {
-        $request = request();
-        $parts = $request->input('part');
-
-        $listResp = DB::table('ims_initial_incident as inc')
-            ->select([
-                'body.id as bodyids',
-                'inc.id as inveeid',
-            ])
-            ->leftJoin('ims_injury_details as inj', 'inj.incident_id', '=', 'inc.id')
-            ->leftJoin('ims_incident_body_parts as body', 'body.injury_id', '=', 'inj.id')
-            ->where('inc.trash', 'NO')
-            ->where('body.body_parts_label', 'like', '%' . $parts . '%') // Correct LIKE usage
-            ->get();
-
-        $inveeid = [];
-        $response = [];
-
-        if (!$listResp->isEmpty()) {
-            foreach ($listResp as $lists) {
-                $inveeid[] = $lists->inveeid;
-            }
-
-            $response['count'] = count($listResp);
-            $response['inc_id'] = $inveeid;
-        } else {
-            $response['count'] = 0;
-            $response['inc_id'] = [];
-        }
-
-        return response()->json($response);
-    }
-
-
-    public function IIRTypeWiseUAUC(Request $request)
-    {
-        try {
-            $chartData = $this->ims_incident->getTypeofIIRUAUCCountData($request);
-
-            // dd($chartData);
-            $data = [
-                'chartData' => $chartData,
-            ];
-
-            return view('kpi.iir_wise_uauc', $data);
         } catch (\Exception $ex) {
             report($ex);
         }
