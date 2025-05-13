@@ -3,6 +3,7 @@
 namespace App\Models\Inspection\Fire;
 
 use App\Scopes\TrashScope;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 use Google\Rpc\Context\AttributeContext\Request;
@@ -68,6 +69,21 @@ class MonthlyPhysicalInspection extends Model
 
         if (isset($request->inspection_status) && $request->inspection_status) {
             $query = $query->where('inspection_fire_monthly_physical_inspection.inspection_status', decryptId($request->inspection_status));
+        }
+
+         if ($request->has('from_date') && !empty($request->from_date)) {
+
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_fire_monthly_physical_inspection.created_at', '>=', $startDate);
+        }
+        if ($request->has('to_date') && !empty($request->to_date)) {
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_fire_monthly_physical_inspection.created_at', '<=', $endDate);
+        }
+        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->whereBetween('inspection_fire_monthly_physical_inspection.created_at', [$startDate, $endDate]);
         }
 
         if (isset($request->order) && count($request->order) > 0) {
@@ -172,6 +188,21 @@ class MonthlyPhysicalInspection extends Model
 
         if (isset($request->inspection_status) && $request->inspection_status) {
             $query = $query->where('inspection_fire_monthly_physical_inspection.inspection_status', decryptId($request->inspection_status));
+        }
+
+         if ($request->has('from_date') && !empty($request->from_date)) {
+
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_fire_monthly_physical_inspection.created_at', '>=', $startDate);
+        }
+        if ($request->has('to_date') && !empty($request->to_date)) {
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_fire_monthly_physical_inspection.created_at', '<=', $endDate);
+        }
+        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->whereBetween('inspection_fire_monthly_physical_inspection.created_at', [$startDate, $endDate]);
         }
 
         $query->orderBy('inspection_fire_monthly_physical_inspection.id', 'DESC');

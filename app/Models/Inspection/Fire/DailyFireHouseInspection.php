@@ -3,6 +3,7 @@
 namespace App\Models\Inspection\Fire;
 
 use App\Scopes\TrashScope;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 
@@ -56,6 +57,20 @@ class DailyFireHouseInspection extends Model
         }
         if (isset($request->shift_id) && $request->shift_id) {
             $query = $query->where('inspection_daily_fire_pump_checklist.shift_id', decryptId($request->shift_id));
+        }
+         if ($request->has('from_date') && !empty($request->from_date)) {
+
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_daily_fire_pump_checklist.created_at', '>=', $startDate);
+        }
+        if ($request->has('to_date') && !empty($request->to_date)) {
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_daily_fire_pump_checklist.created_at', '<=', $endDate);
+        }
+        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->whereBetween('inspection_daily_fire_pump_checklist.created_at', [$startDate, $endDate]);
         }
         $query->orderBy('id', 'desc');
         $data_count = $query;
@@ -142,6 +157,20 @@ class DailyFireHouseInspection extends Model
         }
         if (isset($request->shift_id) && $request->shift_id) {
             $query = $query->where('inspection_daily_fire_pump_checklist.shift_id', decryptId($request->shift_id));
+        }
+         if ($request->has('from_date') && !empty($request->from_date)) {
+
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_daily_fire_pump_checklist.created_at', '>=', $startDate);
+        }
+        if ($request->has('to_date') && !empty($request->to_date)) {
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_daily_fire_pump_checklist.created_at', '<=', $endDate);
+        }
+        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->whereBetween('inspection_daily_fire_pump_checklist.created_at', [$startDate, $endDate]);
         }
 
         $query->orderBy('id', 'DESC');

@@ -112,7 +112,7 @@
                                             </select>
                                         </div>
 
-                                          <div class="col-md-4 mb-3 form-input">
+                                        <div class="col-md-4 mb-3 form-input">
                                             <label for="emp_name" class="form-label ">From Date</label>
                                             <div class="input-group date form-input custom-height">
                                                 <input type="text" class="form-control " name="from_date" id="from_date"
@@ -127,8 +127,8 @@
                                         <div class="col-md-4 mb-3 form-input">
                                             <label for="emp_name" class="form-label ">To Date</label>
                                             <div class="input-group date form-input  custom-height">
-                                                <input type="text" class="form-control " name="to_date" id="to_date"
-                                                    autocomplete="off">
+                                                <input type="text" class="form-control " name="to_date"
+                                                    id="to_date" autocomplete="off">
                                                 <div class="input-group-addon input-group-text">
                                                     <span class="fa fa-calendar"></span>
                                                 </div>
