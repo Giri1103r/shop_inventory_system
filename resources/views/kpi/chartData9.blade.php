@@ -1,42 +1,42 @@
-<div id="chartData18"></div>
+<div id="chartData9"></div>
 
 <script>
-    
     var options = {
-        series: [14, 23, 21, 17, 15, 10, 12, 17, 21],
+        series: [44, 55, 67, 83],
         chart: {
-            type: 'polarArea',
-            height: 330, // ✅ Set your desired height here
+            height: 350,
+            type: 'radialBar',
         },
-        stroke: {
-            colors: ['#fff']
-        },
-        fill: {
-            opacity: 0.8
-        },
-        legend: {
-            position: 'bottom'
-        },
-        responsive: [{
-            breakpoint: 480,
-            options: {
-                chart: {
-                    width: 200,
-                    height: 250 // Optional: set height for smaller screens
-                },
-                legend: {
-                    position: 'bottom'
+        plotOptions: {
+            radialBar: {
+                dataLabels: {
+                    name: {
+                        fontSize: '22px',
+                    },
+                    value: {
+                        fontSize: '16px',
+                    },
+                    total: {
+                        show: true,
+                        label: 'Total',
+                        formatter: function(w) {
+                            // By default this function returns the average of all series. The below is just an example to show the use of custom formatter function
+                            return 249
+                        }
+                    }
                 }
             }
-        }]
+        },
+        labels: ['Apples', 'Oranges', 'Bananas', 'Berries'],
     };
 
-    var chartData18 = new ApexCharts(document.querySelector("#chartData18"), options);
-    chartData18.render();
+
+    var chartData9 = new ApexCharts(document.querySelector("#chartData9"), options);
+    chartData9.render();
 
     // Download button functionality
-    $("#LoadChart18_download").off("click").on("click", function() {
-        chartData18.dataURI().then(({
+    $("#LoadChart9_download").off("click").on("click", function() {
+        chartData9.dataURI().then(({
             imgURI
         }) => {
             var newCanvas = document.createElement('canvas');

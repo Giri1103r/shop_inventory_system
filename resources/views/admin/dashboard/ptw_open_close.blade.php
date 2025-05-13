@@ -1,28 +1,36 @@
-<div id="chartData18"></div>
+<div id="ptw_open_close"></div>
 
 <script>
-    
+    var open_close = @json($active_close_count);
+
     var options = {
-        series: [14, 23, 21, 17, 15, 10, 12, 17, 21],
+        series: Object.values(open_close),
         chart: {
-            type: 'polarArea',
-            height: 330, // ✅ Set your desired height here
+            width: 380,
+            type: 'pie',
         },
-        stroke: {
-            colors: ['#fff']
-        },
-        fill: {
-            opacity: 0.8
-        },
+        labels: Object.keys(open_close),
         legend: {
             position: 'bottom'
+        },
+        tooltip: {
+            enabled: true,
+            y: {
+                formatter: function(value) {
+                    return value;
+                },
+                title: {
+                    formatter: function(seriesName) {
+                        return seriesName;
+                    }
+                }
+            }
         },
         responsive: [{
             breakpoint: 480,
             options: {
                 chart: {
-                    width: 200,
-                    height: 250 // Optional: set height for smaller screens
+                    width: 200
                 },
                 legend: {
                     position: 'bottom'
@@ -31,12 +39,12 @@
         }]
     };
 
-    var chartData18 = new ApexCharts(document.querySelector("#chartData18"), options);
-    chartData18.render();
+    var ptw_open_close = new ApexCharts(document.querySelector("#ptw_open_close"), options);
+    ptw_open_close.render();
 
-    // Download button functionality
-    $("#LoadChart18_download").off("click").on("click", function() {
-        chartData18.dataURI().then(({
+    // Download chart as image
+    $("#ptw_open_close_download").off("click").on("click", function() {
+        ptw_open_close.dataURI().then(({
             imgURI
         }) => {
             var newCanvas = document.createElement('canvas');
@@ -48,22 +56,22 @@
                 let headerHeight = 120;
                 newCanvas.height = image.height + headerHeight;
 
-                // White background
+                // Background
                 ctx.fillStyle = 'white';
                 ctx.fillRect(0, 0, newCanvas.width, newCanvas.height);
 
-                // Header text
+                // Header
                 ctx.fillStyle = '#203669';
                 ctx.font = '20px Arial';
-                ctx.fillText('CHART', 10, 30);
+                ctx.fillText('PTW Open Close', 10, 30);
 
-                // Optional filter text
+                // Optional filter info
                 let yPos = 60;
 
-                @if (isset($getdashdata))
+                @if (isset($dates))
                     @php
-                        $from = $getdashdata->Fromdate ?? null;
-                        $to = $getdashdata->Todate ?? null;
+                        $from = $dates['from_date'] ?? null;
+                        $to = $dates['to_date'] ?? null;
                     @endphp
 
                     @if ($from || $to)
@@ -84,14 +92,14 @@
                     @endif
                 @endif
 
-                // Draw chart image below header
+                // Draw image
                 ctx.drawImage(image, 0, headerHeight);
 
-                // Save as image
+                // Download
                 newCanvas.toBlob(function(blob) {
                     var link = document.createElement('a');
                     link.href = URL.createObjectURL(blob);
-                    link.download = 'CHART.png';
+                    link.download = 'PTW Open Close.png';
                     link.click();
                 });
             };

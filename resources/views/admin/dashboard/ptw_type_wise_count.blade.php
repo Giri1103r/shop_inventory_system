@@ -5,6 +5,7 @@
 
     var options = {
         series: [{
+            name: 'Work Count',
             data: Object.values(type_wise)
         }],
         chart: {
@@ -18,24 +19,13 @@
             bar: {
                 borderRadius: 10,
                 dataLabels: {
-                    position: 'top',
+                    position: 'bottom',
                 },
             }
         },
-        // dataLabels: {
-        //     enabled: true,
-        //     formatter: function(val) {
-        //         return val + "%";
-        //     },
-        //     offsetY: -20,
-        //     style: {
-        //         fontSize: '12px',
-        //         colors: ["#304758"]
-        //     }
-        // },
         xaxis: {
             categories: Object.keys(type_wise),
-            position: 'top',
+            position: 'bottom',
             axisBorder: {
                 show: false
             },
@@ -55,7 +45,7 @@
                 }
             },
             tooltip: {
-                enabled: true,
+                enabled: false,
             }
         },
         yaxis: {
@@ -79,6 +69,14 @@
             align: 'center',
             style: {
                 color: '#444'
+            }
+        },
+        tooltip: {
+            y: {
+                formatter: function(val, opts) {
+                    const category = opts.w.globals.labels[opts.dataPointIndex];
+                    return category + ": " + val;
+                }
             }
         }
     };
@@ -107,7 +105,7 @@
                 // Header text
                 ctx.fillStyle = '#203669';
                 ctx.font = '20px Arial';
-                ctx.fillText('CHART', 10, 30);
+                ctx.fillText('PTW Type Wise', 10, 30);
 
                 // Optional filter text
                 let yPos = 60;
@@ -143,7 +141,7 @@
                 newCanvas.toBlob(function(blob) {
                     var link = document.createElement('a');
                     link.href = URL.createObjectURL(blob);
-                    link.download = 'CHART.png';
+                    link.download = 'PTW Type Wise.png';
                     link.click();
                 });
             };

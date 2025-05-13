@@ -1,42 +1,75 @@
-<div id="chartData18"></div>
+<div id="auditFindings"></div>
 
 <script>
-    
+    var auditAssessmentCount = {!! json_encode($auditAssessmentCount) !!};
+    var auditAnalysisCount = {!! json_encode($auditAnalysisCount) !!};
+    var interUnitCount = {!! json_encode($interUnitCount) !!};
+    var auditMonthlyCount = {!! json_encode($auditMonthlyCount) !!};
+
     var options = {
-        series: [14, 23, 21, 17, 15, 10, 12, 17, 21],
+        series: [auditAssessmentCount, auditAnalysisCount, interUnitCount, auditMonthlyCount],
         chart: {
-            type: 'polarArea',
-            height: 330, // ✅ Set your desired height here
+            height: 350,
+            type: 'radialBar',
         },
-        stroke: {
-            colors: ['#fff']
+        plotOptions: {
+            radialBar: {
+                offsetY: 0,
+                startAngle: 0,
+                endAngle: 270,
+                hollow: {
+                    margin: 5,
+                    size: '30%',
+                    background: 'transparent',
+                },
+                dataLabels: {
+                    name: {
+                        show: true,
+                    },
+                    value: {
+                        show: true,
+                    }
+                }
+            }
         },
-        fill: {
-            opacity: 0.8
-        },
+        colors: ['#1ab7ea', '#0084ff', '#39539E', '#0077B5'],
+        labels: ['Audit Assessment', 'Audit Analysis', 'Inter Unit Audit', 'Monthly Audit Plan'],
         legend: {
-            position: 'bottom'
+            show: true,
+            floating: true,
+            fontSize: '14px',
+            position: 'left',
+            offsetX: 160,
+            offsetY: 15,
+            labels: {
+                useSeriesColors: true,
+            },
+            markers: {
+                size: 0
+            },
+            formatter: function(seriesName, opts) {
+                return seriesName + ": " + opts.w.globals.series[opts.seriesIndex];
+            },
+            itemMargin: {
+                vertical: 3
+            }
         },
         responsive: [{
             breakpoint: 480,
             options: {
-                chart: {
-                    width: 200,
-                    height: 250 // Optional: set height for smaller screens
-                },
                 legend: {
-                    position: 'bottom'
+                    show: false
                 }
             }
         }]
     };
 
-    var chartData18 = new ApexCharts(document.querySelector("#chartData18"), options);
-    chartData18.render();
+    var auditFindings = new ApexCharts(document.querySelector("#auditFindings"), options);
+    auditFindings.render();
 
     // Download button functionality
-    $("#LoadChart18_download").off("click").on("click", function() {
-        chartData18.dataURI().then(({
+    $("#auditFindings_download").off("click").on("click", function() {
+        auditFindings.dataURI().then(({
             imgURI
         }) => {
             var newCanvas = document.createElement('canvas');
@@ -55,7 +88,7 @@
                 // Header text
                 ctx.fillStyle = '#203669';
                 ctx.font = '20px Arial';
-                ctx.fillText('CHART', 10, 30);
+                ctx.fillText('Type Of Audit Findings', 10, 30);
 
                 // Optional filter text
                 let yPos = 60;
@@ -91,7 +124,7 @@
                 newCanvas.toBlob(function(blob) {
                     var link = document.createElement('a');
                     link.href = URL.createObjectURL(blob);
-                    link.download = 'CHART.png';
+                    link.download = 'Type Of Audit Findings.png';
                     link.click();
                 });
             };

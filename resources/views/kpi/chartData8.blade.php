@@ -1,28 +1,33 @@
-<div id="chartData18"></div>
+<div id="chartData8"></div>
 
 <script>
-    
     var options = {
-        series: [14, 23, 21, 17, 15, 10, 12, 17, 21],
+        series: [44, 55, 41, 17, 15],
         chart: {
-            type: 'polarArea',
-            height: 330, // ✅ Set your desired height here
-        },
-        stroke: {
-            colors: ['#fff']
-        },
-        fill: {
-            opacity: 0.8
+            width: 380,
+            type: 'donut',
+            toolbar: {
+                show: false 
+            },
         },
         legend: {
-            position: 'bottom'
+            position: 'bottom' 
         },
         responsive: [{
             breakpoint: 480,
             options: {
+                legend: {
+                    position: 'bottom',
+                    offsetX: 0,
+                    offsetY: 0
+                }
+            }
+        }],
+        responsive: [{
+            breakpoint: 480,
+            options: {
                 chart: {
-                    width: 200,
-                    height: 250 // Optional: set height for smaller screens
+                    width: 200
                 },
                 legend: {
                     position: 'bottom'
@@ -31,12 +36,12 @@
         }]
     };
 
-    var chartData18 = new ApexCharts(document.querySelector("#chartData18"), options);
-    chartData18.render();
+    var chartData8 = new ApexCharts(document.querySelector("#chartData8"), options);
+    chartData8.render();
 
     // Download button functionality
-    $("#LoadChart18_download").off("click").on("click", function() {
-        chartData18.dataURI().then(({
+    $("#LoadChart8_download").off("click").on("click", function() {
+        chartData8.dataURI().then(({
             imgURI
         }) => {
             var newCanvas = document.createElement('canvas');

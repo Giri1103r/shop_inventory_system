@@ -1,42 +1,55 @@
-<div id="chartData18"></div>
+<div id="chartData2"></div>
 
 <script>
-    
     var options = {
-        series: [14, 23, 21, 17, 15, 10, 12, 17, 21],
+        series: [{
+            data: [44, 55, 41, 64, 22, 43, 21]
+        }, {
+            data: [53, 32, 33, 52, 13, 44, 32]
+        }],
         chart: {
-            type: 'polarArea',
-            height: 330, // ✅ Set your desired height here
+            type: 'bar',
+            height: 350,
+            toolbar: {
+                show: false
+            },
+        },
+        plotOptions: {
+            bar: {
+                horizontal: true,
+                dataLabels: {
+                    position: 'top',
+                },
+            }
+        },
+        dataLabels: {
+            enabled: true,
+            offsetX: -6,
+            style: {
+                fontSize: '12px',
+                colors: ['#fff']
+            }
         },
         stroke: {
+            show: true,
+            width: 1,
             colors: ['#fff']
         },
-        fill: {
-            opacity: 0.8
+        tooltip: {
+            shared: true,
+            intersect: false
         },
-        legend: {
-            position: 'bottom'
+        xaxis: {
+            categories: [2001, 2002, 2003, 2004, 2005],
         },
-        responsive: [{
-            breakpoint: 480,
-            options: {
-                chart: {
-                    width: 200,
-                    height: 250 // Optional: set height for smaller screens
-                },
-                legend: {
-                    position: 'bottom'
-                }
-            }
-        }]
     };
 
-    var chartData18 = new ApexCharts(document.querySelector("#chartData18"), options);
-    chartData18.render();
+    var chartData2 = new ApexCharts(document.querySelector("#chartData2"), options);
+    chartData2.render();
 
     // Download button functionality
-    $("#LoadChart18_download").off("click").on("click", function() {
-        chartData18.dataURI().then(({
+    $("#LoadChart2_download").off("click").on("click", function() {
+        chartData2.dataURI().then(({
             imgURI
         }) => {
             var newCanvas = document.createElement('canvas');

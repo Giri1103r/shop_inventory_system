@@ -37,35 +37,35 @@
                                         @csrf
 
                                         <div class="row">
-                                            <div class="col-md-4">
+                                            <div class="col-md-4 mb-3">
                                                 <div class="form-group form-input">
                                                     <label for="from_date" class="form-label require">From Date</label>
                                                     <input type="text" name ="from_date" id="from_date_datepicker"
                                                         class="form-control" placeholder="From Date">
                                                 </div>
                                             </div>
-                                            <div class="col-md-4">
+                                            <div class="col-md-4 mb-3">
                                                 <div class="form-group form-input">
                                                     <label for="to_date" class="form-label require">To Date</label>
                                                     <input type="text" name ="to_date" id="to_date_datepicker"
                                                         class="form-control" placeholder="To Date">
                                                 </div>
                                             </div>
-                                            <div class="col-md-4">
+                                            <div class="col-md-4 mb-3">
                                                 <div class="form-group form-input">
                                                     <label for="start_time" class="form-label require">Start Time</label>
                                                     <input type="text" name ="start_time" id="start_timepicker"
                                                         class="form-control">
                                                 </div>
                                             </div>
-                                            <div class="col-md-4">
+                                            <div class="col-md-4 mb-3">
                                                 <div class="form-group form-input">
                                                     <label for="end_time" class="form-label require">End Time</label>
                                                     <input type="text" name ="end_time" id="end_timepicker"
                                                         class="form-control">
                                                 </div>
                                             </div>
-                                            <div class="col-md-4">
+                                            <div class="col-md-4 mb-3">
                                                 <div class="form-group form-input">
                                                     <label for="topic_id" class="form-label require">Training Topic</label>
                                                     <select name="topic_id" id="topic_id"
@@ -78,7 +78,7 @@
                                                     </select>
                                                 </div>
                                             </div>
-                                            <div class="col-md-4">
+                                            <div class="col-md-4 mb-3">
                                                 <div class="form-group form-input">
                                                     <label for="trainer_id" class="form-label require">Trainer</label>
                                                     <select name="trainer_id" id="trainer_id"
@@ -92,7 +92,7 @@
                                                 </div>
                                             </div>
 
-                                            <div class="col-md-4">
+                                            <div class="col-md-4 mb-3">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Unit</label>
                                                     <select name="unit_id" id="unit_id"
@@ -105,7 +105,7 @@
                                                     </select>
                                                 </div>
                                             </div>
-                                            <div class="col-md-4">
+                                            <div class="col-md-4 mb-3">
                                                 <div class="form-group form-input">
                                                     <label for="department_id" class="form-label require">Department
                                                     </label>
@@ -116,7 +116,7 @@
                                                     </select>
                                                 </div>
                                             </div>
-                                            <div class="col-md-4">
+                                            <div class="col-md-4 mb-3">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Target Trainees</label>
                                                     <input type="text" name="target_trainees" id="target_trainees"
@@ -124,7 +124,7 @@
                                                 </div>
                                             </div>
 
-                                            <div class="col-md-4">
+                                            <div class="col-md-4 mb-3">
                                                 <div class="form-group form-input">
                                                     <label for="venue_id" class="form-label require">Venue/Location
                                                     </label>
@@ -340,6 +340,12 @@
                     topic_id: {
                         required: true
                     },
+                    start_time: {
+                        required: true
+                    },
+                    end_time: {
+                        required: true
+                    },
                     trainer_id: {
                         required: true
                     },
@@ -366,6 +372,12 @@
                     },
                     topic_id: {
                         required: "Select a Training Topic."
+                    },
+                    start_time: {
+                        required: "Enter Start Time"
+                    },
+                    end_time: {
+                        required: "Enter End Time"
                     },
                     trainer_id: {
                         required: "Select a Trainer."

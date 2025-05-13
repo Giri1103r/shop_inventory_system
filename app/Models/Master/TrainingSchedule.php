@@ -743,6 +743,35 @@ class TrainingSchedule extends Model
 
         return $query->first(); // only one row
     }
+    public function GetTrainingHoursDepartmentData($request)
+    {
+        $query = DB::table('training_schedule')
+            ->join('training_masters_topic', 'training_schedule.topic_id', '=', 'training_masters_topic.id')
+            ->join('masters_department', 'training_schedule.department_id', '=', 'masters_department.id')
+            ->select(
+                'training_masters_topic.topic_name',
+                'masters_department.department_name',
+                DB::raw('ROUND(SUM(TIMESTAMPDIFF(MINUTE, start_time, end_time)) / 60, 2) as total_hours')
+            )
+            ->whereNotNull('start_time')
+            ->whereNotNull('end_time')
+            ->groupBy('training_masters_topic.topic_name', 'masters_department.department_name');
+
+
+
+        if ($request->Fromdate && $request->Todate) {
+            $query->whereBetween('training_schedule.created_at', [
+                DBdateformat($request->Fromdate),
+                DBdateformat($request->Todate)
+            ]);
+        } elseif ($request->Fromdate) {
+            $query->where('training_schedule.created_at', '>=', DBdateformat($request->Fromdate));
+        } elseif ($request->Todate) {
+            $query->where('training_schedule.created_at', '<=', DBdateformat($request->Todate));
+        }
+
+        return $query->get();
+    }
 
 
     protected static function booted()

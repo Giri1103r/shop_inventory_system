@@ -1183,14 +1183,11 @@ class SafetyPermit extends Model
         $open_count = $openQuery->count();
         $close_count = $closeQuery->count();
 
-        if (($open_count > 0) && ($close_count > 0)) {
-            return [
+
+        return [
                 'PTW Open Count' => $open_count,
                 'PTW Close Count' => $close_count
             ];
-        }
-
-        return null;
     }
 
     public function GetTypeWiseCount()
@@ -1199,10 +1196,10 @@ class SafetyPermit extends Model
         $from_date = $request->input('Fromdate');
         $to_date = $request->input('Todate');
 
-        
+
         $query = $this->where('status', 1)->where('trash', 'NO');
 
-        
+
         if (!empty($from_date)) {
             $query->whereDate('created_at', '>=', $from_date);
         }
@@ -1210,21 +1207,21 @@ class SafetyPermit extends Model
             $query->whereDate('created_at', '<=', $to_date);
         }
 
-        $data = $query->get(); 
+        $data = $query->get();
 
         $type_of_work = GetPTWTypes();
 
         $idToWorkNameMap = [];
         $workCounts = [];
-        
+
         foreach ($type_of_work as $type) {
             $idToWorkNameMap[$type['id']] = $type['work_name'];
             $workCounts[$type['work_name']] = 0;
         }
 
-        
+
         foreach ($data as $details) {
-            $subpermits = string_to_array($details->sub_permit); 
+            $subpermits = string_to_array($details->sub_permit);
             foreach ($subpermits as $subpermit) {
                 if ($subpermit && isset($idToWorkNameMap[$subpermit])) {
                     $workName = $idToWorkNameMap[$subpermit];
@@ -1234,5 +1231,32 @@ class SafetyPermit extends Model
         }
 
         return $workCounts;
+    }
+    public function getHoldStatus($request)
+    {
+        $query = DB::table('ptw_safety')
+            ->join('masters_unit', 'ptw_safety.unit_id', '=', 'masters_unit.id')
+            ->select(
+                'masters_unit.unit_name',
+                DB::raw('COUNT(*) as hold_count')
+            )
+            ->where('ptw_safety.permit_status', STATUS_EHS_HOLD)
+            ->groupBy('masters_unit.unit_name');
+
+        if ($request->Fromdate && $request->Todate) {
+            $query->whereBetween('ptw_safety.created_at', [
+                DBdateformat($request->Fromdate),
+                DBdateformat($request->Todate)
+            ]);
+        } elseif ($request->Fromdate) {
+            $query->where('ptw_safety.created_at', '>=', DBdateformat($request->Fromdate));
+        } elseif ($request->Todate) {
+            $query->where('ptw_safety.created_at', '<=', DBdateformat($request->Todate));
+        }
+
+        $results = $query->get();
+
+       
+        return $results->pluck('hold_count', 'unit_name')->toArray();
     }
 }

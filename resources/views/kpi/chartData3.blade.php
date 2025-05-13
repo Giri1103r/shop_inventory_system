@@ -1,42 +1,88 @@
-<div id="chartData18"></div>
+<div id="chartData3"></div>
 
 <script>
-    
     var options = {
-        series: [14, 23, 21, 17, 15, 10, 12, 17, 21],
+        series: [{
+            name: 'Marine Sprite',
+            data: [44, 55, 41, 37, 22, 43, 21]
+        }, {
+            name: 'Striking Calf',
+            data: [53, 32, 33, 52, 13, 43, 32]
+        }, {
+            name: 'Tank Picture',
+            data: [12, 17, 11, 9, 15, 11, 20]
+        }, {
+            name: 'Bucket Slope',
+            data: [9, 7, 5, 8, 6, 9, 4]
+        }, {
+            name: 'Reborn Kid',
+            data: [25, 12, 19, 32, 25, 24, 10]
+        }],
         chart: {
-            type: 'polarArea',
-            height: 330, // ✅ Set your desired height here
+            type: 'bar',
+            height: 350,
+            stacked: true,
+            toolbar: {
+                show: false
+            },
+        },
+        plotOptions: {
+            bar: {
+                horizontal: true,
+                dataLabels: {
+                    total: {
+                        enabled: true,
+                        offsetX: 0,
+                        style: {
+                            fontSize: '13px',
+                            fontWeight: 900
+                        }
+                    }
+                }
+            },
         },
         stroke: {
+            width: 1,
             colors: ['#fff']
         },
-        fill: {
-            opacity: 0.8
+        title: {
+            text: 'Fiction Books Sales'
         },
-        legend: {
-            position: 'bottom'
-        },
-        responsive: [{
-            breakpoint: 480,
-            options: {
-                chart: {
-                    width: 200,
-                    height: 250 // Optional: set height for smaller screens
-                },
-                legend: {
-                    position: 'bottom'
+        xaxis: {
+            categories: [2008, 2009, 2010, 2011, 2012, 2013, 2014],
+            labels: {
+                formatter: function(val) {
+                    return val + "K"
                 }
             }
-        }]
+        },
+        yaxis: {
+            title: {
+                text: undefined
+            },
+        },
+        tooltip: {
+            y: {
+                formatter: function(val) {
+                    return val + "K"
+                }
+            }
+        },
+        fill: {
+            opacity: 1
+        },
+        legend: {
+            position: 'top',
+            horizontalAlign: 'left',
+            offsetX: 40
+        }
     };
-
-    var chartData18 = new ApexCharts(document.querySelector("#chartData18"), options);
-    chartData18.render();
+    var chartData3 = new ApexCharts(document.querySelector("#chartData3"), options);
+    chartData3.render();
 
     // Download button functionality
-    $("#LoadChart18_download").off("click").on("click", function() {
-        chartData18.dataURI().then(({
+    $("#LoadChart3_download").off("click").on("click", function() {
+        chartData3.dataURI().then(({
             imgURI
         }) => {
             var newCanvas = document.createElement('canvas');

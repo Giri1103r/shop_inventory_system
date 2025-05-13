@@ -1,101 +1,137 @@
-<div id="chartData18"></div>
-
+@php
+    $units = collect($formattedData)
+        ->flatMap(function ($types) {
+            return array_keys($types);
+        })
+        ->unique()
+        ->values()
+        ->all();
+ 
+    $series = [];
+    foreach ($formattedData as $incidentType => $unitData) {
+        $data = [];
+        foreach ($units as $unit) {
+            $data[] = $unitData[$unit] ?? 0;
+        }
+        $series[] = [
+            'name' => $incidentType,
+            'data' => $data,
+        ];
+    }
+@endphp
+ 
+<div id="TotalIncidentsCount"></div>
+ 
 <script>
-    
     var options = {
-        series: [14, 23, 21, 17, 15, 10, 12, 17, 21],
+        series: {!! json_encode($series) !!},
         chart: {
-            type: 'polarArea',
-            height: 330, // ✅ Set your desired height here
+            type: 'bar',
+            height: 350,
+            toolbar: {
+                show: false
+            },
+        },
+        plotOptions: {
+            bar: {
+                horizontal: false,
+                columnWidth: '55%',
+                borderRadius: 5,
+                borderRadiusApplication: 'end'
+            },
+        },
+        dataLabels: {
+            enabled: false
         },
         stroke: {
-            colors: ['#fff']
+            show: true,
+            width: 2,
+            colors: ['transparent']
+        },
+        xaxis: {
+            categories: {!! json_encode($units) !!}
+        },
+        yaxis: {
+            title: {
+                text: 'Incident Count'
+            }
         },
         fill: {
-            opacity: 0.8
+            opacity: 1
         },
-        legend: {
-            position: 'bottom'
-        },
-        responsive: [{
-            breakpoint: 480,
-            options: {
-                chart: {
-                    width: 200,
-                    height: 250 // Optional: set height for smaller screens
-                },
-                legend: {
-                    position: 'bottom'
+        tooltip: {
+            y: {
+                formatter: function(val) {
+                    return val + " incidents"
                 }
             }
-        }]
+        }
     };
-
-    var chartData18 = new ApexCharts(document.querySelector("#chartData18"), options);
-    chartData18.render();
-
+    var TotalIncidentsCount = new ApexCharts(document.querySelector("#TotalIncidentsCount"), options);
+    TotalIncidentsCount.render();
+ 
     // Download button functionality
-    $("#LoadChart18_download").off("click").on("click", function() {
-        chartData18.dataURI().then(({
+    $("#total_incidents_download").off("click").on("click", function() {
+        TotalIncidentsCount.dataURI().then(({
             imgURI
         }) => {
             var newCanvas = document.createElement('canvas');
             var ctx = newCanvas.getContext('2d');
             var image = new Image();
-
+ 
             image.onload = function() {
                 newCanvas.width = image.width;
                 let headerHeight = 120;
                 newCanvas.height = image.height + headerHeight;
-
+ 
                 // White background
                 ctx.fillStyle = 'white';
                 ctx.fillRect(0, 0, newCanvas.width, newCanvas.height);
-
+ 
                 // Header text
                 ctx.fillStyle = '#203669';
                 ctx.font = '20px Arial';
-                ctx.fillText('CHART', 10, 30);
-
+                ctx.fillText('Total Incidents (YTD)', 10, 30);
+ 
                 // Optional filter text
                 let yPos = 60;
-
+ 
                 @if (isset($getdashdata))
                     @php
                         $from = $getdashdata->Fromdate ?? null;
                         $to = $getdashdata->Todate ?? null;
                     @endphp
-
+ 
                     @if ($from || $to)
                         ctx.fillStyle = '#203669';
                         ctx.font = '16px Arial';
                         ctx.fillText('Filtered By:', 10, yPos);
                         yPos += 30;
-
+ 
                         @if ($from)
                             ctx.fillText('From Date: {{ $from }}', 10, yPos);
                             yPos += 30;
                         @endif
-
+ 
                         @if ($to)
                             ctx.fillText('To Date: {{ $to }}', 10, yPos);
                             yPos += 30;
                         @endif
                     @endif
                 @endif
-
+ 
                 // Draw chart image below header
                 ctx.drawImage(image, 0, headerHeight);
-
+ 
                 // Save as image
                 newCanvas.toBlob(function(blob) {
                     var link = document.createElement('a');
                     link.href = URL.createObjectURL(blob);
-                    link.download = 'CHART.png';
+                    link.download = 'Total Incidents (YTD).png';
                     link.click();
                 });
             };
-
+ 
             image.src = imgURI;
         });
     });
