@@ -1,6 +1,7 @@
 <div id="chartData18"></div>
 
 <script>
+    
     var options = {
         series: [14, 23, 21, 17, 15, 10, 12, 17, 21],
         chart: {
@@ -14,7 +15,7 @@
             opacity: 0.8
         },
         legend: {
-            position: 'bottom' 
+            position: 'bottom'
         },
         responsive: [{
             breakpoint: 480,

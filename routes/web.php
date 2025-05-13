@@ -205,6 +205,8 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('inspection-count', [KpiDashboardController::class, 'InspectionWiseCount']);
                 Route::get('ptw-open-close', [KpiDashboardController::class, 'PTWActiveVsClose']);
                 Route::get('ptw-type-wise-count', [KpiDashboardController::class, 'PTWTypeWiseCount']);
+                Route::get('training-hour-safety-department', [KpiDashboardController::class, 'TrainingHoursSafetyDepartmentWise']);
+                Route::get('ptw-hold-violation', [KpiDashboardController::class, 'ptwholdviolation']);
                 Route::get('chart4', [KpiDashboardController::class, 'getChart4']);
                 Route::get('chart1', [KpiDashboardController::class, 'getChart1']);
                 Route::get('chart2', [KpiDashboardController::class, 'getChart2']);

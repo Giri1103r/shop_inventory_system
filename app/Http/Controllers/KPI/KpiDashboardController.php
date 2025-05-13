@@ -83,7 +83,7 @@ class KpiDashboardController extends Controller
             ];
             $active_close_count = $this->ptw->ActiveVsClose();
 
-            if($active_close_count == null){
+            if ($active_close_count == null) {
                 return response()->json('<div class="border-0 pb-3" style="margin-top: 150px;"><h4 style="text-align: center;">No data Found.</h4></div>');
             }
 
@@ -121,6 +121,59 @@ class KpiDashboardController extends Controller
         }
     }
 
+    public function TrainingHoursSafetyDepartmentWise(Request $request)
+    {
+        try {
+            $dates = [
+                'from_date' => $request->input('FromDate'),
+                'to_date' =>  $request->input('ToDate')
+            ];
+
+            $training_data = $this->training_schedule->GetTrainingHoursDepartmentData($request);
+
+            $chartData = [
+                'labels' => [],
+                'series' => [],
+                'departments' => []
+            ];
+
+            foreach ($training_data as $item) {
+                $chartData['labels'][] = $item->topic_name;
+                $chartData['series'][] = (float) $item->total_hours;
+                $chartData['departments'][] = $item->department_name;
+            }
+
+            return view('kpi.training_hour_department_wise', [
+                'training_data' => $training_data,
+                'chartData' => $chartData,
+                'getdashdata' => (object) $dates
+            ]);
+        } catch (\Exception $ex) {
+            report($ex);
+        }
+    }
+
+    public function ptwholdviolation(Request $request)
+    {
+        try {
+
+            $dates = [
+                'from_date' => $request->input('FromDate'),
+                'to_date' =>  $request->input('ToDate')
+            ];
+
+            $hold_count = $this->ptw->getHoldStatus($request);
+
+            $data = [
+                'hold_count' => $hold_count,
+                'dates' => $dates,
+            ];
+
+            return view('kpi.ptw_hold_wise_count', $data);
+        } catch (\Exception $ex) {
+            report($ex);
+        }
+    }
     public function TrainingHours(Request $request)
     {
         try {
@@ -194,7 +247,6 @@ class KpiDashboardController extends Controller
                 'getdashdata' => $request,
                 'chartData' => $chartData,
             ]);
-
         } catch (\Exception $ex) {
             report($ex);
         }
@@ -212,7 +264,6 @@ class KpiDashboardController extends Controller
                 'getdashdata' => $request,
                 'chartData' => $chartData,
             ]);
-
         } catch (\Exception $ex) {
             report($ex);
         }
@@ -371,7 +422,6 @@ class KpiDashboardController extends Controller
             return view('kpi.chartData21', $data);
         } catch (\Exception $ex) {
             report($ex);
-
         }
     }
     public function getRCADistributionCount(Request $request)

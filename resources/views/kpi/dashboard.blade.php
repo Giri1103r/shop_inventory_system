@@ -409,7 +409,7 @@
             var csrfToken = document.createElement('input');
             csrfToken.type = 'hidden';
             csrfToken.name = '_token';
-            csrfToken.value = '{{ csrf_token() }}'; // Use Blade directive to get CSRF token
+            csrfToken.value = '{{ csrf_token() }}'; 
             form.appendChild(csrfToken);
 
             // Create hidden input fields for each POST data
@@ -450,10 +450,10 @@
             InspectionWiseCount(Fromdate, Todate);
             PTWOpenClose(Fromdate, Todate);
             PTWTypeWiseCount(Fromdate, Todate);
-            LoadChart4Count(Fromdate, Todate);
-            LoadChart1Count(Fromdate, Todate);
-            LoadChart2Count(Fromdate, Todate);
-            LoadChart3Count(Fromdate, Todate);
+            // LoadChart4Count(Fromdate, Todate);
+            // LoadChart1Count(Fromdate, Todate);
+            // LoadChart2Count(Fromdate, Todate);
+            // LoadChart3Count(Fromdate, Todate);
             LoadiirTypewiseRCPACount(Fromdate, Todate);
             LoadChart5Count(Fromdate, Todate);
             LoadChart6Count(Fromdate, Todate);
