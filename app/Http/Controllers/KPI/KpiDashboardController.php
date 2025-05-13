@@ -1,12 +1,12 @@
 <?php
 
 namespace App\Http\Controllers\KPI;
-use App\Http\Controllers\Controller;
+
 use App\Models\IMS\Incident\IncidentBodyParts;
 use App\Models\IMS\Incident\InitialIncident;
-use App\Models\Master\Employee;
+
 use App\Models\Master\PpeRequest;
-use App\Models\Master\TrainingSchedule;
+
 use DB;
 use Exception;
 use App\Models\User;
@@ -18,6 +18,7 @@ use App\Models\Permit\SafetyPermit;
 use App\Http\Controllers\Controller;
 use App\Models\Master\TrainingSchedule;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB as FacadesDB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
@@ -28,7 +29,7 @@ class KpiDashboardController extends Controller
     private $training_schedule;
     private $ims_incident;
     private $ptw;
-    private $training_schedule;
+
 
     public function __construct()
     {
@@ -42,7 +43,7 @@ class KpiDashboardController extends Controller
 
     public function index(Request $request)
     {
-        
+
         if (Auth::check()) {
             $user = Auth::user();
             $data = [];
@@ -106,7 +107,7 @@ class KpiDashboardController extends Controller
                 'from_date' => $request->input('FromDate'),
                 'to_date' =>  $request->input('ToDate')
             ];
-            
+
             $work_wise_count = $this->ptw->GetTypeWiseCount();
 
             $data = [
@@ -475,7 +476,7 @@ class KpiDashboardController extends Controller
         $request = request();
         $parts = $request->input('part');
 
-        $listResp = DB::table('ims_initial_incident as inc')
+        $listResp = FacadesDB::table('ims_initial_incident as inc')
             ->select([
                 'body.id as bodyids',
                 'inc.id as inveeid',
