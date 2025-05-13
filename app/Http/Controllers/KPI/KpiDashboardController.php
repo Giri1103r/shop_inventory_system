@@ -507,27 +507,7 @@ class KpiDashboardController extends Controller
             return back()->with('error', 'Failed to load unit-wise accident data.');
         }
     }
-    public function getNearMissCount(Request $request)
-    {
-        try {
-            $chartData = $this->ims_incident->getNearMissCountData($request);
 
-            $formattedData = [
-                'labels' => $chartData->pluck('unit_name'),
-                'major' => $chartData->pluck('major'),
-                'minor' => $chartData->pluck('minor'),
-                'fatal' => $chartData->pluck('fatal'),
-            ];
-
-            return view('kpi.near_miss', [
-                'formattedData' => $formattedData,
-                'getdashdata' => $request,
-            ]);
-        } catch (\Exception $ex) {
-            report($ex);
-            return back()->with('error', 'Failed to load unit-wise accident data.');
-        }
-    }
 
     public function getInjurypart(Request $request)
     {
@@ -576,7 +556,19 @@ class KpiDashboardController extends Controller
         return response()->json($response);
     }
 
+    public function IIRTypeWiseRCPA(Request $request)
+    {
+        try {
+            $chartData = $this->ims_incident->getTypeofIIRRCPACountData($request);
+            $data = [
+                'chartData' => $chartData,
+            ];
 
+            return view('kpi.iir_wise_rcpa', $data);
+        } catch (\Exception $ex) {
+            report($ex);
+        }
+    }
     public function IIRTypeWiseUAUC(Request $request)
     {
         try {
@@ -586,6 +578,22 @@ class KpiDashboardController extends Controller
             ];
 
             return view('kpi.iir_wise_uauc', $data);
+        } catch (\Exception $ex) {
+            report($ex);
+        }
+    }
+
+    public function nearMissFrequency(Request $request)
+    {
+        try {
+            $chartData = $this->ims_incident->getNearMissCountData($request);
+            // dd($chartData);
+
+            $data = [
+                'chartData' => $chartData,
+            ];
+
+            return view('kpi.near_miss_frequency', $data);
         } catch (\Exception $ex) {
             report($ex);
         }

@@ -237,6 +237,7 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('injurypart', [KpiDashboardController::class, 'getInjurypart']);
                 Route::post('getbodycount', [KpiDashboardController::class, 'injurybodycount']);
                 Route::get('IIRTypeWiseUAUC', [KpiDashboardController::class, 'IIRTypeWiseUAUC']);
+                Route::get('nearMissFrequency', [KpiDashboardController::class, 'nearMissFrequency']);
             });
 
             /**
