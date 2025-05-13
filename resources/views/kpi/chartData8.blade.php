@@ -1,11 +1,8 @@
-<div id="IncidentTypeChart"></div>
-@php
-    $labels = array_keys($formattedData);
-    $data = array_values($formattedData);
-@endphp
+<div id="chartData8"></div>
+
 <script>
     var options = {
-        series: {!! json_encode($data) !!},
+        series: [44, 55, 41, 17, 15],
         chart: {
             width: 380,
             type: 'donut',
@@ -13,7 +10,6 @@
                 show: false 
             },
         },
-        labels: {!! json_encode($labels) !!},
         legend: {
             position: 'bottom' 
         },
@@ -40,12 +36,12 @@
         }]
     };
 
-    var IncidentTypeChart = new ApexCharts(document.querySelector("#IncidentTypeChart"), options);
-    IncidentTypeChart.render();
+    var chartData8 = new ApexCharts(document.querySelector("#chartData8"), options);
+    chartData8.render();
 
     // Download button functionality
-    $("#IncidentType_download").off("click").on("click", function() {
-        IncidentTypeChart.dataURI().then(({
+    $("#LoadChart8_download").off("click").on("click", function() {
+        chartData8.dataURI().then(({
             imgURI
         }) => {
             var newCanvas = document.createElement('canvas');
@@ -64,7 +60,7 @@
                 // Header text
                 ctx.fillStyle = '#203669';
                 ctx.font = '20px Arial';
-                ctx.fillText('Incident Type', 10, 30);
+                ctx.fillText('CHART', 10, 30);
 
                 // Optional filter text
                 let yPos = 60;
@@ -100,7 +96,7 @@
                 newCanvas.toBlob(function(blob) {
                     var link = document.createElement('a');
                     link.href = URL.createObjectURL(blob);
-                    link.download = 'Incident Type.png';
+                    link.download = 'CHART.png';
                     link.click();
                 });
             };

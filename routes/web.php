@@ -213,6 +213,9 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('getbodycount', [AdminController::class, 'injurybodycount']);
                 Route::get('IIRTypeWiseUAUC', [AdminController::class, 'IIRTypeWiseUAUC']);
                 Route::get('nearMissFrequency', [AdminController::class, 'nearMissFrequency']);
+                Route::get('auditFindings', [AdminController::class, 'auditFindings']);
+                Route::get('IIRTypeWiseRCPA', [AdminController::class, 'IIRTypeWiseRCPA']);
+ 
             });
 
             /**

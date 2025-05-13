@@ -485,7 +485,7 @@ class AdminController extends Controller
             report($ex);
         }
     }
-   
+
     public function getPPEIssuanceGroupWise(Request $request)
     {
         try {
@@ -665,7 +665,7 @@ class AdminController extends Controller
             $data = [
                 'chartData' => $chartData,
             ];
-
+ 
             return view('admin.dashboard.iir_wise_rcpa', $data);
         } catch (\Exception $ex) {
             report($ex);
@@ -698,6 +698,53 @@ class AdminController extends Controller
             return view('admin.dashboard.near_miss_frequency', $data);
         } catch (\Exception $ex) {
             report($ex);
+        }
+    }
+    public function auditFindings(Request $request)
+    {
+        try {
+            $from = $request->Fromdate ? DBdateformat($request->Fromdate) : null;
+            $to   = $request->Todate ? DBdateformat($request->Todate) : null;
+
+            $auditAssessmentCount = DB::table('inspection_audit_assessment')
+                ->when($from && $to, fn($q) => $q->whereBetween('created_at', [$from, $to]))
+                ->when($from && !$to, fn($q) => $q->where('created_at', '>=', $from))
+                ->when(!$from && $to, fn($q) => $q->where('created_at', '<=', $to))
+                ->count('id');
+
+            $auditAnalysisCount = DB::table('inspection_audit_analysis')
+                ->when($from && $to, fn($q) => $q->whereBetween('created_at', [$from, $to]))
+                ->when($from && !$to, fn($q) => $q->where('created_at', '>=', $from))
+                ->when(!$from && $to, fn($q) => $q->where('created_at', '<=', $to))
+                ->count('id');
+
+            $interUnitCount = DB::table('inspection_audit_inter_unit')
+                ->when($from && $to, fn($q) => $q->whereBetween('created_at', [$from, $to]))
+                ->when($from && !$to, fn($q) => $q->where('created_at', '>=', $from))
+                ->when(!$from && $to, fn($q) => $q->where('created_at', '<=', $to))
+                ->count('id');
+
+            $auditMonthlyCount = DB::table('inspection_audit_monthly_audit_plan')
+                ->when($from && $to, fn($q) => $q->whereBetween('created_at', [$from, $to]))
+                ->when($from && !$to, fn($q) => $q->where('created_at', '>=', $from))
+                ->when(!$from && $to, fn($q) => $q->where('created_at', '<=', $to))
+                ->count('id');
+
+            $data = [
+                'auditAssessmentCount' => $auditAssessmentCount,
+                'auditAnalysisCount' => $auditAnalysisCount,
+                'interUnitCount' => $interUnitCount,
+                'auditMonthlyCount' => $auditMonthlyCount,
+                'getdashdata' => (object)[
+                    'Fromdate' => $request->Fromdate,
+                    'Todate' => $request->Todate,
+                ]
+            ];
+
+            return view('admin.dashboard.auditFindings', $data);
+        } catch (\Exception $ex) {
+            report($ex);
+            return back()->withErrors('An error occurred while processing the audit findings.');
         }
     }
 }

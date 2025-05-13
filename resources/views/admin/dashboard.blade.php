@@ -332,6 +332,18 @@
                 <div class="col-xl-12 col-xxl-12">
                     <div class="card view_card">
                         <div class="card-header">
+                            <h4 class="text-white">IIR Type Wise RCPA</h4>
+                            <a class="fas fa-arrow-alt-circle-down chartdownload" id="iirTypewiseRCPA_download"></a>
+                        </div>
+                        <div class="card-body px-0 pt-0 dlab-scroll height450" id="iirTypewiseRCPACount"> </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xl-12 col-xxl-12">
+                    <div class="card view_card">
+                        <div class="card-header">
                             <h4 class="text-white">Near Miss Frequency Rate</h4>
                             <a class="fas fa-arrow-alt-circle-down chartdownload" id="nearMiss_download"></a>
                         </div>
@@ -419,6 +431,7 @@
                     </div>
                 </div>
             </div>
+
             <div class="row">
                 <div class="col-xl-6 col-xxl-12">
                     <div class="card view_card responsive">
@@ -445,7 +458,17 @@
                 </div>
             </div>
 
-
+            <div class = "row">
+                <div class="col-xl-6 col-xxl-6">
+                    <div class="card view_card">
+                        <div class="card-header">
+                            <h4 class="text-white">Type Of Audit Findings</h4>
+                            <a class="fas fa-arrow-alt-circle-down chartdownload" id="auditFindings_download"></a>
+                        </div>
+                        <div id="LoadauditFindingsCount"></div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -480,7 +503,48 @@
             LoadPTWAvgTimeChartCount(Fromdate, Todate);
             LoadPPEIssuanceGroupWiseCount(Fromdate, Todate);
             loadinjurychart(Fromdate, Todate);
+            LoadauditFindingsCount(Fromdate, Todate);
+            LoadiirTypewiseRCPACount(Fromdate, Todate);
 
+
+        }
+
+        function LoadiirTypewiseRCPACount(Fromdate = '', Todate = '') {
+            var url = "{{ admin_url('dashboard/IIRTypeWiseRCPA') }}"
+            var data = {
+                Fromdate: Fromdate,
+                Todate: Todate,
+            };
+            $('#iirTypewiseRCPACount').html('');
+            $.ajax({
+                type: 'get',
+                url: url,
+                data: data,
+                cache: false,
+                success: function(dataAjx) {
+
+                    $('#iirTypewiseRCPACount').html(dataAjx);
+                }
+            });
+        }
+
+        function LoadauditFindingsCount(Fromdate = '', Todate = '') {
+            var url = "{{ admin_url('dashboard/auditFindings') }}"
+            var data = {
+                Fromdate: Fromdate,
+                Todate: Todate,
+            };
+            $('#LoadauditFindingsCount').html('');
+            $.ajax({
+                type: 'get',
+                url: url,
+                data: data,
+                cache: false,
+                success: function(dataAjx) {
+
+                    $('#LoadauditFindingsCount').html(dataAjx);
+                }
+            });
         }
 
         function TotalIncidentsCount(Fromdate = '', Todate = '') {

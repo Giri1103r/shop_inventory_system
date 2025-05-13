@@ -1,94 +1,55 @@
-<div id="ptw_type_wise"></div>
+<div id="chartData2"></div>
 
 <script>
-    var type_wise = @json($work_wise_count);
-
     var options = {
         series: [{
-            data: Object.values(type_wise)
+            data: [44, 55, 41, 64, 22, 43, 21]
+        }, {
+            data: [53, 32, 33, 52, 13, 44, 32]
         }],
         chart: {
-            height: 350,
             type: 'bar',
+            height: 350,
             toolbar: {
                 show: false
             },
         },
         plotOptions: {
             bar: {
-                borderRadius: 10,
+                horizontal: true,
                 dataLabels: {
                     position: 'top',
                 },
             }
         },
-        // dataLabels: {
-        //     enabled: true,
-        //     formatter: function(val) {
-        //         return val + "%";
-        //     },
-        //     offsetY: -20,
-        //     style: {
-        //         fontSize: '12px',
-        //         colors: ["#304758"]
-        //     }
-        // },
-        xaxis: {
-            categories: Object.keys(type_wise),
-            position: 'top',
-            axisBorder: {
-                show: false
-            },
-            axisTicks: {
-                show: false
-            },
-            crosshairs: {
-                fill: {
-                    type: 'gradient',
-                    gradient: {
-                        colorFrom: '#D8E3F0',
-                        colorTo: '#BED1E6',
-                        stops: [0, 100],
-                        opacityFrom: 0.4,
-                        opacityTo: 0.5,
-                    }
-                }
-            },
-            tooltip: {
-                enabled: true,
-            }
-        },
-        yaxis: {
-            axisBorder: {
-                show: false
-            },
-            axisTicks: {
-                show: false,
-            },
-            labels: {
-                show: false,
-                formatter: function(val) {
-                    return val;
-                }
-            }
-        },
-        title: {
-            text: 'Work Type Wise Summary',
-            floating: true,
-            offsetY: 330,
-            align: 'center',
+        dataLabels: {
+            enabled: true,
+            offsetX: -6,
             style: {
-                color: '#444'
+                fontSize: '12px',
+                colors: ['#fff']
             }
-        }
+        },
+        stroke: {
+            show: true,
+            width: 1,
+            colors: ['#fff']
+        },
+        tooltip: {
+            shared: true,
+            intersect: false
+        },
+        xaxis: {
+            categories: [2001, 2002, 2003, 2004, 2005],
+        },
     };
 
-    var ptw_type_wise = new ApexCharts(document.querySelector("#ptw_type_wise"), options);
-    ptw_type_wise.render();
+    var chartData2 = new ApexCharts(document.querySelector("#chartData2"), options);
+    chartData2.render();
 
     // Download button functionality
-    $("#ptw_type_wise_download").off("click").on("click", function() {
-        ptw_type_wise.dataURI().then(({
+    $("#LoadChart2_download").off("click").on("click", function() {
+        chartData2.dataURI().then(({
             imgURI
         }) => {
             var newCanvas = document.createElement('canvas');
@@ -107,15 +68,15 @@
                 // Header text
                 ctx.fillStyle = '#203669';
                 ctx.font = '20px Arial';
-                ctx.fillText('PTW Type Wise', 10, 30);
+                ctx.fillText('CHART', 10, 30);
 
                 // Optional filter text
                 let yPos = 60;
 
-                @if (isset($dates))
+                @if (isset($getdashdata))
                     @php
-                        $from = $dates['from_date'] ?? null;
-                        $to = $dates['to_date'] ?? null;
+                        $from = $getdashdata->Fromdate ?? null;
+                        $to = $getdashdata->Todate ?? null;
                     @endphp
 
                     @if ($from || $to)
@@ -143,7 +104,7 @@
                 newCanvas.toBlob(function(blob) {
                     var link = document.createElement('a');
                     link.href = URL.createObjectURL(blob);
-                    link.download = 'PTW Type Wise.png';
+                    link.download = 'CHART.png';
                     link.click();
                 });
             };

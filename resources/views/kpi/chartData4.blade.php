@@ -1,51 +1,65 @@
-<div id="IncidentTypeChart"></div>
-@php
-    $labels = array_keys($formattedData);
-    $data = array_values($formattedData);
-@endphp
+<div id="chartData4"></div>
+
 <script>
     var options = {
-        series: {!! json_encode($data) !!},
+        series: [{
+            name: 'Net Profit',
+            data: [44, 55, 57, 56, 61, 58, 63, 60, 66]
+        }, {
+            name: 'Revenue',
+            data: [76, 85, 101, 98, 87, 105, 91, 114, 94]
+        }, {
+            name: 'Free Cash Flow',
+            data: [35, 41, 36, 26, 45, 48, 52, 53, 41]
+        }],
         chart: {
-            width: 380,
-            type: 'donut',
+            type: 'bar',
+            height: 350,
             toolbar: {
-                show: false 
+                show: false
             },
         },
-        labels: {!! json_encode($labels) !!},
-        legend: {
-            position: 'bottom' 
+        plotOptions: {
+            bar: {
+                horizontal: false,
+                columnWidth: '55%',
+                borderRadius: 5,
+                borderRadiusApplication: 'end'
+            },
         },
-        responsive: [{
-            breakpoint: 480,
-            options: {
-                legend: {
-                    position: 'bottom',
-                    offsetX: 0,
-                    offsetY: 0
+        dataLabels: {
+            enabled: false
+        },
+        stroke: {
+            show: true,
+            width: 2,
+            colors: ['transparent']
+        },
+        xaxis: {
+            categories: ['Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'],
+        },
+        yaxis: {
+            title: {
+                text: '$ (thousands)'
+            }
+        },
+        fill: {
+            opacity: 1
+        },
+        tooltip: {
+            y: {
+                formatter: function(val) {
+                    return "$ " + val + " thousands"
                 }
             }
-        }],
-        responsive: [{
-            breakpoint: 480,
-            options: {
-                chart: {
-                    width: 200
-                },
-                legend: {
-                    position: 'bottom'
-                }
-            }
-        }]
+        }
     };
-
-    var IncidentTypeChart = new ApexCharts(document.querySelector("#IncidentTypeChart"), options);
-    IncidentTypeChart.render();
+    var chartData4 = new ApexCharts(document.querySelector("#chartData4"), options);
+    chartData4.render();
 
     // Download button functionality
-    $("#IncidentType_download").off("click").on("click", function() {
-        IncidentTypeChart.dataURI().then(({
+    $("#LoadChart4_download").off("click").on("click", function() {
+        chartData4.dataURI().then(({
             imgURI
         }) => {
             var newCanvas = document.createElement('canvas');
@@ -64,7 +78,7 @@
                 // Header text
                 ctx.fillStyle = '#203669';
                 ctx.font = '20px Arial';
-                ctx.fillText('Incident Type', 10, 30);
+                ctx.fillText('CHART', 10, 30);
 
                 // Optional filter text
                 let yPos = 60;
@@ -100,7 +114,7 @@
                 newCanvas.toBlob(function(blob) {
                     var link = document.createElement('a');
                     link.href = URL.createObjectURL(blob);
-                    link.download = 'Incident Type.png';
+                    link.download = 'CHART.png';
                     link.click();
                 });
             };

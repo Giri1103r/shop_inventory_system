@@ -52,7 +52,7 @@
                 // Header
                 ctx.fillStyle = '#203669';
                 ctx.font = '20px Arial';
-                ctx.fillText('CHART', 10, 30);
+                ctx.fillText('PTW Open Close', 10, 30);
 
                 // Optional filter info
                 let yPos = 60;
@@ -88,7 +88,7 @@
                 newCanvas.toBlob(function(blob) {
                     var link = document.createElement('a');
                     link.href = URL.createObjectURL(blob);
-                    link.download = 'CHART.png';
+                    link.download = 'PTW Open Close.png';
                     link.click();
                 });
             };

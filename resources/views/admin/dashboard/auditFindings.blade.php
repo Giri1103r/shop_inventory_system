@@ -1,51 +1,75 @@
-<div id="IncidentTypeChart"></div>
-@php
-    $labels = array_keys($formattedData);
-    $data = array_values($formattedData);
-@endphp
+<div id="auditFindings"></div>
+
 <script>
+    var auditAssessmentCount = {!! json_encode($auditAssessmentCount) !!};
+    var auditAnalysisCount = {!! json_encode($auditAnalysisCount) !!};
+    var interUnitCount = {!! json_encode($interUnitCount) !!};
+    var auditMonthlyCount = {!! json_encode($auditMonthlyCount) !!};
+
     var options = {
-        series: {!! json_encode($data) !!},
+        series: [auditAssessmentCount, auditAnalysisCount, interUnitCount, auditMonthlyCount],
         chart: {
-            width: 380,
-            type: 'donut',
-            toolbar: {
-                show: false 
-            },
+            height: 350,
+            type: 'radialBar',
         },
-        labels: {!! json_encode($labels) !!},
-        legend: {
-            position: 'bottom' 
-        },
-        responsive: [{
-            breakpoint: 480,
-            options: {
-                legend: {
-                    position: 'bottom',
-                    offsetX: 0,
-                    offsetY: 0
+        plotOptions: {
+            radialBar: {
+                offsetY: 0,
+                startAngle: 0,
+                endAngle: 270,
+                hollow: {
+                    margin: 5,
+                    size: '30%',
+                    background: 'transparent',
+                },
+                dataLabels: {
+                    name: {
+                        show: true,
+                    },
+                    value: {
+                        show: true,
+                    }
                 }
             }
-        }],
+        },
+        colors: ['#1ab7ea', '#0084ff', '#39539E', '#0077B5'],
+        labels: ['Audit Assessment', 'Audit Analysis', 'Inter Unit Audit', 'Monthly Audit Plan'],
+        legend: {
+            show: true,
+            floating: true,
+            fontSize: '14px',
+            position: 'left',
+            offsetX: 160,
+            offsetY: 15,
+            labels: {
+                useSeriesColors: true,
+            },
+            markers: {
+                size: 0
+            },
+            formatter: function(seriesName, opts) {
+                return seriesName + ": " + opts.w.globals.series[opts.seriesIndex];
+            },
+            itemMargin: {
+                vertical: 3
+            }
+        },
         responsive: [{
             breakpoint: 480,
             options: {
-                chart: {
-                    width: 200
-                },
                 legend: {
-                    position: 'bottom'
+                    show: false
                 }
             }
         }]
     };
 
-    var IncidentTypeChart = new ApexCharts(document.querySelector("#IncidentTypeChart"), options);
-    IncidentTypeChart.render();
+    var auditFindings = new ApexCharts(document.querySelector("#auditFindings"), options);
+    auditFindings.render();
 
     // Download button functionality
-    $("#IncidentType_download").off("click").on("click", function() {
-        IncidentTypeChart.dataURI().then(({
+    $("#auditFindings_download").off("click").on("click", function() {
+        auditFindings.dataURI().then(({
             imgURI
         }) => {
             var newCanvas = document.createElement('canvas');
@@ -64,7 +88,7 @@
                 // Header text
                 ctx.fillStyle = '#203669';
                 ctx.font = '20px Arial';
-                ctx.fillText('Incident Type', 10, 30);
+                ctx.fillText('Type Of Audit Findings', 10, 30);
 
                 // Optional filter text
                 let yPos = 60;
@@ -100,7 +124,7 @@
                 newCanvas.toBlob(function(blob) {
                     var link = document.createElement('a');
                     link.href = URL.createObjectURL(blob);
-                    link.download = 'Incident Type.png';
+                    link.download = 'Type Of Audit Findings.png';
                     link.click();
                 });
             };

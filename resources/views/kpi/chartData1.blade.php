@@ -1,78 +1,41 @@
-<div id="heatmapofImsData"></div>
-<div id="customLegend" style="margin-top: 10px;"></div>
+<div id="chartData1"></div>
+
 
 <script>
-    var chartData = @json($formattedData);
-
-    // Map injury types to colors
-    var injuryColors = {
-        'Major': '#FF0000', // Red
-        'Minor': '#FFB200', // Orange
-        'Fatal': '#128FD9'  // Blue
-    };
-
-    // Get colors for each series
-    var seriesColors = chartData.map(series => injuryColors[series.name] || '#999');
-
     var options = {
-        series: chartData,
+        series: [{
+            data: [400, 430, 448, 470, 540, 580, 690, 1100, 1200, 1380]
+        }],
         chart: {
-            height: 400,
-            type: 'heatmap',
+            type: 'bar',
+            height: 350,
+            toolbar: {
+                show: false
+            },
+        },
+        plotOptions: {
+            bar: {
+                borderRadius: 4,
+                borderRadiusApplication: 'end',
+                horizontal: true,
+            }
         },
         dataLabels: {
             enabled: true
         },
-        colors: seriesColors, // Use mapped colors
-        plotOptions: {
-            heatmap: {
-                shadeIntensity: 0.5,
-                radius: 4,
-                useFillColorAsStroke: true,
-            }
-        },
-     
         xaxis: {
-            type: 'category',
-            title: {
-                text: 'Month'
-            }
-        },
-        yaxis: {
-            title: {
-                text: 'Nature of Injury'
-            }
-        },
-        tooltip: {
-            enabled: true,
-            y: {
-                formatter: function(val) {
-                    return val + " Incidents";
-                }
-            }
-        },
-        legend: {
-            show: false // Hide default legend
+            categories: ['South Korea', 'Canada', 'United Kingdom', 'Netherlands', 'Italy', 'France', 'Japan',
+                'United States', 'China', 'Germany'
+            ],
         }
     };
 
-    var chart = new ApexCharts(document.querySelector("#heatmapofImsData"), options);
-    chart.render();
-
-    // Manual custom legend
-    var customLegendHTML = '<div style="display: flex; gap: 15px; justify-content: center;">';
-    for (const [label, color] of Object.entries(injuryColors)) {
-        customLegendHTML += `<div style="display: flex; align-items: center; gap: 5px;">
-            <div style="width: 12px; height: 12px; background-color: ${color}; border-radius: 2px;"></div>
-            <span>${label}</span>
-        </div>`;
-    }
-    customLegendHTML += '</div>';
-    document.getElementById('customLegend').innerHTML = customLegendHTML;
+    var chartData1 = new ApexCharts(document.querySelector("#chartData1"), options);
+    chartData1.render();
 
     // Download button functionality
-    $("#heatmapofImsData_download").off("click").on("click", function() {
-        heatmapofImsData.dataURI().then(({
+    $("#LoadChart1_download").off("click").on("click", function() {
+        chartData1.dataURI().then(({
             imgURI
         }) => {
             var newCanvas = document.createElement('canvas');
@@ -87,7 +50,7 @@
                 ctx.fillRect(0, 0, newCanvas.width, 250);
                 ctx.fillStyle = '#203669';
                 ctx.font = '20px Arial';
-                var headerText = 'Heatmap of Ims Data';
+                var headerText = 'DEPARTMENT WISE TRAINING COUNT';
                 ctx.fillText(headerText, 10, 30);
 
                 // var factoryNames = '';
@@ -124,7 +87,7 @@
                 newCanvas.toBlob(function(blob) {
                     var link = document.createElement('a');
                     link.href = URL.createObjectURL(blob);
-                    link.download = 'Heatmap of Ims Data.png';
+                    link.download = 'CHART.png';
                     link.click();
                 });
             };

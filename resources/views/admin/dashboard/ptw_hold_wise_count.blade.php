@@ -98,7 +98,7 @@ var hold_count = @json($hold_count);
                 // Header text
                 ctx.fillStyle = '#203669';
                 ctx.font = '20px Arial';
-                ctx.fillText('CHART', 10, 30);
+                ctx.fillText('PTW Hold Violation', 10, 30);
 
                 // Optional filter text
                 let yPos = 60;

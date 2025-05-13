@@ -1,32 +1,17 @@
-<div id="IncidentTypeChart"></div>
-@php
-    $labels = array_keys($formattedData);
-    $data = array_values($formattedData);
-@endphp
+<div id="chartData7"></div>
+
 <script>
     var options = {
-        series: {!! json_encode($data) !!},
+        series: [44, 55, 13, 43, 22],
         chart: {
             width: 380,
-            type: 'donut',
-            toolbar: {
-                show: false 
-            },
+            type: 'pie',
+          
         },
-        labels: {!! json_encode($labels) !!},
+        labels: ['Team A', 'Team B', 'Team C', 'Team D', 'Team E'],
         legend: {
             position: 'bottom' 
         },
-        responsive: [{
-            breakpoint: 480,
-            options: {
-                legend: {
-                    position: 'bottom',
-                    offsetX: 0,
-                    offsetY: 0
-                }
-            }
-        }],
         responsive: [{
             breakpoint: 480,
             options: {
@@ -40,12 +25,12 @@
         }]
     };
 
-    var IncidentTypeChart = new ApexCharts(document.querySelector("#IncidentTypeChart"), options);
-    IncidentTypeChart.render();
+    var chartData7 = new ApexCharts(document.querySelector("#chartData7"), options);
+    chartData7.render();
 
-    // Download button functionality
-    $("#IncidentType_download").off("click").on("click", function() {
-        IncidentTypeChart.dataURI().then(({
+    // Download chart as image
+    $("#LoadChart7_download").off("click").on("click", function() {
+        chartData7.dataURI().then(({
             imgURI
         }) => {
             var newCanvas = document.createElement('canvas');
@@ -57,16 +42,16 @@
                 let headerHeight = 120;
                 newCanvas.height = image.height + headerHeight;
 
-                // White background
+                // Background
                 ctx.fillStyle = 'white';
                 ctx.fillRect(0, 0, newCanvas.width, newCanvas.height);
 
-                // Header text
+                // Header
                 ctx.fillStyle = '#203669';
                 ctx.font = '20px Arial';
-                ctx.fillText('Incident Type', 10, 30);
+                ctx.fillText('CHART', 10, 30);
 
-                // Optional filter text
+                // Optional filter info
                 let yPos = 60;
 
                 @if (isset($getdashdata))
@@ -93,14 +78,14 @@
                     @endif
                 @endif
 
-                // Draw chart image below header
+                // Draw image
                 ctx.drawImage(image, 0, headerHeight);
 
-                // Save as image
+                // Download
                 newCanvas.toBlob(function(blob) {
                     var link = document.createElement('a');
                     link.href = URL.createObjectURL(blob);
-                    link.download = 'Incident Type.png';
+                    link.download = 'CHART.png';
                     link.click();
                 });
             };

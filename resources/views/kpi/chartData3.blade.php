@@ -1,94 +1,88 @@
-<div id="ptw_type_wise"></div>
+<div id="chartData3"></div>
 
 <script>
-    var type_wise = @json($work_wise_count);
-
     var options = {
         series: [{
-            data: Object.values(type_wise)
+            name: 'Marine Sprite',
+            data: [44, 55, 41, 37, 22, 43, 21]
+        }, {
+            name: 'Striking Calf',
+            data: [53, 32, 33, 52, 13, 43, 32]
+        }, {
+            name: 'Tank Picture',
+            data: [12, 17, 11, 9, 15, 11, 20]
+        }, {
+            name: 'Bucket Slope',
+            data: [9, 7, 5, 8, 6, 9, 4]
+        }, {
+            name: 'Reborn Kid',
+            data: [25, 12, 19, 32, 25, 24, 10]
         }],
         chart: {
-            height: 350,
             type: 'bar',
+            height: 350,
+            stacked: true,
             toolbar: {
                 show: false
             },
         },
         plotOptions: {
             bar: {
-                borderRadius: 10,
+                horizontal: true,
                 dataLabels: {
-                    position: 'top',
-                },
-            }
-        },
-        // dataLabels: {
-        //     enabled: true,
-        //     formatter: function(val) {
-        //         return val + "%";
-        //     },
-        //     offsetY: -20,
-        //     style: {
-        //         fontSize: '12px',
-        //         colors: ["#304758"]
-        //     }
-        // },
-        xaxis: {
-            categories: Object.keys(type_wise),
-            position: 'top',
-            axisBorder: {
-                show: false
-            },
-            axisTicks: {
-                show: false
-            },
-            crosshairs: {
-                fill: {
-                    type: 'gradient',
-                    gradient: {
-                        colorFrom: '#D8E3F0',
-                        colorTo: '#BED1E6',
-                        stops: [0, 100],
-                        opacityFrom: 0.4,
-                        opacityTo: 0.5,
+                    total: {
+                        enabled: true,
+                        offsetX: 0,
+                        style: {
+                            fontSize: '13px',
+                            fontWeight: 900
+                        }
                     }
                 }
             },
-            tooltip: {
-                enabled: true,
-            }
         },
-        yaxis: {
-            axisBorder: {
-                show: false
-            },
-            axisTicks: {
-                show: false,
-            },
+        stroke: {
+            width: 1,
+            colors: ['#fff']
+        },
+        title: {
+            text: 'Fiction Books Sales'
+        },
+        xaxis: {
+            categories: [2008, 2009, 2010, 2011, 2012, 2013, 2014],
             labels: {
-                show: false,
                 formatter: function(val) {
-                    return val;
+                    return val + "K"
                 }
             }
         },
-        title: {
-            text: 'Work Type Wise Summary',
-            floating: true,
-            offsetY: 330,
-            align: 'center',
-            style: {
-                color: '#444'
+        yaxis: {
+            title: {
+                text: undefined
+            },
+        },
+        tooltip: {
+            y: {
+                formatter: function(val) {
+                    return val + "K"
+                }
             }
+        },
+        fill: {
+            opacity: 1
+        },
+        legend: {
+            position: 'top',
+            horizontalAlign: 'left',
+            offsetX: 40
         }
     };
-
-    var ptw_type_wise = new ApexCharts(document.querySelector("#ptw_type_wise"), options);
-    ptw_type_wise.render();
+    var chartData3 = new ApexCharts(document.querySelector("#chartData3"), options);
+    chartData3.render();
 
     // Download button functionality
-    $("#ptw_type_wise_download").off("click").on("click", function() {
-        ptw_type_wise.dataURI().then(({
+    $("#LoadChart3_download").off("click").on("click", function() {
+        chartData3.dataURI().then(({
             imgURI
         }) => {
             var newCanvas = document.createElement('canvas');
@@ -107,15 +101,15 @@
                 // Header text
                 ctx.fillStyle = '#203669';
                 ctx.font = '20px Arial';
-                ctx.fillText('PTW Type Wise', 10, 30);
+                ctx.fillText('CHART', 10, 30);
 
                 // Optional filter text
                 let yPos = 60;
 
-                @if (isset($dates))
+                @if (isset($getdashdata))
                     @php
-                        $from = $dates['from_date'] ?? null;
-                        $to = $dates['to_date'] ?? null;
+                        $from = $getdashdata->Fromdate ?? null;
+                        $to = $getdashdata->Todate ?? null;
                     @endphp
 
                     @if ($from || $to)
@@ -143,7 +137,7 @@
                 newCanvas.toBlob(function(blob) {
                     var link = document.createElement('a');
                     link.href = URL.createObjectURL(blob);
-                    link.download = 'PTW Type Wise.png';
+                    link.download = 'CHART.png';
                     link.click();
                 });
             };

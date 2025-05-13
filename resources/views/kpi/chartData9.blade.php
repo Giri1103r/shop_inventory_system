@@ -1,51 +1,42 @@
-<div id="IncidentTypeChart"></div>
-@php
-    $labels = array_keys($formattedData);
-    $data = array_values($formattedData);
-@endphp
+<div id="chartData9"></div>
+
 <script>
     var options = {
-        series: {!! json_encode($data) !!},
+        series: [44, 55, 67, 83],
         chart: {
-            width: 380,
-            type: 'donut',
-            toolbar: {
-                show: false 
-            },
+            height: 350,
+            type: 'radialBar',
         },
-        labels: {!! json_encode($labels) !!},
-        legend: {
-            position: 'bottom' 
-        },
-        responsive: [{
-            breakpoint: 480,
-            options: {
-                legend: {
-                    position: 'bottom',
-                    offsetX: 0,
-                    offsetY: 0
+        plotOptions: {
+            radialBar: {
+                dataLabels: {
+                    name: {
+                        fontSize: '22px',
+                    },
+                    value: {
+                        fontSize: '16px',
+                    },
+                    total: {
+                        show: true,
+                        label: 'Total',
+                        formatter: function(w) {
+                            // By default this function returns the average of all series. The below is just an example to show the use of custom formatter function
+                            return 249
+                        }
+                    }
                 }
             }
-        }],
-        responsive: [{
-            breakpoint: 480,
-            options: {
-                chart: {
-                    width: 200
-                },
-                legend: {
-                    position: 'bottom'
-                }
-            }
-        }]
+        },
+        labels: ['Apples', 'Oranges', 'Bananas', 'Berries'],
     };
 
-    var IncidentTypeChart = new ApexCharts(document.querySelector("#IncidentTypeChart"), options);
-    IncidentTypeChart.render();
+
+    var chartData9 = new ApexCharts(document.querySelector("#chartData9"), options);
+    chartData9.render();
 
     // Download button functionality
-    $("#IncidentType_download").off("click").on("click", function() {
-        IncidentTypeChart.dataURI().then(({
+    $("#LoadChart9_download").off("click").on("click", function() {
+        chartData9.dataURI().then(({
             imgURI
         }) => {
             var newCanvas = document.createElement('canvas');
@@ -64,7 +55,7 @@
                 // Header text
                 ctx.fillStyle = '#203669';
                 ctx.font = '20px Arial';
-                ctx.fillText('Incident Type', 10, 30);
+                ctx.fillText('CHART', 10, 30);
 
                 // Optional filter text
                 let yPos = 60;
@@ -100,7 +91,7 @@
                 newCanvas.toBlob(function(blob) {
                     var link = document.createElement('a');
                     link.href = URL.createObjectURL(blob);
-                    link.download = 'Incident Type.png';
+                    link.download = 'CHART.png';
                     link.click();
                 });
             };
