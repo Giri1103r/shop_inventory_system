@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', '  Daily Departmental First Aid Box' )
+@section('title', ' Daily Departmental First Aid Box')
 @section('pageurl', admin_url('ohc/first-aid-box/daily-departmental/list'))
 
 
@@ -15,8 +15,8 @@
                         <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
 
                         {{-- @if (CheckUserPermission('add')) --}}
-                            <x-button-add dataId="" class="add btn btn-primary ms-1"
-                                href="{{ admin_url('ohc/first-aid-box/daily-departmental/add') }}">Add</x-button-add>
+                        <x-button-add dataId="" class="add btn btn-primary ms-1"
+                            href="{{ admin_url('ohc/first-aid-box/daily-departmental/add') }}">Add</x-button-add>
                         {{-- @endif --}}
                     </div>
                     <div id="search" class="collapse">
@@ -25,7 +25,7 @@
                                 <div class="col-md-12">
                                     <div class="row">
 
-                                        <div class="col-md-3 mb-2">
+                                        <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
                                                 <label class="form-label require">Unit</label>
                                                 <select name="unit_id" id="unit_id" class="form-control single-select"
@@ -38,7 +38,28 @@
                                                 </select>
                                             </div>
                                         </div>
-                                        <div class="col-md-3 mb-2">
+                                        <div class="col-md-4 mb-3 form-input">
+                                            <label for="emp_name" class="form-label ">From Date</label>
+                                            <div class="input-group date form-input custom-height">
+                                                <input type="text" class="form-control " name="from_date" id="from_date"
+                                                    autocomplete="off">
+                                                <div class="input-group-addon input-group-text">
+                                                    <span class="fa fa-calendar"></span>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="col-md-4 mb-3 form-input">
+                                            <label for="emp_name" class="form-label ">To Date</label>
+                                            <div class="input-group date form-input  custom-height">
+                                                <input type="text" class="form-control " name="to_date" id="to_date"
+                                                    autocomplete="off">
+                                                <div class="input-group-addon input-group-text">
+                                                    <span class="fa fa-calendar"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
                                                 <label class="form-label require">Department</label>
                                                 <select name="department_id" id="department_id"
@@ -48,7 +69,7 @@
                                                 </select>
                                             </div>
                                         </div>
-                                        <div class="col-md-3 mb-2">
+                                        <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
                                                 <label class="form-label require">Shift</label>
                                                 <select name="shift" id="shift" style="width: 100%"
@@ -61,17 +82,20 @@
                                                 </select>
                                             </div>
                                         </div>
-                                        <div class="col-md-3 mb-3 form-input">
+                                        <div class="col-md-4 mb-3 form-input">
                                             <label for="status" class="form-label ">{{ __('common.status') }}</label>
                                             <select name="status" id="status" style="width: 100%"
                                                 class="form-control single-select">
                                                 <option value="">Select Status</option>
-                                                <option value="{{ encryptId(8) }}">Medical Assistant / Floor manager Approve Pending</option>
-                                                <option value="{{ encryptId(9) }}">Medical Assistant / Floor manager Approved</option>
-                                                <option value="{{ encryptId(10) }}">Medical Assistant / Floor manager Rejected</option>
+                                                <option value="{{ encryptId(8) }}">Medical Assistant / Floor manager
+                                                    Approve Pending</option>
+                                                <option value="{{ encryptId(9) }}">Medical Assistant / Floor manager
+                                                    Approved</option>
+                                                <option value="{{ encryptId(10) }}">Medical Assistant / Floor manager
+                                                    Rejected</option>
                                             </select>
                                         </div>
-                                        <div class="col-md-3 mt-3">
+                                        <div class="col-md-4 mt-3">
                                             <x-button-search></x-button-search>
                                             <x-button-reset></x-button-reset>
                                         </div>
@@ -122,6 +146,24 @@
 
 
             });
+            $(document).ready(function() {
+                var fromDatepicker = flatpickr("#from_date", {
+                    dateFormat: "d-m-Y",
+                    onChange: function(selectedDates) {
+                        if (selectedDates.length > 0) {
+                            var startDate = selectedDates[0];
+                            toDatepicker.set('minDate', startDate);
+                            toDatepicker.clear();
+                        }
+                    }
+                });
+
+                var toDatepicker = flatpickr("#to_date", {
+                    dateFormat: "d-m-Y",
+
+                });
+            });
+
             $(function() {
                 /* Datatable */
                 var table = $('.datatable-list').DataTable({
@@ -159,6 +201,8 @@
                             d.department_id = $('#department_id').val();
                             d.shift = $('#shift').val();
                             d.status = $('#status').val();
+                            d.from_date = $('#from_date').val();
+                            d.to_date = $('#to_date').val();
                         },
                         error: function(xhr, error, code) {
                             if (xhr.status === 419) {
@@ -192,8 +236,8 @@
                             name: 'approve_status'
                         },
                         {
-                            data: 'created_date',
-                            name: 'created_date'
+                            data: 'inspection_created_at',
+                            name: 'inspection_created_at'
                         },
                         {
                             data: 'action',
@@ -229,6 +273,8 @@
                                         department_id = $('#department_id').val();
                                         shift = $('#shift').val();
                                         status = $('#status').val();
+                                        var from_date = $('#from_date').val();
+                                        var to_date = $('#to_date').val();
 
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
@@ -237,6 +283,8 @@
                                             '?search=' + searchValue +
                                             '&unit_id=' + unit_id +
                                             '&department_id=' + department_id +
+                                            '&from_date=' + from_date +
+                                            '&to_date=' + to_date +
                                             '&shift=' + shift +
                                             '&status=' + status
                                     }
@@ -250,12 +298,16 @@
                                         department_id = $('#department_id').val();
                                         shift = $('#shift').val();
                                         status = $('#status').val();
+                                        var from_date = $('#from_date').val();
+                                        var to_date = $('#to_date').val();
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('ohc/first-aid-box/daily-departmental/export/excel') }}"+
+                                            "{{ admin_url('ohc/first-aid-box/daily-departmental/export/excel') }}" +
                                             '?search=' + searchValue +
                                             '&unit_id=' + unit_id +
+                                            '&from_date=' + from_date +
+                                            '&to_date=' + to_date +
                                             '&department_id=' + department_id +
                                             '&shift=' + shift +
                                             '&status=' + status

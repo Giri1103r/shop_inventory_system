@@ -152,21 +152,7 @@
                     dateFormat: "d-m-Y",
                 });
 
-                var fromDatepicker = flatpickr("#from_date", {
-                    dateFormat: "d-m-Y",
-                    onChange: function(selectedDates) {
-                        if (selectedDates.length > 0) {
-                            var startDate = selectedDates[0];
-                            toDatepicker.set('minDate', startDate);
-                            toDatepicker.clear();
-                        }
-                    }
-                });
 
-                var toDatepicker = flatpickr("#to_date", {
-                    dateFormat: "d-m-Y",
-
-                });
             });
             $(document).ready(function() {
                 var fromDatepicker = flatpickr("#from_date", {
@@ -307,8 +293,8 @@
                                             '&auditee_name=' + auditee_name +
                                             '&unit_id=' + unit_id +
                                             '&task_name=' + task_name +
-                                             '&from_date=' + from_date +
-                                        '&to_date=' + to_date +
+                                            '&from_date=' + from_date +
+                                            '&to_date=' + to_date +
                                             '&compliance_category=' + compliance_category
 
                                     }
@@ -333,8 +319,8 @@
                                             '&auditee_name=' + auditee_name +
                                             '&unit_id=' + unit_id +
                                             '&task_name=' + task_name +
-                                             '&from_date=' + from_date +
-                                        '&to_date=' + to_date +
+                                            '&from_date=' + from_date +
+                                            '&to_date=' + to_date +
                                             '&compliance_category=' + compliance_category
                                     }
                                 },

@@ -62,7 +62,27 @@
                                                 @endforeach
                                             </select>
                                         </div>
+                                        <div class="col-md-4 mb-3 form-input">
+                                            <label for="emp_name" class="form-label ">From Date</label>
+                                            <div class="input-group date form-input custom-height">
+                                                <input type="text" class="form-control " name="from_date" id="from_date"
+                                                    autocomplete="off">
+                                                <div class="input-group-addon input-group-text">
+                                                    <span class="fa fa-calendar"></span>
+                                                </div>
+                                            </div>
 
+                                        </div>
+                                        <div class="col-md-4 mb-3 form-input">
+                                            <label for="emp_name" class="form-label ">To Date</label>
+                                            <div class="input-group date form-input  custom-height">
+                                                <input type="text" class="form-control " name="to_date" id="to_date"
+                                                    autocomplete="off">
+                                                <div class="input-group-addon input-group-text">
+                                                    <span class="fa fa-calendar"></span>
+                                                </div>
+                                            </div>
+                                        </div>
                                         <div class="col-md-3 mt-3">
                                             <x-button-search></x-button-search>
                                             <x-button-reset></x-button-reset>
@@ -87,6 +107,7 @@
                                         <th>{{ __('inspection.frequency') }}</th>
                                         <th>{{ __('inspection.shifts') }}</th>
                                         <th>{{ __('inspection.unit') }}</th>
+                                        <th>{{ __('common.created_date') }}</th>
                                         <th>{{ __('common.action') }}</th>
                                     </tr>
                                 </thead>
@@ -110,6 +131,23 @@
 
             flatpickr("#issue_date", {
                 dateFormat: "d-m-Y",
+            });
+            $(document).ready(function() {
+                var fromDatepicker = flatpickr("#from_date", {
+                    dateFormat: "d-m-Y",
+                    onChange: function(selectedDates) {
+                        if (selectedDates.length > 0) {
+                            var startDate = selectedDates[0];
+                            toDatepicker.set('minDate', startDate);
+                            toDatepicker.clear();
+                        }
+                    }
+                });
+
+                var toDatepicker = flatpickr("#to_date", {
+                    dateFormat: "d-m-Y",
+
+                });
             });
             $(function() {
                 /* Datatable */
@@ -148,6 +186,8 @@
                             d.issue_date = $('#issue_date').val();
                             d.shift_id = $('#shift_id').val();
                             d.unit = $('#unit').val();
+                            d.from_date = $('#from_date').val();
+                            d.to_date = $('#to_date').val();
                         },
                         error: function(xhr, error, code) {
                             if (xhr.status === 419) {
@@ -177,6 +217,10 @@
                         {
                             data: 'shift',
                             name: 'shift',
+                        },
+                        {
+                            data: 'inspection_created_at',
+                            name: 'inspection_created_at',
                         },
                         {
                             data: 'action',
@@ -211,13 +255,16 @@
                                         issue_date = $('#issue_date').val();
                                         shift_id = $('#shift_id').val();
                                         unit = $('#unit').val();
-
+                                        var from_date = $('#from_date').val();
+                                        var to_date = $('#to_date').val();
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
                                             "{{ admin_url('ohc/floor_stretcher/checklist/export/pdf') }}" +
                                             '?search=' + searchValue +
                                             '&frequency=' + frequency +
+                                            '&from_date=' + from_date +
+                                            '&to_date=' + to_date +
                                             '&issue_date=' + issue_date +
                                             '&shift_id=' + shift_id +
                                             '&unit=' + unit
@@ -232,6 +279,8 @@
                                         issue_date = $('#issue_date').val();
                                         shift_id = $('#shift_id').val();
                                         unit = $('#unit').val();
+                                        var from_date = $('#from_date').val();
+                                        var to_date = $('#to_date').val();
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
@@ -239,6 +288,8 @@
                                             '?search=' + searchValue +
                                             '&frequency=' + frequency +
                                             '&issue_date=' + issue_date +
+                                            '&from_date=' + from_date +
+                                            '&to_date=' + to_date +
                                             '&shift_id=' + shift_id +
                                             '&unit=' + unit
                                     }
