@@ -1,10 +1,11 @@
-<div id="chartData1"></div>
+<div id="inspection_wise_count"></div>
 
 
 <script>
+    var inspection_wise_count = @json($inspection_wise_count);
     var options = {
         series: [{
-            data: [400, 430, 448, 470, 540, 580, 690, 1100, 1200, 1380]
+            data: Object.values(inspection_wise_count)
         }],
         chart: {
             type: 'bar',
@@ -24,18 +25,16 @@
             enabled: true
         },
         xaxis: {
-            categories: ['South Korea', 'Canada', 'United Kingdom', 'Netherlands', 'Italy', 'France', 'Japan',
-                'United States', 'China', 'Germany'
-            ],
+            categories: Object.keys(inspection_wise_count)
         }
     };
 
-    var chartData1 = new ApexCharts(document.querySelector("#chartData1"), options);
-    chartData1.render();
+    var inspection_wise_count = new ApexCharts(document.querySelector("#inspection_wise_count"), options);
+    inspection_wise_count.render();
 
     // Download button functionality
-    $("#LoadChart1_download").off("click").on("click", function() {
-        chartData1.dataURI().then(({
+    $("#inspection_wise_count_download").off("click").on("click", function() {
+        inspection_wise_count.dataURI().then(({
             imgURI
         }) => {
             var newCanvas = document.createElement('canvas');
@@ -50,27 +49,17 @@
                 ctx.fillRect(0, 0, newCanvas.width, 250);
                 ctx.fillStyle = '#203669';
                 ctx.font = '20px Arial';
-                var headerText = 'DEPARTMENT WISE TRAINING COUNT';
+                var headerText = 'INSPECTION TYPE WISE COUNT';
                 ctx.fillText(headerText, 10, 30);
 
-                // var factoryNames = '';
-                // @if ($getdashdata->Factory && is_array($getdashdata->Factory) && isset($getdashdata->Factory))
-                //     factoryNames = @json(getFactoryNames(arrayDecrypt($getdashdata->Factory)));
-                // @endif
-
-                var Fromdate = @json($getdashdata->Fromdate ?? null);
-                var Todate = @json($getdashdata->Todate ?? null);
+                var Fromdate = @json($from_date ?? null);
+                var Todate = @json($to_date ?? null);
 
                 var yPos = 60;
 
                 if (Fromdate || Todate) {
                     var subHeaderText = 'Filtered By:';
                     ctx.fillText(subHeaderText, 10, yPos);
-
-                    // if (factoryNames) {
-                    //     yPos += 50;
-                    //     ctx.fillText('Factory: ' + factoryNames, 10, yPos);
-                    // }
 
                     if (Fromdate) {
                         yPos += 30;
@@ -87,7 +76,7 @@
                 newCanvas.toBlob(function(blob) {
                     var link = document.createElement('a');
                     link.href = URL.createObjectURL(blob);
-                    link.download = 'CHART.png';
+                    link.download = 'Inspection Type Wise Count.png';
                     link.click();
                 });
             };

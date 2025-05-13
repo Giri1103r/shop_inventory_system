@@ -6,6 +6,7 @@ namespace App\Models\Inspection\Ohc;
 
 use App\Models\Master\Employee;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
@@ -103,7 +104,20 @@ class DailyDepartmentFirstAidBoxDetails extends Model
         if (isset($request->status) && $request->status) {
             $query = $query->where('inspection_ohc_daily_department_first_aid_box_details.approve_status',  decryptId($request->status));
         }
+        if ($request->has('from_date') && !empty($request->from_date)) {
 
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_ohc_daily_department_first_aid_box_details.created_at', '>=', $startDate);
+        }
+        if ($request->has('to_date') && !empty($request->to_date)) {
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_ohc_daily_department_first_aid_box_details.created_at', '<=', $endDate);
+        }
+        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->whereBetween('inspection_ohc_daily_department_first_aid_box_details.created_at', [$startDate, $endDate]);
+        }
         if (isset($request->order) && count($request->order) > 0) {
             $columnName = $request->order[0]['column'];
             $columnorder = $request->order[0]['dir'];
@@ -197,7 +211,8 @@ class DailyDepartmentFirstAidBoxDetails extends Model
 
 
         $query = $this->select(
-            'inspection_ohc_daily_department_first_aid_box_details.*');
+            'inspection_ohc_daily_department_first_aid_box_details.*'
+        );
 
         if (isset($request->search['value']) && $request->search['value'] != '') {
             $search = $request->search['value'];
@@ -229,7 +244,20 @@ class DailyDepartmentFirstAidBoxDetails extends Model
         if (isset($request->status) && $request->status) {
             $query = $query->where('inspection_ohc_daily_department_first_aid_box_details.approve_status',  decryptId($request->status));
         }
+  if ($request->has('from_date') && !empty($request->from_date)) {
 
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_ohc_daily_department_first_aid_box_details.created_at', '>=', $startDate);
+        }
+        if ($request->has('to_date') && !empty($request->to_date)) {
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_ohc_daily_department_first_aid_box_details.created_at', '<=', $endDate);
+        }
+        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->whereBetween('inspection_ohc_daily_department_first_aid_box_details.created_at', [$startDate, $endDate]);
+        }
         if (isset($request->order) && count($request->order) > 0) {
             $columnName = $request->order[0]['column'];
             $columnorder = $request->order[0]['dir'];

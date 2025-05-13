@@ -1,10 +1,11 @@
 <?php
 
 namespace App\Models\Inspection\Ohc;
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Facades\Auth;
 use App\Scopes\TrashScope;
-
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class SafetyPettyDetails extends Model
@@ -48,12 +49,12 @@ class SafetyPettyDetails extends Model
         $search = '';
 
         $query = $this->select(
-                'inspection_ohc_safety_petty_logbook.*',
-                'masters_employee.emp_name',
-                'masters_unit.unit_name',
-                'masters_department.department_name',
-                'inspection_ohc_safety_petty_logbook.id as safety_petty_id'
-            )
+            'inspection_ohc_safety_petty_logbook.*',
+            'masters_employee.emp_name',
+            'masters_unit.unit_name',
+            'masters_department.department_name',
+            'inspection_ohc_safety_petty_logbook.id as safety_petty_id'
+        )
             ->leftJoin('masters_employee', 'masters_employee.login_id', '=', 'inspection_ohc_safety_petty_logbook.employee_name')
             ->leftJoin('masters_unit', 'masters_unit.id', '=', 'inspection_ohc_safety_petty_logbook.unit')
             ->leftJoin('masters_department', 'masters_department.id', '=', 'inspection_ohc_safety_petty_logbook.department');
@@ -73,7 +74,20 @@ class SafetyPettyDetails extends Model
                     ->orWhere('inspection_ohc_safety_petty_logbook.employee_code', 'LIKE', '%' . $search . '%');
             });
         }
+        if ($request->has('from_date') && !empty($request->from_date)) {
 
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_ohc_safety_petty_logbook.created_at', '>=', $startDate);
+        }
+        if ($request->has('to_date') && !empty($request->to_date)) {
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_ohc_safety_petty_logbook.created_at', '<=', $endDate);
+        }
+        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->whereBetween('inspection_ohc_safety_petty_logbook.created_at', [$startDate, $endDate]);
+        }
         if ($request->has('unit_id') && $request->unit_id) {
             $query = $query->where('inspection_ohc_safety_petty_logbook.unit', 'LIKE', '%' . decryptId($request->unit_id) . '%');
         }
@@ -130,7 +144,7 @@ class SafetyPettyDetails extends Model
         foreach ($request->amount as $index => $amount) {
             $insert_array = array(
                 'document_reference_id' => decryptId($request->document_reference_id),
-                'serial_number' =>$request->serial_number[$index],
+                'serial_number' => $request->serial_number[$index],
                 'employee_name' => $request->emp_id[$index],
                 'employee_code' => $request->employee_code[$index],
                 'department' => decryptId($request->department_id[$index]),
@@ -144,8 +158,7 @@ class SafetyPettyDetails extends Model
                 'created_by' => Auth::id(),
             );
 
-            $insertedData[]=  $this->create($insert_array);
-
+            $insertedData[] =  $this->create($insert_array);
         }
 
         return $insertedData;
@@ -185,15 +198,15 @@ class SafetyPettyDetails extends Model
         $request = request();
         $search = '';
         $query = $this->select(
-                    'inspection_ohc_safety_petty_logbook.*',
-                    'masters_employee.emp_name',
-                    'masters_unit.unit_name',
-                    'masters_department.department_name',
-                    'inspection_ohc_safety_petty_logbook.id as safety_petty_id'
-                )
-                ->leftJoin('masters_employee', 'masters_employee.login_id', '=', 'inspection_ohc_safety_petty_logbook.employee_name')
-                ->leftJoin('masters_unit', 'masters_unit.id', '=', 'inspection_ohc_safety_petty_logbook.unit')
-                ->leftJoin('masters_department', 'masters_department.id', '=', 'inspection_ohc_safety_petty_logbook.department');
+            'inspection_ohc_safety_petty_logbook.*',
+            'masters_employee.emp_name',
+            'masters_unit.unit_name',
+            'masters_department.department_name',
+            'inspection_ohc_safety_petty_logbook.id as safety_petty_id'
+        )
+            ->leftJoin('masters_employee', 'masters_employee.login_id', '=', 'inspection_ohc_safety_petty_logbook.employee_name')
+            ->leftJoin('masters_unit', 'masters_unit.id', '=', 'inspection_ohc_safety_petty_logbook.unit')
+            ->leftJoin('masters_department', 'masters_department.id', '=', 'inspection_ohc_safety_petty_logbook.department');
 
         if ($request->search != null || $request->search != '') {
             $search = $request->search;
@@ -205,7 +218,6 @@ class SafetyPettyDetails extends Model
                     ->orWhere('masters_unit.unit_name', 'LIKE', '%' . $search . '%')
                     ->orWhere('masters_department.department_name', 'LIKE', '%' . $search . '%')
                     ->orWhere('inspection_ohc_safety_petty_logbook.employee_code', 'LIKE', '%' . $search . '%');
-
             });
         }
 
@@ -219,7 +231,20 @@ class SafetyPettyDetails extends Model
         if ($request->has('emp_id') && $request->emp_id) {
             $query = $query->where('inspection_ohc_safety_petty_logbook.employee_name', 'LIKE', '%' . $request->emp_id . '%');
         }
+        if ($request->has('from_date') && !empty($request->from_date)) {
 
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_ohc_safety_petty_logbook.created_at', '>=', $startDate);
+        }
+        if ($request->has('to_date') && !empty($request->to_date)) {
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_ohc_safety_petty_logbook.created_at', '<=', $endDate);
+        }
+        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->whereBetween('inspection_ohc_safety_petty_logbook.created_at', [$startDate, $endDate]);
+        }
         if ($request->has('employee_code') && $request->employee_code) {
             $query = $query->where('inspection_ohc_safety_petty_logbook.employee_code', 'LIKE', '%' . $request->employee_code . '%');
         }
@@ -237,5 +262,4 @@ class SafetyPettyDetails extends Model
     {
         static::addGlobalScope(new TrashScope('inspection_ohc_safety_petty_logbook'));
     }
-
 }

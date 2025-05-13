@@ -24,19 +24,18 @@
                             <div class="card-body">
                                 <div class="col-md-12">
                                     <div class="row">
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="document_number"
-                                                class="form-label ">Health Instrument ID</label>
+                                        <div class="col-md-4 mb-3 form-input">
+                                            <label for="document_number" class="form-label ">Health Instrument ID</label>
                                             <input type="text" name="health_instrument_id" id="health_instrument_id"
                                                 class="form-control">
                                         </div>
-                                      
-                                        <div class="col-md-3 mb-2">
+
+                                        <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
                                                 <label for="unit_id" class="form-label">
                                                     Unit</label>
-                                                <select name="unit_id" id="unit_id"
-                                                    class=" form-control single-select" style="width: 100%">
+                                                <select name="unit_id" id="unit_id" class=" form-control single-select"
+                                                    style="width: 100%">
                                                     <option value="">Select Unit</option>
                                                     @foreach ($unitList as $unit)
                                                         <option value="{{ encryptId($unit->id) }}">
@@ -45,8 +44,28 @@
                                                 </select>
                                             </div>
                                         </div>
+                                        <div class="col-md-4 mb-3 form-input">
+                                            <label for="emp_name" class="form-label ">From Date</label>
+                                            <div class="input-group date form-input custom-height">
+                                                <input type="text" class="form-control " name="from_date" id="from_date"
+                                                    autocomplete="off">
+                                                <div class="input-group-addon input-group-text">
+                                                    <span class="fa fa-calendar"></span>
+                                                </div>
+                                            </div>
 
-                                        <div class="col-md-3 mb-3 form-input">
+                                        </div>
+                                        <div class="col-md-4 mb-3 form-input">
+                                            <label for="emp_name" class="form-label ">To Date</label>
+                                            <div class="input-group date form-input  custom-height">
+                                                <input type="text" class="form-control " name="to_date" id="to_date"
+                                                    autocomplete="off">
+                                                <div class="input-group-addon input-group-text">
+                                                    <span class="fa fa-calendar"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 mb-3 form-input">
                                             <label for="status" class="form-label ">{{ __('common.status') }}</label>
                                             <select name="status" id="status" style="width: 100%"
                                                 class="form-control single-select">
@@ -55,7 +74,7 @@
                                                 <option value="{{ encryptId(0) }}">In-Active</option>
                                             </select>
                                         </div>
-                                        <div class="col-md-3 mt-3">
+                                        <div class="col-md-4 mt-3">
                                             <x-button-search></x-button-search>
                                             <x-button-reset></x-button-reset>
 
@@ -78,7 +97,7 @@
                                         <th>Health Instrument ID</th>
                                         <th>Unit</th>
                                         <th>Status</th>
-                                        <th>Created By</th>
+                                        <th>{{ __('common.created_by') }}</th>
                                         <th>{{ __('common.created_date') }}</th>
                                         <th>{{ __('common.action') }}</th>
                                     </tr>
@@ -104,12 +123,12 @@
             firstTh.removeClass('sorting_asc');
 
             var fromDatepicker = flatpickr("#issue_date", {
-            dateFormat: "d-m-Y",
-        });
+                dateFormat: "d-m-Y",
+            });
 
-        var fromDatepicker = flatpickr("#revision_date", {
-            dateFormat: "d-m-Y",
-        });
+            var fromDatepicker = flatpickr("#revision_date", {
+                dateFormat: "d-m-Y",
+            });
         });
         $(document).ready(function() {
             var fromDatepicker = flatpickr("#from_date", {
@@ -125,7 +144,7 @@
 
             var toDatepicker = flatpickr("#to_date", {
                 dateFormat: "d-m-Y",
-                minDate: "today"
+
             });
         });
 
@@ -165,12 +184,13 @@
                         d.health_instrument_id = $('#health_instrument_id').val();
                         d.unit_id = $('#unit_id').val();
                         d.status = $('#status').val();
-
+                        d.from_date = $('#from_date').val();
+                        d.to_date = $('#to_date').val();
                     },
                     error: function(xhr, error, code) {
                         if (xhr.status === 419) {
                             alert('Session has expired. You will be redirected to the login page.');
-                            window.location.href = "{{ url('') }}"; 
+                            window.location.href = "{{ url('') }}";
                         }
                     }
                 },
@@ -187,19 +207,19 @@
                         data: 'unit_name',
                         name: 'unit_name'
                     },
-                   
+
                     {
                         data: 'status',
                         name: 'status'
                     },
-                   
+
                     {
-                        data: 'created_by',
-                        name: 'created_by'
+                        data: 'inspection_created_by',
+                        name: 'inspection_created_by'
                     },
                     {
-                        data: 'created_at',
-                        name: 'created_at'
+                        data: 'inspection_created_at',
+                        name: 'inspection_created_at'
                     },
                     {
                         data: 'action',
@@ -233,7 +253,8 @@
                                     var health_instrument_id = $('#health_instrument_id').val();
                                     var unit_id = $('#unit_id').val();
                                     var status = $('#status').val();
-
+                                    var from_date = $('#from_date').val();
+                                    var to_date = $('#to_date').val();
                                     $(".dt-button").removeClass('processing');
                                     $('body').click();
                                     window.location.href =
@@ -241,7 +262,9 @@
                                         '?search=' + searchValue +
                                         '&health_instrument_id=' + health_instrument_id +
                                         '&unit_id=' + unit_id +
-                                        '&status=' + status 
+                                        '&from_date=' + from_date +
+                                        '&to_date=' + to_date +
+                                        '&status=' + status
 
                                 }
                             },
@@ -249,21 +272,24 @@
                                 extend: 'excel',
                                 text: '{{ __('common.excel') }}',
                                 action: function(e, dt, button, config) {
-                                    
+
                                     var searchValue = $('#datatable-list_filter input').val();
                                     var health_instrument_id = $('#health_instrument_id').val();
                                     var unit_id = $('#unit_id').val();
                                     var status = $('#status').val();
-
+                                    var from_date = $('#from_date').val();
+                                    var to_date = $('#to_date').val();
                                     $(".dt-button").removeClass('processing');
                                     $('body').click();
                                     window.location.href =
                                         "{{ admin_url('ohc/health-instrument/calibration-track-sheet/export/excel') }}" +
                                         '?search=' + searchValue +
-                                       '&health_instrument_id=' + health_instrument_id +
+                                        '&health_instrument_id=' + health_instrument_id +
                                         '&unit_id=' + unit_id +
-                                        '&status=' + status 
- 
+                                        '&from_date=' + from_date +
+                                        '&to_date=' + to_date +
+                                        '&status=' + status
+
 
                                 }
                             },

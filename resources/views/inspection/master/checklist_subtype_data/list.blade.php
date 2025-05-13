@@ -17,20 +17,20 @@
                             <x-button-import href="{{ admin_url('inspection/master/checklist-sub-type-data/import') }}"></x-button-import>
                         @endif --}}
                         {{-- @if (CheckUserPermission('add')) --}}
-                            <x-button-add dataId="" class="add btn btn-primary ms-1"
-                                href="{{ admin_url('inspection/master/checklist-sub-type-data/add') }}">Add</x-button-add>
+                        <x-button-add dataId="" class="add btn btn-primary ms-1"
+                            href="{{ admin_url('inspection/master/checklist-sub-type-data/add') }}">Add</x-button-add>
                         {{-- @endif --}}
                     </div>
                     <div id="search" class="collapse">
                         <form action="" id="formsearch">
                             <div class="card-body">
-                                <div class="col-md-12">
+
                                     <div class="row">
-                            
-                                        <div class="col-md-3 mb-3 form-input">
+
+                                        <div class="col-md-4 mb-3 form-input">
                                             <label for="checklist_type_id" class="form-label ">Checklist Type Name</label>
-                                            <select name="checklist_type_id" id="checklist_type_id" class=" form-control single-select"
-                                                style="width: 100%">
+                                            <select name="checklist_type_id" id="checklist_type_id"
+                                                class=" form-control single-select" style="width: 100%">
                                                 <option value="">Select Checklist Type Name</option>
                                                 @foreach ($checklistTypeList as $list)
                                                     <option value="{{ encryptId($list->id) }}">
@@ -38,17 +38,38 @@
                                                 @endforeach
                                             </select>
                                         </div>
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="checklist_sub_type_id" class="form-label ">Checklist Sub Type Name </label>
-                                            <select name="checklist_sub_type_id" id="checklist_sub_type_id" class=" form-control single-select"
-                                                style="width: 100%">
+                                        <div class="col-md-4 mb-3 form-input">
+                                            <label for="checklist_sub_type_id" class="form-label ">Checklist Sub Type Name
+                                            </label>
+                                            <select name="checklist_sub_type_id" id="checklist_sub_type_id"
+                                                class=" form-control single-select" style="width: 100%">
                                                 <option value="">Select Checklist Sub Type Name</option>
 
                                             </select>
                                         </div>
-                                       
+                                        <div class="col-md-4 mb-3 form-input">
+                                            <label for="emp_name" class="form-label ">From Date</label>
+                                            <div class="input-group date form-input custom-height">
+                                                <input type="text" class="form-control " name="from_date" id="from_date"
+                                                    autocomplete="off">
+                                                <div class="input-group-addon input-group-text">
+                                                    <span class="fa fa-calendar"></span>
+                                                </div>
+                                            </div>
 
-                                        <div class="col-md-3 mb-3 form-input">
+                                        </div>
+                                        <div class="col-md-4 mb-3 form-input">
+                                            <label for="emp_name" class="form-label ">To Date</label>
+                                            <div class="input-group date form-input  custom-height">
+                                                <input type="text" class="form-control " name="to_date" id="to_date"
+                                                    autocomplete="off">
+                                                <div class="input-group-addon input-group-text">
+                                                    <span class="fa fa-calendar"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4 mb-3 form-input">
                                             <label for="status" class="form-label ">{{ __('common.status') }}</label>
                                             <select name="status" id="status" style="width: 100%"
                                                 class="form-control single-select">
@@ -57,13 +78,13 @@
                                                 <option value="{{ encryptId(0) }}">In-Active</option>
                                             </select>
                                         </div>
-                                        <div class="col-md-3 mt-3">
+                                        <div class="col-md-4 mt-3">
                                             <x-button-search></x-button-search>
                                             <x-button-reset></x-button-reset>
 
                                         </div>
                                     </div>
-                                </div>
+                               
                             </div>
                         </form>
                         <hr>
@@ -98,18 +119,36 @@
 
     @push('script')
         <script type="text/javascript" nonce="projectcab">
+            var fromDatepicker = flatpickr("#from_date", {
+                dateFormat: "d-m-Y",
+                onChange: function(selectedDates) {
+                    if (selectedDates.length > 0) {
+                        var startDate = selectedDates[0];
+                        toDatepicker.set('minDate', startDate);
+                        toDatepicker.clear();
+                    }
+                }
+            });
+
+            var toDatepicker = flatpickr("#to_date", {
+                dateFormat: "d-m-Y",
+
+            });
             $(document).on('change', '#checklist_type_id', function() {
                 let checklistTypeId = $(this).val();
 
                 if (checklistTypeId) {
                     $.ajax({
-                        url: "{{ admin_url('inspection/master/checklist-sub-type/ajax-list') }}/" + checklistTypeId + "/0",
+                        url: "{{ admin_url('inspection/master/checklist-sub-type/ajax-list') }}/" +
+                            checklistTypeId + "/0",
                         type: 'GET',
                         dataType: 'json',
                         success: function(data) {
-                            $('#checklist_sub_type_id').empty().append('<option value="">Select Checklist Sub Type Name</option>');
+                            $('#checklist_sub_type_id').empty().append(
+                                '<option value="">Select Checklist Sub Type Name</option>');
                             $.each(data, function(key, value) {
-                                $('#checklist_sub_type_id').append('<option value="' + value.id + '">' + value
+                                $('#checklist_sub_type_id').append('<option value="' + value.id +
+                                    '">' + value
                                     .name + '</option>');
                             });
                             $('#checklist_sub_type_id').trigger('change.');
@@ -119,11 +158,12 @@
                         }
                     });
                 } else {
-                    $('#checklist_sub_type_id').empty().append('<option value="">Select Checklist Sub Type Name</option>');
+                    $('#checklist_sub_type_id').empty().append(
+                        '<option value="">Select Checklist Sub Type Name</option>');
                     $('#checklist_sub_type_id').trigger('change.');
                 }
             });
-    
+
             $(function() {
                 /* Datatable */
                 var table = $('.datatable-list').DataTable({
@@ -160,7 +200,8 @@
                             d.checklist_type_id = $('#checklist_type_id').val();
                             d.checklist_sub_type_id = $('#checklist_sub_type_id').val();
                             d.status = $('#status').val();
-
+                            d.from_date = $('#from_date').val();
+                            d.to_date = $('#to_date').val();
                         },
                         error: function(xhr, error, code) {
                             if (xhr.status === 419) {
@@ -226,7 +267,8 @@
                                         checklist_type_id = $('#checklist_type_id').val();
                                         checklist_sub_type_id = $('#checklist_sub_type_id').val();
                                         status = $('#status').val();
-
+                                        var from_date = $('#from_date').val();
+                                        var to_date = $('#to_date').val();
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
@@ -234,6 +276,8 @@
                                             '?search=' + searchValue +
                                             '&checklist_type_id=' + checklist_type_id +
                                             '&checklist_sub_type_id=' + checklist_sub_type_id +
+                                            '&from_date=' + from_date +
+                                            '&to_date=' + to_date +
                                             '&status=' + status
                                     }
                                 },
@@ -245,6 +289,8 @@
                                         checklist_type_id = $('#checklist_type_id').val();
                                         checklist_sub_type_id = $('#checklist_sub_type_id').val();
                                         status = $('#status').val();
+                                        var from_date = $('#from_date').val();
+                                        var to_date = $('#to_date').val();
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
@@ -252,6 +298,8 @@
                                             '?search=' + searchValue +
                                             '&checklist_type_id=' + checklist_type_id +
                                             '&checklist_sub_type_id=' + checklist_sub_type_id +
+                                            '&from_date=' + from_date +
+                                            '&to_date=' + to_date +
                                             '&status=' + status
                                     }
                                 },

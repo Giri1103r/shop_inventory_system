@@ -153,7 +153,7 @@
                                                         <div class="col-md-4 mb-3">
                                                             <div class="form-group form-input">
                                                                 <label for="chemicals_1" class="form-label require">
-                                                                   Name of Chemical
+                                                                    Name of Chemical
                                                                 </label>
                                                                 <input type="text" name="name_of_chemical[1]"
                                                                     class="form-control" placeholder="Enter the Chemicals"
@@ -512,29 +512,29 @@
                         </button>
                     </div>
                     <div class="row">
-                        <div class="col-md-4">
+                        <div class="col-md-4 mb-3">
                             <div class="form-group form-input">
                                 <label class="form-label require">Serial Number</label>
                                 <input type="text" name="serial_number[${form_set_count}]" class="form-control" placeholder="Serial Number" value="${newSerialNumber}" readonly>
                             </div>
                         </div>
 
-                        <div class="col-md-4">
+                        <div class="col-md-4 mb-3">
                             <div class="form-group form-input">
                                 <label class="form-label require">Item Code</label>
                                 <input type="text" name="item_code[${form_set_count}]" class="form-control" placeholder="Item Code" value="">
                             </div>
                         </div>
 
-                        <div class="col-md-4">
+                        <div class="col-md-4 mb-3">
                             <div class="form-group form-input">
                                 <label class="form-label require">Name of Chemical</label>
                              <input type="text" name="name_of_chemical[${form_set_count}]"
-                                                                    class="form-control" placeholder="Enter the Chemicals"
-                                                                    value="">
+                                 class="form-control" placeholder="Enter the Chemicals"
+                                    value="">
                             </div>
                         </div>
-                        <div class="col-md-4 form-input">
+                        <div class="col-md-4 form-input mb-3">
                             <div class="form-group">
                                 <label class="form-label require">Storage Capacity</label>
                                 <input type="text" name="storage_capacity[${form_set_count}]" class="form-control" placeholder="Storage Capacity" value="">

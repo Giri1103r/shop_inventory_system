@@ -766,7 +766,6 @@ class DetectorInspectionController extends Controller
     {
         try {
             $allData = $this->detector->exportdata();
-            // dd($allData);
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
             }
@@ -816,7 +815,7 @@ class DetectorInspectionController extends Controller
                 ]);
 
                 $sheet->mergeCells("C{$titleRow}:H" . ($titleRow + 2));
-                $sheet->setCellValue("C{$titleRow}", "DETECTOR INSPECTION CHECKLIST PN INTERNATIONAL PVT. LTD.");
+                $sheet->setCellValue("C{$titleRow}", "DETECTOR INSPECTION CHECKLIST");
 
                 $sheet->getStyle("C{$titleRow}:H" . ($titleRow + 2))->applyFromArray([
                     'font' => ['bold' => true, 'size' => 14],
@@ -965,7 +964,6 @@ class DetectorInspectionController extends Controller
                 $signatureRowStart = $dataRow;
                 $sheet->getRowDimension($signatureRowStart)->setRowHeight(80);
 
-                // Prepared By
                 $sheet->mergeCells("A{$signatureRowStart}:C{$signatureRowStart}");
                 $sheet->getStyle("A{$signatureRowStart}:C{$signatureRowStart}")->applyFromArray([
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
@@ -1214,7 +1212,7 @@ class DetectorInspectionController extends Controller
             ]);
 
             $sheet->mergeCells("C1:H3");
-            $sheet->setCellValue("C1", "DETECTOR INSPECTION CHECKLIST PN INTERNATIONAL PVT. LTD.");
+            $sheet->setCellValue("C1", "DETECTOR INSPECTION CHECKLIST");
             $sheet->getStyle("C1:H3")->applyFromArray([
                 'font' => ['bold' => true, 'size' => 14],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],

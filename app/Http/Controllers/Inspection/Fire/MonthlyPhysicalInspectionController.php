@@ -250,7 +250,7 @@ class MonthlyPhysicalInspectionController extends Controller
                 $logoRow = $startRow;
                 $sheet->mergeCells("A$logoRow:C" . ($logoRow + 2));
                 $sheet->mergeCells("D$logoRow:J" . ($logoRow + 2));
-                $sheet->setCellValue("D$logoRow", 'Fire Equipment Monthly Physical Inspection PN INTERNATIONAL PVT. LTD.');
+                $sheet->setCellValue("D$logoRow", 'Fire Equipment Monthly Physical Inspection');
 
                 $sheet->getStyle("D$logoRow:J" . ($logoRow + 2))->applyFromArray([
                     'font' => ['bold' => true, 'size' => 14],
@@ -455,7 +455,7 @@ class MonthlyPhysicalInspectionController extends Controller
             $filename = "Fire Equipment Monthly Physical Inspection Details.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            report($ex);
+            dd($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('fire/equipment-monthly-physical-inspection/list'));
         }

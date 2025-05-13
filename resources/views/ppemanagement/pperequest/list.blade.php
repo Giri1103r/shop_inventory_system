@@ -417,8 +417,8 @@
                         name: 'approve_status'
                     },
                     {
-                        data: 'created_by',
-                        name: 'created_by'
+                        data: 'ppe_created_by',
+                        name: 'ppe_created_by'
                     },
                     {
                         data: 'ppe_created_at',

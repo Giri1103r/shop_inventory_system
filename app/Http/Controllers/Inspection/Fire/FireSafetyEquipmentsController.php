@@ -272,7 +272,7 @@ class FireSafetyEquipmentsController extends Controller
                 $sheet->mergeCells("K{$currentRow}:M" . ($currentRow + 2));
 
                 $sheet->mergeCells("C{$currentRow}:J" . ($currentRow + 2));
-                $sheet->setCellValue("C{$currentRow}", "Fire Safety Equipment Resource Code Sheet PN International Pvt Ltd.");
+                $sheet->setCellValue("C{$currentRow}", "Fire Safety Equipment Resource Code Sheet");
                 $sheet->getStyle("C{$currentRow}:J" . ($currentRow + 2))->applyFromArray([
                     'font' => ['bold' => true, 'size' => 14],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
@@ -518,7 +518,7 @@ class FireSafetyEquipmentsController extends Controller
             $sheet->mergeCells('K1:M3');
 
             $sheet->mergeCells('C1:J3');
-            $sheet->setCellValue('C1', "Fire Safety Equipment Resource Code Sheet PN International Pvt Ltd.");
+            $sheet->setCellValue('C1', "Fire Safety Equipment Resource Code Sheet");
             $sheet->getStyle('C1:J3')->applyFromArray([
                 'font' => ['bold' => true, 'size' => 14],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],

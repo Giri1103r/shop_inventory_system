@@ -2,6 +2,7 @@
 
 namespace App\Models\Inspection\audit\Master;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 
@@ -30,7 +31,7 @@ class Task extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_audit_master_task.*')->where('trash','NO');
+        $query = $this->select('inspection_audit_master_task.*')->where('trash', 'NO');
         $org_total =  $query;
         $org_total_counts = $org_total->count();
 
@@ -50,7 +51,20 @@ class Task extends Model
         if (isset($request->task_name) && $request->task_name) {
             $query = $query->where('inspection_audit_master_task.task_name', 'LIKE', '%' . $request->task_name . '%');
         }
+        if ($request->has('from_date') && !empty($request->from_date)) {
 
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_audit_master_task.created_at', '>=', $startDate);
+        }
+        if ($request->has('to_date') && !empty($request->to_date)) {
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_audit_master_task.created_at', '<=', $endDate);
+        }
+        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->whereBetween('inspection_audit_master_task.created_at', [$startDate, $endDate]);
+        }
         if ($request->has('status') && $request->status) {
 
             $query = $query->where('inspection_audit_master_task.status', decryptId($request->status));
@@ -74,7 +88,7 @@ class Task extends Model
 
         return $datas;
     }
-    
+
     public function store()
     {
         $request = request();
@@ -119,7 +133,20 @@ class Task extends Model
                     ->orWhere('inspection_audit_master_task.task_name', 'LIKE', '%' . $search . '%');
             });
         }
+        if ($request->has('from_date') && !empty($request->from_date)) {
 
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_audit_master_task.created_at', '>=', $startDate);
+        }
+        if ($request->has('to_date') && !empty($request->to_date)) {
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_audit_master_task.created_at', '<=', $endDate);
+        }
+        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->whereBetween('inspection_audit_master_task.created_at', [$startDate, $endDate]);
+        }
         if (isset($request->task_id) && $request->task_id) {
             $query = $query->where('inspection_audit_master_task.task_auto_id', 'LIKE', '%' . $request->task_id . '%');
         }
@@ -166,8 +193,8 @@ class Task extends Model
     }
 
 
-    public function getAuditTask(){
+    public function getAuditTask()
+    {
         return $this->where('trash', 'NO')->where('status', '!=', 0)->get();
     }
-    
 }

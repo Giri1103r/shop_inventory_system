@@ -96,8 +96,8 @@ class DailyDepartmentFirstAidBoxController extends Controller
                             }
                             return $text;
                         })
-                        ->addColumn('created_date', function ($row) {
-                            return Displaydateformat($row->created_at);
+                        ->addColumn('inspection_created_at', function ($row) {
+                            return Displaydateformat($row->inspection_created_at);
                         })
                         ->addColumn('unit', function ($row) {
                             return getUnitname($row->unit);
@@ -645,7 +645,7 @@ class DailyDepartmentFirstAidBoxController extends Controller
 
                 // Title Section
                 $sheet->mergeCells("G{$currentRow}:M" . ($currentRow + 2));
-                $sheet->setCellValue("G{$currentRow}", "OCCUPATIONAL HEALTH CENTER ");
+                $sheet->setCellValue("G{$currentRow}", "OCCUPATIONAL HEALTH CENTER");
                 $sheet->getStyle("G{$currentRow}")->applyFromArray([
                     'font' => ['bold' => true, 'size' => 14],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],

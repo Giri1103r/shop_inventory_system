@@ -67,8 +67,8 @@ class FirstAidBagChecklistController extends Controller
                             }
                             return $text;
                         })
-                        ->addColumn('created_date', function ($row) {
-                            return Displaydateformat($row->created_at);
+                        ->addColumn('inspection_created_at', function ($row) {
+                            return Displaydateformat($row->inspection_created_at);
                         })
                         ->addColumn('inspection_date', function ($row) {
                             return Displaydateformat($row->inspection_date);
@@ -267,7 +267,7 @@ class FirstAidBagChecklistController extends Controller
             }
 
             $sheet->mergeCells("G1:M3");
-            $sheet->setCellValue("G1", "FLOOR FIRST AID BAG INSPECTION CHECKLIST PN INTERNATIONAL PNT. LTD.");
+            $sheet->setCellValue("G1", "FLOOR FIRST AID BAG INSPECTION CHECKLIST");
             $sheet->getStyle("G1")->applyFromArray([
                 'font' => ['bold' => true, 'size' => 14],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
@@ -448,7 +448,7 @@ class FirstAidBagChecklistController extends Controller
                 }
 
                 $sheet->mergeCells("G{$currentRow}:M" . ($currentRow + 2));
-                $sheet->setCellValue("G$currentRow", "FLOOR FIRST AID BAG INSPECTION CHECKLIST PN INTERNATIONAL PNT. LTD.");
+                $sheet->setCellValue("G$currentRow", "FLOOR FIRST AID BAG INSPECTION CHECKLIST");
                 $sheet->getStyle("G$currentRow")->applyFromArray([
                     'font' => ['bold' => true, 'size' => 14],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],

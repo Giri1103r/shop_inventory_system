@@ -98,8 +98,8 @@ class MonthlyFirstAidboxController extends Controller
                             }
                             return $text;
                         })
-                        ->addColumn('created_date', function ($row) {
-                            return Displaydateformat($row->created_at);
+                        ->addColumn('inspection_created_at', function ($row) {
+                            return Displaydateformat($row->inspection_created_at);
                         })
                         ->addColumn('shift', function ($row) {
                             return getShift($row->shift);
@@ -107,8 +107,8 @@ class MonthlyFirstAidboxController extends Controller
                         ->addColumn('frequency', function ($row) {
                             return getFrequencyname($row->frequency);
                         })
-                        ->addColumn('created_by', function ($row) {
-                            return getUsername($row->created_by);
+                        ->addColumn('inspection_created_by', function ($row) {
+                            return getUsername($row->inspection_created_by);
                         })
 
                         ->addColumn('action', function ($row) {
@@ -327,7 +327,7 @@ class MonthlyFirstAidboxController extends Controller
 
                 // Title Section
                 $sheet->mergeCells("G{$currentRow}:M" . ($currentRow + 2));
-                $sheet->setCellValue("G{$currentRow}", "MONTHLY FIRST AID BOX AUDIT CHECKLIST PN INTERNATIONAL PVT LTD");
+                $sheet->setCellValue("G{$currentRow}", "MONTHLY FIRST AID BOX AUDIT CHECKLIST");
                 $sheet->getStyle("G{$currentRow}")->applyFromArray([
                     'font' => ['bold' => true, 'size' => 14],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
@@ -631,7 +631,7 @@ class MonthlyFirstAidboxController extends Controller
 
             // Title Section
             $sheet->mergeCells("G{$currentRow}:M" . ($currentRow + 2));
-            $sheet->setCellValue("G{$currentRow}", "MONTHLY FIRST AID BOX AUDIT CHECKLIST PN INTERNATIONAL PVT LTD");
+            $sheet->setCellValue("G{$currentRow}", "MONTHLY FIRST AID BOX AUDIT CHECKLIST");
             $sheet->getStyle("G{$currentRow}")->applyFromArray([
                 'font' => ['bold' => true, 'size' => 14],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],

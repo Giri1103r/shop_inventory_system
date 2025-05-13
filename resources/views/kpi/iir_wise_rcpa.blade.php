@@ -1,88 +1,85 @@
-<div id="chartData3"></div>
+<div id="iirWiseRcpa"></div>
 
 <script>
+
+    var chartData = {!! json_encode($chartData) !!};
+
+
+    var series = [{
+            name: 'Total Incidents',
+            data: chartData.map(item => item.total_incident)
+        },
+        {
+            name: 'Total RCPA',
+            data: chartData.map(item => item.total_rcpa)
+        }
+    ];
+
+
+    var categories = chartData.map(item => item.incident_type_name);
+
     var options = {
-        series: [{
-            name: 'Marine Sprite',
-            data: [44, 55, 41, 37, 22, 43, 21]
-        }, {
-            name: 'Striking Calf',
-            data: [53, 32, 33, 52, 13, 43, 32]
-        }, {
-            name: 'Tank Picture',
-            data: [12, 17, 11, 9, 15, 11, 20]
-        }, {
-            name: 'Bucket Slope',
-            data: [9, 7, 5, 8, 6, 9, 4]
-        }, {
-            name: 'Reborn Kid',
-            data: [25, 12, 19, 32, 25, 24, 10]
-        }],
+        series: series,
         chart: {
             type: 'bar',
             height: 350,
-            stacked: true,
             toolbar: {
                 show: false
             },
         },
         plotOptions: {
             bar: {
-                horizontal: true,
-                dataLabels: {
-                    total: {
-                        enabled: true,
-                        offsetX: 0,
-                        style: {
-                            fontSize: '13px',
-                            fontWeight: 900
-                        }
-                    }
-                }
+                horizontal: false,
+                columnWidth: '55%',
+                borderRadius: 5,
+                borderRadiusApplication: 'end'
             },
         },
-        stroke: {
-            width: 1,
-            colors: ['#fff']
+        dataLabels: {
+            enabled: false
         },
-        title: {
-            text: 'Fiction Books Sales'
+        stroke: {
+            show: true,
+            width: 2,
+            colors: ['transparent']
         },
         xaxis: {
-            categories: [2008, 2009, 2010, 2011, 2012, 2013, 2014],
+            categories: categories,
             labels: {
-                formatter: function(val) {
-                    return val + "K"
+
+                rotate: -45,
+                style: {
+                    fontSize: '12px'
                 }
             }
         },
         yaxis: {
             title: {
-                text: undefined
+                text: 'Count'
             },
-        },
-        tooltip: {
-            y: {
-                formatter: function(val) {
-                    return val + "K"
-                }
-            }
+            min: 0
         },
         fill: {
             opacity: 1
         },
+        tooltip: {
+            y: {
+                formatter: function(val) {
+                    return val
+                }
+            }
+        },
+        colors: ['#008FFB', '#00E396'], 
         legend: {
-            position: 'top',
-            horizontalAlign: 'left',
-            offsetX: 40
+            position: 'bottom'
         }
     };
-    var chartData3 = new ApexCharts(document.querySelector("#chartData3"), options);
-    chartData3.render();
 
-    // Download button functionality
-    $("#LoadChart3_download").off("click").on("click", function() {
-        chartData3.dataURI().then(({
+    var iirWiseRcpa = new ApexCharts(document.querySelector("#iirWiseRcpa"), options);
+    iirWiseRcpa.render();
+
+    $("#iirTypewiseRCPA_download").off("click").on("click", function() {
+        iirWiseRcpa.dataURI().then(({
             imgURI
         }) => {
             var newCanvas = document.createElement('canvas');
@@ -101,7 +98,7 @@
                 // Header text
                 ctx.fillStyle = '#203669';
                 ctx.font = '20px Arial';
-                ctx.fillText('CHART', 10, 30);
+                ctx.fillText('IIR Type wise RCPA', 10, 30);
 
                 // Optional filter text
                 let yPos = 60;
@@ -137,7 +134,7 @@
                 newCanvas.toBlob(function(blob) {
                     var link = document.createElement('a');
                     link.href = URL.createObjectURL(blob);
-                    link.download = 'CHART.png';
+                    link.download = 'IIR Type wise RCPA.png';
                     link.click();
                 });
             };

@@ -1,16 +1,10 @@
-<div id="chartData4"></div>
+<div id="chartPTWAvgTimeChart"></div>
 
 <script>
     var options = {
         series: [{
-            name: 'Net Profit',
-            data: [44, 55, 57, 56, 61, 58, 63, 60, 66]
-        }, {
-            name: 'Revenue',
-            data: [76, 85, 101, 98, 87, 105, 91, 114, 94]
-        }, {
-            name: 'Free Cash Flow',
-            data: [35, 41, 36, 26, 45, 48, 52, 53, 41]
+            name: 'Avg Time (in mins)',
+            data: {!! json_encode($chartData['series']) !!}
         }],
         chart: {
             type: 'bar',
@@ -18,48 +12,63 @@
             toolbar: {
                 show: false
             },
+            stacked: false,
+            zoom: {
+                enabled: false
+            }
         },
+        responsive: [{
+            breakpoint: 480,
+            options: {
+                legend: {
+                    position: 'bottom',
+                    offsetX: 0,
+                    offsetY: 0
+                }
+            }
+        }],
         plotOptions: {
             bar: {
                 horizontal: false,
-                columnWidth: '55%',
-                borderRadius: 5,
-                borderRadiusApplication: 'end'
+                borderRadius: 10,
+                dataLabels: {
+                    total: {
+                        enabled: true,
+                        style: {
+                            fontSize: '13px',
+                            fontWeight: 900
+                        }
+                    }
+                }
             },
         },
-        dataLabels: {
-            enabled: false
-        },
-        stroke: {
-            show: true,
-            width: 2,
-            colors: ['transparent']
-        },
         xaxis: {
-            categories: ['Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'],
-        },
-        yaxis: {
-            title: {
-                text: '$ (thousands)'
-            }
-        },
-        fill: {
-            opacity: 1
+            categories: {!! json_encode($chartData['labels']) !!}
         },
         tooltip: {
             y: {
                 formatter: function(val) {
-                    return "$ " + val + " thousands"
+                    return val + ' mins';
                 }
             }
+        },
+        legend: {
+            position: 'bottom',
+            horizontalAlign: 'center',
+            offsetY: 10
+        },
+        fill: {
+            opacity: 1
         }
     };
-    var chartData4 = new ApexCharts(document.querySelector("#chartData4"), options);
-    chartData4.render();
+
+
+    var chartPTWAvgTimeChart = new ApexCharts(document.querySelector("#chartPTWAvgTimeChart"), options);
+    chartPTWAvgTimeChart.render();
 
     // Download button functionality
-    $("#LoadChart4_download").off("click").on("click", function() {
-        chartData4.dataURI().then(({
+    $("#LoadPTWAvgTimeChart_download").off("click").on("click", function() {
+        chartPTWAvgTimeChart.dataURI().then(({
             imgURI
         }) => {
             var newCanvas = document.createElement('canvas');
@@ -78,7 +87,7 @@
                 // Header text
                 ctx.fillStyle = '#203669';
                 ctx.font = '20px Arial';
-                ctx.fillText('CHART', 10, 30);
+                ctx.fillText('chartPTWAvgTimeChart', 10, 30);
 
                 // Optional filter text
                 let yPos = 60;
@@ -114,7 +123,7 @@
                 newCanvas.toBlob(function(blob) {
                     var link = document.createElement('a');
                     link.href = URL.createObjectURL(blob);
-                    link.download = 'CHART.png';
+                    link.download = 'chartPTWAvgTimeChart.png';
                     link.click();
                 });
             };

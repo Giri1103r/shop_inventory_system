@@ -158,7 +158,7 @@
              <table style="width:100%;">
                  <tr>
                      <td style="background-color: #ce0f1f; color: #ffffff; padding: 10px; font-weight: bold;">
-                         Fire Extinguisher InspectionDetails
+                      Isolation Valve Inspection
                      </td>
                  </tr>
              </table>

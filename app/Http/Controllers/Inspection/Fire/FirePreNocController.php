@@ -250,7 +250,7 @@ class FirePreNocController extends Controller
 
                 // Title Section
                 $sheet->mergeCells("G{$currentRow}:M" . ($currentRow + 2));
-                $sheet->setCellValue("G{$currentRow}", "अग्नि अनापत्ति प्रमाण पत्र जांच-सूची(Fire Pre-Noc Checklist) PN INTERNATIONAL PVT LTD");
+                $sheet->setCellValue("G{$currentRow}", "अग्नि अनापत्ति प्रमाण पत्र जांच-सूची(Fire Pre-Noc Checklist)");
                 $sheet->getStyle("G{$currentRow}")->applyFromArray([
                     'font' => ['bold' => true, 'size' => 14],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
@@ -538,7 +538,7 @@ class FirePreNocController extends Controller
 
             // Title Section
             $sheet->mergeCells("G{$currentRow}:M" . ($currentRow + 2));
-            $sheet->setCellValue("G{$currentRow}", "अग्नि अनापत्ति प्रमाण पत्र जांच-सूची(Fire Pre-Noc Checklist) PN INTERNATIONAL PVT LTD");
+            $sheet->setCellValue("G{$currentRow}", "अग्नि अनापत्ति प्रमाण पत्र जांच-सूची(Fire Pre-Noc Checklist)");
             $sheet->getStyle("G{$currentRow}")->applyFromArray([
                 'font' => ['bold' => true, 'size' => 14],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],

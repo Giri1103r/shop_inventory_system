@@ -60,8 +60,8 @@ class OHCHygieneCleaningChecklistController extends Controller
                             // }
                             return $text;
                         })
-                        ->addColumn('created_date', function ($row) {
-                            return Displaydateformat($row->created_at);
+                        ->addColumn('inspection_created_at', function ($row) {
+                            return Displaydateformat($row->inspection_created_at);
                         })
                         ->addColumn('date', function ($row) {
                             return Displaydateformat($row->issue_date);
@@ -366,7 +366,7 @@ class OHCHygieneCleaningChecklistController extends Controller
                 $drawing->setWorksheet($sheet);
             }
 
-            $sheet->setCellValue("G1", "DAILY OHC HYGIENE CLEANING CHECKLIST - PN INTERNATIONAL PNT. LTD.");
+            $sheet->setCellValue("G1", "DAILY OHC HYGIENE CLEANING CHECKLIST");
             $sheet->getStyle("G1")->applyFromArray([
                 'font' => ['bold' => true, 'size' => 14],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
@@ -506,7 +506,7 @@ class OHCHygieneCleaningChecklistController extends Controller
                 $drawing->setWorksheet($sheet);
             }
 
-            $sheet->setCellValue("G1", "DAILY OHC HYGIENE CLEANING CHECKLIST - PN INTERNATIONAL PNT. LTD.");
+            $sheet->setCellValue("G1", "DAILY OHC HYGIENE CLEANING CHECKLIST");
             $sheet->getStyle("G1")->applyFromArray([
                 'font' => ['bold' => true, 'size' => 14],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],

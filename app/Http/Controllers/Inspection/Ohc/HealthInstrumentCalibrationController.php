@@ -64,14 +64,14 @@ class HealthInstrumentCalibrationController extends Controller
                             }
                             return $text;
                         })
-                        ->addColumn('created_at', function ($row) {
-                            return Displaydateformat($row->created_at);
+                        ->addColumn('inspection_created_at', function ($row) {
+                            return Displaydateformat($row->inspection_created_at);
                         })
                         ->addColumn('issue_date', function ($row) {
                             return Displaydateformat($row->issue_date);
                         })
-                        ->addColumn('created_by', function ($row) {
-                            return getUsername($row->created_by);
+                        ->addColumn('inspection_created_by', function ($row) {
+                            return getUsername($row->inspection_created_by);
                         })
 
                         ->addColumn('action', function ($row) {
@@ -305,7 +305,7 @@ class HealthInstrumentCalibrationController extends Controller
             ]);
 
             $sheet->mergeCells("D1:I3");
-            $sheet->setCellValue("D1", "Fire & Safety Equipment Instrument Calibration Track Sheet\nPN International Pvt Ltd");
+            $sheet->setCellValue("D1", "Fire & Safety Equipment Instrument Calibration Track Sheet");
             $sheet->getStyle("D1:I3")->applyFromArray([
                 'font' => ['bold' => true, 'size' => 16],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
@@ -534,7 +534,7 @@ class HealthInstrumentCalibrationController extends Controller
 
             // Title (Center)
             $sheet->mergeCells("D1:I3");
-            $sheet->setCellValue("D1", "Fire & Safety Equipment Instrument Calibration Track Sheet\nPN International Pvt Ltd");
+            $sheet->setCellValue("D1", "Fire & Safety Equipment Instrument Calibration Track Sheet");
             $sheet->getStyle("D1:I3")->applyFromArray([
                 'font' => ['bold' => true, 'size' => 16],
                 'alignment' => [

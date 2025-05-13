@@ -101,8 +101,8 @@ class WeeklyAmbulanceController extends Controller
                         ->addColumn('created_date', function ($row) {
                             return Displaydateformat($row->created_at);
                         })
-                        ->addColumn('created_date', function ($row) {
-                            return Displaydateformat($row->created_at);
+                        ->addColumn('inspection_created_at', function ($row) {
+                            return Displaydateformat($row->inspection_created_at);
                         })
                         ->addColumn('unit', function ($row) {
                             return ($row->unit_name);
@@ -829,7 +829,7 @@ class WeeklyAmbulanceController extends Controller
 
                 // Title Section
                 $sheet->mergeCells("G{$currentRow}:M" . ($currentRow + 2));
-                $sheet->setCellValue("G{$currentRow}", "WEEKLY AMBULANCE INSPECTION CHECKLIST ");
+                $sheet->setCellValue("G{$currentRow}", "WEEKLY AMBULANCE INSPECTION CHECKLIST");
                 $sheet->getStyle("G{$currentRow}")->applyFromArray([
                     'font' => ['bold' => true, 'size' => 14],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
@@ -1219,7 +1219,7 @@ class WeeklyAmbulanceController extends Controller
 
             // Title Section
             $sheet->mergeCells("G{$currentRow}:M" . ($currentRow + 2));
-            $sheet->setCellValue("G{$currentRow}", "WEEKLY AMBULANCE INSPECTION CHECKLIST ");
+            $sheet->setCellValue("G{$currentRow}", "WEEKLY AMBULANCE INSPECTION CHECKLIST");
             $sheet->getStyle("G{$currentRow}")->applyFromArray([
                 'font' => ['bold' => true, 'size' => 14],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],

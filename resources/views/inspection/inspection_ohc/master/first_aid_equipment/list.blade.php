@@ -32,8 +32,8 @@
                                                     class="form-control single-select" style="width: 100%">
                                                     <option value="">Select the option</option>
                                                     @foreach ($medicine as $medicine)
-                                                    <option value="{{ encryptId($medicine->id) }}">
-                                                        {{ $medicine->medicine }}</option>
+                                                        <option value="{{ encryptId($medicine->id) }}">
+                                                            {{ $medicine->medicine }}</option>
                                                     @endforeach
                                                 </select>
                                             </div>
@@ -41,12 +41,32 @@
                                         <div class="col-md-4">
                                             <div class="form-group form-input">
                                                 <label class="form-label require">Freeze Quantity</label>
-                                                <input type="text" name="freeze_quantity" id ="freeze_quantity" class="form-control"
-                                                    placeholder="Medicine Name">
+                                                <input type="text" name="freeze_quantity" id ="freeze_quantity"
+                                                    class="form-control" placeholder="Medicine Name">
                                             </div>
                                         </div>
+                                        <div class="col-md-4 mb-3 form-input">
+                                            <label for="emp_name" class="form-label ">From Date</label>
+                                            <div class="input-group date form-input custom-height">
+                                                <input type="text" class="form-control " name="from_date" id="from_date"
+                                                    autocomplete="off">
+                                                <div class="input-group-addon input-group-text">
+                                                    <span class="fa fa-calendar"></span>
+                                                </div>
+                                            </div>
 
-                                        <div class="col-md-3 mb-3 form-input">
+                                        </div>
+                                        <div class="col-md-4 mb-3 form-input">
+                                            <label for="emp_name" class="form-label ">To Date</label>
+                                            <div class="input-group date form-input  custom-height">
+                                                <input type="text" class="form-control " name="to_date" id="to_date"
+                                                    autocomplete="off">
+                                                <div class="input-group-addon input-group-text">
+                                                    <span class="fa fa-calendar"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 mb-3 form-input">
                                             <label for="status" class="form-label ">{{ __('common.status') }}</label>
                                             <select name="status" id="status" style="width: 100%"
                                                 class="form-control single-select">
@@ -55,7 +75,7 @@
                                                 <option value="{{ encryptId(0) }}">In-Active</option>
                                             </select>
                                         </div>
-                                        <div class="col-md-3 mt-3">
+                                        <div class="col-md-4 mt-3">
                                             <x-button-search></x-button-search>
                                             <x-button-reset></x-button-reset>
 
@@ -92,7 +112,7 @@
         </div>
 
 
-@stop
+    @stop
 
     @push('script')
         <script type="text/javascript">
@@ -100,7 +120,23 @@
                 var firstTh = $('.datatable-list thead th:first');
                 firstTh.removeClass('sorting_asc');
             });
+            $(document).ready(function() {
+                var fromDatepicker = flatpickr("#from_date", {
+                    dateFormat: "d-m-Y",
+                    onChange: function(selectedDates) {
+                        if (selectedDates.length > 0) {
+                            var startDate = selectedDates[0];
+                            toDatepicker.set('minDate', startDate);
+                            toDatepicker.clear();
+                        }
+                    }
+                });
 
+                var toDatepicker = flatpickr("#to_date", {
+                    dateFormat: "d-m-Y",
+
+                });
+            });
             $(function() {
                 /* Datatable */
                 var table = $('.datatable-list').DataTable({
@@ -137,7 +173,8 @@
                             d.medicine_id = $('#medicine_id').val();
                             d.freeze_quantity = $('#freeze_quantity').val();
                             d.status = $('#status').val();
-
+                            d.from_date = $('#from_date').val();
+                            d.to_date = $('#to_date').val();
                         },
                         error: function(xhr, error, code) {
                             if (xhr.status === 419) {
@@ -199,13 +236,16 @@
                                         medicine_id = $('#medicine_id').val();
                                         freeze_quantity = $('#freeze_quantity').val();
                                         status = $('#status').val();
-
+                                        var from_date = $('#from_date').val();
+                                        var to_date = $('#to_date').val();
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
                                             "{{ admin_url('ohc/master/first-aid-stock/export/pdf') }}" +
                                             '?search=' + searchValue +
                                             '&medicine_id=' + medicine_id +
+                                            '&from_date=' + from_date +
+                                            '&to_date=' + to_date +
                                             '&freeze_quantity=' + freeze_quantity +
                                             '&status=' + status
                                     }
@@ -218,12 +258,16 @@
                                         medicine_id = $('#medicine_id').val();
                                         freeze_quantity = $('#freeze_quantity').val();
                                         status = $('#status').val();
+                                        var from_date = $('#from_date').val();
+                                        var to_date = $('#to_date').val();
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
                                             "{{ admin_url('ohc/master/first-aid-stock/export/excel') }}" +
                                             '?search=' + searchValue +
                                             '&medicine_id=' + medicine_id +
+                                            '&from_date=' + from_date +
+                                            '&to_date=' + to_date +
                                             '&freeze_quantity=' + freeze_quantity +
                                             '&status=' + status
                                     }
