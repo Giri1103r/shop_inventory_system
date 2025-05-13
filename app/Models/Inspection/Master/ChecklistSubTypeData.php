@@ -3,6 +3,7 @@
 namespace App\Models\Inspection\Master;
 
 use App\Scopes\TrashScope;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 
@@ -48,7 +49,20 @@ class ChecklistSubTypeData extends Model
                     ->orWhere('inspection_master_checklist_subtype.subcategory_name', 'LIKE', '%' . $search . '%');
             });
         }
+        if ($request->has('from_date') && !empty($request->from_date)) {
 
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_master_checklist_sub_type_data.created_at', '>=', $startDate);
+        }
+        if ($request->has('to_date') && !empty($request->to_date)) {
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_master_checklist_sub_type_data.created_at', '<=', $endDate);
+        }
+        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->whereBetween('inspection_master_checklist_sub_type_data.created_at', [$startDate, $endDate]);
+        }
         if ($request->has('checklist_type_id') && $request->checklist_type_id) {
             $query = $query->where('inspection_master_checklist_sub_type_data.checklist_type_id', decryptId($request->checklist_type_id));
         }
@@ -112,7 +126,7 @@ class ChecklistSubTypeData extends Model
         $query = $query->leftJoin('inspection_master_checklist_type', 'inspection_master_checklist_sub_type_data.checklist_type_id', '=', 'inspection_master_checklist_type.id');
         $query = $query->leftJoin('inspection_master_checklist_subtype', 'inspection_master_checklist_sub_type_data.checklist_sub_type_id', '=', 'inspection_master_checklist_subtype.id');
         // dd($query);
-     
+
         if ($request->has('checklist_type_id') && $request->checklist_type_id) {
             $query = $query->where('inspection_master_checklist_sub_type_data.checklist_type_id', decryptId($request->checklist_type_id));
         }
@@ -125,6 +139,20 @@ class ChecklistSubTypeData extends Model
 
         if ($request->has('status') && $request->status) {
             $query = $query->where('inspection_master_checklist_sub_type_data.status', decryptId($request->status));
+        }
+        if ($request->has('from_date') && !empty($request->from_date)) {
+
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_master_checklist_sub_type_data.created_at', '>=', $startDate);
+        }
+        if ($request->has('to_date') && !empty($request->to_date)) {
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_master_checklist_sub_type_data.created_at', '<=', $endDate);
+        }
+        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->whereBetween('inspection_master_checklist_sub_type_data.created_at', [$startDate, $endDate]);
         }
         $query->orderBy('id', 'DESC');
         return  $query->get();

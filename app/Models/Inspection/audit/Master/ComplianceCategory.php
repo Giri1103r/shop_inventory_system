@@ -3,6 +3,7 @@
 namespace App\Models\Inspection\audit\Master;
 
 use App\Scopes\TrashScope;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 
@@ -51,6 +52,20 @@ class ComplianceCategory extends Model
         if ($request->has('status') && $request->status) {
 
             $query = $query->where('status', decryptId($request->status));
+        }
+        if ($request->has('from_date') && !empty($request->from_date)) {
+
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_audit_master_compliance_category.created_at', '>=', $startDate);
+        }
+        if ($request->has('to_date') && !empty($request->to_date)) {
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_audit_master_compliance_category.created_at', '<=', $endDate);
+        }
+        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->whereBetween('inspection_audit_master_compliance_category.created_at', [$startDate, $endDate]);
         }
         $data_count = $query;
         $total_records = $data_count->count();
@@ -148,7 +163,20 @@ class ComplianceCategory extends Model
                 $query->orWhereRaw('compliance_category LIKE "%' . $search . '%"');
             });
         }
+        if ($request->has('from_date') && !empty($request->from_date)) {
 
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_audit_master_compliance_category.created_at', '>=', $startDate);
+        }
+        if ($request->has('to_date') && !empty($request->to_date)) {
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_audit_master_compliance_category.created_at', '<=', $endDate);
+        }
+        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->whereBetween('inspection_audit_master_compliance_category.created_at', [$startDate, $endDate]);
+        }
         if ($request->has('compliance_category') && $request->compliance_category) {
             $query = $query->where('compliance_category', 'LIKE', '%' . $request->compliance_category . '%');
         }

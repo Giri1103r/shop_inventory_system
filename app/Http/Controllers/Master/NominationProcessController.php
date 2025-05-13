@@ -26,6 +26,7 @@ use App\Models\UploadLog;
 use App\Jobs\ImporNominationProcessJob;
 use App\Models\Master\TrainingAttendance;
 use App\Models\Master\TrainingStatuslog;
+use App\Mail\Training\NomineeTrainingEmail;
 
 class NominationProcessController extends Controller
 {
@@ -170,47 +171,7 @@ class NominationProcessController extends Controller
         ]);
     }
 
-    // public function fetchEmployeeDetails($emp_id)
-    // {
-    //     $employee = Employee::select('id', 'emp_name', 'email', 'department', 'employee_status')
-    //         ->where('id', $emp_id)->where('user_role', '!=', 10)
-    //         ->where('status', 1)
-    //         ->first();
-    //     $worker = Work::select('id', 'emp_id', 'emp_name', 'department', 'wfemptype')
-    //         ->where('id', $emp_id)
-    //         ->where('status', 1)
-    //         ->first();
-    //     if (!$employee) {
-    //         return response()->json([
-    //             'error' => 'Employee not found.',
-    //         ], 404);
-    //     }
-    //     if (!$worker) {
-    //         return response()->json([
-    //             'error' => 'Worker not found.',
-    //         ], 404);
-    //     }
 
-    //     $departments = $this->department->select('id', 'department_name')
-    //         ->where('status', '1')
-    //         ->get();
-    //     $lastTraining = TrainingAttendance::select('training_masters_topic.topic_name', 'training_attendance.attendance_date')
-    //         ->leftJoin('training_masters_topic', 'training_attendance.topic_id', '=', 'training_masters_topic.id')
-    //         ->where('training_attendance.email', $employee->email)
-    //         ->where('training_attendance.attendance_status', 1)
-    //         ->orderBy('training_attendance.attendance_date', 'desc')
-    //         ->first();
-
-    //     $lastTrainingDate = optional($lastTraining)->attendance_date ? $lastTraining->attendance_date->format('d-m-Y') : 'No data';
-    //     $lastTrainingTopic = optional($lastTraining)->topic_name ?? 'No data';
-
-    //     return response()->json([
-    //         'employee' => $employee,
-    //         'departments' => $departments,
-    //         'lastTrainingDate' => $lastTrainingDate,
-    //         'lastTrainingTopic' => $lastTrainingTopic,
-    //     ]);
-    // }
 
     public function Store(Request $request)
     {
@@ -231,7 +192,7 @@ class NominationProcessController extends Controller
                 return redirect()->back()->withErrors($validator)->withInput();
             }
             try {
-                $this->nomination_process->storeOrUpdate();
+               $this->nomination_process->storeOrUpdate();
 
                 $trainingScheduleId = decryptId($request->training_schedule_id);
 
@@ -239,6 +200,61 @@ class NominationProcessController extends Controller
                     $training_status = TRAINING_NOMINATION_COMPLETED;
                     $this->training_schedule->updateStatus($trainingScheduleId, $training_status);
                     $this->training_statuslog->storestatus($trainingScheduleId, $training_status);
+            
+                    $nominees = $this->nomination_process->getNomination($trainingScheduleId);
+
+                    if ($nominees->isNotEmpty()) {
+                        $mailsubject = 'Training Scheduled';
+                        $assignedUsers = [];
+    
+                        /**
+                         * Send email notification
+                         */
+                        $nomineesWithEmail = $nominees->filter(function ($nominee) {
+                            return !empty($nominee->email);
+                        });
+    
+                        foreach ($nomineesWithEmail  as $nominee) {
+                            $nomineeArray = [
+                                'emp_name' => $nominee->emp_name,
+                                'from_date' => Displaydateformat($nominee->from_date),
+                                'to_date' => Displaydateformat($nominee->to_date),
+                                'start_time' => Displaytimeformat($nominee->start_time),
+                                'end_time' => Displaytimeformat($nominee->end_time),
+                                'topic_name' => $nominee->topic_name,
+                                'venue' => $nominee->name_of_the_conference_hall,
+                                'mail_subject' => $mailsubject,
+                            ];
+                            Mail::to($nominee->email)->queue(new NomineeTrainingEmail($nomineeArray));
+                        }
+    
+                        /**
+                         * Send Web notification
+                         */
+                        $assignedUsers = $nominees->pluck('login_id')->filter()->toArray(); // Ensure it's not null
+    
+                        $img = admin_url('public/assets/icons/traning.png');
+                        if (!empty($assignedUsers)) {
+                            $notificationData = [
+                                'notification_type' => 2,
+                                'module_type' => 4,
+                                'notification_message' => $mailsubject,
+                                'mobile_notification' => json_encode([
+                                    'title' => $mailsubject,
+                                    'message' => 'Training on the topic ' . getTopic($nominee->topic_id) . ' has been created by ' . getUsername(Auth::id()),
+                                    'icon' =>  $img,
+                                    'module' => 4,
+                                    'id'=>  $trainingScheduleId
+                                ]),
+                                'web_link' => 'training_schedule/view/' . encryptId($trainingScheduleId),
+                                'assigned_user' => array_to_string($assignedUsers),
+                                'created_by' => Auth::id(),
+                            ];
+    
+                            notificationSave($notificationData);
+                        }
+                    }
+    
                 }
                 Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {

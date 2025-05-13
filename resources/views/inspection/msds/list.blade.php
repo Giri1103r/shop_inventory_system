@@ -125,21 +125,21 @@
 
             var firstTh = $('.datatable-list thead th:first');
             firstTh.removeClass('sorting_asc');
- var fromDatepicker = flatpickr("#from_date", {
-            dateFormat: "d-m-Y",
-            onChange: function(selectedDates) {
-                if (selectedDates.length > 0) {
-                    var startDate = selectedDates[0];
-                    toDatepicker.set('minDate', startDate);
-                    toDatepicker.clear();
+            var fromDatepicker = flatpickr("#from_date", {
+                dateFormat: "d-m-Y",
+                onChange: function(selectedDates) {
+                    if (selectedDates.length > 0) {
+                        var startDate = selectedDates[0];
+                        toDatepicker.set('minDate', startDate);
+                        toDatepicker.clear();
+                    }
                 }
-            }
-        });
+            });
 
-        var toDatepicker = flatpickr("#to_date", {
-            dateFormat: "d-m-Y",
+            var toDatepicker = flatpickr("#to_date", {
+                dateFormat: "d-m-Y",
 
-        });
+            });
             $('#location_id').on('change', function() {
                 var location_id = $(this).val();
                 $('#department_id').val("").trigger("change");
