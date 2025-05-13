@@ -4,6 +4,7 @@ namespace App\Http\Controllers\KPI;
 
 use App\Http\Controllers\Controller;
 use App\Models\Master\Employee;
+use App\Models\Master\PpeRequest;
 use DB;
 use Exception;
 
@@ -36,274 +37,286 @@ class KpiDashboardController extends Controller
     public function getChart1(Request $request)
     {
         try {
-            
+
             $data = [
                 'getdashdata' => $request,
             ];
 
             return view('kpi.chartData1', $data);
         } catch (\Exception $ex) {
-            report($ex); 
+            report($ex);
         }
     }
     public function getChart2(Request $request)
     {
         try {
-            
+
             $data = [
                 'getdashdata' => $request,
             ];
 
             return view('kpi.chartData2', $data);
         } catch (\Exception $ex) {
-            report($ex); 
+            report($ex);
         }
     }
     public function getChart3(Request $request)
     {
         try {
-            
+
             $data = [
                 'getdashdata' => $request,
             ];
 
             return view('kpi.chartData3', $data);
         } catch (\Exception $ex) {
-            report($ex); 
+            report($ex);
         }
     }
     public function getChart4(Request $request)
     {
         try {
-            
+
             $data = [
                 'getdashdata' => $request,
             ];
 
             return view('kpi.chartData4', $data);
         } catch (\Exception $ex) {
-            report($ex); 
+            report($ex);
         }
     }
     public function getChart5(Request $request)
     {
         try {
-            
+
             $data = [
                 'getdashdata' => $request,
             ];
 
             return view('kpi.chartData5', $data);
         } catch (\Exception $ex) {
-            report($ex); 
+            report($ex);
         }
     }
     public function getChart6(Request $request)
     {
         try {
-            
+
             $data = [
                 'getdashdata' => $request,
             ];
 
             return view('kpi.chartData6', $data);
         } catch (\Exception $ex) {
-            report($ex); 
+            report($ex);
         }
     }
-    public function getChart7(Request $request)
+    public function getPPEIssuanceGroupWise(Request $request)
     {
         try {
-            
-            $data = [
-                'getdashdata' => $request,
-            ];
+            $form_date = $request->input('Fromdate');
+            $to_date = $request->input('Todate');
+            $chartData = getPPERequestChartData($form_date, $to_date);
 
-            return view('kpi.chartData7', $data);
+            return view('kpi.chartPPEIssuanceGroupWise', [
+                'getdashdata' => $request,
+                'chartData' => $chartData,
+            ]);
         } catch (\Exception $ex) {
-            report($ex); 
+            report($ex);
         }
     }
-    public function getChart8(Request $request)
+
+    public function getPTWAvgTimeChart(Request $request)
     {
         try {
-            
-            $data = [
-                'getdashdata' => $request,
-            ];
 
-            return view('kpi.chartData8', $data);
+            $form_date = $request->input('Fromdate');
+            $to_date = $request->input('Todate');
+            $chartData = getPTWAvgTimeChartData($form_date, $to_date);
+
+            return view('kpi.chartPTWAvgTimeChart', [
+                'getdashdata' => $request,
+                'chartData' => $chartData,
+            ]);
+
         } catch (\Exception $ex) {
-            report($ex); 
+            report($ex);
         }
     }
-    public function getChart9(Request $request)
+
+    public function getPPEAvailabilityChart(Request $request)
     {
         try {
-            
-            $data = [
-                'getdashdata' => $request,
-            ];
 
-            return view('kpi.chartData9', $data);
+            $form_date = $request->input('Fromdate');
+            $to_date = $request->input('Todate');
+            $chartData = getPPEAvailabilityChartData($form_date, $to_date);
+
+            return view('kpi.chartPPEAvailability', [
+                'getdashdata' => $request,
+                'chartData' => $chartData,
+            ]);
+
         } catch (\Exception $ex) {
-            report($ex); 
+            report($ex);
         }
     }
     public function getChart10(Request $request)
     {
         try {
-            
+
             $data = [
                 'getdashdata' => $request,
             ];
 
             return view('kpi.chartData10', $data);
         } catch (\Exception $ex) {
-            report($ex); 
+            report($ex);
         }
     }
     public function getChart11(Request $request)
     {
         try {
-            
+
             $data = [
                 'getdashdata' => $request,
             ];
 
             return view('kpi.chartData11', $data);
         } catch (\Exception $ex) {
-            report($ex); 
+            report($ex);
         }
     }
     public function getChart12(Request $request)
     {
         try {
-            
+
             $data = [
                 'getdashdata' => $request,
             ];
 
             return view('kpi.chartData12', $data);
         } catch (\Exception $ex) {
-            report($ex); 
+            report($ex);
         }
     }
     public function getChart13(Request $request)
     {
         try {
-            
+
             $data = [
                 'getdashdata' => $request,
             ];
 
             return view('kpi.chartData13', $data);
         } catch (\Exception $ex) {
-            report($ex); 
+            report($ex);
         }
     }
     public function getChart14(Request $request)
     {
         try {
-            
+
             $data = [
                 'getdashdata' => $request,
             ];
 
             return view('kpi.chartData14', $data);
         } catch (\Exception $ex) {
-            report($ex); 
+            report($ex);
         }
     }
     public function getChart15(Request $request)
     {
         try {
-            
+
             $data = [
                 'getdashdata' => $request,
             ];
 
             return view('kpi.chartData15', $data);
         } catch (\Exception $ex) {
-            report($ex); 
+            report($ex);
         }
     }
     public function getChart16(Request $request)
     {
         try {
-            
+
             $data = [
                 'getdashdata' => $request,
             ];
 
             return view('kpi.chartData16', $data);
         } catch (\Exception $ex) {
-            report($ex); 
+            report($ex);
         }
     }
     public function getChart17(Request $request)
     {
         try {
-            
+
             $data = [
                 'getdashdata' => $request,
             ];
 
             return view('kpi.chartData17', $data);
         } catch (\Exception $ex) {
-            report($ex); 
+            report($ex);
         }
     }
     public function getChart18(Request $request)
     {
         try {
-            
+
             $data = [
                 'getdashdata' => $request,
             ];
 
             return view('kpi.chartData18', $data);
         } catch (\Exception $ex) {
-            report($ex); 
+            report($ex);
         }
     }
     public function getChart19(Request $request)
     {
         try {
-            
+
             $data = [
                 'getdashdata' => $request,
             ];
 
             return view('kpi.chartData19', $data);
         } catch (\Exception $ex) {
-            report($ex); 
+            report($ex);
         }
     }
     public function getChart20(Request $request)
     {
         try {
-            
+
             $data = [
                 'getdashdata' => $request,
             ];
 
             return view('kpi.chartData20', $data);
         } catch (\Exception $ex) {
-            report($ex); 
+            report($ex);
         }
     }
     public function getChart21(Request $request)
     {
         try {
-            
+
             $data = [
                 'getdashdata' => $request,
             ];
 
             return view('kpi.chartData21', $data);
         } catch (\Exception $ex) {
-            report($ex); 
+            report($ex);
         }
     }
 }

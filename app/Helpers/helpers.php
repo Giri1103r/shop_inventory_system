@@ -70,6 +70,7 @@ use App\Models\Inspection\Safety\MonthlyPhysicalEquipmentList;
 use App\Models\Inspection\Fire\EmergencyLightInspectionDetails;
 use App\Models\Inspection\Fire\MonthlyPhysicalInspectionFileUpload;
 use App\Models\Inspection\Safety\SafetyWalkObservationDetails;
+use App\Models\Master\PpeStockinventory;
 
 if (!function_exists('get_encryptVal')) {
 
@@ -2344,19 +2345,19 @@ if (!function_exists('getMonth')) {
                         return $name->file_path;
                     }
 
-                    case DAILY_FIRE_PUMP:
-                        $name = FireSignatureUpload::where('emp_id', $userid)->where('inspection_id', $id)->where('type', DAILY_FIRE_PUMP)
-                            ->where('status', 1)->where('trash', 'NO')->first();
+                case DAILY_FIRE_PUMP:
+                    $name = FireSignatureUpload::where('emp_id', $userid)->where('inspection_id', $id)->where('type', DAILY_FIRE_PUMP)
+                        ->where('status', 1)->where('trash', 'NO')->first();
 
+                    if ($name == null) {
+                        $name = User::where('id', $userid)->first();
                         if ($name == null) {
-                            $name = User::where('id', $userid)->first();
-                            if ($name == null) {
-                                return null;
-                            }
-                            return $name->signature_upload;
-                        } else {
-                            return $name->file_path;
+                            return null;
                         }
+                        return $name->signature_upload;
+                    } else {
+                        return $name->file_path;
+                    }
             }
         }
     }
@@ -2944,5 +2945,124 @@ function GetLastMonthDetails($lastMonthObservationDetails)
         return $lastMonth;
     }
     return false;
+}
+
+function getPPERequestChartData($form_date, $to_date)
+{
+    $query = PpeRequest::selectRaw('unit_id, COUNT(*) as total')
+        ->groupBy('unit_id');
+
+    if (!empty($form_date)) {
+        $query->whereDate('created_at', '>=', DBdateformat($form_date));
+    }
+
+    if (!empty($to_date)) {
+        $query->whereDate('created_at', '<=', DBdateformat($to_date));
+    }
+
+    $rawData = $query->get();
+
+    $labels = [];
+    $series = [];
+
+    foreach ($rawData as $row) {
+        $labels[] = getUnitname($row->unit_id);
+        $series[] = $row->total;
+    }
+
+    return [
+        'labels' => $labels,
+        'series' => $series,
+    ];
+}
+
+function getPTWAvgTimeChartData($form_date, $to_date)
+{
+    $query = SafetyPermit::where('permit_status',STATUS_CLOSED);
+
+    if (!empty($form_date)) {
+        $query->whereDate('created_at', '>=', DBdateformat($form_date));
+    }
+    
+    if (!empty($to_date)) {
+        $query->whereDate('created_at', '<=', DBdateformat($to_date));
+    }
+    
+    $rawData = $query->selectRaw('unit_id, AVG(TIMESTAMPDIFF(SECOND, created_at, updated_at)) as avg_duration')
+        ->groupBy('unit_id')
+        ->get();
+    
+
+    $labels = [];
+    $series = [];
+
+    foreach ($rawData as $row) {
+        $labels[] = getUnitname($row->unit_id);
+        $series[] = round($row->avg_duration / 60, 2); // convert seconds to minutes
+    }
+
+    return [
+        'labels' => $labels,
+        'series' => $series,
+    ];
+}
+
+
+function getHazardUnitChartData($form_date, $to_date)
+{
+    $query = PpeRequest::selectRaw('unit_id, COUNT(*) as total')
+        ->groupBy('unit_id');
+
+    if (!empty($form_date)) {
+        $query->whereDate('created_at', '>=', DBdateformat($form_date));
+    }
+
+    if (!empty($to_date)) {
+        $query->whereDate('created_at', '<=', DBdateformat($to_date));
+    }
+
+    $rawData = $query->get();
+
+    $labels = [];
+    $series = [];
+
+    foreach ($rawData as $row) {
+        $labels[] = getUnitname($row->unit_id);
+        $series[] = $row->total;
+    }
+
+    return [
+        'labels' => $labels,
+        'series' => $series,
+    ];
+}
+
+function getPPEAvailabilityChartData($form_date, $to_date)
+{
+    $query = PpeStockinventory::selectRaw('sub, SUM(quantity) as total_quantity')
+        ->groupBy('sub');
+
+    if (!empty($form_date)) {
+        $query->whereDate('created_at', '>=', DBdateformat($form_date));
+    }
+
+    if (!empty($to_date)) {
+        $query->whereDate('created_at', '<=', DBdateformat($to_date));
+    }
+
+    $rawData = $query->get();
+
+    $labels = [];
+    $series = [];
+
+    foreach ($rawData as $row) {
+        $labels[] = ($row->sub);
+        $series[] = (int) $row->total_quantity;
+    }
+
+    return [
+        'labels' => $labels,
+        'series' => $series,
+    ];
 }
 
