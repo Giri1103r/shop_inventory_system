@@ -67,8 +67,8 @@ class FirstAidBagChecklistController extends Controller
                             }
                             return $text;
                         })
-                        ->addColumn('created_date', function ($row) {
-                            return Displaydateformat($row->created_at);
+                        ->addColumn('inspection_created_at', function ($row) {
+                            return Displaydateformat($row->inspection_created_at);
                         })
                         ->addColumn('inspection_date', function ($row) {
                             return Displaydateformat($row->inspection_date);

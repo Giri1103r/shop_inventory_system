@@ -24,22 +24,42 @@
                             <div class="card-body">
                                 <div class="col-md-12">
                                     <div class="row">
-                                        
-                                        <div class="col-md-3 mb-2">
+
+                                        <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
                                                 <label for="rate" class="form-label require ">
                                                     Date of Inspection</label>
                                                 <div class="input-group date form-input custom-height">
-                                                    <input type="text" name="date_of_inspection"
-                                                        id="date_of_inspection" class="form-control"autocomplete="off">
+                                                    <input type="text" name="date_of_inspection" id="date_of_inspection"
+                                                        class="form-control"autocomplete="off">
                                                     <div class="input-group-addon input-group-text">
                                                         <span class="fa fa-calendar"></span>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
+                                        <div class="col-md-4 mb-3 form-input">
+                                            <label for="emp_name" class="form-label ">From Date</label>
+                                            <div class="input-group date form-input custom-height">
+                                                <input type="text" class="form-control " name="from_date" id="from_date"
+                                                    autocomplete="off">
+                                                <div class="input-group-addon input-group-text">
+                                                    <span class="fa fa-calendar"></span>
+                                                </div>
+                                            </div>
 
-                                        <div class="col-md-3 mb-2">
+                                        </div>
+                                        <div class="col-md-4 mb-3 form-input">
+                                            <label for="emp_name" class="form-label ">To Date</label>
+                                            <div class="input-group date form-input  custom-height">
+                                                <input type="text" class="form-control " name="to_date" id="to_date"
+                                                    autocomplete="off">
+                                                <div class="input-group-addon input-group-text">
+                                                    <span class="fa fa-calendar"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
                                                 <label class="form-label require">Location First Aid Bag</label>
                                                 <input type="text" name="location_first_aid_bag"
@@ -48,7 +68,7 @@
                                             </div>
                                         </div>
 
-                                        <div class="col-md-3 mb-2">
+                                        <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
                                                 <label class="form-label require">Shift</label>
                                                 <select name="shift_id" id="shift_id" style="width: 100%"
@@ -62,7 +82,7 @@
                                             </div>
                                         </div>
 
-                                        <div class="col-md-3 mb-2">
+                                        <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
                                                 <label class="form-label require">Unit</label>
                                                 <select name="unit_id" id="unit_id" class="form-control single-select"
@@ -75,10 +95,10 @@
                                                 </select>
                                             </div>
                                         </div>
-                                       
 
-                                        
-                                        <div class="col-md-3 mt-3">
+
+
+                                        <div class="col-md-4 mt-3">
                                             <x-button-search></x-button-search>
                                             <x-button-reset></x-button-reset>
                                         </div>
@@ -127,9 +147,9 @@
             firstTh.removeClass('sorting_asc');
 
             var fromDatepicker = flatpickr("#date_of_inspection", {
-            dateFormat: "d-m-Y",
+                dateFormat: "d-m-Y",
             });
-        
+
         });
 
         $(document).ready(function() {
@@ -146,9 +166,10 @@
 
             var toDatepicker = flatpickr("#to_date", {
                 dateFormat: "d-m-Y",
-                minDate: "today"
+
             });
         });
+
 
         $(function() {
             /* Datatable */
@@ -180,18 +201,20 @@
                     type: 'POST',
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
-                        .attr('content')
+                            .attr('content')
                     },
                     data: function(d) {
                         d.date_of_inspection = $('#date_of_inspection').val();
                         d.location_first_aid_bag = $('#location_first_aid_bag').val();
                         d.shift_id = $('#shift_id').val();
                         d.unit_id = $('#unit_id').val();
+                        d.from_date = $('#from_date').val();
+                        d.to_date = $('#to_date').val();
                     },
                     error: function(xhr, error, code) {
                         if (xhr.status === 419) {
                             alert('Session has expired. You will be redirected to the login page.');
-                            window.location.href = "{{ url('') }}"; 
+                            window.location.href = "{{ url('') }}";
                         }
                     }
                 },
@@ -217,12 +240,12 @@
                         name: 'unit_name'
                     },
                     {
-                        data: 'created_by',
-                        name: 'created_by'
+                        data: 'inspection_created_by',
+                        name: 'inspection_created_by'
                     },
                     {
-                        data: 'created_at',
-                        name: 'created_at'
+                        data: 'inspection_created_at',
+                        name: 'inspection_created_at'
                     },
                     {
                         data: 'action',
@@ -246,17 +269,19 @@
                     [10, 25, 50, 100]
                 ],
                 buttons: [{
-                    extend: 'collection',
-                    text: '{{ __('common.export') }}',
-                    buttons: [{
-                        extend: 'pdf',
-                        text: '{{ __('common.pdf') }}',
-                        action: function(e, dt, button, config) {
+                        extend: 'collection',
+                        text: '{{ __('common.export') }}',
+                        buttons: [{
+                                extend: 'pdf',
+                                text: '{{ __('common.pdf') }}',
+                                action: function(e, dt, button, config) {
                                     var searchValue = $('#datatable-list_filter input').val();
                                     date_of_inspection = $('#date_of_inspection').val();
                                     location_first_aid_bag = $('#location_first_aid_bag').val();
                                     shift_id = $('#shift_id').val();
                                     unit_id = $('#unit_id').val();
+                                    var from_date = $('#from_date').val();
+                                    var to_date = $('#to_date').val();
 
                                     $(".dt-button").removeClass('processing');
                                     $('body').click();
@@ -266,7 +291,9 @@
                                         '&date_of_inspection=' + date_of_inspection +
                                         '&location_first_aid_bag=' + location_first_aid_bag +
                                         '&shift_id=' + shift_id +
-                                        '&unit_id=' + unit_id 
+                                        '&from_date=' + from_date +
+                                        '&to_date=' + to_date +
+                                        '&unit_id=' + unit_id
 
                                 }
                             },
@@ -279,6 +306,8 @@
                                     location_first_aid_bag = $('#location_first_aid_bag').val();
                                     shift_id = $('#shift_id').val();
                                     unit_id = $('#unit_id').val();
+                                    var from_date = $('#from_date').val();
+                                    var to_date = $('#to_date').val();
 
                                     $(".dt-button").removeClass('processing');
                                     $('body').click();
@@ -286,10 +315,12 @@
                                         "{{ admin_url('ohc/emergency-buyer-first-aid-bag/checklist/export/excel') }}" +
                                         '?search=' + searchValue +
                                         '&date_of_inspection=' + date_of_inspection +
+                                        '&from_date=' + from_date +
+                                        '&to_date=' + to_date +
                                         '&location_first_aid_bag=' + location_first_aid_bag +
                                         '&shift_id=' + shift_id +
-                                        '&unit_id=' + unit_id 
- 
+                                        '&unit_id=' + unit_id
+
 
                                 }
                             },

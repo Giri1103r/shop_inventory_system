@@ -83,8 +83,8 @@ class FirstAiderlistController extends Controller
                             }
                             return $text;
                         })
-                        ->addColumn('created_date', function ($row) {
-                            return Displaydateformat($row->created_at);
+                        ->addColumn('inspection_created_at', function ($row) {
+                            return Displaydateformat($row->inspection_created_at);
                         })
                         ->addColumn('last_updated_date', function ($row) {
                             return Displaydateformat($row->last_updated_date);

@@ -69,11 +69,11 @@ class EmergencyBuyerFirstAidBagChecklistController extends Controller
                         ->addColumn('date_of_inspection', function ($row) {
                             return Displaydateformat($row->date_of_inspection);
                         })
-                        ->addColumn('created_at', function ($row) {
-                            return Displaydateformat($row->created_at);
+                        ->addColumn('inspection_created_at', function ($row) {
+                            return Displaydateformat($row->inspection_created_at);
                         })
-                        ->addColumn('created_by', function ($row) {
-                            return getUsername($row->created_by);
+                        ->addColumn('inspection_created_by', function ($row) {
+                            return getUsername($row->inspection_created_by);
                         })
 
                         ->addColumn('action', function ($row) {

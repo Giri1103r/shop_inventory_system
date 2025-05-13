@@ -56,7 +56,8 @@ class WeeklyAmbulance extends Model
         $search = '';
 
 
-        $query = $this->select('inspection_ohc_weekly_ambulance_inspection_checklist.*', 'inspection_shift_option.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*', 'inspection_ohc_weekly_ambulance_inspection_checklist.id as inspection_id' ,'inspection_ohc_weekly_ambulance_inspection_checklist.created_by as inspection_created_by')
+        $query = $this->select('inspection_ohc_weekly_ambulance_inspection_checklist.*', 'inspection_shift_option.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*', 'inspection_ohc_weekly_ambulance_inspection_checklist.id as inspection_id',
+        'inspection_ohc_weekly_ambulance_inspection_checklist.created_at as inspection_created_at','inspection_ohc_weekly_ambulance_inspection_checklist.created_by as inspection_created_by')
             ->leftJoin('masters_location', 'inspection_ohc_weekly_ambulance_inspection_checklist.location', '=', 'masters_location.id')
             ->leftJoin('inspection_shift_option', 'inspection_ohc_weekly_ambulance_inspection_checklist.shift', '=', 'inspection_shift_option.id')
             ->leftJoin('masters_unit', 'inspection_ohc_weekly_ambulance_inspection_checklist.unit', '=', 'masters_unit.id')
@@ -71,12 +72,26 @@ class WeeklyAmbulance extends Model
             $search = $request->search['value'];
             $query = $query->where(function ($query) use ($search) {
                 $query->orWhere('inspection_shift_option.shift', 'LIKE', '%' . $search . '%')
-                      ->orWhere('masters_unit.unit_name', 'LIKE', '%' . $search . '%')
-                      ->orWhere('masters_location.location_name', 'LIKE', '%' . $search . '%');
+                    ->orWhere('masters_unit.unit_name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('masters_location.location_name', 'LIKE', '%' . $search . '%');
             });
         }
+        if ($request->has('from_date') && !empty($request->from_date)) {
+
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_ohc_weekly_ambulance_inspection_checklist.created_at', '>=', $startDate);
+        }
+        if ($request->has('to_date') && !empty($request->to_date)) {
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_ohc_weekly_ambulance_inspection_checklist.created_at', '<=', $endDate);
+        }
+        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->whereBetween('inspection_ohc_weekly_ambulance_inspection_checklist.created_at', [$startDate, $endDate]);
+        }
         if (isset($request->unit_id) && $request->unit_id) {
-           
+
             $query = $query->where('inspection_ohc_weekly_ambulance_inspection_checklist.unit', decryptId($request->unit_id));
         }
         if (isset($request->shift) && $request->shift) {
@@ -262,38 +277,60 @@ class WeeklyAmbulance extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_ohc_weekly_ambulance_inspection_checklist.*', 'inspection_shift_option.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*', 'inspection_ohc_weekly_ambulance_inspection_checklist.id as inspection_id' ,'inspection_ohc_weekly_ambulance_inspection_checklist.created_by as inspection_created_by',
-        'inspection_ohc_weekly_ambulance_inspection_checklist.created_at as inspection_created_at')
-        ->leftJoin('masters_location', 'inspection_ohc_weekly_ambulance_inspection_checklist.location', '=', 'masters_location.id')
-        ->leftJoin('inspection_shift_option', 'inspection_ohc_weekly_ambulance_inspection_checklist.shift', '=', 'inspection_shift_option.id')
-        ->leftJoin('masters_unit', 'inspection_ohc_weekly_ambulance_inspection_checklist.unit', '=', 'masters_unit.id')
-        ->leftJoin('inspection_frequency_option', 'inspection_ohc_weekly_ambulance_inspection_checklist.frequency', '=', 'inspection_frequency_option.id')
-        ->leftJoin('inspection_static_docno', 'inspection_ohc_weekly_ambulance_inspection_checklist.document_reference_id', '=', 'inspection_static_docno.id');
+        $query = $this->select(
+            'inspection_ohc_weekly_ambulance_inspection_checklist.*',
+            'inspection_shift_option.*',
+            'masters_unit.*',
+            'masters_location.*',
+            'inspection_frequency_option.*',
+            'inspection_ohc_weekly_ambulance_inspection_checklist.id as inspection_id',
+            'inspection_ohc_weekly_ambulance_inspection_checklist.created_by as inspection_created_by',
+            'inspection_ohc_weekly_ambulance_inspection_checklist.created_at as inspection_created_at'
+        )
+            ->leftJoin('masters_location', 'inspection_ohc_weekly_ambulance_inspection_checklist.location', '=', 'masters_location.id')
+            ->leftJoin('inspection_shift_option', 'inspection_ohc_weekly_ambulance_inspection_checklist.shift', '=', 'inspection_shift_option.id')
+            ->leftJoin('masters_unit', 'inspection_ohc_weekly_ambulance_inspection_checklist.unit', '=', 'masters_unit.id')
+            ->leftJoin('inspection_frequency_option', 'inspection_ohc_weekly_ambulance_inspection_checklist.frequency', '=', 'inspection_frequency_option.id')
+            ->leftJoin('inspection_static_docno', 'inspection_ohc_weekly_ambulance_inspection_checklist.document_reference_id', '=', 'inspection_static_docno.id');
 
-    // dd($query);
-    $org_total =  $query;
-    $org_total_counts = $org_total->count();
+        // dd($query);
+        $org_total =  $query;
+        $org_total_counts = $org_total->count();
 
-    if (isset($request->search['value']) && $request->search['value'] != '') {
-        $search = $request->search['value'];
-        $query = $query->where(function ($query) use ($search) {
-            $query->orWhere('inspection_shift_option.shift', 'LIKE', '%' . $search . '%')
-                  ->orWhere('masters_unit.unit_name', 'LIKE', '%' . $search . '%')
-                  ->orWhere('masters_location.location_name', 'LIKE', '%' . $search . '%');
-        });
-    }
-    if (isset($request->unit) && $request->unit) {
-        $query = $query->where('inspection_ohc_weekly_ambulance_inspection_checklist.unit', decryptId($request->unit));
-    }
-    if (isset($request->shift) && $request->shift) {
-        $query = $query->where('inspection_ohc_weekly_ambulance_inspection_checklist.shift', decryptId($request->shift));
-    }
-    if (isset($request->location_id) && $request->location_id) {
-        $query = $query->where('inspection_ohc_weekly_ambulance_inspection_checklist.location', decryptId($request->location_id));
-    }
-    if (isset($request->status) && $request->status) {
-        $query = $query->where('inspection_ohc_weekly_ambulance_inspection_checklist.approve_status', decryptId($request->status));
-    }
+        if (isset($request->search['value']) && $request->search['value'] != '') {
+            $search = $request->search['value'];
+            $query = $query->where(function ($query) use ($search) {
+                $query->orWhere('inspection_shift_option.shift', 'LIKE', '%' . $search . '%')
+                    ->orWhere('masters_unit.unit_name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('masters_location.location_name', 'LIKE', '%' . $search . '%');
+            });
+        }
+          if ($request->has('from_date') && !empty($request->from_date)) {
+
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_ohc_weekly_ambulance_inspection_checklist.created_at', '>=', $startDate);
+        }
+        if ($request->has('to_date') && !empty($request->to_date)) {
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_ohc_weekly_ambulance_inspection_checklist.created_at', '<=', $endDate);
+        }
+        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->whereBetween('inspection_ohc_weekly_ambulance_inspection_checklist.created_at', [$startDate, $endDate]);
+        }
+        if (isset($request->unit) && $request->unit) {
+            $query = $query->where('inspection_ohc_weekly_ambulance_inspection_checklist.unit', decryptId($request->unit));
+        }
+        if (isset($request->shift) && $request->shift) {
+            $query = $query->where('inspection_ohc_weekly_ambulance_inspection_checklist.shift', decryptId($request->shift));
+        }
+        if (isset($request->location_id) && $request->location_id) {
+            $query = $query->where('inspection_ohc_weekly_ambulance_inspection_checklist.location', decryptId($request->location_id));
+        }
+        if (isset($request->status) && $request->status) {
+            $query = $query->where('inspection_ohc_weekly_ambulance_inspection_checklist.approve_status', decryptId($request->status));
+        }
 
         if (isset($request->order) && count($request->order) > 0) {
             $columnName = $request->order[0]['column'];

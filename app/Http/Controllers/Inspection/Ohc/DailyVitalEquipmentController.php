@@ -50,8 +50,8 @@ class DailyVitalEquipmentController extends Controller
                     $data =  $this->daily_vital->list();
                     $datatables = DataTables::of($data['data'])
                         ->addIndexColumn()
-                        ->addColumn('created_date', function ($row) {
-                            return Displaydateformat($row->created_at);
+                        ->addColumn('inspected_created_at', function ($row) {
+                            return Displaydateformat($row->inspected_created_at);
                         })
                         ->addColumn('date_of_inspection', function ($row) {
                             return Displaydateformat($row->date_of_inspection);

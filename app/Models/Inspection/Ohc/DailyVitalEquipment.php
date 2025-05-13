@@ -3,6 +3,7 @@
 namespace App\Models\Inspection\Ohc;
 
 use App\Scopes\TrashScope;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 
@@ -37,7 +38,7 @@ class DailyVitalEquipment extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_ohc_daily_vital_equipment_checklist.*', 'inspection_shift_option.*', 'masters_unit.*','inspection_ohc_daily_vital_equipment_checklist.created_by as checked_by')
+        $query = $this->select('inspection_ohc_daily_vital_equipment_checklist.*', 'inspection_shift_option.*', 'masters_unit.*', 'inspection_ohc_daily_vital_equipment_checklist.created_by as checked_by' , 'inspection_ohc_daily_vital_equipment_checklist.created_at as inspected_created_at')
             ->leftJoin('inspection_shift_option', 'inspection_ohc_daily_vital_equipment_checklist.shift', '=', 'inspection_shift_option.id')
             ->leftJoin('masters_unit', 'inspection_ohc_daily_vital_equipment_checklist.unit', '=', 'masters_unit.id');
 
@@ -56,14 +57,28 @@ class DailyVitalEquipment extends Model
         }
 
         if ($request->has('unit') && $request->unit) {
-            $query = $query->where('inspection_ohc_daily_vital_equipment_checklist.unit','LIKE', '%' . decryptId($request->unit) . '%');
+            $query = $query->where('inspection_ohc_daily_vital_equipment_checklist.unit', 'LIKE', '%' . decryptId($request->unit) . '%');
         }
         if (isset($request->date_of_inspection) && $request->date_of_inspection) {
-           
+
             $query = $query->whereDate('inspection_ohc_daily_vital_equipment_checklist.date_of_inspection', '=', DBdateformat($request->date_of_inspection));
         }
         if ($request->has('shift') && $request->shift) {
             $query = $query->where('inspection_ohc_daily_vital_equipment_checklist.shift', 'LIKE', '%' . decryptId($request->shift) . '%');
+        }
+        if ($request->has('from_date') && !empty($request->from_date)) {
+
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_ohc_daily_vital_equipment_checklist.created_at', '>=', $startDate);
+        }
+        if ($request->has('to_date') && !empty($request->to_date)) {
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_ohc_daily_vital_equipment_checklist.created_at', '<=', $endDate);
+        }
+        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->whereBetween('inspection_ohc_daily_vital_equipment_checklist.created_at', [$startDate, $endDate]);
         }
         $data_count = $query;
         $total_records = $data_count->count();
@@ -125,7 +140,7 @@ class DailyVitalEquipment extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_ohc_daily_vital_equipment_checklist.*', 'inspection_shift_option.*', 'masters_unit.*','inspection_ohc_daily_vital_equipment_checklist.created_by as checked_by')
+        $query = $this->select('inspection_ohc_daily_vital_equipment_checklist.*', 'inspection_shift_option.*', 'masters_unit.*', 'inspection_ohc_daily_vital_equipment_checklist.created_by as checked_by')
             ->leftJoin('inspection_shift_option', 'inspection_ohc_daily_vital_equipment_checklist.shift', '=', 'inspection_shift_option.id')
             ->leftJoin('masters_unit', 'inspection_ohc_daily_vital_equipment_checklist.unit', '=', 'masters_unit.id');
 
@@ -133,14 +148,27 @@ class DailyVitalEquipment extends Model
             $search = $request->search['value'];
             $query = $query->where(function ($query) use ($search) {
                 $query
-                ->orWhereRaw("DATE_FORMAT(inspection_ohc_daily_vital_equipment_checklist.date_of_inspection, '%d-%m-%Y') LIKE ?", ["%{$search}%"])
-                ->orWhere('masters_unit.unit_name', 'LIKE', '%' . $search . '%')
-                ->orWhere('inspection_shift_option.shift', 'LIKE', '%' . $search . '%');
+                    ->orWhereRaw("DATE_FORMAT(inspection_ohc_daily_vital_equipment_checklist.date_of_inspection, '%d-%m-%Y') LIKE ?", ["%{$search}%"])
+                    ->orWhere('masters_unit.unit_name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('inspection_shift_option.shift', 'LIKE', '%' . $search . '%');
             });
         }
+        if ($request->has('from_date') && !empty($request->from_date)) {
 
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_ohc_daily_vital_equipment_checklist.created_at', '>=', $startDate);
+        }
+        if ($request->has('to_date') && !empty($request->to_date)) {
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_ohc_daily_vital_equipment_checklist.created_at', '<=', $endDate);
+        }
+        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->whereBetween('inspection_ohc_daily_vital_equipment_checklist.created_at', [$startDate, $endDate]);
+        }
         if ($request->has('unit') && $request->unit) {
-            $query = $query->where('inspection_ohc_daily_vital_equipment_checklist.unit','LIKE', '%' . decryptId($request->unit) . '%');
+            $query = $query->where('inspection_ohc_daily_vital_equipment_checklist.unit', 'LIKE', '%' . decryptId($request->unit) . '%');
         }
         if (isset($request->date_of_inspection) && $request->date_of_inspection) {
             $query = $query->whereDate('inspection_ohc_daily_vital_equipment_checklist.date_of_inspection', '=', DBdateformat($request->date_of_inspection));
