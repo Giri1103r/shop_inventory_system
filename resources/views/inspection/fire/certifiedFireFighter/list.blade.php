@@ -25,7 +25,7 @@
                                 <div class="col-md-12">
                                     <div class="row">
 
-                                        <div class="col-md-3 mb-3 form-input">
+                                        <div class="col-md-4 mb-3 form-input">
                                             <label for="fire_no" class="form-label">Certified Fire Fighter Id                                            </label>
                                             <select name="fire_no" id="fire_no" class=" form-control single-select"
                                                 style="width: 100%">
@@ -36,8 +36,8 @@
                                                 @endforeach
                                             </select>
                                         </div>
-                                      
-                                        <div class="col-md-3 mb-3 form-input">
+
+                                        <div class="col-md-4 mb-3 form-input">
                                             <label for="status" class="form-label ">{{ __('common.status') }}</label>
                                             <select name="status" id="status" style="width: 100%"
                                                 class="form-control single-select">
@@ -45,6 +45,28 @@
                                                 <option value="{{ encryptId(1) }}">Active</option>
                                                 <option value="{{ encryptId(0) }}">In-Active</option>
                                             </select>
+                                        </div>
+                                         <div class="col-md-4 mb-3 form-input">
+                                            <label for="emp_name" class="form-label ">From Date</label>
+                                            <div class="input-group date form-input custom-height">
+                                                <input type="text" class="form-control " name="from_date" id="from_date"
+                                                    autocomplete="off">
+                                                <div class="input-group-addon input-group-text">
+                                                    <span class="fa fa-calendar"></span>
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                        <div class="col-md-4 mb-3 form-input">
+                                            <label for="emp_name" class="form-label ">To Date</label>
+                                            <div class="input-group date form-input  custom-height">
+                                                <input type="text" class="form-control " name="to_date"
+                                                    id="to_date" autocomplete="off">
+                                                <div class="input-group-addon input-group-text">
+                                                    <span class="fa fa-calendar"></span>
+                                                </div>
+                                            </div>
                                         </div>
                                         <div class="col-md-3 mt-3">
                                             <x-button-search></x-button-search>
@@ -86,7 +108,26 @@
 
     @push('script')
         <script type="text/javascript" nonce="projectcab">
-         
+            $(document).ready(function() {
+             var fromDatepicker = flatpickr("#from_date", {
+                    dateFormat: "d-m-Y",
+                    onChange: function(selectedDates) {
+                        if (selectedDates.length > 0) {
+                            var startDate = selectedDates[0];
+                            toDatepicker.set('minDate', startDate);
+                            toDatepicker.clear();
+                        }
+                    }
+
+                })
+
+                var toDatepicker = flatpickr("#to_date", {
+                    dateFormat: "d-m-Y",
+
+                });
+
+            });
+
             $(function() {
                 /* Datatable */
                 var table = $('.datatable-list').DataTable({
@@ -122,6 +163,8 @@
                         data: function(d) {
                             d.fire_no = $('#fire_no').val();
                             d.status = $('#status').val();
+                             d.from_date = $('#from_date').val();
+                            d.to_date = $('#to_date').val();
 
                         },
                         error: function(xhr, error, code) {
@@ -183,6 +226,8 @@
                                         var searchValue = $('#datatable-list_filter input').val();
                                         fire_no = $('#fire_no').val();
                                         status = $('#status').val();
+                                           var from_date = $('#from_date').val();
+                                        var to_date = $('#to_date').val();
 
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
@@ -190,6 +235,8 @@
                                             "{{ admin_url('fire/certified-fire-fighter/export/pdf') }}" +
                                             '?search=' + searchValue +
                                             '&fire_no=' + fire_no +
+                                             '&from_date=' + from_date +
+                                            '&to_date=' + to_date +
                                             '&status=' + status
                                     }
                                 },
@@ -200,12 +247,17 @@
                                         var searchValue = $('#datatable-list_filter input').val();
                                         fire_no = $('#fire_no').val();
                                         status = $('#status').val();
+                                           var from_date = $('#from_date').val();
+                                        var to_date = $('#to_date').val();
+                                        
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
                                             "{{ admin_url('fire/certified-fire-fighter/export/excel') }}" +
                                             '?search=' + searchValue +
                                             '&fire_no=' + fire_no +
+                                             '&from_date=' + from_date +
+                                            '&to_date=' + to_date +
                                             '&status=' + status
                                     }
                                 },

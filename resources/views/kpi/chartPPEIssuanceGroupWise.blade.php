@@ -1,38 +1,40 @@
-<div id="chartData3"></div>
+
+<div id="chartPPEIssuanceGroupWise"></div>
 
 <script>
     var options = {
         series: [{
-            name: 'Marine Sprite',
-            data: [44, 55, 41, 37, 22, 43, 21]
-        }, {
-            name: 'Striking Calf',
-            data: [53, 32, 33, 52, 13, 43, 32]
-        }, {
-            name: 'Tank Picture',
-            data: [12, 17, 11, 9, 15, 11, 20]
-        }, {
-            name: 'Bucket Slope',
-            data: [9, 7, 5, 8, 6, 9, 4]
-        }, {
-            name: 'Reborn Kid',
-            data: [25, 12, 19, 32, 25, 24, 10]
+            name: 'PPE Issuance (in Count)',
+            data: {!! json_encode($chartData['series']) !!}
         }],
         chart: {
             type: 'bar',
             height: 350,
-            stacked: true,
             toolbar: {
                 show: false
             },
+            stacked: false,
+            zoom: {
+                enabled: false
+            }
         },
+        responsive: [{
+            breakpoint: 480,
+            options: {
+                legend: {
+                    position: 'bottom',
+                    offsetX: 0,
+                    offsetY: 0
+                }
+            }
+        }],
         plotOptions: {
             bar: {
-                horizontal: true,
+                horizontal: false,
+                borderRadius: 10,
                 dataLabels: {
                     total: {
                         enabled: true,
-                        offsetX: 0,
                         style: {
                             fontSize: '13px',
                             fontWeight: 900
@@ -41,48 +43,33 @@
                 }
             },
         },
-        stroke: {
-            width: 1,
-            colors: ['#fff']
-        },
-        title: {
-            text: 'Fiction Books Sales'
-        },
         xaxis: {
-            categories: [2008, 2009, 2010, 2011, 2012, 2013, 2014],
-            labels: {
-                formatter: function(val) {
-                    return val + "K"
-                }
-            }
-        },
-        yaxis: {
-            title: {
-                text: undefined
-            },
+            categories: {!! json_encode($chartData['labels']) !!}
         },
         tooltip: {
             y: {
                 formatter: function(val) {
-                    return val + "K"
+                    return val;
                 }
             }
         },
+        legend: {
+            position: 'bottom',
+            horizontalAlign: 'center',
+            offsetY: 10
+        },
         fill: {
             opacity: 1
-        },
-        legend: {
-            position: 'top',
-            horizontalAlign: 'left',
-            offsetX: 40
         }
     };
-    var chartData3 = new ApexCharts(document.querySelector("#chartData3"), options);
-    chartData3.render();
+
+
+    var chartPPEIssuanceGroupWise = new ApexCharts(document.querySelector("#chartPPEIssuanceGroupWise"), options);
+    chartPPEIssuanceGroupWise.render();
 
     // Download button functionality
-    $("#LoadChart3_download").off("click").on("click", function() {
-        chartData3.dataURI().then(({
+    $("#LoadPPEIssuanceGroupWise_download").off("click").on("click", function() {
+        chartPPEIssuanceGroupWise.dataURI().then(({
             imgURI
         }) => {
             var newCanvas = document.createElement('canvas');
@@ -101,7 +88,7 @@
                 // Header text
                 ctx.fillStyle = '#203669';
                 ctx.font = '20px Arial';
-                ctx.fillText('CHART', 10, 30);
+                ctx.fillText('PPEIssuanceGroupWiseChart', 10, 30);
 
                 // Optional filter text
                 let yPos = 60;
@@ -137,7 +124,7 @@
                 newCanvas.toBlob(function(blob) {
                     var link = document.createElement('a');
                     link.href = URL.createObjectURL(blob);
-                    link.download = 'CHART.png';
+                    link.download = 'PPEIssuanceGroupWiseChart.png';
                     link.click();
                 });
             };

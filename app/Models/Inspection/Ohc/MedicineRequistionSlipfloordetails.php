@@ -4,6 +4,7 @@ namespace App\Models\Inspection\Ohc;
 
 use App\Models\Master\Employee;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
@@ -58,8 +59,8 @@ class MedicineRequistionSlipfloordetails extends Model
             'inspection_ohc_medicine_requisition_slip_floor_details.created_by as inspection_created_by',
             'inspection_ohc_medicine_requisition_slip_floor_details.created_at as inspection_created_at',
         )
-        ->leftJoin('masters_unit', 'inspection_ohc_medicine_requisition_slip_floor_details.unit', '=', 'masters_unit.id')
-        ->leftJoin('masters_department', 'inspection_ohc_medicine_requisition_slip_floor_details.department', '=', 'masters_department.id')
+            ->leftJoin('masters_unit', 'inspection_ohc_medicine_requisition_slip_floor_details.unit', '=', 'masters_unit.id')
+            ->leftJoin('masters_department', 'inspection_ohc_medicine_requisition_slip_floor_details.department', '=', 'masters_department.id')
             ->leftJoin(
                 'inspection_static_docno',
                 'inspection_ohc_medicine_requisition_slip_floor_details.document_reference_id',
@@ -74,9 +75,22 @@ class MedicineRequistionSlipfloordetails extends Model
         } else {
             $query->where('inspection_ohc_medicine_requisition_slip_floor_details.created_by', Auth::id());
         }
+        if ($request->has('from_date') && !empty($request->from_date)) {
 
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_ohc_medicine_requisition_slip_floor_details.created_at', '>=', $startDate);
+        }
+        if ($request->has('to_date') && !empty($request->to_date)) {
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_ohc_medicine_requisition_slip_floor_details.created_at', '<=', $endDate);
+        }
+        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->whereBetween('inspection_ohc_medicine_requisition_slip_floor_details.created_at', [$startDate, $endDate]);
+        }
 
-       if (isset($request->search['value']) && $request->search['value'] != '') {
+        if (isset($request->search['value']) && $request->search['value'] != '') {
             $search = $request->search['value'];
             $query = $query->where(function ($query) use ($search) {
                 $query
@@ -197,7 +211,7 @@ class MedicineRequistionSlipfloordetails extends Model
         $search = '';
         $query = $this->select(
             'inspection_ohc_medicine_requisition_slip_floor_details.*',
-          );
+        );
         $user = Auth::user();
         $userRole = string_to_array($user->role);
         // dd($query);
@@ -207,8 +221,21 @@ class MedicineRequistionSlipfloordetails extends Model
             $query->where('inspection_ohc_medicine_requisition_slip_floor_details.created_by', Auth::id());
         }
 
+        if ($request->has('from_date') && !empty($request->from_date)) {
 
-       if (isset($request->search['value']) && $request->search['value'] != '') {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_ohc_medicine_requisition_slip_floor_details.created_at', '>=', $startDate);
+        }
+        if ($request->has('to_date') && !empty($request->to_date)) {
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_ohc_medicine_requisition_slip_floor_details.created_at', '<=', $endDate);
+        }
+        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->whereBetween('inspection_ohc_medicine_requisition_slip_floor_details.created_at', [$startDate, $endDate]);
+        }
+        if (isset($request->search['value']) && $request->search['value'] != '') {
             $search = $request->search['value'];
             $query = $query->where(function ($query) use ($search) {
                 $query

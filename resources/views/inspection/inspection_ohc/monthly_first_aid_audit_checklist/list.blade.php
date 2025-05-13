@@ -25,7 +25,7 @@
                                     <div class="row">
 
 
-                                        <div class="col-md-3 mb-2">
+                                        <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
                                                 <label class="form-label require">Shift</label>
                                                 <select name="shift" id="shift" style="width: 100%"
@@ -38,7 +38,7 @@
                                                 </select>
                                             </div>
                                         </div>
-                                        <div class="col-md-3 mb-2">
+                                        <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
                                                 <label class="form-label require">Frequency</label>
                                                 <select name="frequency" id="frequency" style="width: 100%"
@@ -52,7 +52,28 @@
                                                 </select>
                                             </div>
                                         </div>
-                                        <div class="col-md-3 mt-3">
+                                        <div class="col-md-4 mb-3 form-input">
+                                            <label for="emp_name" class="form-label ">From Date</label>
+                                            <div class="input-group date form-input custom-height">
+                                                <input type="text" class="form-control " name="from_date" id="from_date"
+                                                    autocomplete="off">
+                                                <div class="input-group-addon input-group-text">
+                                                    <span class="fa fa-calendar"></span>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="col-md-4 mb-3 form-input">
+                                            <label for="emp_name" class="form-label ">To Date</label>
+                                            <div class="input-group date form-input  custom-height">
+                                                <input type="text" class="form-control " name="to_date" id="to_date"
+                                                    autocomplete="off">
+                                                <div class="input-group-addon input-group-text">
+                                                    <span class="fa fa-calendar"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 mt-3">
                                             <x-button-search></x-button-search>
                                             <x-button-reset></x-button-reset>
 
@@ -76,6 +97,7 @@
                                         <th>Shift</th>
                                         <th>Frequency</th>
                                         <th>{{ __('common.created_date') }}</th>
+                                        <th>{{ __('common.created_by') }}</th>
                                         <th>{{ __('common.action') }}</th>
                                     </tr>
                                 </thead>
@@ -99,6 +121,23 @@
             });
             flatpickr("#issue_date", {
                 dateFormat: "d-m-Y",
+            });
+            $(document).ready(function() {
+                var fromDatepicker = flatpickr("#from_date", {
+                    dateFormat: "d-m-Y",
+                    onChange: function(selectedDates) {
+                        if (selectedDates.length > 0) {
+                            var startDate = selectedDates[0];
+                            toDatepicker.set('minDate', startDate);
+                            toDatepicker.clear();
+                        }
+                    }
+                });
+
+                var toDatepicker = flatpickr("#to_date", {
+                    dateFormat: "d-m-Y",
+
+                });
             });
             $(function() {
                 /* Datatable */
@@ -138,6 +177,8 @@
                             d.rev_date = $('#rev_date').val();
                             d.shift = $('#shift').val();
                             d.frequency = $('#frequency').val();
+                            d.from_date = $('#from_date').val();
+                            d.to_date = $('#to_date').val();
                         },
                         error: function(xhr, error, code) {
                             if (xhr.status === 419) {
@@ -160,8 +201,12 @@
                             name: 'frequency'
                         },
                         {
-                            data: 'created_date',
-                            name: 'created_date'
+                            data: 'inspection_created_at',
+                            name: 'inspection_created_at'
+                        },
+                         {
+                            data: 'inspection_created_by',
+                            name: 'inspection_created_by'
                         },
                         {
                             data: 'action',
@@ -197,7 +242,8 @@
                                         rev_date = $('#rev_date').val();
                                         shift = $('#shift').val();
                                         frequency = $('#frequency').val();
-
+                                        var from_date = $('#from_date').val();
+                                        var to_date = $('#to_date').val();
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
@@ -206,6 +252,8 @@
                                             '&document_number=' + document_number +
                                             '&issue_date=' + issue_date +
                                             '&rev_date=' + rev_date +
+                                            '&from_date=' + from_date +
+                                            '&to_date=' + to_date +
                                             '&shift=' + shift +
                                             '&frequency=' + frequency
                                     }
@@ -220,6 +268,8 @@
                                         rev_date = $('#rev_date').val();
                                         status = $('#status').val();
                                         shift = $('#shift').val();
+                                        var from_date = $('#from_date').val();
+                                        var to_date = $('#to_date').val();
                                         frequency = $('#frequency').val();
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
@@ -228,6 +278,8 @@
                                             '?search=' + searchValue +
                                             '&document_number=' + document_number +
                                             '&issue_date=' + issue_date +
+                                            '&from_date=' + from_date +
+                                            '&to_date=' + to_date +
                                             '&rev_date=' + rev_date +
                                             '&shift=' + shift
                                     }

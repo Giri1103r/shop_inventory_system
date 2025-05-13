@@ -3,6 +3,7 @@
 namespace App\Models\Inspection\Fire;
 
 use App\Scopes\TrashScope;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 
@@ -101,6 +102,20 @@ class SprinklarSystemInspection extends Model
         if (isset($request->next_due) && $request->next_due) {
             $query = $query->where('inspection_fire_sprinklar_system.next_due', 'LIKE', '%' . DBdateformat($request->next_due) . '%');
         }
+        if ($request->has('from_date') && !empty($request->from_date)) {
+
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_fire_sprinklar_system.created_at', '>=', $startDate);
+        }
+        if ($request->has('to_date') && !empty($request->to_date)) {
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_fire_sprinklar_system.created_at', '<=', $endDate);
+        }
+        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->whereBetween('inspection_fire_sprinklar_system.created_at', [$startDate, $endDate]);
+        }
 
 
         if (isset($request->inspection_status) && $request->inspection_status) {
@@ -168,7 +183,7 @@ class SprinklarSystemInspection extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_fire_sprinklar_system.*', 'inspection_shift_option.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*', 'inspection_fire_sprinklar_system.id as fire_id','inspection_fire_sprinklar_system.created_by as checked_by','inspection_fire_sprinklar_system_details.*')
+        $query = $this->select('inspection_fire_sprinklar_system.*', 'inspection_shift_option.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*', 'inspection_fire_sprinklar_system.id as fire_id', 'inspection_fire_sprinklar_system.created_by as checked_by', 'inspection_fire_sprinklar_system_details.*')
             ->leftJoin('masters_location', 'inspection_fire_sprinklar_system.location', '=', 'masters_location.id')
             ->leftJoin('inspection_shift_option', 'inspection_fire_sprinklar_system.shift', '=', 'inspection_shift_option.id')
             ->leftJoin('masters_unit', 'inspection_fire_sprinklar_system.unit', '=', 'masters_unit.id')
@@ -210,10 +225,22 @@ class SprinklarSystemInspection extends Model
         if (isset($request->next_due) && $request->next_due) {
             $query = $query->where('inspection_fire_sprinklar_system.next_due', 'LIKE', '%' . DBdateformat($request->next_due) . '%');
         }
-
-
         if (isset($request->inspection_status) && $request->inspection_status) {
             $query = $query->where('inspection_fire_sprinklar_system.inspection_status', decryptId($request->inspection_status));
+        }
+        if ($request->has('from_date') && !empty($request->from_date)) {
+
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_fire_sprinklar_system.created_at', '>=', $startDate);
+        }
+        if ($request->has('to_date') && !empty($request->to_date)) {
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_fire_sprinklar_system.created_at', '<=', $endDate);
+        }
+        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->whereBetween('inspection_fire_sprinklar_system.created_at', [$startDate, $endDate]);
         }
 
         $query->orderBy('inspection_fire_sprinklar_system.id', 'DESC');

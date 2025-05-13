@@ -1,87 +1,93 @@
 <div id="iirWiseUAUC"></div>
 
 <script>
-
     var chartData = {!! json_encode($chartData) !!};
-
-
-    var series = [{
-            name: 'Total Incidents',
-            data: chartData.map(item => item.total_incident)
-        },
-        {
-            name: 'Total RCPA',
-            data: chartData.map(item => item.total_rcpa)
-        }
-    ];
-
-
-    var categories = chartData.map(item => item.incident_type_name);
-
+    var categories = chartData.map(item => item.incident_type_name); // Moved outside options
+    
     var options = {
-        series: series,
+        series: [{
+                name: 'Total Incidents',
+                data: chartData.map(item => item.total_incident)
+            },
+            {
+                name: 'Unsafe Act',
+                data: chartData.map(item => item.unsafe_act) 
+            },
+            {
+                name: 'Unsafe Condition',
+                data: chartData.map(item => item.unsafe_condition) 
+            },
+            {
+                name: 'Natural Causes',
+                data: chartData.map(item => item.natural_causes)
+            }
+        ],
         chart: {
             type: 'bar',
             height: 350,
+            stacked: true,
             toolbar: {
                 show: false
             },
+            zoom: {
+                enabled: false
+            }
         },
+        responsive: [{
+            breakpoint: 480,
+            options: {
+                legend: {
+                    position: 'bottom',
+                    offsetX: -10,
+                    offsetY: 0
+                }
+            }
+        }],
         plotOptions: {
             bar: {
                 horizontal: false,
-                columnWidth: '55%',
-                borderRadius: 5,
-                borderRadiusApplication: 'end'
-            },
-        },
-        dataLabels: {
-            enabled: false
-        },
-        stroke: {
-            show: true,
-            width: 2,
-            colors: ['transparent']
+                borderRadius: 10,
+                borderRadiusApplication: 'end',
+                borderRadiusWhenStacked: 'last',
+                dataLabels: {
+                    total: {
+                        enabled: false 
+                    }
+                }
+            }
         },
         xaxis: {
+            type: 'category',
             categories: categories,
             labels: {
-
                 rotate: -45,
                 style: {
                     fontSize: '12px'
                 }
             }
         },
-        yaxis: {
-            title: {
-                text: 'Count'
-            },
-            min: 0
+        legend: {
+            position: 'bottom',
+            horizontalAlign: 'center',
+            offsetY: 10
         },
         fill: {
             opacity: 1
         },
         tooltip: {
             y: {
-                formatter: function(val) {
-                    return val
+                formatter: function(value) {
+                    return value + " incidents";
                 }
             }
-        },
-        colors: ['#008FFB', '#00E396'], 
-        legend: {
-            position: 'bottom'
         }
     };
 
     var iirWiseUAUC = new ApexCharts(document.querySelector("#iirWiseUAUC"), options);
     iirWiseUAUC.render();
 
-    $("#iirTypewiseRCPA_download").off("click").on("click", function() {
-        iirWiseUAUC.dataURI().then(({
-            imgURI
-        }) => {
+    $("#iirTypewiseUAUC_download").off("click").on("click", function() {
+        iirWiseUAUC.dataURI().then(({ imgURI }) => {
             var newCanvas = document.createElement('canvas');
             var ctx = newCanvas.getContext('2d');
             var image = new Image();
@@ -91,16 +97,13 @@
                 let headerHeight = 120;
                 newCanvas.height = image.height + headerHeight;
 
-                // White background
                 ctx.fillStyle = 'white';
                 ctx.fillRect(0, 0, newCanvas.width, newCanvas.height);
 
-                // Header text
                 ctx.fillStyle = '#203669';
                 ctx.font = '20px Arial';
-                ctx.fillText('IIR Type wise RCPA', 10, 30);
+                ctx.fillText('IIR Type Wise UAUC', 10, 30); // More descriptive title
 
-                // Optional filter text
                 let yPos = 60;
 
                 @if (isset($getdashdata))
@@ -127,14 +130,12 @@
                     @endif
                 @endif
 
-                // Draw chart image below header
                 ctx.drawImage(image, 0, headerHeight);
 
-                // Save as image
                 newCanvas.toBlob(function(blob) {
                     var link = document.createElement('a');
                     link.href = URL.createObjectURL(blob);
-                    link.download = 'IIR Type wise RCPA.png';
+                    link.download = 'IIR Type Wise UAUC.png'; // Better filename
                     link.click();
                 });
             };

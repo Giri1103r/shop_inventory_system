@@ -25,11 +25,11 @@
                             <div class="card-body">
                                 <div class="col-md-12">
                                     <div class="row">
-                                        <div class="col-md-3 mb-3">
+                                        <div class="col-md-4 mb-3">
                                             <div class="form-group form-input">
                                                 <label for="unit_id" class="form-label require">Unit</label>
-                                                <select name="unit_id" id="unit_id"
-                                                    class="form-control single-select" style="width: 100%">
+                                                <select name="unit_id" id="unit_id" class="form-control single-select"
+                                                    style="width: 100%">
                                                     <option value="">Select Unit</option>
                                                     @foreach ($unitList as $unit)
                                                         <option value="{{ encryptId($unit->id) }}">
@@ -38,9 +38,29 @@
                                                 </select>
                                             </div>
                                         </div>
+                                        <div class="col-md-4 mb-3 form-input">
+                                            <label for="emp_name" class="form-label ">From Date</label>
+                                            <div class="input-group date form-input custom-height">
+                                                <input type="text" class="form-control " name="from_date" id="from_date"
+                                                    autocomplete="off">
+                                                <div class="input-group-addon input-group-text">
+                                                    <span class="fa fa-calendar"></span>
+                                                </div>
+                                            </div>
 
+                                        </div>
+                                        <div class="col-md-4 mb-3 form-input">
+                                            <label for="emp_name" class="form-label ">To Date</label>
+                                            <div class="input-group date form-input  custom-height">
+                                                <input type="text" class="form-control " name="to_date" id="to_date"
+                                                    autocomplete="off">
+                                                <div class="input-group-addon input-group-text">
+                                                    <span class="fa fa-calendar"></span>
+                                                </div>
+                                            </div>
+                                        </div>
                                         <!-- Department Selection -->
-                                        <div class="col-md-3 mb-3">
+                                        <div class="col-md-4 mb-3">
                                             <div class="form-group form-input">
                                                 <label class="form-label require">Department</label>
                                                 <select name="department_id" id="department_id"
@@ -52,7 +72,7 @@
                                         </div>
 
                                         <!-- Employee Name Selection -->
-                                        <div class="col-md-3 mb-3">
+                                        <div class="col-md-4 mb-3">
                                             <div class="form-group form-input">
                                                 <label class="form-label require">Employee Name</label>
                                                 <select name="emp_name" id="emp_name"
@@ -63,16 +83,15 @@
                                             </div>
                                         </div>
 
-                                        <div class="col-md-3 mb-3">
+                                        <div class="col-md-4 mb-3">
                                             <div class="form-group form-input">
                                                 <label class="form-label require">Enter Number</label>
-                                                <input type="text" name="number" id="number"
-                                                    class="form-control">
+                                                <input type="text" name="number" id="number" class="form-control">
                                             </div>
                                         </div>
 
 
-                                        <div class="col-md-3 mb-3 form-input">
+                                        <div class="col-md-4 mb-3 form-input">
                                             <label for="status" class="form-label ">{{ __('common.status') }}</label>
                                             <select name="status" id="status" style="width: 100%"
                                                 class="form-control single-select">
@@ -81,7 +100,7 @@
                                                 <option value="{{ encryptId(0) }}">In-Active</option>
                                             </select>
                                         </div>
-                                        <div class="col-md-3 mt-3">
+                                        <div class="col-md-4 mt-3">
                                             <x-button-search></x-button-search>
                                             <x-button-reset></x-button-reset>
 
@@ -120,13 +139,30 @@
         </div>
 
 
-@stop
+    @stop
 
     @push('script')
         <script type="text/javascript">
             $(document).ready(function() {
                 var firstTh = $('.datatable-list thead th:first');
                 firstTh.removeClass('sorting_asc');
+            });
+            $(document).ready(function() {
+                var fromDatepicker = flatpickr("#from_date", {
+                    dateFormat: "d-m-Y",
+                    onChange: function(selectedDates) {
+                        if (selectedDates.length > 0) {
+                            var startDate = selectedDates[0];
+                            toDatepicker.set('minDate', startDate);
+                            toDatepicker.clear();
+                        }
+                    }
+                });
+
+                var toDatepicker = flatpickr("#to_date", {
+                    dateFormat: "d-m-Y",
+
+                });
             });
 
 
@@ -148,8 +184,7 @@
                             });
                             $('#department_id').trigger('change');
                         },
-                        error: function(xhr) {
-                        }
+                        error: function(xhr) {}
                     });
                 } else {
                     $('#department_id').empty().append('<option value="">Select Department Name</option>');
@@ -176,7 +211,8 @@
 
                             if (response.employee && response.employee.length > 0) {
                                 $.each(response.employee, function(index, employee) {
-                                    empSelect.append('<option value="' + employee.id + '">' + employee.emp_name + '</option>');
+                                    empSelect.append('<option value="' + employee.id + '">' +
+                                        employee.emp_name + '</option>');
                                 });
                             } else {
                                 empSelect.append('<option value="">No Employees Found</option>');
@@ -184,8 +220,7 @@
 
                             empSelect.trigger('change');
                         },
-                        error: function(xhr) {
-                        }
+                        error: function(xhr) {}
                     });
                 } else {
                     $('#emp_name').empty().append('<option value="">Select Employee</option>').trigger('change');
@@ -230,6 +265,8 @@
                             d.emp_name_id = $('#emp_name').val();
                             d.number = $('#number').val();
                             d.status = $('#status').val();
+                            d.from_date = $('#from_date').val();
+                            d.to_date = $('#to_date').val();
 
                         },
                         error: function(xhr, error, code) {
@@ -302,7 +339,8 @@
                                         emp_name_id = $('#emp_name').val();
                                         number = $('#number').val();
                                         status = $('#status').val();
-
+                                        var from_date = $('#from_date').val();
+                                        var to_date = $('#to_date').val();
 
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
@@ -311,6 +349,8 @@
                                             '?search=' + searchValue +
                                             '&unit_id=' + unit_id +
                                             '&department_id=' + department_id +
+                                            '&from_date=' + from_date +
+                                            '&to_date=' + to_date +
                                             '&emp_name_id=' + emp_name_id +
                                             '&number=' + number +
                                             '&status=' + status
@@ -326,6 +366,9 @@
                                         emp_name_id = $('#emp_name').val();
                                         status = $('#status').val();
                                         number = $('#number').val();
+                                        var from_date = $('#from_date').val();
+                                        var to_date = $('#to_date').val();
+
 
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
@@ -333,6 +376,8 @@
                                             "{{ admin_url('ohc/current-new-ext-code-dialing/export/excel') }}" +
                                             '?search=' + searchValue +
                                             '&unit_id=' + unit_id +
+                                            '&from_date=' + from_date +
+                                            '&to_date=' + to_date +
                                             '&department_id=' + department_id +
                                             '&emp_name_id=' + emp_name_id +
                                             '&number=' + number +
@@ -372,7 +417,8 @@
                     var id = $(this).data('id');
                     var types = $(this).data('type');
                     if (types == 1) {
-                        var title = '{{ __('Do You want to In-Activate Current New Ext Code Dailing  Detail') }}';
+                        var title =
+                            '{{ __('Do You want to In-Activate Current New Ext Code Dailing  Detail') }}';
                         var text = '{{ __('common.inactive') }}';
                         var btncolor = '#dc3545'
 

@@ -88,8 +88,8 @@ class MedicalRequisitionSlipController extends Controller
                             }
                             return $text;
                         })
-                        ->addColumn('created_date', function ($row) {
-                            return Displaydateformat($row->created_at);
+                        ->addColumn('inspection_created_at', function ($row) {
+                            return Displaydateformat($row->inspection_created_at);
                         })
                         ->addColumn('unit', function ($row) {
                             return getUnitname($row->unit);
@@ -542,7 +542,7 @@ class MedicalRequisitionSlipController extends Controller
                     $getmedicalassistants = $getmedicalassistant->pluck('id')->toArray();
                     $details = $this->medicine_requisition_floor_details->Selectone($id);
                     $mailsubject = 'Medicine Requistion Slip Floor approved';
-                    if(!empty( $getmedicalassistant)){
+                    if(!empty($getmedicalassistant) || !empty( $getsafetyofficer)){
                         $notificationData = array(
                             'notification_type' => OHC_INSPECTION,
                             'module_type' => 3,

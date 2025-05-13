@@ -3,6 +3,7 @@
 namespace App\Models\Inspection\Fire;
 
 use App\Scopes\TrashScope;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 
@@ -102,10 +103,22 @@ class FireAlarmInspection extends Model
         if (isset($request->next_due) && $request->next_due) {
             $query = $query->where('inspection_fire_fire_alarm.next_due', 'LIKE', '%' . DBdateformat($request->next_due) . '%');
         }
-
-
         if (isset($request->inspection_status) && $request->inspection_status) {
             $query = $query->where('inspection_fire_fire_alarm.inspection_status', decryptId($request->inspection_status));
+        }
+        if ($request->has('from_date') && !empty($request->from_date)) {
+
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_fire_fire_alarm.created_at', '>=', $startDate);
+        }
+        if ($request->has('to_date') && !empty($request->to_date)) {
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_fire_fire_alarm.created_at', '<=', $endDate);
+        }
+        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->whereBetween('inspection_fire_fire_alarm.created_at', [$startDate, $endDate]);
         }
 
         if (isset($request->order) && count($request->order) > 0) {
@@ -169,7 +182,7 @@ class FireAlarmInspection extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_fire_fire_alarm.*', 'inspection_shift_option.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*', 'inspection_fire_fire_alarm.id as fire_id','inspection_fire_fire_alarm.created_by as checked_by','inspection_static_docno.*','inspection_fire_fire_alarm_details.*')
+        $query = $this->select('inspection_fire_fire_alarm.*', 'inspection_shift_option.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*', 'inspection_fire_fire_alarm.id as fire_id', 'inspection_fire_fire_alarm.created_by as checked_by', 'inspection_static_docno.*', 'inspection_fire_fire_alarm_details.*')
             ->leftJoin('masters_location', 'inspection_fire_fire_alarm.location', '=', 'masters_location.id')
             ->leftJoin('inspection_shift_option', 'inspection_fire_fire_alarm.shift', '=', 'inspection_shift_option.id')
             ->leftJoin('masters_unit', 'inspection_fire_fire_alarm.unit', '=', 'masters_unit.id')
@@ -211,10 +224,22 @@ class FireAlarmInspection extends Model
         if (isset($request->next_due) && $request->next_due) {
             $query = $query->where('inspection_fire_fire_alarm.next_due', 'LIKE', '%' . DBdateformat($request->next_due) . '%');
         }
-
-
         if (isset($request->inspection_status) && $request->inspection_status) {
             $query = $query->where('inspection_fire_fire_alarm.inspection_status', decryptId($request->inspection_status));
+        }
+        if ($request->has('from_date') && !empty($request->from_date)) {
+
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_fire_fire_alarm.created_at', '>=', $startDate);
+        }
+        if ($request->has('to_date') && !empty($request->to_date)) {
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_fire_fire_alarm.created_at', '<=', $endDate);
+        }
+        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->whereBetween('inspection_fire_fire_alarm.created_at', [$startDate, $endDate]);
         }
         $query->orderBy('inspection_fire_fire_alarm.id', 'DESC');
 

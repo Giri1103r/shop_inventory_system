@@ -2,6 +2,7 @@
 
 namespace App\Models\Inspection\Ohc;
 
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 
@@ -46,6 +47,7 @@ class MonthlyMedicineStore extends Model
                     ->orWhere('inspection_ohc_medicine_store_inspection.next_due', 'LIKE', '%' . $search . '%');
             });
         }
+
         $user = Auth::user();
         $userRole = string_to_array($user->role);
         $empId = $user->employee_id;
@@ -64,7 +66,20 @@ class MonthlyMedicineStore extends Model
             $query = $query->whereDate('inspection_ohc_medicine_store_inspection.next_due', $formattedDate);
         }
 
+  if ($request->has('from_date') && !empty($request->from_date)) {
 
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_ohc_medicine_store_inspection.created_at', '>=', $startDate);
+        }
+        if ($request->has('to_date') && !empty($request->to_date)) {
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_ohc_medicine_store_inspection.created_at', '<=', $endDate);
+        }
+        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->whereBetween('inspection_ohc_medicine_store_inspection.created_at', [$startDate, $endDate]);
+        }
         if ($request->has('status') && $request->status) {
 
             $query = $query->where('inspection_ohc_medicine_store_inspection.inspection_status',  decryptId($request->status));
@@ -140,7 +155,20 @@ class MonthlyMedicineStore extends Model
             $formattedDate = DBdateformat($request->inspection_date);
             $query = $query->whereDate('inspection_ohc_medicine_store_inspection.inspection_date', $formattedDate);
         }
+        if ($request->has('from_date') && !empty($request->from_date)) {
 
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_ohc_medicine_store_inspection.created_at', '>=', $startDate);
+        }
+        if ($request->has('to_date') && !empty($request->to_date)) {
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_ohc_medicine_store_inspection.created_at', '<=', $endDate);
+        }
+        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->whereBetween('inspection_ohc_medicine_store_inspection.created_at', [$startDate, $endDate]);
+        }
         if ($request->has('next_due') && $request->next_due) {
             $formattedDate = DBdateformat($request->next_due);
             $query = $query->whereDate('inspection_ohc_medicine_store_inspection.next_due', $formattedDate);

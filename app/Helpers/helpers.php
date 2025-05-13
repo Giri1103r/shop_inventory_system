@@ -15,6 +15,7 @@ use App\Models\Master\UserRole;
 use App\Models\IMS\Incident\Rcpa;
 use App\Models\Master\Department;
 use App\Models\Master\PpeRequest;
+use App\Models\Master\TypeofWork;
 use Illuminate\Support\Facades\DB;
 use App\Models\Master\ForkLiftType;
 use App\Models\Master\PpeExemption;
@@ -65,13 +66,15 @@ use App\Models\Inspection\Master\ChecklistSubTypeDataName;
 use App\Models\Inspection\Ohc\MonthlyFirstAidboxChecklist;
 use App\Models\Inspection\GembaWalk\GembaWalkChecklistFile;
 use App\Models\Inspection\Ohc\MedicineRequisitionSlipFloor;
+use App\Models\Inspection\Environment\AmbientNoiseMonitoring;
 use App\Models\Inspection\Ohc\MedicineRequistionFdoChecklist;
 use App\Models\Inspection\Safety\MonthlyPhysicalEquipmentList;
+use App\Models\Inspection\Safety\SafetyWalkObservationDetails;
 use App\Models\Inspection\Fire\EmergencyLightInspectionDetails;
 use App\Models\Inspection\Fire\MonthlyPhysicalInspectionFileUpload;
 use App\Models\Inspection\MSDS\Master\Chemical;
 use App\Models\Inspection\MSDS\Master\NFARating;
-use App\Models\Inspection\Safety\SafetyWalkObservationDetails;
+use App\Models\Master\PpeStockinventory;
 
 if (!function_exists('get_encryptVal')) {
 
@@ -2346,19 +2349,19 @@ if (!function_exists('getMonth')) {
                         return $name->file_path;
                     }
 
-                    case DAILY_FIRE_PUMP:
-                        $name = FireSignatureUpload::where('emp_id', $userid)->where('inspection_id', $id)->where('type', DAILY_FIRE_PUMP)
-                            ->where('status', 1)->where('trash', 'NO')->first();
+                case DAILY_FIRE_PUMP:
+                    $name = FireSignatureUpload::where('emp_id', $userid)->where('inspection_id', $id)->where('type', DAILY_FIRE_PUMP)
+                        ->where('status', 1)->where('trash', 'NO')->first();
 
+                    if ($name == null) {
+                        $name = User::where('id', $userid)->first();
                         if ($name == null) {
-                            $name = User::where('id', $userid)->first();
-                            if ($name == null) {
-                                return null;
-                            }
-                            return $name->signature_upload;
-                        } else {
-                            return $name->file_path;
+                            return null;
                         }
+                        return $name->signature_upload;
+                    } else {
+                        return $name->file_path;
+                    }
             }
         }
     }
@@ -2968,5 +2971,257 @@ function GetLastMonthDetails($lastMonthObservationDetails)
     return false;
 }
 
+// Inspection Count DashBoard Helper
+if (!function_exists('InspectionCount')) {
+    function InspectionCount($from_date, $to_date)
+    {
+        $group_wise_models = [
+            'Environment' => [
+                \App\Models\Inspection\Environment\AmbientAirMonitoring::class,
+                \App\Models\Inspection\Environment\AmbientNoiseMonitoring::class,
+                \App\Models\Inspection\Environment\DgSetStackEmissionMonitoring::class,
+                \App\Models\Inspection\Environment\LuxMonitoring::class,
+                \App\Models\Inspection\Environment\WorkNoiseMonitoring::class,
+                \App\Models\Inspection\Environment\WorkZoneAirMonitoring::class,
+            ],
 
+            'Fire' => [
+                \App\Models\Inspection\Fire\CartridgeTypeFireExtinguisher::class,
+                \App\Models\Inspection\Fire\CoTypeFireExtinguisher::class,
+                \App\Models\Inspection\Fire\DailyFireHouseInspection::class,
+                \App\Models\Inspection\Fire\DetectorInspection::class,
+                \App\Models\Inspection\Fire\EmergencyLightInspection::class,
+                \App\Models\Inspection\Fire\FireAlarmInspection::class,
+                \App\Models\Inspection\Fire\FireCheckListFollowUp::class,
+                \App\Models\Inspection\Fire\FireExtinguisher::class,
+                \App\Models\Inspection\Fire\FireMockDrillInspection::class,
+                \App\Models\Inspection\Fire\FireModularInspection::class,
+                \App\Models\Inspection\Fire\HooterInspection::class,
+                \App\Models\Inspection\Fire\HoseBoxInspection::class,
+                \App\Models\Inspection\Fire\HoseReelHoseInspection::class,
+                \App\Models\Inspection\Fire\HydrantRiserInspection::class,
+                \App\Models\Inspection\Fire\IsolationValve::class,
+                \App\Models\Inspection\Fire\MonthlyFirePumpHouseInspection::class,
+                \App\Models\Inspection\Fire\MonthlyPhysicalInspection::class,
+                \App\Models\Inspection\Fire\PASystemInspection::class,
+                \App\Models\Inspection\Fire\SandBucketInspection::class,
+                \App\Models\Inspection\Fire\SprinklarSystemInspection::class,
+                \App\Models\Inspection\Fire\Fire::class,
+            ],
+
+            'GembaWalk' => [
+                \App\Models\Inspection\GembaWalk\GembaWalk::class
+            ],
+
+            'MSDS' => [
+                \App\Models\Inspection\MSDS\MSDSDetails::class
+            ],
+
+            'RRAA' => [
+                \App\Models\Inspection\RRAA\RRAADetails::class,
+            ],
+
+            'Safety' => [
+                App\Models\Inspection\Safety\FireSafetyEquipment::class,
+                App\Models\Inspection\Safety\ForkLiftInspection::class,
+                App\Models\Inspection\Safety\MonthlyEyeWashInspection::class,
+                App\Models\Inspection\Safety\MonthlyForkLiftInspection::class,
+                App\Models\Inspection\Safety\OHSPlantSummaryReport::class,
+                App\Models\Inspection\Safety\SafetyGalleryInspection::class,
+                App\Models\Inspection\Safety\SafetyWalkObservation::class,
+            ],
+
+            'Ohc' => [
+                App\Models\Inspection\Ohc\CurrentNewExtCodeDialing::class,
+                App\Models\Inspection\Ohc\DailyDepartmentFirstAidBox::class,
+                App\Models\Inspection\Ohc\DailyVitalEquipment::class,
+                App\Models\Inspection\Ohc\EmergencyBuyerFirstAidChecklist::class,
+                App\Models\Inspection\Ohc\FirstAidBagChecklist::class,
+                App\Models\Inspection\Ohc\FirstAiderList::class,
+                App\Models\Inspection\Ohc\FirstAidMedicineInspection::class,
+                App\Models\Inspection\Ohc\FirstAidRecordChecklist::class,
+                App\Models\Inspection\Ohc\FloorStretcher::class,
+                App\Models\Inspection\Ohc\HealthInstrumentCalibrationDetails::class,
+                App\Models\Inspection\Ohc\MedicineRequistionSlipfdodetails::class,
+                App\Models\Inspection\Ohc\MedicineRequistionSlipfloordetails::class,
+                App\Models\Inspection\Ohc\MonthlyFirstAidbox::class,
+                App\Models\Inspection\Ohc\MonthlyMedicineStore::class,
+                App\Models\Inspection\Ohc\OccupationHealthInspection::class,
+                App\Models\Inspection\Ohc\OHCHygieneCleaningChecklist::class,
+                // App\Models\Inspection\Ohc\PhysicalHealthExamination::class,
+                App\Models\Inspection\Ohc\SafetyPettyDetails::class,
+                App\Models\Inspection\Ohc\WeeklyAmbulance::class,
+                App\Models\Inspection\Ohc\WeeklyFirstAidBox::class,
+            ]
+        ];
+        
+        $applyDateFilter = function ($query) use ($from_date, $to_date) {
+            if (!empty($from_date)) {
+                $query->whereDate('created_at', '>=', DBDateformat($from_date));
+            }
+            if (!empty($to_date)) {
+                $query->whereDate('created_at', '<=', DBDateformat($to_date));
+            }
+            return $query;
+        };
+
+        $groupCounts = [];
+        $grandTotal = 0;
+
+        foreach ($group_wise_models as $groupName => $models) {
+            $total = 0;
+
+            foreach ($models as $modelClass) {
+                $query = $modelClass::where('status', 1)->where('trash', 'NO');
+                $count = $applyDateFilter($query)->count();
+                $total += $count;
+            }
+
+            $groupCounts[$groupName] = $total;
+            $grandTotal += $total;
+        }
+
+        return $groupCounts;
+    }
+}
+
+
+// Get PTW Types 
+if(!function_exists('GetPTWTypes'))
+{
+    function GetPTWTypes()
+    {
+        $data = TypeofWork::where('status',1)->where('trash','NO')->get();
+
+        $details = [];
+
+        foreach($data as $data){
+            $details[] = [
+                'id' => $data->id,
+                'work_name' => $data->work_name,
+            ];
+        }
+
+        return $details;
+        
+    }
+}
+function getPPERequestChartData($form_date, $to_date)
+{
+    $query = PpeRequest::selectRaw('unit_id, COUNT(*) as total')
+        ->groupBy('unit_id');
+
+    if (!empty($form_date)) {
+        $query->whereDate('created_at', '>=', DBdateformat($form_date));
+    }
+
+    if (!empty($to_date)) {
+        $query->whereDate('created_at', '<=', DBdateformat($to_date));
+    }
+
+    $rawData = $query->get();
+
+    $labels = [];
+    $series = [];
+
+    foreach ($rawData as $row) {
+        $labels[] = getUnitname($row->unit_id);
+        $series[] = $row->total;
+    }
+
+    return [
+        'labels' => $labels,
+        'series' => $series,
+    ];
+}
+
+function getPTWAvgTimeChartData($form_date, $to_date)
+{
+    $query = SafetyPermit::where('permit_status',STATUS_CLOSED);
+
+    if (!empty($form_date)) {
+        $query->whereDate('created_at', '>=', DBdateformat($form_date));
+    }
+    
+    if (!empty($to_date)) {
+        $query->whereDate('created_at', '<=', DBdateformat($to_date));
+    }
+    
+    $rawData = $query->selectRaw('unit_id, AVG(TIMESTAMPDIFF(SECOND, created_at, updated_at)) as avg_duration')
+        ->groupBy('unit_id')
+        ->get();
+    
+
+    $labels = [];
+    $series = [];
+
+    foreach ($rawData as $row) {
+        $labels[] = getUnitname($row->unit_id);
+        $series[] = round($row->avg_duration / 60, 2); // convert seconds to minutes
+    }
+
+    return [
+        'labels' => $labels,
+        'series' => $series,
+    ];
+}
+
+
+function getHazardUnitChartData($form_date, $to_date)
+{
+    $query = PpeRequest::selectRaw('unit_id, COUNT(*) as total')
+        ->groupBy('unit_id');
+
+    if (!empty($form_date)) {
+        $query->whereDate('created_at', '>=', DBdateformat($form_date));
+    }
+
+    if (!empty($to_date)) {
+        $query->whereDate('created_at', '<=', DBdateformat($to_date));
+    }
+
+    $rawData = $query->get();
+
+    $labels = [];
+    $series = [];
+
+    foreach ($rawData as $row) {
+        $labels[] = getUnitname($row->unit_id);
+        $series[] = $row->total;
+    }
+
+    return [
+        'labels' => $labels,
+        'series' => $series,
+    ];
+}
+
+function getPPEAvailabilityChartData($form_date, $to_date)
+{
+    $query = PpeStockinventory::selectRaw('sub, SUM(quantity) as total_quantity')
+        ->groupBy('sub');
+
+    if (!empty($form_date)) {
+        $query->whereDate('created_at', '>=', DBdateformat($form_date));
+    }
+
+    if (!empty($to_date)) {
+        $query->whereDate('created_at', '<=', DBdateformat($to_date));
+    }
+
+    $rawData = $query->get();
+
+    $labels = [];
+    $series = [];
+
+    foreach ($rawData as $row) {
+        $labels[] = ($row->sub);
+        $series[] = (int) $row->total_quantity;
+    }
+
+    return [
+        'labels' => $labels,
+        'series' => $series,
+    ];
+}
 

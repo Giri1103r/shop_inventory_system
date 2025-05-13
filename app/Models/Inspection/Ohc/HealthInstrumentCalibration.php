@@ -1,8 +1,9 @@
 <?php
 
 namespace App\Models\Inspection\Ohc;
-use App\Scopes\TrashScope;
 
+use App\Scopes\TrashScope;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 
@@ -29,13 +30,14 @@ class HealthInstrumentCalibration extends Model
     ];
 
 
-    public function list(){
+    public function list()
+    {
 
         $request = request();
         $search = '';
-         
-        $query = $this->select('inspection_ohc_health_instrument_calibration_track_sheet.*','masters_unit.unit_name')
-                      ->leftjoin('masters_unit','masters_unit.id','=','inspection_ohc_health_instrument_calibration_track_sheet.unit_id');
+
+        $query = $this->select('inspection_ohc_health_instrument_calibration_track_sheet.*', 'inspection_ohc_health_instrument_calibration_track_sheet.created_at as inspection_created_at', 'inspection_ohc_health_instrument_calibration_track_sheet.created_at as inspection_created_by', 'masters_unit.unit_name')
+            ->leftjoin('masters_unit', 'masters_unit.id', '=', 'inspection_ohc_health_instrument_calibration_track_sheet.unit_id');
 
         $org_total =  $query;
         $org_total_counts = $org_total->count();
@@ -48,7 +50,20 @@ class HealthInstrumentCalibration extends Model
                     ->orWhere('masters_unit.unit_name', 'LIKE', '%' . $search . '%');
             });
         }
+        if ($request->has('from_date') && !empty($request->from_date)) {
 
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_ohc_health_instrument_calibration_track_sheet.created_at', '>=', $startDate);
+        }
+        if ($request->has('to_date') && !empty($request->to_date)) {
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_ohc_health_instrument_calibration_track_sheet.created_at', '<=', $endDate);
+        }
+        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->whereBetween('inspection_ohc_health_instrument_calibration_track_sheet.created_at', [$startDate, $endDate]);
+        }
         if ($request->has('health_instrument_id') && $request->health_instrument_id) {
             $query = $query->where('inspection_ohc_health_instrument_calibration_track_sheet.health_auto_id', 'LIKE', '%' . $request->health_instrument_id . '%');
         }
@@ -80,10 +95,10 @@ class HealthInstrumentCalibration extends Model
             'filter_records' => $total_records,
         );
         return $datas;
-
     }
 
-    public function store(){
+    public function store()
+    {
 
         $request = request();
         $insert_array = array(
@@ -96,19 +111,21 @@ class HealthInstrumentCalibration extends Model
     }
 
 
-    public function selectOne($id){
-           $data = $this->select(
-            'inspection_ohc_health_instrument_calibration_track_sheet.id as instrument_id', 
-            'inspection_ohc_health_instrument_calibration_track_sheet_details.id as instrument_detail_id', 
-            'inspection_ohc_health_instrument_calibration_track_sheet.*','inspection_ohc_health_instrument_calibration_track_sheet_details.*')
-            ->leftjoin('inspection_ohc_health_instrument_calibration_track_sheet_details','inspection_ohc_health_instrument_calibration_track_sheet_details.health_instrument_id','=','inspection_ohc_health_instrument_calibration_track_sheet.id')
-            ->where('inspection_ohc_health_instrument_calibration_track_sheet.id',$id)
+    public function selectOne($id)
+    {
+        $data = $this->select(
+            'inspection_ohc_health_instrument_calibration_track_sheet.id as instrument_id',
+            'inspection_ohc_health_instrument_calibration_track_sheet_details.id as instrument_detail_id',
+            'inspection_ohc_health_instrument_calibration_track_sheet.*',
+            'inspection_ohc_health_instrument_calibration_track_sheet_details.*'
+        )
+            ->leftjoin('inspection_ohc_health_instrument_calibration_track_sheet_details', 'inspection_ohc_health_instrument_calibration_track_sheet_details.health_instrument_id', '=', 'inspection_ohc_health_instrument_calibration_track_sheet.id')
+            ->where('inspection_ohc_health_instrument_calibration_track_sheet.id', $id)
             ->get();
-            return $data;
-                  
+        return $data;
     }
 
-     public function getDocumentId($id)
+    public function getDocumentId($id)
     {
         return $this->where('id', $id)->first();
     }
@@ -117,19 +134,33 @@ class HealthInstrumentCalibration extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_ohc_health_instrument_calibration_track_sheet.*','inspection_ohc_health_instrument_calibration_track_sheet_details.*','masters_unit.unit_name','inspection_ohc_health_instrument_calibration_track_sheet.id as instrument_id','inspection_ohc_health_instrument_calibration_track_sheet_details.id as instrument_detail_id','inspection_static_docno.*')
-        ->leftjoin('inspection_ohc_health_instrument_calibration_track_sheet_details','inspection_ohc_health_instrument_calibration_track_sheet_details.health_instrument_id','=','inspection_ohc_health_instrument_calibration_track_sheet.id')
-        ->leftjoin('masters_unit','masters_unit.id','=','inspection_ohc_health_instrument_calibration_track_sheet.unit_id')
-        ->leftJoin('inspection_static_docno', 'inspection_ohc_health_instrument_calibration_track_sheet.document_reference_id', '=', 'inspection_static_docno.id');
+        $query = $this->select('inspection_ohc_health_instrument_calibration_track_sheet.*', 'inspection_ohc_health_instrument_calibration_track_sheet_details.*', 'masters_unit.unit_name', 'inspection_ohc_health_instrument_calibration_track_sheet.id as instrument_id', 'inspection_ohc_health_instrument_calibration_track_sheet_details.id as instrument_detail_id', 'inspection_static_docno.*')
+            ->leftjoin('inspection_ohc_health_instrument_calibration_track_sheet_details', 'inspection_ohc_health_instrument_calibration_track_sheet_details.health_instrument_id', '=', 'inspection_ohc_health_instrument_calibration_track_sheet.id')
+            ->leftjoin('masters_unit', 'masters_unit.id', '=', 'inspection_ohc_health_instrument_calibration_track_sheet.unit_id')
+            ->leftJoin('inspection_static_docno', 'inspection_ohc_health_instrument_calibration_track_sheet.document_reference_id', '=', 'inspection_static_docno.id');
 
         if ($request->search != null || $request->search != '') {
             $search = $request->search;
-            
+
             $query->where(function ($query) use ($search) {
                 $query
                     ->orWhere('inspection_ohc_health_instrument_calibration_track_sheet.health_auto_id', 'LIKE', '%' . $search . '%')
                     ->orWhere('masters_unit.unit_name', 'LIKE', '%' . $search . '%');
             });
+        }
+          if ($request->has('from_date') && !empty($request->from_date)) {
+
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_ohc_health_instrument_calibration_track_sheet.created_at', '>=', $startDate);
+        }
+        if ($request->has('to_date') && !empty($request->to_date)) {
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_ohc_health_instrument_calibration_track_sheet.created_at', '<=', $endDate);
+        }
+        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->whereBetween('inspection_ohc_health_instrument_calibration_track_sheet.created_at', [$startDate, $endDate]);
         }
         if ($request->has('health_instrument_id') && $request->health_instrument_id) {
             $query = $query->where('inspection_ohc_health_instrument_calibration_track_sheet.health_auto_id', 'LIKE', '%' . $request->health_instrument_id . '%');
@@ -179,4 +210,3 @@ class HealthInstrumentCalibration extends Model
         });
     }
 }
-

@@ -64,6 +64,29 @@
                                                 <div class="error">{{ $message }}</div>
                                             @enderror
                                         </div>
+
+                                         <div class="col-md-4 mb-3 form-input">
+                                            <label for="emp_name" class="form-label ">From Date</label>
+                                            <div class="input-group date form-input custom-height">
+                                                <input type="text" class="form-control " name="from_date" id="from_date"
+                                                    autocomplete="off">
+                                                <div class="input-group-addon input-group-text">
+                                                    <span class="fa fa-calendar"></span>
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                        <div class="col-md-4 mb-3 form-input">
+                                            <label for="emp_name" class="form-label ">To Date</label>
+                                            <div class="input-group date form-input  custom-height">
+                                                <input type="text" class="form-control " name="to_date"
+                                                    id="to_date" autocomplete="off">
+                                                <div class="input-group-addon input-group-text">
+                                                    <span class="fa fa-calendar"></span>
+                                                </div>
+                                            </div>
+                                        </div>
                                         <div class="col-md-3 mt-3">
                                             <x-button-search></x-button-search>
                                             <x-button-reset></x-button-reset>
@@ -114,6 +137,23 @@
                     dateFormat: "d-m-Y",
                 });
 
+                var fromDatepicker = flatpickr("#from_date", {
+                    dateFormat: "d-m-Y",
+                    onChange: function(selectedDates) {
+                        if (selectedDates.length > 0) {
+                            var startDate = selectedDates[0];
+                            toDatepicker.set('minDate', startDate);
+                            toDatepicker.clear();
+                        }
+                    }
+
+                })
+
+                var toDatepicker = flatpickr("#to_date", {
+                    dateFormat: "d-m-Y",
+
+                });
+
             });
 
             $(function() {
@@ -152,6 +192,8 @@
                             d.inspection_date = $('#inspection_date').val();
                             d.location_id = $('#location_id').val();
                             d.unit_id = $('#unit_id').val();
+                             d.from_date = $('#from_date').val();
+                            d.to_date = $('#to_date').val();
                         },
                         error: function(xhr, error, code) {
                             if (xhr.status === 419) {
@@ -210,6 +252,8 @@
                                         inspection_date = $('#inspection_date').val();
                                         location_id = $('#location_id').val();
                                         unit_id = $('#unit_id').val();
+                                           var from_date = $('#from_date').val();
+                                        var to_date = $('#to_date').val();
 
 
                                         $(".dt-button").removeClass('processing');
@@ -219,6 +263,8 @@
                                             '?search=' + searchValue +
                                             '&inspection_date=' + inspection_date +
                                             '&location_id=' + location_id +
+                                             '&from_date=' + from_date +
+                                            '&to_date=' + to_date +
                                             '&unit_id=' + unit_id
                                     }
                                 },
@@ -230,6 +276,8 @@
                                         inspection_date = $('#inspection_date').val();
                                         location_id = $('#location_id').val();
                                         unit_id = $('#unit_id').val();
+                                           var from_date = $('#from_date').val();
+                                        var to_date = $('#to_date').val();
 
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
@@ -238,6 +286,8 @@
                                             '?search=' + searchValue +
                                             '&inspection_date=' + inspection_date +
                                             '&location_id=' + location_id +
+                                             '&from_date=' + from_date +
+                                            '&to_date=' + to_date +
                                             '&unit_id=' + unit_id
                                     }
                                 },

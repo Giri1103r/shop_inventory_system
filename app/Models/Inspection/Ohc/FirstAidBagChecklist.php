@@ -2,6 +2,7 @@
 
 namespace App\Models\Inspection\Ohc;
 
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 
@@ -36,7 +37,7 @@ class FirstAidBagChecklist extends Model
         $request = request();
         $search = '';
 
-        $query = $this->select('inspection_ohc_first_aid_bag_inspection.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*', 'inspection_ohc_first_aid_bag_inspection.id as inspection_id', 'inspection_ohc_first_aid_bag_inspection.created_by as checked_by', 'inspection_shift_option.*')
+        $query = $this->select('inspection_ohc_first_aid_bag_inspection.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*', 'inspection_ohc_first_aid_bag_inspection.id as inspection_id' , 'inspection_ohc_first_aid_bag_inspection.created_at as inspection_created_at', 'inspection_ohc_first_aid_bag_inspection.created_by as checked_by', 'inspection_shift_option.*')
             ->leftJoin('masters_location', 'inspection_ohc_first_aid_bag_inspection.location', '=', 'masters_location.id')
             ->leftJoin('masters_unit', 'inspection_ohc_first_aid_bag_inspection.unit', '=', 'masters_unit.id')
             ->leftJoin('inspection_shift_option', 'inspection_ohc_first_aid_bag_inspection.shift_id', '=', 'inspection_shift_option.id')
@@ -58,6 +59,20 @@ class FirstAidBagChecklist extends Model
             });
         }
 
+        if ($request->has('from_date') && !empty($request->from_date)) {
+
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_ohc_first_aid_bag_inspection.created_at', '>=', $startDate);
+        }
+        if ($request->has('to_date') && !empty($request->to_date)) {
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_ohc_first_aid_bag_inspection.created_at', '<=', $endDate);
+        }
+        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->whereBetween('inspection_ohc_first_aid_bag_inspection.created_at', [$startDate, $endDate]);
+        }
 
         if ($request->has('inspection_date') && $request->inspection_date) {
             $formattedDate = DBdateformat($request->inspection_date);
@@ -70,16 +85,16 @@ class FirstAidBagChecklist extends Model
         }
 
         if (isset($request->location) && $request->location) {
-            $query = $query->where('inspection_ohc_first_aid_bag_inspection.location',  decryptId($request->location) );
+            $query = $query->where('inspection_ohc_first_aid_bag_inspection.location',  decryptId($request->location));
         }
         if (isset($request->frequency) && $request->frequency) {
-            $query = $query->where('inspection_ohc_first_aid_bag_inspection.frequency',  decryptId($request->frequency) );
+            $query = $query->where('inspection_ohc_first_aid_bag_inspection.frequency',  decryptId($request->frequency));
         }
         if (isset($request->unit) && $request->unit) {
-            $query = $query->where('inspection_ohc_first_aid_bag_inspection.unit',  decryptId($request->unit) );
+            $query = $query->where('inspection_ohc_first_aid_bag_inspection.unit',  decryptId($request->unit));
         }
         if (isset($request->shift) && $request->shift) {
-            $query = $query->where('inspection_ohc_first_aid_bag_inspection.shift_id',  decryptId($request->shift) );
+            $query = $query->where('inspection_ohc_first_aid_bag_inspection.shift_id',  decryptId($request->shift));
         }
 
 
@@ -165,7 +180,20 @@ class FirstAidBagChecklist extends Model
                 $query->orWhereRaw('inspection_frequency_option.frequency_name LIKE "%' . $search . '%"');;
             });
         }
+        if ($request->has('from_date') && !empty($request->from_date)) {
 
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_ohc_first_aid_bag_inspection.created_at', '>=', $startDate);
+        }
+        if ($request->has('to_date') && !empty($request->to_date)) {
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_ohc_first_aid_bag_inspection.created_at', '<=', $endDate);
+        }
+        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->whereBetween('inspection_ohc_first_aid_bag_inspection.created_at', [$startDate, $endDate]);
+        }
 
         if ($request->has('inspection_date') && $request->inspection_date) {
             $formattedDate = DBdateformat($request->inspection_date);

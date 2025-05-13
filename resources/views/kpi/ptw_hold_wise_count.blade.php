@@ -1,55 +1,85 @@
-<div id="chartData2"></div>
+<div id="LoadPtwHoldViolation_Count"></div>
 
 <script>
+var hold_count = @json($hold_count);
+
     var options = {
         series: [{
-            data: [44, 55, 41, 64, 22, 43, 21]
-        }, {
-            data: [53, 32, 33, 52, 13, 44, 32]
+            name: 'Hold Count',
+            data: Object.values(hold_count),
         }],
         chart: {
-            type: 'bar',
             height: 350,
-            toolbar: {
-                show: false
-            },
+            type: 'bar',
+            toolbar: { show: false }
         },
         plotOptions: {
             bar: {
-                horizontal: true,
-                dataLabels: {
-                    position: 'top',
-                },
+                borderRadius: 10,
+                dataLabels: { position: 'top' }
             }
         },
         dataLabels: {
             enabled: true,
-            offsetX: -6,
+            formatter: function (val) {
+                return val;
+            },
+            offsetY: -20,
             style: {
                 fontSize: '12px',
-                colors: ['#fff']
+                colors: ["#304758"]
             }
         },
-        stroke: {
-            show: true,
-            width: 1,
-            colors: ['#fff']
+        xaxis: {
+            categories: Object.keys(hold_count),
+            position: 'top',
+            tooltip: {
+                enabled: false
+            },
+            axisBorder: { show: false },
+            axisTicks: { show: false },
+            crosshairs: {
+                fill: {
+                    type: 'gradient',
+                    gradient: {
+                        colorFrom: '#D8E3F0',
+                        colorTo: '#BED1E6',
+                        stops: [0, 100],
+                        opacityFrom: 0.4,
+                        opacityTo: 0.5,
+                    }
+                }
+            },
+        },
+        yaxis: {
+            labels: {
+                show: true
+            }
         },
         tooltip: {
-            shared: true,
-            intersect: false
+            enabled: true,
+            y: {
+                formatter: function (val, { series, seriesIndex, dataPointIndex, w }) {
+                    const unit = w.globals.labels[dataPointIndex];
+                    return `${unit}: ${val} Holds`;
+                }
+            }
         },
-        xaxis: {
-            categories: [2001, 2002, 2003, 2004, 2005],
-        },
+        title: {
+            text: 'PTW Hold Violation Compliance',
+            floating: true,
+            offsetY: 330,
+            align: 'center',
+            style: { color: '#444' }
+        }
     };
 
-    var chartData2 = new ApexCharts(document.querySelector("#chartData2"), options);
-    chartData2.render();
+    var ptwChart = new ApexCharts(document.querySelector("#LoadPtwHoldViolation_Count"), options);
+    ptwChart.render();
 
     // Download button functionality
-    $("#LoadChart2_download").off("click").on("click", function() {
-        chartData2.dataURI().then(({
+    $("#LoadPtwHoldViolation_download").off("click").on("click", function() {
+        ptwChart.dataURI().then(({
             imgURI
         }) => {
             var newCanvas = document.createElement('canvas');
@@ -73,10 +103,10 @@
                 // Optional filter text
                 let yPos = 60;
 
-                @if (isset($getdashdata))
+                @if (isset($dates))
                     @php
-                        $from = $getdashdata->Fromdate ?? null;
-                        $to = $getdashdata->Todate ?? null;
+                        $from = $dates['from_date'] ?? null;
+                        $to = $dates['to_date'] ?? null;
                     @endphp
 
                     @if ($from || $to)
@@ -104,7 +134,7 @@
                 newCanvas.toBlob(function(blob) {
                     var link = document.createElement('a');
                     link.href = URL.createObjectURL(blob);
-                    link.download = 'CHART.png';
+                    link.download = 'PTW Hold Violation.png';
                     link.click();
                 });
             };
