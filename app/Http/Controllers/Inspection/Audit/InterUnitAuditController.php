@@ -144,6 +144,9 @@ class InterUnitAuditController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
+            Session::flash('error', __('inspection.checklist_add'));
+            return redirect()->back();
+
         }
     }
     public function store(Request $request)

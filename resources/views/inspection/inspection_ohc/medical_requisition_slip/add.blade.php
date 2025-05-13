@@ -622,6 +622,9 @@
                     date: {
                         required: true,
                     },
+                    signature_image:{
+                         filesize: 10485760,
+                    },
                     'medicine_id[0]': {
                         required: true,
                     },
@@ -660,6 +663,9 @@
                     },
                     review_date: {
                         required: "Please select the request date.",
+                    },
+                    signature_image:{
+                        filesize: "File size must be less than 10MB."
                     },
                     'medicine_id[0]': {
                         required: 'Medicine Name is required',

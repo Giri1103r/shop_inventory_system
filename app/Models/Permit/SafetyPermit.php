@@ -1184,14 +1184,11 @@ class SafetyPermit extends Model
         $open_count = $openQuery->count();
         $close_count = $closeQuery->count();
 
-        if (($open_count > 0) && ($close_count > 0)) {
-            return [
+
+        return [
                 'PTW Open Count' => $open_count,
                 'PTW Close Count' => $close_count
             ];
-        }
-
-        return null;
     }
 
     public function GetTypeWiseCount()

@@ -869,6 +869,7 @@
                     },
                     signature_image: {
                         required: true,
+                         filesize: 10485760,
                     }
                 },
                 messages: {
@@ -879,6 +880,7 @@
                     },
                     signature_image: {
                         required: "Signature is Required",
+                        filesize: "File size should not exceed 10MB",
                     }
                 },
                 errorElement: 'div',
@@ -916,6 +918,7 @@
                     },
                     signature_image: {
                         required: true,
+                         filesize: 10485760,
                     }
                 },
                 messages: {
@@ -926,6 +929,7 @@
                     },
                     signature_image: {
                         required: "Signature is Required",
+                        filesize: "File size should not exceed 10MB",
                     }
                 },
                 errorElement: 'div',
@@ -959,6 +963,7 @@
                     },
                     signature_image: {
                         required: true,
+                        filesize: 10485760,
                     }
                 },
                 messages: {
@@ -969,6 +974,7 @@
                     },
                     signature_image: {
                         required: "Signature is Required",
+                        filesize: "File size should not exceed 10MB",
                     }
                 },
                 errorElement: 'div',
@@ -1002,6 +1008,7 @@
                     },
                     signature_image: {
                         required: true,
+                        filesize: 10485760,
                     }
                 },
                 messages: {
@@ -1012,6 +1019,7 @@
                     },
                     signature_image: {
                         required: "Signature is Required",
+                        filesize: "File size should not exceed 10MB",
                     }
                 },
                 errorElement: 'div',

@@ -136,8 +136,8 @@
                                             <div class="col-md-12 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">{{ __('inspection.obs') }}</label>
-                                                    <div class="view_data">
-                                                        {{ $inspection->observation }}
+                                                    <div class="view_data"> 
+                                                        {{ $inspection->observation == 1 ? 'Yes' : ' No' }}
                                                     </div>
 
                                                 </div>

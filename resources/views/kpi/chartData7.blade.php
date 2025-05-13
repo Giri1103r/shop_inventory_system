@@ -1,17 +1,14 @@
-<div id="ptw_open_close"></div>
+<div id="chartData7"></div>
 
 <script>
-    var open_close = @json($active_close_count);
     var options = {
-        series: [{
-            data: Object.values(open_close)
-        }],
+        series: [44, 55, 13, 43, 22],
         chart: {
             width: 380,
             type: 'pie',
           
         },
-        labels: Object.keys(open_close),
+        labels: ['Team A', 'Team B', 'Team C', 'Team D', 'Team E'],
         legend: {
             position: 'bottom' 
         },
@@ -28,12 +25,12 @@
         }]
     };
 
-    var ptw_open_close = new ApexCharts(document.querySelector("#ptw_open_close"), options);
-    ptw_open_close.render();
+    var chartData7 = new ApexCharts(document.querySelector("#chartData7"), options);
+    chartData7.render();
 
     // Download chart as image
-    $("#ptw_open_close_download").off("click").on("click", function() {
-        ptw_open_close.dataURI().then(({
+    $("#LoadChart7_download").off("click").on("click", function() {
+        chartData7.dataURI().then(({
             imgURI
         }) => {
             var newCanvas = document.createElement('canvas');
@@ -57,10 +54,10 @@
                 // Optional filter info
                 let yPos = 60;
 
-                @if (isset($dates))
+                @if (isset($getdashdata))
                     @php
-                        $from = $dates['from_date'] ?? null;
-                        $to = $dates['to_date'] ?? null;
+                        $from = $getdashdata->Fromdate ?? null;
+                        $to = $getdashdata->Todate ?? null;
                     @endphp
 
                     @if ($from || $to)

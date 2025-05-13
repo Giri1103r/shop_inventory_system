@@ -311,6 +311,7 @@
                         },
                         signature_image: {
                             required: true,
+                            filesize: 10485760,
                         },
                         frequency_id:{
                             required: true,
@@ -334,6 +335,7 @@
                         },
                         signature_image: {
                             required: "Signature is required",
+                            filesize: "File size must be less than 10MB."
                         },
                         frequency_id: {
                             required: "Frequency is required",

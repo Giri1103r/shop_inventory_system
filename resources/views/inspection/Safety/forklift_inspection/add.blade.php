@@ -327,6 +327,7 @@
                             },
                             signature_image: {
                                 required: true,
+                                 filesize: 10485760,
                             },
                             "inspection_date": {
                                 required: true,
@@ -382,6 +383,7 @@
                             },
                             signature_image: {
                                 required: "Signature is required",
+                                 filesize: "File size must be less than 10MB."
                             },
                             "inspection_date": {
                                 required: "Inspection Date is required",

@@ -74,20 +74,10 @@ class InitialIncident extends Model
          * Role Based list view condition start
          */
         if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_ADMIN) || CheckUserRole(ROLE_EHS_HEAD)) {
-            // $query->where('ims_initial_incident.status', '1');
+            $query->where('ims_initial_incident.status', '1');
         } elseif (CheckUserRole(ROLE_EHS_OFFICER)) {
             $query->where('ims_initial_incident.created_by', Auth::user()->id);
         } else {
-            // $userId = Auth::id();
-            // $userLoginId = Auth::user()->employee_id;
-
-            // $employeeId = Employee::where('emp_id', $userLoginId)->value('id');
-
-            // $query->where(function ($q) use ($userId, $employeeId) {
-            //     $q->where('ims_initial_incident.created_by', $userId)
-            //         ->orWhereRaw("FIND_IN_SET(?, investigation_assigned)", [$employeeId])
-            //         ->orWhereRaw("FIND_IN_SET(?, choose_assignee)", [$employeeId]);
-            // });
 
             $query->where('ims_initial_incident.created_by', Auth::user()->id);
         }
@@ -292,6 +282,92 @@ class InitialIncident extends Model
         );
         return $this->create($insert_array);
     }
+    public function getTotalIncidentCountData($request)
+    {
+        $query = DB::table('ims_initial_incident')
+            ->select(
+                'masters_unit.unit_name',
+                'ims_master_incident_type.incident_type_name',
+                DB::raw('COUNT(ims_initial_incident.id) as incident_count')
+            )
+            ->leftJoin('masters_unit', 'masters_unit.id', '=', 'ims_initial_incident.unit_id')
+            ->leftJoin('ims_master_incident_type', 'ims_master_incident_type.id', '=', 'ims_initial_incident.iir_type')
+            ->whereNotNull('ims_initial_incident.id');
+
+        // Date Filters
+        if ($request->Fromdate && $request->Todate) {
+            $query->whereBetween('ims_initial_incident.created_at', [
+                DBdateformat($request->Fromdate),
+                DBdateformat($request->Todate)
+            ]);
+        } elseif ($request->Fromdate) {
+            $query->where('ims_initial_incident.created_at', '>=', DBdateformat($request->Fromdate));
+        } elseif ($request->Todate) {
+            $query->where('ims_initial_incident.created_at', '<=', DBdateformat($request->Todate));
+        }
+
+        // Role-Based Filtering
+        if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_ADMIN) || CheckUserRole(ROLE_EHS_HEAD)) {
+            // all data
+        } elseif (Auth::user()->role == ROLE_USER) {
+            $query->where('ims_initial_incident.created_by', Auth::id());
+        }
+
+        return $query->groupBy('masters_unit.unit_name', 'ims_master_incident_type.incident_type_name')
+            ->orderBy('masters_unit.unit_name')
+            ->get();
+    }
+    public function getIncidentTypeCountData($request)
+    {
+        $query = DB::table('ims_initial_incident')
+            ->select(
+                'ims_master_incident_type.incident_type_name',
+                DB::raw('COUNT(ims_initial_incident.id) as incident_count')
+            )
+            ->leftJoin('ims_master_incident_type', 'ims_master_incident_type.id', '=', 'ims_initial_incident.iir_type')
+            ->whereNotNull('ims_initial_incident.id');
+
+        // Date Filters
+        if ($request->Fromdate && $request->Todate) {
+            $query->whereBetween('ims_initial_incident.created_at', [
+                DBdateformat($request->Fromdate),
+                DBdateformat($request->Todate)
+            ]);
+        } elseif ($request->Fromdate) {
+            $query->where('ims_initial_incident.created_at', '>=', DBdateformat($request->Fromdate));
+        } elseif ($request->Todate) {
+            $query->where('ims_initial_incident.created_at', '<=', DBdateformat($request->Todate));
+        }
+
+        return $query->groupBy('ims_master_incident_type.incident_type_name')
+            ->get();
+    }
+    public function getHeatmapImsCountData($request)
+    {
+        $query = DB::table('ims_initial_incident')
+            ->select(
+                DB::raw("MONTH(ims_initial_incident.created_at) as month"),
+                'ims_injury_details.nature_of_injury',
+                DB::raw('COUNT(ims_initial_incident.id) as incident_count')
+            )
+            ->leftJoin('ims_injury_details', 'ims_injury_details.incident_id', '=', 'ims_initial_incident.id');
+
+        // Apply date filters
+        if ($request->Fromdate && $request->Todate) {
+            $query->whereBetween('ims_initial_incident.created_at', [
+                DBdateformat($request->Fromdate),
+                DBdateformat($request->Todate)
+            ]);
+        } elseif ($request->Fromdate) {
+            $query->where('ims_initial_incident.created_at', '>=', DBdateformat($request->Fromdate));
+        } elseif ($request->Todate) {
+            $query->where('ims_initial_incident.created_at', '<=', DBdateformat($request->Todate));
+        }
+
+        return $query->groupBy('month', 'ims_injury_details.nature_of_injury')
+            ->orderBy('month')
+            ->get();
+    }
 
     public function updates($id)
     {
@@ -437,18 +513,10 @@ class InitialIncident extends Model
         if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_ADMIN) || CheckUserRole(ROLE_EHS_HEAD)) {
             $query->where('ims_initial_incident.status', '1');
         } elseif (CheckUserRole(ROLE_EHS_OFFICER)) {
-            $query->where('ims_initial_incident.created_by', Auth::user()->id)->where('ims_initial_incident.status', '1');
+            $query->where('ims_initial_incident.created_by', Auth::user()->id);
         } else {
-            $userId = Auth::id();
-            $userLoginId = Auth::user()->employee_id;
 
-            $employeeId = Employee::where('emp_id', $userLoginId)->value('id');
-
-            $query->where(function ($q) use ($userId, $employeeId) {
-                $q->where('ims_initial_incident.created_by', $userId)
-                    ->orWhereRaw("FIND_IN_SET(?, investigation_assigned)", [$employeeId])
-                    ->orWhereRaw("FIND_IN_SET(?, choose_assignee)", [$employeeId]);
-            })->where('ims_initial_incident.status', '1');
+            $query->where('ims_initial_incident.created_by', Auth::user()->id);
         }
 
 
@@ -546,24 +614,6 @@ class InitialIncident extends Model
     }
 
 
-    // public function getInvestigation($id)
-    // {
-    //     $data = $this->select('ims_initial_incident_investigation.*', 'ims_master_incident_hiramoc.*')
-    //         ->where('ims_initial_incident.id', $id)
-    //         ->leftJoin('ims_initial_incident_investigation', 'ims_initial_incident_investigation.incident_id', '=', 'ims_initial_incident.id')
-    //         ->leftJoin('ims_master_incident_hiramoc', 'ims_master_incident_hiramoc.incident_id', '=', 'ims_initial_incident.id')
-    //         ->first();
-    //     if ($data && $data->witness_id) {
-    //         $witnessids = explode(',', $data->witness_id);
-
-    //         $employees = DB::table('masters_employee')
-    //             ->whereIn('id', $witnessids)
-    //             ->pluck('emp_name')
-    //             ->toArray();
-    //         $data->witness_name = implode(', ', $employees);
-    //     }
-    //     return $data;
-    // }
     public function getInvestigation($id)
     {
         $data = $this->select('ims_initial_incident_investigation.*')
@@ -722,13 +772,7 @@ class InitialIncident extends Model
             $query->where('iii.created_at', '<=', DBdateformat($request->Todate));
         }
 
-        // Role-based filter
-        if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_ADMIN)) {
-            // No restriction
-        } elseif (Auth::user()->role == ROLE_USER) {
-            $query->where('iii.created_by', Auth::id());
-        }
-
+      
         return $query->get(); // returns multiple rows
     }
 
@@ -758,13 +802,7 @@ class InitialIncident extends Model
             $query->where('iii.created_at', '<=', DBdateformat($request->Todate));
         }
 
-        // Role-based filter
-        if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_ADMIN)) {
-            // No restriction
-        } elseif (Auth::user()->role == ROLE_USER) {
-            $query->where('iii.created_by', Auth::id());
-        }
-
+      
         return $query->get();
     }
 
@@ -798,12 +836,6 @@ class InitialIncident extends Model
             $query->where('iii.created_at', '<=', DBdateformat($request->Todate));
         }
 
-        // Role-based filter
-        if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_ADMIN)) {
-            // No restriction
-        } elseif (Auth::user()->role == ROLE_USER) {
-            $query->where('iii.created_by', Auth::id());
-        }
 
         return $query->get(); // returns multiple rows
     }
@@ -835,12 +867,7 @@ class InitialIncident extends Model
             $query->where('iii.created_at', '<=', DBdateformat($request->Todate));
         }
 
-        // Role-based filter
-        if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_ADMIN)) {
-            // No restriction
-        } elseif (Auth::user()->role == ROLE_USER) {
-            $query->where('iii.created_by', Auth::id());
-        }
+      
 
         return $query->get(); // returns multiple rows
     }
@@ -879,12 +906,6 @@ class InitialIncident extends Model
             $query->where('iii.created_at', '<=', DBdateformat($request->Todate));
         }
     
-        // Role-based filter
-        if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_ADMIN)) {
-            // No restriction
-        } elseif (Auth::user()->role == ROLE_USER) {
-            $query->where('iii.created_by', Auth::id());
-        }
     
         $results = $query->get();
     

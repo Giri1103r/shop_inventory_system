@@ -392,7 +392,7 @@
                                             <x-button-submit class="submit"></x-button-submit>
                                             <x-button-reset class="submit"></x-button-reset>
                                             <x-button-cancel
-                                                href="{{ admin_url('safety/forklift-inspection/monthly/list') }}"></x-button-cancel>
+                                                href="{{ admin_url('fire/fire-sand-bucket-inspection/list') }}"></x-button-cancel>
                                         </div>
 
                                     </form>
@@ -484,12 +484,12 @@
                         },
                         "fire_sand_bucket_stand_no[1]": {
                             required: true,
-                            minlength:3,
+                            minlength: 3,
                             maxlength: 30,
                         },
                         "fire_sand_bucket_no[1]": {
                             required: true,
-                            minlength:3,
+                            minlength: 3,
                             maxlength: 30,
                         },
                         "condition[1]": {
@@ -503,7 +503,7 @@
                         },
                         "approach[1]": {
                             required: true,
-                            minlength:3,
+                            minlength: 3,
                             maxlength: 300,
                         },
                         "location[1]": {
@@ -514,7 +514,7 @@
                         },
                         "remarks[1]": {
                             required: true,
-                            minlength:3,
+                            minlength: 3,
                             maxlength: 300,
                         },
 
@@ -523,6 +523,11 @@
                         },
                         signature_image: {
                             required: true,
+                            filesize: 10485760,
+                        },
+                        device_image: {
+                            required: true,
+                            filesize: 10485760,
                         },
 
                     },
@@ -534,6 +539,7 @@
                         },
                         signature_image: {
                             required: 'Please upload your signature',
+                            filesize: 'File size should not exceed 10MB',
                         },
                         issue_date: {
                             required: "Date Of Audit is required",
@@ -594,8 +600,7 @@
                         },
                         device_image: {
                             required: "Please upload an image.",
-                            extension: "Only JPG files are allowed.",
-                            filesize: "Image must be under 2MB."
+                            filesize: "File size should not exceed 10MB",
                         },
                         observation: {
                             required: "Please add observation",
@@ -826,7 +831,7 @@
                     $("input[name='fire_sand_bucket_stand_no[" + form_set_count + "]']").rules('add', {
                         required: true,
                         uniqueItemCode: true,
-                        minlength:3,
+                        minlength: 3,
                         maxlength: 30,
                         messages: {
                             required: 'Please add the Fire Sand Bucket Stand Number',
@@ -837,7 +842,7 @@
 
                     $("input[name='fire_sand_bucket_no[" + form_set_count + "]']").rules('add', {
                         required: true,
-                        minlength:3,
+                        minlength: 3,
                         maxlength: 30,
                         messages: {
                             required: 'Please Select the Fire Sand Bucket Number',
@@ -873,7 +878,7 @@
 
                     $("input[name='approach[" + form_set_count + "]']").rules('add', {
                         required: true,
-                        minlength:3,
+                        minlength: 3,
                         maxlength: 300,
                         messages: {
                             required: 'Please Enter the Approach',
@@ -884,7 +889,7 @@
 
                     $("textarea[name='remarks[" + form_set_count + "]']").rules('add', {
                         required: true,
-                        minlength:3,
+                        minlength: 3,
                         maxlength: 300,
                         messages: {
                             required: 'Please Enter the Remarks',

@@ -819,7 +819,7 @@
                     signature_image: {
                         required: true,
                         extension: "png|jpeg|jpg",
-                        filesize: 5242880
+                       filesize: 10485760,
                     },
                     frequency: {
                         required: true
@@ -840,7 +840,9 @@
                     },
                     signature_image: {
                         required: true,
-                        extension: "png|jpeg|jpg"
+                        extension: "png|jpeg|jpg",
+                        filesize: 10485760,
+
                     },
 
                     "unit_id[]": {
@@ -910,6 +912,7 @@
                     signature_image: {
                         required: "Please upload a signature.",
                         extension: "Only PNG, JPEG, and JPG formats are allowed.",
+                        filesize: "File size must be less than 10MB."
                     },
                     "unit_id[]": {
                         required: "Please select the Unit Name."

@@ -1,47 +1,43 @@
-<div id="ptw_type_wise"></div>
+<div id="LoadPtwHoldViolation_Count"></div>
 
 <script>
-    var type_wise = @json($work_wise_count);
+var hold_count = @json($hold_count);
 
     var options = {
         series: [{
-            data: Object.values(type_wise)
+            name: 'Hold Count',
+            data: Object.values(hold_count),
         }],
         chart: {
             height: 350,
             type: 'bar',
-            toolbar: {
-                show: false
-            },
+            toolbar: { show: false }
         },
         plotOptions: {
             bar: {
                 borderRadius: 10,
-                dataLabels: {
-                    position: 'top',
-                },
+                dataLabels: { position: 'top' }
             }
         },
-        // dataLabels: {
-        //     enabled: true,
-        //     formatter: function(val) {
-        //         return val + "%";
-        //     },
-        //     offsetY: -20,
-        //     style: {
-        //         fontSize: '12px',
-        //         colors: ["#304758"]
-        //     }
-        // },
+        dataLabels: {
+            enabled: true,
+            formatter: function (val) {
+                return val;
+            },
+            offsetY: -20,
+            style: {
+                fontSize: '12px',
+                colors: ["#304758"]
+            }
+        },
         xaxis: {
-            categories: Object.keys(type_wise),
+            categories: Object.keys(hold_count),
             position: 'top',
-            axisBorder: {
-                show: false
+            tooltip: {
+                enabled: false
             },
-            axisTicks: {
-                show: false
-            },
+            axisBorder: { show: false },
+            axisTicks: { show: false },
             crosshairs: {
                 fill: {
                     type: 'gradient',
@@ -54,41 +50,36 @@
                     }
                 }
             },
-            tooltip: {
-                enabled: true,
-            }
         },
         yaxis: {
-            axisBorder: {
-                show: false
-            },
-            axisTicks: {
-                show: false,
-            },
             labels: {
-                show: false,
-                formatter: function(val) {
-                    return val;
+                show: true
+            }
+        },
+        tooltip: {
+            enabled: true,
+            y: {
+                formatter: function (val, { series, seriesIndex, dataPointIndex, w }) {
+                    const unit = w.globals.labels[dataPointIndex];
+                    return `${unit}: ${val} Holds`;
                 }
             }
         },
         title: {
-            text: 'Work Type Wise Summary',
+            text: 'PTW Hold Violation Compliance',
             floating: true,
             offsetY: 330,
             align: 'center',
-            style: {
-                color: '#444'
-            }
+            style: { color: '#444' }
         }
     };
 
-    var ptw_type_wise = new ApexCharts(document.querySelector("#ptw_type_wise"), options);
-    ptw_type_wise.render();
+    var ptwChart = new ApexCharts(document.querySelector("#LoadPtwHoldViolation_Count"), options);
+    ptwChart.render();
 
     // Download button functionality
-    $("#ptw_type_wise_download").off("click").on("click", function() {
-        ptw_type_wise.dataURI().then(({
+    $("#LoadPtwHoldViolation_download").off("click").on("click", function() {
+        ptwChart.dataURI().then(({
             imgURI
         }) => {
             var newCanvas = document.createElement('canvas');
@@ -107,7 +98,7 @@
                 // Header text
                 ctx.fillStyle = '#203669';
                 ctx.font = '20px Arial';
-                ctx.fillText('CHART', 10, 30);
+                ctx.fillText('PTW Hold Violation', 10, 30);
 
                 // Optional filter text
                 let yPos = 60;
@@ -143,7 +134,7 @@
                 newCanvas.toBlob(function(blob) {
                     var link = document.createElement('a');
                     link.href = URL.createObjectURL(blob);
-                    link.download = 'CHART.png';
+                    link.download = 'PTW Hold Violation.png';
                     link.click();
                 });
             };

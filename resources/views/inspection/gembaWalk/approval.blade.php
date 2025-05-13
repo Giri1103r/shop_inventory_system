@@ -866,8 +866,7 @@
                     },
                     capa_image: {
                         required: true,
-                        filesize: 2097152, // 2MB
-                        fileExtension: "jpg|jpeg|png|gif"
+                        filesize: 10485760,
                     }
                 },
                 messages: {
@@ -882,8 +881,8 @@
                     },
                     capa_image: {
                         required: "Image is required",
-                        filesize: "File size should not exceed 2MB.",
-                        fileExtension: "Only JPG, JPEG, PNG, and GIF files are allowed."
+                        filesize: "File size should not exceed 10MB.",
+
                     }
                 },
                 errorElement: 'div',
@@ -922,9 +921,7 @@
                     },
                     gemba_walk_verified_by: {
                         required: true,
-
-                        filesize: 2097152, // 2MB
-                        fileExtension: "jpg|jpeg|png|gif"
+                         filesize: 10485760,
                     }
                 },
                 messages: {
@@ -939,8 +936,8 @@
                     },
                     gemba_walk_verified_by: {
                         required: "Signature is required",
-                        filesize: "File size should not exceed 2MB.",
-                        fileExtension: "Only JPG, JPEG, PNG, and GIF files are allowed."
+                        filesize: "File size should not exceed 10       MB.",
+
                     }
                 },
                 errorElement: 'div',

@@ -840,6 +840,7 @@
                     },
                     signature_image: {
                         required: true,
+                        filesize: 10485760,
                     }
                 },
                 messages: {
@@ -850,6 +851,7 @@
                     },
                     signature_image: {
                         required: "Signature is Required",
+                        filesize: "Image must be under 10MB."
                     }
                 },
                 errorElement: 'div',
@@ -887,6 +889,7 @@
                     },
                     signature_image: {
                         required: true,
+                        filesize: 10485760,
                     }
                 },
                 messages: {
@@ -897,6 +900,7 @@
                     },
                     signature_image: {
                         required: "Signature is Required",
+                        filesize: "Image must be under 10MB."
                     }
                 },
                 errorElement: 'div',
@@ -930,6 +934,7 @@
                     },
                     signature_image: {
                         required: true,
+                        filesize: 10485760,
                     }
                 },
                 messages: {
@@ -940,6 +945,7 @@
                     },
                     signature_image: {
                         required: "Signature is Required",
+                        filesize: "Image must be under 10MB."
                     }
                 },
                 errorElement: 'div',
@@ -973,6 +979,7 @@
                     },
                     signature_image: {
                         required: true,
+                        filesize: 10485760,
                     }
                 },
                 messages: {
@@ -983,6 +990,7 @@
                     },
                     signature_image: {
                         required: "Signature is Required",
+                        filesize: "Image must be under 10MB."
                     }
                 },
                 errorElement: 'div',

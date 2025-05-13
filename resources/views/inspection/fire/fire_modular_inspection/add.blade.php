@@ -374,7 +374,7 @@
                                             <x-button-submit class="submit"></x-button-submit>
                                             <x-button-reset class="submit"></x-button-reset>
                                             <x-button-cancel
-                                                href="{{ admin_url('safety/forklift-inspection/monthly/list') }}"></x-button-cancel>
+                                                href="{{ admin_url('fire/fire-modular-inspection/checklist/list') }}"></x-button-cancel>
                                         </div>
 
                                     </form>
@@ -507,13 +507,14 @@
                         },
                         device_image: {
                             required: true,
-                            filesize: 2097152
+                             filesize: 10485760,
                         },
                         observation: {
                             required: true,
                         },
                         signature_image: {
                             required: true,
+                             filesize: 10485760,
                         },
 
                     },
@@ -525,6 +526,7 @@
                         },
                         signature_image: {
                             required: 'Please upload your signature',
+                            filesize: 'File size should not exceed 10 MB',
                         },
                         issue_date: {
                             required: "Date Of Audit is required",
@@ -586,8 +588,7 @@
                         },
                         device_image: {
                             required: "Please upload an image.",
-                            extension: "Only JPG files are allowed.",
-                            filesize: "Image must be under 2MB."
+                           filesize: "File size should not exceed 10MB",
                         },
                         observation: {
                             required: "Please add observation",

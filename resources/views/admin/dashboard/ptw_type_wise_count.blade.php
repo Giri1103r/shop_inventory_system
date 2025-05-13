@@ -1,43 +1,37 @@
-<div id="LoadPtwHoldViolation_Count"></div>
+<div id="ptw_type_wise"></div>
 
 <script>
-var hold_count = @json($hold_count);
+    var type_wise = @json($work_wise_count);
 
     var options = {
         series: [{
-            name: 'Hold Count',
-            data: Object.values(hold_count),
+            name: 'Work Count',
+            data: Object.values(type_wise)
         }],
         chart: {
             height: 350,
             type: 'bar',
-            toolbar: { show: false }
+            toolbar: {
+                show: false
+            },
         },
         plotOptions: {
             bar: {
                 borderRadius: 10,
-                dataLabels: { position: 'top' }
-            }
-        },
-        dataLabels: {
-            enabled: true,
-            formatter: function (val) {
-                return val;
-            },
-            offsetY: -20,
-            style: {
-                fontSize: '12px',
-                colors: ["#304758"]
+                dataLabels: {
+                    position: 'bottom',
+                },
             }
         },
         xaxis: {
-            categories: Object.keys(hold_count),
-            position: 'top',
-            tooltip: {
-                enabled: false
+            categories: Object.keys(type_wise),
+            position: 'bottom',
+            axisBorder: {
+                show: false
             },
-            axisBorder: { show: false },
-            axisTicks: { show: false },
+            axisTicks: {
+                show: false
+            },
             crosshairs: {
                 fill: {
                     type: 'gradient',
@@ -50,36 +44,49 @@ var hold_count = @json($hold_count);
                     }
                 }
             },
-        },
-        yaxis: {
-            labels: {
-                show: true
+            tooltip: {
+                enabled: false,
             }
         },
-        tooltip: {
-            enabled: true,
-            y: {
-                formatter: function (val, { series, seriesIndex, dataPointIndex, w }) {
-                    const unit = w.globals.labels[dataPointIndex];
-                    return `${unit}: ${val} Holds`;
+        yaxis: {
+            axisBorder: {
+                show: false
+            },
+            axisTicks: {
+                show: false,
+            },
+            labels: {
+                show: false,
+                formatter: function(val) {
+                    return val;
                 }
             }
         },
         title: {
-            text: 'PTW Hold Violation Compliance',
+            text: 'Work Type Wise Summary',
             floating: true,
             offsetY: 330,
             align: 'center',
-            style: { color: '#444' }
+            style: {
+                color: '#444'
+            }
+        },
+        tooltip: {
+            y: {
+                formatter: function(val, opts) {
+                    const category = opts.w.globals.labels[opts.dataPointIndex];
+                    return category + ": " + val;
+                }
+            }
         }
     };
 
-    var ptwChart = new ApexCharts(document.querySelector("#LoadPtwHoldViolation_Count"), options);
-    ptwChart.render();
+    var ptw_type_wise = new ApexCharts(document.querySelector("#ptw_type_wise"), options);
+    ptw_type_wise.render();
 
     // Download button functionality
-    $("#LoadPtwHoldViolation_download").off("click").on("click", function() {
-        ptwChart.dataURI().then(({
+    $("#ptw_type_wise_download").off("click").on("click", function() {
+        ptw_type_wise.dataURI().then(({
             imgURI
         }) => {
             var newCanvas = document.createElement('canvas');
@@ -98,7 +105,7 @@ var hold_count = @json($hold_count);
                 // Header text
                 ctx.fillStyle = '#203669';
                 ctx.font = '20px Arial';
-                ctx.fillText('CHART', 10, 30);
+                ctx.fillText('PTW Type Wise', 10, 30);
 
                 // Optional filter text
                 let yPos = 60;
@@ -134,7 +141,7 @@ var hold_count = @json($hold_count);
                 newCanvas.toBlob(function(blob) {
                     var link = document.createElement('a');
                     link.href = URL.createObjectURL(blob);
-                    link.download = 'PTW Hold Violation.png';
+                    link.download = 'PTW Type Wise.png';
                     link.click();
                 });
             };

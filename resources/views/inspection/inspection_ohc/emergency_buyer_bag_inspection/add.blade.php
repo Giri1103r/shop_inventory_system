@@ -280,6 +280,7 @@
                     },
                     signature_image: {
                         required: true,
+                        filesize: 10485760,
                     },
                     remark_by: {
                         required: true,
@@ -311,6 +312,7 @@
                     },
                     signature_image: {
                         required: "Signature is required",
+                        filesize: "File size must be less than 10MB."
                     },
                     remark_by: {
                         required: "Please add remarks",

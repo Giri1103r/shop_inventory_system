@@ -268,6 +268,7 @@
                             },
                             signature_image: {
                                 required: true,
+                                 filesize: 10485760,
                             },
 
                         },
@@ -299,6 +300,7 @@
                             },
                             signature_image: {
                                 required: 'Please upload your signature',
+                                filesize: 'File size should not exceed 10MB',   
                             },
 
                         },

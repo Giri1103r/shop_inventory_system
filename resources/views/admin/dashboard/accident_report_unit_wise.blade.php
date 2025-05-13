@@ -2,8 +2,7 @@
 
 <script>
     var options = {
-        series: [
-            {
+        series: [{
                 name: 'Major',
                 data: {!! json_encode($formattedData['major']) !!}
             },
@@ -20,8 +19,8 @@
             type: 'bar',
             height: 400,
             toolbar: {
-                show: true
-            }
+                show: false
+            },
         },
         plotOptions: {
             bar: {
@@ -54,7 +53,7 @@
         },
         tooltip: {
             y: {
-                formatter: function (val) {
+                formatter: function(val) {
                     return val + " incident(s)";
                 }
             }
@@ -70,7 +69,9 @@
 
     // Download chart image
     $("#AccidentReportUnitWise_download").off("click").on("click", function() {
-        chart.dataURI().then(({ imgURI }) => {
+        chart.dataURI().then(({
+            imgURI
+        }) => {
             const link = document.createElement('a');
             link.href = imgURI;
             link.download = 'accident_report_unit_wise.png';

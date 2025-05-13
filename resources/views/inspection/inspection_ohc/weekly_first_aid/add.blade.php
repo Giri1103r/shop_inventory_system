@@ -36,7 +36,7 @@
 
                                     <input type="hidden" name="document_reference_id"
                                     value="{{ $document_no->id }}">
-                                    
+
                                     <div class="basic-form">
 
                                         <div class="row">
@@ -65,7 +65,7 @@
                                                     <label for="rate" class="form-label require ">Review
                                                         Date</label>
                                                     <div class="input-group date form-input custom-height">
-                                                        <input type="text" 
+                                                        <input type="text"
                                                             name="review_date" id="review_date" class="form-control" value="{{ $document_no->rev_dt }}" readonly
                                                             autocomplete="off" readonly>
 
@@ -315,6 +315,7 @@
                     },
                     signature_image: {
                         required: true,
+                        filesize: 10485760,
                     },
                     remark_by: {
                             required: true,
@@ -354,6 +355,7 @@
                     },
                     signature_image: {
                         required: "Signature is required",
+                        filesize: "File size must be less than 10MB."
                     },
                     remark_by: {
                         required: "Please add remarks",

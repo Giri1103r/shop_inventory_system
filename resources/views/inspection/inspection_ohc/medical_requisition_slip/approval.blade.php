@@ -465,6 +465,7 @@ $signature = GetOHCSignature($medicinerequisition->created_by , $medicinerequisi
                     },
                     signature_image: {
                         required: true,
+                        filesize: 10485760,
                     }
                 },
                 messages: {
@@ -476,6 +477,7 @@ $signature = GetOHCSignature($medicinerequisition->created_by , $medicinerequisi
                     },
                     signature_image: {
                         required: "Signature is Required",
+                        filesize: "File size must be less than 10MB."
                     }
                 },
                 errorElement: 'div',
@@ -521,6 +523,7 @@ $signature = GetOHCSignature($medicinerequisition->created_by , $medicinerequisi
                     },
                     signature_image: {
                         required: true,
+                        filesize: 10485760,
                     }
                 },
                 messages: {
@@ -532,6 +535,7 @@ $signature = GetOHCSignature($medicinerequisition->created_by , $medicinerequisi
                     },
                     signature_image: {
                         required: "Signature is Required",
+                        filesize: "File size must be less than 10MB."
                     }
                 },
                 errorElement: 'div',
