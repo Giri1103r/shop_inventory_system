@@ -257,7 +257,7 @@ class DgSetStackEmissionMonitoringController extends Controller
 
                 // Title Section
                 $sheet->mergeCells("G{$currentRow}:M" . ($currentRow + 2));
-                $sheet->setCellValue("G{$currentRow}", "DG SET STACK EMISSION MONITORING MASTER SHEET PN INTERNATIONAL PVT. LTD");
+                $sheet->setCellValue("G{$currentRow}", "DG SET STACK EMISSION MONITORING");
                 $sheet->getStyle("G{$currentRow}:M{$currentRow}")->applyFromArray([
                     'font' => ['bold' => true, 'size' => 14],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
@@ -290,8 +290,9 @@ class DgSetStackEmissionMonitoringController extends Controller
                 $sheet->mergeCells("H$headerRow:I$headerRow")->setCellValue("H$headerRow", "Installation Location");
                 $sheet->mergeCells("J$headerRow:K$headerRow")->setCellValue("J$headerRow", "Engine Sr No");
                 $sheet->mergeCells("L$headerRow:M$headerRow")->setCellValue("L$headerRow", "Date Of Monitoring");
-                $sheet->setCellValue("N$headerRow", "Next Due Date Of Monitoring");
-                $sheet->mergeCells("P$headerRow:S$headerRow")->setCellValue("P$headerRow", "Remark");
+                $sheet->mergeCells("N$headerRow:O$headerRow")->setCellValue("N$headerRow", "Next Due Date Of Monitoring");
+                $sheet->mergeCells("P$headerRow:Q$headerRow")->setCellValue("P$headerRow", "Last Due Date Of Monitoring");
+                $sheet->mergeCells("R$headerRow:S$headerRow")->setCellValue("R$headerRow", "Remark");
 
 
 
@@ -310,8 +311,9 @@ class DgSetStackEmissionMonitoringController extends Controller
                     $sheet->mergeCells("H$inspectionRow:I$inspectionRow")->setCellValue("H$inspectionRow", $detail->location);
                     $sheet->mergeCells("J$inspectionRow:K$inspectionRow")->setCellValue("J$inspectionRow", $detail->engine_srno);
                     $sheet->mergeCells("L$inspectionRow:M$inspectionRow")->setCellValue("L$inspectionRow", Displaydateformat($detail->date_of_monitoring));
-                    $sheet->setCellValue("N$inspectionRow", Displaydateformat($detail->next_due_date_of_monitoring));
-                    $sheet->mergeCells("P$inspectionRow:S$inspectionRow")->setCellValue("P$inspectionRow", $detail->remark);
+                    $sheet->mergeCells("N$inspectionRow:O$inspectionRow")->setCellValue("N$inspectionRow", Displaydateformat($detail->next_due_date_of_monitoring));
+                    $sheet->mergeCells("P$inspectionRow:Q$inspectionRow")->setCellValue("P$inspectionRow", Displaydateformat($detail->last_due_date_of_monitoring));
+                    $sheet->mergeCells("R$inspectionRow:S$inspectionRow")->setCellValue("R$inspectionRow", $detail->remark);
 
 
                     $sheet->getStyle("A$inspectionRow:S$inspectionRow")->applyFromArray([
@@ -424,7 +426,6 @@ class DgSetStackEmissionMonitoringController extends Controller
                     'DgSetDataList' => $DgSetDataList,
                     'document_no' => $document_no,
                 ];
-                // dd( $data);
                 $mpdf = new \Mpdf\Mpdf($property);
                 $mpdf->setAutoTopMargin = 'stretch';
 
@@ -488,7 +489,7 @@ class DgSetStackEmissionMonitoringController extends Controller
 
                 // Title Section
                 $sheet->mergeCells("G{$currentRow}:M" . ($currentRow + 2));
-                $sheet->setCellValue("G{$currentRow}", "DG SET STACK EMISSION MONITORING MASTER SHEET PN INTERNATIONAL PVT. LTD");
+                $sheet->setCellValue("G{$currentRow}", "DG SET STACK EMISSION MONITORING");
                 $sheet->getStyle("G{$currentRow}")->applyFromArray([
                     'font' => ['bold' => true, 'size' => 14],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
@@ -521,8 +522,9 @@ class DgSetStackEmissionMonitoringController extends Controller
                 $sheet->mergeCells("H$headerRow:I$headerRow")->setCellValue("H$headerRow", "Installation Location");
                 $sheet->mergeCells("J$headerRow:K$headerRow")->setCellValue("J$headerRow", "Engine Sr No");
                 $sheet->mergeCells("L$headerRow:M$headerRow")->setCellValue("L$headerRow", "Date Of Monitoring");
-                $sheet->setCellValue("N$headerRow", "Next Due Date Of Monitoring");
-                $sheet->mergeCells("P$headerRow:S$headerRow")->setCellValue("P$headerRow", "Remark");
+                $sheet->mergeCells("N$headerRow:O$headerRow")->setCellValue("N$headerRow", " Next Due Date Of Monitoring");
+                $sheet->mergeCells("P$headerRow:Q$headerRow")->setCellValue("P$headerRow", " Last Due Date Of Monitoring");
+                $sheet->mergeCells("R$headerRow:S$headerRow")->setCellValue("R$headerRow", "Remark");
 
 
 
@@ -541,8 +543,9 @@ class DgSetStackEmissionMonitoringController extends Controller
                     $sheet->mergeCells("H$inspectionRow:I$inspectionRow")->setCellValue("H$inspectionRow", $detail->location);
                     $sheet->mergeCells("J$inspectionRow:K$inspectionRow")->setCellValue("J$inspectionRow", $detail->engine_srno);
                     $sheet->mergeCells("L$inspectionRow:M$inspectionRow")->setCellValue("L$inspectionRow", Displaydateformat($detail->date_of_monitoring));
-                    $sheet->setCellValue("N$inspectionRow", Displaydateformat($detail->next_due_date_of_monitoring));
-                    $sheet->mergeCells("P$inspectionRow:S$inspectionRow")->setCellValue("P$inspectionRow", $detail->remark);
+                    $sheet->mergeCells("N$inspectionRow:O$inspectionRow")->setCellValue("N$inspectionRow", Displaydateformat($detail->next_due_date_of_monitoring));
+                    $sheet->mergeCells("P$inspectionRow:Q$inspectionRow")->setCellValue("P$inspectionRow", Displaydateformat($detail->last_due_date_of_monitoring));
+                    $sheet->mergeCells("R$inspectionRow:S$inspectionRow")->setCellValue("R$inspectionRow", $detail->remark);
 
 
                     $sheet->getStyle("A$inspectionRow:S$inspectionRow")->applyFromArray([

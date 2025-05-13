@@ -24,7 +24,7 @@
                                 <div class="col-md-12">
                                     <div class="row">
 
-                                        <div class="col-md-3 mb-3 form-input">
+                                        <div class="col-md-4 mb-3 form-input">
                                             <label for="audit_analysis_id" class="form-label">6S Audit Analysis Id
                                             </label>
                                             <select name="audit_analysis_id" id="audit_analysis_id"
@@ -36,8 +36,28 @@
                                                 @endforeach
                                             </select>
                                         </div>
+                                        <div class="col-md-4 mb-3 form-input">
+                                            <label for="emp_name" class="form-label ">From Date</label>
+                                            <div class="input-group date form-input custom-height">
+                                                <input type="text" class="form-control " name="from_date" id="from_date"
+                                                    autocomplete="off">
+                                                <div class="input-group-addon input-group-text">
+                                                    <span class="fa fa-calendar"></span>
+                                                </div>
+                                            </div>
 
-                                        <div class="col-md-3 mb-3 form-input">
+                                        </div>
+                                        <div class="col-md-4 mb-3 form-input">
+                                            <label for="emp_name" class="form-label ">To Date</label>
+                                            <div class="input-group date form-input  custom-height">
+                                                <input type="text" class="form-control " name="to_date" id="to_date"
+                                                    autocomplete="off">
+                                                <div class="input-group-addon input-group-text">
+                                                    <span class="fa fa-calendar"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 mb-3 form-input">
                                             <label for="status" class="form-label ">{{ __('common.status') }}</label>
                                             <select name="status" id="status" style="width: 100%"
                                                 class="form-control single-select">
@@ -46,7 +66,7 @@
                                                 <option value="{{ encryptId(0) }}">In-Active</option>
                                             </select>
                                         </div>
-                                        <div class="col-md-3 mt-3">
+                                        <div class="col-md-4 mt-3">
                                             <x-button-search></x-button-search>
                                             <x-button-reset></x-button-reset>
 
@@ -101,7 +121,21 @@
                 dateFormat: "d-m-Y",
                 // minDate: new Date(),
             });
+            var fromDatepicker = flatpickr("#from_date", {
+                dateFormat: "d-m-Y",
+                onChange: function(selectedDates) {
+                    if (selectedDates.length > 0) {
+                        var startDate = selectedDates[0];
+                        toDatepicker.set('minDate', startDate);
+                        toDatepicker.clear();
+                    }
+                }
+            });
 
+            var toDatepicker = flatpickr("#to_date", {
+                dateFormat: "d-m-Y",
+
+            });
         });
 
         $(function() {
@@ -139,7 +173,8 @@
                     data: function(d) {
                         d.audit_analysis_id = $('#audit_analysis_id').val();
                         d.status = $('#status').val();
-
+                        d.from_date = $('#from_date').val();
+                        d.to_date = $('#to_date').val();
                     },
                     error: function(xhr, error, code) {
                         if (xhr.status === 419) {
@@ -201,12 +236,16 @@
                                     var searchValue = $('#datatable-list_filter input').val();
                                     audit_analysis_id = $('#audit_analysis_id').val();
                                     status = $('#status').val();
+                                    var from_date = $('#from_date').val();
+                                    var to_date = $('#to_date').val();
 
                                     $(".dt-button").removeClass('processing');
                                     $('body').click();
                                     window.location.href =
                                         "{{ admin_url('audit/6s-analysis/export/pdf') }}" +
                                         '?search=' + searchValue +
+                                        '&from_date=' + from_date +
+                                        '&to_date=' + to_date +
                                         '&audit_analysis_id=' + audit_analysis_id +
                                         '&status=' + status
                                 }
@@ -217,12 +256,16 @@
                                 action: function(e, dt, button, config) {
                                     var searchValue = $('#datatable-list_filter input').val();
                                     audit_analysis_id = $('#audit_analysis_id').val();
+                                    var from_date = $('#from_date').val();
+                                    var to_date = $('#to_date').val();
                                     status = $('#status').val();
                                     $(".dt-button").removeClass('processing');
                                     $('body').click();
                                     window.location.href =
                                         "{{ admin_url('audit/6s-analysis/export/excel') }}" +
                                         '?search=' + searchValue +
+                                        '&from_date=' + from_date +
+                                        '&to_date=' + to_date +
                                         '&audit_analysis_id=' + audit_analysis_id +
                                         '&status=' + status
                                 }

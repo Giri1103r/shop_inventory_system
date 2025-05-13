@@ -78,6 +78,30 @@
                                                         <div class="text-danger"></div>
                                                     </div>
                                                 </div>
+                                                <div class="col-md-4 mb-3">
+                                                    <div class="form-group form-input">
+                                                        <label for="department" class="form-label require">Company</label>
+                                                        <input type="text" name="company_id" id="company_id"
+                                                            class="form-control form-control-sm" readonly>
+                                                        <div class="text-danger"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 mb-3">
+                                                    <div class="form-group form-input">
+                                                        <label for="department" class="form-label require">location</label>
+                                                        <input type="text" name="location_id" id="location_id"
+                                                            class="form-control form-control-sm" readonly>
+                                                        <div class="text-danger"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 mb-3">
+                                                    <div class="form-group form-input">
+                                                        <label for="department" class="form-label require">Unit</label>
+                                                        <input type="text" name="unit_id" id="unit_id"
+                                                            class="form-control form-control-sm" readonly>
+                                                        <div class="text-danger"></div>
+                                                    </div>
+                                                </div>
 
                                                 <div class="col-md-4 mb-3">
                                                     <div class="form-group form-input">
@@ -88,12 +112,6 @@
                                                         <div class="text-danger"></div>
                                                     </div>
                                                 </div>
-
-
-                                                <input type="hidden" name="unit" id="unit"
-                                                    class="form-control form-control-sm" readonly>
-                                                <input type="hidden" name="company" id="company"
-                                                    class="form-control form-control-sm" readonly>
                                             @else
                                                 <div class="col-md-4 mb-3">
                                                     <div class="form-group form-input">
@@ -116,7 +134,34 @@
 
                                                     </div>
                                                 </div>
-
+                                                <div class="col-md-4 mb-3">
+                                                    <div class="form-group form-input">
+                                                        <label for="department" class="form-label require">Company</label>
+                                                        <input type="text" name="company_id" id="company_id"
+                                                            class="form-control form-control-sm"
+                                                            value="{{ getCompanyname($employee->company_id) }}" readonly>
+                                                        <div class="text-danger"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 mb-3">
+                                                    <div class="form-group form-input">
+                                                        <label for="department"
+                                                            class="form-label require">location</label>
+                                                        <input type="text" name="location_id" id="location_id"
+                                                            class="form-control form-control-sm"
+                                                            value="{{ getLocationname($employee->location_id) }}" readonly>
+                                                        <div class="text-danger"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 mb-3">
+                                                    <div class="form-group form-input">
+                                                        <label for="department" class="form-label require">Unit</label>
+                                                        <input type="text" name="unit_id" id="unit_id"
+                                                            class="form-control form-control-sm"
+                                                            value="{{ getUnitname($employee->unit_id) }}" readonly>
+                                                        <div class="text-danger"></div>
+                                                    </div>
+                                                </div>
                                                 <div class="col-md-4 mb-3">
                                                     <div class="form-group form-input">
                                                         <label for="department"
@@ -128,12 +173,6 @@
 
                                                     </div>
                                                 </div>
-                                                <input type="hidden" name="company" id="company"
-                                                    class="form-control form-control-sm"
-                                                    value="{{ getCompanyname($employee->company_id) }}" readonly>
-                                                <input type="hidden" name="unit" id="unit"
-                                                    class="form-control form-control-sm"
-                                                    value="{{ getUnitname($employee->unit_id) }}" readonly>
                                             @endif
                                             <div class="col-md-4 mb-2">
                                                 <label for="date" class="form-label require">From Date</label>
@@ -263,12 +302,14 @@
                     "{{ auth()->user()->employee_id }}";
                 var authDepartment =
                     "{{ getDepartment(auth()->user()->department_id) ?? 'N/A' }}";
+                var authCompany =
+                    "{{ getCompanyname(auth()->user()->company_id) ?? 'N/A' }}";
+                var authLocation =
+                    "{{ getLocationname(auth()->user()->location_id) ?? 'N/A' }}";
                 var authUnit =
                     "{{ getUnitname(auth()->user()->unit_id) ?? 'N/A' }}";
-                    var authCompany =
-                    "{{ getCompanyname(auth()->user()->company_id) ?? 'N/A' }}";
                 if (requestFor === "1") {
-
+                    // If "Myself" is selected
                     empIdContainer.html(`
                 <label for="emp_id" class="form-label require">Employee ID</label>
                 <input type="text" name="emp_id" id="emp_id" class="form-control form-control-sm" value="${authEmployeeId}" readonly>
@@ -277,8 +318,9 @@
 
                     $("#emp_name").val("{{ auth()->user()->name }}");
                     $("#department").val(authDepartment);
-                    $("#unit").val(authUnit);
-                    $("#company").val(authCompany);
+                    $("#company_id").val(authCompany);
+                    $("#unit_id").val(authUnit);
+                    $("#location_id").val(authLocation);
 
                 } else if (requestFor === "2") {
                     empIdContainer.html(`
@@ -334,11 +376,13 @@
                             if (data && data.employee) {
                                 $("#emp_name").val(data.employee.emp_name);
                                 $("#department").val(data.departments ? data.departments
-                                    .department_name : "No department available");
-                                $("#unit").val(data.units ? data.units
-                                    .unit_name : "No unit available");
-                                    $("#company").val(data.companys ? data.companys
-                                    .company_name : "No company available");
+                                    .department_name : "");
+                                $("#unit_id").val(data.units ? data.units
+                                    .unit_name : "");
+                                $("#company_id").val(data.companys ? data.companys
+                                    .company_name : "");
+                                $("#location_id").val(data.location ? data.location
+                                    .location_name : "");
                             } else {
                                 Swal.fire({
                                     icon: "error",
@@ -358,10 +402,7 @@
                     });
                 } else {
                     $("#emp_name").val("");
-                    $("#unit").val("");
-                    $("#company").val("");
-
-                    $("#department").val("");
+                    $("#department").val(""); // Clear department when no employee is selected
                 }
             });
         });
@@ -450,6 +491,15 @@
                     department: {
                         required: true,
                     },
+                    company_id: {
+                        required: true,
+                    },
+                    location_id: {
+                        required: true,
+                    },
+                    unit_id: {
+                        required: true,
+                    },
                     from_date: {
                         required: true
                     },
@@ -479,6 +529,15 @@
                     },
                     department: {
                         required: "Department cannot be empty.",
+                    },
+                    location_id: {
+                        required: "location cannot be empty.",
+                    },
+                    company_id: {
+                        required: "Company cannot be empty.",
+                    },
+                    unit_id: {
+                        required: "Unit cannot be empty.",
                     },
                     from_date: {
                         required: "Please Select the From date."

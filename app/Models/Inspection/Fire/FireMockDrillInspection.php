@@ -47,7 +47,7 @@ class FireMockDrillInspection extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_fire_mock_drill_observation.*', 'inspection_static_docno.*', 'inspection_fire_mock_drill_observation.id as inspection_id')
+        $query = $this->select('inspection_fire_mock_drill_observation.*', 'inspection_static_docno.*', 'inspection_fire_mock_drill_observation.id as inspection_id','inspection_fire_mock_drill_observation.created_by as inspection_created_by')
             ->leftJoin('inspection_static_docno', 'inspection_fire_mock_drill_observation.document_reference_id', '=', 'inspection_static_docno.id');
 
         if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_OFFICER) || CheckUserRole(ROLE_L1_MANAGER) || CheckUserRole(ROLE_L2_MANAGER)) {
@@ -144,7 +144,7 @@ class FireMockDrillInspection extends Model
         if (isset($request->inspection_date) && $request->inspection_date) {
             $query = $query->where('inspection_fire_mock_drill_observation.inspection_date',  DBdateformat($request->inspection_date));
         }
-     
+
         if (isset($request->inspection_status) && $request->inspection_status) {
             $query = $query->where('inspection_fire_mock_drill_observation.inspection_status', decryptId($request->inspection_status));
         }

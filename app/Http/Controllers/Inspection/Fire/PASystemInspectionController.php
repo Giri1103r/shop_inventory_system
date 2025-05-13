@@ -511,7 +511,7 @@ class PASystemInspectionController extends Controller
             } else {
                 $message = 'EHS Officer Rejected the CAPA Action';
                 $web_link =   admin_url('fire/pa-system-inspection/verification/' . encryptId($inspection_details->id) . '/capa');
-                
+
 
                 $users = [
                     'users' => $inspection_details->created_by,
@@ -760,7 +760,7 @@ class PASystemInspectionController extends Controller
                 ]);
 
                 $sheet->mergeCells("C{$titleRow}:I" . ($titleRow + 2));
-                $sheet->setCellValue("C{$titleRow}", "PA SYSTEM INSPECTION CHECKLIST PN INTERNATIONAL PVT. LTD.");
+                $sheet->setCellValue("C{$titleRow}", "PA SYSTEM INSPECTION CHECKLIST");
 
                 $sheet->getStyle("C{$titleRow}:I" . ($titleRow + 2))->applyFromArray([
                     'font' => ['bold' => true, 'size' => 14],
@@ -1118,7 +1118,7 @@ class PASystemInspectionController extends Controller
 
             $sheet->mergeCells('A1:B3');
             $sheet->mergeCells("C1:I3");
-            $sheet->setCellValue("C1", "PA SYSTEM INSPECTION CHECKLIST PN INTERNATIONAL PVT. LTD.");
+            $sheet->setCellValue("C1", "PA SYSTEM INSPECTION CHECKLIST");
             $sheet->getStyle("C1:I3")->applyFromArray([
                 'font' => ['bold' => true, 'size' => 14],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],

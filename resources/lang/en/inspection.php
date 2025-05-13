@@ -261,4 +261,17 @@ return [
     'verified_by' => 'Verified By',
 
 
+    //Compliance Category
+    'compliance_category_name' => 'Compliance Category Name',
+    'compliance_category' => 'Compliance Category',
+    'compliance_category_inactive_msg' => 'Do you want to Inactive the Compliance Category',
+    'compliance_category_inactive_msg' => 'Do you want to Active the Compliance Category',
+
+    //Chemicals
+    'chemical_name' => 'Chemical Name',
+    'chemical' => 'Chemical',
+    'chemical_inactive_msg' => 'Do you want to Inactive the Chemical',
+    'chemical_inactive_msg' => 'Do you want to Active the Chemical',
+
+
 ];

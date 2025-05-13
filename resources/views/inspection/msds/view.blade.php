@@ -62,6 +62,24 @@
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('inspection.rev_date') }}</label>
+                                        <div class="view_data">
+                                            {{ getLocationname($msds->location_id) }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('inspection.rev_date') }}</label>
+                                        <div class="view_data">
+                                            {{ getUnitname($msds->unit_id) }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('inspection.rev_date') }}</label>
+                                        <div class="view_data">
+                                            {{ getDepartment($msds->department_id) }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('common.created_by') }}</label>
                                         <div class="view_data">
                                             {{ getUsername(isset($msdsDetails->created_by) ? $msdsDetails->created_by : '') }}
@@ -76,7 +94,7 @@
                                 </div>
 
                             </div>
-
+                            @foreach ($inspection_details as $msdsDetails)
                                 <div class="card-body ">
                                     <div class="row">
                                         <div class="card-header-inner">
@@ -100,7 +118,25 @@
                                             <label
                                                 class="form-label view_label">{{ __('inspection.name_of_chemical') }}</label>
                                             <div class="view_data">
-                                                {{ isset($msdsDetails->name_of_chemical) ? $msdsDetails->name_of_chemical : '' }}
+                                                {{ isset($msdsDetails->name_of_chemical) ? ($msdsDetails->name_of_chemical) : '' }}
+                                            </div>
+                                        </div>
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <label class="form-label view_label">{{ __('Storage Capacity') }}</label>
+                                            <div class="view_data">
+                                                {{ isset($msdsDetails->storage_capacity) ? $msdsDetails->storage_capacity : '' }}
+                                            </div>
+                                        </div>
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <label class="form-label view_label">{{ __('NPFA Rating Type') }}</label>
+                                            <div class="view_data">
+                                                {{ isset($msdsDetails->nfa_rating) ? getNFARating($msdsDetails->nfa_rating) : '' }}
+                                            </div>
+                                        </div>
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <label class="form-label view_label">{{ __('NPFA Rating Value') }}</label>
+                                            <div class="view_data">
+                                                {{ isset($msdsDetails->nfa_rating_value) ? $msdsDetails->nfa_rating_value : '' }}
                                             </div>
                                         </div>
                                         <div class="mb-3 col-md-4 form-input">
@@ -123,6 +159,7 @@
 
                                     </div>
                                 </div>
+                            @endforeach
 
                         </div>
                     </div>

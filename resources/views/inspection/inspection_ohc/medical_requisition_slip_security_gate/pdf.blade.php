@@ -166,7 +166,7 @@
                         <span><b>MEDICAL REQUISITION ISSUE SLIP
                             </b></span>
                         <br>
-                        <span><b>PN INTERNATIONAL PVT. LTD.</b></span>
+                      
                     </h3>
                 </th>
 

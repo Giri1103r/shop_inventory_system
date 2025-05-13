@@ -32,44 +32,52 @@
                                                 <option value="">Select the Employee ID</option>
                                             </select>
                                         </div>
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="emp_name" class="form-label ">Emp Name</label>
-                                            <select name="emp_name" id="emp_name" class="form-control form-control-sm"
-                                                style="width: 100%">
-                                                <option value="">Select the Employee Name</option>
-                                            </select>
+                                        <div class="col-md-3 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label require">Employee Name</label>
+                                                <input type="text" name="emp_name" id="emp_name" class="form-control"
+                                                    placeholder="Employee Name">
+                                            </div>
                                         </div>
-
-
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="emp_name" class="form-label ">Unit</label>
-                                            <select name="unit" id="unit" style="width: 100%"
-                                                class="form-select single-select">
-
-                                                <option value="">Select the unit name</option>
-                                                @foreach ($unit as $name)
-                                                    <option value="{{ $name->id }}">{{ $name->unit_name }}</option>
+                                            <label for="company_id" class="form-label ">Company</label>
+                                            <select name="company_id" id="company_id"
+                                                class="form-control single-select form-control-sm" style="width: 100%">
+                                                <option value="">Select the company</option>
+                                                @foreach ($company as $list)
+                                                    <option value="{{ encryptId($list->id) }}">
+                                                        {{ $list->company_name }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
+
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="emp_name" class="form-label ">Department</label>
-                                            <select name="department" id="department" style="width: 100%"
-                                                class="form-select single-select">
-                                                <option value="">Select the department name</option>
+                                            <label for="location_id" class="form-label ">Location</label>
+                                            <select name="location_id" id="location_id"
+                                                class="form-control single-select form-control-sm" style="width: 100%">
+                                                <option value="">Select the Location</option>
 
                                             </select>
                                         </div>
+
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="emp_name" class="form-label ">Company</label>
-                                            <select name="company" id="company" style="width: 100%"
-                                                class="form-select single-select">
-                                                <option value="">Select the company name</option>
-                                                @foreach ($company as $name)
-                                                    <option value="{{ $name->id }}">{{ $name->company_name }}</option>
-                                                @endforeach
+                                            <label for="unit_id" class="form-label">Unit</label>
+                                            <select name="unit_id" id="unit_id"
+                                                class="form-control single-select form-control-sm" style="width: 100%">
+                                                <option value="">Select the Unit</option>
+
                                             </select>
                                         </div>
+                                        <div class="col-md-3 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label require">Department</label>
+                                                <select name="department_id" id="department_id"
+                                                    class="form-control single-select form-control-sm" style="width: 100%">
+                                                    <option value="">Select the department</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="emp_name" class="form-label ">From Date</label>
                                             <div class="input-group date form-input custom-height">
@@ -130,8 +138,10 @@
                                         <th>{{ __('common.sno') }}</th>
                                         <th>Employee / Worker ID</th>
                                         <th>Employee / Worker Name</th>
-                                        <th>Department</th>
+                                        <th>Company</th>
+                                        <th>Location</th>
                                         <th>Unit</th>
+                                        <th>Department</th>
                                         <th>From Date</th>
                                         <th>To Date</th>
                                         <th>Reason</th>
@@ -160,35 +170,87 @@
             });
         });
 
+        $(document).on('change', '#company_id', function() {
+            var companyId = $(this).val();
+            if (companyId) {
+                $.ajax({
+                    url: "{{ admin_url('location/ajax-list') }}/" + companyId + "/0",
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#location_id').empty().append(
+                            '<option value="">Select Location</option>');
+                        $.each(data, function(key, value) {
+                            $('#location_id').append('<option value="' + value
+                                .id + '">' + value.name + '</option>');
+                        });
+                        $('#location_id').trigger('change.');
+                    },
+                    error: function(xhr) {
+                        alert('Error fetching location. Please try again.');
+                    }
+                });
+            } else {
+                $('#location_id').empty().append('<option value="">Select Location</option>');
+                $('#location_id').trigger('change.');
+            }
+        });
+        // location
+
+        $(document).on('change', '#location_id', function() {
+            var locationId = $(this).val();
+            if (locationId) {
+                $.ajax({
+                    url: "{{ admin_url('unit/ajax-list') }}/" + locationId + "/0",
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#unit_id').empty().append(
+                            '<option value="">Select unit</option>');
+                        $.each(data, function(key, value) {
+                            $('#unit_id').append('<option value="' + value
+                                .id + '">' + value.name + '</option>');
+                        });
+                        $('#unit_id').trigger('change.');
+                    },
+                    error: function(xhr) {
+                        alert('Error fetching unit. Please try again.');
+                    }
+                });
+            } else {
+                $('#unit_id').empty().append('<option value="">Select unit</option>');
+                $('#unit_id').trigger('change.');
+            }
+        });
+        $(document).on('change', '#unit_id', function() {
+            var unitId = $(this).val();
+            if (unitId) {
+                $.ajax({
+                    url: "{{ admin_url('department/ajax-list') }}/" + unitId + "/0",
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#department_id').empty().append(
+                            '<option value="">Select Department</option>');
+                        $.each(data, function(key, value) {
+                            $('#department_id').append('<option value="' + value
+                                .id + '">' + value.name + '</option>');
+                        });
+                        $('#department_id').trigger('change.');
+                    },
+                    error: function(xhr) {
+                        alert('Error fetching unit. Please try again.');
+                    }
+                });
+            } else {
+                $('#department_id').empty().append('<option value="">Select Department</option>');
+                $('#department_id').trigger('change.');
+            }
+        });
+
         $('#emp_id').select2({
                 ajax: {
-                    url: '{{ admin_url('ppe_request/employeeid') }}',
-                    dataType: 'json',
-                    delay: 250,
-                    data: function(params) {
-                        return {
-                            search: params.term
-                        };
-                    },
-                    processResults: function(data) {
-                        return {
-                            results: $.map(data, function(item) {
-                                return {
-                                    id: item.text,
-                                    text: item.text
-                                };
-                            })
-                        };
-                    }
-                },
-                minimumInputLength: 1,
-                dropdownCssClass: 'form-control',
-                selectionCssClass: 'form-control'
-            });
-
-            $('#emp_name').select2({
-                ajax: {
-                    url: '{{ admin_url('ppe_request/employeename') }}',
+                    url: '{{ admin_url('ohc/employee-cum-patient/employeeid') }}',
                     dataType: 'json',
                     delay: 250,
                     data: function(params) {
@@ -201,7 +263,7 @@
                             results: $.map(data, function(item) {
                                 return {
                                     id: item.id,
-                                    text: item.id
+                                    text: item.text
                                 };
                             })
                         };
@@ -210,6 +272,33 @@
                 minimumInputLength: 1,
                 dropdownCssClass: 'form-control',
                 selectionCssClass: 'form-control'
+            });
+            $(document).on('change', '#emp_id', function() {
+                var empId = $(this).val();
+                if (empId) {
+                    $.ajax({
+                        url: "{{ admin_url('ohc/employee-cum-patient/employeename') }}",
+                        type: 'GET',
+                        data: {
+                            empId: empId
+                        },
+                        dataType: 'json',
+                        success: function(response) {
+                            if (response.employee) {
+                                $('#emp_name').val(response.employee.emp_name).prop('readonly',
+                                    true);
+
+                            } else {
+                                $('#emp_name').val('').prop('readonly', true);
+                            }
+                        },
+                        error: function(xhr) {
+                            alert('Error fetching employee name. Please try again.');
+                        }
+                    });
+                } else {
+                    $('#emp_name').val('').prop('readonly', true);
+                }
             });
 
         $(document).ready(function() {
@@ -281,9 +370,11 @@
                     data: function(d) {
                         d.emp_id = $('#emp_id').val();
                         d.emp_name = $('#emp_name').val();
-                        d.department = $('#department').val();
-                        d.unit = $('#unit').val();
-                        d.company = $('#company').val();
+
+                        d.unit_id = $('#unit_id').val();
+                        d.company_id = $('#company_id').val();
+                        d.location_id = $('#location_id').val();
+                        d.department_id = $('#department_id').val();
                         d.from_date = $('#from_date').val();
                         d.to_date = $('#to_date').val();
                         d.status = $('#status').val();
@@ -310,13 +401,22 @@
                         name: 'emp_name'
                     },
                     {
-                        data: 'department',
-                        name: 'department'
+                        data: 'company',
+                        name: 'company'
+                    },
+                    {
+                        data: 'location_id',
+                        name: 'location_id'
                     },
                     {
                         data: 'unit',
                         name: 'unit'
                     },
+                    {
+                        data: 'department',
+                        name: 'department'
+                    },
+
                     {
                         data: 'from_date',
                         name: 'from_date'
@@ -368,9 +468,10 @@
                                     var searchValue = $('#datatable-list_filter input').val();
                                     var emp_id = $('#emp_id').val();
                                     var emp_name = $('#emp_name').val();
-                                    var department = $('#department').val();
-                                    var unit = $('#unit').val();
-                                    var company = $('#company').val();
+                                    var unit_id = $('#unit_id').val();
+                                    var company_id = $('#company_id').val();
+                                    var location_id = $('#location_id').val();
+                                    var department_id = $('#department_id').val();
                                     var from_date = $('#from_date').val();
                                     var to_date = $('#to_date').val();
                                     status = $('#status').val();
@@ -383,9 +484,10 @@
                                         '?search=' + searchValue +
                                         '&emp_id=' + emp_id +
                                         '&emp_name=' + emp_name +
-                                        '&department=' + department +
-                                        '&unit=' + unit +
-                                        '&company=' + company +
+                                        '&unit_id=' + unit_id +
+                                        '&company_id=' + company_id +
+                                        '&location_id=' + location_id +
+                                        '&department_id=' + department_id +
                                         '&from_date=' + from_date +
                                         '&to_date=' + to_date +
                                         '&status=' + status +
@@ -399,9 +501,10 @@
                                     var searchValue = $('#datatable-list_filter input').val();
                                     var emp_id = $('#emp_id').val();
                                     var emp_name = $('#emp_name').val();
-                                    var department = $('#department').val();
-                                    var unit = $('#unit').val();
-                                    var company = $('#company').val();
+                                    var unit_id = $('#unit_id').val();
+                                    var company_id = $('#company_id').val();
+                                    var location_id = $('#location_id').val();
+                                    var department_id = $('#department_id').val();
                                     var from_date = $('#from_date').val();
                                     var to_date = $('#to_date').val();
                                     status = $('#status').val();
@@ -414,9 +517,10 @@
                                         '?search=' + searchValue +
                                         '&emp_id=' + emp_id +
                                         '&emp_name=' + emp_name +
-                                        '&department=' + department +
-                                        '&unit=' + unit +
-                                        '&company=' + company +
+                                        '&unit_id=' + unit_id +
+                                        '&company_id=' + company_id +
+                                        '&location_id=' + location_id +
+                                        '&department_id=' + department_id +
                                         '&from_date=' + from_date +
                                         '&to_date=' + to_date +
                                         '&status=' + status +

@@ -163,8 +163,6 @@
                 <th colspan="6" style="border:1px solid black;">
                     <h3>
                         <span><b>अग्नि अनापत्ति प्रमाण पत्र जांच-सूची(Fire Pre-Noc Checklist)</b></span>
-                        <br>
-                        <span><b>PN INTERNATIONAL PVT. LTD.</b></span>
                     </h3>
                 </th>
 

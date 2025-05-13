@@ -254,39 +254,41 @@ class DailyDepartmentFirstAidBoxController extends Controller
                 $daily_department_first_aid_box_details = $this->daily_department_first_aid_box_details->Selectone($id);
                 $daily_department_first_aid_box = $this->daily_department_first_aid_box->Selectone($id);
                 // notification and email
+                if (!empty($getmedicalassistant) || !empty($getfloormanager)) {
+                    $title = "Daily Department First Aid Box";
+                    $mailsubject = "Daily Department First Aid Box";
+                    $details = array(
+                        'ohc_type' => 'Daily Department First Aid Box',
+                        'mail_subject' => $mailsubject,
+                        'title' => $title,
+                        'data' => $daily_department_first_aid_box_details,
+                        'checklist' =>   $daily_department_first_aid_box
+                    );
 
-                $title = "Daily Department First Aid Box";
-                $mailsubject = "Daily Department First Aid Box";
-                $details = array(
-                    'ohc_type' => 'Daily Department First Aid Box',
-                    'mail_subject' => $mailsubject,
-                    'title' => $title,
-                    'data' => $daily_department_first_aid_box_details,
-                    'checklist' =>   $daily_department_first_aid_box
-                );
+                    $recipients = array_merge($getfloormanagerEmail, $getmedicalassistantEmail);
+                    if (!empty($recipients)) {
+                        Mail::to($recipients)->queue(new OccupationalHealthEmail($details));
+                    }
 
-                $recipients = array_merge($getfloormanagerEmail, $getmedicalassistantEmail);
-                if (!empty($recipients)) {
-                    Mail::to($recipients)->queue(new OccupationalHealthEmail($details));
+                    $notificationData = array(
+                        'notification_type' => OHC_INSPECTION,
+                        'module_type' => 1,
+                        'notification_message' => $mailsubject,
+                        'mobile_notification' => json_encode(array(
+                            'title' => $mailsubject,
+                            'message' => "Requestor Created the Daily Departmental First Aid box",
+                            'icon' => admin_url('public/assets/icons/occupational-therapy.png'),
+                            'id' => $id,
+                            'module' => 1,
+                        )),
+                        'web_link' => admin_url('ohc/first-aid-box/daily-departmental/approval/view/' . encryptId($id)), // Fixed concatenation
+                        'assigned_user' => array_to_string(array_merge($getmedicalassistants,   $getfloormanagers)), // Fixed missing parenthesis
+                        'created_by' => Auth::id(),
+                    );
+
+                    notificationSave($notificationData);
                 }
 
-                $notificationData = array(
-                    'notification_type' => OHC_INSPECTION,
-                    'module_type' => 1,
-                    'notification_message' => $mailsubject,
-                    'mobile_notification' => json_encode(array(
-                        'title' => $mailsubject,
-                        'message' => "Requestor Created the Daily Departmental First Aid box",
-                        'icon' => admin_url('public/assets/icons/occupational-therapy.png'),
-                        'id' => $id,
-                        'module' => 1,
-                    )),
-                    'web_link' => admin_url('ohc/first-aid-box/daily-departmental/approval/view/' . encryptId($id)), // Fixed concatenation
-                    'assigned_user' => array_to_string(array_merge($getmedicalassistants,   $getfloormanagers)), // Fixed missing parenthesis
-                    'created_by' => Auth::id(),
-                );
-
-                notificationSave($notificationData);
 
                 Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
@@ -349,6 +351,9 @@ class DailyDepartmentFirstAidBoxController extends Controller
             return view('inspection.inspection_ohc.daily_department_first_aid_box.view', $data);
         } catch (Exception $ex) {
             report($ex);
+
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/first-aid-box/daily-departmental/list'));
         }
     }
 
@@ -397,6 +402,8 @@ class DailyDepartmentFirstAidBoxController extends Controller
             return view('inspection.inspection_ohc.daily_department_first_aid_box.approval', $data);
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/first-aid-box/daily-departmental/list'));
         }
     }
 
@@ -463,7 +470,8 @@ class DailyDepartmentFirstAidBoxController extends Controller
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);
-            return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/first-aid-box/daily-departmental/list'));
         }
     }
 
@@ -637,7 +645,7 @@ class DailyDepartmentFirstAidBoxController extends Controller
 
                 // Title Section
                 $sheet->mergeCells("G{$currentRow}:M" . ($currentRow + 2));
-                $sheet->setCellValue("G{$currentRow}", "OCCUPATIONAL HEALTH CENTER PN INTERNATIONAL PVT LTD");
+                $sheet->setCellValue("G{$currentRow}", "OCCUPATIONAL HEALTH CENTER");
                 $sheet->getStyle("G{$currentRow}")->applyFromArray([
                     'font' => ['bold' => true, 'size' => 14],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
@@ -795,8 +803,7 @@ class DailyDepartmentFirstAidBoxController extends Controller
                 }
 
 
-$row =   $signatureStartRow +8;
-
+                $row =   $signatureStartRow + 8;
             }
 
 
@@ -813,7 +820,7 @@ $row =   $signatureStartRow +8;
             ]);
         } catch (Exception $ex) {
 
-             report($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/first-aid-box/daily-departmental/list'));
         }
@@ -921,7 +928,7 @@ $row =   $signatureStartRow +8;
 
             // Title Section
             $sheet->mergeCells("G{$currentRow}:M" . ($currentRow + 2));
-            $sheet->setCellValue("G{$currentRow}", "OCCUPATIONAL HEALTH CENTER PN INTERNATIONAL PVT LTD");
+            $sheet->setCellValue("G{$currentRow}", "OCCUPATIONAL HEALTH CENTER ");
             $sheet->getStyle("G{$currentRow}")->applyFromArray([
                 'font' => ['bold' => true, 'size' => 14],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
@@ -1093,7 +1100,7 @@ $row =   $signatureStartRow +8;
                 'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
             ]);
         } catch (Exception $ex) {
-             report($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong!');
             return redirect(admin_url('ohc/first-aid-box/daily-departmental/list'));
         }

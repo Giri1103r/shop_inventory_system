@@ -4,48 +4,62 @@ namespace App\Http\Controllers\Inspection\MSDS;
 
 use Exception;
 use App\Models\User;
+use App\Models\Master\Unit;
 use Illuminate\Http\Request;
+use App\Models\Master\Location;
+use App\Models\Master\Department;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\Inspection\MSDS\MSDSEmail;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Response;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Spatie\SimpleExcel\SimpleExcelWriter;
+use PhpOffice\PhpSpreadsheet\Style\Border;
 use App\Models\Inspection\MSDS\MSDSDetails;
 use App\Models\Inspection\MSDS\MSDSCheckList;
 use App\Models\Inspection\MSDS\MSDSStatusLog;
-use App\Http\Controllers\Admin\AdminController;
-use App\Models\Inspection\InspectionStaticDocno;
-use App\Models\Inspection\MSDS\MSDSSignatureUpload;
-
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
-use PhpOffice\PhpSpreadsheet\Style\Alignment;
-use PhpOffice\PhpSpreadsheet\Style\Border;
-use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use App\Http\Controllers\Admin\AdminController;
+use App\Models\Inspection\MSDS\Master\Chemical;
 use PhpOffice\PhpSpreadsheet\RichText\RichText;
-use Illuminate\Support\Facades\Response;
+use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
+use App\Models\Inspection\InspectionStaticDocno;
+use App\Models\Inspection\MSDS\Master\NFARating;
+use App\Models\Inspection\MSDS\MSDSSignatureUpload;
+use App\Models\Inspection\MSDS\Master\NFARatingValue;
+use App\Models\Inspection\MSDS\MSDS;
 
 class MSDSController extends Controller
 {
 
     private $msdsDetails;
-    private $msdsCheckList;
-    private $statusLog;
-    private $signature;
+    private $units;
+    private $departments;
+    private $locations;
+    private $chemicals;
     private $document_reference;
+    private $nfarating;
+    private $nfaratingvalue;
+    private $msds;
 
     public function __construct()
     {
         $this->msdsDetails = new MSDSDetails();
-        $this->msdsCheckList = new MSDSCheckList();
-        $this->statusLog = new MSDSStatusLog();
-        $this->signature = new MSDSSignatureUpload();
+        $this->units = new Unit();
+        $this->departments = new Department();
+        $this->locations = new Location();
+        $this->chemicals = new Chemical();
         $this->document_reference = new InspectionStaticDocno();
+        $this->nfarating = new NFARating();
+        $this->nfaratingvalue = new NFARatingValue();
+        $this->msds = new MSDS();
     }
 
     public function Index(Request $request)
@@ -53,7 +67,7 @@ class MSDSController extends Controller
         if (Auth::check()) {
             if ($request->ajax()) {
                 try {
-                    $data =  $this->msdsDetails->list();
+                    $data =  $this->msds->list();
                     $datatables = DataTables::of($data['data'])
                         ->addIndexColumn()
                         ->addColumn('created_date', function ($row) {
@@ -76,7 +90,7 @@ class MSDSController extends Controller
                                     </a>';
                             return $btn;
                         })
-                        ->rawColumns(['action', 'created_date','issue_date','created_by'])
+                        ->rawColumns(['action', 'created_date', 'issue_date', 'created_by'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -89,7 +103,10 @@ class MSDSController extends Controller
             }
         }
 
-        $data = [];
+        $locations = $this->locations->getLocationName();
+        $data = [
+            'locations' => $locations,
+        ];
 
         return view('inspection.msds.list', $data);
     }
@@ -98,8 +115,20 @@ class MSDSController extends Controller
     {
         try {
             $document_no = $this->document_reference->selectUsingName('MSDS');
+            $chemicals = $this->chemicals->getChemicals();
+            $locations = $this->locations->getLocationName();
+            $units = $this->units->getunit();
+            $departments = $this->departments->getdepartment();
+            $nfaratings = $this->nfarating->getNFArating();
+            $nfaratingvalues = $this->nfaratingvalue->getNFARatingValue();
             $data = [
                 'document_no' => $document_no,
+                'chemicals' => $chemicals,
+                'locations' => $locations,
+                'units' => $units,
+                'departments' => $departments,
+                'nfaratings' => $nfaratings,
+                'nfaratingvalues' => $nfaratingvalues,
             ];
             return view('inspection.msds.add', $data);
         } catch (Exception $ex) {
@@ -113,26 +142,9 @@ class MSDSController extends Controller
     {
 
         try {
-            $rules = [
-                'item_code' => 'required',
-                'name_of_chemical' => 'required',
-                'msds_availability_status' => 'required',
-                'remark' => 'required',
-            ];
-            $messages = [
-                'item_code.required' => __('Item Code is required'),
-                'name_of_chemical.required' => __('Name of Chemical is required'),
-                'msds_availability_status.required' => __('MSDS Availability Status is required'),
-                'remark.required' => __('Remark is required'),
-            ];
-
-            $validator = Validator::make($request->all(), $rules, $messages);
-            if ($validator->fails()) {
-                return redirect()->back()->withErrors($validator)->withInput();
-            }
             try {
-               $msds = $this->msdsDetails->store();
-
+                $msds = $this->msds->store();
+                $msdsdetails = $this->msdsDetails->store($msds->id);
                 Session::flash('success', __('Your data has been created successfully'));
             } catch (Exception $ex) {
 
@@ -141,7 +153,7 @@ class MSDSController extends Controller
             }
             return redirect(admin_url('msds/list'));
         } catch (Exception $ex) {
-            report($ex);
+
             Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('msds/list'));
         }
@@ -157,8 +169,6 @@ class MSDSController extends Controller
 
             if (empty($id)) {
                 $isUnique = $this->msdsDetails->uniqueCheck($item_code, $name_of_chemical);
-
-
             } else {
                 $id = decryptId($id);
 
@@ -177,12 +187,12 @@ class MSDSController extends Controller
         try {
             $id = decryptId($request->id);
             if (Auth::check()) {
-                $msdsDetails = $this->msdsDetails->find($id);
-                $inspection_details = $this->msdsDetails->selectOne($id);
-                $document_no = $this->document_reference->selectOne($msdsDetails->document_reference_id);
+                $msds = $this->msds->find($id);
+                $inspection_details = $this->msdsDetails->getDetails($msds->id);
+                $document_no = $this->document_reference->selectOne($msds->document_reference_id);
 
                 $data = array(
-                    'msdsDetails' => $msdsDetails,
+                    'msds' => $msds,
                     'inspection_details' => $inspection_details,
                     'document_no' => $document_no,
                 );
@@ -201,13 +211,13 @@ class MSDSController extends Controller
 
         try {
 
-            $allData = $this->msdsDetails->exportdata();
+            $allData = $this->msds->exportdata();
             $document_no = $this->document_reference->selectUsingName('MSDS');
 
 
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
-            }elseif(count($allData) > 20){
+            } elseif (count($allData) > 20) {
                 return redirect()->back()->with('error',   __('inspection.excess_error'));
             }
 
@@ -237,6 +247,7 @@ class MSDSController extends Controller
             $filename = "MSDS.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
+            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('msds/list'));
@@ -394,12 +405,12 @@ class MSDSController extends Controller
             $id = decryptId($request->id);
 
             if (Auth::check()) {
-                $msdsDetails = $this->msdsDetails->find($id);
-                $inspection_details = $this->msdsDetails->selectOne($id);
+                $msds = $this->msds->selectOne($id);
+                $inspection_details = $this->msdsDetails->getDetails($msds->id);
                 $document_no = $this->document_reference->selectUsingName('MSDS');
 
                 $data = [
-                    'msdsDetails' => $msdsDetails,
+                    'msds' => $msds,
                     'inspection_details' => $inspection_details,
                     'pagetitle' => "MSDS Details",
                     'document_no' => $document_no,
@@ -423,6 +434,7 @@ class MSDSController extends Controller
             $filename = "MSDS Details.pdf";
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
+            dd($ex);
             report($ex);
             Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('msds/list'));
@@ -434,7 +446,8 @@ class MSDSController extends Controller
     {
         try {
             $id = decryptId($request->id);
-            $msdsDetails = $this->msdsDetails->selectOne($id);
+            $msds = $this->msds->selectOne($id);
+            $inspection_details = $this->msdsDetails->getDetails($msds->id);
             $document_no = $this->document_reference->selectUsingName('MSDS');
 
             $spreadsheet = new Spreadsheet();
@@ -457,121 +470,104 @@ class MSDSController extends Controller
             $sheet->setCellValue('C1', "Chemical (MSDS) Master List PN International Pvt.Ltd.");
             $sheet->getStyle('C1')->applyFromArray([
                 'font' => ['bold' => true, 'size' => 14],
-                'alignment' => [
-                    'horizontal' => Alignment::HORIZONTAL_CENTER,
-                    'vertical' => Alignment::VERTICAL_CENTER,
-                    'wrapText' => true
-                ],
-            ]);
-
-            $headerLabels = [
-                'M1:N1' => 'Doc. No.',
-                'M2:N2' => 'Issue Dt.',
-                'M3:N3' => 'Rev. & Dt.',
-            ];
-
-            foreach ($headerLabels as $cellRange => $label) {
-                $cell = explode(':', $cellRange)[0];
-                $sheet->mergeCells($cellRange)->setCellValue($cell, $label);
-                $sheet->getStyle($cell)->applyFromArray([
-                    'font' => ['bold' => true],
-                    'alignment' => [
-                        'horizontal' => Alignment::HORIZONTAL_CENTER,
-                        'vertical' => Alignment::VERTICAL_CENTER,
-                    ],
-                ]);
-            }
-
-            $sheet->setCellValue("O1", $document_no->doc_no);
-            $sheet->setCellValue("O2", Displaydateformat($document_no->issue_date));
-            $sheet->setCellValue("O3", $document_no->rev_dt);
-
-            $sheet->getStyle("M1:O3")->applyFromArray([
-                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE, 'color' => ['argb' => '000000']]],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
             ]);
 
-            $headers = [
-                'Sr. No',
-                'Item Code',
-                'Name Of Chemical',
-                'MSDS Available Status',
-                'Remarks'
-            ];
+            $docHeaders = ['M1:N1' => 'Doc. No.', 'M2:N2' => 'Issue Dt.', 'M3:N3' => 'Rev. & Dt.'];
+            foreach ($docHeaders as $cellRange => $label) {
+                $startCell = explode(':', $cellRange)[0];
+                $sheet->mergeCells($cellRange)->setCellValue($startCell, $label);
+                $sheet->getStyle($cellRange)->applyFromArray([
+                    'font' => ['bold' => true],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                ]);
+            }
+            $sheet->setCellValue("O1", $document_no->doc_no ?? '');
+            $sheet->setCellValue("O2", Displaydateformat($document_no->issue_date ?? ''));
+            $sheet->setCellValue("O3", $document_no->rev_dt ?? '');
+            $sheet->getStyle("M1:O3")->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+            ]);
 
-            $sheet->mergeCells('A4:C4')->setCellValue('A4', $headers[0]);
-            $sheet->mergeCells('D4:F4')->setCellValue('D4', $headers[1]);
-            $sheet->mergeCells('G4:I4')->setCellValue('G4', $headers[2]);
-            $sheet->mergeCells('J4:L4')->setCellValue('J4', $headers[3]);
-            $sheet->mergeCells('M4:O4')->setCellValue('M4', $headers[4]);
+
 
             $sheet->getStyle('A4:O4')->applyFromArray([
                 'font' => ['bold' => true],
-                'alignment' => [
-                    'horizontal' => Alignment::HORIZONTAL_CENTER,
-                    'vertical' => Alignment::VERTICAL_CENTER,
-                    'wrapText' => true
-                ],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                'fill' => [
-                    'fillType' => Fill::FILL_SOLID,
-                ],
+                'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['argb' => 'D9E1F2']]
             ]);
 
-            $row = 5;
-            $sheet->mergeCells("A{$row}:C{$row}")->setCellValue("A{$row}", '1');
-            $sheet->mergeCells("D{$row}:F{$row}")->setCellValue("D{$row}", $msdsDetails->item_code ?? '');
-            $sheet->mergeCells("G{$row}:I{$row}")->setCellValue("G{$row}", $msdsDetails->name_of_chemical ?? '');
+            $sheet->mergeCells('A4:E4')->setCellValue('A4', 'Location: ' . getLocationName($msds->location_id));
+            $sheet->mergeCells('F4:J4')->setCellValue('F4', 'Department: ' . getDepartment($msds->department_id));
+            $sheet->mergeCells('K4:O4')->setCellValue('K4', 'Unit: ' . getUnitName($msds->unit_id));
 
-            $sheet->mergeCells("J{$row}:L{$row}");
+            $sheet->getStyle('A5:O5')->applyFromArray([
+                'font' => ['bold' => true],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['argb' => 'D9E1F2']]
+            ]);
 
-            $status = strtoupper($msdsDetails->msds_availability_status ?? '');
+            $sheet->mergeCells('A5:B5')->setCellValue('A5', 'Sr. No');
+            $sheet->setCellValue('C5', 'Item Code');
+            $sheet->mergeCells('D5:F5')->setCellValue('D5', 'Name Of Chemical');
+            $sheet->setCellValue('G5', 'Storage Capacity');
+            $sheet->setCellValue('H5', 'NPFA Rating Type');
+            $sheet->setCellValue('I5', 'NPFA Rating');
+            $sheet->mergeCells('J5:L5')->setCellValue('J5', 'MSDS Availability Status');
+            $sheet->mergeCells('M5:O5')->setCellValue('M5', 'Remarks');
 
-            switch ($status) {
-                case '1':
-                    $symbol = '✓';
-                    $color = '008000';
-                    break;
-                case '2':
-                    $symbol = 'X';
-                    $color = 'FF0000';
-                    break;
-                case 'null':
-                    $symbol = 'N/A';
-                    $color = '808080';
-                    break;
-                default:
-                    $symbol = '-';
-                    $color = '808080';
-                    break;
+            $row = 6;
+            foreach ($inspection_details as $index => $msdsDetails) {
+                $sheet->mergeCells("A{$row}:B{$row}")->setCellValue("A{$row}", $index + 1);
+                $sheet->setCellValue("C{$row}", $msdsDetails->item_code ?? '');
+                $sheet->mergeCells("D{$row}:F{$row}")->setCellValue("D{$row}", getChemicalName($msdsDetails->name_of_chemical) ?? '');
+                $sheet->setCellValue("G{$row}", $msdsDetails->storage_capacity ?? '');
+                $sheet->setCellValue("H{$row}", getNFARating($msdsDetails->nfa_rating) ?? '');
+                $sheet->setCellValue("I{$row}", $msdsDetails->nfa_rating_value ?? '');
+
+                // MSDS Status
+                $status = strtoupper($msdsDetails->msds_availability_status ?? '');
+                switch ($status) {
+                    case '1':
+                    case 'YES':
+                        $symbol = '✓';
+                        $color = '008000';
+                        break;
+                    case '2':
+                    case 'NO':
+                        $symbol = 'X';
+                        $color = 'FF0000';
+                        break;
+                    case 'N/A':
+                    case 'NULL':
+                        $symbol = 'N/A';
+                        $color = '808080';
+                        break;
+                    default:
+                        $symbol = '-';
+                        $color = '808080';
+                        break;
+                }
+
+                $sheet->mergeCells("J{$row}:L{$row}")->setCellValue("J{$row}", $symbol);
+                $sheet->getStyle("J{$row}:L{$row}")->applyFromArray([
+                    'font' => ['color' => ['rgb' => $color], 'bold' => true, 'size' => 14],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                ]);
+
+                $sheet->mergeCells("M{$row}:O{$row}")->setCellValue("M{$row}", $msdsDetails->remark ?? '');
+
+                $sheet->getStyle("A{$row}:O{$row}")->applyFromArray([
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                ]);
+
+                $row++;
             }
-
-            $sheet->setCellValue("J{$row}", $symbol);
-
-            $sheet->getStyle("J{$row}:L{$row}")->applyFromArray([
-                'font' => [
-                    'name' => 'Segoe UI Symbol',
-                    'color' => ['rgb' => $color],
-                    'bold' => true,
-                    'size' => 14,
-                ],
-                'alignment' => [
-                    'horizontal' => Alignment::HORIZONTAL_CENTER,
-                    'vertical' => Alignment::VERTICAL_CENTER,
-                ],
-            ]);
-
-
-            $sheet->mergeCells("M{$row}:O{$row}")->setCellValue("M{$row}", $msdsDetails->remark ?? '');
-
-            $sheet->getStyle("A{$row}:O{$row}")->applyFromArray([
-                'alignment' => [
-                    'horizontal' => Alignment::HORIZONTAL_CENTER,
-                    'vertical' => Alignment::VERTICAL_CENTER
-                ],
-                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-            ]);
-
 
             foreach (range('A', 'O') as $col) {
                 $sheet->getColumnDimension($col)->setAutoSize(true);
@@ -593,7 +589,47 @@ class MSDSController extends Controller
     }
 
 
-
-
-
+    public function GetUnit(Request $request)
+    {
+        $location = decryptId($request->location);
+        try {
+            $unit = $this->units->getUnitBasedLocation($location);
+            return response()->json([
+                'unit' => $unit->map(function ($unit) {
+                    return [
+                        'id' => encryptId($unit->id),
+                        'unit' => getUnitname($unit->id),
+                    ];
+                })
+            ]);
+        } catch (Exception $ex) {
+            report($ex);
+            return response()->json([
+                'employee' => [],
+                'message' => 'Failed to retrieve Unit.',
+            ], 500);
+        }
+    }
+    public function getDepartment(Request $request)
+    {
+        $location = decryptId($request->location);
+        $unit = decryptId($request->unit);
+        try {
+            $department = $this->departments->getDepartmentBasedUnit($location, $unit);
+            return response()->json([
+                'department' => $department->map(function ($department) {
+                    return [
+                        'id' => encryptId($department->id),
+                        'department_name' => getDepartment($department->id),
+                    ];
+                })
+            ]);
+        } catch (Exception $ex) {
+            report($ex);
+            return response()->json([
+                'employee' => [],
+                'message' => 'Failed to retrieve Department.',
+            ], 500);
+        }
+    }
 }

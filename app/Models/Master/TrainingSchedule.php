@@ -394,12 +394,12 @@ class TrainingSchedule extends Model
         }
         // Select and group data by year and month
         $results = $query->selectRaw(
-            'YEAR(from_date) as year, 
-             MONTH(from_date) as month, 
-             COUNT(*) as total_count, 
-             SUM(CASE WHEN training_status IN (1, 2, 4, 5) THEN 1 ELSE 0 END) as pending_count, 
-             SUM(CASE WHEN training_status = 3 THEN 1 ELSE 0 END) as rejected_count, 
-             SUM(CASE WHEN training_status IN (6, 7) THEN 1 ELSE 0 END) as inprogress_count, 
+            'YEAR(from_date) as year,
+             MONTH(from_date) as month,
+             COUNT(*) as total_count,
+             SUM(CASE WHEN training_status IN (1, 2, 4, 5) THEN 1 ELSE 0 END) as pending_count,
+             SUM(CASE WHEN training_status = 3 THEN 1 ELSE 0 END) as rejected_count,
+             SUM(CASE WHEN training_status IN (6, 7) THEN 1 ELSE 0 END) as inprogress_count,
              SUM(CASE WHEN training_status = 8 THEN 1 ELSE 0 END) as completed_count'
         )
             ->groupBy('year', 'month')
@@ -501,10 +501,10 @@ class TrainingSchedule extends Model
 
         // Select and aggregate the counts
         $results = $query->selectRaw(
-            'COUNT(*) as total_count, 
-             SUM(CASE WHEN training_status IN (1, 2, 4, 5) THEN 1 ELSE 0 END) as pending_count, 
-             SUM(CASE WHEN training_status = 3 THEN 1 ELSE 0 END) as rejected_count, 
-             SUM(CASE WHEN training_status IN (6, 7) THEN 1 ELSE 0 END) as inprogress_count, 
+            'COUNT(*) as total_count,
+             SUM(CASE WHEN training_status IN (1, 2, 4, 5) THEN 1 ELSE 0 END) as pending_count,
+             SUM(CASE WHEN training_status = 3 THEN 1 ELSE 0 END) as rejected_count,
+             SUM(CASE WHEN training_status IN (6, 7) THEN 1 ELSE 0 END) as inprogress_count,
              SUM(CASE WHEN training_status = 8 THEN 1 ELSE 0 END) as completed_count'
         )->first();
 
@@ -713,22 +713,35 @@ class TrainingSchedule extends Model
         return $data;
     }
 
-    public function GetTrainingData()
+    public function getTrainigCompletionCountData($request)
     {
-        $request = request();
-        $from_date = $request->input('Fromdate');
-        $to_date = $request->input('Todate');
+        $query = DB::table('training_schedule')
+            ->select(
+                DB::raw('COUNT(id) as training_total_count'),
+                DB::raw('SUM(CASE WHEN training_status = 8 THEN 1 ELSE 0 END) as closed_count'),
+                DB::raw('SUM(CASE WHEN training_status != 8 THEN 1 ELSE 0 END) as open_count'),
+                DB::raw('ROUND(SUM(CASE WHEN training_status = 8 THEN 1 ELSE 0 END) * 100.0 / COUNT(id), 2) as closed_percentage'),
+                DB::raw('ROUND(SUM(CASE WHEN training_status != 8 THEN 1 ELSE 0 END) * 100.0 / COUNT(id), 2) as open_percentage')
+            );
 
-
-        $query = $this->where('status', 1)->where('trash', 'NO');
-
-
-        if (!empty($from_date)) {
-            $query->whereDate('created_at', '>=', $from_date);
+        // Date Filters
+        if ($request->Fromdate && $request->Todate) {
+            $query->whereBetween('created_at', [
+                DBdateformat($request->Fromdate),
+                DBdateformat($request->Todate)
+            ]);
+        } elseif ($request->Fromdate) {
+            $query->where('created_at', '>=', DBdateformat($request->Fromdate));
+        } elseif ($request->Todate) {
+            $query->where('created_at', '<=', DBdateformat($request->Todate));
         }
-        if (!empty($to_date)) {
-            $query->whereDate('created_at', '<=', $to_date);
+
+        if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_ADMIN)) {
+        } elseif (Auth::user()->role == ROLE_USER) {
+            $query->where('created_by', Auth::id());
         }
+
+        return $query->first(); // only one row
     }
 
 

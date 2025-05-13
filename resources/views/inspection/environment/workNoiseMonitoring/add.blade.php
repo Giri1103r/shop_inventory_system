@@ -95,7 +95,7 @@
                                                     </div>
 
                                                     <div class="col-md-4 form-input">
-                                                        <label for="" class="form-label">Location</label>
+                                                        <label for="" class="form-label require">Location</label>
                                                         <select class="form-control single-select"
                                                             name="monitoring[1][location_id]" style="width: 100%"
                                                             id="location_id_1">
@@ -107,7 +107,7 @@
                                                         </select>
                                                     </div>
                                                     <div class="col-md-4 form-input">
-                                                        <label for="" class="form-label">Unit</label>
+                                                        <label for="" class=" require form-label">Unit</label>
                                                         <select class="form-control single-select"
                                                             name="monitoring[1][unit_id]" style="width: 100%"
                                                             id="unit_id_1">
@@ -118,25 +118,25 @@
 
 
                                                     <div class="col-md-4 form-input mt-2">
-                                                        <label class="form-label">NOISE LEVEL (dBA)</label>
+                                                        <label class="form-label require">NOISE LEVEL (dBA)</label>
                                                         <input type="text" name="monitoring[1][noise_level_dba]"
                                                             class="form-control" id="noise_level_dba_1">
                                                     </div>
 
                                                     <div class="col-md-4 form-input mt-2">
-                                                        <label class="form-label">Date of Monitoring</label>
+                                                        <label class="form-label require">Date of Monitoring</label>
                                                         <input type="text" name="monitoring[1][date_of_monitoring]"
                                                             class="form-control" id="date_of_monitoring_1">
                                                     </div>
                                                     <div class="col-md-4 form-input mt-2">
-                                                        <label class="form-label">Next Due Date of
+                                                        <label class="form-label require">Next Due Date of
                                                             Monitoring</label>
                                                         <input type="text"
                                                             name="monitoring[1][next_due_date_of_monitoring]"
                                                             class="form-control" id="next_due_date_of_monitoring_1">
                                                     </div>
                                                     <div class="col-md-4 form-input mt-2">
-                                                        <label class="form-label">NOISE LEVEL (dBA)</label>
+                                                        <label class="form-label require">Time of Monitoring</label>
                                                         <select class="form-control single-select"
                                                             name="monitoring[1][noise_level_dba_dropdown]"
                                                             style="width: 100%" id="noise_level_dba_dropdown_1">
@@ -147,31 +147,40 @@
                                                     </div>
 
                                                     <div class="col-md-4 form-input mt-2">
-                                                        <label class="form-label">NOISE LEVEL (dBA)</label>
+                                                        <label class="form-label require">NOISE LEVEL (dBA)</label>
                                                         <input type="text" name="monitoring[1][noise_level_dba_no]"
                                                             class="form-control" id="noise_level_dba_no_1">
                                                     </div>
                                                     <div class="col-md-4 form-input mt-2">
-                                                        <label class="form-label">Date of Monitoring</label>
+                                                        <label class="form-label require">Date of Monitoring</label>
                                                         <input type="text"
                                                             name="monitoring[1][date_of_monitoring_date]"
                                                             class="form-control" id="date_of_monitoring_date_1">
                                                     </div>
 
                                                     <div class="col-md-4 form-input mt-2">
-                                                        <label class="form-label">Next Due Date of Monitoring
+                                                        <label class="form-label require">Next Due Date of Monitoring
                                                         </label>
                                                         <input type="text"
                                                             name="monitoring[1][next_due_date_of_monitoring_date]"
                                                             class="form-control" id="next_due_date_of_monitoring_date_1">
                                                     </div>
+
                                                     <div class="col-md-4 form-input mt-2">
-                                                        <label class="form-label">Act/Rule</label>
+                                                        <label class="form-label require">Last Due Date of Monitoring
+                                                        </label>
+                                                        <input type="text"
+                                                            name="monitoring[1][last_due_date_of_monitoring_date]"
+                                                            class="form-control" id="last_due_date_of_monitoring_date_1">
+                                                    </div>
+
+                                                    <div class="col-md-4 form-input mt-2">
+                                                        <label class="form-label require">Act/Rule</label>
                                                         <input type="text" name="monitoring[1][act_rule]"
                                                             class="form-control" id="act_rule_1">
                                                     </div>
                                                     <div class="col-md-4 form-input mt-2">
-                                                        <label class="form-label">Remark</label>
+                                                        <label class="form-label ">Remark</label>
                                                         <textarea name="monitoring[1][remark]" class="form-control" id="remark_1"> </textarea>
                                                     </div>
 
@@ -218,19 +227,33 @@
 
 
         document.addEventListener("DOMContentLoaded", function() {
+          
+
             function initializeFlatpickr() {
-                flatpickr("input[id^='date_of_monitoring_']", {
-                    dateFormat: "d-m-Y"
-                });
-                flatpickr("input[id^='date_of_monitoring_date_']", {
+                flatpickr("input[id^='last_due_date_of_monitoring_date_']", {
                     dateFormat: "d-m-Y"
                 });
                 flatpickr("input[id^='next_due_date_of_monitoring_date_']", {
                     dateFormat: "d-m-Y"
                 });
-                flatpickr("input[id^='next_due_date_of_monitoring_']", {
-                    dateFormat: "d-m-Y"
+
+                $("input[id^='date_of_monitoring_']").flatpickr({
+                    dateFormat: "d-m-Y",
+                    onChange: function(selectedDates, dateStr, instance) {
+                        let index = instance.element.id.replace("date_of_monitoring_",
+                            ""); // Extract index
+                        let $nextDueDate = $("#next_due_date_of_monitoring_" + index);
+
+                        if ($nextDueDate.length) {
+                            $nextDueDate.flatpickr({
+                                dateFormat: "d-m-Y",
+                                minDate: selectedDates[0].fp_incr(
+                                    1) // Next Due Date should be after Date of Monitoring
+                            });
+                        }
+                    }
                 });
+
             }
 
             function updateRowIndexes() {
@@ -358,6 +381,12 @@
                     }
                 });
                 newRow.find("input[name$='[next_due_date_of_monitoring_date]']").rules("add", {
+                    required: true,
+                    messages: {
+                        required: "Please Select the date."
+                    }
+                });
+                newRow.find("input[name$='[last_due_date_of_monitoring_date]']").rules("add", {
                     required: true,
                     messages: {
                         required: "Please Select the date."
@@ -496,6 +525,10 @@
                         required: true,
 
                     },
+                    'monitoring[1][last_due_date_of_monitoring_date]': {
+                        required: true,
+
+                    },
                     'monitoring[1][act_rule]': {
                         required: true,
                         minlength: 3,
@@ -538,6 +571,10 @@
                     },
 
                     'monitoring[1][next_due_date_of_monitoring_date]': {
+                        required: "Please enter a date.",
+
+                    },
+                    'monitoring[1][last_due_date_of_monitoring_date]': {
                         required: "Please enter a date.",
 
                     },

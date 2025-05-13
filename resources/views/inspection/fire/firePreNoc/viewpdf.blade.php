@@ -280,8 +280,6 @@
             <th colspan="6" style="border:1px solid black;">
                 <h3>
                     <span><b>DAILY FIRE PUMP HOUSE INSPECTION CHECKLIST</b></span>
-                    <br>
-                    <span><b>PN International Pvt Ltd. </b></span>
                 </h3>
             </th>
 

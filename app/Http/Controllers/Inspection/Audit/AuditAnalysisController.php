@@ -113,7 +113,7 @@ class AuditAnalysisController extends Controller
             $staticDocno  = $this->static_docno->select('id', 'doc_no', 'issue_date', 'rev_dt')->where([
                 ['type', "6SAuditAnalysis"],
                 ['status', '1']
-                ])->first();
+            ])->first();
 
             $data = array(
                 'departmentList' => $departmentList,
@@ -123,7 +123,7 @@ class AuditAnalysisController extends Controller
             return view('inspection.inspection_audit.auditAnalysis.add', $data);
         } catch (Exception $ex) {
             report($ex);
-             Session::flash('error',  __('common.message_error'));
+            Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('audit/6s-analysis/list'));
         }
     }
@@ -139,7 +139,7 @@ class AuditAnalysisController extends Controller
                 Session::flash('success', __('Your data has been created successfully'));
             } catch (Exception $ex) {
 
-               report($ex);
+                report($ex);
                 Session::flash('error', __('common.message_error'));
             }
             return redirect(admin_url('audit/6s-analysis/list'));
@@ -266,7 +266,7 @@ class AuditAnalysisController extends Controller
                     $leftAuditDrawing->setHeight(60);
                     $leftAuditDrawing->setWorksheet($sheet);
                 }
-                $sheet->mergeCells('C'.$row.':D'.($row+2));
+                $sheet->mergeCells('C' . $row . ':D' . ($row + 2));
 
                 $rightAuditLogo = public_path('assets/images/audit_right_logo.jpg');
                 if (file_exists($rightAuditLogo)) {
@@ -280,11 +280,18 @@ class AuditAnalysisController extends Controller
                     $rightAuditDrawing->setHeight(60);
                     $rightAuditDrawing->setWorksheet($sheet);
                 }
-                $sheet->mergeCells('P'.$row.':Q'.($row+2));
-
-                $sheet->mergeCells('E'.$row.':O'.($row+2));
-                $sheet->setCellValue('E'.$row, "   6'S AUDIT ANALYSIS REPORT (FY FROM ….... TO ……) PN INTERNATIONAL PVT LTD");
-                $sheet->getStyle('E'.$row.':O'.($row+2))->applyFromArray([
+                $sheet->mergeCells('P' . $row . ':Q' . ($row + 2));
+                $sheet->mergeCells('E' . $row . ':O' . ($row + 2));
+                $currentMonth = date('n');
+                $currentYear = date('Y');
+                if ($currentMonth >= 4) {
+                    $fyText = "FY FROM APR $currentYear TO MAR " . ($currentYear + 1);
+                } else {
+                    $fyText = "FY FROM APR " . ($currentYear - 1) . " TO MAR $currentYear";
+                }
+                
+                $sheet->setCellValue('E' . $row, "   6'S AUDIT ANALYSIS REPORT ($fyText)");
+                $sheet->getStyle('E' . $row . ':O' . ($row + 2))->applyFromArray([
                     'font' => ['bold' => true, 'size' => 14],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                     'borders' => ['outline' => ['borderStyle' => Border::BORDER_THIN]],
@@ -304,13 +311,13 @@ class AuditAnalysisController extends Controller
 
                 foreach ($labelMap as $cell => $info) {
                     $sheet->setCellValue($cell, $info['label']);
-                    $sheet->setCellValue(chr(ord($cell[0])+1).substr($cell,1), $info['value']);
+                    $sheet->setCellValue(chr(ord($cell[0]) + 1) . substr($cell, 1), $info['value']);
                     $sheet->getStyle($cell)->applyFromArray([
                         'font' => ['bold' => true],
                         'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                         'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
                     ]);
-                    $sheet->getStyle(chr(ord($cell[0])+1).substr($cell,1))->applyFromArray([
+                    $sheet->getStyle(chr(ord($cell[0]) + 1) . substr($cell, 1))->applyFromArray([
                         'font' => ['bold' => true],
                         'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                         'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
@@ -321,23 +328,23 @@ class AuditAnalysisController extends Controller
 
                 $months = ['April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December', 'January', 'February', 'March'];
 
-                $sheet->mergeCells('A'.$row.':A'.($row+1))->setCellValue('A'.$row, 'Sr. No.');
-                $sheet->mergeCells('B'.$row.':B'.($row+1))->setCellValue('B'.$row, 'Department Name');
-                $sheet->mergeCells('C'.$row.':C'.($row+1))->setCellValue('C'.$row, 'Unit');
-                $sheet->mergeCells('D'.$row.':O'.$row)->setCellValue('D'.$row, 'MARKS OBTAINED');
+                $sheet->mergeCells('A' . $row . ':A' . ($row + 1))->setCellValue('A' . $row, 'Sr. No.');
+                $sheet->mergeCells('B' . $row . ':B' . ($row + 1))->setCellValue('B' . $row, 'Department Name');
+                $sheet->mergeCells('C' . $row . ':C' . ($row + 1))->setCellValue('C' . $row, 'Unit');
+                $sheet->mergeCells('D' . $row . ':O' . $row)->setCellValue('D' . $row, 'MARKS OBTAINED');
 
                 $col = 'D';
                 foreach ($months as $month) {
-                    $sheet->setCellValue($col.($row+1), $month);
+                    $sheet->setCellValue($col . ($row + 1), $month);
                     $col++;
                 }
 
-                $sheet->mergeCells('P'.$row.':P'.($row+1))->setCellValue('P'.$row, "Total No's of Audit");
-                $sheet->mergeCells('Q'.$row.':Q'.($row+1))->setCellValue('Q'.$row, 'Total Marks');
-                $sheet->mergeCells('R'.$row.':R'.($row+1))->setCellValue('R'.$row, 'Marks Obtained');
-                $sheet->mergeCells('S'.$row.':S'.($row+1))->setCellValue('S'.$row, '%');
+                $sheet->mergeCells('P' . $row . ':P' . ($row + 1))->setCellValue('P' . $row, "Total No's of Audit");
+                $sheet->mergeCells('Q' . $row . ':Q' . ($row + 1))->setCellValue('Q' . $row, 'Total Marks');
+                $sheet->mergeCells('R' . $row . ':R' . ($row + 1))->setCellValue('R' . $row, 'Marks Obtained');
+                $sheet->mergeCells('S' . $row . ':S' . ($row + 1))->setCellValue('S' . $row, '%');
 
-                $sheet->getStyle('A'.$row.':S'.($row+1))->applyFromArray([
+                $sheet->getStyle('A' . $row . ':S' . ($row + 1))->applyFromArray([
                     'font' => ['bold' => true],
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
@@ -346,24 +353,24 @@ class AuditAnalysisController extends Controller
                 $row += 2;
 
                 foreach ($auditAnalysisData as $detail) {
-                    $sheet->setCellValue('A'.$row, $srGlobal++);
-                    $sheet->setCellValue('B'.$row, $detail['department_name'] ?? '');
-                    $sheet->setCellValue('C'.$row, $detail['unit_name'] ?? '');
+                    $sheet->setCellValue('A' . $row, $srGlobal++);
+                    $sheet->setCellValue('B' . $row, $detail['department_name'] ?? '');
+                    $sheet->setCellValue('C' . $row, $detail['unit_name'] ?? '');
 
                     $marks = json_decode($detail['marks'] ?? '{}', true);
                     $col = 'D';
                     foreach ($months as $month) {
                         $value = $marks[strtolower($month)] ?? 0;
-                        $sheet->setCellValue($col.$row, $value);
+                        $sheet->setCellValue($col . $row, $value);
                         $col++;
                     }
 
-                    $sheet->setCellValue('P'.$row, $detail['no_of_audit'] ?? '');
-                    $sheet->setCellValue('Q'.$row, $detail['total_marks'] ?? '');
-                    $sheet->setCellValue('R'.$row, $detail['marks_obtained'] ?? '');
-                    $sheet->setCellValue('S'.$row, $detail['percentage'] ?? '');
+                    $sheet->setCellValue('P' . $row, $detail['no_of_audit'] ?? '');
+                    $sheet->setCellValue('Q' . $row, $detail['total_marks'] ?? '');
+                    $sheet->setCellValue('R' . $row, $detail['marks_obtained'] ?? '');
+                    $sheet->setCellValue('S' . $row, $detail['percentage'] ?? '');
 
-                    $sheet->getStyle('A'.$row.':S'.$row)->applyFromArray([
+                    $sheet->getStyle('A' . $row . ':S' . $row)->applyFromArray([
                         'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                         'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                     ]);
@@ -372,7 +379,7 @@ class AuditAnalysisController extends Controller
                 }
 
                 $lastDataRow = $row - 1;
-                $sheet->getStyle('A'.$rowStart.':S'.$lastDataRow)->applyFromArray([
+                $sheet->getStyle('A' . $rowStart . ':S' . $lastDataRow)->applyFromArray([
                     'borders' => [
                         'outline' => [
                             'borderStyle' => Border::BORDER_THICK,
@@ -390,7 +397,6 @@ class AuditAnalysisController extends Controller
             $writer->save($filePath);
 
             return response()->download($filePath)->deleteFileAfterSend(true);
-
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
@@ -405,10 +411,10 @@ class AuditAnalysisController extends Controller
             $allData = $this->auditAnalysis->exportdata();
 
             $document_no = $this->static_docno->select('id', 'doc_no', 'issue_date', 'rev_dt')
-                        ->where([
-                            ['type', "6SAuditAnalysis"],
-                            ['status', '1']
-                        ])->first();
+                ->where([
+                    ['type', "6SAuditAnalysis"],
+                    ['status', '1']
+                ])->first();
 
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
@@ -416,10 +422,18 @@ class AuditAnalysisController extends Controller
                 return redirect()->back()->with('error', __('inspection.excess_error'));
             }
 
+            $currentMonth = date('n');
+            $currentYear = date('Y');
+            if ($currentMonth >= 4) {
+                $fyText = "FY FROM APR $currentYear TO MAR " . ($currentYear + 1);
+            } else {
+                $fyText = "FY FROM APR " . ($currentYear - 1) . " TO MAR $currentYear";
+            }
             $data = array(
                 'content' => $allData,
                 'document_no' => $document_no,
                 'pagetitle' => "6'S AUDIT ANALYSIS REPORT",
+                'fyText' => $fyText,
             );
 
             $property = [
@@ -461,9 +475,9 @@ class AuditAnalysisController extends Controller
                 $auditAnalysisData =   $this->auditAnalysisCheckList->selectOne($id);
 
                 $document_no  = $this->static_docno->select('id', 'doc_no', 'issue_date', 'rev_dt')->where([
-                                    ['type', "6SAuditAnalysis"],
-                                    ['status', '1']
-                                ])->first();
+                    ['type', "6SAuditAnalysis"],
+                    ['status', '1']
+                ])->first();
 
                 $data = [
                     'auditData' => $auditData,
@@ -570,7 +584,15 @@ class AuditAnalysisController extends Controller
             $sheet->mergeCells('P1:Q3');
 
             $sheet->mergeCells('E1:O3');
-            $sheet->setCellValue('E1', "   6'S AUDIT ANALYSIS REPORT (FY FROM ….... TO ……) PN INTERNATIONAL PVT LTD");
+            $currentMonth = date('n');
+            $currentYear = date('Y');
+            if ($currentMonth >= 4) {
+                $fyText = "FY FROM APR $currentYear TO MAR " . ($currentYear + 1);
+            } else {
+                $fyText = "FY FROM APR " . ($currentYear - 1) . " TO MAR $currentYear";
+            }
+            
+            $sheet->setCellValue('E1', "   6'S AUDIT ANALYSIS REPORT ($fyText)");
             $sheet->getStyle('E1:O3')->applyFromArray([
                 'font' => ['bold' => true, 'size' => 14],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
@@ -607,7 +629,7 @@ class AuditAnalysisController extends Controller
 
             $col = 'D';
             foreach ($months as $month) {
-                $sheet->setCellValue($col.'5', $month);
+                $sheet->setCellValue($col . '5', $month);
                 $col++;
             }
 
@@ -619,38 +641,37 @@ class AuditAnalysisController extends Controller
             $sheet->getStyle('A4:S5')->applyFromArray([
                 'font' => ['bold' => true],
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER,'wrapText' => true],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
             ]);
 
             $row = 6;
             $sr = 1;
 
             foreach ($auditAnalysisData as $detail) {
-                $sheet->setCellValue('A'.$row, $sr);
-                $sheet->setCellValue('B'.$row, $detail['department_name'] ?? '');
-                $sheet->setCellValue('C'.$row, $detail['unit_name'] ?? '');
+                $sheet->setCellValue('A' . $row, $sr);
+                $sheet->setCellValue('B' . $row, $detail['department_name'] ?? '');
+                $sheet->setCellValue('C' . $row, $detail['unit_name'] ?? '');
 
                 $marks = json_decode($detail['marks'] ?? '{}', true);
                 $col = 'D';
                 foreach ($months as $month) {
                     $value = $marks[strtolower($month)] ?? 0;
-                    $sheet->setCellValue($col.$row, $value);
+                    $sheet->setCellValue($col . $row, $value);
                     $col++;
                 }
 
-                $sheet->setCellValue('P'.$row, $detail['no_of_audit'] ?? '');
-                $sheet->setCellValue('Q'.$row, $detail['total_marks'] ?? '');
-                $sheet->setCellValue('R'.$row, $detail['marks_obtained'] ?? '');
-                $sheet->setCellValue('S'.$row, $detail['percentage'] ?? '');
+                $sheet->setCellValue('P' . $row, $detail['no_of_audit'] ?? '');
+                $sheet->setCellValue('Q' . $row, $detail['total_marks'] ?? '');
+                $sheet->setCellValue('R' . $row, $detail['marks_obtained'] ?? '');
+                $sheet->setCellValue('S' . $row, $detail['percentage'] ?? '');
 
-                $sheet->getStyle('A'.$row.':S'.$row)->applyFromArray([
+                $sheet->getStyle('A' . $row . ':S' . $row)->applyFromArray([
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                 ]);
 
                 $sr++;
                 $row++;
-
             }
 
             $writer = new Xlsx($spreadsheet);
@@ -659,15 +680,10 @@ class AuditAnalysisController extends Controller
             $writer->save($filePath);
 
             return response()->download($filePath)->deleteFileAfterSend(true);
-
         } catch (\Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong!');
             return redirect(admin_url('audit/6s-analysis/list'));
         }
     }
-
-
-
-
 }

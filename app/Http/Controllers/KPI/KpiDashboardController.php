@@ -1,7 +1,11 @@
 <?php
 
 namespace App\Http\Controllers\KPI;
-
+use App\Http\Controllers\Controller;
+use App\Models\IMS\Incident\IncidentBodyParts;
+use App\Models\IMS\Incident\InitialIncident;
+use App\Models\Master\Employee;
+use App\Models\Master\TrainingSchedule;
 use DB;
 use Exception;
 use App\Models\User;
@@ -19,12 +23,17 @@ use Illuminate\Support\Facades\Session;
 
 class KpiDashboardController extends Controller
 {
-
+    private $bodyparts;
+    private $training_schedule;
+    private $ims_incident;
     private $ptw;
     private $training_schedule;
 
     public function __construct()
     {
+        $this->bodyparts = new IncidentBodyParts();
+        $this->training_schedule = new TrainingSchedule();
+        $this->ims_incident = new InitialIncident();
         $this->ptw = new SafetyPermit();
         $this->training_schedule = new TrainingSchedule();
     }
@@ -49,6 +58,7 @@ class KpiDashboardController extends Controller
             $to_date = $request->input('Todate');
 
             $inspection_wise_count = InspectionCount($from_date, $to_date);
+
             $data = [
                 'inspection_wise_count' => $inspection_wise_count,
                 'from_date' => $from_date,
@@ -58,7 +68,6 @@ class KpiDashboardController extends Controller
             return view('kpi.inspection_wise_count', $data);
         } catch (\Exception $ex) {
             report($ex);
-
         }
     }
 
@@ -96,7 +105,7 @@ class KpiDashboardController extends Controller
                 'from_date' => $request->input('FromDate'),
                 'to_date' =>  $request->input('ToDate')
             ];
-
+            
             $work_wise_count = $this->ptw->GetTypeWiseCount();
 
             $data = [
@@ -117,10 +126,10 @@ class KpiDashboardController extends Controller
             $training_data = $this->training_schedule->GetTrainingData();
 
             $data = [
-                'getdashdata' => $request,
+                'training_data' => $training_data,
             ];
 
-            return view('kpi.chartData4', $data);
+            return view('kpi.iir_wise_rcpa', $data);
         } catch (\Exception $ex) {
             report($ex);
         }
@@ -342,6 +351,154 @@ class KpiDashboardController extends Controller
             ];
 
             return view('kpi.chartData21', $data);
+        } catch (\Exception $ex) {
+            report($ex);
+
+        }
+    }
+    public function getRCADistributionCount(Request $request)
+    {
+        try {
+
+            $data = [
+                'getdashdata' => $request,
+            ];
+
+            return view('kpi.rca_distribution', $data);
+        } catch (\Exception $ex) {
+            report($ex);
+        }
+    }
+
+    public function getTrainingCompletionCount(Request $request)
+    {
+        try {
+            $chartData = $this->training_schedule->getTrainigCompletionCountData($request);
+
+            if (empty($chartData) || $chartData->training_total_count == 0) {
+                return response()->json('<div class="border-0 pb-3" style="margin-top: 166px;"><h4 style="text-align: center;">No data Found.</h4></div>');
+            }
+
+            $formattedData = [
+                'total' => $chartData->training_total_count,
+                'closed' => $chartData->closed_count,
+                'open' => $chartData->open_count,
+                'closed_percentage' => $chartData->closed_percentage,
+                'open_percentage' => $chartData->open_percentage,
+            ];
+
+            return view('kpi.training_completion', [
+                'formattedData' => $formattedData,
+                'getdashdata' => $request,
+            ]);
+        } catch (\Exception $ex) {
+            report($ex);
+            return back()->with('error', 'Failed to load training completion data.');
+        }
+    }
+
+    public function getTypeofIIRCount(Request $request)
+    {
+        try {
+            $chartData = $this->ims_incident->getTypeofIIRCountData($request);
+
+            // Format data for chart: separate arrays for names and counts
+            $formattedData = [
+                'labels' => $chartData->pluck('incident_type_name'),
+                'counts' => $chartData->pluck('total'),
+            ];
+
+            return view('kpi.type_of_irr', [
+                'formattedData' => $formattedData,
+                'getdashdata' => $request,
+            ]);
+        } catch (\Exception $ex) {
+            report($ex);
+            return back()->with('error', 'Failed to load Type of IIR data.');
+        }
+    }
+
+    public function getAccidentReportUnitWiseCount(Request $request)
+    {
+        try {
+            $chartData = $this->ims_incident->getAccidentReportUnitWiseCountData($request);
+
+            $formattedData = [
+                'labels' => $chartData->pluck('unit_name'),
+                'major' => $chartData->pluck('major'),
+                'minor' => $chartData->pluck('minor'),
+                'fatal' => $chartData->pluck('fatal'),
+            ];
+
+            return view('kpi.accident_report_unit_wise', [
+                'formattedData' => $formattedData,
+                'getdashdata' => $request,
+            ]);
+        } catch (\Exception $ex) {
+            report($ex);
+            return back()->with('error', 'Failed to load unit-wise accident data.');
+        }
+    }
+
+    public function getInjurypart(Request $request)
+    {
+        try {
+            $countBodyPart = $this->bodyparts->countBodyPart();
+            $data = array(
+                'countBodyPart' => $countBodyPart
+            );
+            return view('kpi.injurypartchart', $data);
+        } catch (\Exception $ex) {
+            report($ex);
+        }
+    }
+
+    public function injurybodycount(Request $request)
+    {
+        $request = request();
+        $parts = $request->input('part');
+
+        $listResp = DB::table('ims_initial_incident as inc')
+            ->select([
+                'body.id as bodyids',
+                'inc.id as inveeid',
+            ])
+            ->leftJoin('ims_injury_details as inj', 'inj.incident_id', '=', 'inc.id')
+            ->leftJoin('ims_incident_body_parts as body', 'body.injury_id', '=', 'inj.id')
+            ->where('inc.trash', 'NO')
+            ->where('body.body_parts_label', 'like', '%' . $parts . '%') // Correct LIKE usage
+            ->get();
+
+        $inveeid = [];
+        $response = [];
+
+        if (!$listResp->isEmpty()) {
+            foreach ($listResp as $lists) {
+                $inveeid[] = $lists->inveeid;
+            }
+
+            $response['count'] = count($listResp);
+            $response['inc_id'] = $inveeid;
+        } else {
+            $response['count'] = 0;
+            $response['inc_id'] = [];
+        }
+
+        return response()->json($response);
+    }
+
+
+    public function IIRTypeWiseUAUC(Request $request)
+    {
+        try {
+            $chartData = $this->ims_incident->getTypeofIIRUAUCCountData($request);
+
+            // dd($chartData);
+            $data = [
+                'chartData' => $chartData,
+            ];
+
+            return view('kpi.iir_wise_uauc', $data);
         } catch (\Exception $ex) {
             report($ex);
         }

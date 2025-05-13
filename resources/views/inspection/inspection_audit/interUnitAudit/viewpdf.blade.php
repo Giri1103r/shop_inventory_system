@@ -168,9 +168,7 @@
                     <th colspan="8" style="border:1px solid black;">
                         <h3>
                             <span><b>Inter Unit Monthly Audit Checklist</b></span>
-                            <br>
-                            <span><b>PN International Pvt. Ltd</b></span>
-                        </h3>
+                            </h3>
                     </th>
 
                     <th colspan="8" style="border:1px solid black;">

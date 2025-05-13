@@ -173,7 +173,7 @@
                     <img src="{{ url('public/assets/images/logo-dark.png') }}" style="width:125px; height:50px;">
                 </th>
                 <th colspan="6" style="border:1px solid black; text-align: center;">
-                    <h3><b>Safety Walk Observation Sheet PN International Pvt Ltd</b></h3>
+                    <h3><b>Safety Walk Observation Sheet </b></h3>
                 </th>
                 <th colspan="3" style="border:1px solid black;">
                     <table style="width:100%; border-collapse: collapse;">

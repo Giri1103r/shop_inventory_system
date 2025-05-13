@@ -93,7 +93,7 @@
 
                                                     </div>
                                                     <div class="col-md-4 form-input">
-                                                        <label for="" class="form-label">Location</label>
+                                                        <label for="" class="form-label require">Location</label>
                                                         <select class="form-control single-select"
                                                             name="monitoring[1][location_id]" style="width: 100%"
                                                             id="location_id_1">
@@ -105,7 +105,7 @@
                                                         </select>
                                                     </div>
                                                     <div class="col-md-4 form-input">
-                                                        <label for="" class="form-label">Unit</label>
+                                                        <label for="" class="form-label require">Unit</label>
                                                         <select class="form-control single-select"
                                                             name="monitoring[1][unit_id]" style="width: 100%"
                                                             id="unit_id_1">
@@ -117,7 +117,7 @@
                                                         </select>
                                                     </div>
                                                     <div class="col-md-4 form-input">
-                                                        <label for="" class="form-label">Department</label>
+                                                        <label for="" class="form-label require">Department</label>
                                                         <select class="form-control single-select"
                                                             name="monitoring[1][department_id]" style="width: 100%"
                                                             id="department_id_1">
@@ -125,44 +125,53 @@
                                                         </select>
                                                     </div>
                                                     <div class="col-md-4 form-input mt-2">
-                                                        <label class="form-label">Lux Level</label>
+                                                        <label class="form-label require">Lux Level</label>
                                                         <input type="text" name="monitoring[1][lux_level1]"
                                                             class="form-control" id="lux_level1_1">
                                                     </div>
                                                     <div class="col-md-4 form-input mt-2">
-                                                        <label class="form-label">Date of Monitoring</label>
+                                                        <label class="form-label require">Date of Monitoring</label>
                                                         <input type="text" name="monitoring[1][date_of_monitoring]"
                                                             class="form-control" id="date_of_monitoring_1">
                                                     </div>
                                                     <div class="col-md-4 form-input mt-2">
-                                                        <label class="form-label">Next Due Date of
+                                                        <label class="form-label require">Next Due Date of
                                                             Monitoring</label>
                                                         <input type="text"
                                                             name="monitoring[1][next_due_date_of_monitoring]"
                                                             class="form-control" id="next_due_date_of_monitoring_1">
                                                     </div>
                                                     <div class="col-md-4 form-input mt-2">
-                                                        <label class="form-label">Lux Level</label>
+                                                        <label class="form-label require">Lux Level</label>
                                                         <input type="text" name="monitoring[1][lux_level2]"
                                                             class="form-control" id="lux_level2_1">
                                                     </div>
                                                     <div class="col-md-4 form-input mt-2">
-                                                        <label class="form-label">Date of Monitoring</label>
+                                                        <label class="form-label require">Date of Monitoring</label>
                                                         <input type="text" name="monitoring[1][date_of_monitoring2]"
                                                             class="form-control" id="date_of_monitoring2_1">
                                                     </div>
                                                     <div class="col-md-4 form-input mt-2">
-                                                        <label class="form-label">Next Due Date of
+                                                        <label class="form-label require">Next Due Date of
                                                             Monitoring</label>
                                                         <input type="text"
                                                             name="monitoring[1][next_due_date_of_monitoring2]"
                                                             class="form-control" id="next_due_date_of_monitoring2_1">
                                                     </div>
                                                     <div class="col-md-4 form-input mt-2">
-                                                        <label class="form-label">Act/Rule</label>
+                                                        <label class="form-label require">Act/Rule</label>
                                                         <input type="text" name="monitoring[1][act_rule]"
                                                             class="form-control" id="act_rule_1">
                                                     </div>
+
+                                                    <div class="col-md-4 form-input mt-2">
+                                                        <label class="form-label require">Last Due Date of
+                                                            Monitoring</label>
+                                                        <input type="text"
+                                                            name="monitoring[1][last_due_date_of_monitoring]"
+                                                            class="form-control" id="last_due_date_of_monitoring_1">
+                                                    </div>
+
                                                     <div class="col-md-4 form-input mt-2">
                                                         <label class="form-label">Remark</label>
                                                         <textarea name="monitoring[1][remark]" class="form-control" id="remark_1"> </textarea>
@@ -212,6 +221,10 @@
 
         document.addEventListener("DOMContentLoaded", function() {
             function initializeFlatpickr() {
+                flatpickr("input[id^='last_due_date_of_monitoring_']", {
+                    dateFormat: "d-m-Y"
+                });
+
                 $("input[id^='date_of_monitoring_']").flatpickr({
                     dateFormat: "d-m-Y",
                     onChange: function(selectedDates, dateStr, instance) {
@@ -389,6 +402,12 @@
 
                     }
                 });
+                newRow.find("input[name$='[last_due_date_of_monitoring]']").rules("add", {
+                    required: true,
+                    messages: {
+                        required: "Please Select the date."
+                    }
+                });
                 newRow.find("input[name$='[next_due_date_of_monitoring2]']").rules("add", {
                     required: true,
                     messages: {
@@ -512,6 +531,10 @@
                         required: true,
 
                     },
+                    'monitoring[1][last_due_date_of_monitoring]': {
+                        required: true,
+
+                    },
                     'monitoring[1][act_rule]': {
                         required: true,
                         minlength: 3,
@@ -550,6 +573,10 @@
                     },
                     'monitoring[1][next_due_date_of_monitoring]': {
                         required: "Please select the next due date of monitoring.",
+
+                    },
+                    'monitoring[1][last_due_date_of_monitoring]': {
+                        required: "Please select the Last due date of monitoring.",
 
                     },
                     'monitoring[1][act_rule]': {

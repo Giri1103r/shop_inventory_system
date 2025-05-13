@@ -47,16 +47,33 @@
                                                     placeholder="Employee Name">
                                             </div>
                                         </div>
+                                        <div class="col-md-3 mb-3 form-input">
+                                            <label for="company_id" class="form-label ">Company</label>
+                                            <select name="company_id" id="company_id"
+                                                class="form-control single-select form-control-sm" style="width: 100%">
+                                                <option value="">Select the company</option>
+                                                @foreach ($company as $list)
+                                                    <option value="{{ encryptId($list->id) }}">
+                                                        {{ $list->company_name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
 
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="unit_id" class="form-label ">Unit</label>
-                                            <select name="unit_id" id="unit_id" class="form-control single-select form-control-sm"
-                                                style="width: 100%">
+                                            <label for="location_id" class="form-label ">Location</label>
+                                            <select name="location_id" id="location_id"
+                                                class="form-control single-select form-control-sm" style="width: 100%">
+                                                <option value="">Select the Location</option>
+
+                                            </select>
+                                        </div>
+
+                                        <div class="col-md-3 mb-3 form-input">
+                                            <label for="unit_id" class="form-label">Unit</label>
+                                            <select name="unit_id" id="unit_id"
+                                                class="form-control single-select form-control-sm" style="width: 100%">
                                                 <option value="">Select the Unit</option>
-                                                @foreach ($unit as $list)
-                                                    <option value="{{ encryptId($list->id) }}">
-                                                        {{ $list->unit_name }}</option>
-                                                @endforeach
+
                                             </select>
                                         </div>
                                         <div class="col-md-3 mb-2">
@@ -128,6 +145,8 @@
                                         <th>Employee / Worker Name</th>
                                         <th>Item Code</th>
                                         <th>PPE Name</th>
+                                        <th>Company</th>
+                                        <th>Location</th>
                                         <th>Unit</th>
                                         <th>Department</th>
                                         <th data-priority="2">Approval Status</th>
@@ -148,6 +167,58 @@
 @stop
 @push('script')
     <script type="text/javascript" nonce="projectcab">
+        $(document).on('change', '#company_id', function() {
+            var companyId = $(this).val();
+            if (companyId) {
+                $.ajax({
+                    url: "{{ admin_url('location/ajax-list') }}/" + companyId + "/0",
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#location_id').empty().append(
+                            '<option value="">Select Location</option>');
+                        $.each(data, function(key, value) {
+                            $('#location_id').append('<option value="' + value
+                                .id + '">' + value.name + '</option>');
+                        });
+                        $('#location_id').trigger('change.');
+                    },
+                    error: function(xhr) {
+                        alert('Error fetching location. Please try again.');
+                    }
+                });
+            } else {
+                $('#location_id').empty().append('<option value="">Select Location</option>');
+                $('#location_id').trigger('change.');
+            }
+        });
+        // location
+
+        $(document).on('change', '#location_id', function() {
+            var locationId = $(this).val();
+            if (locationId) {
+                $.ajax({
+                    url: "{{ admin_url('unit/ajax-list') }}/" + locationId + "/0",
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#unit_id').empty().append(
+                            '<option value="">Select unit</option>');
+                        $.each(data, function(key, value) {
+                            $('#unit_id').append('<option value="' + value
+                                .id + '">' + value.name + '</option>');
+                        });
+                        $('#unit_id').trigger('change.');
+                    },
+                    error: function(xhr) {
+                        alert('Error fetching unit. Please try again.');
+                    }
+                });
+            } else {
+                $('#unit_id').empty().append('<option value="">Select unit</option>');
+                $('#unit_id').trigger('change.');
+            }
+        });
         $(document).on('change', '#unit_id', function() {
             var unitId = $(this).val();
             if (unitId) {
@@ -165,7 +236,7 @@
                         $('#department_id').trigger('change.');
                     },
                     error: function(xhr) {
-                        alert('Error fetching department. Please try again.');
+                        alert('Error fetching unit. Please try again.');
                     }
                 });
             } else {
@@ -291,6 +362,8 @@
                         d.emp_name = $('#emp_name').val();
                         d.from_date = $('#from_date').val();
                         d.unit_id = $('#unit_id').val();
+                        d.company_id = $('#company_id').val();
+                        d.location_id = $('#location_id').val();
                         d.department_id = $('#department_id').val();
                         d.to_date = $('#to_date').val();
                         d.approve_status = $('#approve_status').val();
@@ -324,6 +397,14 @@
                         name: 'ppe_name'
                     },
                     {
+                        data: 'company_id',
+                        name: 'company_id'
+                    },
+                    {
+                        data: 'location_id',
+                        name: 'location_id'
+                    },
+                    {
                         data: 'unit_id',
                         name: 'unit_id'
                     },
@@ -336,8 +417,8 @@
                         name: 'approve_status'
                     },
                     {
-                        data: 'created_by',
-                        name: 'created_by'
+                        data: 'ppe_created_by',
+                        name: 'ppe_created_by'
                     },
                     {
                         data: 'ppe_created_at',

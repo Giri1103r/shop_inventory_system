@@ -29,6 +29,8 @@ class IncidentBodyParts extends Model
         'injured_person_type',
         'injury_person_name',
         'imgMapdata',
+        'body_parts',
+        'body_parts_label',
         'body_part_image',
         'status',
         'trash',
@@ -80,7 +82,8 @@ class IncidentBodyParts extends Model
                 ->where('trash', 'NO')
                 ->where(function ($q) {
                     $q->where('status', 'Y')
-                        ->orWhere('status', 'N');
+                        ->orWhere('status', 'N')
+                        ->orWhere('status', 'T');
                 })
                 ->where(function ($q) use ($partyname) {
                     $q->where('injury_person_id', $partyname)
@@ -151,7 +154,7 @@ class IncidentBodyParts extends Model
         }
 
 
-        if ($request['body_prim_id'] != 0) {
+        if ($request['body_prim_id'] != 0 && $request['incident_id'] != 0) {
             $locdatas = [
                 'incident_id' => $request->incident_id,
                 'random_id' => $random_id,
@@ -159,13 +162,44 @@ class IncidentBodyParts extends Model
                 'injured_person_type' => decryptId($request->injury_person_type),
                 'injury_person_name' => $request->injuredPerson,
                 'imgMapdata' => postData($request, 'imgMapdata'),
+                'body_parts' => $request->humanbodyinjury,
+                'body_parts_label' => $request->humanbodyinjurylabel,
                 'body_part_image' => $storedImagePath,
                 'updated_by' => Auth::id(),
-                'status' => 'Y'
+                'status' => 'T'
             ];
             $updtBody =  $this->where('id', $request['body_prim_id'])->update($locdatas);
+        } elseif ($request['body_prim_id'] != 0 && $request['incident_id'] == 0) {
+            $locdatas = [
+                'incident_id' => $request->incident_id,
+                'random_id' => $random_id,
+                'injury_person_id' => decryptId($request->injuredPerson),
+                'injured_person_type' => decryptId($request->injury_person_type),
+                'injury_person_name' => $request->injuredPerson,
+                'imgMapdata' => postData($request, 'imgMapdata'),
+                'body_parts' => $request->humanbodyinjury,
+                'body_parts_label' => $request->humanbodyinjurylabel,
+                'body_part_image' => $storedImagePath,
+                'updated_by' => Auth::id(),
+                'status' => 'T'
+            ];
+            $updtBody =  $this->where('id', $request['body_prim_id'])->update($locdatas);
+        } elseif ($request['body_prim_id'] == 0 && $request['incident_id'] != 0) {
+            $locdatas = [
+                'incident_id' => $request->incident_id,
+                'random_id' => $random_id,
+                'injury_person_id' => decryptId($request->injuredPerson),
+                'injured_person_type' => decryptId($request->injury_person_type),
+                'injury_person_name' => $request->injuredPerson,
+                'imgMapdata' => postData($request, 'imgMapdata'),
+                'body_parts' => $request->humanbodyinjury,
+                'body_parts_label' => $request->humanbodyinjurylabel,
+                'body_part_image' => $storedImagePath,
+                'updated_by' => Auth::id(),
+                'status' => 'T'
+            ];
+            $updtBody =  $this->create($locdatas);
         } else {
-
             $locdatas = [
                 'incident_id' => decryptId($request->incident_id),
                 'random_id' => $random_id,
@@ -173,6 +207,8 @@ class IncidentBodyParts extends Model
                 'injured_person_type' => decryptId($request->injury_person_type),
                 'injury_person_name' => $request->injuredPerson,
                 'imgMapdata' => postData($request, 'imgMapdata'),
+                'body_parts' => $request->humanbodyinjury,
+                'body_parts_label' => $request->humanbodyinjurylabel,
                 'body_part_image' => $storedImagePath,
                 'created_by' => Auth::id(),
                 'status' => 'T'
@@ -229,5 +265,67 @@ class IncidentBodyParts extends Model
 
 
         return $update_array;
+    }
+
+    public function countBodyPart()
+    {
+        // Incident investigation
+        $listResp = DB::table('ims_initial_incident as inc')
+            ->select([
+                'body.id as bodyids',
+                'inc.id as inveeid',
+            ])
+            ->leftJoin('ims_incident_body_parts as body', 'body.incident_id', '=', 'inc.id')
+            ->where('inc.trash', 'NO')
+            ->get();
+
+        // Collect body IDs
+        $bodyid = collect($listResp)->pluck('bodyids')->filter()->toArray();
+        $mergedArray = $bodyid;
+
+        // If no body IDs found, return all parts with 0 count
+        if (empty($mergedArray)) {
+            $body_parts_labels = DB::table('ims_accident_injury_parts')->pluck('part_name');
+
+            return $body_parts_labels->map(function ($part) {
+                return [
+                    'body_part' => $part,
+                    'count' => 0
+                ];
+            })->toArray();
+        }
+
+        // Count matched body parts
+        $body_parts = DB::table('ims_accident_injury_parts as t1')
+            ->select('t1.part_name', DB::raw('COALESCE(COUNT(t2.body_parts_label), 0) as count'))
+            ->join('ims_incident_body_parts as t2', DB::raw("FIND_IN_SET(t1.part_name, t2.body_parts_label)"), '>', DB::raw('0'))
+            ->whereIn('t2.id', $mergedArray)
+            ->groupBy('t1.part_name')
+            ->get();
+
+        // dd($body_parts);
+        foreach ($body_parts as $key => $obsvalue) {
+            $obserdata[$obsvalue->part_name] = (array) $obsvalue;
+        }
+
+        $body_parts_labels = DB::table('ims_accident_injury_parts')->pluck('part_name');
+
+        foreach ($body_parts_labels as $value) {
+            if (isset($obserdata[$value])) {
+                $result[] = [
+                    'body_part' => $obserdata[$value]['part_name'],
+                    'count' => $obserdata[$value]['count']
+                ];
+            } else {
+                $result[] = [
+                    'body_part' => $value,
+                    'count' => 0
+                ];
+            }
+        }
+
+        // dd($result);
+
+        return $result;
     }
 }

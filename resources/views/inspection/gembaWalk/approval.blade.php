@@ -411,7 +411,7 @@
                                                     <label class="form-label">CAPA Action</label>
                                                     <div class="view_data">
                                                         @if (isset($gembaWalk_ehs_capa_details->capa))
-                                                            {{ $gembaWalk_ehs_capa_details->capa == 1 ? 'NO' : 'YES' }}
+                                                            {{ $gembaWalk_ehs_capa_details->capa == 1 ? 'YES' : 'NO' }}
                                                         @endif
                                                     </div>
                                                 </div>
@@ -527,7 +527,7 @@
 
 
 
-                                                <div class="col-md-4 mb-2">
+                                                {{-- <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label class="form-label">Uploaded File</label>
                                                         <div class="view_data">
@@ -544,7 +544,7 @@
 
                                                         </div>
                                                     </div>
-                                                </div>
+                                                </div> --}}
 
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">

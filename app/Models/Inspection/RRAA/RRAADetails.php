@@ -4,6 +4,7 @@ namespace App\Models\Inspection\RRAA;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Scopes\TrashScope;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Facades\Auth;
 
@@ -45,8 +46,8 @@ class RRAADetails extends Model
         $request = request();
         $search = '';
         $query = $this->select('inspection_rraa.*', 'inspection_master_checklist_type.category_name', 'inspection_frequency_option.frequency_name')
-                ->leftJoin('inspection_master_checklist_type', 'inspection_rraa.category', '=', 'inspection_master_checklist_type.id')
-                ->leftJoin('inspection_frequency_option', 'inspection_rraa.frequency', '=', 'inspection_frequency_option.id');
+            ->leftJoin('inspection_master_checklist_type', 'inspection_rraa.category', '=', 'inspection_master_checklist_type.id')
+            ->leftJoin('inspection_frequency_option', 'inspection_rraa.frequency', '=', 'inspection_frequency_option.id');
 
         $org_total =  $query;
         $org_total_counts = $org_total->count();
@@ -62,20 +63,32 @@ class RRAADetails extends Model
                     ->orWhereRaw('inspection_rraa.scope LIKE ?', ['%' . $search . '%']);
             });
         }
-
+        if ($request->has('from_date') && !empty($request->from_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_rraa.created_at', '>=', $startDate);
+        }
+        if ($request->has('to_date') && !empty($request->to_date)) {
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_rraa.created_at', '<=', $endDate);
+        }
+        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->whereBetween('inspection_rraa.created_at', [$startDate, $endDate]);
+        }
         if (isset($request->category) && $request->category) {
 
-            $query = $query->where('inspection_rraa.category',  decryptId($request->category) );
+            $query = $query->where('inspection_rraa.category',  decryptId($request->category));
         }
         if (isset($request->ohs_compliance_index) && $request->ohs_compliance_index) {
-            
-            $query = $query->where('inspection_rraa.ohs_compliance_index',  $request->ohs_compliance_index );
+
+            $query = $query->where('inspection_rraa.ohs_compliance_index',  $request->ohs_compliance_index);
         }
         if ($request->has('frequency') && $request->frequency) {
-            $query = $query->where('inspection_rraa.frequency',  decryptId($request->frequency) );
+            $query = $query->where('inspection_rraa.frequency',  decryptId($request->frequency));
         }
         if (isset($request->scope) && $request->scope) {
-            $query = $query->where('inspection_rraa.scope',  $request->scope );
+            $query = $query->where('inspection_rraa.scope',  $request->scope);
         }
 
         $data_count = $query;
@@ -97,32 +110,63 @@ class RRAADetails extends Model
         return $datas;
     }
 
+    // public function store()
+    // {
+    //     $request = request();
+    //     $insertedData = [];
+
+    //     foreach ($request->scope as $index => $Scope) {
+    //         $insert_array = array(
+    //             'document_reference_id' => decryptId($request->document_reference_id),
+    //             'serial_number' =>$request->serial_number[$index],
+    //             'category' =>decryptId($request->category[$index]),
+    //             'ohs_compliance_index' =>$request->ohs_compliance_index[$index],
+    //             'frequency' =>decryptId($request->frequency[$index]),
+    //             'scope' => $Scope,
+    //             'responsibility' =>$request->emp_id[$index],
+    //             'authority' => $request->authority[$index],
+    //             'accountability' => $request->accountability[$index],
+    //             'remark' => $request->remark[$index],
+    //             'created_by' => Auth::id(),
+    //         );
+
+    //         $insertedData []=  $this->create($insert_array);
+
+    //     }
+
+    //     return $insertedData;
+    // }
+
     public function store()
     {
         $request = request();
         $insertedData = [];
 
         foreach ($request->scope as $index => $Scope) {
-            $insert_array = array(
+            $insert_array = [
                 'document_reference_id' => decryptId($request->document_reference_id),
-                'serial_number' =>$request->serial_number[$index],
-                'category' =>decryptId($request->category[$index]),
-                'ohs_compliance_index' =>$request->ohs_compliance_index[$index],
-                'frequency' =>decryptId($request->frequency[$index]),
+                'serial_number' => $request->serial_number[$index],
+                'category' => decryptId($request->category[$index]),
+                'ohs_compliance_index' => $request->ohs_compliance_index[$index],
+                'frequency' => decryptId($request->frequency[$index]),
                 'scope' => $Scope,
-                'responsibility' =>$request->emp_id[$index],
+                'responsibility' => $request->emp_id[$index],
                 'authority' => $request->authority[$index],
                 'accountability' => $request->accountability[$index],
                 'remark' => $request->remark[$index],
                 'created_by' => Auth::id(),
-            );
+            ];
 
-            $insertedData []=  $this->create($insert_array);
+            $record = $this->create($insert_array);  // create a single record
+            $insertedData[] = $record;               // store in results array
 
+            $safetyFiles = new RRAAFiles();
+            $safetyFiles->store($record->id, $index, $request->rraa_files);
         }
 
         return $insertedData;
     }
+
 
     public function selectOne($id)
     {
@@ -134,8 +178,8 @@ class RRAADetails extends Model
         $request = request();
         $search = '';
         $query = $this->select('inspection_rraa.*', 'inspection_master_checklist_type.category_name', 'inspection_frequency_option.frequency_name')
-                ->leftJoin('inspection_master_checklist_type', 'inspection_rraa.category', '=', 'inspection_master_checklist_type.id')
-                ->leftJoin('inspection_frequency_option', 'inspection_rraa.frequency', '=', 'inspection_frequency_option.id');
+            ->leftJoin('inspection_master_checklist_type', 'inspection_rraa.category', '=', 'inspection_master_checklist_type.id')
+            ->leftJoin('inspection_frequency_option', 'inspection_rraa.frequency', '=', 'inspection_frequency_option.id');
 
         if ($request->search != null || $request->search != '') {
             $search = $request->search;
@@ -149,19 +193,31 @@ class RRAADetails extends Model
             });
         }
         if ($request->has('category') && $request->category) {
-            $query = $query->where('inspection_rraa.category',  decryptId($request->category) );
+            $query = $query->where('inspection_rraa.category',  decryptId($request->category));
         }
         if (isset($request->ohs_compliance_index) && $request->ohs_compliance_index) {
-            $query = $query->where('inspection_rraa.ohs_compliance_index',  $request->ohs_compliance_index );
+            $query = $query->where('inspection_rraa.ohs_compliance_index',  $request->ohs_compliance_index);
         }
         if ($request->has('frequency') && $request->frequency) {
-            $query = $query->where('inspection_rraa.frequency',  decryptId($request->frequency) );
+            $query = $query->where('inspection_rraa.frequency',  decryptId($request->frequency));
         }
         if (isset($request->scope) && $request->scope) {
-            $query = $query->where('inspection_rraa.scope',  $request->scope );
+            $query = $query->where('inspection_rraa.scope',  $request->scope);
         }
-
-         $query->orderBy('inspection_rraa.id', 'DESC');
+        if ($request->has('from_date') && !empty($request->from_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_rraa.created_at', '>=', $startDate);
+        }
+        if ($request->has('to_date') && !empty($request->to_date)) {
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_rraa.created_at', '<=', $endDate);
+        }
+        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->whereBetween('inspection_rraa.created_at', [$startDate, $endDate]);
+        }
+        $query->orderBy('inspection_rraa.id', 'DESC');
 
         return  $query->get();
     }

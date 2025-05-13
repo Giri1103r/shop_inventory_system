@@ -193,6 +193,12 @@ class ChecklistObservationFollowupController extends Controller
                                 case OBSERVATION_FOLLOWUP:
                                     $text = 'Observation Follow-up';
                                     break;
+                                case OBSERVATION_FOLLOWUP:
+                                    $text = 'Observation Follow-up';
+                                    break;
+                                case GEMBA_WALK:
+                                    $text = 'Observation Follow-up';
+                                    break;
                                 default:
                                     $text = 'Unknown';
                             }
@@ -215,7 +221,7 @@ class ChecklistObservationFollowupController extends Controller
 
                             return $btn;
                         })
-                        ->rawColumns(['action', 'created_date', 'created_by', 'status', 'observation_status','inspection_type'])
+                        ->rawColumns(['action', 'created_date', 'created_by', 'status', 'observation_status', 'inspection_type'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -341,27 +347,7 @@ class ChecklistObservationFollowupController extends Controller
         }
     }
 
-    // public function employeename(Request $request)
-    // {
-    //     $name = $request->input('search');
-
-    //     $employees = Employee::where('emp_name', 'like', '%' . $name . '%')
-    //         ->orWhere('emp_id', 'like', '%' . $name . '%')
-    //         ->where('status', 1)
-    //         ->where('user_role',18)
-    //         ->limit(10)
-    //         ->get();
-
-
-    //     return response()->json(
-    //         $employees->map(function ($employee) {
-    //             return [
-    //                 'id' => encryptId($employee->login_id),
-    //                 'text' => $employee->emp_name . ' - ' . $employee->emp_id,
-    //             ];
-    //         })
-    //     );
-    // }
+ 
 
     public function employeename(Request $request)
     {
@@ -371,8 +357,8 @@ class ChecklistObservationFollowupController extends Controller
             $query->where('emp_name', 'like', '%' . $name . '%')
                 ->orWhere('emp_id', 'like', '%' . $name . '%');
         })
+            ->whereRaw('FIND_IN_SET(?, user_role)', [18])
             ->where('status', 1)
-            ->where('user_role', 18)
             ->limit(10)
             ->get();
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Inspection\Audit;
 
 use App\Http\Controllers\Controller;
+use App\Models\Inspection\audit\Master\ComplianceCategory;
 use App\Models\Inspection\audit\Master\Task;
 use App\Models\Inspection\audit\MonthlyAuditPlan;
 use App\Models\Inspection\Master\Frequency;
@@ -32,9 +33,7 @@ class MonthlyAuditPlanController extends Controller
     private $audit_task;
     private $frequency;
     private $monthly_audit_plan;
-
-
-
+    private $category;
 
     public function __construct()
     {
@@ -42,7 +41,7 @@ class MonthlyAuditPlanController extends Controller
         $this->audit_task = new Task();
         $this->frequency = new Frequency();
         $this->monthly_audit_plan = new MonthlyAuditPlan();
-
+        $this->category = new ComplianceCategory();
     }
 
     public function Index(Request $request)
@@ -115,15 +114,16 @@ class MonthlyAuditPlanController extends Controller
             $unitList = $this->unit->getUnitList();
             $audit_task = $this->audit_task->getAuditTask();
             $frequency = $this->frequency->getFrequency();
+            $categories = $this->category->GetCategory();
 
 
             $data = array(
                 'unitList' => $unitList,
                 'audit_task' => $audit_task,
                 'frequency' => $frequency,
-
+                'categories' => $categories
             );
-            return view('inspection.inspection_audit.monthlyAudit.add',$data);
+            return view('inspection.inspection_audit.monthlyAudit.add', $data);
         } catch (Exception $ex) {
             report($ex);
         }
@@ -162,7 +162,7 @@ class MonthlyAuditPlanController extends Controller
                 return redirect()->back()->withErrors($validator)->withInput();
             }
 
-             $data = $this->monthly_audit_plan->store();
+            $data = $this->monthly_audit_plan->store();
 
 
             Session::flash('success', 'Your data has been created successfully!');
@@ -186,9 +186,7 @@ class MonthlyAuditPlanController extends Controller
                     'monthly_audit_plan' => $monthly_audit_plan,
                 );
             }
-            return view('inspection.inspection_audit.monthlyAudit.view',$data);
-
-
+            return view('inspection.inspection_audit.monthlyAudit.view', $data);
         } catch (Exception $ex) {
             report($ex);
         }
@@ -283,7 +281,7 @@ class MonthlyAuditPlanController extends Controller
                         'fillType' => Fill::FILL_SOLID,
                         'startColor' => ['rgb' => 'ffb9bf']
                     ],
-                        'alignment' => [
+                    'alignment' => [
                         'horizontal' => Alignment::HORIZONTAL_CENTER,
                         'vertical' => Alignment::VERTICAL_CENTER,
                         'wrapText' => true,
@@ -293,7 +291,13 @@ class MonthlyAuditPlanController extends Controller
                 $row++;
 
                 $sheet->fromArray([
-                    'S.No', 'Auditee Name', 'Task Name', 'Reference Doc No', 'Category', 'Frequency', 'Created At'
+                    'S.No',
+                    'Auditee Name',
+                    'Task Name',
+                    'Reference Doc No',
+                    'Category',
+                    'Frequency',
+                    'Created At'
                 ], NULL, "A{$row}");
 
                 $sheet->getStyle("A{$row}:G{$row}")->applyFromArray([
@@ -341,7 +345,6 @@ class MonthlyAuditPlanController extends Controller
 
             $writer = new Xlsx($spreadsheet);
             $writer->save('php://output');
-
         } catch (\Exception $e) {
             report($e);
             return redirect()->back()->with('error', 'Something went wrong while exporting.');
@@ -359,7 +362,7 @@ class MonthlyAuditPlanController extends Controller
             $allData = $this->monthly_audit_plan->exportdata();
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
-            }elseif(count($allData) > 20){
+            } elseif (count($allData) > 20) {
                 return redirect()->back()->with('error',   __('inspection.excess_error'));
             }
 
@@ -448,7 +451,7 @@ class MonthlyAuditPlanController extends Controller
                 $drawing->setWorksheet($sheet);
             }
 
-                    // Merge and style A1:B3
+            // Merge and style A1:B3
             $sheet->mergeCells('A1:B3');
             $sheet->getStyle('A1:B3')->applyFromArray([
                 'fill' => [
@@ -486,8 +489,17 @@ class MonthlyAuditPlanController extends Controller
             ]);
 
             $headers = [
-                'Sr.', 'Auditee Name', 'Unit', 'Task Name', 'Reference Doc No', 'Category',
-                'Frequency', 'Direct/Indirect', 'Status' ,'Points', 'Remarks'
+                'Sr.',
+                'Auditee Name',
+                'Unit',
+                'Task Name',
+                'Reference Doc No',
+                'Category',
+                'Frequency',
+                'Direct/Indirect',
+                'Status',
+                'Points',
+                'Remarks'
             ];
             $colIndex = 'A';
             foreach ($headers as $header) {
@@ -499,7 +511,7 @@ class MonthlyAuditPlanController extends Controller
                         'bold' => true,
                         'color' => ['rgb' => 'FFFFFF']
                     ],
-                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER,'vertical' => Alignment::VERTICAL_CENTER],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                     'fill' => [
                         'fillType' => Fill::FILL_SOLID,
@@ -545,6 +557,4 @@ class MonthlyAuditPlanController extends Controller
             return back()->with('error', 'Failed to export Monthly Audit Plan');
         }
     }
-
 }
-

@@ -72,8 +72,8 @@ class FireSafetyEquipmentController extends Controller
                         </a>';
                             return $btn;
                         })
-                        ->addColumn('created_date', function ($row) {
-                            return Displaydateformat($row->created_at);
+                        ->addColumn('inspection_created_at', function ($row) {
+                            return Displaydateformat($row->inspection_created_at);
                         })
                         ->addColumn('issue_date', function ($row) {
                             return Displaydateformat($row->issue_date);
@@ -145,14 +145,7 @@ class FireSafetyEquipmentController extends Controller
                 'economic_order_quantity.*' => 'required',
                 'observation_status.*' => 'required',
                 'remarks.*' => 'required',
-                'signature_upload' => [
-                    function ($attribute, $value, $fail) {
-                        $user = Auth::user();
-                        if (is_null($user->signature_upload)) {
-                            $fail('Signature is required.');
-                        }
-                    }
-                ],
+               
             ];
 
             $messages = [
@@ -250,7 +243,7 @@ class FireSafetyEquipmentController extends Controller
             }
 
             $sheet->mergeCells("D{$row}:H" . ($row + 2));
-            $sheet->setCellValue("D{$row}", 'List of Fire Safety & Rescue Equipment PN INTERNATIONAL PVT. LTD.');
+            $sheet->setCellValue("D{$row}", 'List of Fire Safety & Rescue Equipment .');
             $sheet->getStyle("D{$row}:H" . ($row + 2))->applyFromArray([
                 'font' => ['bold' => true, 'size' => 14],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
@@ -494,7 +487,7 @@ class FireSafetyEquipmentController extends Controller
             }
 
             $sheet->mergeCells("D{$row}:H" . ($row + 2));
-            $sheet->setCellValue("D{$row}", 'List of Fire Safety & Rescue Equipment PN INTERNATIONAL PVT. LTD.');
+            $sheet->setCellValue("D{$row}", 'List of Fire Safety & Rescue Equipment .');
             $sheet->getStyle("D{$row}:H" . ($row + 2))->applyFromArray([
                 'font' => ['bold' => true, 'size' => 14],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],

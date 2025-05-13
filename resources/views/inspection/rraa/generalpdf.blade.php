@@ -208,7 +208,7 @@
             <tr>
                 <th style="border: 2px solid black; padding: 8px; background-color: #ddd;">SERIAL NUMBER</th>
                 <th style="border: 2px solid black; padding: 8px; background-color: #ddd;">CATEGORY</th>
-                <th style="border: 2px solid black; padding: 8px; background-color: #ddd;">OHS COMPLIANCE INDEX</th>
+                <th style="border: 2px solid black; padding: 8px; background-color: #ddd;">OHS Compliance Index(Role)</th>
                 <th style="border: 2px solid black; padding: 8px; background-color: #eee; font-weight: bold;">FREQUENCY</th>
                 <th style="border: 2px solid black; padding: 8px; background-color: #eee; font-weight: bold;">SCOPE</th>
                 <th style="border: 2px solid black; padding: 8px; background-color: #eee; font-weight: bold;">RESPONSIBILITY</th>

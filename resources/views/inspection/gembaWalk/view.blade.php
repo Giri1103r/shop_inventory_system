@@ -89,7 +89,7 @@
 
                                     </div>
 
-                                   
+
 
                                     <div class="m-2">
                                         <div class="col-md-4 form-group form-input mb-2">
@@ -97,7 +97,7 @@
                                                 style="display: block; ">{{ __('inspection.signature') }}</label>
                                                 <img src="{{ admin_url($gembaWalk_approved_singnature) }}"
                                                 alt="Signature Upload" style="width: 100px; margin-top:-10px">
-                                           
+
                                         </div>
                                     </div>
 
@@ -309,13 +309,13 @@
                                             <div class="form-group form-input">
                                                 <label class="form-label ">Remarks</label>
                                                 <div class="view_data">
-                                                    {{ $gembaWalk_ehs_capa_details->remarks }}
+                                                    {{ isset($gembaWalk_ehs_capa_details->remarks) ? $gembaWalk_ehs_capa_details->remarks : '-' }}
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
-                                                <label class="form-label">CAPA Action</label>
+                                                <label class="form-label">Whether the Inspection has been passed Without the CAPA?</label>
                                                 <div class="view_data">
                                                     @if (isset($gembaWalk_ehs_capa_details->capa))
                                                         {{ $gembaWalk_ehs_capa_details->capa == 1 ? 'YES' : 'NO' }}
@@ -344,7 +344,7 @@
                                             </div>
                                         </div> --}}
 
-                                     
+
 
 
 
@@ -354,7 +354,7 @@
                                 @if ($gembaWalk->gemba_walk_status == GEMBA_WALK_INSPECTION_WAITING_FOR_EHS_OFFICER_VERIFICATION)
                                     <div class="row mt-3">
                                         <div class="card-header-inner">
-                                            <h4 class="text-white">EHS OFFICER</h4>
+                                            <h4 class="text-white">CAPA Action</h4>
                                         </div>
                                     </div>
                                     <div class="row">
@@ -390,7 +390,7 @@
 
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
-                                                <label class="form-label">CAPA Action</label>
+                                                <label class="form-label">Whether the Inspection has been passed Without the CAPA?</label>
                                                 <div class="view_data">
                                                     @if (isset($gembaWalk_ehs_capa_details->capa))
                                                         {{ $gembaWalk_ehs_capa_details->capa == 1 ? 'YES' : 'NO' }}
@@ -400,7 +400,7 @@
                                         </div>
 
 
-                                        <div class="col-md-4 mb-2">
+                                        {{-- <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
                                                 <label class="form-label">Uploaded File</label>
                                                 <div class="view_data">
@@ -417,7 +417,7 @@
 
                                                 </div>
                                             </div>
-                                        </div>
+                                        </div> --}}
 
                                     </div>
 
@@ -521,7 +521,7 @@
 
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label">CAPA Action</label>
+                                                    <label class="form-label">Whether the Inspection has been passed Without the CAPA?</label>
                                                     <div class="view_data">
                                                         @if (isset($gembaWalk_ehs_capa_details->capa))
                                                             {{ $gembaWalk_ehs_capa_details->capa == 1 ? 'YES' : 'NO' }}
@@ -530,7 +530,7 @@
                                                 </div>
                                             </div>
 
-                                            <div class="col-md-4 mb-2">
+                                            {{-- <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label">Uploaded File</label>
                                                     <div class="view_data">
@@ -547,7 +547,7 @@
 
                                                     </div>
                                                 </div>
-                                            </div>
+                                            </div> --}}
 
                                         </div>
                                     @endif
@@ -638,7 +638,7 @@
                                             <div class="form-group form-input">
                                                 <label class="form-label ">Remarks</label>
                                                 <div class="view_data">
-                                                    {{ isset($gembaWalk_ehs_verificatioin_details->remarks) ? $gembaWalk_ehs_verificatioin_details->remarks : '' }}
+                                                    {{ isset($gembaWalk_ehs_verificatioin_details->remarks) ? $gembaWalk_ehs_verificatioin_details->remarks : '-' }}
 
                                                 </div>
                                             </div>
@@ -652,7 +652,7 @@
                                                     style="display: block; ">{{ __('inspection.signature') }}</label>
                                                     <img src="{{ admin_url($gembaWalk_verified_singnature) }}"
                                                     alt="Signature Upload" style="width: 100px; margin-top:-10px">
-                                               
+
                                             </div>
                                         </div>
 
@@ -699,7 +699,7 @@
                                                     @endforeach
                                                 @endif
                                             </tbody>
-                                            
+
                                         </table>
 
                                     </div>
