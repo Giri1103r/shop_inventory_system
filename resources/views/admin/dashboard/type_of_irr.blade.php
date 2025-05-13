@@ -8,7 +8,10 @@
         }],
         chart: {
             type: 'bar',
-            height: 400
+            height: 400,
+            toolbar: {
+                show: false
+            },
         },
         xaxis: {
             categories: {!! json_encode($formattedData['labels']) !!},

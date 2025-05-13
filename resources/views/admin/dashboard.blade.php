@@ -374,7 +374,7 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-xl-6 col-xxl-6">
+                <div class="col-xl-12 col-xxl-12">
                     <div class="card view_card">
                         <div class="card-header">
                             <h4 class="text-white">PTW Type Wise Count</h4>
@@ -382,16 +382,6 @@
                         </div>
                         <div class="card-body px-0 pt-0 dlab-scroll height450" id="ptw_type_wise_count"></div>
 
-                    </div>
-                </div>
-                <div class="col-xl-6 col-xxl-6">
-                    <div class="card view_card">
-                        <div class="card-header">
-                            <h4 class="text-white">PPE Availability Chart</h4>
-                            <a class="fas fa-arrow-alt-circle-down chartdownload"
-                                id="LoadPPEAvailabilityChart_download"></a>
-                        </div>
-                        <div id="LoadPPEAvailabilityChartCount"></div>
                     </div>
                 </div>
             </div>
@@ -433,7 +423,7 @@
             </div>
 
             <div class="row">
-                <div class="col-xl-6 col-xxl-12">
+                <div class="col-xl-12 col-xxl-12">
                     <div class="card view_card responsive">
                         <div class="card-header">
                             <h4 class="text-white">Training Hour of Safety Department Wise</h4>
@@ -447,7 +437,7 @@
 
 
             <div class="row">
-                <div class="col-xl-6 col-xxl-12">
+                <div class="col-xl-12 col-xxl-12">
                     <div class="card view_card responsive">
                         <div class="card-header">
                             <h4 class="text-white">PTW – Violation Hold for Compliance</h4>
@@ -466,6 +456,16 @@
                             <a class="fas fa-arrow-alt-circle-down chartdownload" id="auditFindings_download"></a>
                         </div>
                         <div id="LoadauditFindingsCount"></div>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-xxl-6">
+                    <div class="card view_card">
+                        <div class="card-header">
+                            <h4 class="text-white">PPE Availability</h4>
+                            <a class="fas fa-arrow-alt-circle-down chartdownload"
+                                id="LoadPPEAvailabilityChart_download"></a>
+                        </div>
+                        <div id="LoadPPEAvailabilityChartCount"></div>
                     </div>
                 </div>
             </div>

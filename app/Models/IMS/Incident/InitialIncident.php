@@ -772,13 +772,7 @@ class InitialIncident extends Model
             $query->where('iii.created_at', '<=', DBdateformat($request->Todate));
         }
 
-        // Role-based filter
-        if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_ADMIN)) {
-            // No restriction
-        } elseif (Auth::user()->role == ROLE_USER) {
-            $query->where('iii.created_by', Auth::id());
-        }
-
+      
         return $query->get(); // returns multiple rows
     }
 
@@ -808,13 +802,7 @@ class InitialIncident extends Model
             $query->where('iii.created_at', '<=', DBdateformat($request->Todate));
         }
 
-        // Role-based filter
-        if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_ADMIN)) {
-            // No restriction
-        } elseif (Auth::user()->role == ROLE_USER) {
-            $query->where('iii.created_by', Auth::id());
-        }
-
+      
         return $query->get();
     }
 
@@ -848,12 +836,6 @@ class InitialIncident extends Model
             $query->where('iii.created_at', '<=', DBdateformat($request->Todate));
         }
 
-        // Role-based filter
-        if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_ADMIN)) {
-            // No restriction
-        } elseif (Auth::user()->role == ROLE_USER) {
-            $query->where('iii.created_by', Auth::id());
-        }
 
         return $query->get(); // returns multiple rows
     }
@@ -885,12 +867,7 @@ class InitialIncident extends Model
             $query->where('iii.created_at', '<=', DBdateformat($request->Todate));
         }
 
-        // Role-based filter
-        if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_ADMIN)) {
-            // No restriction
-        } elseif (Auth::user()->role == ROLE_USER) {
-            $query->where('iii.created_by', Auth::id());
-        }
+      
 
         return $query->get(); // returns multiple rows
     }
@@ -929,12 +906,6 @@ class InitialIncident extends Model
             $query->where('iii.created_at', '<=', DBdateformat($request->Todate));
         }
     
-        // Role-based filter
-        if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_ADMIN)) {
-            // No restriction
-        } elseif (Auth::user()->role == ROLE_USER) {
-            $query->where('iii.created_by', Auth::id());
-        }
     
         $results = $query->get();
     

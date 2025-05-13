@@ -8,7 +8,7 @@
     var injuryColors = {
         'Major': '#FF0000', // Red
         'Minor': '#FFB200', // Orange
-        'Fatal': '#128FD9'  // Blue
+        'Fatal': '#128FD9' // Blue
     };
 
     // Get colors for each series
@@ -19,6 +19,9 @@
         chart: {
             height: 400,
             type: 'heatmap',
+            toolbar: {
+                show: false
+            },
         },
         dataLabels: {
             enabled: true
@@ -31,7 +34,7 @@
                 useFillColorAsStroke: true,
             }
         },
-     
+
         xaxis: {
             type: 'category',
             title: {
@@ -56,10 +59,9 @@
         }
     };
 
-    var chart = new ApexCharts(document.querySelector("#heatmapofImsData"), options);
-    chart.render();
+    var heatmapofImsData = new ApexCharts(document.querySelector("#heatmapofImsData"), options);
+    heatmapofImsData.render();
 
-    // Manual custom legend
     var customLegendHTML = '<div style="display: flex; gap: 15px; justify-content: center;">';
     for (const [label, color] of Object.entries(injuryColors)) {
         customLegendHTML += `<div style="display: flex; align-items: center; gap: 5px;">
@@ -70,7 +72,6 @@
     customLegendHTML += '</div>';
     document.getElementById('customLegend').innerHTML = customLegendHTML;
 
-    // Download button functionality
     $("#heatmapofImsData_download").off("click").on("click", function() {
         heatmapofImsData.dataURI().then(({
             imgURI
@@ -81,53 +82,56 @@
 
             image.onload = function() {
                 newCanvas.width = image.width;
-                newCanvas.height = image.height + 250;
+                let headerHeight = 120;
+                newCanvas.height = image.height + headerHeight;
 
+                // White background
                 ctx.fillStyle = 'white';
-                ctx.fillRect(0, 0, newCanvas.width, 250);
+                ctx.fillRect(0, 0, newCanvas.width, newCanvas.height);
+
+                // Header text
                 ctx.fillStyle = '#203669';
                 ctx.font = '20px Arial';
-                var headerText = 'Heatmap of Ims Data';
-                ctx.fillText(headerText, 10, 30);
+                ctx.fillText('Heatmap of IMS Data', 10, 30);
 
-                // var factoryNames = '';
-                // @if ($getdashdata->Factory && is_array($getdashdata->Factory) && isset($getdashdata->Factory))
-                //     factoryNames = @json(getFactoryNames(arrayDecrypt($getdashdata->Factory)));
-                // @endif
+                // Optional filter text
+                let yPos = 60;
 
-                var Fromdate = @json($getdashdata->Fromdate ?? null);
-                var Todate = @json($getdashdata->Todate ?? null);
+                @if (isset($getdashdata))
+                    @php
+                        $from = $getdashdata->Fromdate ?? null;
+                        $to = $getdashdata->Todate ?? null;
+                    @endphp
 
-                var yPos = 60;
-
-                if (Fromdate || Todate) {
-                    var subHeaderText = 'Filtered By:';
-                    ctx.fillText(subHeaderText, 10, yPos);
-
-                    // if (factoryNames) {
-                    //     yPos += 50;
-                    //     ctx.fillText('Factory: ' + factoryNames, 10, yPos);
-                    // }
-
-                    if (Fromdate) {
+                    @if ($from || $to)
+                        ctx.fillStyle = '#203669';
+                        ctx.font = '16px Arial';
+                        ctx.fillText('Filtered By:', 10, yPos);
                         yPos += 30;
-                        ctx.fillText('From Date: ' + Fromdate, 10, yPos);
-                    }
-                    if (Todate) {
-                        yPos += 30;
-                        ctx.fillText('To Date: ' + Todate, 10, yPos);
-                    }
-                }
 
-                ctx.drawImage(image, 0, yPos);
+                        @if ($from)
+                            ctx.fillText('From Date: {{ $from }}', 10, yPos);
+                            yPos += 30;
+                        @endif
+
+                        @if ($to)
+                            ctx.fillText('To Date: {{ $to }}', 10, yPos);
+                            yPos += 30;
+                        @endif
+                    @endif
+                @endif
+
+                // Draw chart image below header
+                ctx.drawImage(image, 0, headerHeight);
 
                 newCanvas.toBlob(function(blob) {
                     var link = document.createElement('a');
                     link.href = URL.createObjectURL(blob);
-                    link.download = 'Heatmap of Ims Data.png';
+                    link.download = 'Heatmap of IMS Data.png';
                     link.click();
                 });
             };
+
             image.src = imgURI;
         });
     });

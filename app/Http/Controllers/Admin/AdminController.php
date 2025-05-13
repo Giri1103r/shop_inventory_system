@@ -38,74 +38,78 @@ class AdminController extends Controller
         $this->training_schedule = new TrainingSchedule();
         $this->ims_incident = new InitialIncident();
         $this->ptw = new SafetyPermit();
-        $this->training_schedule = new TrainingSchedule();
     }
 
     public function index(Request $request)
     {
-        if (Auth::check()) {
-            $user = Auth::user();
-            $data = [];
-            if ((in_array(ROLE_SUPERADMIN, getUserRoleId(Auth::id())) || in_array(ROLE_ADMIN, getUserRoleId(Auth::id())))) {
-                $masterLink = [
-                    [
-                        'link' => 'company/list',
-                        'name' => 'Company',
-                        'count' => gettotalCount('company'),
-                        'icon' => 'bx bx-message-square-detail',
-                        'icon_color' => 'text-primary',
-                    ],
-                    [
-                        'link' => 'location/list',
-                        'name' => 'Location',
-                        'count' => gettotalCount('location'),
-                        'icon' => 'bx bx-message-square-detail',
-                        'icon_color' => 'text-primary',
-                    ],
-                    [
-                        'link' => 'unit/list',
-                        'name' => 'Unit',
-                        'count' => gettotalCount('unit'),
-                        'icon' => 'bx bx-message-square-detail',
-                        'icon_color' => 'text-primary',
-                    ],
+        try {
+            if (Auth::check()) {
+                $user = Auth::user();
+                $data = [];
+                if ((in_array(ROLE_SUPERADMIN, getUserRoleId(Auth::id())) || in_array(ROLE_ADMIN, getUserRoleId(Auth::id())))) {
+                    $masterLink = [
+                        [
+                            'link' => 'company/list',
+                            'name' => 'Company',
+                            'count' => gettotalCount('company'),
+                            'icon' => 'bx bx-message-square-detail',
+                            'icon_color' => 'text-primary',
+                        ],
+                        [
+                            'link' => 'location/list',
+                            'name' => 'Location',
+                            'count' => gettotalCount('location'),
+                            'icon' => 'bx bx-message-square-detail',
+                            'icon_color' => 'text-primary',
+                        ],
+                        [
+                            'link' => 'unit/list',
+                            'name' => 'Unit',
+                            'count' => gettotalCount('unit'),
+                            'icon' => 'bx bx-message-square-detail',
+                            'icon_color' => 'text-primary',
+                        ],
 
-                    [
-                        'link' => 'department/list',
-                        'name' => 'Department',
-                        'count' => gettotalCount('department'),
-                        'icon' => 'bx bx-message-square-detail',
-                        'icon_color' => 'text-primary',
-                    ],
+                        [
+                            'link' => 'department/list',
+                            'name' => 'Department',
+                            'count' => gettotalCount('department'),
+                            'icon' => 'bx bx-message-square-detail',
+                            'icon_color' => 'text-primary',
+                        ],
 
 
-                    [
-                        'link' => 'employee/list',
-                        'name' => 'Employees',
-                        'count' => gettotalCount('employee'),
-                        'icon' => 'bx bx-message-square-detail',
-                        'icon_color' => 'text-primary',
-                    ],
+                        [
+                            'link' => 'employee/list',
+                            'name' => 'Employees',
+                            'count' => gettotalCount('employee'),
+                            'icon' => 'bx bx-message-square-detail',
+                            'icon_color' => 'text-primary',
+                        ],
 
-                    [
-                        'link' => 'work/list',
-                        'name' => 'Workers',
-                        'count' => gettotalCount('work'),
-                        'icon' => 'bx bx-message-square-detail',
-                        'icon_color' => 'text-primary',
-                    ],
+                        [
+                            'link' => 'work/list',
+                            'name' => 'Workers',
+                            'count' => gettotalCount('work'),
+                            'icon' => 'bx bx-message-square-detail',
+                            'icon_color' => 'text-primary',
+                        ],
 
-                ];
+                    ];
 
-                $data = [
-                    'masterLink' => $masterLink,
-                ];
+                    $data = [
+                        'masterLink' => $masterLink,
+                    ];
+                }
+                if (Auth::user()->role == ROLE_SUPERADMIN || Auth::user()->role == ROLE_ADMIN || Auth::user()->role == ROLE_EHS_HEAD || Auth::user()->role == ROLE_EHS_OFFICER) {
+                    return view('admin.dashboard', $data);
+                } else {
+                    return view('admin.userdashboard', $data);
+                }
             }
-            if (Auth::user()->role == ROLE_SUPERADMIN || Auth::user()->role == ROLE_ADMIN) {
-                return view('admin.dashboard', $data);
-            } else {
-                return view('admin.userdashboard', $data);
-            }
+        } catch (\Exception $ex) {
+            report($ex);
+            return back()->with('error', 'Failed to load heatmap incident data.');
         }
     }
 
@@ -667,7 +671,7 @@ class AdminController extends Controller
             $data = [
                 'chartData' => $chartData,
             ];
- 
+
             return view('admin.dashboard.iir_wise_rcpa', $data);
         } catch (\Exception $ex) {
             report($ex);
