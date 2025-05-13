@@ -258,24 +258,25 @@ class MSDSController extends Controller
     public function ExportExcel(Request $request)
     {
         try {
-            $allData = $this->msdsDetails->exportdata();
+            $allData = $this->msds->exportdata();
 
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
             }
 
-            $document_no = $this->document_reference->selectUsingName('MSDS');
             $spreadsheet = new Spreadsheet();
             $sheet = $spreadsheet->getActiveSheet();
-
             $row = 1;
-            $i = 1;
 
-            foreach ($allData as $data) {
+            foreach ($allData as $msdsIndex => $msds) {
+                $titleRow = $row;
+                $firstData = $msds->first();
+                $inspection_details = $this->msdsDetails->getDetails($firstData->id);
+                $document_no = $this->document_reference->selectUsingName('MSDS');
 
                 $logoPath = public_path('assets/images/logo-dark.png');
                 if (file_exists($logoPath)) {
-                    $drawing = new Drawing();
+                    $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
                     $drawing->setName('Logo');
                     $drawing->setPath($logoPath);
                     $drawing->setCoordinates('A' . $row);
@@ -287,114 +288,128 @@ class MSDSController extends Controller
 
                 $sheet->mergeCells("A{$row}:B" . ($row + 2));
                 $sheet->mergeCells("C{$row}:L" . ($row + 2));
-                $sheet->setCellValue("C{$row}", "Chemical (MSDS) Master List PN International Pvt.Ltd.");
-                $sheet->getStyle("A{$row}:O" . ($row + 2))->applyFromArray([
+                $sheet->setCellValue("C{$row}", "Chemical (MSDS) Master List");
+                $sheet->getStyle("C{$row}")->applyFromArray([
                     'font' => ['bold' => true, 'size' => 14],
-                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                 ]);
 
-                $docLabels = [
-                    'M1:N1' => 'Doc. No.',
-                    'M2:N2' => 'Issue Dt.',
-                    'M3:N3' => 'Rev. & Dt.',
-                ];
-
-                foreach ([0, 1, 2] as $idx) {
-                    $labelRow = $row + $idx;
-                    $labelCell = "M{$labelRow}";
-                    $mergeRange = "M{$labelRow}:N{$labelRow}";
-                    $sheet->mergeCells($mergeRange)->setCellValue($labelCell, array_values($docLabels)[$idx]);
-                    $sheet->getStyle($mergeRange)->applyFromArray([
-                        'font' => ['bold' => true, 'size' => 10],
-                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
+                $docHeaders = ['M' . $row . ':N' . $row => 'Doc. No.', 'M' . ($row + 1) . ':N' . ($row + 1) => 'Issue Dt.', 'M' . ($row + 2) . ':N' . ($row + 2) => 'Rev. & Dt.'];
+                foreach ($docHeaders as $cellRange => $label) {
+                    $startCell = explode(':', $cellRange)[0];
+                    $sheet->mergeCells($cellRange)->setCellValue($startCell, $label);
+                    $sheet->getStyle($cellRange)->applyFromArray([
+                        'font' => ['bold' => true],
                         'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                     ]);
                 }
 
-                $sheet->setCellValue("O{$row}", $document_no->doc_no);
-                $sheet->setCellValue("O" . ($row + 1), Displaydateformat($document_no->issue_date));
-                $sheet->setCellValue("O" . ($row + 2), $document_no->rev_dt);
-
-                $sheet->getStyle("O{$row}:O" . ($row + 2))->applyFromArray([
-                    'font' => ['size' => 10],
-                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
+                $sheet->setCellValue("O{$row}", $document_no->doc_no ?? '');
+                $sheet->setCellValue("O" . ($row + 1), Displaydateformat($document_no->issue_date ?? ''));
+                $sheet->setCellValue("O" . ($row + 2), $document_no->rev_dt ?? '');
+                $sheet->getStyle("M{$row}:O" . ($row + 2))->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                 ]);
 
-                $headerRow = $row + 3;
-                $sheet->mergeCells("A{$headerRow}:C{$headerRow}")->setCellValue("A{$headerRow}", 'Sr. No');
-                $sheet->mergeCells("D{$headerRow}:F{$headerRow}")->setCellValue("D{$headerRow}", 'Item Code');
-                $sheet->mergeCells("G{$headerRow}:I{$headerRow}")->setCellValue("G{$headerRow}", 'Name Of Chemical');
-                $sheet->mergeCells("J{$headerRow}:L{$headerRow}")->setCellValue("J{$headerRow}", 'MSDS Available Status');
-                $sheet->mergeCells("M{$headerRow}:O{$headerRow}")->setCellValue("M{$headerRow}", 'Remarks');
+                $row += 3;
 
-                $sheet->getStyle("A{$headerRow}:O{$headerRow}")->applyFromArray([
+                $sheet->getStyle("A{$row}:O{$row}")->applyFromArray([
                     'font' => ['bold' => true],
-                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                    'fill' => ['fillType' => Fill::FILL_SOLID],
+                    'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['argb' => 'D9E1F2']]
                 ]);
+                $sheet->mergeCells("A{$row}:E{$row}")->setCellValue("A{$row}", 'Location: ' . getLocationName($firstData->location_id));
+                $sheet->mergeCells("F{$row}:J{$row}")->setCellValue("F{$row}", 'Department: ' . getDepartment($firstData->department_id));
+                $sheet->mergeCells("K{$row}:O{$row}")->setCellValue("K{$row}", 'Unit: ' . getUnitName($firstData->unit_id));
+                $row++;
 
-                $dataRow = $headerRow + 1;
+                $sheet->getStyle("A{$row}:O{$row}")->applyFromArray([
+                    'font' => ['bold' => true],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['argb' => 'D9E1F2']]
+                ]);
+                $sheet->mergeCells("A{$row}:B{$row}")->setCellValue("A{$row}", 'Sr. No');
+                $sheet->setCellValue("C{$row}", 'Item Code');
+                $sheet->mergeCells("D{$row}:F{$row}")->setCellValue("D{$row}", 'Name Of Chemical');
+                $sheet->setCellValue("G{$row}", 'Storage Capacity');
+                $sheet->setCellValue("H{$row}", 'NPFA Rating Type');
+                $sheet->setCellValue("I{$row}", 'NPFA Rating');
+                $sheet->mergeCells("J{$row}:L{$row}")->setCellValue("J{$row}", 'MSDS Availability Status');
+                $sheet->mergeCells("M{$row}:O{$row}")->setCellValue("M{$row}", 'Remarks');
+                $row++;
 
-                $sheet->mergeCells("A{$dataRow}:C{$dataRow}")->setCellValue("A{$dataRow}", 1); // Always 1 for each block
-                $sheet->mergeCells("D{$dataRow}:F{$dataRow}")->setCellValue("D{$dataRow}", $data->item_code ?? '');
-                $sheet->mergeCells("G{$dataRow}:I{$dataRow}")->setCellValue("G{$dataRow}", $data->name_of_chemical ?? '');
-                $sheet->mergeCells("J{$dataRow}:L{$dataRow}");
+                foreach ($inspection_details as $index => $msdsDetails) {
+                    $sheet->mergeCells("A{$row}:B{$row}")->setCellValue("A{$row}", $index + 1);
+                    $sheet->setCellValue("C{$row}", $msdsDetails->item_code ?? '');
+                    $sheet->mergeCells("D{$row}:F{$row}")->setCellValue("D{$row}", ($msdsDetails->name_of_chemical) ?? '');
+                    $sheet->setCellValue("G{$row}", $msdsDetails->storage_capacity ?? '');
+                    $sheet->setCellValue("H{$row}", getNFARating($msdsDetails->nfa_rating) ?? '');
+                    $sheet->setCellValue("I{$row}", $msdsDetails->nfa_rating_value ?? '');
 
-                $status = strtoupper($data->msds_availability_status ?? '');
-                switch ($status) {
-                    case '1':
-                        $symbol = '✓';
-                        $color = '008000';
-                        break;
-                    case '2':
-                        $symbol = 'X';
-                        $color = 'FF0000';
-                        break;
-                    case 'null':
-                        $symbol = 'N/A';
-                        $color = '808080';
-                        break;
-                    default:
-                        $symbol = '-';
-                        $color = '808080';
-                        break;
+                    $status = strtoupper($msdsDetails->msds_availability_status ?? '');
+                    switch ($status) {
+                        case '1':
+                        case 'YES':
+                            $symbol = '✓';
+                            $color = '008000';
+                            break;
+                        case '2':
+                        case 'NO':
+                            $symbol = 'X';
+                            $color = 'FF0000';
+                            break;
+                        case 'N/A':
+                        case 'NULL':
+                            $symbol = 'N/A';
+                            $color = '808080';
+                            break;
+                        default:
+                            $symbol = '-';
+                            $color = '808080';
+                            break;
+                    }
+
+                    $sheet->mergeCells("J{$row}:L{$row}")->setCellValue("J{$row}", $symbol);
+                    $sheet->getStyle("J{$row}:L{$row}")->applyFromArray([
+                        'font' => ['color' => ['rgb' => $color], 'bold' => true, 'size' => 14],
+                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                    ]);
+                    $sheet->mergeCells("M{$row}:O{$row}")->setCellValue("M{$row}", $msdsDetails->remark ?? '');
+                    $sheet->getStyle("A{$row}:O{$row}")->applyFromArray([
+                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    ]);
+                    $row++;
                 }
 
-                $sheet->setCellValue("J{$dataRow}", $symbol);
-                $sheet->getStyle("J{$dataRow}:L{$dataRow}")->applyFromArray([
-                    'font' => ['name' => 'Segoe UI Symbol', 'color' => ['rgb' => $color], 'bold' => true, 'size' => 14],
-                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                $sheet->getStyle("A{$titleRow}:O{$row}")->applyFromArray([
+                    'borders' => [
+                        'outline' => [
+                            'borderStyle' => Border::BORDER_THICK,
+                            'color' => ['argb' => '000000'],
+                        ],
+                    ],
                 ]);
 
-                $sheet->mergeCells("M{$dataRow}:O{$dataRow}")->setCellValue("M{$dataRow}", $data->remark ?? '');
-                $sheet->getStyle("A{$dataRow}:O{$dataRow}")->applyFromArray([
-                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
-                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                ]);
-
-                $row = $dataRow + 5;
-                $i++;
+                $row += 5;
             }
 
             foreach (range('A', 'O') as $col) {
                 $sheet->getColumnDimension($col)->setAutoSize(true);
             }
 
-            $fileName = 'MSDS.xlsx';
+            $fileName = 'Chemical_MSDS_Master_List.xlsx';
             $writer = new Xlsx($spreadsheet);
+            $temp_file = tempnam(sys_get_temp_dir(), $fileName);
+            $writer->save($temp_file);
 
-            return response()->streamDownload(function () use ($writer) {
-                $writer->save('php://output');
-            }, $fileName, [
-                'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            ]);
+            return response()->download($temp_file, $fileName)->deleteFileAfterSend(true);
         } catch (\Exception $e) {
-            report($e);
-            Session::flash('error', 'Something went wrong!');
-            return redirect(admin_url('msds/list'));
+            return redirect()->back()->with('error', $e->getMessage());
         }
     }
 
@@ -467,7 +482,7 @@ class MSDSController extends Controller
 
             $sheet->mergeCells('A1:B3');
             $sheet->mergeCells('C1:L3');
-            $sheet->setCellValue('C1', "Chemical (MSDS) Master List PN International Pvt.Ltd.");
+            $sheet->setCellValue('C1', "Chemical (MSDS) Master List");
             $sheet->getStyle('C1')->applyFromArray([
                 'font' => ['bold' => true, 'size' => 14],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
@@ -524,12 +539,11 @@ class MSDSController extends Controller
             foreach ($inspection_details as $index => $msdsDetails) {
                 $sheet->mergeCells("A{$row}:B{$row}")->setCellValue("A{$row}", $index + 1);
                 $sheet->setCellValue("C{$row}", $msdsDetails->item_code ?? '');
-                $sheet->mergeCells("D{$row}:F{$row}")->setCellValue("D{$row}", getChemicalName($msdsDetails->name_of_chemical) ?? '');
+                $sheet->mergeCells("D{$row}:F{$row}")->setCellValue("D{$row}", ($msdsDetails->name_of_chemical) ?? '');
                 $sheet->setCellValue("G{$row}", $msdsDetails->storage_capacity ?? '');
                 $sheet->setCellValue("H{$row}", getNFARating($msdsDetails->nfa_rating) ?? '');
                 $sheet->setCellValue("I{$row}", $msdsDetails->nfa_rating_value ?? '');
 
-                // MSDS Status
                 $status = strtoupper($msdsDetails->msds_availability_status ?? '');
                 switch ($status) {
                     case '1':
