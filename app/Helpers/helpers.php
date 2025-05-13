@@ -3014,7 +3014,7 @@ if (!function_exists('InspectionCount')) {
             ],
 
             'MSDS' => [
-                \App\Models\Inspection\MSDS\MSDSDetails::class
+                \App\Models\Inspection\MSDS\MSDS::class
             ],
 
             'RRAA' => [

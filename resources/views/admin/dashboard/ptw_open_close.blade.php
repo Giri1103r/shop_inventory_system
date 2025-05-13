@@ -2,18 +2,29 @@
 
 <script>
     var open_close = @json($active_close_count);
+
     var options = {
-        series: [{
-            data: Object.values(open_close)
-        }],
+        series: Object.values(open_close),
         chart: {
             width: 380,
             type: 'pie',
-          
         },
         labels: Object.keys(open_close),
         legend: {
-            position: 'bottom' 
+            position: 'bottom'
+        },
+        tooltip: {
+            enabled: true,
+            y: {
+                formatter: function(value) {
+                    return value;
+                },
+                title: {
+                    formatter: function(seriesName) {
+                        return seriesName;
+                    }
+                }
+            }
         },
         responsive: [{
             breakpoint: 480,

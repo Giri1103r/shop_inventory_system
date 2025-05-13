@@ -3,8 +3,10 @@
 
 <script>
     var inspection_wise_count = @json($inspection_wise_count);
+
     var options = {
         series: [{
+            name: 'Inspection Count',
             data: Object.values(inspection_wise_count)
         }],
         chart: {
@@ -26,6 +28,14 @@
         },
         xaxis: {
             categories: Object.keys(inspection_wise_count)
+        },
+        tooltip: {
+            y: {
+                formatter: function(val, opts) {
+                    const category = opts.w.globals.labels[opts.dataPointIndex];
+                    return category + ': ' + val;
+                }
+            }
         }
     };
 
