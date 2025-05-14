@@ -649,7 +649,7 @@
                     uaucStaticReport(Fromdate, Todate);
                     LoadDepartmentCount(Fromdate, Todate);
                     loadfmonthwisetraining(Fromdate, Todate);
-                    LoadmonthewiseData(Fromdate, Todate);
+                    LoadmonthewisePTWData(Fromdate, Todate);
                     loadunitwisecount(Fromdate, Todate);
                     loadtraining_count_status(Fromdate, Todate);
                 }
@@ -1130,34 +1130,26 @@
                     });
                 }
 
-                $(document).ready(function() {
-                    $('#resetform').on('click', function(e) {
-                        e.preventDefault();
-                        location.reload();
-                    });
-                    const toDatePicker = flatpickr("#toDate", {
-                        dateFormat: "d-m-Y",
-                        minDate: "today",
-                    });
+                function LoadmonthewisePTWData(Fromdate = '', Todate = '') {
+                        var url = "{{ admin_url('dashboard/monthwiseptw') }}"
+                        var data = {
+                            Fromdate: Fromdate,
+                            Todate: Todate,
+                        };
+                        $('#monthwiseptw').html('');
+                        $.ajax({
+                            type: 'get',
+                            url: url,
+                            data: data,
+                            cache: false,
+                            success: function(dataAjx) {
 
-                    flatpickr("#fromDate", {
-                        dateFormat: "d-m-Y",
-                        onChange: function(selectedDates, dateStr) {
-                            if (selectedDates.length > 0) {
-                                const fromDate = selectedDates[0];
-                                if (toDatePicker) {
-                                    toDatePicker.set("minDate",
-                                        dateStr);
-                                }
-                                $('#LoadDepartmentCount').html(dataAjx);
-
-
+                                $('#monthwiseptw').html(dataAjx);
                             }
-                        }
-                    });
+                        });
+                    }
 
-
-
+                    
                     function loadfmonthwisetraining(Fromdate = '', Todate = '') {
                         var url = "{{ admin_url('dashboard/monthwisetraining') }}"
                         var data = {
@@ -1215,24 +1207,7 @@
                         });
                     }
 
-                    function LoadmonthewiseData(Fromdate = '', Todate = '') {
-                        var url = "{{ admin_url('dashboard/monthwiseptw') }}"
-                        var data = {
-                            Fromdate: Fromdate,
-                            Todate: Todate,
-                        };
-                        $('#unitwiseptw').html('');
-                        $.ajax({
-                            type: 'get',
-                            url: url,
-                            data: data,
-                            cache: false,
-                            success: function(dataAjx) {
-
-                                $('#unitwiseptw').html(dataAjx);
-                            }
-                        });
-                    }
+                   
 
                     function LoadiirTypewiseRCPACount(Fromdate = '', Todate = '') {
                         var url = "{{ admin_url('dashboard/IIRTypeWiseRCPA') }}"
@@ -1613,6 +1588,35 @@
                             }
                         });
                     }
+
+                $(document).ready(function() {
+                    $('#resetform').on('click', function(e) {
+                        e.preventDefault();
+                        location.reload();
+                    });
+                    const toDatePicker = flatpickr("#toDate", {
+                        dateFormat: "d-m-Y",
+                        minDate: "today",
+                    });
+
+                    flatpickr("#fromDate", {
+                        dateFormat: "d-m-Y",
+                        onChange: function(selectedDates, dateStr) {
+                            if (selectedDates.length > 0) {
+                                const fromDate = selectedDates[0];
+                                if (toDatePicker) {
+                                    toDatePicker.set("minDate",
+                                        dateStr);
+                                }
+                                $('#LoadDepartmentCount').html(dataAjx);
+
+
+                            }
+                        }
+                    });
+
+
+
                     filterDashboard();
                 });
             </script>
