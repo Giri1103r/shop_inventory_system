@@ -390,7 +390,7 @@ class AdminController extends Controller
             $to_date = $request->input('Todate');
 
             $inspection_wise_count = InspectionCount($from_date, $to_date);
-
+            
             $data = [
                 'inspection_wise_count' => $inspection_wise_count,
                 'from_date' => $from_date,
@@ -465,6 +465,10 @@ class AdminController extends Controller
 
             $training_data = $this->training_schedule->GetTrainingHoursDepartmentData($request);
 
+            if ($training_data->isEmpty()) {
+                return response()->json('<div class="border-0 pb-3" style="margin-top: 166px;"><h4 style="text-align: center;">No data Found.</h4></div>');
+            }
+
             $chartData = [
                 'labels' => [],
                 'series' => [],
@@ -499,7 +503,6 @@ class AdminController extends Controller
             ];
 
             $hold_count = $this->ptw->getHoldStatus($request);
-
             $data = [
                 'hold_count' => $hold_count,
                 'dates' => $dates,
@@ -1066,7 +1069,6 @@ class AdminController extends Controller
                 }
             }
 
-            // Use Laravel's filter() to remove departments with count 0
             $chartDataArray = $chartDataArray->filter(function ($count) {
                 return $count > 0;
             });
