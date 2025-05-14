@@ -52,12 +52,12 @@ class LoginController extends Controller
         $rules = [
             'email' => 'required',
             'password' => 'required',
-            'g-recaptcha-response' => 'required',
+            // 'g-recaptcha-response' => 'required',
         ];
         $messages = [
             'email.required' => 'Please enter your email address!',
             'password.required' => 'Please enter your password',
-            'g-recaptcha-response.required' => 'Please complete the reCAPTCHA verification',
+            // 'g-recaptcha-response.required' => 'Please complete the reCAPTCHA verification',
         ];
 
         $validator = Validator::make($request->all(), $rules, $messages);
@@ -89,7 +89,7 @@ class LoginController extends Controller
             $user = Auth::user();
 
             if ($user->status == 0) {
-                Auth::logout(); 
+                Auth::logout();
                 Session::flash('error', 'Employee no longer exists');
                 return redirect()->back();
             }

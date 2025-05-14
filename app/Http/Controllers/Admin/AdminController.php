@@ -20,6 +20,8 @@ use App\Models\IMS\Incident\InitialIncident;
 use App\Models\Permit\SafetyPermit;
 use App\Models\Master\TrainingSchedule;
 use App\Models\IMS\Incident\IncidentBodyParts;
+use App\Models\Inspection\GembaWalk\GembaWalk;
+use App\Models\Inspection\GembaWalk\GembaWalkChecklist;
 use Illuminate\Support\Facades\DB as FacadesDB;
 use App\Models\Master\Unit;
 
@@ -32,6 +34,7 @@ class AdminController extends Controller
     private $training_schedule;
     private $ims_incident;
     private $ptw;
+    private $gembaWalk;
     private $unit;
     private $department;
 
@@ -45,6 +48,7 @@ class AdminController extends Controller
         $this->training_schedule = new TrainingSchedule();
         $this->ims_incident = new InitialIncident();
         $this->ptw = new SafetyPermit();
+        $this->gembaWalk = new GembaWalkChecklist();
         $this->unit = new Unit();
         $this->department = new Department();
     }
@@ -703,6 +707,51 @@ class AdminController extends Controller
             report($ex);
         }
     }
+
+
+    public function gembaWalkObservation(Request $request)
+    {
+        try {
+            $chartData = $this->gembaWalk->gembaWalkPotentialCount($request);
+
+            if (count($chartData) <= 0) {
+                return response()->json('<div class="border-0 pb-3" style="margin-top: 166px;"><h4 style="text-align: center;">No data Found.</h4></div>');
+            }
+
+            $chartDataSeries = [
+                'Unsafe Act' => [],
+                'Unknown' => [],
+                'Unsafe Condition' => [],
+            ];
+
+            $categories = [];
+
+            foreach ($chartData as $data) {
+                $categories[] = $data['unit_name'];
+                foreach ($chartDataSeries as $key => $value) {
+                    $chartDataSeries[$key][] = $data[$key];
+                }
+            }
+
+            $chartData = [
+                'categories' => $categories,
+                'series' => [
+                    ['name' => 'Unsafe Act', 'data' => $chartDataSeries['Unsafe Act']],
+                    ['name' => 'Unknown', 'data' => $chartDataSeries['Unknown']],
+                    ['name' => 'Unsafe Condition', 'data' => $chartDataSeries['Unsafe Condition']],
+                ],
+            ];
+
+            return view('admin.dashboard.gembaWalkObservation', [
+                'chartData' => $chartData
+            ]);
+        } catch (\Exception $ex) {
+            dd($ex);
+            report($ex);
+            return back()->with('error', 'Failed to load unit-wise incident data.');
+        }
+    }
+
     public function IIRTypeWiseUAUC(Request $request)
     {
         try {
