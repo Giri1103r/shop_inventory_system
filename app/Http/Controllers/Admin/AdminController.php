@@ -526,7 +526,7 @@ class AdminController extends Controller
             $data = [
                 'getdashdata' => $request,
             ];
-            if (empty($chartData) || array_sum($chartData) == 0) {
+            if (empty($chartData)) {
                 return response()->json('<div class="border-0 pb-3" style="margin-top: 166px;"><h4 style="text-align: center;">No data Found.</h4></div>');
             }
 
