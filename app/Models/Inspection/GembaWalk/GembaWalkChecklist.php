@@ -2,11 +2,12 @@
 
 namespace App\Models\Inspection\GembaWalk;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 
 class GembaWalkChecklist extends Model
@@ -93,7 +94,7 @@ class GembaWalkChecklist extends Model
                     GembaWalkChecklistFile::create([
                         'gemba_walk_id' => $gembaWalk_id,
                         'gemba_walk_checklist_id' => $gembaWalkChecklist->id,
-                        'file_type'=>3,
+                        'file_type' => 3,
                         'file_name' => $filenewname,
                         'file_orgname' => $fileName,
                         'file_path' => $path,
@@ -110,5 +111,69 @@ class GembaWalkChecklist extends Model
         return response()->json(['error' => 'Invalid data'], 400);
     }
 
+    public function gembaWalkPotentialCount()
+    {
+        $request = request();
 
+        // Step 1: Base query
+        $query = $this
+            ->select(
+                'masters_unit.unit_name',
+                'inspection_gemba_walk_checklist.observation_type_id as observation_type_name',
+                DB::raw('COUNT(*) as total')
+            )
+            ->leftJoin('masters_unit', 'masters_unit.id', '=', 'inspection_gemba_walk_checklist.unit_id');
+
+        // Step 2: Date filter
+        if ($request->Fromdate && $request->Todate) {
+            $query->whereBetween('inspection_gemba_walk_checklist.created_at', [
+                DBdateformat($request->Fromdate),
+                DBdateformat($request->Todate)
+            ]);
+        } elseif ($request->Fromdate) {
+            $query->where('inspection_gemba_walk_checklist.created_at', '>=', DBdateformat($request->Fromdate));
+        } elseif ($request->Todate) {
+            $query->where('inspection_gemba_walk_checklist.created_at', '<=', DBdateformat($request->Todate));
+        }
+
+        // Step 3: Role-based filtering
+        if (!CheckUserRole(ROLE_SUPERADMIN) && !CheckUserRole(ROLE_ADMIN) && !CheckUserRole(ROLE_EHS_HEAD)) {
+            if (Auth::user()->role == ROLE_USER) {
+                $query->where('inspection_gemba_walk_checklist.created_by', Auth::id());
+            }
+        }
+
+        $results = $query
+            ->groupBy('masters_unit.unit_name', 'inspection_gemba_walk_checklist.observation_type_id')
+            ->get();
+
+        $finalData = [];
+        $allObservationTypes = [];
+
+        foreach ($results as $row) {
+            $unit = $row->unit_name;
+            $type = getObservationType($row->observation_type_name);
+            $count = $row->total;
+
+            $allObservationTypes[$type] = true;
+
+            if (!isset($finalData[$unit])) {
+                $finalData[$unit] = ['unit_name' => $unit];
+            }
+
+            $finalData[$unit][$type] = $count;
+        }
+
+        $allTypes = array_keys($allObservationTypes);
+        foreach ($finalData as &$unitData) {
+            foreach ($allTypes as $type) {
+                if (!isset($unitData[$type])) {
+                    $unitData[$type] = 0;
+                }
+            }
+        }
+
+        $finalData = array_values($finalData);
+        return $finalData;
+    }
 }
