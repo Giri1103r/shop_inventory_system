@@ -13,6 +13,13 @@
                 show: false
             },
         },
+        plotOptions: {
+            bar: {
+                horizontal: false,
+                borderRadius: 6,
+                distributed: true
+            }
+        },
         xaxis: {
             categories: {!! json_encode($formattedData['labels']) !!},
             title: {
@@ -27,7 +34,19 @@
         dataLabels: {
             enabled: true
         },
-        colors: ['#F97316'],
+        colors: [
+            '#1E90FF', 
+            '#32CD32', 
+            '#FF6347', 
+            '#FFD700', 
+            '#6A5ACD', 
+            '#00CED1', 
+            '#DC143C', 
+            '#FFA500', 
+            '#2E8B57', 
+            '#8B4513'
+        ],
+
         legend: {
             position: 'bottom'
         }
@@ -38,7 +57,10 @@
 
     // Download button functionality
     $("#TypeofIIR_download").off("click").on("click", function() {
-        chart.dataURI().then(({ imgURI, blob }) => {
+        chart.dataURI().then(({
+            imgURI,
+            blob
+        }) => {
             const link = document.createElement('a');
             link.href = imgURI;
             link.download = 'type_of_iir_chart.png';

@@ -30,8 +30,8 @@
                 </div>
             </div>
 
-               <!--Filter -->
-               <div id="search" class="collapse card">
+            <!--Filter -->
+            <div id="search" class="collapse card">
                 <form action="" id="formsearch">
                     <div class="card-body">
                         <div class="col-md-12">
@@ -389,7 +389,7 @@
                 <div class="col-xl-12 col-xxl-12">
                     <div class="card view_card">
                         <div class="card-header">
-                            <h4 class="text-white">Near Miss Frequency Rate</h4>
+                            <h4 class="text-white">Monthly Near Miss Frequency Rate</h4>
                             <a class="fas fa-arrow-alt-circle-down chartdownload" id="nearMiss_download"></a>
                         </div>
                         <div class="card-body px-0 pt-0 dlab-scroll height450" id="nearMissCount"> </div>
@@ -434,7 +434,7 @@
 
             <div class="row">
 
-                <div class="col-xl-12 col-xxl-12">
+                {{-- <div class="col-xl-12 col-xxl-12">
                     <div class="card view_card">
                         <div class="card-header">
                             <h4 class="text-white">PTW Average time between initial to closed</h4>
@@ -443,631 +443,701 @@
                         <div id="LoadPTWAvgTimeChartCount"></div>
                     </div>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-xl-12 col-xxl-12">
-                    <div class="card view_card">
-                        <div class="card-header">
-                            <h4 class="text-white">PPE Issuance Group Wise</h4>
-                            <a class="fas fa-arrow-alt-circle-down chartdownload"
-                                id="LoadPPEIssuanceGroupWise_download"></a>
+            </div> --}}
+                <div class="row">
+                    <div class="col-xl-12 col-xxl-12">
+                        <div class="card view_card">
+                            <div class="card-header">
+                                <h4 class="text-white">PPE Issuance Group Wise</h4>
+                                <a class="fas fa-arrow-alt-circle-down chartdownload"
+                                    id="LoadPPEIssuanceGroupWise_download"></a>
+                            </div>
+                            <div id="LoadPPEIssuanceGroupWiseCount"></div>
                         </div>
-                        <div id="LoadPPEIssuanceGroupWiseCount"></div>
                     </div>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-xl-12 col-xxl-12">
-                    <div class="card view_card">
-                        <div class="card-header">
-                            <h4 class="text-white">Injury Report - Based On Body Parts</h4>
+                <div class="row">
+                    <div class="col-xl-12 col-xxl-12">
+                        <div class="card view_card">
+                            <div class="card-header">
+                                <h4 class="text-white">Injury Report - Based On Body Parts</h4>
+                            </div>
+                            <div class="card-body" id="loadinjurychart"></div>
                         </div>
-                        <div class="card-body" id="loadinjurychart"></div>
                     </div>
                 </div>
-            </div>
 
-            <div class="row">
-                <div class="col-xl-12 col-xxl-12">
-                    <div class="card view_card responsive">
-                        <div class="card-header">
-                            <h4 class="text-white">Training Hour of Safety Department Wise</h4>
-                            <a class="fas fa-arrow-alt-circle-down chartdownload"
-                                id="LoadTrainingHourSafetyDepartmentWise_download"></a>
+                <div class="row">
+                    <div class="col-xl-12 col-xxl-12">
+                        <div class="card view_card responsive">
+                            <div class="card-header">
+                                <h4 class="text-white">Training Hour of Safety Department Wise</h4>
+                                <a class="fas fa-arrow-alt-circle-down chartdownload"
+                                    id="LoadTrainingHourSafetyDepartmentWise_download"></a>
+                            </div>
+                            <div id="LoadTrainingHourSafetyDepartmentWise_Count"></div>
                         </div>
-                        <div id="LoadTrainingHourSafetyDepartmentWise_Count"></div>
+                    </div>
+                </div>
+
+
+                <div class="row">
+                    <div class="col-xl-12 col-xxl-12">
+                        <div class="card view_card responsive">
+                            <div class="card-header">
+                                <h4 class="text-white">PTW – Violation Hold for Compliance</h4>
+                                <a class="fas fa-arrow-alt-circle-down chartdownload"
+                                    id="LoadPtwHoldViolation_download"></a>
+                            </div>
+                            <div id="LoadPtwHoldViolation_Count"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class = "row">
+                    <div class="col-xl-12 col-xxl-12">
+                        <div class="card view_card">
+                            <div class="card-header">
+                                <h4 class="text-white">Type Of Audit Findings</h4>
+                                <a class="fas fa-arrow-alt-circle-down chartdownload" id="auditFindings_download"></a>
+                            </div>
+                            <div id="LoadauditFindingsCount"></div>
+                        </div>
+                    </div>
+                    <div class="col-xl-6 col-xxl-6">
+                        <div class="card view_card">
+                            <div class="card-header">
+                                <h4 class="text-white">PPE Availability</h4>
+                                <a class="fas fa-arrow-alt-circle-down chartdownload"
+                                    id="LoadPPEAvailabilityChart_download"></a>
+                            </div>
+                            <div id="LoadPPEAvailabilityChartCount"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class = "row">
+                    <div class="col-xl-12 col-xxl-12">
+                        <div class="card view_card">
+                            <div class="card-header">
+                                <h4 class="text-white ">Month Wise PTW</h4>
+                                <a class="fas fa-arrow-alt-circle-down chartdownload" id="monthwiseptw_download"></a>
+                            </div>
+                            <div class="card-body px-0 pt-0 dlab-scroll height450" id="monthwiseptw">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xl-12 col-xxl-12">
+                        <div class="card view_card responsive">
+                            <div class="card-header">
+                                <h4 class="text-white">Unsafe Act / Unsafe Condition Static Report</h4>
+                                <a class="fas fa-arrow-alt-circle-down chartdownload" id="uaucstaticreport_download"></a>
+                            </div>
+                            <div id="uaucStaticReport"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xl-12 col-xxl-12">
+                        <div class="card view_card">
+                            <div class="card-header">
+                                <h4 class="text-white">MONTH WISE TRAINING COUNT</h4>
+                                <a class="fas fa-arrow-alt-circle-down chartdownload" id="monthwisetraining_download"></a>
+                            </div>
+                            <div class="card-body px-0 pt-0 dlab-scroll height450" id="Loadmonthwisetraining"> </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class = "row">
+                    <div class="col-xl-12 col-xxl-12">
+                        <div class="card view_card">
+                            <div class="card-header">
+                                <h4 class="text-white ">Unit Wise PTW</h4>
+                                <a class="fas fa-arrow-alt-circle-down chartdownload" id="unitwiseptw_download"></a>
+                            </div>
+                            <div class="card-body px-0 pt-0 dlab-scroll height450" id="unitwiseptw">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="row">
+                    <div class="col-xl-12 col-xxl-12">
+                        <div class="card view_card">
+                            <div class="card-header">
+                                <h4 class="text-white">DEPARTMENT WISE TRAINING COUNT</h4>
+                                <a class="fas fa-arrow-alt-circle-down chartdownload"
+                                    id="LoadDepartmentCount_download"></a>
+                            </div>
+                            <div class="card-body px-0 pt-0 dlab-scroll height450" id="LoadDepartmentCount">
+                            </div>
+
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+
+                    <div class="col-xl-6 col-xxl-6">
+                        <div class="card view_card responsive">
+                            <div class="card-header">
+                                <h4 class="text-white">TRAINING STATUS COUNT</h4>
+                                <a class="fas fa-arrow-alt-circle-down chartdownload" id="training_count_download"></a>
+                            </div>
+                            <div id="trainingStatusPieChart"></div>
+                        </div>
                     </div>
                 </div>
             </div>
-
-
-            <div class="row">
-                <div class="col-xl-12 col-xxl-12">
-                    <div class="card view_card responsive">
-                        <div class="card-header">
-                            <h4 class="text-white">PTW – Violation Hold for Compliance</h4>
-                            <a class="fas fa-arrow-alt-circle-down chartdownload" id="LoadPtwHoldViolation_download"></a>
-                        </div>
-                        <div id="LoadPtwHoldViolation_Count"></div>
-                    </div>
-                </div>
-            </div>
-
-            <div class = "row">
-                <div class="col-xl-6 col-xxl-6">
-                    <div class="card view_card">
-                        <div class="card-header">
-                            <h4 class="text-white">Type Of Audit Findings</h4>
-                            <a class="fas fa-arrow-alt-circle-down chartdownload" id="auditFindings_download"></a>
-                        </div>
-                        <div id="LoadauditFindingsCount"></div>
-                    </div>
-                </div>
-                <div class="col-xl-6 col-xxl-6">
-                    <div class="card view_card">
-                        <div class="card-header">
-                            <h4 class="text-white">PPE Availability</h4>
-                            <a class="fas fa-arrow-alt-circle-down chartdownload"
-                                id="LoadPPEAvailabilityChart_download"></a>
-                        </div>
-                        <div id="LoadPPEAvailabilityChartCount"></div>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-xl-12 col-xxl-12">
-                    <div class="card view_card responsive">
-                        <div class="card-header">
-                            <h4 class="text-white">Unsafe Act / Unsafe Condition Static Report</h4>
-                            <a class="fas fa-arrow-alt-circle-down chartdownload" id="uaucstaticreport_download"></a>
-                        </div>
-                        <div id="uaucStaticReport"></div>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-xl-12 col-xxl-12">
-                    <div class="card view_card">
-                        <div class="card-header">
-                            <h4 class="text-white">MONTH WISE TRAINING COUNT</h4>
-                            <a class="fas fa-arrow-alt-circle-down chartdownload" id="monthwisetraining_download"></a>
-                        </div>
-                        <div class="card-body px-0 pt-0 dlab-scroll height450" id="Loadmonthwisetraining"> </div>
-
-                    </div>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-xl-12 col-xxl-12">
-                    <div class="card view_card">
-                        <div class="card-header">
-                            <h4 class="text-white">DEPARTMENT WISE TRAINING COUNT</h4>
-                            <a class="fas fa-arrow-alt-circle-down chartdownload" id="LoadDepartmentCount_download"></a>
-                        </div>
-                        <div class="card-body px-0 pt-0 dlab-scroll height450" id="LoadDepartmentCount"> </div>
-
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-
-                <div class="col-xl-6 col-xxl-6">
-                    <div class="card view_card responsive">
-                        <div class="card-header">
-                            <h4 class="text-white">TRAINING STATUS COUNT</h4>
-                            <a class="fas fa-arrow-alt-circle-down chartdownload" id="training_count_download"></a>
-                        </div>
-                        <div id="trainingStatusPieChart"></div>
-                    </div>
-                </div>
-            </div>
-
         </div>
-    </div>
 
-@endsection
-
-
-@push('scripts')
-    <script>
-        function redirectopermanage(link) {
-            var url = "{{ admin_url('') }}" + link;
-            window.location.href = url;
-        }
-
-        function filterDashboard() {
-            Fromdate = $("#fromDate").val();
-            Todate = $("#toDate").val();
-            TrainingHourSafetyDepartmentWise(Fromdate, Todate);
-            PTWViolationHoldCompliance(Fromdate, Todate);
-            TotalIncidentsCount(Fromdate, Todate);
-            heatmapofImsData(Fromdate, Todate);
-            IncidentTypeChart(Fromdate, Todate);
-            TrainingCompletionCount(Fromdate, Todate);
-            TypeofIIRCount(Fromdate, Todate);
-            AccidentReportUnitWiseCount(Fromdate, Todate);
-            LoadiirTypewiseUAUCCount(Fromdate, Todate);
-            LoadnearMissCount(Fromdate, Todate);
-            inspection_wise_count(Fromdate, Todate);
-            ptw_open_close_count(Fromdate, Todate);
-            ptw_type_wise_count(Fromdate, Todate);
-            LoadPPEAvailabilityChartCount(Fromdate, Todate);
-            LoadPTWAvgTimeChartCount(Fromdate, Todate);
-            LoadPPEIssuanceGroupWiseCount(Fromdate, Todate);
-            loadinjurychart(Fromdate, Todate);
-            LoadauditFindingsCount(Fromdate, Todate);
-            LoadiirTypewiseRCPACount(Fromdate, Todate);
-            uaucStaticReport(Fromdate, Todate);
-            LoadDepartmentCount(Fromdate, Todate);
-            loadfmonthwisetraining(Fromdate, Todate);
-            loadtraining_count_status(Fromdate, Todate);
-
-        }
-
-        function LoadDepartmentCount(Fromdate = '', Todate = '') {
-            var url = "{{ admin_url('dashboard/department') }}"
-            var data = {
-                Fromdate: Fromdate,
-                Todate: Todate,
-            };
-            $('#LoadDepartmentCount').html('');
-            $.ajax({
-                type: 'get',
-                url: url,
-                data: data,
-                cache: false,
-                success: function(dataAjx) {
-
-                    $('#LoadDepartmentCount').html(dataAjx);
-                }
-            });
-        }
+    @endsection
 
 
-        function loadfmonthwisetraining(Fromdate = '', Todate = '') {
-            var url = "{{ admin_url('dashboard/monthwisetraining') }}"
-            var data = {
-                Fromdate: Fromdate,
-                Todate: Todate,
-            };
-            $('#Loadmonthwisetraining').html('');
-            $.ajax({
-                type: 'get',
-                url: url,
-                data: data,
-                cache: false,
-                success: function(dataAjx) {
+    @push('scripts')
+        <script>
+            function redirectopermanage(link) {
+                var url = "{{ admin_url('') }}" + link;
+                window.location.href = url;
+            }
 
-                    $('#Loadmonthwisetraining').html(dataAjx);
-                }
-            });
-        }
+            function filterDashboard() {
+                Fromdate = $("#fromDate").val();
+                Todate = $("#toDate").val();
+                TrainingHourSafetyDepartmentWise(Fromdate, Todate);
+                PTWViolationHoldCompliance(Fromdate, Todate);
+                TotalIncidentsCount(Fromdate, Todate);
+                heatmapofImsData(Fromdate, Todate);
+                IncidentTypeChart(Fromdate, Todate);
+                TrainingCompletionCount(Fromdate, Todate);
+                TypeofIIRCount(Fromdate, Todate);
+                AccidentReportUnitWiseCount(Fromdate, Todate);
+                LoadiirTypewiseUAUCCount(Fromdate, Todate);
+                LoadnearMissCount(Fromdate, Todate);
+                inspection_wise_count(Fromdate, Todate);
+                ptw_open_close_count(Fromdate, Todate);
+                ptw_type_wise_count(Fromdate, Todate);
+                LoadPPEAvailabilityChartCount(Fromdate, Todate);
+                LoadPTWAvgTimeChartCount(Fromdate, Todate);
+                LoadPPEIssuanceGroupWiseCount(Fromdate, Todate);
+                loadinjurychart(Fromdate, Todate);
+                LoadauditFindingsCount(Fromdate, Todate);
+                LoadiirTypewiseRCPACount(Fromdate, Todate);
+                loadmonthewisecount(Fromdate, Todate);
+                loadunitwisecount(Fromdate, Todate);
+                uaucStaticReport(Fromdate, Todate);
+                LoadDepartmentCount(Fromdate, Todate);
+                loadfmonthwisetraining(Fromdate, Todate);
+                loadtraining_count_status(Fromdate, Todate);
 
-        function loadtraining_count_status(Fromdate = '', Todate = '') {
-            var url = "{{ admin_url('dashboard/trainingStatusCount') }}"
-            var data = {
-                Fromdate: Fromdate,
-                Todate: Todate,
-            };
-            $('#trainingStatusPieChart').html('');
-            $.ajax({
-                type: 'get',
-                url: url,
-                data: data,
-                cache: false,
-                success: function(dataAjx) {
+            }
 
-                    $('#trainingStatusPieChart').html(dataAjx);
-                }
-            });
-        }
+            function LoadDepartmentCount(Fromdate = '', Todate = '') {
+                var url = "{{ admin_url('dashboard/department') }}"
+                var data = {
+                    Fromdate: Fromdate,
+                    Todate: Todate,
+                };
+                $('#LoadDepartmentCount').html('');
+                $.ajax({
+                    type: 'get',
+                    url: url,
+                    data: data,
+                    cache: false,
+                    success: function(dataAjx) {
 
-        function LoadiirTypewiseRCPACount(Fromdate = '', Todate = '') {
-            var url = "{{ admin_url('dashboard/IIRTypeWiseRCPA') }}"
-            var data = {
-                Fromdate: Fromdate,
-                Todate: Todate,
-            };
-            $('#iirTypewiseRCPACount').html('');
-            $.ajax({
-                type: 'get',
-                url: url,
-                data: data,
-                cache: false,
-                success: function(dataAjx) {
-
-                    $('#iirTypewiseRCPACount').html(dataAjx);
-                }
-            });
-        }
-
-        function LoadauditFindingsCount(Fromdate = '', Todate = '') {
-            var url = "{{ admin_url('dashboard/auditFindings') }}"
-            var data = {
-                Fromdate: Fromdate,
-                Todate: Todate,
-            };
-            $('#LoadauditFindingsCount').html('');
-            $.ajax({
-                type: 'get',
-                url: url,
-                data: data,
-                cache: false,
-                success: function(dataAjx) {
-
-                    $('#LoadauditFindingsCount').html(dataAjx);
-                }
-            });
-        }
-
-        function TotalIncidentsCount(Fromdate = '', Todate = '') {
-            var url = "{{ admin_url('dashboard/total-incident') }}"
-            var data = {
-                Fromdate: Fromdate,
-                Todate: Todate,
-            };
-            $('#TotalIncidentsCount').html('');
-            $.ajax({
-                type: 'get',
-                url: url,
-                data: data,
-                cache: false,
-                success: function(dataAjx) {
-
-                    $('#TotalIncidentsCount').html(dataAjx);
-                }
-            });
-        }
-
-        function heatmapofImsData(Fromdate = '', Todate = '') {
-            var url = "{{ admin_url('dashboard/heatmap-of-imsData') }}"
-            var data = {
-                Fromdate: Fromdate,
-                Todate: Todate,
-            };
-            $('#heatmapofImsData').html('');
-            $.ajax({
-                type: 'get',
-                url: url,
-                data: data,
-                cache: false,
-                success: function(dataAjx) {
-
-                    $('#heatmapofImsData').html(dataAjx);
-                }
-            });
-        }
-
-        function IncidentTypeChart(Fromdate = '', Todate = '') {
-            var url = "{{ admin_url('dashboard/incident-type-chart') }}"
-            var data = {
-                Fromdate: Fromdate,
-                Todate: Todate,
-            };
-            $('#IncidentTypeChart').html('');
-            $.ajax({
-                type: 'get',
-                url: url,
-                data: data,
-                cache: false,
-                success: function(dataAjx) {
-
-                    $('#IncidentTypeChart').html(dataAjx);
-                }
-            });
-        }
-
-        function loadinjurychart(Fromdate = '', Todate = '') {
-            var url = "{{ admin_url('dashboard/injurypart') }}"
-            var data = {
-                Fromdate: Fromdate,
-                Todate: Todate,
-            };
-            $('#loadinjurychart').html('');
-            $.ajax({
-                type: 'get',
-                url: url,
-                data: data,
-                cache: false,
-                success: function(dataAjx) {
-
-                    $('#loadinjurychart').html(dataAjx);
-                }
-            });
-        }
-
-        function LoadPPEIssuanceGroupWiseCount(Fromdate = '', Todate = '') {
-            var url = "{{ admin_url('dashboard/PPEIssuanceGroupWise') }}"
-            var data = {
-                Fromdate: Fromdate,
-                Todate: Todate,
-            };
-            $('#LoadPPEIssuanceGroupWiseCount').html('');
-            $.ajax({
-                type: 'get',
-                url: url,
-                data: data,
-                cache: false,
-                success: function(dataAjx) {
-
-                    $('#LoadPPEIssuanceGroupWiseCount').html(dataAjx);
-                }
-            });
-        }
-
-        function LoadPTWAvgTimeChartCount(Fromdate = '', Todate = '') {
-            var url = "{{ admin_url('dashboard/PTWAvgTimeChart') }}"
-            var data = {
-                Fromdate: Fromdate,
-                Todate: Todate,
-            };
-            $('#LoadPTWAvgTimeChartCount').html('');
-            $.ajax({
-                type: 'get',
-                url: url,
-                data: data,
-                cache: false,
-                success: function(dataAjx) {
-
-                    $('#LoadPTWAvgTimeChartCount').html(dataAjx);
-                }
-            });
-        }
-
-        function LoadPPEAvailabilityChartCount(Fromdate = '', Todate = '') {
-            var url = "{{ admin_url('dashboard/PPEAvailabilityChart') }}"
-            var data = {
-                Fromdate: Fromdate,
-                Todate: Todate,
-            };
-            $('#LoadPPEAvailabilityChartCount').html('');
-            $.ajax({
-                type: 'get',
-                url: url,
-                data: data,
-                cache: false,
-                success: function(dataAjx) {
-
-                    $('#LoadPPEAvailabilityChartCount').html(dataAjx);
-                }
-            });
-        }
-
-        function ptw_type_wise_count(Fromdate = '', Todate = '') {
-            var url = "{{ admin_url('dashboard/ptw-type-wise-count') }}"
-            var data = {
-                Fromdate: Fromdate,
-                Todate: Todate,
-            };
-            $('#ptw_type_wise_count').html('');
-            $.ajax({
-                type: 'get',
-                url: url,
-                data: data,
-                cache: false,
-                success: function(dataAjx) {
-
-                    $('#ptw_type_wise_count').html(dataAjx);
-                }
-            });
-        }
-
-        function ptw_open_close_count(Fromdate = '', Todate = '') {
-            var url = "{{ admin_url('dashboard/ptw-open-close') }}"
-            var data = {
-                Fromdate: Fromdate,
-                Todate: Todate,
-            };
-            $('#ptw_open_close_count').html('');
-            $.ajax({
-                type: 'get',
-                url: url,
-                data: data,
-                cache: false,
-                success: function(dataAjx) {
-
-                    $('#ptw_open_close_count').html(dataAjx);
-                }
-            });
-        }
-
-        function inspection_wise_count(Fromdate = '', Todate = '') {
-            var url = "{{ admin_url('dashboard/inspection-count') }}"
-            var data = {
-                Fromdate: Fromdate,
-                Todate: Todate,
-            };
-            $('#inspection_wise_count').html('');
-            $.ajax({
-                type: 'get',
-                url: url,
-                data: data,
-                cache: false,
-                success: function(dataAjx) {
-
-                    $('#inspection_wise_count').html(dataAjx);
-                }
-            });
-        }
-
-        function LoadnearMissCount(Fromdate = '', Todate = '') {
-            var url = "{{ admin_url('dashboard/nearMissFrequency') }}"
-            var data = {
-                Fromdate: Fromdate,
-                Todate: Todate,
-            };
-            $('#nearMissCount').html('');
-            $.ajax({
-                type: 'get',
-                url: url,
-                data: data,
-                cache: false,
-                success: function(dataAjx) {
-
-                    $('#nearMissCount').html(dataAjx);
-                }
-            });
-        }
-
-        function LoadiirTypewiseUAUCCount(Fromdate = '', Todate = '') {
-            var url = "{{ admin_url('dashboard/IIRTypeWiseUAUC') }}"
-            var data = {
-                Fromdate: Fromdate,
-                Todate: Todate,
-            };
-            $('#iirTypewiseUAUCCount').html('');
-            $.ajax({
-                type: 'get',
-                url: url,
-                data: data,
-                cache: false,
-                success: function(dataAjx) {
-
-                    $('#iirTypewiseUAUCCount').html(dataAjx);
-                }
-            });
-        }
-
-        function AccidentReportUnitWiseCount(Fromdate = '', Todate = '') {
-            var url = "{{ admin_url('dashboard/AccidentReportUnitWiseCount') }}"
-            var data = {
-                Fromdate: Fromdate,
-                Todate: Todate,
-            };
-            $('#AccidentReportUnitWiseCount').html('');
-            $.ajax({
-                type: 'get',
-                url: url,
-                data: data,
-                cache: false,
-                success: function(dataAjx) {
-
-                    $('#AccidentReportUnitWiseCount').html(dataAjx);
-                }
-            });
-        }
-
-        function TypeofIIRCount(Fromdate = '', Todate = '') {
-            var url = "{{ admin_url('dashboard/TypeofIIRCount') }}"
-            var data = {
-                Fromdate: Fromdate,
-                Todate: Todate,
-            };
-            $('#TypeofIIRCount').html('');
-            $.ajax({
-                type: 'get',
-                url: url,
-                data: data,
-                cache: false,
-                success: function(dataAjx) {
-
-                    $('#TypeofIIRCount').html(dataAjx);
-                }
-            });
-        }
-
-        function TrainingCompletionCount(Fromdate = '', Todate = '') {
-            var url = "{{ admin_url('dashboard/TrainingCompletionCount') }}"
-            var data = {
-                Fromdate: Fromdate,
-                Todate: Todate,
-            };
-            $('#TrainingCompletionCount').html('');
-            $.ajax({
-                type: 'get',
-                url: url,
-                data: data,
-                cache: false,
-                success: function(dataAjx) {
-
-                    $('#TrainingCompletionCount').html(dataAjx);
-                }
-            });
-        }
-
-        function TrainingHourSafetyDepartmentWise(Fromdate = '', Todate = '') {
-            var url = "{{ admin_url('dashboard/training-hour-safety-department') }}"
-            var data = {
-                Fromdate: Fromdate,
-                Todate: Todate,
-            };
-            $('#LoadTrainingHourSafetyDepartmentWise_Count').html('');
-            $.ajax({
-                type: 'get',
-                url: url,
-                data: data,
-                cache: false,
-                success: function(dataAjx) {
-
-                    $('#LoadTrainingHourSafetyDepartmentWise_Count').html(dataAjx);
-                }
-            });
-        }
-
-        function PTWViolationHoldCompliance(Fromdate = '', Todate = '') {
-            var url = "{{ admin_url('dashboard/ptw-hold-violation') }}"
-            var data = {
-                Fromdate: Fromdate,
-                Todate: Todate,
-            };
-            $('#LoadPtwHoldViolation_Count').html('');
-            $.ajax({
-                type: 'get',
-                url: url,
-                data: data,
-                cache: false,
-                success: function(dataAjx) {
-
-                    $('#LoadPtwHoldViolation_Count').html(dataAjx);
-                }
-            });
-        }
-
-        function uaucStaticReport(Fromdate = '', Todate = '') {
-            var url = "{{ admin_url('dashboard/uauc-static-report') }}"
-            var data = {
-                Fromdate: Fromdate,
-                Todate: Todate,
-            };
-            $('#uaucStaticReport').html('');
-            $.ajax({
-                type: 'get',
-                url: url,
-                data: data,
-                cache: false,
-                success: function(dataAjx) {
-
-                    $('#uaucStaticReport').html(dataAjx);
-                }
-            });
-        }
-
-        $(document).ready(function() {
-            $('#resetform').on('click', function(e) {
-                e.preventDefault();
-                location.reload();
-            });
-            const toDatePicker = flatpickr("#toDate", {
-                dateFormat: "d-m-Y",
-                minDate: "today",
-            });
-
-            flatpickr("#fromDate", {
-                dateFormat: "d-m-Y",
-                onChange: function(selectedDates, dateStr) {
-                    if (selectedDates.length > 0) {
-                        const fromDate = selectedDates[0];
-                        if (toDatePicker) {
-                            toDatePicker.set("minDate",
-                                dateStr);
-                        }
+                        $('#LoadDepartmentCount').html(dataAjx);
                     }
-                },
+                });
+            } 
+            function loadfmonthwisetraining(Fromdate = '', Todate = '') {
+                var url = "{{ admin_url('dashboard/monthwisetraining') }}"
+                var data = {
+                    Fromdate: Fromdate,
+                    Todate: Todate,
+                };
+                $('#Loadmonthwisetraining').html('');
+                $.ajax({
+                    type: 'get',
+                    url: url,
+                    data: data,
+                    cache: false,
+                    success: function(dataAjx) {
+
+                        $('#Loadmonthwisetraining').html(dataAjx);
+                    }
+                });
+            }
+
+            function loadtraining_count_status(Fromdate = '', Todate = '') {
+                var url = "{{ admin_url('dashboard/trainingStatusCount') }}"
+                var data = {
+                    Fromdate: Fromdate,
+                    Todate: Todate,
+                };
+                $('#trainingStatusPieChart').html('');
+                $.ajax({
+                    type: 'get',
+                    url: url,
+                    data: data,
+                    cache: false,
+                    success: function(dataAjx) {
+
+                        $('#trainingStatusPieChart').html(dataAjx);
+                    }
+                });
+            }
+
+            function loadunitwisecount(Fromdate = '', Todate = '') {
+                var url = "{{ admin_url('dashboard/unitwiseptw') }}"
+                var data = {
+                    Fromdate: Fromdate,
+                    Todate: Todate,
+                };
+                $('#unitwiseptw').html('');
+                $.ajax({
+                    type: 'get',
+                    url: url,
+                    data: data,
+                    cache: false,
+                    success: function(dataAjx) {
+
+                        $('#unitwiseptw').html(dataAjx);
+                    }
+                });
+            }
+
+            function loadmonthewisecount(Fromdate = '', Todate = '') {
+                var url = "{{ admin_url('dashboard/monthwiseptw') }}"
+                var data = {
+                    Fromdate: Fromdate,
+                    Todate: Todate,
+                };
+                $('#unitwiseptw').html('');
+                $.ajax({
+                    type: 'get',
+                    url: url,
+                    data: data,
+                    cache: false,
+                    success: function(dataAjx) {
+
+                        $('#unitwiseptw').html(dataAjx);
+                    }
+                });
+            }
+
+            function LoadiirTypewiseRCPACount(Fromdate = '', Todate = '') {
+                var url = "{{ admin_url('dashboard/IIRTypeWiseRCPA') }}"
+                var data = {
+                    Fromdate: Fromdate,
+                    Todate: Todate,
+                };
+                $('#iirTypewiseRCPACount').html('');
+                $.ajax({
+                    type: 'get',
+                    url: url,
+                    data: data,
+                    cache: false,
+                    success: function(dataAjx) {
+
+                        $('#iirTypewiseRCPACount').html(dataAjx);
+                    }
+                });
+            }
+
+            function LoadauditFindingsCount(Fromdate = '', Todate = '') {
+                var url = "{{ admin_url('dashboard/auditFindings') }}"
+                var data = {
+                    Fromdate: Fromdate,
+                    Todate: Todate,
+                };
+                $('#LoadauditFindingsCount').html('');
+                $.ajax({
+                    type: 'get',
+                    url: url,
+                    data: data,
+                    cache: false,
+                    success: function(dataAjx) {
+
+                        $('#LoadauditFindingsCount').html(dataAjx);
+                    }
+                });
+            }
+
+            function TotalIncidentsCount(Fromdate = '', Todate = '') {
+                var url = "{{ admin_url('dashboard/total-incident') }}"
+                var data = {
+                    Fromdate: Fromdate,
+                    Todate: Todate,
+                };
+                $('#TotalIncidentsCount').html('');
+                $.ajax({
+                    type: 'get',
+                    url: url,
+                    data: data,
+                    cache: false,
+                    success: function(dataAjx) {
+
+                        $('#TotalIncidentsCount').html(dataAjx);
+                    }
+                });
+            }
+
+            function heatmapofImsData(Fromdate = '', Todate = '') {
+                var url = "{{ admin_url('dashboard/heatmap-of-imsData') }}"
+                var data = {
+                    Fromdate: Fromdate,
+                    Todate: Todate,
+                };
+                $('#heatmapofImsData').html('');
+                $.ajax({
+                    type: 'get',
+                    url: url,
+                    data: data,
+                    cache: false,
+                    success: function(dataAjx) {
+
+                        $('#heatmapofImsData').html(dataAjx);
+                    }
+                });
+            }
+
+            function IncidentTypeChart(Fromdate = '', Todate = '') {
+                var url = "{{ admin_url('dashboard/incident-type-chart') }}"
+                var data = {
+                    Fromdate: Fromdate,
+                    Todate: Todate,
+                };
+                $('#IncidentTypeChart').html('');
+                $.ajax({
+                    type: 'get',
+                    url: url,
+                    data: data,
+                    cache: false,
+                    success: function(dataAjx) {
+
+                        $('#IncidentTypeChart').html(dataAjx);
+                    }
+                });
+            }
+
+            function loadinjurychart(Fromdate = '', Todate = '') {
+                var url = "{{ admin_url('dashboard/injurypart') }}"
+                var data = {
+                    Fromdate: Fromdate,
+                    Todate: Todate,
+                };
+                $('#loadinjurychart').html('');
+                $.ajax({
+                    type: 'get',
+                    url: url,
+                    data: data,
+                    cache: false,
+                    success: function(dataAjx) {
+
+                        $('#loadinjurychart').html(dataAjx);
+                    }
+                });
+            }
+
+            function LoadPPEIssuanceGroupWiseCount(Fromdate = '', Todate = '') {
+                var url = "{{ admin_url('dashboard/PPEIssuanceGroupWise') }}"
+                var data = {
+                    Fromdate: Fromdate,
+                    Todate: Todate,
+                };
+                $('#LoadPPEIssuanceGroupWiseCount').html('');
+                $.ajax({
+                    type: 'get',
+                    url: url,
+                    data: data,
+                    cache: false,
+                    success: function(dataAjx) {
+
+                        $('#LoadPPEIssuanceGroupWiseCount').html(dataAjx);
+                    }
+                });
+            }
+
+            function LoadPTWAvgTimeChartCount(Fromdate = '', Todate = '') {
+                var url = "{{ admin_url('dashboard/PTWAvgTimeChart') }}"
+                var data = {
+                    Fromdate: Fromdate,
+                    Todate: Todate,
+                };
+                $('#LoadPTWAvgTimeChartCount').html('');
+                $.ajax({
+                    type: 'get',
+                    url: url,
+                    data: data,
+                    cache: false,
+                    success: function(dataAjx) {
+
+                        $('#LoadPTWAvgTimeChartCount').html(dataAjx);
+                    }
+                });
+            }
+
+            function LoadPPEAvailabilityChartCount(Fromdate = '', Todate = '') {
+                var url = "{{ admin_url('dashboard/PPEAvailabilityChart') }}"
+                var data = {
+                    Fromdate: Fromdate,
+                    Todate: Todate,
+                };
+                $('#LoadPPEAvailabilityChartCount').html('');
+                $.ajax({
+                    type: 'get',
+                    url: url,
+                    data: data,
+                    cache: false,
+                    success: function(dataAjx) {
+
+                        $('#LoadPPEAvailabilityChartCount').html(dataAjx);
+                    }
+                });
+            }
+
+            function ptw_type_wise_count(Fromdate = '', Todate = '') {
+                var url = "{{ admin_url('dashboard/ptw-type-wise-count') }}"
+                var data = {
+                    Fromdate: Fromdate,
+                    Todate: Todate,
+                };
+                $('#ptw_type_wise_count').html('');
+                $.ajax({
+                    type: 'get',
+                    url: url,
+                    data: data,
+                    cache: false,
+                    success: function(dataAjx) {
+
+                        $('#ptw_type_wise_count').html(dataAjx);
+                    }
+                });
+            }
+
+            function ptw_open_close_count(Fromdate = '', Todate = '') {
+                var url = "{{ admin_url('dashboard/ptw-open-close') }}"
+                var data = {
+                    Fromdate: Fromdate,
+                    Todate: Todate,
+                };
+                $('#ptw_open_close_count').html('');
+                $.ajax({
+                    type: 'get',
+                    url: url,
+                    data: data,
+                    cache: false,
+                    success: function(dataAjx) {
+
+                        $('#ptw_open_close_count').html(dataAjx);
+                    }
+                });
+            }
+
+            function inspection_wise_count(Fromdate = '', Todate = '') {
+                var url = "{{ admin_url('dashboard/inspection-count') }}"
+                var data = {
+                    Fromdate: Fromdate,
+                    Todate: Todate,
+                };
+                $('#inspection_wise_count').html('');
+                $.ajax({
+                    type: 'get',
+                    url: url,
+                    data: data,
+                    cache: false,
+                    success: function(dataAjx) {
+
+                        $('#inspection_wise_count').html(dataAjx);
+                    }
+                });
+            }
+
+            function LoadnearMissCount(Fromdate = '', Todate = '') {
+                var url = "{{ admin_url('dashboard/nearMissFrequency') }}"
+                var data = {
+                    Fromdate: Fromdate,
+                    Todate: Todate,
+                };
+                $('#nearMissCount').html('');
+                $.ajax({
+                    type: 'get',
+                    url: url,
+                    data: data,
+                    cache: false,
+                    success: function(dataAjx) {
+
+                        $('#nearMissCount').html(dataAjx);
+                    }
+                });
+            }
+
+            function LoadiirTypewiseUAUCCount(Fromdate = '', Todate = '') {
+                var url = "{{ admin_url('dashboard/IIRTypeWiseUAUC') }}"
+                var data = {
+                    Fromdate: Fromdate,
+                    Todate: Todate,
+                };
+                $('#iirTypewiseUAUCCount').html('');
+                $.ajax({
+                    type: 'get',
+                    url: url,
+                    data: data,
+                    cache: false,
+                    success: function(dataAjx) {
+
+                        $('#iirTypewiseUAUCCount').html(dataAjx);
+                    }
+                });
+            }
+
+            function AccidentReportUnitWiseCount(Fromdate = '', Todate = '') {
+                var url = "{{ admin_url('dashboard/AccidentReportUnitWiseCount') }}"
+                var data = {
+                    Fromdate: Fromdate,
+                    Todate: Todate,
+                };
+                $('#AccidentReportUnitWiseCount').html('');
+                $.ajax({
+                    type: 'get',
+                    url: url,
+                    data: data,
+                    cache: false,
+                    success: function(dataAjx) {
+
+                        $('#AccidentReportUnitWiseCount').html(dataAjx);
+                    }
+                });
+            }
+
+            function TypeofIIRCount(Fromdate = '', Todate = '') {
+                var url = "{{ admin_url('dashboard/TypeofIIRCount') }}"
+                var data = {
+                    Fromdate: Fromdate,
+                    Todate: Todate,
+                };
+                $('#TypeofIIRCount').html('');
+                $.ajax({
+                    type: 'get',
+                    url: url,
+                    data: data,
+                    cache: false,
+                    success: function(dataAjx) {
+
+                        $('#TypeofIIRCount').html(dataAjx);
+                    }
+                });
+            }
+
+            function TrainingCompletionCount(Fromdate = '', Todate = '') {
+                var url = "{{ admin_url('dashboard/TrainingCompletionCount') }}"
+                var data = {
+                    Fromdate: Fromdate,
+                    Todate: Todate,
+                };
+                $('#TrainingCompletionCount').html('');
+                $.ajax({
+                    type: 'get',
+                    url: url,
+                    data: data,
+                    cache: false,
+                    success: function(dataAjx) {
+
+                        $('#TrainingCompletionCount').html(dataAjx);
+                    }
+                });
+            }
+
+            function TrainingHourSafetyDepartmentWise(Fromdate = '', Todate = '') {
+                var url = "{{ admin_url('dashboard/training-hour-safety-department') }}"
+                var data = {
+                    Fromdate: Fromdate,
+                    Todate: Todate,
+                };
+                $('#LoadTrainingHourSafetyDepartmentWise_Count').html('');
+                $.ajax({
+                    type: 'get',
+                    url: url,
+                    data: data,
+                    cache: false,
+                    success: function(dataAjx) {
+
+                        $('#LoadTrainingHourSafetyDepartmentWise_Count').html(dataAjx);
+                    }
+                });
+            }
+
+            function PTWViolationHoldCompliance(Fromdate = '', Todate = '') {
+                var url = "{{ admin_url('dashboard/ptw-hold-violation') }}"
+                var data = {
+                    Fromdate: Fromdate,
+                    Todate: Todate,
+                };
+                $('#LoadPtwHoldViolation_Count').html('');
+                $.ajax({
+                    type: 'get',
+                    url: url,
+                    data: data,
+                    cache: false,
+                    success: function(dataAjx) {
+
+                        $('#LoadPtwHoldViolation_Count').html(dataAjx);
+                    }
+                });
+            }
+
+            function uaucStaticReport(Fromdate = '', Todate = '') {
+                var url = "{{ admin_url('dashboard/uauc-static-report') }}"
+                var data = {
+                    Fromdate: Fromdate,
+                    Todate: Todate,
+                };
+                $('#uaucStaticReport').html('');
+                $.ajax({
+                    type: 'get',
+                    url: url,
+                    data: data,
+                    cache: false,
+                    success: function(dataAjx) {
+
+                        $('#uaucStaticReport').html(dataAjx);
+                    }
+                });
+            }
+
+            $(document).ready(function() {
+                $('#resetform').on('click', function(e) {
+                    e.preventDefault();
+                    location.reload();
+                });
+                const toDatePicker = flatpickr("#toDate", {
+                    dateFormat: "d-m-Y",
+                    minDate: "today",
+                });
+
+                flatpickr("#fromDate", {
+                    dateFormat: "d-m-Y",
+                    onChange: function(selectedDates, dateStr) {
+                        if (selectedDates.length > 0) {
+                            const fromDate = selectedDates[0];
+                            if (toDatePicker) {
+                                toDatePicker.set("minDate",
+                                    dateStr);
+                            }
+                        }
+                    },
+                });
+
+
+                filterDashboard();
             });
-
-
-            filterDashboard();
-        });
-    </script>
-@endpush
+        </script>
+    @endpush

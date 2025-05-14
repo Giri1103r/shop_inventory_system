@@ -3,16 +3,12 @@
 <script>
     var chartData = {!! json_encode($chartData) !!};
 
-    // Map month numbers to names
     var monthNames = [
         "January", "February", "March", "April", "May", "June",
         "July", "August", "September", "October", "November", "December"
     ];
 
-    // Create an array of 12 zeros for each month
     var monthData = Array(12).fill(0);
-
-    // Fill monthData with counts from chartData
     chartData.forEach(item => {
         const monthIndex = item.month - 1;
         monthData[monthIndex] = item.count;
@@ -36,8 +32,14 @@
                 dataLabels: {
                     position: 'top',
                 },
+                distributed: true // <-- enables different color per bar
             }
         },
+        colors: [
+            '#008FFB', '#00E396', '#FEB019', '#775DD0',
+            '#3F51B5', '#546E7A', '#D4526E', '#8D5B4C',
+            '#F86624', '#2E294E', '#1B998B', '#9C27B0'
+        ],
         dataLabels: {
             enabled: true,
             formatter: function(val) {
@@ -51,7 +53,7 @@
         },
         xaxis: {
             categories: monthNames,
-            position: 'top',
+            position: 'bottom',
             axisBorder: {
                 show: false
             },
@@ -72,7 +74,8 @@
             },
             tooltip: {
                 enabled: true,
-            }
+            },
+
         },
         yaxis: {
             axisBorder: {
@@ -88,15 +91,15 @@
                 }
             }
         },
-        title: {
-            text: 'Monthly Near Miss Incidents',
-            floating: true,
-            offsetY: 330,
-            align: 'center',
-            style: {
-                color: '#444'
-            }
-        }
+        // title: {
+        //     text: 'Monthly Near Miss Incidents',
+        //     floating: true,
+        //     offsetY: 330,
+        //     align: 'center',
+        //     style: {
+        //         color: '#444'
+        //     }
+        // }
     };
 
     var nearMiss = new ApexCharts(document.querySelector("#nearMiss"), options);
