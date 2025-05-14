@@ -344,7 +344,7 @@
                 <div class="col-xl-12 col-xxl-12">
                     <div class="card view_card">
                         <div class="card-header">
-                            <h4 class="text-white">Near Miss Frequency Rate</h4>
+                            <h4 class="text-white">Monthly Near Miss Frequency Rate</h4>
                             <a class="fas fa-arrow-alt-circle-down chartdownload" id="nearMiss_download"></a>
                         </div>
                         <div class="card-body px-0 pt-0 dlab-scroll height450" id="nearMissCount"> </div>
@@ -449,7 +449,7 @@
             </div>
 
             <div class = "row">
-                <div class="col-xl-6 col-xxl-6">
+                <div class="col-xl-12 col-xxl-12">
                     <div class="card view_card">
                         <div class="card-header">
                             <h4 class="text-white">Type Of Audit Findings</h4>
@@ -466,6 +466,30 @@
                                 id="LoadPPEAvailabilityChart_download"></a>
                         </div>
                         <div id="LoadPPEAvailabilityChartCount"></div>
+                    </div>
+                </div>
+            </div>
+            <div class = "row">
+                <div class="col-xl-12 col-xxl-12">
+                    <div class="card view_card">
+                        <div class="card-header">
+                            <h4 class="text-white ">Month Wise PTW</h4>
+                            <a class="fas fa-arrow-alt-circle-down chartdownload" id="monthwiseptw_download"></a>
+                        </div>
+                        <div class="card-body px-0 pt-0 dlab-scroll height450" id="monthwiseptw"> </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class = "row">
+                <div class="col-xl-12 col-xxl-12">
+                    <div class="card view_card">
+                        <div class="card-header">
+                            <h4 class="text-white ">Unit Wise PTW</h4>
+                            <a class="fas fa-arrow-alt-circle-down chartdownload" id="unitwiseptw_download"></a>
+                        </div>
+                        <div class="card-body px-0 pt-0 dlab-scroll height450" id="unitwiseptw"> </div>
+
                     </div>
                 </div>
             </div>
@@ -505,8 +529,49 @@
             loadinjurychart(Fromdate, Todate);
             LoadauditFindingsCount(Fromdate, Todate);
             LoadiirTypewiseRCPACount(Fromdate, Todate);
+            loadmonthewisecount(Fromdate, Todate);
+            loadunitwisecount(Fromdate, Todate);
 
 
+        }
+
+        function loadunitwisecount(Fromdate = '', Todate = '') {
+            var url = "{{ admin_url('dashboard/unitwiseptw') }}"
+            var data = {
+                Fromdate: Fromdate,
+                Todate: Todate,
+            };
+            console.log(data);
+            $('#unitwiseptw').html('');
+            $.ajax({
+                type: 'get',
+                url: url,
+                data: data,
+                cache: false,
+                success: function(dataAjx) {
+
+                    $('#unitwiseptw').html(dataAjx);
+                }
+            });
+        }
+
+        function loadmonthewisecount(Fromdate = '', Todate = '') {
+            var url = "{{ admin_url('dashboard/monthwiseptw') }}"
+            var data = {
+                Fromdate: Fromdate,
+                Todate: Todate,
+            };
+            $('#unitwiseptw').html('');
+            $.ajax({
+                type: 'get',
+                url: url,
+                data: data,
+                cache: false,
+                success: function(dataAjx) {
+
+                    $('#unitwiseptw').html(dataAjx);
+                }
+            });
         }
 
         function LoadiirTypewiseRCPACount(Fromdate = '', Todate = '') {

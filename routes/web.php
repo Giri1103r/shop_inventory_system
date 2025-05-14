@@ -215,6 +215,8 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('nearMissFrequency', [AdminController::class, 'nearMissFrequency']);
                 Route::get('auditFindings', [AdminController::class, 'auditFindings']);
                 Route::get('IIRTypeWiseRCPA', [AdminController::class, 'IIRTypeWiseRCPA']);
+                Route::get('unitwiseptw', [AdminController::class, 'unitwiseptw']);
+                Route::get('monthwiseptw', [AdminController::class, 'monthwiseptw']);
  
             });
 

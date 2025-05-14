@@ -772,7 +772,7 @@ class InitialIncident extends Model
             $query->where('iii.created_at', '<=', DBdateformat($request->Todate));
         }
 
-      
+
         return $query->get(); // returns multiple rows
     }
 
@@ -802,7 +802,7 @@ class InitialIncident extends Model
             $query->where('iii.created_at', '<=', DBdateformat($request->Todate));
         }
 
-      
+
         return $query->get();
     }
 
@@ -867,7 +867,7 @@ class InitialIncident extends Model
             $query->where('iii.created_at', '<=', DBdateformat($request->Todate));
         }
 
-      
+
 
         return $query->get(); // returns multiple rows
     }
@@ -875,11 +875,13 @@ class InitialIncident extends Model
     public function getNearMissCountData($request)
     {
         $nearMissIds = DB::table('ims_master_incident_type')
-            ->where('incident_type_name', 'LIKE', '%Near Miss%')
+            ->where(function ($query) {
+                $query->whereRaw("LOWER(REPLACE(incident_type_name, '-', '')) LIKE ?", ['%nearmiss%']);
+            })
             ->where('status', 1)
             ->pluck('id')
             ->toArray();
-    
+
         $query = DB::table('ims_initial_incident as iii')
             ->join('ims_master_incident_type as imit', 'iii.iir_type', '=', 'imit.id')
             ->whereIn('iii.iir_type', $nearMissIds)
@@ -893,7 +895,7 @@ class InitialIncident extends Model
             ->orderBy('year')
             ->orderBy('month')
             ->orderBy('imit.incident_type_name');
-    
+
         // Date Filters
         if ($request->Fromdate && $request->Todate) {
             $query->whereBetween('iii.created_at', [
@@ -905,17 +907,92 @@ class InitialIncident extends Model
         } elseif ($request->Todate) {
             $query->where('iii.created_at', '<=', DBdateformat($request->Todate));
         }
-    
-    
+
+
         $results = $query->get();
-    
+
         // Format results with month names
         $monthNames = [
-            1 => 'January', 2 => 'February', 3 => 'March', 4 => 'April',
-            5 => 'May', 6 => 'June', 7 => 'July', 8 => 'August',
-            9 => 'September', 10 => 'October', 11 => 'November', 12 => 'December'
+            1 => 'January',
+            2 => 'February',
+            3 => 'March',
+            4 => 'April',
+            5 => 'May',
+            6 => 'June',
+            7 => 'July',
+            8 => 'August',
+            9 => 'September',
+            10 => 'October',
+            11 => 'November',
+            12 => 'December'
         ];
-    
+
+        return $results->map(function ($item) use ($monthNames) {
+            return [
+                'incident_type_name' => $item->incident_type_name,
+                'period' => $monthNames[$item->month] . ' ' . $item->year,
+                'month' => $item->month,
+                'year' => $item->year,
+                'count' => $item->incident_count
+            ];
+        });
+    }
+
+    public function getNearMissOpenCloseCountData($request)
+    {
+        $nearMissIds = DB::table('ims_master_incident_type')
+            ->where(function ($query) {
+                $query->whereRaw("LOWER(REPLACE(incident_type_name, '-', '')) LIKE ?", ['%nearmiss%']);
+            })
+            ->where('status', 1)
+            ->pluck('id')
+            ->toArray();
+
+        $query = DB::table('ims_initial_incident as iii')
+            ->join('ims_master_incident_type as imit', 'iii.iir_type', '=', 'imit.id')
+            ->whereIn('iii.iir_type', $nearMissIds)
+            ->select(
+                'imit.incident_type_name',
+                DB::raw('MONTH(iii.created_at) as month'),
+                DB::raw('YEAR(iii.created_at) as year'),
+                DB::raw('COUNT(DISTINCT iii.id) as incident_count')
+            )
+            ->groupBy('imit.incident_type_name', 'month', 'year')
+            ->orderBy('year')
+            ->orderBy('month')
+            ->orderBy('imit.incident_type_name');
+
+        // Date Filters
+        if ($request->Fromdate && $request->Todate) {
+            $query->whereBetween('iii.created_at', [
+                DBdateformat($request->Fromdate),
+                DBdateformat($request->Todate)
+            ]);
+        } elseif ($request->Fromdate) {
+            $query->where('iii.created_at', '>=', DBdateformat($request->Fromdate));
+        } elseif ($request->Todate) {
+            $query->where('iii.created_at', '<=', DBdateformat($request->Todate));
+        }
+
+
+        $results = $query->get();
+
+        // Format results with month names
+        $monthNames = [
+            1 => 'January',
+            2 => 'February',
+            3 => 'March',
+            4 => 'April',
+            5 => 'May',
+            6 => 'June',
+            7 => 'July',
+            8 => 'August',
+            9 => 'September',
+            10 => 'October',
+            11 => 'November',
+            12 => 'December'
+        ];
+
         return $results->map(function ($item) use ($monthNames) {
             return [
                 'incident_type_name' => $item->incident_type_name,

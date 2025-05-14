@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Master\Employee;
 use DB;
 use Exception;
+use Carbon\Carbon;
 
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
@@ -19,6 +20,8 @@ use App\Models\Permit\SafetyPermit;
 use App\Models\Master\TrainingSchedule;
 use App\Models\IMS\Incident\IncidentBodyParts;
 use Illuminate\Support\Facades\DB as FacadesDB;
+use App\Models\Master\Unit;
+
 
 class AdminController extends Controller
 {
@@ -28,7 +31,7 @@ class AdminController extends Controller
     private $training_schedule;
     private $ims_incident;
     private $ptw;
-
+    private $unit;
     private $incident_ims;
 
     public function __construct()
@@ -38,6 +41,7 @@ class AdminController extends Controller
         $this->training_schedule = new TrainingSchedule();
         $this->ims_incident = new InitialIncident();
         $this->ptw = new SafetyPermit();
+        $this->unit = new Unit();
     }
 
     public function index(Request $request)
@@ -668,6 +672,9 @@ class AdminController extends Controller
     {
         try {
             $chartData = $this->ims_incident->getTypeofIIRRCPACountData($request);
+            if ($chartData->isEmpty()) {
+                return response()->json('<div class="border-0 pb-3" style="margin-top: 166px;"><h4 style="text-align: center;">No data Found.</h4></div>');
+            }
             $data = [
                 'chartData' => $chartData,
             ];
@@ -681,6 +688,9 @@ class AdminController extends Controller
     {
         try {
             $chartData = $this->ims_incident->getTypeofIIRUAUCCountData($request);
+            if ($chartData->isEmpty()) {
+                return response()->json('<div class="border-0 pb-3" style="margin-top: 166px;"><h4 style="text-align: center;">No data Found.</h4></div>');
+            }
             $data = [
                 'chartData' => $chartData,
             ];
@@ -695,7 +705,9 @@ class AdminController extends Controller
     {
         try {
             $chartData = $this->ims_incident->getNearMissCountData($request);
-            // dd($chartData);
+            if ($chartData->isEmpty()) {
+                return response()->json('<div class="border-0 pb-3" style="margin-top: 166px;"><h4 style="text-align: center;">No data Found.</h4></div>');
+            }
 
             $data = [
                 'chartData' => $chartData,
@@ -735,12 +747,18 @@ class AdminController extends Controller
                 ->when($from && !$to, fn($q) => $q->where('created_at', '>=', $from))
                 ->when(!$from && $to, fn($q) => $q->where('created_at', '<=', $to))
                 ->count('id');
+            $total = $auditAssessmentCount + $auditAnalysisCount + $interUnitCount + $auditMonthlyCount;
+
+            if ($total === 0) {
+                return response()->json('<div class="border-0 pb-3" style="margin-top: 166px;"><h4 style="text-align: center;">No data available.</h4></div>');
+            }
 
             $data = [
                 'auditAssessmentCount' => $auditAssessmentCount,
                 'auditAnalysisCount' => $auditAnalysisCount,
                 'interUnitCount' => $interUnitCount,
                 'auditMonthlyCount' => $auditMonthlyCount,
+                'hasData' => ($auditAssessmentCount + $auditAnalysisCount + $interUnitCount + $auditMonthlyCount) > 0,
                 'getdashdata' => (object)[
                     'Fromdate' => $request->Fromdate,
                     'Todate' => $request->Todate,
@@ -752,5 +770,109 @@ class AdminController extends Controller
             report($ex);
             return back()->withErrors('An error occurred while processing the audit findings.');
         }
+    }
+
+
+    public function unitwiseptw(Request $request)
+    {
+        $user = Auth::user();
+        $id = Auth::id();
+
+
+        $unit = $this->unit
+            ->select('id', 'unit_name')
+            ->where('status', 1)
+            ->where('trash', 'NO')
+            ->get();
+
+
+        $permitCountsQuery = $this->ptw
+            ->selectRaw('unit_id, COUNT(*) as permit_count')
+            ->where('status', 1)
+            ->where('trash', 'NO')
+            ->groupBy('unit_id');
+
+        // if ($request->has('Fromdate') && !empty($request->Fromdate)) {
+        //     $startDate = Carbon::createFromFormat('d-m-Y', $request->Fromdate)->startOfDay()->format('Y-m-d H:i:s');
+        //     $permitCountsQuery->where('created_at', '>=', $startDate);
+        // }
+        // if ($request->has('Todate') && !empty($request->Todate)) {
+        //     $endDate = Carbon::createFromFormat('d-m-Y', $request->Todate)->endOfDay()->format('Y-m-d H:i:s');
+        //     $permitCountsQuery->where('created_at', '<=', $endDate);
+        // }
+        // if ($request->has('Fromdate') && !empty($request->Fromdate) && $request->has('Todate') && !empty($request->Todate)) {
+        //     $startDate = Carbon::createFromFormat('d-m-Y', $request->Fromdate)->startOfDay()->format('Y-m-d H:i:s');
+        //     $endDate = Carbon::createFromFormat('d-m-Y', $request->Todate)->endOfDay()->format('Y-m-d H:i:s');
+        //     $permitCountsQuery->whereBetween('created_at', [$startDate, $endDate]);
+        // }
+
+        if ($request->Fromdate && $request->Todate) {
+            $permitCountsQuery->whereBetween('created_at', [
+                DBdateformat($request->Fromdate),
+                DBdateformat($request->Todate)
+            ]);
+        } elseif ($request->Fromdate) {
+            $permitCountsQuery->where('created_at', '>=', DBdateformat($request->Fromdate));
+        } elseif ($request->Todate) {
+            $permitCountsQuery->where('created_at', '<=', DBdateformat($request->Todate));
+        }
+
+
+        $permitCounts = $permitCountsQuery->get()->pluck('permit_count', 'unit_id');
+
+        $result = $unit->map(function ($unit) use ($permitCounts) {
+            return [
+                'unit_id' => $unit->id,
+                'unit_name' => $unit->unit_name,
+                'permit_count' => $permitCounts[$unit->id] ?? 0,
+            ];
+        });
+
+        return view('admin.dashboard.unitwisecount', [
+            'unit' => $unit,
+            'unitData' => $result,
+        ]);
+    }
+
+
+    public function monthwiseptw(Request $request)
+    {
+        $permitCountsQuery = $this->ptw
+            ->selectRaw('MONTH(created_at) as month, YEAR(created_at) as year, COUNT(*) as permit_count')
+            ->where('status', 1)
+            ->where('trash', 'NO');
+
+        if ($request->Fromdate && $request->Todate) {
+            $permitCountsQuery->whereBetween('created_at', [
+                DBdateformat($request->Fromdate),
+                DBdateformat($request->Todate)
+            ]);
+        } elseif ($request->Fromdate) {
+            $permitCountsQuery->where('created_at', '>=', DBdateformat($request->Fromdate));
+        } elseif ($request->Todate) {
+            $permitCountsQuery->where('created_at', '<=', DBdateformat($request->Todate));
+        }
+
+        $permitCounts = $permitCountsQuery
+            ->groupBy('year', 'month')
+            ->orderBy('year')
+            ->orderBy('month')
+            ->get();
+
+        $result = [];
+        $currentYear = date('Y');
+        for ($month = 1; $month <= 12; $month++) {
+            $result[$month] = 0;
+        }
+
+        foreach ($permitCounts as $count) {
+            if ($count->year == $currentYear) {
+                $result[$count->month] = $count->permit_count;
+            }
+        }
+
+        return view('admin.dashboard.monthwisecount', [
+            'monthlyCounts' => $result,
+        ]);
     }
 }
