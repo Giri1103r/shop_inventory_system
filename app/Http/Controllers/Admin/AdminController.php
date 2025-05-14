@@ -265,7 +265,6 @@ class AdminController extends Controller
     {
         try {
             $chartData = $this->incident_ims->getTotalIncidentCountData($request);
-
             if ($chartData->isEmpty()) {
                 return response()->json('<div class="border-0 pb-3" style="margin-top: 166px;"><h4 style="text-align: center;">No data Found.</h4></div>');
             }
