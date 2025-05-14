@@ -1,85 +1,85 @@
 <div id="iirWiseUAUC"></div>
 
 <script>
-    var chartData = {!! json_encode($chartData) !!};
-    var categories = chartData.map(item => item.incident_type_name); // Moved outside options
-    
+
+var chartData = {!! json_encode($chartData) !!};
+
+
+    var series = [{
+        name: 'Total Incidents',
+        data: chartData.map(item => item.total_incident)
+        },
+        {
+            name: 'Unsafe Act',
+            data: chartData.map(item => item.unsafe_act) 
+        },
+        {
+            name: 'Unsafe Condition',
+            data: chartData.map(item => item.unsafe_condition) 
+        },
+        {
+            name: 'Natural Causes',
+            data: chartData.map(item => item.natural_causes)
+        },
+    ];
+
+
+    var categories = chartData.map(item => item.incident_type_name);
+
     var options = {
-        series: [{
-                name: 'Total Incidents',
-                data: chartData.map(item => item.total_incident)
-            },
-            {
-                name: 'Unsafe Act',
-                data: chartData.map(item => item.unsafe_act) 
-            },
-            {
-                name: 'Unsafe Condition',
-                data: chartData.map(item => item.unsafe_condition) 
-            },
-            {
-                name: 'Natural Causes',
-                data: chartData.map(item => item.natural_causes)
-            }
-        ],
+        series: series,
         chart: {
             type: 'bar',
             height: 350,
-            stacked: true,
             toolbar: {
                 show: false
             },
-            zoom: {
-                enabled: false
-            }
         },
-        responsive: [{
-            breakpoint: 480,
-            options: {
-                legend: {
-                    position: 'bottom',
-                    offsetX: -10,
-                    offsetY: 0
-                }
-            }
-        }],
         plotOptions: {
             bar: {
                 horizontal: false,
-                borderRadius: 10,
-                borderRadiusApplication: 'end',
-                borderRadiusWhenStacked: 'last',
-                dataLabels: {
-                    total: {
-                        enabled: false 
-                    }
-                }
-            }
+                columnWidth: '55%',
+                borderRadius: 5,
+                borderRadiusApplication: 'end'
+            },
+        },
+        dataLabels: {
+            enabled: false
+        },
+        stroke: {
+            show: true,
+            width: 2,
+            colors: ['transparent']
         },
         xaxis: {
-            type: 'category',
             categories: categories,
             labels: {
+
                 rotate: -45,
                 style: {
                     fontSize: '12px'
                 }
             }
         },
-        legend: {
-            position: 'bottom',
-            horizontalAlign: 'center',
-            offsetY: 10
+        yaxis: {
+            title: {
+                text: 'Count'
+            },
+            min: 0
         },
         fill: {
             opacity: 1
         },
         tooltip: {
             y: {
-                formatter: function(value) {
-                    return value + " incidents";
+                formatter: function(val) {
+                    return val
                 }
             }
+        },
+        colors: ['#008FFB', '#00E396', '#FEB019', '#775DD0'],
+        legend: {
+            position: 'bottom'
         }
     };
 
@@ -87,7 +87,9 @@
     iirWiseUAUC.render();
 
     $("#iirTypewiseUAUC_download").off("click").on("click", function() {
-        iirWiseUAUC.dataURI().then(({ imgURI }) => {
+        iirWiseUAUC.dataURI().then(({
+            imgURI
+        }) => {
             var newCanvas = document.createElement('canvas');
             var ctx = newCanvas.getContext('2d');
             var image = new Image();
@@ -97,13 +99,16 @@
                 let headerHeight = 120;
                 newCanvas.height = image.height + headerHeight;
 
+                // White background
                 ctx.fillStyle = 'white';
                 ctx.fillRect(0, 0, newCanvas.width, newCanvas.height);
 
+                // Header text
                 ctx.fillStyle = '#203669';
                 ctx.font = '20px Arial';
-                ctx.fillText('IIR Type Wise UAUC', 10, 30); // More descriptive title
+                ctx.fillText('IIR Type Wise UAUC', 10, 30);
 
+                // Optional filter text
                 let yPos = 60;
 
                 @if (isset($getdashdata))
@@ -130,12 +135,14 @@
                     @endif
                 @endif
 
+                // Draw chart image below header
                 ctx.drawImage(image, 0, headerHeight);
 
+                // Save as image
                 newCanvas.toBlob(function(blob) {
                     var link = document.createElement('a');
                     link.href = URL.createObjectURL(blob);
-                    link.download = 'IIR Type Wise UAUC.png'; // Better filename
+                    link.download = 'IIR Type Wise UAUC.png';
                     link.click();
                 });
             };

@@ -870,13 +870,15 @@ class InitialIncident extends Model
             $query->where('iii.created_at', '<=', DBdateformat($request->Todate));
         }
 
-        return $query->get();
+        return $query->get(); // returns multiple rows
     }
 
     public function getNearMissCountData($request)
     {
         $nearMissIds = DB::table('ims_master_incident_type')
-            ->where('incident_type_name', 'LIKE', '%Near Miss%')
+            ->where(function ($query) {
+                $query->whereRaw("LOWER(REPLACE(incident_type_name, '-', '')) LIKE ?", ['%nearmiss%']);
+            })
             ->where('status', 1)
             ->pluck('id')
             ->toArray();
@@ -926,6 +928,7 @@ class InitialIncident extends Model
             12 => 'December'
         ];
 
+
         return $results->map(function ($item) use ($monthNames) {
             return [
                 'incident_type_name' => $item->incident_type_name,
@@ -937,6 +940,7 @@ class InitialIncident extends Model
         });
     }
 
+  
     protected static function booted()
     {
         static::addGlobalScope(new TrashScope('ims_initial_incident'));
