@@ -421,9 +421,7 @@ class AdminController extends Controller
                 'active_close_count' => $active_close_count,
                 'dates' => $dates,
             ];
-            if (empty($active_close_count) || array_sum($active_close_count) == 0) {
-                return response()->json('<div class="border-0 pb-3" style="margin-top: 166px;"><h4 style="text-align: center;">No data Found.</h4></div>');
-            }
+          
             return view('admin.dashboard.ptw_open_close', $data);
         } catch (\Exception $ex) {
             report($ex);
@@ -446,9 +444,7 @@ class AdminController extends Controller
                 'work_wise_count' => $work_wise_count,
                 'dates' => $dates,
             ];
-            if (empty($work_wise_count) || array_sum($work_wise_count) == 0) {
-                return response()->json('<div class="border-0 pb-3" style="margin-top: 166px;"><h4 style="text-align: center;">No data Found.</h4></div>');
-            }
+           
             return view('admin.dashboard.ptw_type_wise_count', $data);
         } catch (\Exception $ex) {
             report($ex);
@@ -526,9 +522,7 @@ class AdminController extends Controller
             $data = [
                 'getdashdata' => $request,
             ];
-            if (empty($chartData)) {
-                return response()->json('<div class="border-0 pb-3" style="margin-top: 166px;"><h4 style="text-align: center;">No data Found.</h4></div>');
-            }
+          
 
             return view('admin.dashboard.chartPPEIssuanceGroupWise', [
                 'getdashdata' => $request,
@@ -568,9 +562,7 @@ class AdminController extends Controller
                 'getdashdata' => $request,
                 'chartData' => $chartData,
             ]);
-            if (empty($chartData) || array_sum($chartData) == 0) {
-                return response()->json('<div class="border-0 pb-3" style="margin-top: 166px;"><h4 style="text-align: center;">No data Found.</h4></div>');
-            }
+         
         } catch (\Exception $ex) {
             report($ex);
         }
