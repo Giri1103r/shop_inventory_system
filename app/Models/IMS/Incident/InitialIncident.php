@@ -772,7 +772,7 @@ class InitialIncident extends Model
             $query->where('iii.created_at', '<=', DBdateformat($request->Todate));
         }
 
-      
+
         return $query->get(); // returns multiple rows
     }
 
@@ -802,7 +802,7 @@ class InitialIncident extends Model
             $query->where('iii.created_at', '<=', DBdateformat($request->Todate));
         }
 
-      
+
         return $query->get();
     }
 
@@ -839,23 +839,26 @@ class InitialIncident extends Model
 
         return $query->get(); // returns multiple rows
     }
-    public function getTypeofIIRUAUCCountData($request)
+
+
+    public function getTypeofUAUCStatusCountData($request)
     {
         $query = DB::table('ims_initial_incident as iii')
-            ->join('ims_master_incident_type as imit', 'iii.iir_type', '=', 'imit.id')
-            ->where('iii.ua_uc_yes_no', 1)
+            ->leftJoin('masters_unit as mu', 'mu.id', '=', 'iii.unit_id')
             ->select(
-                'imit.incident_type_name',
-                DB::raw('COUNT(DISTINCT iii.id) as total_incident'),
-                DB::raw('SUM(CASE WHEN FIND_IN_SET("1", iii.ua_or_uc) > 0 THEN 1 ELSE 0 END) as unsafe_act'),
-                DB::raw('SUM(CASE WHEN FIND_IN_SET("2", iii.ua_or_uc) > 0 THEN 1 ELSE 0 END) as unsafe_condition'),
-                DB::raw('SUM(CASE WHEN FIND_IN_SET("3", iii.ua_or_uc) > 0 THEN 1 ELSE 0 END) as natural_causes'),
+                'mu.unit_name',
+                DB::raw('SUM(CASE WHEN FIND_IN_SET("1", iii.ua_or_uc) > 0 THEN 1 ELSE 0 END) as ua_total'),
+                DB::raw('SUM(CASE WHEN FIND_IN_SET("1", iii.ua_or_uc) > 0 AND iii.status != 4 THEN 1 ELSE 0 END) as ua_open'),
+                DB::raw('SUM(CASE WHEN FIND_IN_SET("1", iii.ua_or_uc) > 0 AND iii.status = 4 THEN 1 ELSE 0 END) as ua_closed'),
+
+                DB::raw('SUM(CASE WHEN FIND_IN_SET("2", iii.ua_or_uc) > 0 THEN 1 ELSE 0 END) as uc_total'),
+                DB::raw('SUM(CASE WHEN FIND_IN_SET("2", iii.ua_or_uc) > 0 AND iii.status != 4 THEN 1 ELSE 0 END) as uc_open'),
+                DB::raw('SUM(CASE WHEN FIND_IN_SET("2", iii.ua_or_uc) > 0 AND iii.status = 4 THEN 1 ELSE 0 END) as uc_closed')
             )
-            ->groupBy('imit.incident_type_name')
-            ->orderBy('imit.incident_type_name');
+            ->where('iii.ua_uc_yes_no', 1)
+            ->groupBy('mu.unit_name')
+            ->orderBy('mu.unit_name');
 
-
-        // Date Filters
         if ($request->Fromdate && $request->Todate) {
             $query->whereBetween('iii.created_at', [
                 DBdateformat($request->Fromdate),
@@ -867,9 +870,7 @@ class InitialIncident extends Model
             $query->where('iii.created_at', '<=', DBdateformat($request->Todate));
         }
 
-      
-
-        return $query->get(); // returns multiple rows
+        return $query->get();
     }
 
     public function getNearMissCountData($request)
@@ -879,7 +880,7 @@ class InitialIncident extends Model
             ->where('status', 1)
             ->pluck('id')
             ->toArray();
-    
+
         $query = DB::table('ims_initial_incident as iii')
             ->join('ims_master_incident_type as imit', 'iii.iir_type', '=', 'imit.id')
             ->whereIn('iii.iir_type', $nearMissIds)
@@ -893,7 +894,7 @@ class InitialIncident extends Model
             ->orderBy('year')
             ->orderBy('month')
             ->orderBy('imit.incident_type_name');
-    
+
         // Date Filters
         if ($request->Fromdate && $request->Todate) {
             $query->whereBetween('iii.created_at', [
@@ -905,17 +906,26 @@ class InitialIncident extends Model
         } elseif ($request->Todate) {
             $query->where('iii.created_at', '<=', DBdateformat($request->Todate));
         }
-    
-    
+
+
         $results = $query->get();
-    
+
         // Format results with month names
         $monthNames = [
-            1 => 'January', 2 => 'February', 3 => 'March', 4 => 'April',
-            5 => 'May', 6 => 'June', 7 => 'July', 8 => 'August',
-            9 => 'September', 10 => 'October', 11 => 'November', 12 => 'December'
+            1 => 'January',
+            2 => 'February',
+            3 => 'March',
+            4 => 'April',
+            5 => 'May',
+            6 => 'June',
+            7 => 'July',
+            8 => 'August',
+            9 => 'September',
+            10 => 'October',
+            11 => 'November',
+            12 => 'December'
         ];
-    
+
         return $results->map(function ($item) use ($monthNames) {
             return [
                 'incident_type_name' => $item->incident_type_name,

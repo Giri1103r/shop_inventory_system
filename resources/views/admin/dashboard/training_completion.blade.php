@@ -8,7 +8,7 @@
         ],
         chart: {
             type: 'pie',
-            height: 350,
+            height: 320,
             id: 'TrainingCompletionChart'
         },
         labels: ['Closed Trainings (%)', 'Open Trainings (%)'],
@@ -21,6 +21,7 @@
         legend: {
             position: 'bottom'
         }
+      
     };
 
     var TrainingCompletionChart = new ApexCharts(document.querySelector("#TrainingCompletion"), TrainingCompletionOptions);

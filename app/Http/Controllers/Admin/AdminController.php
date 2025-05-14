@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Master\Employee;
 use DB;
 use Exception;
+use App\Models\Master\Department;
 
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
@@ -28,16 +29,19 @@ class AdminController extends Controller
     private $training_schedule;
     private $ims_incident;
     private $ptw;
+    private $department;
 
     private $incident_ims;
 
     public function __construct()
     {
         $this->bodyparts = new IncidentBodyParts();
+        $this->bodyparts = new IncidentBodyParts();
         $this->incident_ims = new InitialIncident();
         $this->training_schedule = new TrainingSchedule();
         $this->ims_incident = new InitialIncident();
         $this->ptw = new SafetyPermit();
+        $this->department = new Department();
     }
 
     public function index(Request $request)
@@ -703,6 +707,40 @@ class AdminController extends Controller
         }
     }
 
+
+    public function uaucStaticReport(Request $request)
+    {
+        try {
+            $chartData = $this->ims_incident->getTypeofUAUCStatusCountData($request);
+
+            if ($chartData->isEmpty()) {
+                return response()->json('<div class="border-0 pb-3" style="margin-top: 166px;"><h4 style="text-align: center;">No data Found.</h4></div>');
+            }
+
+            // Format for ApexCharts
+            $units = $chartData->pluck('unit_name')->unique()->values()->all();
+            $totals = [];
+            $opens = [];
+            $closeds = [];
+
+            foreach ($chartData as $row) {
+                $totals[] = ($row->ua_total + $row->uc_total);
+                $opens[] = ($row->ua_open + $row->uc_open);
+                $closeds[] = ($row->ua_closed + $row->uc_closed);
+            }
+
+            $series = [
+                ['name' => 'Total', 'data' => $totals],
+                ['name' => 'Open', 'data' => $opens],
+                ['name' => 'Closed', 'data' => $closeds],
+            ];
+
+            return view('admin.dashboard.unit_wise_uauc', compact('series', 'units', 'request'));
+        } catch (\Exception $ex) {
+            report($ex);
+        }
+    }
+
     public function nearMissFrequency(Request $request)
     {
         try {
@@ -763,6 +801,122 @@ class AdminController extends Controller
         } catch (\Exception $ex) {
             report($ex);
             return back()->withErrors('An error occurred while processing the audit findings.');
+        }
+    }
+
+    public function gettrainingStatusCount(Request $request)
+    {
+        try {
+            $chartData = $this->training_schedule->getTrainingCount();
+
+            // Prepare data for the pie chart
+            $chartDataArray = [
+                'Pending' => $chartData->pending_count ?? 0,
+                'Rejected' => $chartData->rejected_count ?? 0,
+                'In Progress' => $chartData->inprogress_count ?? 0,
+                'Completed' => $chartData->completed_count ?? 0,
+            ];
+            $data = [
+                'getdashdata' => $request,
+                'chartDataArray' => $chartDataArray
+            ];
+            return view('admin.dashboard.trainingstatusCount', $data);
+        } catch (\Exception $ex) {
+           report($ex); // Debug any errors during execution
+        }
+    }
+
+
+    public function getDepartment(Request $request)
+    {
+        try {
+            $chartData = $this->training_schedule->getDepartmentData();
+            $departmentDetails = $this->department->select('department_name', 'id')->get();
+
+            // Initialize chartDataArray with all departments having count 0
+            $chartDataArray = $departmentDetails->pluck('id', 'department_name')->mapWithKeys(function ($value, $key) {
+                return [$key => 0];
+            });
+
+            // Fill chartDataArray with actual counts from the query
+            foreach ($chartData as $data) {
+                if (isset($chartDataArray[$data->department_name])) {
+                    $chartDataArray[$data->department_name] = $data->count;
+                }
+            }
+
+            // Use Laravel's filter() to remove departments with count 0
+            $chartDataArray = $chartDataArray->filter(function ($count) {
+                return $count > 0;
+            });
+
+            $data = [
+                'getdashdata' => $request,
+                'departmentDetails' => $departmentDetails,
+                'chartDataArray' => $chartDataArray
+            ];
+
+            return view('admin.dashboard.departmentData', $data);
+        } catch (\Exception $ex) {
+           report($ex); // Debug any errors during execution
+        }
+    }
+
+    public function getmonthwiseTraining(Request $request)
+    {
+        try {
+            // Fetch chart data
+            $chartData = $this->training_schedule->monthwiseTrainingCountData();
+
+            // Initialize count arrays for each month
+            $overallCounts = array_fill(1, 12, 0);
+            $pendingCounts = array_fill(1, 12, 0);
+            $rejectedCounts = array_fill(1, 12, 0);
+            $inProgressCounts = array_fill(1, 12, 0);
+            $completedCounts = array_fill(1, 12, 0);
+
+            // Populate counts based on fetched data
+            foreach ($chartData as $data) {
+                $overallCounts[$data->month] = $data->total_count;
+                $pendingCounts[$data->month] = $data->pending_count;
+                $rejectedCounts[$data->month] = $data->rejected_count;
+                $inProgressCounts[$data->month] = $data->inprogress_count;
+                $completedCounts[$data->month] = $data->completed_count;
+            }
+
+            // Prepare chart data array
+            $chartDataArray = [];
+            $months = [
+                'January',
+                'February',
+                'March',
+                'April',
+                'May',
+                'June',
+                'July',
+                'August',
+                'September',
+                'October',
+                'November',
+                'December'
+            ];
+
+            foreach ($months as $monthIndex => $monthName) {
+                $chartDataArray[$monthName] = [
+                    'pending' => $pendingCounts[$monthIndex + 1],
+                    'rejected' => $rejectedCounts[$monthIndex + 1],
+                    'in_progress' => $inProgressCounts[$monthIndex + 1],
+                    'completed' => $completedCounts[$monthIndex + 1]
+                ];
+            }
+
+            return view('admin.dashboard.monthwisetraining', [
+                'getdashdata' => $request,
+                'chartDataArray' => $chartDataArray
+            ]);
+        } catch (\Exception $ex) {
+            report($ex);
+            return back()->with('error', 'Failed to load month-wise Training data.');
         }
     }
 }
