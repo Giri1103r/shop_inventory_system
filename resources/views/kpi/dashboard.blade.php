@@ -316,7 +316,6 @@
 
 
         function filterDashboard() {
-            Factory = $("#factory").val()
             Fromdate = $("#fromDate").val();
             Todate = $("#toDate").val();
             LoadChart1Count(Fromdate, Todate);
