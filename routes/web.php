@@ -212,10 +212,14 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('injurypart', [AdminController::class, 'getInjurypart']);
                 Route::post('getbodycount', [AdminController::class, 'injurybodycount']);
                 Route::get('IIRTypeWiseUAUC', [AdminController::class, 'IIRTypeWiseUAUC']);
+                Route::get('uauc-static-report', [AdminController::class, 'uaucStaticReport']);
                 Route::get('nearMissFrequency', [AdminController::class, 'nearMissFrequency']);
                 Route::get('auditFindings', [AdminController::class, 'auditFindings']);
                 Route::get('IIRTypeWiseRCPA', [AdminController::class, 'IIRTypeWiseRCPA']);
                 Route::get('gemba-walk-observation', [AdminController::class, 'gembaWalkObservation']);
+                Route::get('department', [AdminController::class, 'getDepartment']);
+                Route::get('monthwisetraining', [AdminController::class, 'getmonthwiseTraining']);
+                Route::get('trainingStatusCount', [AdminController::class, 'gettrainingStatusCount']);
 
             });
 

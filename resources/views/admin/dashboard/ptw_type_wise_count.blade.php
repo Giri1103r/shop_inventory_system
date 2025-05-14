@@ -69,6 +69,12 @@
             align: 'center',
             style: {
                 color: '#444'
+            },
+
+        },
+          grid: {
+            padding: {
+                bottom: 60
             }
         },
         tooltip: {

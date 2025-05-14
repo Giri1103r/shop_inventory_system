@@ -6,7 +6,15 @@
     var categories = {!! json_encode($chartData['labels']) !!};
     var seriesData = {!! json_encode($chartData['series']) !!};
 
-    // ApexCharts options
+    var dynamicColors = [
+        '#3B5998', '#26A69A', '#FFC300', '#6C3483', '#E74C3C', '#3498DB',
+        '#1ABC9C', '#9B59B6', '#F39C12', '#2ECC71', '#E67E22', '#34495E'
+    ];
+
+    // Ensure colors match the number of bars
+    var barCount = seriesData.length;
+    var colors = dynamicColors.slice(0, barCount); // Or generate random colors if needed
+
     var options = {
         series: [{
             name: 'Total Hours',
@@ -25,9 +33,11 @@
         plotOptions: {
             bar: {
                 borderRadius: 10,
-                horizontal: false
+                horizontal: false,
+                distributed: true // ✅ Enables individual bar colors
             }
         },
+        colors: colors, // ✅ Apply individual colors
         dataLabels: {
             enabled: true
         },
@@ -56,23 +66,21 @@
                 w
             }) {
                 return `
-                    <div style="padding:10px;">
-                        <strong>Topic:</strong> ${w.globals.labels[dataPointIndex]}<br>
-                        <strong>Hours:</strong> ${series[seriesIndex][dataPointIndex]}<br>
-                        <strong>Department:</strong> ${departments[dataPointIndex]}
-                    </div>`;
+                <div style="padding:10px;">
+                    <strong>Topic:</strong> ${w.globals.labels[dataPointIndex]}<br>
+                    <strong>Hours:</strong> ${series[seriesIndex][dataPointIndex]}<br>
+                    <strong>Department:</strong> ${departments[dataPointIndex]}
+                </div>`;
             }
         },
         fill: {
             opacity: 1
         },
         legend: {
-            position: 'bottom',
-            horizontalAlign: 'center'
+            show: false // ✅ Hide legend since each bar is unique
         }
     };
 
-    // Render chart
     var chartPPEIssuanceGroupWise = new ApexCharts(document.querySelector(
         "#LoadTrainingHourSafetyDepartmentWise_Count"), options);
     chartPPEIssuanceGroupWise.render();

@@ -22,10 +22,55 @@
                             <h4 class="m-0 " style="padding-left: 10px;">Welcome Back {{ Auth::user()->name }}!
                             </h4>
                         </div>
+                        <div>
+                            <x-button-filter dataId="" class="search" href=""></x-button-filter>
 
+                        </div>
                     </div>
                 </div>
             </div>
+
+               <!--Filter -->
+               <div id="search" class="collapse card">
+                <form action="" id="formsearch">
+                    <div class="card-body">
+                        <div class="col-md-12">
+                            <div class="row">
+
+                                <div class="col-md-3 form-input">
+                                    <label for="fromDate" class="form-label">{{ __('From Date') }}</label>
+                                    <div class="input-group date form-input">
+                                        <input type="text" required class="form-control todaymaxdatepicker"
+                                            id="fromDate" name="fromDate" value="">
+                                        <div class="input-group-addon input-group-text">
+                                            <span class="fa fa-calendar"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3 form-input">
+                                    <label for="toDate" class="form-label">{{ __('To Date') }}</label>
+                                    <div class="input-group date form-input">
+                                        <input type="text" required class="form-control todaymaxdatepicker"
+                                            id="toDate" name="toDate" value="">
+                                        <div class="input-group-addon input-group-text">
+                                            <span class="fa fa-calendar"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <button type="button" id="searchform" onclick="filterDashboard();"
+                                        class="btn btn-primary mt-4">Search</button>
+                                    <button type="reset" id="resetform" class="btn btn-danger mt-4">Reset</button>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
             <div class="card view_card">
 
                 <div class="card-body">
@@ -389,7 +434,7 @@
 
             <div class="row">
 
-                <div class="col-xl-12 col-xxl-12">
+                {{-- <div class="col-xl-12 col-xxl-12">
                     <div class="card view_card">
                         <div class="card-header">
                             <h4 class="text-white">PTW Average time between initial to closed</h4>
@@ -398,7 +443,7 @@
                         <div id="LoadPTWAvgTimeChartCount"></div>
                     </div>
                 </div>
-            </div>
+            </div> --}}
             <div class="row">
                 <div class="col-xl-12 col-xxl-12">
                     <div class="card view_card">
@@ -482,6 +527,51 @@
                     </div>
                 </div>
             </div>
+                            <h4 class="text-white">Unsafe Act / Unsafe Condition Static Report</h4>
+                            <a class="fas fa-arrow-alt-circle-down chartdownload" id="uaucstaticreport_download"></a>
+                        </div>
+                        <div id="uaucStaticReport"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xl-12 col-xxl-12">
+                    <div class="card view_card">
+                        <div class="card-header">
+                            <h4 class="text-white">MONTH WISE TRAINING COUNT</h4>
+                            <a class="fas fa-arrow-alt-circle-down chartdownload" id="monthwisetraining_download"></a>
+                        </div>
+                        <div class="card-body px-0 pt-0 dlab-scroll height450" id="Loadmonthwisetraining"> </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-xl-12 col-xxl-12">
+                    <div class="card view_card">
+                        <div class="card-header">
+                            <h4 class="text-white">DEPARTMENT WISE TRAINING COUNT</h4>
+                            <a class="fas fa-arrow-alt-circle-down chartdownload" id="LoadDepartmentCount_download"></a>
+                        </div>
+                        <div class="card-body px-0 pt-0 dlab-scroll height450" id="LoadDepartmentCount"> </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+
+                <div class="col-xl-6 col-xxl-6">
+                    <div class="card view_card responsive">
+                        <div class="card-header">
+                            <h4 class="text-white">TRAINING STATUS COUNT</h4>
+                            <a class="fas fa-arrow-alt-circle-down chartdownload" id="training_count_download"></a>
+                        </div>
+                        <div id="trainingStatusPieChart"></div>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 
@@ -496,7 +586,6 @@
         }
 
         function filterDashboard() {
-            Factory = $("#factory").val()
             Fromdate = $("#fromDate").val();
             Todate = $("#toDate").val();
             TrainingHourSafetyDepartmentWise(Fromdate, Todate);
@@ -519,7 +608,69 @@
             LoadauditFindingsCount(Fromdate, Todate);
             LoadiirTypewiseRCPACount(Fromdate, Todate);
             GembaWalkObservationReport(Fromdate, Todate);
+            uaucStaticReport(Fromdate, Todate);
+            LoadDepartmentCount(Fromdate, Todate);
+            loadfmonthwisetraining(Fromdate, Todate);
+            loadtraining_count_status(Fromdate, Todate);
 
+        }
+
+        function LoadDepartmentCount(Fromdate = '', Todate = '') {
+            var url = "{{ admin_url('dashboard/department') }}"
+            var data = {
+                Fromdate: Fromdate,
+                Todate: Todate,
+            };
+            $('#LoadDepartmentCount').html('');
+            $.ajax({
+                type: 'get',
+                url: url,
+                data: data,
+                cache: false,
+                success: function(dataAjx) {
+
+                    $('#LoadDepartmentCount').html(dataAjx);
+                }
+            });
+        }
+
+
+        function loadfmonthwisetraining(Fromdate = '', Todate = '') {
+            var url = "{{ admin_url('dashboard/monthwisetraining') }}"
+            var data = {
+                Fromdate: Fromdate,
+                Todate: Todate,
+            };
+            $('#Loadmonthwisetraining').html('');
+            $.ajax({
+                type: 'get',
+                url: url,
+                data: data,
+                cache: false,
+                success: function(dataAjx) {
+
+                    $('#Loadmonthwisetraining').html(dataAjx);
+                }
+            });
+        }
+
+        function loadtraining_count_status(Fromdate = '', Todate = '') {
+            var url = "{{ admin_url('dashboard/trainingStatusCount') }}"
+            var data = {
+                Fromdate: Fromdate,
+                Todate: Todate,
+            };
+            $('#trainingStatusPieChart').html('');
+            $.ajax({
+                type: 'get',
+                url: url,
+                data: data,
+                cache: false,
+                success: function(dataAjx) {
+
+                    $('#trainingStatusPieChart').html(dataAjx);
+                }
+            });
         }
 
         function LoadiirTypewiseRCPACount(Fromdate = '', Todate = '') {
@@ -898,6 +1049,25 @@
                 success: function(dataAjx) {
 
                     $('#LoadPtwHoldViolation_Count').html(dataAjx);
+                }
+            });
+        }
+
+        function uaucStaticReport(Fromdate = '', Todate = '') {
+            var url = "{{ admin_url('dashboard/uauc-static-report') }}"
+            var data = {
+                Fromdate: Fromdate,
+                Todate: Todate,
+            };
+            $('#uaucStaticReport').html('');
+            $.ajax({
+                type: 'get',
+                url: url,
+                data: data,
+                cache: false,
+                success: function(dataAjx) {
+
+                    $('#uaucStaticReport').html(dataAjx);
                 }
             });
         }

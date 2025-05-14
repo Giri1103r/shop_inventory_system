@@ -55,7 +55,8 @@
             }
         },
         legend: {
-            show: false // Hide default legend
+            show: false 
+            // Hide default legend
         }
     };
 

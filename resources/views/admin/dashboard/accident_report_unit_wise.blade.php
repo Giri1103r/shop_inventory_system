@@ -61,7 +61,7 @@
         legend: {
             position: 'bottom'
         },
-        colors: ['#EF4444', '#FACC15', '#6366F1'] // Red for Major, Yellow for Minor, Indigo for Fatal
+        colors: ['#EF4444', '#FACC15', '#6366F1'] 
     };
 
     var chart = new ApexCharts(document.querySelector("#AccidentReportChart"), options);
