@@ -2,28 +2,28 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
-use App\Models\Master\Employee;
-use DB;
 use Exception;
 use Carbon\Carbon;
-use App\Models\Master\Department;
-
+use App\Models\User;
+use App\Models\Master\Unit;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Facades\File;
-use App\Models\User;
-use App\Models\IMS\Incident\InitialIncident;
+
+use App\Models\Master\Employee;
+use App\Models\Master\Department;
+use Illuminate\Support\Facades\DB;
 use App\Models\Permit\SafetyPermit;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Hash;
 use App\Models\Master\TrainingSchedule;
+use Illuminate\Support\Facades\Session;
+use App\Models\IMS\Incident\InitialIncident;
 use App\Models\IMS\Incident\IncidentBodyParts;
 use App\Models\Inspection\GembaWalk\GembaWalk;
-use App\Models\Inspection\GembaWalk\GembaWalkChecklist;
 use Illuminate\Support\Facades\DB as FacadesDB;
-use App\Models\Master\Unit;
+use App\Models\Inspection\GembaWalk\GembaWalkChecklist;
 
 
 class AdminController extends Controller
@@ -712,7 +712,7 @@ class AdminController extends Controller
     public function gembaWalkObservation(Request $request)
     {
         try {
-            $chartData = $this->gembaWalk->gembaWalkPotentialCount($request);
+            $chartData = $this->gembaWalk->gembaWalkPotentialCount();
 
             if (count($chartData) <= 0) {
                 return response()->json('<div class="border-0 pb-3" style="margin-top: 166px;"><h4 style="text-align: center;">No data Found.</h4></div>');
@@ -746,11 +746,54 @@ class AdminController extends Controller
                 'chartData' => $chartData
             ]);
         } catch (\Exception $ex) {
-            dd($ex);
             report($ex);
             return back()->with('error', 'Failed to load unit-wise incident data.');
         }
     }
+
+    public function DailyObservationMonthCount()
+    {
+        try {
+            $chartData = $this->gembaWalk->DailyObservationMonthCount();
+
+            if (count($chartData) <= 0) {
+                return response()->json('<div class="border-0 pb-3" style="margin-top: 166px;"><h4 style="text-align: center;">No data Found.</h4></div>');
+            }
+
+            $categories = [];
+            $chartDataSeries = [
+                'open' => [],
+                'closed' => [],
+                'total' => [],
+            ];
+
+            foreach ($chartData as $data) {
+                $categories[] = $data['unit_name'];
+
+                $chartDataSeries['open'][] = $data['open'];
+                $chartDataSeries['closed'][] = $data['closed'];
+                $chartDataSeries['total'][] = $data['total'];
+            }
+
+            $chartData = [
+                'categories' => $categories,
+                'series' => [
+                    ['name' => 'Open', 'data' => $chartDataSeries['open']],
+                    ['name' => 'Closed', 'data' => $chartDataSeries['closed']],
+                    ['name' => 'Total', 'data' => $chartDataSeries['total']],
+                ],
+            ];
+
+
+            return view('admin.dashboard.observationCountMonthly', [
+                'chartData' => $chartData
+            ]);
+        } catch (\Exception $ex) {
+            report($ex);
+            return back()->with('error', 'Failed to load unit-wise incident data.');
+        }
+    }
+
 
     public function IIRTypeWiseUAUC(Request $request)
     {

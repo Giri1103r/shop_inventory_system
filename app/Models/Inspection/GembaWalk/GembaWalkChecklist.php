@@ -176,4 +176,38 @@ class GembaWalkChecklist extends Model
         $finalData = array_values($finalData);
         return $finalData;
     }
+
+    public function DailyObservationMonthCount()
+    {
+        $request = request();
+
+        $query = $this
+            ->select(
+                'masters_unit.unit_name',
+                DB::raw("SUM(CASE WHEN inspection_gemba_walk_checklist.checklist_observation_status = 1 THEN 1 ELSE 0 END) as open"),
+                DB::raw("SUM(CASE WHEN inspection_gemba_walk_checklist.checklist_observation_status = 5 THEN 1 ELSE 0 END) as closed"),
+                DB::raw("COUNT(*) as total")
+            )
+            ->leftJoin('masters_unit', 'masters_unit.id', '=', 'inspection_gemba_walk_checklist.unit_id');
+
+        if ($request->Fromdate && $request->Todate) {
+            $query->whereBetween('inspection_gemba_walk_checklist.created_at', [
+                DBdateformat($request->Fromdate),
+                DBdateformat($request->Todate)
+            ]);
+        } elseif ($request->Fromdate) {
+            $query->where('inspection_gemba_walk_checklist.created_at', '>=', DBdateformat($request->Fromdate));
+        } elseif ($request->Todate) {
+            $query->where('inspection_gemba_walk_checklist.created_at', '<=', DBdateformat($request->Todate));
+        }
+
+        if (!CheckUserRole(ROLE_SUPERADMIN) && !CheckUserRole(ROLE_ADMIN) && !CheckUserRole(ROLE_EHS_HEAD)) {
+            if (Auth::user()->role == ROLE_USER) {
+                $query->where('inspection_gemba_walk_checklist.created_by', Auth::id());
+            }
+        }
+        $results = $query->groupBy('masters_unit.unit_name')->get();
+
+        return $results;
+    }
 }
