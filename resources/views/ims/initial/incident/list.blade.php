@@ -169,8 +169,10 @@
 
         $(function() {
             /* Datatable */
-            var dash_iirtype_id =
-            '{{ isset($dashboard_search['iir_type']) && !empty($dashboard_search['iir_type']) && $dashboard_search['iir_type'] != 'undefined' ? decryptId($dashboard_search['iir_type']) : '' }}';
+            
+            var dash_iirtype_id =  '{{ isset($dashboard_search['iir_type']) && $dashboard_search['iir_type'] != ''
+            ? $dashboard_search['iir_type'] : ''}}';            
+
 
             var table = $('.datatable-list').DataTable({
                 autoWidth: false,
@@ -204,12 +206,12 @@
                     },
                     data: function(d) {
                         d.sr_no = $('#sr_no').val();
+                        d.dash_iirtype_id = dash_iirtype_id;
                         d.unit_id = $('#unit_id').val();
                         d.from_date = $('#from_date').val();
                         d.to_date = $('#to_date').val();
                         d.incident_status = $('#incident_status').val();
                         d.status = $('#status').val();
-                        d.dash_iirtype_id = dash_iirtype_id;
 
                     },
                     error: function(xhr, error, code) {
@@ -282,12 +284,12 @@
                                 action: function(e, dt, button, config) {
                                     var searchValue = $('#datatable-list_filter input').val();
                                     var sr_no = $('#sr_no').val();
+                                    var dash_iirtype_id = dash_iirtype_id;
                                     var unit_id = $('#unit_id').val();
                                     var from_date = $('#from_date').val();
                                     var to_date = $('#to_date').val();
                                     var incident_status = $('#incident_status').val();
                                     var status = $('#status').val();
-                                    var dash_iirtype_id = dash_iirtype_id;
 
                                     $(".dt-button").removeClass('processing');
                                     $('body').click();
@@ -295,11 +297,11 @@
                                         "{{ admin_url('incident/initial-incident/export/pdf') }}" +
                                         '?search=' + searchValue +
                                         '&sr_no=' + sr_no +
+                                        '&dash_iirtype_id=' + dash_iirtype_id +
                                         '&unit_id=' + unit_id +
                                         '&from_date=' + from_date +
                                         '&to_date=' + to_date +
                                         '&incident_status=' + incident_status +
-                                        '&dash_iirtype_id=' + dash_iirtype_id +
                                         '&status=' + status
                                 }
                             },
@@ -310,23 +312,23 @@
 
                                     var searchValue = $('#datatable-list_filter input').val();
                                     var sr_no = $('#sr_no').val();
+                                    var dash_iirtype_id = dash_iirtype_id;
                                     var unit_id = $('#unit_id').val();
                                     var from_date = $('#from_date').val();
                                     var to_date = $('#to_date').val();
                                     var incident_status = $('#incident_status').val();
-                                    var dash_iirtype_id = dash_iirtype_id;
                                     var status = $('#status').val();
                                     $(".dt-button").removeClass('processing');
                                     $('body').click();
                                     window.location.href =
                                         "{{ admin_url('incident/initial-incident/export/excel') }}" +
                                         '?search=' + searchValue +
+                                        '&dash_iirtype_id=' + dash_iirtype_id +
                                         '&sr_no=' + sr_no +
                                         '&unit_id=' + unit_id +
                                         '&from_date=' + from_date +
                                         '&to_date=' + to_date +
                                         '&incident_status=' + incident_status +
-                                        '&dash_iirtype_id=' + dash_iirtype_id +
                                         '&status=' + status
                                 }
                             },

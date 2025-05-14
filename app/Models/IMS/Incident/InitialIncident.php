@@ -119,15 +119,14 @@ class InitialIncident extends Model
 
             $query = $query->where('ims_initial_incident.status', decryptId($request->status));
         }
+       
+        if ($request->has('dash_iirtype_id') && $request->dash_iirtype_id) {
+            $query = $query->where('ims_initial_incident.iir_type', ($request->dash_iirtype_id));
+        }
         if ($request->has('unit_id') && $request->unit_id) {
 
             $query = $query->where('ims_initial_incident.unit_id', decryptId($request->unit_id));
         }
-
-        if ($request->has('dash_iirtype_id') && $request->dash_iirtype_id) {
-            $query = $query->where('ims_initial_incident.iir_type', ($request->dash_iirtype_id));
-        }
-      
         $data_count = $query;
         $total_records = $data_count->count();
 
