@@ -397,7 +397,7 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-xl-6 col-xxl-6">
+                <div class="col-xl-12 col-xxl-12">
                     <div class="card view_card">
                         <div class="card-header">
                             <h4 class="text-white">Inspection Type Wise Count</h4>
@@ -407,16 +407,7 @@
 
                     </div>
                 </div>
-                <div class="col-xl-6 col-xxl-6">
-                    <div class="card view_card">
-                        <div class="card-header">
-                            <h4 class="text-white">PTW Open Close</h4>
-                            <a class="fas fa-arrow-alt-circle-down chartdownload" id="ptw_open_close_download"></a>
-                        </div>
-                        <div class="card-body px-0 pt-0 dlab-scroll height450" id="ptw_open_close_count"> </div>
 
-                    </div>
-                </div>
             </div>
             <div class="row">
                 <div class="col-xl-12 col-xxl-12">
@@ -502,6 +493,18 @@
                                 <a class="fas fa-arrow-alt-circle-down chartdownload" id="auditFindings_download"></a>
                             </div>
                             <div id="LoadauditFindingsCount"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class = "row">
+                    <div class="col-xl-6 col-xxl-6">
+                        <div class="card view_card">
+                            <div class="card-header">
+                                <h4 class="text-white">PTW Open Close</h4>
+                                <a class="fas fa-arrow-alt-circle-down chartdownload" id="ptw_open_close_download"></a>
+                            </div>
+                            <div class="card-body px-0 pt-0 dlab-scroll height450" id="ptw_open_close_count"> </div>
+
                         </div>
                     </div>
                     <div class="col-xl-6 col-xxl-6">
