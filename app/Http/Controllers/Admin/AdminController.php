@@ -940,20 +940,6 @@ class AdminController extends Controller
                 ->where('trash', 'NO')
                 ->groupBy('unit_id');
 
-            // if ($request->has('Fromdate') && !empty($request->Fromdate)) {
-            //     $startDate = Carbon::createFromFormat('d-m-Y', $request->Fromdate)->startOfDay()->format('Y-m-d H:i:s');
-            //     $permitCountsQuery->where('created_at', '>=', $startDate);
-            // }
-            // if ($request->has('Todate') && !empty($request->Todate)) {
-            //     $endDate = Carbon::createFromFormat('d-m-Y', $request->Todate)->endOfDay()->format('Y-m-d H:i:s');
-            //     $permitCountsQuery->where('created_at', '<=', $endDate);
-            // }
-            // if ($request->has('Fromdate') && !empty($request->Fromdate) && $request->has('Todate') && !empty($request->Todate)) {
-            //     $startDate = Carbon::createFromFormat('d-m-Y', $request->Fromdate)->startOfDay()->format('Y-m-d H:i:s');
-            //     $endDate = Carbon::createFromFormat('d-m-Y', $request->Todate)->endOfDay()->format('Y-m-d H:i:s');
-            //     $permitCountsQuery->whereBetween('created_at', [$startDate, $endDate]);
-            // }
-
             if ($request->Fromdate && $request->Todate) {
                 $permitCountsQuery->whereBetween('created_at', [
                     DBdateformat($request->Fromdate),
