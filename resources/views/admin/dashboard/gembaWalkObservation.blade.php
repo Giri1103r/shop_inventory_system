@@ -54,7 +54,7 @@
     dailyObservation.render();
 
     // Download button functionality
-    $("#dailyObservationDownload").off("click").on("click", function() {
+    $("#gembaWalkDownload").off("click").on("click", function() {
         dailyObservation.dataURI().then(({
             imgURI
         }) => {

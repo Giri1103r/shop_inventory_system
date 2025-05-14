@@ -222,7 +222,7 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('department', [AdminController::class, 'getDepartment']);
                 Route::get('monthwisetraining', [AdminController::class, 'getmonthwiseTraining']);
                 Route::get('trainingStatusCount', [AdminController::class, 'gettrainingStatusCount']);
-                Route::get('dailyObservation', [AdminController::class, 'DailyObservationMonthCount']);
+                // Route::get('dailyObservation', [AdminController::class, 'DailyObservationMonthCount']);
             });
 
             /**

@@ -598,7 +598,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="row">
+                {{-- <div class="row">
                     <div class="col-xl-12 col-xxl-12">
                         <div class="card view_card responsive">
                             <div class="card-header">
@@ -608,7 +608,7 @@
                             <div id="dailyObservation"></div>
                         </div>
                     </div>
-                </div>
+                </div> --}}
 
                 <div class="row">
 
@@ -664,7 +664,7 @@
                     LoadmonthewisePTWData(Fromdate, Todate);
                     loadunitwisecount(Fromdate, Todate);
                     loadtraining_count_status(Fromdate, Todate);
-                    dailyObservation(Fromdate, Todate);
+                    // dailyObservation(Fromdate, Todate);
                 }
 
                 function LoadDepartmentCount(Fromdate = '', Todate = '') {

@@ -720,7 +720,6 @@ class AdminController extends Controller
 
             $chartDataSeries = [
                 'Unsafe Act' => [],
-                'Unknown' => [],
                 'Unsafe Condition' => [],
             ];
 
@@ -737,7 +736,6 @@ class AdminController extends Controller
                 'categories' => $categories,
                 'series' => [
                     ['name' => 'Unsafe Act', 'data' => $chartDataSeries['Unsafe Act']],
-                    ['name' => 'Unknown', 'data' => $chartDataSeries['Unknown']],
                     ['name' => 'Unsafe Condition', 'data' => $chartDataSeries['Unsafe Condition']],
                 ],
             ];
@@ -746,6 +744,7 @@ class AdminController extends Controller
                 'chartData' => $chartData
             ]);
         } catch (\Exception $ex) {
+            dd($ex);
             report($ex);
             return back()->with('error', 'Failed to load unit-wise incident data.');
         }

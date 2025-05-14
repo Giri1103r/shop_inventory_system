@@ -2599,9 +2599,7 @@ if (!function_exists('getMonth')) {
                 return 'Unsafe Act';
             } elseif ($type_id == 2) {
                 return 'Unsafe Condition';
-            } else {
-                return 'Unknown';
-            }
+            } 
         }
     }
 
