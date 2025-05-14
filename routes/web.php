@@ -215,7 +215,8 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('nearMissFrequency', [AdminController::class, 'nearMissFrequency']);
                 Route::get('auditFindings', [AdminController::class, 'auditFindings']);
                 Route::get('IIRTypeWiseRCPA', [AdminController::class, 'IIRTypeWiseRCPA']);
- 
+                Route::get('gemba-walk-observation', [AdminController::class, 'gembaWalkObservation']);
+
             });
 
             /**

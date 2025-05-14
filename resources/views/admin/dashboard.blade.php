@@ -469,6 +469,19 @@
                     </div>
                 </div>
             </div>
+
+            <div class="row">
+                <div class="col-xl-12 col-xxl-12">
+                    <div class="card view_card responsive">
+                        <div class="card-header">
+                            <h4 class="text-white">Gemba Walk Potential Hazard 6s Observation Report</h4>
+                            <a class="fas fa-arrow-alt-circle-down chartdownload"
+                                id="gembaWalkDownload"></a>
+                        </div>
+                        <div id="gembaWalk"></div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -505,7 +518,7 @@
             loadinjurychart(Fromdate, Todate);
             LoadauditFindingsCount(Fromdate, Todate);
             LoadiirTypewiseRCPACount(Fromdate, Todate);
-
+            GembaWalkObservationReport(Fromdate, Todate);
 
         }
 
@@ -562,6 +575,25 @@
                 success: function(dataAjx) {
 
                     $('#TotalIncidentsCount').html(dataAjx);
+                }
+            });
+        }
+
+        function GembaWalkObservationReport(Fromdate = '', Todate = '') {
+            var url = "{{ admin_url('dashboard/gemba-walk-observation') }}"
+            var data = {
+                Fromdate: Fromdate,
+                Todate: Todate,
+            };
+            $('#gembaWalk').html('');
+            $.ajax({
+                type: 'get',
+                url: url,
+                data: data,
+                cache: false,
+                success: function(dataAjx) {
+
+                    $('#gembaWalk').html(dataAjx);
                 }
             });
         }

@@ -307,7 +307,6 @@ class GembaWalk extends Model
     }
 
 
-
     protected static function booted()
     {
         static::addGlobalScope(new TrashScope('inspection_gemba_walk'));
