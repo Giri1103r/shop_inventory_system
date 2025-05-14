@@ -839,26 +839,23 @@ class InitialIncident extends Model
 
         return $query->get(); // returns multiple rows
     }
-
-
-    public function getTypeofUAUCStatusCountData($request)
+    public function getTypeofIIRUAUCCountData($request)
     {
         $query = DB::table('ims_initial_incident as iii')
-            ->leftJoin('masters_unit as mu', 'mu.id', '=', 'iii.unit_id')
-            ->select(
-                'mu.unit_name',
-                DB::raw('SUM(CASE WHEN FIND_IN_SET("1", iii.ua_or_uc) > 0 THEN 1 ELSE 0 END) as ua_total'),
-                DB::raw('SUM(CASE WHEN FIND_IN_SET("1", iii.ua_or_uc) > 0 AND iii.status != 4 THEN 1 ELSE 0 END) as ua_open'),
-                DB::raw('SUM(CASE WHEN FIND_IN_SET("1", iii.ua_or_uc) > 0 AND iii.status = 4 THEN 1 ELSE 0 END) as ua_closed'),
-
-                DB::raw('SUM(CASE WHEN FIND_IN_SET("2", iii.ua_or_uc) > 0 THEN 1 ELSE 0 END) as uc_total'),
-                DB::raw('SUM(CASE WHEN FIND_IN_SET("2", iii.ua_or_uc) > 0 AND iii.status != 4 THEN 1 ELSE 0 END) as uc_open'),
-                DB::raw('SUM(CASE WHEN FIND_IN_SET("2", iii.ua_or_uc) > 0 AND iii.status = 4 THEN 1 ELSE 0 END) as uc_closed')
-            )
+            ->join('ims_master_incident_type as imit', 'iii.iir_type', '=', 'imit.id')
             ->where('iii.ua_uc_yes_no', 1)
-            ->groupBy('mu.unit_name')
-            ->orderBy('mu.unit_name');
+            ->select(
+                'imit.incident_type_name',
+                DB::raw('COUNT(DISTINCT iii.id) as total_incident'),
+                DB::raw('SUM(CASE WHEN FIND_IN_SET("1", iii.ua_or_uc) > 0 THEN 1 ELSE 0 END) as unsafe_act'),
+                DB::raw('SUM(CASE WHEN FIND_IN_SET("2", iii.ua_or_uc) > 0 THEN 1 ELSE 0 END) as unsafe_condition'),
+                DB::raw('SUM(CASE WHEN FIND_IN_SET("3", iii.ua_or_uc) > 0 THEN 1 ELSE 0 END) as natural_causes'),
+            )
+            ->groupBy('imit.incident_type_name')
+            ->orderBy('imit.incident_type_name');
 
+
+        // Date Filters
         if ($request->Fromdate && $request->Todate) {
             $query->whereBetween('iii.created_at', [
                 DBdateformat($request->Fromdate),
@@ -870,12 +867,15 @@ class InitialIncident extends Model
             $query->where('iii.created_at', '<=', DBdateformat($request->Todate));
         }
 
+
+
         return $query->get(); // returns multiple rows
     }
 
     public function getNearMissCountData($request)
     {
         $nearMissIds = DB::table('ims_master_incident_type')
+            ->where('incident_type_name', 'LIKE', '%Near Miss%')
             ->where(function ($query) {
                 $query->whereRaw("LOWER(REPLACE(incident_type_name, '-', '')) LIKE ?", ['%nearmiss%']);
             })
@@ -928,7 +928,6 @@ class InitialIncident extends Model
             12 => 'December'
         ];
 
-
         return $results->map(function ($item) use ($monthNames) {
             return [
                 'incident_type_name' => $item->incident_type_name,
@@ -939,8 +938,38 @@ class InitialIncident extends Model
             ];
         });
     }
+    public function getTypeofUAUCStatusCountData($request)
+    {
+        $query = DB::table('ims_initial_incident as iii')
+            ->leftJoin('masters_unit as mu', 'mu.id', '=', 'iii.unit_id')
+            ->select(
+                'mu.unit_name',
+                DB::raw('SUM(CASE WHEN FIND_IN_SET("1", iii.ua_or_uc) > 0 THEN 1 ELSE 0 END) as ua_total'),
+                DB::raw('SUM(CASE WHEN FIND_IN_SET("1", iii.ua_or_uc) > 0 AND iii.status != 4 THEN 1 ELSE 0 END) as ua_open'),
+                DB::raw('SUM(CASE WHEN FIND_IN_SET("1", iii.ua_or_uc) > 0 AND iii.status = 4 THEN 1 ELSE 0 END) as ua_closed'),
+ 
+                DB::raw('SUM(CASE WHEN FIND_IN_SET("2", iii.ua_or_uc) > 0 THEN 1 ELSE 0 END) as uc_total'),
+                DB::raw('SUM(CASE WHEN FIND_IN_SET("2", iii.ua_or_uc) > 0 AND iii.status != 4 THEN 1 ELSE 0 END) as uc_open'),
+                DB::raw('SUM(CASE WHEN FIND_IN_SET("2", iii.ua_or_uc) > 0 AND iii.status = 4 THEN 1 ELSE 0 END) as uc_closed')
+            )
+            ->where('iii.ua_uc_yes_no', 1)
+            ->groupBy('mu.unit_name')
+            ->orderBy('mu.unit_name');
+ 
+        if ($request->Fromdate && $request->Todate) {
+            $query->whereBetween('iii.created_at', [
+                DBdateformat($request->Fromdate),
+                DBdateformat($request->Todate)
+            ]);
+        } elseif ($request->Fromdate) {
+            $query->where('iii.created_at', '>=', DBdateformat($request->Fromdate));
+        } elseif ($request->Todate) {
+            $query->where('iii.created_at', '<=', DBdateformat($request->Todate));
+        }
+ 
+        return $query->get(); // returns multiple rows
+    }
 
-  
     protected static function booted()
     {
         static::addGlobalScope(new TrashScope('ims_initial_incident'));

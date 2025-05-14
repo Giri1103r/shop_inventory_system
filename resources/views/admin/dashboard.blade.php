@@ -730,6 +730,26 @@
                     });
                 }
 
+                function loadmonthewisecount(Fromdate = '', Todate = '') {
+                    var url = "{{ admin_url('dashboard/monthwiseptw') }}"
+                    var data = {
+                        Fromdate: Fromdate,
+                        Todate: Todate,
+                    };
+                    $('#monthwiseptw').html('');
+                    $.ajax({
+                        type: 'get',
+                        url: url,
+                        data: data,
+                        cache: false,
+                        success: function(dataAjx) {
+
+                            $('#monthwiseptw').html(dataAjx);
+                        }
+                    });
+                }
+
+
                 function LoadauditFindingsCount(Fromdate = '', Todate = '') {
                     var url = "{{ admin_url('dashboard/auditFindings') }}"
                     var data = {
