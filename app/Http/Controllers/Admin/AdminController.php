@@ -271,22 +271,30 @@ class AdminController extends Controller
             }
 
             $formattedData = [];
+            $incidentTypeIds = [];
+            $unitIds = [];
+            $lookup = [];
+
             foreach ($chartData as $row) {
-                $unit = $row->unit_name ?? 'Unknown Unit';
-                $type = $row->incident_type_name ?? 'Unknown Type';
+                $unitName = $row->unit_name ?? 'Unknown Unit';
+                $incidentTypeName = $row->incident_type_name ?? 'Unknown Type';
 
-                if (!isset($formattedData[$type])) {
-                    $formattedData[$type] = [];
-                }
+                $formattedData[$incidentTypeName][$unitName] = $row->incident_count;
 
-                if (!isset($formattedData[$type][$unit])) {
-                    $formattedData[$type][$unit] = 0;
-                }
+                $incidentTypeIds[$incidentTypeName] = $row->incident_type_id;
+                $unitIds[$unitName] = $row->unit_id;
 
-                $formattedData[$type][$unit]++;
+                $lookup[$incidentTypeName][$unitName] = [
+                    'incident_type_id' => $row->incident_type_id,
+                    'unit_id' => $row->unit_id,
+                ];
             }
+
             return view('admin.dashboard.totalIncidentsCount', [
                 'formattedData' => $formattedData,
+                'incidentTypeIds' => $incidentTypeIds,
+                'unitIds' => $unitIds,
+                'lookup' => $lookup,
                 'getdashdata' => $request,
             ]);
         } catch (\Exception $ex) {
@@ -390,7 +398,7 @@ class AdminController extends Controller
             $to_date = $request->input('Todate');
 
             $inspection_wise_count = InspectionCount($from_date, $to_date);
-            
+
             $data = [
                 'inspection_wise_count' => $inspection_wise_count,
                 'from_date' => $from_date,
@@ -421,7 +429,7 @@ class AdminController extends Controller
                 'active_close_count' => $active_close_count,
                 'dates' => $dates,
             ];
-          
+
             return view('admin.dashboard.ptw_open_close', $data);
         } catch (\Exception $ex) {
             report($ex);
@@ -444,7 +452,7 @@ class AdminController extends Controller
                 'work_wise_count' => $work_wise_count,
                 'dates' => $dates,
             ];
-           
+
             return view('admin.dashboard.ptw_type_wise_count', $data);
         } catch (\Exception $ex) {
             report($ex);
@@ -522,7 +530,7 @@ class AdminController extends Controller
             $data = [
                 'getdashdata' => $request,
             ];
-          
+
 
             return view('admin.dashboard.chartPPEIssuanceGroupWise', [
                 'getdashdata' => $request,
@@ -562,7 +570,6 @@ class AdminController extends Controller
                 'getdashdata' => $request,
                 'chartData' => $chartData,
             ]);
-         
         } catch (\Exception $ex) {
             report($ex);
         }

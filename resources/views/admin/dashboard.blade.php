@@ -634,7 +634,84 @@
                     window.location.href = url;
                 }
 
+                function redirectToIms(iirType, unitId ,incidentId, injuryType, month, uauc, rcpa) {
 
+                Fromdate = $("#fromDate").val();
+                Todate = $("#toDate").val();
+                // Create a form element
+                var form = document.createElement('form');
+                form.setAttribute('method', 'post');
+                form.setAttribute('action', "{{ admin_url('incident/initial-incident/list') }}");
+
+                // Add CSRF token field
+                var csrfToken = document.createElement('input');
+                csrfToken.type = 'hidden';
+                csrfToken.name = '_token';
+                csrfToken.value = '{{ csrf_token() }}';
+                form.appendChild(csrfToken);
+
+                // Create hidden input fields for each POST data
+                var inputiirType = document.createElement('input');
+                inputiirType.setAttribute('type', 'hidden');
+                inputiirType.setAttribute('name', 'iir_type');
+                inputiirType.setAttribute('value', iirType);
+                form.appendChild(inputiirType);
+
+                var inputincidentId = document.createElement('input');
+                inputincidentId.setAttribute('type', 'hidden');
+                inputincidentId.setAttribute('name', 'incident_id');
+                inputincidentId.setAttribute('value', incidentId);
+                form.appendChild(inputincidentId);
+
+
+                var inputunitId = document.createElement('input');
+                inputunitId.setAttribute('type', 'hidden');
+                inputunitId.setAttribute('name', 'unit_id');
+                inputunitId.setAttribute('value', unitId);
+                form.appendChild(inputunitId);
+
+                var inputinjuryType = document.createElement('input');
+                inputinjuryType.setAttribute('type', 'hidden');
+                inputinjuryType.setAttribute('name', 'injury_type');
+                inputinjuryType.setAttribute('value', injuryType);
+                form.appendChild(inputinjuryType);
+
+                var inputmonth = document.createElement('input');
+                inputmonth.setAttribute('type', 'hidden');
+                inputmonth.setAttribute('name', 'month');
+                inputmonth.setAttribute('value', month);
+                form.appendChild(inputmonth);
+
+                var inputuauc = document.createElement('input');
+                inputuauc.setAttribute('type', 'hidden');
+                inputuauc.setAttribute('name', 'uauc');
+                inputuauc.setAttribute('value', uauc);
+                form.appendChild(inputuauc);
+
+                var inputrcpa = document.createElement('input');
+                inputrcpa.setAttribute('type', 'hidden');
+                inputrcpa.setAttribute('name', 'rcpa');
+                inputrcpa.setAttribute('value', rcpa);
+                form.appendChild(inputrcpa);
+
+              
+
+                var inputFromdate = document.createElement('input');
+                inputFromdate.setAttribute('type', 'hidden');
+                inputFromdate.setAttribute('name', 'Fromdate');
+                inputFromdate.setAttribute('value', Fromdate);
+                form.appendChild(inputFromdate);
+
+                var inputTodate = document.createElement('input');
+                inputTodate.setAttribute('type', 'hidden');
+                inputTodate.setAttribute('name', 'Todate');
+                inputTodate.setAttribute('value', Todate);
+                form.appendChild(inputTodate);
+
+                // Append the form to the body and submit it
+                document.body.appendChild(form);
+                form.submit();
+            }
                 function filterDashboard() {
                     Fromdate = $("#fromDate").val();
                     Todate = $("#toDate").val();
