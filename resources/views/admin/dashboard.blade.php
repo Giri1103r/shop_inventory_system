@@ -896,24 +896,6 @@
                     });
                 }
 
-                function LoadPPEIssuanceGroupWiseCount(Fromdate = '', Todate = '') {
-                    var url = "{{ admin_url('dashboard/PPEIssuanceGroupWise') }}"
-                    var data = {
-                        Fromdate: Fromdate,
-                        Todate: Todate,
-                    };
-                    $('#LoadPPEIssuanceGroupWiseCount').html('');
-                    $.ajax({
-                        type: 'get',
-                        url: url,
-                        data: data,
-                        cache: false,
-                        success: function(dataAjx) {
-
-                            $('#LoadPPEIssuanceGroupWiseCount').html(dataAjx);
-                        }
-                    });
-                }
 
                 function LoadPTWAvgTimeChartCount(Fromdate = '', Todate = '') {
                     var url = "{{ admin_url('dashboard/PTWAvgTimeChart') }}"

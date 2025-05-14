@@ -81,13 +81,13 @@
         }
     };
 
-    var chartPPEIssuanceGroupWise = new ApexCharts(document.querySelector(
+    var LoadTrainingHourSafetyDepartmentWise_Count = new ApexCharts(document.querySelector(
         "#LoadTrainingHourSafetyDepartmentWise_Count"), options);
-    chartPPEIssuanceGroupWise.render();
+        LoadTrainingHourSafetyDepartmentWise_Count.render();
 
 
     $("#LoadTrainingHourSafetyDepartmentWise_download").off("click").on("click", function() {
-        chartPPEIssuanceGroupWise.dataURI().then(({
+        LoadTrainingHourSafetyDepartmentWise_Count.dataURI().then(({
             imgURI
         }) => {
             var newCanvas = document.createElement('canvas');
