@@ -720,7 +720,7 @@
                     Fromdate: Fromdate,
                     Todate: Todate,
                 };
-                $('#unitwiseptw').html('');
+                $('#monthwiseptw').html('');
                 $.ajax({
                     type: 'get',
                     url: url,
@@ -728,7 +728,7 @@
                     cache: false,
                     success: function(dataAjx) {
 
-                        $('#unitwiseptw').html(dataAjx);
+                        $('#monthwiseptw').html(dataAjx);
                     }
                 });
             }
