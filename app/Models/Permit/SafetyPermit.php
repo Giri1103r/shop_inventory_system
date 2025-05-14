@@ -1163,14 +1163,13 @@ class SafetyPermit extends Model
         $from_date = $request->input('Fromdate');
         $to_date = $request->input('Todate');
 
-        $openQuery = $this->where('permit_status', '>='  ,STATUS_EHS_VERIFICATION_PENDING)
-          ->orwhere('permit_status' , '!=', STATUS_CLOSED)
-          ->orwhere('permit_status' , '!=', STATUS_PERMIT_EXPIRED)
+        $openQuery = $this->whereNotIn('permit_status', [STATUS_CLOSED, STATUS_PERMIT_EXPIRED])
+            ->where('permit_status', '>=', STATUS_EHS_VERIFICATION_PENDING)
             ->where('status', 1)
             ->where('trash', 'NO');
 
         $closeQuery = $this->where('permit_status', STATUS_CLOSED)
-        ->orwhere('permit_status' , STATUS_PERMIT_EXPIRED)
+            ->orwhere('permit_status', STATUS_PERMIT_EXPIRED)
             ->where('status', 1)
             ->where('trash', 'NO');
 
@@ -1189,9 +1188,9 @@ class SafetyPermit extends Model
 
 
         return [
-                'PTW Open Count' => $open_count,
-                'PTW Close Count' => $close_count
-            ];
+            'PTW Open Count' => $open_count,
+            'PTW Close Count' => $close_count
+        ];
     }
 
     public function GetTypeWiseCount()
