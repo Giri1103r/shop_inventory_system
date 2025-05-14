@@ -33,7 +33,7 @@
         },
         yaxis: {
             title: {
-                text: 'Incident Count'
+                text: 'Gemba Walk'
             }
         },
         fill: {
@@ -42,7 +42,7 @@
         tooltip: {
             y: {
                 formatter: function(val) {
-                    return val + " incidents"; 
+                    return val + " incidents";
                 }
             }
         }
@@ -54,7 +54,7 @@
     gembaWalk.render();
 
     // Download button functionality
-    $("#total_incidents_download").off("click").on("click", function() {
+    $("#gembaWalkDownload").off("click").on("click", function() {
         gembaWalk.dataURI().then(({
             imgURI
         }) => {
@@ -74,7 +74,7 @@
                 // Add a header text
                 ctx.fillStyle = '#203669';
                 ctx.font = '20px Arial';
-                ctx.fillText('Total Incidents (YTD)', 10, 30);
+                ctx.fillText('Gemba Walk', 10, 30);
 
                 // Optional filter text (if available)
                 let yPos = 60;
@@ -110,7 +110,7 @@
                 newCanvas.toBlob(function(blob) {
                     var link = document.createElement('a');
                     link.href = URL.createObjectURL(blob);
-                    link.download = 'Total Incidents (YTD).png';
+                    link.download = 'Gemba Walk.png';
                     link.click();
                 });
             };

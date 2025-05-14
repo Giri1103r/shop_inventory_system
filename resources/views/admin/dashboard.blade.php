@@ -1590,31 +1590,6 @@
                             }
                         });
                     }
-
-
-                    $('#resetform').on('click', function(e) {
-                        e.preventDefault();
-                        location.reload();
-                    });
-                    const toDatePicker = flatpickr("#toDate", {
-                        dateFormat: "d-m-Y",
-                        minDate: "today",
-                    });
-
-                    flatpickr("#fromDate", {
-                        dateFormat: "d-m-Y",
-                        onChange: function(selectedDates, dateStr) {
-                            if (selectedDates.length > 0) {
-                                const fromDate = selectedDates[0];
-                                if (toDatePicker) {
-                                    toDatePicker.set("minDate",
-                                        dateStr);
-                                }
-                            }
-                        },
-                    });
-
-
                     filterDashboard();
                 });
             </script>
