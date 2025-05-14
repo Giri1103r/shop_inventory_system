@@ -628,15 +628,15 @@
                     Todate = $("#toDate").val();
                     TrainingHourSafetyDepartmentWise(Fromdate, Todate);
                     PTWViolationHoldCompliance(Fromdate, Todate);
-                    TotalIncidentsCount(Fromdate, Todate);
-                    heatmapofImsData(Fromdate, Todate);
-                    IncidentTypeChart(Fromdate, Todate);
+                    IncidentsCount(Fromdate, Todate);
+                    heatmapofIms(Fromdate, Todate);
+                    IncidentType(Fromdate, Todate);
                     TrainingCompletionCount(Fromdate, Todate);
                     TypeofIIRCount(Fromdate, Todate);
                     AccidentReportUnitWiseCount(Fromdate, Todate);
                     LoadiirTypewiseUAUCCount(Fromdate, Todate);
                     LoadnearMissCount(Fromdate, Todate);
-                    inspection_wise_count(Fromdate, Todate);
+                    inspectionWiseCount(Fromdate, Todate);
                     ptw_open_close_count(Fromdate, Todate);
                     ptw_type_wise_count(Fromdate, Todate);
                     LoadPPEAvailabilityChartCount(Fromdate, Todate);
@@ -649,7 +649,7 @@
                     uaucStaticReport(Fromdate, Todate);
                     LoadDepartmentCount(Fromdate, Todate);
                     loadfmonthwisetraining(Fromdate, Todate);
-                    loadmonthewisecount(Fromdate, Todate);
+                    LoadmonthewiseData(Fromdate, Todate);
                     loadunitwisecount(Fromdate, Todate);
                     loadtraining_count_status(Fromdate, Todate);
                 }
@@ -749,7 +749,7 @@
                     });
                 }
 
-                function TotalIncidentsCount(Fromdate = '', Todate = '') {
+                function IncidentsCount(Fromdate = '', Todate = '') {
                     var url = "{{ admin_url('dashboard/total-incident') }}"
                     var data = {
                         Fromdate: Fromdate,
@@ -787,7 +787,7 @@
                     });
                 }
 
-                function heatmapofImsData(Fromdate = '', Todate = '') {
+                function heatmapofIms(Fromdate = '', Todate = '') {
                     var url = "{{ admin_url('dashboard/heatmap-of-imsData') }}"
                     var data = {
                         Fromdate: Fromdate,
@@ -806,7 +806,7 @@
                     });
                 }
 
-                function IncidentTypeChart(Fromdate = '', Todate = '') {
+                function IncidentType(Fromdate = '', Todate = '') {
                     var url = "{{ admin_url('dashboard/incident-type-chart') }}"
                     var data = {
                         Fromdate: Fromdate,
@@ -939,7 +939,7 @@
                     });
                 }
 
-                function inspection_wise_count(Fromdate = '', Todate = '') {
+                function inspectionWiseCount(Fromdate = '', Todate = '') {
                     var url = "{{ admin_url('dashboard/inspection-count') }}"
                     var data = {
                         Fromdate: Fromdate,
@@ -1195,7 +1195,7 @@
                         });
                     }
 
-                    function loadmonthewisecount(Fromdate = '', Todate = '') {
+                    function LoadmonthewiseData(Fromdate = '', Todate = '') {
                         var url = "{{ admin_url('dashboard/monthwiseptw') }}"
                         var data = {
                             Fromdate: Fromdate,
