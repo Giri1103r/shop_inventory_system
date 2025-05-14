@@ -1,21 +1,20 @@
 <div id="iirWiseUAUC"></div>
 
 <script>
-
-var chartData = {!! json_encode($chartData) !!};
+    var chartData = {!! json_encode($chartData) !!};
 
 
     var series = [{
-        name: 'Total Incidents',
-        data: chartData.map(item => item.total_incident)
+            name: 'Total Incidents',
+            data: chartData.map(item => item.total_incident)
         },
         {
             name: 'Unsafe Act',
-            data: chartData.map(item => item.unsafe_act) 
+            data: chartData.map(item => item.unsafe_act)
         },
         {
             name: 'Unsafe Condition',
-            data: chartData.map(item => item.unsafe_condition) 
+            data: chartData.map(item => item.unsafe_condition)
         },
         {
             name: 'Natural Causes',
@@ -34,6 +33,28 @@ var chartData = {!! json_encode($chartData) !!};
             toolbar: {
                 show: false
             },
+            events: {
+                dataPointSelection: function(event, chartContext, config) {
+                    var seriesIndex = config.seriesIndex;
+                    var dataPointIndex = config.dataPointIndex;
+
+                    var incidentType = chartContext.w.config.series[seriesIndex].name;
+                    var unit = chartContext.w.config.xaxis.categories[dataPointIndex];
+
+                    var incidentTypeObj = chartData[
+                        incidentType];
+
+                    if (incidentTypeObj) {
+                        var unitObj = incidentTypeObj[unit];
+
+                        if (unitObj) {
+                            var iirType = unitObj.incident_type_id;
+                            var unitId = unitObj.unit_id;
+                            redirectToIms(iirType, unitId);
+                        }
+                    }
+                }
+            }
         },
         plotOptions: {
             bar: {

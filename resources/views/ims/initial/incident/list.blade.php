@@ -6,11 +6,6 @@
     $dash_unit_id =
         isset($dashboard_search['unit_id']) && $dashboard_search['unit_id'] != ''
             ? $dashboard_search['unit_id'] : '';
-
-    $unitId =
-        isset($dashboard_search['unitId']) && $dashboard_search['unitId'] != ''
-            ? $dashboard_search['unitId'] : '';
-   dd( $dash_unit_id,$unitId);
     // $Fromdate = isset($dashboard_search['Fromdate']) ? $dashboard_search['Fromdate'] : '';
     // $Todate = isset($dashboard_search['Todate']) ? $dashboard_search['Todate'] : '';
 @endphp
