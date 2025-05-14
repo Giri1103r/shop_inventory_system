@@ -217,6 +217,8 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('auditFindings', [AdminController::class, 'auditFindings']);
                 Route::get('IIRTypeWiseRCPA', [AdminController::class, 'IIRTypeWiseRCPA']);
                 Route::get('gemba-walk-observation', [AdminController::class, 'gembaWalkObservation']);
+                Route::get('unitwiseptw', [AdminController::class, 'unitwiseptw']);
+                Route::get('monthwiseptw', [AdminController::class, 'monthwiseptw']);
                 Route::get('department', [AdminController::class, 'getDepartment']);
                 Route::get('monthwisetraining', [AdminController::class, 'getmonthwiseTraining']);
                 Route::get('trainingStatusCount', [AdminController::class, 'gettrainingStatusCount']);
