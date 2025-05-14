@@ -1,4 +1,4 @@
-<div id="dailyObservation"></div>
+<div id="gembaWalk"></div>
 
 
 <script>
@@ -50,12 +50,12 @@
 
 
     // Initialize and render the ApexCharts instance
-    var dailyObservation = new ApexCharts(document.querySelector("#dailyObservation"), options);
-    dailyObservation.render();
+    var gembaWalk = new ApexCharts(document.querySelector("#gembaWalk"), options);
+    gembaWalk.render();
 
     // Download button functionality
-    $("#dailyObservationDownload").off("click").on("click", function() {
-        dailyObservation.dataURI().then(({
+    $("#gembaWalkDownload").off("click").on("click", function() {
+        gembaWalk.dataURI().then(({
             imgURI
         }) => {
             var newCanvas = document.createElement('canvas');

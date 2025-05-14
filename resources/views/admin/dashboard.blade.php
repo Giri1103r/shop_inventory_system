@@ -586,6 +586,30 @@
                     </div>
                 </div>
 
+
+                <div class="row">
+                    <div class="col-xl-12 col-xxl-12">
+                        <div class="card view_card responsive">
+                            <div class="card-header">
+                                <h4 class="text-white">Gemba Walk Potential Hazard 6's Observation Report</h4>
+                                <a class="fas fa-arrow-alt-circle-down chartdownload" id="gembaWalkDownload"></a>
+                            </div>
+                            <div id="gembaWalk"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xl-12 col-xxl-12">
+                        <div class="card view_card responsive">
+                            <div class="card-header">
+                                <h4 class="text-white">Daily 6's Observation Report Monthly Static Report</h4>
+                                <a class="fas fa-arrow-alt-circle-down chartdownload" id="dailyObservationDownload"></a>
+                            </div>
+                            <div id="dailyObservation"></div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="row">
 
                     <div class="col-xl-6 col-xxl-6">
@@ -595,18 +619,6 @@
                                 <a class="fas fa-arrow-alt-circle-down chartdownload" id="training_count_download"></a>
                             </div>
                             <div id="trainingStatusPieChart"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-xl-12 col-xxl-12">
-                        <div class="card view_card responsive">
-                            <div class="card-header">
-                                <h4 class="text-white">Gemba Walk Potential Hazard 6s Observation Report</h4>
-                                <a class="fas fa-arrow-alt-circle-down chartdownload" id="gembaWalkDownload"></a>
-                            </div>
-                            <div id="gembaWalk"></div>
                         </div>
                     </div>
                 </div>
@@ -649,9 +661,10 @@
                     uaucStaticReport(Fromdate, Todate);
                     LoadDepartmentCount(Fromdate, Todate);
                     loadfmonthwisetraining(Fromdate, Todate);
-                    LoadmonthewiseData(Fromdate, Todate);
+                    LoadmonthewisePTWData(Fromdate, Todate);
                     loadunitwisecount(Fromdate, Todate);
                     loadtraining_count_status(Fromdate, Todate);
+                    dailyObservation(Fromdate, Todate);
                 }
 
                 function LoadDepartmentCount(Fromdate = '', Todate = '') {
@@ -803,6 +816,25 @@
                         success: function(dataAjx) {
 
                             $('#gembaWalk').html(dataAjx);
+                        }
+                    });
+                }
+
+                function dailyObservation(Fromdate = '', Todate = '') {
+                    var url = "{{ admin_url('dashboard/dailyObservation') }}"
+                    var data = {
+                        Fromdate: Fromdate,
+                        Todate: Todate,
+                    };
+                    $('#dailyObservation').html('');
+                    $.ajax({
+                        type: 'get',
+                        url: url,
+                        data: data,
+                        cache: false,
+                        success: function(dataAjx) {
+
+                            $('#dailyObservation').html(dataAjx);
                         }
                     });
                 }
@@ -1130,32 +1162,24 @@
                     });
                 }
 
-                $(document).ready(function() {
-                    $('#resetform').on('click', function(e) {
-                        e.preventDefault();
-                        location.reload();
-                    });
-                    const toDatePicker = flatpickr("#toDate", {
-                        dateFormat: "d-m-Y",
-                        minDate: "today",
-                    });
+                function LoadmonthewisePTWData(Fromdate = '', Todate = '') {
+                        var url = "{{ admin_url('dashboard/monthwiseptw') }}"
+                        var data = {
+                            Fromdate: Fromdate,
+                            Todate: Todate,
+                        };
+                        $('#monthwiseptw').html('');
+                        $.ajax({
+                            type: 'get',
+                            url: url,
+                            data: data,
+                            cache: false,
+                            success: function(dataAjx) {
 
-                    flatpickr("#fromDate", {
-                        dateFormat: "d-m-Y",
-                        onChange: function(selectedDates, dateStr) {
-                            if (selectedDates.length > 0) {
-                                const fromDate = selectedDates[0];
-                                if (toDatePicker) {
-                                    toDatePicker.set("minDate",
-                                        dateStr);
-                                }
-                                $('#LoadDepartmentCount').html(dataAjx);
-
-
+                                $('#monthwiseptw').html(dataAjx);
                             }
-                        }
-                    });
-
+                        });
+                    }
 
 
                     function loadfmonthwisetraining(Fromdate = '', Todate = '') {
@@ -1215,24 +1239,7 @@
                         });
                     }
 
-                    function LoadmonthewiseData(Fromdate = '', Todate = '') {
-                        var url = "{{ admin_url('dashboard/monthwiseptw') }}"
-                        var data = {
-                            Fromdate: Fromdate,
-                            Todate: Todate,
-                        };
-                        $('#unitwiseptw').html('');
-                        $.ajax({
-                            type: 'get',
-                            url: url,
-                            data: data,
-                            cache: false,
-                            success: function(dataAjx) {
 
-                                $('#unitwiseptw').html(dataAjx);
-                            }
-                        });
-                    }
 
                     function LoadiirTypewiseRCPACount(Fromdate = '', Todate = '') {
                         var url = "{{ admin_url('dashboard/IIRTypeWiseRCPA') }}"
@@ -1291,24 +1298,7 @@
                         });
                     }
 
-                    function heatmapofImsData(Fromdate = '', Todate = '') {
-                        var url = "{{ admin_url('dashboard/heatmap-of-imsData') }}"
-                        var data = {
-                            Fromdate: Fromdate,
-                            Todate: Todate,
-                        };
-                        $('#heatmapofImsData').html('');
-                        $.ajax({
-                            type: 'get',
-                            url: url,
-                            data: data,
-                            cache: false,
-                            success: function(dataAjx) {
 
-                                $('#heatmapofImsData').html(dataAjx);
-                            }
-                        });
-                    }
 
                     function IncidentTypeChart(Fromdate = '', Todate = '') {
                         var url = "{{ admin_url('dashboard/incident-type-chart') }}"
@@ -1613,6 +1603,35 @@
                             }
                         });
                     }
+
+                $(document).ready(function() {
+                    $('#resetform').on('click', function(e) {
+                        e.preventDefault();
+                        location.reload();
+                    });
+                    const toDatePicker = flatpickr("#toDate", {
+                        dateFormat: "d-m-Y",
+                        minDate: "today",
+                    });
+
+                    flatpickr("#fromDate", {
+                        dateFormat: "d-m-Y",
+                        onChange: function(selectedDates, dateStr) {
+                            if (selectedDates.length > 0) {
+                                const fromDate = selectedDates[0];
+                                if (toDatePicker) {
+                                    toDatePicker.set("minDate",
+                                        dateStr);
+                                }
+                                $('#LoadDepartmentCount').html(dataAjx);
+
+
+                            }
+                        }
+                    });
+
+
+
                     filterDashboard();
                 });
             </script>
