@@ -920,63 +920,68 @@ class AdminController extends Controller
 
     public function unitwiseptw(Request $request)
     {
-        $user = Auth::user();
-        $id = Auth::id();
+        try {
+            $user = Auth::user();
+            $id = Auth::id();
 
 
-        $unit = $this->unit
-            ->select('id', 'unit_name')
-            ->where('status', 1)
-            ->where('trash', 'NO')
-            ->get();
+            $unit = $this->unit
+                ->select('id', 'unit_name')
+                ->where('status', 1)
+                ->where('trash', 'NO')
+                ->get();
 
 
-        $permitCountsQuery = $this->ptw
-            ->selectRaw('unit_id, COUNT(*) as permit_count')
-            ->where('status', 1)
-            ->where('trash', 'NO')
-            ->groupBy('unit_id');
+            $permitCountsQuery = $this->ptw
+                ->selectRaw('unit_id, COUNT(*) as permit_count')
+                ->where('status', 1)
+                ->where('trash', 'NO')
+                ->groupBy('unit_id');
 
-        // if ($request->has('Fromdate') && !empty($request->Fromdate)) {
-        //     $startDate = Carbon::createFromFormat('d-m-Y', $request->Fromdate)->startOfDay()->format('Y-m-d H:i:s');
-        //     $permitCountsQuery->where('created_at', '>=', $startDate);
-        // }
-        // if ($request->has('Todate') && !empty($request->Todate)) {
-        //     $endDate = Carbon::createFromFormat('d-m-Y', $request->Todate)->endOfDay()->format('Y-m-d H:i:s');
-        //     $permitCountsQuery->where('created_at', '<=', $endDate);
-        // }
-        // if ($request->has('Fromdate') && !empty($request->Fromdate) && $request->has('Todate') && !empty($request->Todate)) {
-        //     $startDate = Carbon::createFromFormat('d-m-Y', $request->Fromdate)->startOfDay()->format('Y-m-d H:i:s');
-        //     $endDate = Carbon::createFromFormat('d-m-Y', $request->Todate)->endOfDay()->format('Y-m-d H:i:s');
-        //     $permitCountsQuery->whereBetween('created_at', [$startDate, $endDate]);
-        // }
+            // if ($request->has('Fromdate') && !empty($request->Fromdate)) {
+            //     $startDate = Carbon::createFromFormat('d-m-Y', $request->Fromdate)->startOfDay()->format('Y-m-d H:i:s');
+            //     $permitCountsQuery->where('created_at', '>=', $startDate);
+            // }
+            // if ($request->has('Todate') && !empty($request->Todate)) {
+            //     $endDate = Carbon::createFromFormat('d-m-Y', $request->Todate)->endOfDay()->format('Y-m-d H:i:s');
+            //     $permitCountsQuery->where('created_at', '<=', $endDate);
+            // }
+            // if ($request->has('Fromdate') && !empty($request->Fromdate) && $request->has('Todate') && !empty($request->Todate)) {
+            //     $startDate = Carbon::createFromFormat('d-m-Y', $request->Fromdate)->startOfDay()->format('Y-m-d H:i:s');
+            //     $endDate = Carbon::createFromFormat('d-m-Y', $request->Todate)->endOfDay()->format('Y-m-d H:i:s');
+            //     $permitCountsQuery->whereBetween('created_at', [$startDate, $endDate]);
+            // }
 
-        if ($request->Fromdate && $request->Todate) {
-            $permitCountsQuery->whereBetween('created_at', [
-                DBdateformat($request->Fromdate),
-                DBdateformat($request->Todate)
+            if ($request->Fromdate && $request->Todate) {
+                $permitCountsQuery->whereBetween('created_at', [
+                    DBdateformat($request->Fromdate),
+                    DBdateformat($request->Todate)
+                ]);
+            } elseif ($request->Fromdate) {
+                $permitCountsQuery->where('created_at', '>=', DBdateformat($request->Fromdate));
+            } elseif ($request->Todate) {
+                $permitCountsQuery->where('created_at', '<=', DBdateformat($request->Todate));
+            }
+
+
+            $permitCounts = $permitCountsQuery->get()->pluck('permit_count', 'unit_id');
+
+            $result = $unit->map(function ($unit) use ($permitCounts) {
+                return [
+                    'unit_id' => $unit->id,
+                    'unit_name' => $unit->unit_name,
+                    'permit_count' => $permitCounts[$unit->id] ?? 0,
+                ];
+            });
+
+            return view('admin.dashboard.unitwisecount', [
+                'unit' => $unit,
+                'unitData' => $result,
             ]);
-        } elseif ($request->Fromdate) {
-            $permitCountsQuery->where('created_at', '>=', DBdateformat($request->Fromdate));
-        } elseif ($request->Todate) {
-            $permitCountsQuery->where('created_at', '<=', DBdateformat($request->Todate));
+        } catch (\Exception $ex) {
+            report($ex);
+            return back()->withErrors('An error occurred');
         }
-
-
-        $permitCounts = $permitCountsQuery->get()->pluck('permit_count', 'unit_id');
-
-        $result = $unit->map(function ($unit) use ($permitCounts) {
-            return [
-                'unit_id' => $unit->id,
-                'unit_name' => $unit->unit_name,
-                'permit_count' => $permitCounts[$unit->id] ?? 0,
-            ];
-        });
-
-        return view('admin.dashboard.unitwisecount', [
-            'unit' => $unit,
-            'unitData' => $result,
-        ]);
     }
 
 
