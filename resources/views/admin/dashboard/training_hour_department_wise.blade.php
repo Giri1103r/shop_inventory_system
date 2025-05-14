@@ -1,12 +1,12 @@
 <div id="LoadTrainingHourSafetyDepartmentWise_Count"></div>
 
 <script>
-    // Chart data from the controller
+
     var departments = {!! json_encode($chartData['departments']) !!};
     var categories = {!! json_encode($chartData['labels']) !!};
     var seriesData = {!! json_encode($chartData['series']) !!};
 
-    // ApexCharts options
+
     var options = {
         series: [{
             name: 'Total Hours',
@@ -41,6 +41,24 @@
             },
             style: {
                 fontSize: '8px',
+            },
+             axisBorder: {
+                show: false
+            },
+            axisTicks: {
+                show: false
+            },
+            crosshairs: {
+                fill: {
+                    type: 'gradient',
+                    gradient: {
+                        colorFrom: '#D8E3F0',
+                        colorTo: '#BED1E6',
+                        stops: [0, 100],
+                        opacityFrom: 0.4,
+                        opacityTo: 0.5,
+                    }
+                }
             },
         },
         grid: {
