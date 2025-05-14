@@ -4,6 +4,15 @@
 <script>
     var inspection_wise_count = @json($inspection_wise_count);
 
+    var dynamicColors = [
+        '#3B5998', '#26A69A', '#FFC300', '#6C3483', '#E74C3C', '#3498DB',
+        '#1ABC9C', '#9B59B6', '#F39C12', '#2ECC71', '#E67E22', '#34495E'
+    ];
+
+    // Generate the color slice based on the number of bars
+    var barCount = Object.keys(inspection_wise_count).length;
+    var colors = dynamicColors.slice(0, barCount);
+
     var options = {
         series: [{
             name: 'Inspection Count',
@@ -14,20 +23,28 @@
             height: 350,
             toolbar: {
                 show: false
-            },
+            }
         },
         plotOptions: {
             bar: {
-                borderRadius: 4,
+                borderRadius: 10,
                 borderRadiusApplication: 'end',
-                horizontal: true,
+                horizontal: false,
+                distributed: true // Important for per-bar color
             }
         },
+        colors: colors,
         dataLabels: {
-            enabled: true
+            enabled: true,
+            style: {
+                colors: ['#000']
+            }
         },
         xaxis: {
-            categories: Object.keys(inspection_wise_count)
+            categories: Object.keys(inspection_wise_count),
+            labels: {
+                rotate: -45
+            }
         },
         tooltip: {
             y: {
@@ -38,6 +55,8 @@
             }
         }
     };
+
+
 
     var inspection_wise_count = new ApexCharts(document.querySelector("#inspection_wise_count"), options);
     inspection_wise_count.render();
