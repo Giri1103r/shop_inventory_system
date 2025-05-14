@@ -431,7 +431,9 @@ class AdminController extends Controller
                 'work_wise_count' => $work_wise_count,
                 'dates' => $dates,
             ];
-
+            if (empty($work_wise_count) || array_sum($work_wise_count) == 0) {
+                return response()->json('<div class="border-0 pb-3" style="margin-top: 166px;"><h4 style="text-align: center;">No data Found.</h4></div>');
+            }
             return view('admin.dashboard.ptw_type_wise_count', $data);
         } catch (\Exception $ex) {
             report($ex);
@@ -459,7 +461,9 @@ class AdminController extends Controller
                 $chartData['series'][] = (float) $item->total_hours;
                 $chartData['departments'][] = $item->department_name;
             }
-
+            if ($training_data->isEmpty()) {
+                return response()->json('<div class="border-0 pb-3" style="margin-top: 166px;"><h4 style="text-align: center;">No data Found.</h4></div>');
+            }
             return view('admin.dashboard.training_hour_department_wise', [
                 'training_data' => $training_data,
                 'chartData' => $chartData,
@@ -485,7 +489,9 @@ class AdminController extends Controller
                 'hold_count' => $hold_count,
                 'dates' => $dates,
             ];
-
+            if (empty($hold_count)) {
+                return response()->json('<div class="border-0 pb-3" style="margin-top: 166px;"><h4 style="text-align: center;">No data Found.</h4></div>');
+            }
             return view('admin.dashboard.ptw_hold_wise_count', $data);
         } catch (\Exception $ex) {
             report($ex);
@@ -502,6 +508,9 @@ class AdminController extends Controller
             $data = [
                 'getdashdata' => $request,
             ];
+            if (empty($chartData) || array_sum($chartData) == 0) {
+                return response()->json('<div class="border-0 pb-3" style="margin-top: 166px;"><h4 style="text-align: center;">No data Found.</h4></div>');
+            }
 
             return view('admin.dashboard.chartPPEIssuanceGroupWise', [
                 'getdashdata' => $request,
@@ -541,6 +550,9 @@ class AdminController extends Controller
                 'getdashdata' => $request,
                 'chartData' => $chartData,
             ]);
+              if (empty($chartData) || array_sum($chartData) == 0) {
+                return response()->json('<div class="border-0 pb-3" style="margin-top: 166px;"><h4 style="text-align: center;">No data Found.</h4></div>');
+            }
         } catch (\Exception $ex) {
             report($ex);
         }

@@ -389,7 +389,7 @@
 
             <div class="row">
 
-                <div class="col-xl-12 col-xxl-12">
+                {{-- <div class="col-xl-12 col-xxl-12">
                     <div class="card view_card">
                         <div class="card-header">
                             <h4 class="text-white">PTW Average time between initial to closed</h4>
@@ -398,7 +398,7 @@
                         <div id="LoadPTWAvgTimeChartCount"></div>
                     </div>
                 </div>
-            </div>
+            </div> --}}
             <div class="row">
                 <div class="col-xl-12 col-xxl-12">
                     <div class="card view_card">

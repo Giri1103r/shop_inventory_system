@@ -1163,11 +1163,14 @@ class SafetyPermit extends Model
         $from_date = $request->input('Fromdate');
         $to_date = $request->input('Todate');
 
-        $openQuery = $this->where('permit_status', STATUS_PLANT_HEAD_APPROVED)
+        $openQuery = $this->where('permit_status', '>='  ,STATUS_EHS_VERIFICATION_PENDING)
+          ->orwhere('permit_status' , '!=', STATUS_CLOSED)
+          ->orwhere('permit_status' , '!=', STATUS_PERMIT_EXPIRED)
             ->where('status', 1)
             ->where('trash', 'NO');
 
         $closeQuery = $this->where('permit_status', STATUS_CLOSED)
+        ->orwhere('permit_status' , STATUS_PERMIT_EXPIRED)
             ->where('status', 1)
             ->where('trash', 'NO');
 
