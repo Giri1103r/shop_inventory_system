@@ -59,7 +59,7 @@ class AdminController extends Controller
             if (Auth::check()) {
                 $user = Auth::user();
                 $data = [];
-                if ((in_array(ROLE_SUPERADMIN, getUserRoleId(Auth::id())) || in_array(ROLE_ADMIN, getUserRoleId(Auth::id())))) {
+                if (Auth::user()->role == ROLE_SUPERADMIN || Auth::user()->role == ROLE_ADMIN || Auth::user()->role == ROLE_EHS_HEAD || Auth::user()->role == ROLE_EHS_OFFICER) {
                     $masterLink = [
                         [
                             'link' => 'company/list',
@@ -290,7 +290,7 @@ class AdminController extends Controller
                 'getdashdata' => $request,
             ]);
         } catch (\Exception $ex) {
-            report($ex);
+            dd($ex);
             return back()->with('error', 'Failed to load unit-wise incident data.');
         }
     }
