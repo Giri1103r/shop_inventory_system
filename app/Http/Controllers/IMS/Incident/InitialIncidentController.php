@@ -171,6 +171,7 @@ class InitialIncidentController extends Controller
         $data = array(
             'unitList' => $unitList,
             'status' => $status,
+            'dashboard_search' => $request,
         );
 
         return view('ims.initial.incident.list', $data);
@@ -359,7 +360,7 @@ class InitialIncidentController extends Controller
         }
     }
 
-  
+
     public function employeename(Request $request)
     {
         $name = $request->input('search');
@@ -374,7 +375,7 @@ class InitialIncidentController extends Controller
             ->map(function ($employee) {
                 return [
                     'id' =>  $employee->emp_id,
-                    'text' => $employee->emp_name . ' - ' . $employee->emp_id ,
+                    'text' => $employee->emp_name . ' - ' . $employee->emp_id,
                 ];
             });
 
@@ -388,7 +389,7 @@ class InitialIncidentController extends Controller
             ->map(function ($worker) {
                 return [
                     'id' =>  $worker->emp_id,
-                    'text' => $worker->emp_name . ' - ' . $worker->emp_id ,
+                    'text' => $worker->emp_name . ' - ' . $worker->emp_id,
                 ];
             });
 
