@@ -88,15 +88,15 @@ class AuditAssessmentController extends Controller
                         })
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            $btn = '<a href="' . admin_url('audit/assessment/view/' . encryptId($row->id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
+                            $btn = '<a href="' . admin_url('audit/assessment/view/' . encryptId($row->id)) . '"   class="view-icon me-1" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
                             // if (CheckUserRole(ROLE_SUPERADMIN)) {
                             // $btn .= '<a href="' . admin_url('inspection/master/checklist-sub-type/edit/' . encryptId($row->id)) . '" class="edit-icon " title="' . __('common.edit') . '"><i class="fa-solid fa-pen-to-square"></i> ';
                             // }
 
-                            $btn .= '<a href="' . admin_url('audit/assessment/generalpdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
+                            $btn .= '<a href="' . admin_url('audit/assessment/generalpdf/' . encryptId($row->id)) . '" class="view-icon me-1" style="margin-right: 5px;" title="PDF">
                             <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
                         </a>';
-                            $btn .= '<a href="' . admin_url('audit/assessment/generalExcel/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
+                            $btn .= '<a href="' . admin_url('audit/assessment/generalExcel/' . encryptId($row->id)) . '" class="view-icon me-1" style="margin-right: 5px;" title="PDF">
                         <i class="fas fa-file-excel" style="color: #1D6F42;" aria-hidden="true"></i>
                      </a>';
                             return $btn;
@@ -128,11 +128,14 @@ class AuditAssessmentController extends Controller
             $checklist_types  = $this->checklist_type->select('id', 'category_name')->where('status', '1')->get();
             $shift  = $this->shift->select('id', 'shift')->where('status', '1')->get();
             $checklist_details = getCheckListQuestion(CHECKLIST_AUDIT_ASSESSMENT);
+
             $options =  getoption(CHECKLIST_AUDIT_ASSESSMENT);
             $getoption = string_to_array($options->type);
+
             if (count($checklist_details) <= 0) {
-                Session::flash('error', __('inspection.checklist_add'));
-                return redirect()->back();
+
+                Session::flash('success', __('inspection.checklist_add'));
+                return redirect(admin_url('inspection/master/checklist-sub-type-data/add'));
             }
             $data = array(
                 'checklist_types' => $checklist_types,
@@ -143,7 +146,7 @@ class AuditAssessmentController extends Controller
             return view('inspection.inspection_audit.auditAssessment.add', $data);
         } catch (Exception $ex) {
             report($ex);
-              Session::flash('error',  __('common.message_error'));
+            Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('audit/assessment/list'));
         }
     }
@@ -186,6 +189,7 @@ class AuditAssessmentController extends Controller
 
             return redirect(admin_url('audit/assessment/list'));
         } catch (Exception $ex) {
+            report($ex);
             Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('audit/assessment/list'));
         }
@@ -372,9 +376,11 @@ class AuditAssessmentController extends Controller
 
                             $statusIcon = '-';
                             if (!empty($answer) && strtoupper($answer) == 'YES') {
-                                $statusIcon = '✓';
-                            } elseif (in_array(strtoupper($answer), ['NO', 'N/A'])) {
-                                $statusIcon = 'X';
+                                $statusIcon = 'YES';
+                            } elseif (!empty($answer) && strtoupper($answer) == 'NO') {
+                                $statusIcon = 'NO';
+                            } elseif (!empty($answer) && strtoupper($answer) == 'N/A') {
+                                $statusIcon = 'N/A';
                             }
 
                             $sheet->mergeCells("K$inspectionRow:S$inspectionRow")
@@ -429,7 +435,7 @@ class AuditAssessmentController extends Controller
             exit;
         } catch (Exception $ex) {
             report($ex);
-              Session::flash('error',  __('common.message_error'));
+            Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('audit/assessment/list'));
         }
     }
@@ -478,7 +484,7 @@ class AuditAssessmentController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
-              Session::flash('error',  __('common.message_error'));
+            Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('audit/assessment/list'));
         }
     }
@@ -528,7 +534,7 @@ class AuditAssessmentController extends Controller
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);
-             Session::flash('error',  __('common.message_error'));
+            Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('audit/assessment/list'));
         }
     }
@@ -669,9 +675,11 @@ class AuditAssessmentController extends Controller
                         // Handle status icon
                         $statusIcon = '-';
                         if (!empty($answer) && strtoupper($answer) == 'YES') {
-                            $statusIcon = '✓';
-                        } elseif (in_array(strtoupper($answer), ['NO', 'N/A'])) {
-                            $statusIcon = 'X';
+                            $statusIcon = 'YES';
+                        } elseif (!empty($answer) && strtoupper($answer) == 'NO') {
+                            $statusIcon = 'NO';
+                        } elseif (!empty($answer) && strtoupper($answer) == 'N/A') {
+                            $statusIcon = 'N/A';
                         }
 
                         // Write the status icon
@@ -724,7 +732,7 @@ class AuditAssessmentController extends Controller
             exit;
         } catch (Exception $ex) {
             report($ex);
-             Session::flash('error',  __('common.message_error'));
+            Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('audit/assessment/list'));
         }
     }

@@ -16,6 +16,7 @@ use App\Models\Inspection\Master\ChecklistFile;
 use App\Models\Inspection\Master\ChecklistType;
 use App\Models\Inspection\Master\ChecklistOptionType;
 use App\Models\Inspection\Master\ChecklistSubType;
+use App\Models\Inspection\Master\ChecklistSubTypeData;
 use App\Models\UploadLog;
 
 class ChecklistTypeController extends Controller
@@ -26,6 +27,7 @@ class ChecklistTypeController extends Controller
     private $upload_log;
     private $checklist_option;
     private $checklist_sub_type;
+    private $checklist_sub_type_data;
 
     public function __construct()
     {
@@ -34,6 +36,7 @@ class ChecklistTypeController extends Controller
         $this->checklist_option = new ChecklistOptionType();
         $this->upload_log = new UploadLog();
         $this->checklist_sub_type = new ChecklistSubType();
+        $this->checklist_sub_type_data = new ChecklistSubTypeData();
     }
     public function Index(Request $request)
     {
@@ -76,7 +79,6 @@ class ChecklistTypeController extends Controller
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
-                    dd($ex);
                     report($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
@@ -97,6 +99,8 @@ class ChecklistTypeController extends Controller
             return view('inspection.master.checklist_type.add', $data);
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error',  __('common.message_error'));
+            return redirect(admin_url('inspection/master/checklist-type/list'));
         }
     }
 
@@ -117,12 +121,13 @@ class ChecklistTypeController extends Controller
                 $this->checklist_file->store($checklist_type->id, CHECKLIST_TYPE);
                 Session::flash('success', __('inspection.check_list_type_success'));
             } catch (Exception $ex) {
-                dd($ex);
+                report($ex);
                 Session::flash('error', __('common.message_error'));
             }
 
             return redirect(admin_url('inspection/master/checklist-type/list'));
         } catch (Exception $ex) {
+            report($ex);
             Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('inspection/master/checklist-type/list'));
         }
@@ -183,7 +188,9 @@ class ChecklistTypeController extends Controller
             );
             return view('inspection.master.checklist_type.edit', $data);
         } catch (Exception $error) {
-            report($error->getMessage());
+            report($error);
+            Session::flash('error',  __('common.message_error'));
+            return redirect(admin_url('inspection/master/checklist-type/list'));
         }
     }
 
@@ -231,10 +238,18 @@ class ChecklistTypeController extends Controller
     {
         try {
             $id = decryptId($request->id);
-            $this->checklist_type->statuschange($id);
-            // $this->checklist_sub_type->statuschange_all($id);
 
-            return response()->json(['status' => 'success', 'msg' => 'Checklist type Status Changed Successfully!'], 200);
+            $checklistSubtype =   $this->checklist_sub_type->statuschange_all($id);
+            $checklistSubtypeData =   $this->checklist_sub_type_data->statuschange_all($id);
+
+            if ($checklistSubtype) {
+                return response()->json(['status' => 'warning', 'msg' => 'Dependancy Master you Cannot make this In-active!'], 200);
+            } else if ($checklistSubtypeData) {
+                return response()->json(['status' => 'warning', 'msg' => 'Dependancy Master you Cannot make this In-active!'], 200);
+            } else {
+                $this->checklist_type->statuschange($id);
+                return response()->json(['status' => 'success', 'msg' => 'Checklist type Status Changed Successfully!'], 200);
+            }
         } catch (Exception $ex) {
 
             return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);

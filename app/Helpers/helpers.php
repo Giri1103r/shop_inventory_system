@@ -1966,9 +1966,7 @@ if (!function_exists('getMonth')) {
                 ->join('inspection_master_checklist_sub_type_data_name', 'inspection_master_checklist_sub_type_data.id', '=', 'inspection_master_checklist_sub_type_data_name.checklist_sub_type_data_id')
                 ->leftJoin('inspection_master_checklist_option', 'inspection_master_checklist_option.id', '=', 'inspection_master_checklist_type.questionary')
                 ->where('inspection_master_checklist_type.id', $id)
-                ->where('inspection_master_checklist_sub_type_data_name.status',1)
-                ->where('inspection_master_checklist_sub_type_data.status',1)
-
+                ->where('inspection_master_checklist_sub_type_data_name.status', 1)
 
                 ->get([
                     'inspection_master_checklist_subtype.*',

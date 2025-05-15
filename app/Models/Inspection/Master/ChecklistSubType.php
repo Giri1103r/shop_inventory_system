@@ -247,20 +247,10 @@ class ChecklistSubType extends Model
     public function statuschange_all($id)
     {
         $request = request();
-        $datas = $this->where('category_id', $id)->get();
-        $type = $request->types;
-        foreach ($datas as $data) {
-            if ($type == 1) {
-                $update_data = array(
-                    'status' => 0,
-                );
-            } else {
-                $update_data = array(
-                    'status' => 1,
-                );
-            }
-            $data->update($update_data);
-        }
+        $datas = $this->where('category_id', $id)->where('status',1)->get();
+       if($datas->count()>0){
+        return true;
+       }
     }
 
 

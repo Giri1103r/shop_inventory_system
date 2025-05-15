@@ -120,7 +120,23 @@ class ChecklistSubTypeDataName extends Model
             ->get();
     }
 
+    public function statuschange($id)
+    {
+        $request = request();
 
+        $type = $request->types;
+        if ($type == 1) {
+            $update_data = array(
+                'status' => 0,
+            );
+        } else {
+            $update_data = array(
+                'status' => 1,
+            );
+        }
+
+        return $this->where('checklist_sub_type_data_id', $id)->update($update_data);
+    }
 
     protected static function booted()
     {

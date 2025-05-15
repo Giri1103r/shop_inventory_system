@@ -190,7 +190,7 @@ class ChecklistSubTypeDataController extends Controller
             );
             return view('inspection.master.checklist_subtype_data.edit', $data);
         } catch (Exception $error) {
-            dd($error->getMessage());
+            report($error->getMessage());
         }
     }
 
@@ -248,6 +248,7 @@ class ChecklistSubTypeDataController extends Controller
             $id = decryptId($request->id);
 
             $this->checklist_subtype_data->statuschange($id);
+              $this->checklist_subtype_dataName->statuschange($id);
 
             return response()->json(['status' => 'success', 'msg' => 'Checklist Sub Type Data Status Changed Successfully!'], 200);
         } catch (Exception $ex) {
