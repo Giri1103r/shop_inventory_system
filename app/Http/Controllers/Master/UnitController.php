@@ -262,7 +262,7 @@ class UnitController extends Controller
             // $training_schedule = $this->training_schedule->where('unit_id', $id)->exists();
             // $training_matrix = $this->training_matrix->where('unit_id', $id)->exists();
 
-            if ( $department) {
+            if ($department) {
                 return response()->json(['status' => 'error', 'msg' => 'module_exits'], 406);
             }
             $this->unit->deleterecord($id);
@@ -448,7 +448,7 @@ class UnitController extends Controller
                 ];
 
                 // dispatch(new ImportUnitJob($details));
-                   dispatch((new ImportUnitJob($details))->onQueue('unit'));
+                dispatch((new ImportUnitJob($details))->onQueue('unit'));
             }
 
             $insert_data['log_id'] = $insert_id;
@@ -468,7 +468,16 @@ class UnitController extends Controller
     {
         $locationId = decryptId($locationId);
         $id = decryptId($request->id);
-        $unit = $this->unit->ajaxList($id ,$locationId);
+        $unit = $this->unit->ajaxList($id, $locationId);
+
+        return response()->json($unit);
+    }
+
+    public function unitData(Request $request, $companyId)
+    {
+        $companyId = decryptId($companyId);
+        $id = decryptId($request->id);
+        $unit = $this->unit->unitajaxList($id, $companyId);
 
         return response()->json($unit);
     }
@@ -500,10 +509,10 @@ class UnitController extends Controller
             $location_id = decryptId($request->location_id);
             $id = $request->id;
             if ($id == '') {
-                $record = $this->unit->uniqueCheck($unit_name,$location_id,$company_id);
+                $record = $this->unit->uniqueCheck($unit_name, $location_id, $company_id);
             } else {
                 $id = decryptId($id);
-                $record = $this->unit->ExistuniqueCheck($unit_name,$location_id,$company_id,$company_id, $id);
+                $record = $this->unit->ExistuniqueCheck($unit_name, $location_id, $company_id, $company_id, $id);
             }
             if ($record->count()) {
                 return Response::json(false);

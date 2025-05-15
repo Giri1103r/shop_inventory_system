@@ -397,6 +397,7 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/unique', [UnitController::class, 'Uniquecheck']);
                 Route::get('/alllist/{locationId}', [UnitController::class, 'alllist']);
                 Route::get('/ajax-list/{locationId}/{id}', [UnitController::class, 'list']);
+                Route::get('/get-unit-data/{companyId}/{id}', [UnitController::class, 'unitData']);
             });
 
             /**

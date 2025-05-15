@@ -92,18 +92,37 @@
                                                 </div>
                                             </div>
 
-                                            <div class="col-md-4 mb-3">
+                                           <div class="col-md-4 mb-3 ">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Unit</label>
-                                                    <select name="unit_id" id="unit_id"
+                                                    <label for="company_id require" class="form-label require ">Company</label>
+                                                    <select name="company_id" id="company_id"
                                                         class=" form-control single-select" style="width: 100%">
-                                                        <option value="">Select Unit</option>
-                                                        @foreach ($unitList as $unit)
-                                                            <option value="{{ encryptId($unit->id) }}">
-                                                                {{ $unit->unit_name }}</option>
+                                                        <option value="">Select Company</option>
+                                                        @foreach ($companyList as $list)
+                                                            <option value="{{ encryptId($list->id) }}">
+                                                                {{ $list->company_name }}</option>
                                                         @endforeach
+
                                                     </select>
+                                                     <div class="text-danger"></div>
                                                 </div>
+
+
+                                            </div>
+                                           
+
+                                            <div class="col-md-4 mb-3 ">
+                                                <div class="form-group form-input">
+                                                    <label for="unit_id" class="form-label require">Unit</label>
+                                                    <select name="unit_id" id="unit_id"
+                                                        class="form-control single-select form-control-sm"
+                                                        style="width: 100%">
+                                                        <option value="">Select the Unit</option>
+
+                                                    </select>
+                                                     <div class="text-danger"></div>
+                                                </div>
+
                                             </div>
                                             <div class="col-md-4 mb-3">
                                                 <div class="form-group form-input">
@@ -220,7 +239,31 @@
             // $('#unit_id').on('change', checkSelections);
             // $('#department_id').on('change', checkSelections);
             // $('#venue_id').on('change', checkSelections);
-
+   $(document).on('change', '#company_id', function() {
+            var companyId = $(this).val();
+            if (companyId) {
+                $.ajax({
+                    url: "{{ admin_url('unit/get-unit-data') }}/" + companyId + "/0",
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#unit_id').empty().append(
+                            '<option value="">Select unit</option>');
+                        $.each(data, function(key, value) {
+                            $('#unit_id').append('<option value="' + value
+                                .id + '">' + value.name + '</option>');
+                        });
+                        $('#unit_id').trigger('change.');
+                    },
+                    error: function(xhr) {
+                        alert('Error fetching unit. Please try again.');
+                    }
+                });
+            } else {
+                $('#unit_id').empty().append('<option value="">Select unit</option>');
+                $('#unit_id').trigger('change.');
+            }
+        });
             $(document).on('change', '#unit_id', function() {
                 var unitId = $(this).val();
                 if (unitId) {

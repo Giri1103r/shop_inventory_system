@@ -30,7 +30,7 @@
                             <div class="card-body">
 
                                 <div class="basic-form">
-                                    <form method="POST" id="safetyPermitEdit"
+                                    <form method="POST" id="safetyPermitadd"
                                         action="{{ admin_url('safetypermit/edit/submit') }}" enctype="multipart/form-data">
                                         @csrf
                                         <input type="hidden" name="safetypermitid" id="id"
@@ -50,7 +50,8 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">To Date</label>
                                                     <input type="text" name="to_date" id="to_date_picker"
-                                                    value="{{ displaydateformat($safetypermit->to_date) }}" class="form-control">
+                                                        value="{{ displaydateformat($safetypermit->to_date) }}"
+                                                        class="form-control">
                                                     <div class="text-danger"></div>
                                                 </div>
                                             </div>
@@ -74,21 +75,49 @@
                                                 </div>
                                             </div>
 
-                                            <div class="col-md-3">
+                                             <div class="col-md-3 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Unit</label>
-                                                    <select name="unit_id" id="unit_id"
-                                                        class=" form-control single-select" style="width: 100%">
-                                                        <option value="">Select Unit</option>
-                                                        @foreach ($unitList as $unit)
-                                                            <option value="{{ encryptId($unit->id) }}"
-                                                                @if ($unit->id == $safetypermit->unit_id) selected @endif>
-                                                                {{ $unit->unit_name }}
+                                                    <label class="form-label require">Company Name</label>
+                                                    <select name="company_id" id="company_id"
+                                                        class="form-control single-select" style="width: 100%">
+                                                        <option value="">Select Company Name</option>
+
+                                                        @foreach ($companyList as $list)
+                                                            <option value="{{ encryptId($list->id) }}"
+                                                                @if ($safetypermit->company_id == $list->id) selected @endif>
+                                                                {{ $list->company_name }}
+                                                            </option>
                                                         @endforeach
+
+
                                                     </select>
-                                                    <div class="text-danger"></div>
+                                                     <div class="text-danger"></div>
                                                 </div>
                                             </div>
+                                            <div class="col-md-3 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">Location Name</label>
+                                                    <select name="location_id" id="location_id"
+                                                        class=" form-control single-select" style="width: 100%">
+                                                        <option value="">Select Location Name</option>
+
+                                                    </select>
+                                                     <div class="text-danger"></div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">Unit Name</label>
+                                                    <select name="unit_id" id="unit_id"
+                                                        class=" form-control single-select" style="width: 100%">
+                                                        <option value="">Select Unit Name</option>
+
+                                                    </select>
+                                                     <div class="text-danger"></div>
+                                                </div>
+                                            </div>
+
+                                          
 
                                             <div class="col-md-3">
                                                 <div class="form-group form-input">
@@ -1087,55 +1116,7 @@
         $(document).ready(function() {
 
 
-            // $(document).ready(function() {
-            //     const today = new Date();
-            //     const currentTime = today.getHours() + ":" + today.getMinutes().toString().padStart(2, "0");
-
-            //     // Initialize date picker
-            //     flatpickr("#date_picker", {
-            //         minDate: today,
-            //         dateFormat: "d-m-Y",
-            //         defaultDate: "{{ displaydateformat($safetypermit->date) }}"
-            //     });
-
-            //     // Declare endTimePicker globally so it's accessible in the startTimePicker onChange
-            //     let endTimePicker;
-
-            //     // Initialize start time picker
-            //     const startTimePicker = flatpickr("#time_from_picker", {
-            //         enableTime: true,
-            //         noCalendar: true,
-            //         dateFormat: "H:i",
-            //         time_24hr: true,
-            //         defaultDate: "{{ $safetypermit->time_from }}",
-
-            //         onChange: function(selectedDates, dateStr, instance) {
-            //             if (selectedDates.length > 0) {
-            //                 const fromDate = selectedDates[0];
-            //                 const toDate = new Date(fromDate.getTime() + 9 * 60 * 60 *
-            //                     1000); // +9 hours
-
-            //                 // Set limits on end time picker
-            //                 if (endTimePicker) {
-            //                     endTimePicker.set('minDate', fromDate);
-            //                     endTimePicker.set('maxDate', toDate);
-            //                     endTimePicker.setDate(toDate);
-            //                 }
-            //             }
-            //         }
-            //     });
-
-            //     // Initialize end time picker
-            //     endTimePicker = flatpickr("#time_to_picker", {
-            //         enableTime: true,
-            //         noCalendar: true,
-            //         dateFormat: "H:i",
-            //         time_24hr: true,
-            //         defaultDate: "{{ $safetypermit->time_to }}",
-            //         minTime: "{{ $safetypermit->time_from ?? currentTime }}"
-            //     });
-            // });
-
+         
 
             $(document).ready(function() {
                 let fromDate = new Date();
@@ -1151,7 +1132,7 @@
                     $('#date_picker').flatpickr({
                         dateFormat: 'd-m-Y',
                         minDate: 'today',
-                       defaultDate: "{{ Displaydateformat($safetypermit->date) }}",
+                        defaultDate: "{{ Displaydateformat($safetypermit->date) }}",
                         onChange: function(selectedDates) {
                             if (selectedDates.length > 0) {
                                 fromDate = selectedDates[0];
@@ -2511,6 +2492,12 @@
                     unit_id: {
                         required: true,
                     },
+                    company_id: {
+                        required: true,
+                    },
+                     location_id: {
+                        required: true,
+                    },
                     exact_location_job: {
                         required: true,
                         minlength: 3,
@@ -2564,6 +2551,9 @@
                     date: {
                         required: "Date cannot be empty.",
                     },
+                    company_id: {
+                        required: "Please Select the Company Name.",
+                    },
                     to_date: {
                         required: "Date cannot be empty.",
                     },
@@ -2575,6 +2565,12 @@
                     },
                     unit_id: {
                         required: "Please Select the unit.",
+                    },
+                     company_id: {
+                        required: "Please Select the Company.",
+                    },
+                     location_id: {
+                        required: "Please Select the Location.",
                     },
                     exact_location_job: {
                         required: "Exact Job Location cannot be empty.",
@@ -2676,5 +2672,89 @@
                 return this.optional(element) || regexp.test(value);
             }, "Please check your input.");
         });
+
+
+        // get company based unit
+
+      $(document).ready(function() {
+
+            var initialCompanyId = $('#company_id').val();
+            var preselectedLocationId = "{{ encryptId($safetypermit->location_id) ?? '0' }}";
+            var preselectedUnitId = "{{ encryptId($safetypermit->unit_id) ?? '0' }}";
+
+            if (initialCompanyId) {
+                fetchLocations(initialCompanyId, preselectedLocationId, function() {
+                    var location_id = preselectedLocationId;
+                    fetchUnits(location_id, preselectedUnitId);
+
+                });
+            }
+
+            $('#company_id').on('change', function() {
+                var company_id = $(this).val();
+                fetchLocations(company_id, preselectedLocationId, function() {
+                    $('#location_id').trigger('change');
+                });
+            });
+
+            $('#location_id').on('change', function() {
+                var location_id = $(this).val();
+                fetchUnits(location_id, preselectedUnitId, function() {
+                    $('#unit_id').trigger('change');
+                });
+            });
+
+
+
+            function fetchLocations(company_id, preselectedLocationId, callback) {
+               
+                if (company_id) {
+                    $.ajax({
+                        url: "{{ admin_url('location/ajax-list/') }}" + company_id + '/' +
+                            preselectedLocationId,
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(data) {
+                            $('#location_id').empty().append(
+                                '<option value="">Select Location</option>');
+                            $.each(data, function(key, value) {
+                                var selected = (value.id == preselectedLocationId) ?
+                                    'selected' : '';
+                                $('#location_id').append('<option value="' + value.id + '" ' +
+                                    selected + '>' + value.name + '</option>');
+                            });
+                            if (callback) callback();
+                        }
+                    });
+                } else {
+                    $('#location_id').empty().append('<option value="">Select Location</option>');
+                }
+            }
+
+            function fetchUnits(location_id, preselectedUnitId, callback) {
+                if (location_id) {
+                    $.ajax({
+                        url: "{{ admin_url('unit/ajax-list/') }}" + location_id + '/' + preselectedUnitId,
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(data) {
+                            $('#unit_id').empty().append('<option value="">Select Unit</option>');
+                            $.each(data, function(key, value) {
+                                var selected = (value.id == preselectedUnitId) ? 'selected' :
+                                    '';
+                                $('#unit_id').append('<option value="' + value.id + '" ' +
+                                    selected + '>' + value.name + '</option>');
+                            });
+                            if (callback) callback();
+                        }
+                    });
+                } else {
+                    $('#unit_id').empty().append('<option value="">Select Unit</option>');
+                }
+            }
+
+
+        });
+
     </script>
 @endpush

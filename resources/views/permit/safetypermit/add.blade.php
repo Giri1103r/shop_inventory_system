@@ -66,22 +66,49 @@
                                                     <div class="text-danger"></div>
                                                 </div>
                                             </div>
-
-
-                                            <div class="col-md-3 mb-3">
+                                            <div class="col-md-3 mb-3 ">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Unit</label>
-                                                    <select name="unit_id" id="unit_id"
+                                                    <label for="company_id " class="form-label require">Company</label>
+                                                    <select name="company_id" id="company_id"
                                                         class=" form-control single-select" style="width: 100%">
-                                                        <option value="">Select Unit</option>
-                                                        @foreach ($unitList as $unit)
-                                                            <option value="{{ encryptId($unit->id) }}">
-                                                                {{ $unit->unit_name }}</option>
+                                                        <option value="">Select Company</option>
+                                                        @foreach ($companyList as $list)
+                                                            <option value="{{ encryptId($list->id) }}">
+                                                                {{ $list->company_name }}</option>
                                                         @endforeach
 
                                                     </select>
-                                                    <div class="text-danger"></div>
+                                                     <div class="text-danger"></div>
                                                 </div>
+
+
+                                            </div>
+                                            <div class="col-md-3 mb-3 ">
+                                                <div class="form-group form-input">
+                                                    <label for="location_id" class="form-label require">Location</label>
+                                                    <select name="location_id" id="location_id"
+                                                        class="form-control single-select form-control-sm"
+                                                        style="width: 100%">
+                                                        <option value="">Select the Location</option>
+
+                                                    </select>
+                                                     <div class="text-danger"></div>
+                                                </div>
+
+                                            </div>
+
+                                            <div class="col-md-3 mb-3 ">
+                                                <div class="form-group form-input">
+                                                    <label for="unit_id" class="form-label require">Unit</label>
+                                                    <select name="unit_id" id="unit_id"
+                                                        class="form-control single-select form-control-sm"
+                                                        style="width: 100%">
+                                                        <option value="">Select the Unit</option>
+
+                                                    </select>
+                                                     <div class="text-danger"></div>
+                                                </div>
+
                                             </div>
 
                                             <div class="col-md-3 mb-3">
@@ -975,6 +1002,61 @@
 
 @push('script')
     <script>
+        // get UNit
+
+        $(document).on('change', '#company_id', function() {
+            var companyId = $(this).val();
+            if (companyId) {
+                $.ajax({
+                    url: "{{ admin_url('location/ajax-list') }}/" + companyId + "/0",
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#location_id').empty().append(
+                            '<option value="">Select Location</option>');
+                        $.each(data, function(key, value) {
+                            $('#location_id').append('<option value="' + value
+                                .id + '">' + value.name + '</option>');
+                        });
+                        $('#location_id').trigger('change.');
+                    },
+                    error: function(xhr) {
+                        alert('Error fetching location. Please try again.');
+                    }
+                });
+            } else {
+                $('#location_id').empty().append('<option value="">Select Location</option>');
+                $('#location_id').trigger('change.');
+            }
+        });
+        // location
+
+        $(document).on('change', '#location_id', function() {
+            var locationId = $(this).val();
+            if (locationId) {
+                $.ajax({
+                    url: "{{ admin_url('unit/ajax-list') }}/" + locationId + "/0",
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#unit_id').empty().append(
+                            '<option value="">Select unit</option>');
+                        $.each(data, function(key, value) {
+                            $('#unit_id').append('<option value="' + value
+                                .id + '">' + value.name + '</option>');
+                        });
+                        $('#unit_id').trigger('change.');
+                    },
+                    error: function(xhr) {
+                        alert('Error fetching unit. Please try again.');
+                    }
+                });
+            } else {
+                $('#unit_id').empty().append('<option value="">Select unit</option>');
+                $('#unit_id').trigger('change.');
+            }
+        });
+
         $(document).ready(function() {
 
 
@@ -2159,14 +2241,7 @@
         // validation
 
         $(document).ready(function() {
-            $.validator.addMethod(
-                "validTimeTo",
-                function(value, element) {
-                    const maxTime = "18:00";
-                    return value <= maxTime;
-                },
-                "Time cannot exceed 18:00."
-            );
+          
             $.validator.addMethod("regex", function(value, element, regexp) {
                 return this.optional(element) || regexp.test(value);
             }, "Please check your input.");
@@ -2187,6 +2262,12 @@
                         // validTimeTo: true,
                     },
                     unit_id: {
+                        required: true,
+                    },
+                    location_id: {
+                        required: true,
+                    },
+                    company_id: {
                         required: true,
                     },
                     exact_location_job: {
@@ -2254,6 +2335,12 @@
                     },
                     unit_id: {
                         required: "Please Select the unit.",
+                    },
+                    company_id: {
+                        required: "Please Select the Company Name.",
+                    },
+                    location_id: {
+                        required: "Please Select the Location Name.",
                     },
                     exact_location_job: {
                         required: "Exact Job Location cannot be empty.",
