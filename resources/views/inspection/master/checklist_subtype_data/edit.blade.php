@@ -247,7 +247,7 @@
                     required: true,
                     minlength: 3,
                     maxlength: 200,
-                
+
                     remote: {
                         url: '{{ admin_url('inspection/master/checklist-sub-type-data/unique') }}',
                         type: 'post',
@@ -370,7 +370,7 @@
                         required: true,
                         minlength: 3,
                         maxlength: 200,
-                        pattern: /^[a-zA-Z0-9\s\-_'"()]*$/,
+
                         remote: {
                             url: '{{ admin_url('inspection/master/checklist-sub-type-data/unique') }}',
                             type: 'post',
@@ -393,7 +393,7 @@
                             required: "Checklist Sub-Type Data Name is Required",
                             minlength: "Minimum 3 characters required",
                             maxlength: "Maximum 200 characters allowed",
-                            pattern: "Only alphanumeric characters and -, _, ', \", () are allowed",
+                       
                             remote: "Checklist Sub-Type Data Name should be unique"
                         }
                     });
