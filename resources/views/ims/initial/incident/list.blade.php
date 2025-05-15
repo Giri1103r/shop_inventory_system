@@ -2,7 +2,7 @@
 @section('title', 'Initial Incident')
 @section('pageurl', admin_url('incident/initial-incident/list'))
 @php
-    
+
     $dash_unit_id =
         isset($dashboard_search['unit_id']) && $dashboard_search['unit_id'] != ''
             ? $dashboard_search['unit_id'] : '';
@@ -42,7 +42,7 @@
                                                 <input type="text" name="sr_no" id="sr_no" class=" form-control ">
                                             </div>
                                         </div>
-                                      
+
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="inspectiontype" class="form-label ">Unit</label>
                                             <select name="unit_id" id="unit_id" class=" form-control single-select"
@@ -169,9 +169,9 @@
 
         $(function() {
             /* Datatable */
-            
+
             var dash_iirtype_id =  '{{ isset($dashboard_search['iir_type']) && $dashboard_search['iir_type'] != ''
-            ? $dashboard_search['iir_type'] : ''}}';            
+            ? $dashboard_search['iir_type'] : ''}}';
 
 
             var table = $('.datatable-list').DataTable({

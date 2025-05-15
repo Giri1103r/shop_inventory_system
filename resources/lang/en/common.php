@@ -15,6 +15,7 @@ return [
     'approve' => 'Approve',
     'reject' => 'Reject',
     'unit' => 'Unit',
+    'location' => 'Location',
     'department' => 'Department',
     'company' => 'Company',
     'paid' => 'Paid',

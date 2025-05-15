@@ -116,10 +116,12 @@ class TaskMasterController extends Controller
                 $this->audit_task->store();
                 Session::flash('success', __('Your data has been created successfully'));
             } catch (Exception $ex) {
+   report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
             return redirect(admin_url('audit/master/task/list'));
         } catch (Exception $ex) {
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('audit/master/task/list'));
         }

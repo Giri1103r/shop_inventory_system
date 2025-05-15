@@ -26,6 +26,7 @@ class InitialIncident extends Model
         'random_id',
         'incident_date_time',
         'unit_id',
+        'company_id',
         'shift',
         'location_id',
         'exact_location',
@@ -119,7 +120,7 @@ class InitialIncident extends Model
 
             $query = $query->where('ims_initial_incident.status', decryptId($request->status));
         }
-       
+
         if ($request->has('dash_iirtype_id') && $request->dash_iirtype_id) {
             $query = $query->where('ims_initial_incident.iir_type', ($request->dash_iirtype_id));
         }
@@ -266,6 +267,7 @@ class InitialIncident extends Model
             'random_id' => $request->random_id,
             'incident_date_time' => DBdatetimeformat($request->incident_date_time),
             'unit_id' => decryptId($request->unit_id),
+            'company_id' => decryptId($request->company_id),
             'shift' => $request->shift,
             'location_id' => decryptId($request->location_id),
             'exact_location' => $request->exact_location,
@@ -434,6 +436,7 @@ class InitialIncident extends Model
         $update_array = array(
             'incident_date_time' => DBdatetimeformat($request->incident_date_time),
             'unit_id' => decryptId($request->unit_id),
+            'company_id' => decryptId($request->company_id),
             'shift' => $request->shift,
             'location_id' => decryptId($request->location_id),
             'exact_location' => $request->exact_location,
@@ -901,10 +904,13 @@ class InitialIncident extends Model
                 DB::raw('SUM(CASE WHEN FIND_IN_SET("2", iii.ua_or_uc) > 0 THEN 1 ELSE 0 END) as unsafe_condition'),
                 DB::raw('SUM(CASE WHEN FIND_IN_SET("3", iii.ua_or_uc) > 0 THEN 1 ELSE 0 END) as natural_causes'),
             )
-            ->groupBy('imit.incident_type_name',  'iii.unit_id',
-            'masters_unit.unit_name',
-            'iii.iir_type',
-            'imit.incident_type_name')
+            ->groupBy(
+                'imit.incident_type_name',
+                'iii.unit_id',
+                'masters_unit.unit_name',
+                'iii.iir_type',
+                'imit.incident_type_name'
+            )
             ->orderBy('imit.incident_type_name');
 
 

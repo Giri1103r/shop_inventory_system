@@ -95,10 +95,10 @@ class PpeExemptionController extends Controller
                             return getUsername($row->created_by);
                         })
                         ->editColumn('department', function ($row) {
-                            return $row->department_name;
+                            return getDepartment($row->department);
                         })
                         ->editColumn('unit', function ($row) {
-                            return $row->unit_name;
+                            return getUnitname($row->unit);
                         })
                         ->editColumn('company', function ($row) {
                             return getCompanyname($row->company);

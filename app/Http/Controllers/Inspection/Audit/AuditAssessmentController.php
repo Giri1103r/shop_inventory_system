@@ -143,6 +143,8 @@ class AuditAssessmentController extends Controller
             return view('inspection.inspection_audit.auditAssessment.add', $data);
         } catch (Exception $ex) {
             report($ex);
+              Session::flash('error',  __('common.message_error'));
+            return redirect(admin_url('audit/assessment/list'));
         }
     }
 
@@ -427,6 +429,8 @@ class AuditAssessmentController extends Controller
             exit;
         } catch (Exception $ex) {
             report($ex);
+              Session::flash('error',  __('common.message_error'));
+            return redirect(admin_url('audit/assessment/list'));
         }
     }
 
@@ -474,6 +478,8 @@ class AuditAssessmentController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
+              Session::flash('error',  __('common.message_error'));
+            return redirect(admin_url('audit/assessment/list'));
         }
     }
 
@@ -522,7 +528,8 @@ class AuditAssessmentController extends Controller
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);
-            return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
+             Session::flash('error',  __('common.message_error'));
+            return redirect(admin_url('audit/assessment/list'));
         }
     }
 
@@ -717,7 +724,8 @@ class AuditAssessmentController extends Controller
             exit;
         } catch (Exception $ex) {
             report($ex);
-            return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
+             Session::flash('error',  __('common.message_error'));
+            return redirect(admin_url('audit/assessment/list'));
         }
     }
 }
