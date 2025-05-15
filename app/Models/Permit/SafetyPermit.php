@@ -625,9 +625,12 @@ class SafetyPermit extends Model
         $insert_array = array(
             'permit_id' => $newPermitID,
             'date' => DBdateformat(now()),
+            'to_date' => DBdateformat($safetypermit->to_date),
             'time_from' => $safetypermit->time_from,
             'time_to' => $request->time_to,
             'unit_id' => $safetypermit->unit_id,
+            'company_id' => $safetypermit->company_id,
+            'location_id' => $safetypermit->location_id,
             'exact_location_job' => $safetypermit->exact_location_job,
             'job_location_area' => $safetypermit->job_location_area,
             'sub_permit' => $safetypermit->sub_permit,
