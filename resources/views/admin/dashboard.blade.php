@@ -804,7 +804,7 @@
                     form.submit();
                 }
 
-                function redirectToPTW(PTWID, unitId, month) {
+                function redirectToPTW(PTWID, unitId, month, openclose) {
 
                     Fromdate = $("#fromDate").val();
                     Todate = $("#toDate").val();
@@ -839,6 +839,12 @@
                     inputmonth.setAttribute('name', 'month');
                     inputmonth.setAttribute('value', month);
                     form.appendChild(inputmonth);
+
+                    var inputopenclose = document.createElement('input');
+                    inputopenclose.setAttribute('type', 'hidden');
+                    inputopenclose.setAttribute('name', 'openclose');
+                    inputopenclose.setAttribute('value', openclose);
+                    form.appendChild(inputopenclose);
 
                     var inputFromdate = document.createElement('input');
                     inputFromdate.setAttribute('type', 'hidden');

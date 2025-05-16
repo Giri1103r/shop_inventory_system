@@ -168,6 +168,21 @@ class SafetyPermit extends Model
             $query = $query->where('ptw_safety.permit_status',  $status);
         }
 
+        if ($request->has('dashboard_openCloseStatus') && $request->dashboard_openCloseStatus) {
+
+            $openCloseStatus = decryptId($request->dashboard_openCloseStatus);
+            if ($openCloseStatus == "1") {
+                $query = $query->whereNotIn('permit_status', [STATUS_CLOSED, STATUS_PERMIT_EXPIRED])
+                ->where('permit_status', '>=', STATUS_EHS_VERIFICATION_PENDING)
+                ->where('ptw_safety.status', 1)
+                ->where('ptw_safety.trash', 'NO');
+                
+            } else {
+
+                $query = $query->where('permit_status', STATUS_CLOSED)->orWhere('permit_status', STATUS_PERMIT_EXPIRED);
+            }
+        }
+
         if ($request->has('dashboard_month') && $request->dashboard_month) {
             $query = $query->whereMonth('ptw_safety.created_at', $request->dashboard_month);
         }
@@ -746,7 +761,7 @@ class SafetyPermit extends Model
             }
             // $protectiveEquip = json_decode($data->protective_equip, true);
 
-             $protectiveEquip =   !empty($data->protective_equip)
+            $protectiveEquip =   !empty($data->protective_equip)
                 ? json_decode($data->protective_equip, true)
                 : null;
             $mappedProtectiveEquip = [];
@@ -790,7 +805,7 @@ class SafetyPermit extends Model
 
             // $equiment_involved = json_decode($data->equiment_involved, true);
 
-              $equiment_involved =   !empty($data->equiment_involved)
+            $equiment_involved =   !empty($data->equiment_involved)
                 ? json_decode($data->equiment_involved, true)
                 : null;
 
@@ -877,7 +892,7 @@ class SafetyPermit extends Model
 
             $equipment_checklist =   !empty($data->equipment_checklist)
                 ? json_decode($data->equipment_checklist, true)
-                :null;
+                : null;
             $mappeequipment_checklist = [];
 
             if ($equipment_checklist) {

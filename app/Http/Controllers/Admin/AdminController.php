@@ -429,10 +429,13 @@ class AdminController extends Controller
                 'company_id' =>  $request->input('CompanyId')
             ];
             $active_close_count = $this->ptw->ActiveVsClose();
-
+            $openEncrypted = encryptId(1);
+            $closeEncrypted = encryptId(2);
             $data = [
                 'active_close_count' => $active_close_count,
                 'dates' => $dates,
+                'openStatusEncrypted' => $openEncrypted,
+                'closeStatusEncrypted' => $closeEncrypted,
             ];
 
             return view('admin.dashboard.ptw_open_close', $data);
@@ -837,7 +840,7 @@ class AdminController extends Controller
 
             return view('admin.dashboard.iir_wise_uauc', $data);
         } catch (\Exception $ex) {
-            dd($ex);
+            report($ex);
         }
     }
 
