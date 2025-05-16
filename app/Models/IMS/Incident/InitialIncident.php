@@ -27,7 +27,6 @@ class InitialIncident extends Model
         'incident_date_time',
         'company_id',
         'unit_id',
-        'company_id',
         'shift',
         'location_id',
         'exact_location',
@@ -303,8 +302,8 @@ class InitialIncident extends Model
             ->leftJoin('ims_master_incident_type', 'ims_master_incident_type.id', '=', 'ims_initial_incident.iir_type')
             ->whereNotNull('ims_initial_incident.id');
 
-        // Apply company Filter
-        if ($request->CompanyId) {
+            // Apply company Filter
+        if ($request->CompanyId != null) {
             $company_id = decryptId($request->CompanyId);
             $query->where('ims_initial_incident.company_id', $company_id);
         }

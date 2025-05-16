@@ -42,7 +42,7 @@
         tooltip: {
             y: {
                 formatter: function(val) {
-                    return val + " incidents";
+                    return val ;
                 }
             }
         }

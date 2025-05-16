@@ -270,9 +270,10 @@ class AdminController extends Controller
     {
         try {
             $chartData = $this->incident_ims->getTotalIncidentCountData($request);
-            // if ($chartData->isEmpty()) {
-            //     return response()->json('<div class="border-0 pb-3" style="margin-top: 166px;"><h4 style="text-align: center;">No data Found.</h4></div>');
-            // }
+
+            if ($chartData->isEmpty()) {
+                return response()->json('<div class="border-0 pb-3" style="margin-top: 166px;"><h4 style="text-align: center;">No data Found.</h4></div>');
+            }
             $formattedData = [];
             $incidentTypeIds = [];
             $unitIds = [];
@@ -292,7 +293,6 @@ class AdminController extends Controller
                     'unit_id' => $row->unit_id,
                 ];
             }
-            // dd($chartData);
             return view('admin.dashboard.totalIncidentsCount', [
                 'formattedData' => $formattedData,
                 'incidentTypeIds' => $incidentTypeIds,
@@ -314,7 +314,6 @@ class AdminController extends Controller
             if ($chartData->isEmpty()) {
                 return response()->json('<div class="border-0 pb-3" style="margin-top: 166px;"><h4 style="text-align: center;">No data Found.</h4></div>');
             }
-
             $formattedData = [];
             $typeIdMap = [];
 
@@ -407,6 +406,19 @@ class AdminController extends Controller
 
             $inspection_wise_count = InspectionCount($from_date, $to_date);
 
+            $return_flag = true;
+            foreach ($inspection_wise_count as $index => $values) {
+                if ($values == 0) {
+                    $return_flag = false;
+                } else {
+                    $return_flag = true;
+                }
+            }
+
+            if ($return_flag == false) {
+                return response()->json('<div class="border-0 pb-3" style="margin-top: 166px;"><h4 style="text-align: center;">No data Found.</h4></div>');
+            }
+
             $data = [
                 'inspection_wise_count' => $inspection_wise_count,
                 'from_date' => $from_date,
@@ -429,6 +441,20 @@ class AdminController extends Controller
                 'company_id' =>  $request->input('CompanyId')
             ];
             $active_close_count = $this->ptw->ActiveVsClose();
+
+            $return_flag = true;
+            foreach ($active_close_count as $index => $values) {
+                if ($values == 0) {
+                    $return_flag = false;
+                } else {
+                    $return_flag = true;
+                }
+            }
+
+            if ($return_flag == false) {
+                return response()->json('<div class="border-0 pb-3" style="margin-top: 166px;"><h4 style="text-align: center;">No data Found.</h4></div>');
+            }
+
 
 
             $data = [
@@ -455,12 +481,12 @@ class AdminController extends Controller
 
             $work_wise_count = $this->ptw->GetTypeWiseCount();
 
-            // if (empty($work_wise_count) || array_sum($work_wise_count) === 0) {
-            //     return response()->json([
-            //         'html' => '<div class="border-0 pb-3" style="margin-top: 150px;"><h4 style="text-align: center;">No data Found.</h4></div>',
-            //         'status' => 'empty'
-            //     ]);
-            // }
+            if (count($work_wise_count) < 0) {
+                return response()->json([
+                    'html' => '<div class="border-0 pb-3" style="margin-top: 150px;"><h4 style="text-align: center;">No data Found.</h4></div>',
+                    'status' => 'empty'
+                ]);
+            }
             $data = [
                 'work_wise_count' => $work_wise_count,
                 'dates' => $dates,
@@ -578,6 +604,19 @@ class AdminController extends Controller
             $company_id = $request->input('CompanyId');
             $chartData = getPPEAvailabilityChartData($form_date, $to_date, $company_id);
 
+            $return_flag = true;
+            foreach ($chartData as $index => $values) {
+                if ($values == 0) {
+                    $return_flag = false;
+                } else {
+                    $return_flag = true;
+                }
+            }
+
+            if ($return_flag == false) {
+                return response()->json('<div class="border-0 pb-3" style="margin-top: 166px;"><h4 style="text-align: center;">No data Found.</h4></div>');
+            }
+
             return view('admin.dashboard.chartPPEAvailability', [
                 'getdashdata' => $request,
                 'chartData' => $chartData,
@@ -626,10 +665,9 @@ class AdminController extends Controller
                 'labels' => $chartData->pluck('incident_type_name'),
                 'counts' => $chartData->pluck('total'),
             ];
-
             return view('admin.dashboard.type_of_irr', [
                 'formattedData' => $formattedData,
-                'getdashdata' => $request,
+
             ]);
         } catch (\Exception $ex) {
             dd($ex);
@@ -737,6 +775,8 @@ class AdminController extends Controller
                 return response()->json('<div class="border-0 pb-3" style="margin-top: 166px;"><h4 style="text-align: center;">No data Found.</h4></div>');
             }
 
+
+
             $chartDataSeries = [
                 'Unsafe Act' => [],
                 'Unsafe Condition' => [],
@@ -747,7 +787,7 @@ class AdminController extends Controller
             foreach ($chartData as $data) {
                 $categories[] = $data['unit_name'];
                 foreach ($chartDataSeries as $key => $value) {
-                    $chartDataSeries[$key][] = $data[$key];
+                    $chartDataSeries[$key][] = isset($data[$key]) ? $data[$key] : 0;
                 }
             }
 
@@ -763,7 +803,6 @@ class AdminController extends Controller
                 'chartData' => $chartData
             ]);
         } catch (\Exception $ex) {
-            dd($ex);
             dd($ex);
             return back()->with('error', 'Failed to load unit-wise incident data.');
         }
@@ -921,7 +960,7 @@ class AdminController extends Controller
                 'auditAnalysisCount' => $auditAnalysisCount,
                 'interUnitCount' => $interUnitCount,
                 'auditMonthlyCount' => $auditMonthlyCount,
-                'hasData' => ($auditAssessmentCount + $auditAnalysisCount + $interUnitCount + $auditMonthlyCount) > 0,
+                'hasData' => $total,
                 'getdashdata' => (object)[
                     'Fromdate' => $request->Fromdate,
                     'Todate' => $request->Todate,
@@ -985,8 +1024,9 @@ class AdminController extends Controller
                 ];
             });
 
+
+
             return view('admin.dashboard.unitwisecount', [
-                'unit' => $unit,
                 'unitData' => $result,
             ]);
         } catch (\Exception $ex) {
@@ -1037,6 +1077,10 @@ class AdminController extends Controller
             }
         }
 
+        if (count($permitCounts) <  0) {
+            return response()->json('<div class="border-0 pb-3" style="margin-top: 166px;"><h4 style="text-align: center;">No data Found.</h4></div>');
+        }
+
         return view('admin.dashboard.monthwisecount', [
             'monthlyCounts' => $result,
         ]);
@@ -1045,6 +1089,10 @@ class AdminController extends Controller
     {
         try {
             $chartData = $this->training_schedule->getTrainingCount();
+
+            if ($chartData) {
+                return response()->json('<div class="border-0 pb-3" style="margin-top: 166px;"><h4 style="text-align: center;">No data Found.</h4></div>');
+            }
 
             // Prepare data for the pie chart
             $chartDataArray = [
@@ -1068,6 +1116,9 @@ class AdminController extends Controller
     {
         try {
             $chartData = $this->training_schedule->getDepartmentData();
+            if ($chartData->isEmpty()) {
+                return response()->json('<div class="border-0 pb-3" style="margin-top: 166px;"><h4 style="text-align: center;">No data Found.</h4></div>');
+            }
             $departmentDetails = $this->department->select('department_name', 'id')->get();
 
             // Initialize chartDataArray with all departments having count 0
@@ -1103,6 +1154,10 @@ class AdminController extends Controller
         try {
             // Fetch chart data
             $chartData = $this->training_schedule->monthwiseTrainingCountData();
+
+            if ($chartData->isEmpty()) {
+                return response()->json('<div class="border-0 pb-3" style="margin-top: 166px;"><h4 style="text-align: center;">No data Found.</h4></div>');
+            }
 
             // Initialize count arrays for each month
             $overallCounts = array_fill(1, 12, 0);

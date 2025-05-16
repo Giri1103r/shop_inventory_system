@@ -1189,13 +1189,13 @@ class SafetyPermit extends Model
         $to_date = $request->input('Todate');
         $company_id = $request->input('CompanyId');
 
-        // Base open query
+
         $openQuery = $this->whereNotIn('permit_status', [STATUS_CLOSED, STATUS_PERMIT_EXPIRED])
             ->where('permit_status', '>=', STATUS_EHS_VERIFICATION_PENDING)
             ->where('status', 1)
             ->where('trash', 'NO');
 
-        // Base close query with grouped OR condition
+
         $closeQuery = $this->where(function ($query) {
             $query->where('permit_status', STATUS_CLOSED)
                 ->orWhere('permit_status', STATUS_PERMIT_EXPIRED);
@@ -1203,14 +1203,14 @@ class SafetyPermit extends Model
             ->where('status', 1)
             ->where('trash', 'NO');
 
-        // Apply company filter
+
         if ($company_id) {
             $companyId = decryptId($company_id);
             $openQuery->where('company_id', $companyId);
             $closeQuery->where('company_id', $companyId);
         }
 
-        // Apply date filters
+
         if ($from_date && $to_date) {
             $openQuery->whereBetween('created_at', [
                 DBdateformat($from_date),
@@ -1228,7 +1228,7 @@ class SafetyPermit extends Model
             $closeQuery->where('created_at', '<=', DBdateformat($to_date) . ' 23:59:59');
         }
 
-        // Execute counts
+
         $open_count = $openQuery->count();
         $close_count = $closeQuery->count();
 
