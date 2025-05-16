@@ -1,22 +1,18 @@
 <div id="iirWiseRcpa"></div>
 
 <script>
-
-    var chartData = {!! json_encode($chartData) !!};
-
-
+    var iirChartData = @json($chartData);
     var series = [{
             name: 'Total Incidents',
-            data: chartData.map(item => item.total_incident)
+            data: iirChartData.map(item => item.total_incident)
         },
         {
             name: 'Total RCPA',
-            data: chartData.map(item => item.total_rcpa)
+            data: iirChartData.map(item => item.total_rcpa)
         }
     ];
 
-
-    var categories = chartData.map(item => item.incident_type_name);
+    var categories = iirChartData.map(item => item.incident_type_name);
 
     var options = {
         series: series,
@@ -26,14 +22,33 @@
             toolbar: {
                 show: false
             },
+            events: {
+                dataPointSelection: function(event, chartContext, config) {
+                    var seriesIndex = config.seriesIndex;
+                    var dataPointIndex = config.dataPointIndex;
+
+                    var incidentTypeName = chartContext.w.config.xaxis.categories[dataPointIndex];
+                    var selectedItem = iirChartData.find(item => item.incident_type_name === incidentTypeName);
+                   
+                    var iirType = selectedItem.iir_type;
+                  
+                    if (seriesIndex === 0) {
+                        redirectToIms(iirType, '', '', '', '', '', );
+                    } else if (seriesIndex === 1) {
+                        redirectToImsRCPA(iirType, '', '', '', '', '', );
+                    }
+                }
+            }
+
         },
+
         plotOptions: {
             bar: {
                 horizontal: false,
                 columnWidth: '55%',
                 borderRadius: 5,
                 borderRadiusApplication: 'end'
-            },
+            }
         },
         dataLabels: {
             enabled: false
@@ -46,7 +61,6 @@
         xaxis: {
             categories: categories,
             labels: {
-
                 rotate: -45,
                 style: {
                     fontSize: '12px'
@@ -65,11 +79,11 @@
         tooltip: {
             y: {
                 formatter: function(val) {
-                    return val
+                    return val;
                 }
             }
         },
-        colors: ['#008FFB', '#00E396'], 
+        colors: ['#008FFB', '#00E396'],
         legend: {
             position: 'bottom'
         }
@@ -77,6 +91,7 @@
 
     var iirWiseRcpa = new ApexCharts(document.querySelector("#iirWiseRcpa"), options);
     iirWiseRcpa.render();
+
 
     $("#iirTypewiseRCPA_download").off("click").on("click", function() {
         iirWiseRcpa.dataURI().then(({

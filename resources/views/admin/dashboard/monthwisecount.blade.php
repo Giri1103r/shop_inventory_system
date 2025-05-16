@@ -21,6 +21,15 @@
             height: 350,
             toolbar: {
                 show: false
+            },
+            events: {
+                dataPointSelection: function(event, chartContext, config) {
+                    var dataPointIndex = config.dataPointIndex;
+                    var monthName = chartContext.w.config.xaxis.categories[dataPointIndex];
+                    var month = new Date(Date.parse(monthName + " 1, 2000")).getMonth() + 1;
+                    // alert(123);
+                    redirectToPTW('', '', month);
+                }
             }
         },
         plotOptions: {
@@ -31,7 +40,7 @@
                 distributed: true
             },
         },
-        colors: [ 
+        colors: [
             '#008FFB', '#00E396', '#FEB019', '#FF4560',
             '#775DD0', '#546E7A', '#26a69a', '#D10CE8',
             '#9C27B0', '#F86624', '#2E294E', '#1B998B'

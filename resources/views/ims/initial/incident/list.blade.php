@@ -177,6 +177,9 @@
             ? $dashboard_search['injury_type'] : ''}}';
 
 
+            var dash_month =  '{{ isset($dashboard_search['month']) && $dashboard_search['month'] != ''
+            ? $dashboard_search['month'] : ''}}';  
+
             var table = $('.datatable-list').DataTable({
                 autoWidth: false,
                 responsive: true,
@@ -210,6 +213,7 @@
                     data: function(d) {
                         d.sr_no = $('#sr_no').val();
                         d.dash_iirtype_id = dash_iirtype_id;
+                        d.dash_month = dash_month;
                         d.unit_id = $('#unit_id').val();
                         d.dash_injuryType = dash_injuryType;
                         d.from_date = $('#from_date').val();
@@ -289,6 +293,7 @@
                                     var searchValue = $('#datatable-list_filter input').val();
                                     var sr_no = $('#sr_no').val();
                                     var dash_iirtype_id = dash_iirtype_id;
+                                    var dash_month = dash_month;
                                     var unit_id = $('#unit_id').val();
                                     var dash_injuryType = dash_injuryType;
                                     var from_date = $('#from_date').val();
@@ -303,6 +308,7 @@
                                         '?search=' + searchValue +
                                         '&sr_no=' + sr_no +
                                         '&dash_iirtype_id=' + dash_iirtype_id +
+                                        '&dash_month=' + dash_month +
                                         '&unit_id=' + unit_id +
                                         '&dash_injuryType=' + dash_injuryType +
                                         '&from_date=' + from_date +
@@ -319,6 +325,7 @@
                                     var searchValue = $('#datatable-list_filter input').val();
                                     var sr_no = $('#sr_no').val();
                                     var dash_iirtype_id = dash_iirtype_id;
+                                    var dash_month = dash_month;
                                     var unit_id = $('#unit_id').val();
                                     var dash_injuryType = dash_injuryType;
                                     var from_date = $('#from_date').val();
@@ -330,6 +337,8 @@
                                     window.location.href =
                                         "{{ admin_url('incident/initial-incident/export/excel') }}" +
                                         '?search=' + searchValue +
+                                        '&dash_iirtype_id=' + dash_iirtype_id +
+                                        '&dash_month=' + dash_month +
                                         '&sr_no=' + sr_no +
                                         '&dash_iirtype_id=' + dash_iirtype_id +
                                         '&unit_id=' + unit_id +

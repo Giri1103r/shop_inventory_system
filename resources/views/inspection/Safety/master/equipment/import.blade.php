@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Equipment Import')
+@section('title', 'Equipment')
 @section('pageurl', admin_url('checklistmaster/list'))
 
 

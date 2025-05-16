@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'MSDS View')
+@section('title', 'MSDS ')
 @section('pageurl', admin_url('msds/list'))
 
 @section('content')

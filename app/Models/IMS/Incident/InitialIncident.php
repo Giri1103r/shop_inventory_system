@@ -132,10 +132,15 @@ class InitialIncident extends Model
             $query = $query->where('ims_injury_details.nature_of_injury', $request->dash_injuryType);
         }
 
+        if ($request->has('dash_month') && $request->dash_month) {
+            $query = $query->whereMonth('ims_initial_incident.created_at', $request->dash_month);
+        }
+        
         if ($request->has('unit_id') && $request->unit_id) {
 
             $query = $query->where('ims_initial_incident.unit_id', decryptId($request->unit_id));
         }
+
         $data_count = $query;
         $total_records = $data_count->count();
 
@@ -865,10 +870,11 @@ class InitialIncident extends Model
             })
             ->select(
                 'imit.incident_type_name',
+                'iii.iir_type',
                 DB::raw('COUNT(DISTINCT iii.id) as total_incident'),
                 DB::raw('COUNT(rcpa.id) as total_rcpa')
             )
-            ->groupBy('imit.incident_type_name')
+            ->groupBy('imit.incident_type_name','iii.iir_type')
             ->orderBy('imit.incident_type_name');
 
 
@@ -896,17 +902,15 @@ class InitialIncident extends Model
     {
         $query = DB::table('ims_initial_incident as iii')
             ->join('ims_master_incident_type as imit', 'iii.iir_type', '=', 'imit.id')
-            ->leftJoin('masters_unit', 'masters_unit.id', '=', 'iii.unit_id')
             ->where('iii.ua_uc_yes_no', 1)
             ->select(
+                'iii.id as incident_id',
+                'iii.iir_type',
                 'imit.incident_type_name',
-                'masters_unit.unit_name',
-                'iii.unit_id',
-                'iii.iir_type as incident_type_id',
                 DB::raw('COUNT(DISTINCT iii.id) as total_incident'),
                 DB::raw('SUM(CASE WHEN FIND_IN_SET("1", iii.ua_or_uc) > 0 THEN 1 ELSE 0 END) as unsafe_act'),
                 DB::raw('SUM(CASE WHEN FIND_IN_SET("2", iii.ua_or_uc) > 0 THEN 1 ELSE 0 END) as unsafe_condition'),
-                DB::raw('SUM(CASE WHEN FIND_IN_SET("3", iii.ua_or_uc) > 0 THEN 1 ELSE 0 END) as natural_causes'),
+                DB::raw('SUM(CASE WHEN FIND_IN_SET("3", iii.ua_or_uc) > 0 THEN 1 ELSE 0 END) as natural_causes')
             )
             ->groupBy(
                 'imit.incident_type_name',
@@ -942,22 +946,23 @@ class InitialIncident extends Model
         $nearMissIds = DB::table('ims_master_incident_type')
             ->where('incident_type_name', 'LIKE', '%Near Miss%')
             ->where(function ($query) {
-                $query->whereRaw("LOWER(REPLACE(incident_type_name, '-', '')) LIKE ?", ['%nearmiss%']);
+                $query->whereRaw("LOWER(REPLACE(incident_type_name, '-', '')) LIKE ?", ['%Near Miss%']);
             })
             ->where('status', 1)
             ->pluck('id')
             ->toArray();
-
+           
         $query = DB::table('ims_initial_incident as iii')
             ->join('ims_master_incident_type as imit', 'iii.iir_type', '=', 'imit.id')
             ->whereIn('iii.iir_type', $nearMissIds)
             ->select(
                 'imit.incident_type_name',
+                'iii.iir_type',
                 DB::raw('MONTH(iii.created_at) as month'),
                 DB::raw('YEAR(iii.created_at) as year'),
                 DB::raw('COUNT(DISTINCT iii.id) as incident_count')
             )
-            ->groupBy('imit.incident_type_name', 'month', 'year')
+            ->groupBy('imit.incident_type_name','iii.iir_type', 'month', 'year')
             ->orderBy('year')
             ->orderBy('month')
             ->orderBy('imit.incident_type_name');
@@ -1004,7 +1009,8 @@ class InitialIncident extends Model
                 'period' => $monthNames[$item->month] . ' ' . $item->year,
                 'month' => $item->month,
                 'year' => $item->year,
-                'count' => $item->incident_count
+                'count' => $item->incident_count,
+                'iir_type' => $item->iir_type
             ];
         });
     }

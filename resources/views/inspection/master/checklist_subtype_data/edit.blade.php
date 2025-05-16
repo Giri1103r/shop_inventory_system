@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Checklist Sub Type Data Edit')
+@section('title', 'Checklist Sub Type Data')
 @section('pageurl', admin_url('inspection/master/checklist-sub-type-data/list'))
 
 
@@ -393,7 +393,7 @@
                             required: "Checklist Sub-Type Data Name is Required",
                             minlength: "Minimum 3 characters required",
                             maxlength: "Maximum 200 characters allowed",
-                       
+
                             remote: "Checklist Sub-Type Data Name should be unique"
                         }
                     });

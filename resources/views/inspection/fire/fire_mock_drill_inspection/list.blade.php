@@ -23,15 +23,22 @@
                             <div class="card-body">
                                 <div class="col-md-12">
                                     <div class="row">
-                                        <div class="col-md-3 mb-3 form-input">
+                                        <div class="col-md-4 mb-3 form-input">
                                             <label for="inspection_date"
                                                 class="form-label ">{{ __('inspection.date_of_inspection') }}</label>
-                                            <input type="text" name="inspection_date" id="inspection_date"
-                                                class="form-control">
+
+
+                                            <div class="input-group date form-input custom-height">
+                                                <input type="text" name="inspection_date" id="inspection_date"
+                                                    class="form-control">
+                                                <div class="input-group-addon input-group-text">
+                                                    <span class="fa fa-calendar"></span>
+                                                </div>
+                                            </div>
                                         </div>
 
 
-                                        <div class="col-md-3 mb-3 form-input">
+                                        <div class="col-md-4 mb-3 form-input">
                                             <label for="inspection_status"
                                                 class="form-label ">{{ __('common.status') }}</label>
                                             <select name="inspection_status" id="inspection_status" style="width: 100%"
@@ -76,7 +83,7 @@
                                         </div>
 
 
-                                        <div class="col-md-3 mt-3">
+                                        <div class="col-md-4 mt-3">
                                             <x-button-search></x-button-search>
                                             <x-button-reset></x-button-reset>
 

@@ -38,17 +38,19 @@ class ExpireMedicine extends Model
         $query = $this->select(
             'ohc_management_expire_medicine.*',
             'ohc_report_inventory.balance',
+            'ohc_report_inventory.unit_id as expire_unit_id',
             'ohc_management_expire_medicine.medicine_id as medicine'
         )
-        ->leftJoin('ohc_report_inventory', 'ohc_management_expire_medicine.medicine_id', '=', 'ohc_report_inventory.medicine_id')
-        ->where('ohc_report_inventory.unit_id', '=', $user->unit_id)
-        ->orderByRaw("
+            ->leftJoin('ohc_report_inventory', 'ohc_management_expire_medicine.medicine_id', '=', 'ohc_report_inventory.medicine_id')
+            ->where('ohc_report_inventory.unit_id', '=', $user->unit_id)
+            ->orderByRaw("
             CASE
                 WHEN ohc_management_expire_medicine.expire_date < CURDATE() THEN 0
                 ELSE 1
             END,
             ohc_management_expire_medicine.expire_date ASC
         ");
+
 
 
         if ($request->search['value'] != null) {
@@ -131,7 +133,7 @@ class ExpireMedicine extends Model
     {
         $request = request();
         $data  = $this->select('ohc_management_expire_medicine.*')->where('id', $id)
-            ->update(['approve_status' => OHC_DISCARD_EHS_APPROVED,   'remarks' => $request->remarks,'status' => 0]);
+            ->update(['approve_status' => OHC_DISCARD_EHS_APPROVED,   'remarks' => $request->remarks, 'status' => 0]);
         return $data;
     }
     public function medicinediscard($id,  $quantity,  $remarks)

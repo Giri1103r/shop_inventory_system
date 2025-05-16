@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Equipment Add')
+@section('title', 'Equipment ')
 @section('pageurl', admin_url('safety/master/equipment/list'))
 
 

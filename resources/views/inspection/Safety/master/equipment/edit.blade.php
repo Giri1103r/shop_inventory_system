@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Equipment Edit')
+@section('title', 'Equipment ')
 @section('pageurl', admin_url('safety/master/equipment/list'))
 
 
@@ -7,7 +7,7 @@
     <div class="clearfix"></div>
     <div class="page-titles">
         <div class="d-flex align-items-center">
-          
+
 
         </div>
 

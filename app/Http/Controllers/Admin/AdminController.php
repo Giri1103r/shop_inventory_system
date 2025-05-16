@@ -430,7 +430,6 @@ class AdminController extends Controller
             ];
             $active_close_count = $this->ptw->ActiveVsClose();
 
-
             $data = [
                 'active_close_count' => $active_close_count,
                 'dates' => $dates,
@@ -734,18 +733,29 @@ class AdminController extends Controller
     {
         try {
             $chartData = $this->ims_incident->getTypeofIIRRCPACountData($request);
+
             if ($chartData->isEmpty()) {
                 return response()->json('<div class="border-0 pb-3" style="margin-top: 166px;"><h4 style="text-align: center;">No data Found.</h4></div>');
             }
+
             $data = [
-                'chartData' => $chartData,
+                'chartData' => $chartData->map(function ($item) {
+                    return [
+                        'incident_type_name' => $item->incident_type_name,
+                        'iir_type' => $item->iir_type,
+                        'total_incident' => $item->total_incident,
+                        'total_rcpa' => $item->total_rcpa
+                    ];
+                })->toArray(),
             ];
+
 
             return view('admin.dashboard.iir_wise_rcpa', $data);
         } catch (\Exception $ex) {
             report($ex);
         }
     }
+
 
 
     public function gembaWalkObservation(Request $request)
@@ -837,6 +847,7 @@ class AdminController extends Controller
     {
         try {
             $chartData = $this->ims_incident->getTypeofIIRUAUCCountData($request);
+
             if ($chartData->isEmpty()) {
                 return response()->json('<div class="border-0 pb-3" style="margin-top: 166px;"><h4 style="text-align: center;">No data Found.</h4></div>');
             }
@@ -888,12 +899,13 @@ class AdminController extends Controller
     {
         try {
             $chartData = $this->ims_incident->getNearMissCountData($request);
+
             if ($chartData->isEmpty()) {
                 return response()->json('<div class="border-0 pb-3" style="margin-top: 166px;"><h4 style="text-align: center;">No data Found.</h4></div>');
             }
 
             $data = [
-                'chartData' => $chartData,
+                'chartData' => $chartData->toArray(),
             ];
 
             return view('admin.dashboard.near_miss_frequency', $data);
@@ -1005,6 +1017,8 @@ class AdminController extends Controller
                 ];
             });
 
+            // dd($result);
+
             return view('admin.dashboard.unitwisecount', [
                 'unit' => $unit,
                 'unitData' => $result,
@@ -1056,6 +1070,7 @@ class AdminController extends Controller
                 $result[$count->month] = $count->permit_count;
             }
         }
+        // dd($result);
 
         return view('admin.dashboard.monthwisecount', [
             'monthlyCounts' => $result,
