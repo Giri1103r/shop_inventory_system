@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Occupational Health Center Inspection Checklist Approval')
+@section('title', 'Occupational Health Center Inspection Checklist')
 @section('pageurl', admin_url('ohc/inspection/list'))
 
 @push('style')

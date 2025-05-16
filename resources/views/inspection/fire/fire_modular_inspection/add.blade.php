@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Fire Modular Inspection Add')
+@section('title', 'Fire Modular Inspection')
 @section('pageurl', admin_url('fire/fire-modular-inspection/checklist/list'))
 @section('content')
     <div class="clearfix"></div>
@@ -45,9 +45,16 @@
                                                 <div class="form-group form-input">
                                                     <label
                                                         class="form-label require">{{ __('inspection.issue_date') }}</label>
-                                                    <input type="text" name="issue_date" id = ""
-                                                        class="form-control" placeholder="Issued Date"
-                                                        value="{{ displaydateformat($document_no->issue_date) }}" readonly>
+
+                                                    <div class="input-group date form-input custom-height">
+                                                        <input type="text" name="issue_date" id = ""
+                                                            class="form-control" placeholder="Issued Date"
+                                                            value="{{ displaydateformat($document_no->issue_date) }}"
+                                                            readonly>
+                                                        <div class="input-group-addon input-group-text">
+                                                            <span class="fa fa-calendar"></span>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -62,12 +69,36 @@
                                                 <div class="form-group form-input">
                                                     <label
                                                         class="form-label require">{{ __('inspection.inspection_date') }}</label>
-                                                    <input type="text" name="inspection_date" id = "inspection_date"
-                                                        class="form-control" value="{{ old('inspection_date') }}">
+
+
+                                                    <div class="input-group date form-input custom-height">
+                                                        <input type="text" name="inspection_date" id = "inspection_date"
+                                                            class="form-control" value="{{ old('inspection_date') }}">
+                                                        <div class="input-group-addon input-group-text">
+                                                            <span class="fa fa-calendar"></span>
+                                                        </div>
+                                                    </div>
                                                     @error('inspection_date')
                                                         <div class="error">{{ $message }}</div>
                                                     @enderror
                                                 </div>
+                                            </div>
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label
+                                                        class="form-label require">{{ __('inspection.next_due') }}</label>
+
+                                                    <div class="input-group date form-input custom-height">
+                                                        <input type="text" name="next_due" id = "next_due"
+                                                            class="form-control" value="{{ old('next_due') }}">
+                                                        <div class="input-group-addon input-group-text">
+                                                            <span class="fa fa-calendar"></span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                @error('next_due')
+                                                    <div class="error">{{ $message }}</div>
+                                                @enderror
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
@@ -90,6 +121,19 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
+                                                    <label class="form-label require">{{ __('inspection.unit') }}</label>
+                                                    <select name="unit_id" id="unit_id"
+                                                        class=" form-control single-select" style="width: 100%">
+                                                        <option value="">Select Unit</option>
+
+                                                    </select>
+                                                </div>
+                                                @error('unit_id')
+                                                    <div class="error">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
                                                     <label class="form-label require">Shift</label>
                                                     <select name="shift_id" id="shift_id"
                                                         class=" form-control single-select" style="width: 100%">
@@ -105,34 +149,8 @@
                                                     <div class="error">{{ $message }}</div>
                                                 @enderror
                                             </div>
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label
-                                                        class="form-label require">{{ __('inspection.next_due') }}</label>
-                                                    <input type="text" name="next_due" id = "next_due"
-                                                        class="form-control" value="{{ old('next_due') }}">
-                                                </div>
-                                                @error('next_due')
-                                                    <div class="error">{{ $message }}</div>
-                                                @enderror
-                                            </div>
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label require">{{ __('inspection.unit') }}</label>
-                                                    <select name="unit_id" id="unit_id"
-                                                        class=" form-control single-select" style="width: 100%">
-                                                        <option value="">Select Unit</option>
-                                                        @foreach ($units as $unit)
-                                                            <option value="{{ encryptId($unit->id) }}"
-                                                                {{ old('unit_id') == encryptId($unit->id) ? 'selected' : '' }}>
-                                                                {{ $unit->unit_name }}</option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-                                                @error('unit_id')
-                                                    <div class="error">{{ $message }}</div>
-                                                @enderror
-                                            </div>
+
+
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label
@@ -256,8 +274,7 @@
                                                         <label
                                                             class="form-label require">{{ __('inspection.types_of_equipment') }}</label>
                                                         <input type="text" name="types_of_equipment[1]"
-                                                            id = "types_of_equipment" class="form-control"
-    >
+                                                            id = "types_of_equipment" class="form-control">
                                                     </div>
                                                     @error('types_of_equipment.1')
                                                         <div class="error">{{ $message }}</div>
@@ -392,6 +409,31 @@
 
     @push('script')
         <script type="text/javascript" nonce="projectcab">
+            $(document).on('change', '#location_id', function() {
+                var locationId = $(this).val();
+                if (locationId) {
+                    $.ajax({
+                        url: "{{ admin_url('unit/ajax-list') }}/" + locationId + "/0",
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(data) {
+                            $('#unit_id').empty().append(
+                                '<option value="">Select unit</option>');
+                            $.each(data, function(key, value) {
+                                $('#unit_id').append('<option value="' + value
+                                    .id + '">' + value.name + '</option>');
+                            });
+                            $('#unit_id').trigger('change.');
+                        },
+                        error: function(xhr) {
+                            alert('Error fetching unit. Please try again.');
+                        }
+                    });
+                } else {
+                    $('#unit_id').empty().append('<option value="">Select unit</option>');
+                    $('#unit_id').trigger('change.');
+                }
+            });
             $(document).ready(function() {
                 $('#resetform').on('click', function(e) {
                     e.preventDefault();
@@ -400,12 +442,21 @@
                 flatpickr("#issue_date", {
                     dateFormat: "d-m-Y",
                 });
-                flatpickr("#inspection_date", {
+                var fromDatepicker = flatpickr("#inspection_date", {
                     dateFormat: "d-m-Y",
-                });
-                flatpickr("#next_due", {
+                    onChange: function(selectedDates) {
+                        if (selectedDates.length > 0) {
+                            var startDate = selectedDates[0];
+                            toDatepicker.set('minDate', startDate);
+                            toDatepicker.clear();
+                        }
+                    }
+
+                })
+
+                var toDatepicker = flatpickr("#next_due", {
                     dateFormat: "d-m-Y",
-                    minDate: new Date(),
+
                 });
             });
             $(function() {
@@ -507,14 +558,14 @@
                         },
                         device_image: {
                             required: true,
-                             filesize: 10485760,
+                            filesize: 10485760,
                         },
                         observation: {
                             required: true,
                         },
                         signature_image: {
                             required: true,
-                             filesize: 10485760,
+                            filesize: 10485760,
                         },
 
                     },
@@ -588,7 +639,7 @@
                         },
                         device_image: {
                             required: "Please upload an image.",
-                           filesize: "File size should not exceed 10MB",
+                            filesize: "File size should not exceed 10MB",
                         },
                         observation: {
                             required: "Please add observation",

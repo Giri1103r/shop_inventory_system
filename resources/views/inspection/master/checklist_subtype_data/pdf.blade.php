@@ -1,5 +1,5 @@
 @extends('admin.layouts.pdf')
-@section('title', 'Checklist Sub Type Data PDF')
+@section('title', 'Checklist Sub Type Data')
 @section('content')
 
     <div style="width:100%;">

@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', ' Medical Requisition Slip-Floor Approval')
+@section('title', ' Medical Requisition Slip-Floor')
 @section('pageurl', admin_url('ohc/medical-requisition-slip/list'))
 
 @push('style')

@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Daily Fire Pump House Inspection Add')
+@section('title', 'Daily Fire Pump House Inspection')
 @section('pageurl', admin_url('fire/daily-fire-pump-house-inspection/list'))
 
 
@@ -52,8 +52,17 @@
 
                                             <div class="col-md-4 form-input">
                                                 <label class="form-label">Issue Dt.</label>
-                                                <input type="text" class="form-control" name="issue_date" id="issue_date"
-                                                    readonly value="{{ Displaydateformat($staticDocno->issue_date) }}">
+
+
+                                                <div class="input-group date form-input custom-height">
+                                                    <input type="text" class="form-control" name="issue_date"
+                                                        id="issue_date" readonly
+                                                        value="{{ Displaydateformat($staticDocno->issue_date) }}">
+                                                    <div class="input-group-addon input-group-text">
+                                                        <span class="fa fa-calendar"></span>
+                                                    </div>
+                                                </div>
+
                                             </div>
 
                                             <div class="col-md-4 form-input mb-2">
@@ -63,8 +72,15 @@
                                             </div>
                                             <div class="col-md-4 form-input mb-2">
                                                 <label class="form-label">Date of Inspection</label>
-                                                <input type="text" class="form-control" name="date_of_inspection"
-                                                    id="date_of_inspection">
+
+                                                <div class="input-group date form-input custom-height">
+                                                    <input type="text" class="form-control" name="date_of_inspection"
+                                                        id="date_of_inspection">
+
+                                                    <div class="input-group-addon input-group-text">
+                                                        <span class="fa fa-calendar"></span>
+                                                    </div>
+                                                </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
@@ -194,8 +210,15 @@
                                             </div>
                                             <div class="col-md-4 form-input mt-2">
                                                 <label class="form-label require">Date</label>
-                                                <input type="text" class="form-control" name="date"
-                                                    id="date">
+
+                                                <div class="input-group date form-input custom-height">
+                                                    <input type="text" class="form-control" name="date"
+                                                        id="date">
+
+                                                    <div class="input-group-addon input-group-text">
+                                                        <span class="fa fa-calendar"></span>
+                                                    </div>
+                                                </div>
                                             </div>
                                             <div class="col-md-12 form-input mt-2">
                                                 <label class="form-label require">Note</label>
@@ -290,7 +313,7 @@
                         },
                         signature_image: {
                             required: true,
-                             filesize: 10485760,
+                            filesize: 10485760,
                         },
                         date: {
                             required: true,
@@ -321,7 +344,7 @@
                         },
                         signature_image: {
                             required: "Signature is required",
-                             filesize: "File size should not exceed 10MB",
+                            filesize: "File size should not exceed 10MB",
                         },
                         date: {
                             required: "Date is required",

@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Weekly First Aid  Checklist View')
+@section('title', 'Weekly First Aid  Checklist')
 @section('pageurl', admin_url('ohc/first-aid-box/weekly-inspection/list'))
 @section('content')
     <div class="clearfix"></div>
@@ -39,7 +39,7 @@
                                             </div>
                                         </div>
 
-                                        
+
 
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
@@ -136,14 +136,14 @@
                                             </tbody>
                                         </table>
                                     </div>
-                                    
+
                                     <div class="row m-2">
                                         <div class="col-md-4 form-group form-input mb-2">
                                             <label class="form-label"
                                                 style="display: block; ">{{ __('inspection.signature') }}</label>
                                                 <img src="{{ admin_url($inspection_file) }}"
                                                 alt="Signature Upload" style="width: 100px; margin-top:-10px">
-                                           
+
                                         </div>
                                     </div>
 
@@ -155,7 +155,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                  
+
                                 </div>
                             </div>
                         </div>

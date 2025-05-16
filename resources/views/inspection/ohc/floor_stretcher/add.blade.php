@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Ohc Floor Stretcher Checklist Add')
+@section('title', 'Ohc Floor Stretcher Checklist ')
 @section('pageurl', admin_url('ohc/floor_stretcher/checklist/list'))
 @section('content')
     <div class="clearfix"></div>

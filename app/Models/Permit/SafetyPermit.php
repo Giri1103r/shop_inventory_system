@@ -624,7 +624,7 @@ class SafetyPermit extends Model
         $insert_array = array(
             'permit_id' => $newPermitID,
             'date' => DBdateformat(now()),
-            'to_date' => DBdateformat($safetypermit->to_date),
+            'to_date' => DBdateformat($request->date),
             'time_from' => $safetypermit->time_from,
             'time_to' => $request->time_to,
             'unit_id' => $safetypermit->unit_id,
@@ -656,7 +656,6 @@ class SafetyPermit extends Model
             'assigned_job' => $safetypermit->assigned_job,
             'attendance_toolbox_talk' => $safetypermit->attendance_toolbox_talk,
             'permit_status' => STATUS_EHS_VERIFICATION_PENDING,
-            'reference_id' => $safetypermit->id,
             'created_by' => Auth::id(),
         );
 
@@ -743,7 +742,7 @@ class SafetyPermit extends Model
             }
             // $protectiveEquip = json_decode($data->protective_equip, true);
 
-             $protectiveEquip =   !empty($data->protective_equip)
+            $protectiveEquip =   !empty($data->protective_equip)
                 ? json_decode($data->protective_equip, true)
                 : null;
             $mappedProtectiveEquip = [];
@@ -787,7 +786,7 @@ class SafetyPermit extends Model
 
             // $equiment_involved = json_decode($data->equiment_involved, true);
 
-              $equiment_involved =   !empty($data->equiment_involved)
+            $equiment_involved =   !empty($data->equiment_involved)
                 ? json_decode($data->equiment_involved, true)
                 : null;
 
@@ -874,7 +873,7 @@ class SafetyPermit extends Model
 
             $equipment_checklist =   !empty($data->equipment_checklist)
                 ? json_decode($data->equipment_checklist, true)
-                :null;
+                : null;
             $mappeequipment_checklist = [];
 
             if ($equipment_checklist) {
@@ -1160,6 +1159,12 @@ class SafetyPermit extends Model
     {
         return SafetyPermit::where('reference_id', $id)->exists();
     }
+
+    public function PermitExtensionUpdate($id)
+    {
+        return $this->where('id', $id)->update(['reference_id' => $id]);
+    }
+
 
     protected static function booted()
     {

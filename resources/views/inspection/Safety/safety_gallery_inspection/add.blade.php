@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Safety Gallery Add')
+@section('title', 'Safety Gallery')
 @section('pageurl', admin_url('safety/safety-gallery-inspection/list'))
 
 

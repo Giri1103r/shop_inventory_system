@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Fire Alarm Inspection Add')
+@section('title', 'Fire Alarm Inspection')
 @section('pageurl', admin_url('fire/fire-alarm-inspection/list'))
 @section('content')
     <div class="clearfix"></div>
@@ -65,6 +65,7 @@
                                                         class="form-label require">{{ __('inspection.inspection_date') }}</label>
                                                     <input type="text" name="inspection_date" id = "inspection_date"
                                                         class="form-control">
+                                                        
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -79,6 +80,16 @@
                                                             <option value="{{ encryptId($location->id) }}">
                                                                 {{ $location->location_name }}</option>
                                                         @endforeach
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">{{ __('inspection.unit') }}</label>
+                                                    <select name="unit_id" id="unit_id"
+                                                        class=" form-control single-select" style="width: 100%">
+                                                        <option value="">Select Unit</option>
+
                                                     </select>
                                                 </div>
                                             </div>
@@ -103,19 +114,7 @@
                                                         class="form-control">
                                                 </div>
                                             </div>
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label require">{{ __('inspection.unit') }}</label>
-                                                    <select name="unit_id" id="unit_id"
-                                                        class=" form-control single-select" style="width: 100%">
-                                                        <option value="">Select Unit</option>
-                                                        @foreach ($units as $unit)
-                                                            <option value="{{ encryptId($unit->id) }}">
-                                                                {{ $unit->unit_name }}</option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-                                            </div>
+
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label
@@ -159,26 +158,16 @@
                                         </div>
                                         <hr>
                                         <div class="form-wrapper">
+                                            <div class="card-header-inner d-flex justify-content-between">
+                                                <h4 class="text-white ms-3">Fire Alarm Inspection Checklist</h4>
+                                                <button class="btn btn-primary add-row mb-2 " type="button"
+                                                    id="add-row"
+                                                    style="margin-left: 10px;  margin-right: 10px; width: 84px;">
+                                                    Add
+                                                </button>
+                                            </div>
                                             <div class="row mt-4 form-set">
-                                                <div class="card-header-inner p-2">
-                                                    <h4 class="text-white">Fire Alarm Inspection Checklist</h4>
-                                                </div>
 
-                                                <div class="d-flex justify-content-end align-items-center gap-2 m-2">
-                                                    <button class="btn btn-primary add-row" type="button" id="add-row"
-                                                        style="min-width: 130px;">
-                                                        Add
-                                                    </button>
-                                                    {{-- <button class="btn btn-primary add-obs" type="button" id="add-obs"
-                                                        style="min-width: 160px;">
-                                                        Add Observation
-                                                    </button> --}}
-                                                    <button type="button"
-                                                        class="btn btn-danger remove-row d-flex align-items-center"
-                                                        style="min-width: 130px;">
-                                                        <i class="fa-solid fa-trash me-2"></i> Remove
-                                                    </button>
-                                                </div>
 
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
@@ -279,6 +268,13 @@
 
                                                     </div>
                                                 </div>
+
+                                                <div class="col-md-2 text-right  mt-4">
+                                                    <button class="btn btn-danger remove-row" type="button"
+                                                        style="margin:10px;"><i class="fa fa-trash"></i></button>
+
+                                                </div>
+                                                <hr>
                                             </div>
                                         </div>
                                         <div class="form-observation">
@@ -287,21 +283,7 @@
                                                     <h4 class="text-white">Fire Alarm Inspection Observation</h4>
                                                 </div>
 
-                                                {{-- <div class="d-flex justify-content-end align-items-center gap-2 m-2">
-                                                    <button class="btn btn-primary add-row" type="button" id="add-row"
-                                                        style="width: 120px;">
-                                                        Add
-                                                    </button>
-                                                    <button class="btn btn-primary add-obs" type="button" id="add-obs"
-                                                        style="width: 150px;">
-                                                        Add Observation
-                                                    </button>
-                                                    <button type="button"
-                                                        class="btn btn-danger remove-row d-flex align-items-center"
-                                                        style="width: 120px;">
-                                                        <i class="fa-solid fa-trash me-2"></i> Remove
-                                                    </button>
-                                                </div> --}}
+
 
 
                                                 <div class="col-md-12 mb-2">
@@ -313,11 +295,11 @@
                                                         <div class="mb-2">
                                                             <label class="me-3">
                                                                 <input type="radio" name="observation"
-                                                                    value="{{encryptId(1)}}"> Yes
+                                                                    value="{{ encryptId(1) }}"> Yes
                                                             </label>
                                                             <label>
                                                                 <input type="radio" name="observation"
-                                                                    value="{{encryptId(2)}}"> No
+                                                                    value="{{ encryptId(2) }}"> No
                                                             </label>
                                                         </div>
 
@@ -351,6 +333,33 @@
 
     @push('script')
         <script type="text/javascript" nonce="projectcab">
+            // location based unit
+
+            $(document).on('change', '#location_id', function() {
+                var locationId = $(this).val();
+                if (locationId) {
+                    $.ajax({
+                        url: "{{ admin_url('unit/ajax-list') }}/" + locationId + "/0",
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(data) {
+                            $('#unit_id').empty().append(
+                                '<option value="">Select unit</option>');
+                            $.each(data, function(key, value) {
+                                $('#unit_id').append('<option value="' + value
+                                    .id + '">' + value.name + '</option>');
+                            });
+                            $('#unit_id').trigger('change.');
+                        },
+                        error: function(xhr) {
+                            alert('Error fetching unit. Please try again.');
+                        }
+                    });
+                } else {
+                    $('#unit_id').empty().append('<option value="">Select unit</option>');
+                    $('#unit_id').trigger('change.');
+                }
+            });
             $(document).ready(function() {
                 $('#resetform').on('click', function(e) {
                     e.preventDefault();
@@ -429,12 +438,12 @@
                         "resource_code[1]": {
                             required: true,
                             uniqueItemCode: true,
-                            minlength:3,
+                            minlength: 3,
                             maxlength: 30,
                         },
                         "approach[1]": {
                             required: true,
-                            minlength:3,
+                            minlength: 3,
                             maxlength: 300,
                         },
                         "glass[1]": {
@@ -454,21 +463,21 @@
                         },
                         "remarks[1]": {
                             required: true,
-                            minlength:3,
+                            minlength: 3,
                             maxlength: 300,
                         },
 
                         device_image: {
                             required: true,
                             // extension: "jpg",
-                             filesize: 10485760,
+                            filesize: 10485760,
                         },
                         observation: {
                             required: true,
                         },
                         signature_image: {
                             required: true,
-                             filesize: 10485760,
+                            filesize: 10485760,
                         },
 
                     },
@@ -544,7 +553,7 @@
                         device_image: {
                             required: "Please upload an image.",
                             // extension: "Only JPG files are allowed.",
-                             filesize: "File size should not exceed 10MB",
+                            filesize: "File size should not exceed 10MB",
                         },
                         observation: {
                             required: "Please add observation",
@@ -600,25 +609,6 @@
 
                     var newFormSet = `
                         <div class="row mt-4 form-set">
-                                                <div class="card-header-inner p-2">
-                                                    <h4 class="text-white">Fire Alarm Inspection Checklist</h4>
-                                                </div>
-
-                                                <div class="d-flex justify-content-end align-items-center gap-2 m-2">
-                                                    <button class="btn btn-primary add-row" type="button" id="add-row"
-                                                        style="min-width: 130px;">
-                                                        Add
-                                                    </button>
-                                                    {{-- <button class="btn btn-primary add-obs" type="button" id="add-obs"
-                                                        style="min-width: 160px;">
-                                                        Add Observation
-                                                    </button> --}}
-                                                    <button type="button"
-                                                        class="btn btn-danger remove-row d-flex align-items-center"
-                                                        style="min-width: 130px;">
-                                                        <i class="fa-solid fa-trash me-2"></i> Remove
-                                                    </button>
-                                                </div>
 
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
@@ -716,6 +706,12 @@
 
                                                     </div>
                                                 </div>
+                                                 <div class="col-md-2 text-right  mt-4">
+                                                    <button class="btn btn-danger remove-row" type="button"
+                                                        style="margin:10px;"><i class="fa fa-trash"></i></button>
+
+                                                </div>
+                                                <hr>
                                             </div>
                     `;
 
@@ -746,7 +742,7 @@
                     $("input[name='resource_code[" + form_set_count + "]']").rules('add', {
                         required: true,
                         uniqueItemCode: true,
-                        minlength:3,
+                        minlength: 3,
                         maxlength: 30,
                         messages: {
                             required: 'Please enter the resource code',
@@ -790,7 +786,7 @@
 
                     $("textarea[name='approach[" + form_set_count + "]']").rules('add', {
                         required: true,
-                        minlength:3,
+                        minlength: 3,
                         maxlength: 300,
                         messages: {
                             required: 'Please enter the approach details',
@@ -801,7 +797,7 @@
 
                     $("textarea[name='remarks[" + form_set_count + "]']").rules('add', {
                         required: true,
-                        minlength:3,
+                        minlength: 3,
                         maxlength: 30,
                         messages: {
                             required: 'Please enter remarks',

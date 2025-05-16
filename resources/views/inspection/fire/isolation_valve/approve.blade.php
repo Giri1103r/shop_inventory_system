@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Isolation Valve Inspection Approve')
+@section('title', 'Isolation Valve Inspection')
 @section('pageurl', admin_url('fire/isolating-valve-inspection/list'))
 @section('content')
     <div class="clearfix"></div>

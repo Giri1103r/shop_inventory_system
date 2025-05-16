@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Hydrant and Riser View')
+@section('title', 'Hydrant and Riser ')
 @section('pageurl', admin_url('fire/hydrant-riser-inspection/list'))
 
 @section('content')
@@ -378,7 +378,7 @@
                                                     </div>
                                                 </div>
                                             @endif
-                                            
+
                                             @if (isset($signature))
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">

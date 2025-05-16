@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Fire Pre Noc Checklist Show')
+@section('title', 'Fire Pre Noc Checklist')
 @section('pageurl', admin_url('fire/pre-noc/checklist/list'))
 
 @section('content')
@@ -103,12 +103,12 @@
                                                 $srNo = 1;
                                                 $displayedSections = [];
                                             @endphp
-                                        
+
                                             @foreach ($user_response as $checklistId => $data)
                                                 @php
                                                     $sectionName = GetSubChecklistTypeName($data['sub_type_id']);
                                                 @endphp
-                                        
+
                                                 <tr>
                                                     @if (!in_array($sectionName, $displayedSections))
                                                         <td colspan="5"
@@ -118,27 +118,27 @@
                                                         @php $displayedSections[] = $sectionName; @endphp
                                                     @endif
                                                 </tr>
-                                        
+
                                                 <tr>
                                                     <td style="border: 1px solid black; padding: 8px; font-weight: bold; text-align: center;">
                                                         {{ $srNo }}
                                                     </td>
-                                        
+
                                                     <td colspan="2" style="border: 1px solid black; padding: 8px;">
                                                         {{ GetChecklistTypeDate($checklistId) }}
                                                     </td>
-                                        
+
                                                     <td style="border: 1px solid black; padding: 8px; text-align: center;">
                                                         {{ $data['remarks'] ?? '-' }}
                                                     </td>
                                                 </tr>
-                                        
+
                                                 @php
                                                     $srNo++;
                                                 @endphp
                                             @endforeach
                                         </tbody>
-                                        
+
 
                                     </table>
                                 </div>

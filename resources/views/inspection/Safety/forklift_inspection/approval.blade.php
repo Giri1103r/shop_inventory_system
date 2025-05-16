@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Forklift Inspection Report')
+@section('title', 'Forklift Inspection ')
 @section('pageurl', admin_url('safety/forklift-inspection/list'))
 @section('content')
     <div class="clearfix"></div>

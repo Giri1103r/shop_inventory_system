@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Observation FollowUp Approve')
+@section('title', 'Observation FollowUp')
 @section('pageurl', admin_url('fire/checklist-observation/list'))
 @section('content')
     <div class="clearfix"></div>
@@ -534,7 +534,7 @@
                                                         <textarea id="capa_remarks" class="form-control" rows="3" placeholder="Please provide Remarks..."
                                                             name="capa_remarks"></textarea>
                                                     </div>
-                                                
+
                                                 <div class="submit-button mt-3" style="text-align: right;">
                                                     <x-button-submit class="submit"></x-button-submit>
                                                     <x-button-cancel

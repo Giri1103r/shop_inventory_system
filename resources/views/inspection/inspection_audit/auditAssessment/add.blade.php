@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', '6S Audit Assessment Add')
+@section('title', '6S Audit Assessment')
 @section('pageurl', admin_url('audit/assessment/list'))
 
 
