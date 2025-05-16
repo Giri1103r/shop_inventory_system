@@ -3240,10 +3240,10 @@ function getPPEAvailabilityChartData($form_date, $to_date, $company_id)
     $query = PpeStockinventory::selectRaw('sub, SUM(quantity) as total_quantity')
         ->groupBy('sub');
 
-    if ($company_id) {
-        $companyId = decryptId($company_id);
-        $query->where('company_id', $companyId);
-    }
+    // if ($company_id) {
+    //     $companyId = decryptId($company_id);
+    //     $query->where('company_id', $companyId);
+    // }
 
     if ($form_date && $to_date) {
         $query->whereBetween('created_at', [
