@@ -1037,7 +1037,6 @@
                         data: data,
                         cache: false,
                         success: function(dataAjx) {
-                            console.log(dataAjx);
                             $('#TotalIncidentsCountDiv').html(dataAjx);
                         }
                     });
@@ -1404,7 +1403,26 @@
                     });
                 }
 
-        
+                function LoadmonthewisePTWData(CompanyId = '', Fromdate = '', Todate = '') {
+                    var url = "{{ admin_url('dashboard/monthwiseptw') }}"
+                    var data = {
+                        CompanyId: CompanyId,
+                        Fromdate: Fromdate,
+                        Todate: Todate,
+                    };
+                    $('#monthwiseptwDiv').html('');
+                    $.ajax({
+                        type: 'get',
+                        url: url,
+                        data: data,
+                        cache: false,
+                        success: function(dataAjx) {
+
+                            $('#monthwiseptwDiv').html(dataAjx);
+                        }
+                    });
+                }
+
              
                 function loadunitwisecount(CompanyId = '', Fromdate = '', Todate = '') {
                     var url = "{{ admin_url('dashboard/unitwiseptw') }}"

@@ -1035,49 +1035,53 @@ class AdminController extends Controller
 
     public function monthwiseptw(Request $request)
     {
-        $permitCountsQuery = $this->ptw
-            ->selectRaw('MONTH(created_at) as month, YEAR(created_at) as year, COUNT(*) as permit_count')
-            ->where('status', 1)
-            ->where('trash', 'NO');
+        try {
+            $permitCountsQuery = $this->ptw
+                ->selectRaw('MONTH(created_at) as month, YEAR(created_at) as year, COUNT(*) as permit_count')
+                ->where('status', 1)
+                ->where('trash', 'NO');
 
-        $company_id = $request->input('CompanyId');
-        if ($company_id) {
-            $companyId = decryptId($company_id);
-            $permitCountsQuery->where('company_id', $companyId);
-        }
-
-        if ($request->Fromdate && $request->Todate) {
-            $permitCountsQuery->whereBetween('created_at', [
-                DBdateformat($request->Fromdate),
-                DBdateformat($request->Todate) . ' 23:59:59'
-            ]);
-        } elseif ($request->Fromdate) {
-            $permitCountsQuery->where('created_at', '>=', DBdateformat($request->Fromdate));
-        } elseif ($request->Todate) {
-            $permitCountsQuery->where('created_at', '<=', DBdateformat($request->Todate) . ' 23:59:59');
-        }
-        $permitCounts = $permitCountsQuery
-            ->groupBy('year', 'month')
-            ->orderBy('year')
-            ->orderBy('month')
-            ->get();
-
-        $result = [];
-        $currentYear = date('Y');
-        for ($month = 1; $month <= 12; $month++) {
-            $result[$month] = 0;
-        }
-
-        foreach ($permitCounts as $count) {
-            if ($count->year == $currentYear) {
-                $result[$count->month] = $count->permit_count;
+            $company_id = $request->input('CompanyId');
+            if ($company_id) {
+                $companyId = decryptId($company_id);
+                $permitCountsQuery->where('company_id', $companyId);
             }
-        }
-        // dd($result);
 
-        return view('admin.dashboard.monthwisecount', [
-            'monthlyCounts' => $result,
-        ]);
+            if ($request->Fromdate && $request->Todate) {
+                $permitCountsQuery->whereBetween('created_at', [
+                    DBdateformat($request->Fromdate),
+                    DBdateformat($request->Todate) . ' 23:59:59'
+                ]);
+            } elseif ($request->Fromdate) {
+                $permitCountsQuery->where('created_at', '>=', DBdateformat($request->Fromdate));
+            } elseif ($request->Todate) {
+                $permitCountsQuery->where('created_at', '<=', DBdateformat($request->Todate) . ' 23:59:59');
+            }
+            $permitCounts = $permitCountsQuery
+                ->groupBy('year', 'month')
+                ->orderBy('year')
+                ->orderBy('month')
+                ->get();
+
+            $result = [];
+            $currentYear = date('Y');
+            for ($month = 1; $month <= 12; $month++) {
+                $result[$month] = 0;
+            }
+
+            foreach ($permitCounts as $count) {
+                if ($count->year == $currentYear) {
+                    $result[$count->month] = $count->permit_count;
+                }
+            }
+
+            return view('admin.dashboard.monthwisecount', [
+                'monthlyCounts' => $result,
+            ]);
+        } catch (\Exception $ex) {
+            report($ex);
+            return back()->withErrors('An error occurred');
+        }
     }
     public function gettrainingStatusCount(Request $request)
     {
