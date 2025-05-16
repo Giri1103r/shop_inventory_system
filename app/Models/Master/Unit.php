@@ -243,6 +243,8 @@ class Unit extends Model
         return $list;
     }
 
+    
+
     public function unitajaxList($unit_id, $companyId = '')
     {
         $query = $this->select('id', 'unit_name')->where('status', 1);

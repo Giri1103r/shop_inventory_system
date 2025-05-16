@@ -833,7 +833,7 @@
                 },
                 signature_image: {
                     required: true,
-                     filesize: 10485760,
+                    filesize: 15728640,
                 }
             },
             messages: {
@@ -844,7 +844,7 @@
                 },
                 signature_image: {
                     required: "Signature is Required",
-                    filesize: "File size should not exceed 10MB",
+                    filesize: "File size should not exceed 15MB",
                 }
             },
             errorElement: 'div',
@@ -882,7 +882,7 @@
                 },
                 signature_image: {
                     required: true,
-                     filesize: 10485760,
+                    filesize: 15728640,
                 }
             },
             messages: {
@@ -893,7 +893,7 @@
                 },
                 signature_image: {
                     required: "Signature is Required",
-                     filesize: "File size should not exceed 10MB",
+                     filesize: "File size should not exceed 15MB",
                 }
             },
             errorElement: 'div',
@@ -927,7 +927,7 @@
                 },
                 signature_image: {
                     required: true,
-                    filesize: 10485760,
+                    filesize: 15728640,
                 }
             },
             messages: {
@@ -938,7 +938,7 @@
                 },
                 signature_image: {
                     required: "Signature is Required",
-                    filesize: "File size should not exceed 10MB",
+                    filesize: "File size should not exceed 15MB",
                 }
             },
             errorElement: 'div',
@@ -972,7 +972,7 @@
                 },
                 signature_image: {
                     required: true,
-                    filesize: 10485760,
+                    filesize: 15728640,
                 }
             },
             messages: {
@@ -983,7 +983,7 @@
                 },
                 signature_image: {
                     required: "Signature is Required",
-                    filesize: "File size should not exceed 10MB",
+                    filesize: "File size should not exceed 15MB",
                 }
             },
             errorElement: 'div',

@@ -27,6 +27,7 @@ class TrainingSchedule extends Model
         'training_hrs_perday',
         'topic_id',
         'trainer_id',
+        'company_id',
         'unit_id',
         'department_id',
         'venue_id',
@@ -133,6 +134,9 @@ class TrainingSchedule extends Model
         }
         if ($request->has('unit_id') && $request->unit_id) {
             $query = $query->where('training_schedule.unit_id', decryptId($request->unit_id));
+        }
+         if ($request->has('company_id') && $request->company_id) {
+            $query = $query->where('training_schedule.company_id', decryptId($request->company_id));
         }
         if ($request->has('department_id') && $request->department_id) {
             $query = $query->where('training_schedule.department_id', decryptId($request->department_id));
@@ -294,6 +298,7 @@ class TrainingSchedule extends Model
             'trainer_id' => decryptId($request->trainer_id),
             'venue_id' => decryptId($request->venue_id),
             'unit_id' => decryptId($request->unit_id),
+            'company_id' => decryptId($request->company_id),
             'department_id' => decryptId($request->department_id),
             'target_trainees' => $request->target_trainees,
             'training_status' => 1,
@@ -634,6 +639,9 @@ class TrainingSchedule extends Model
         }
         if ($request->has('unit_id') && $request->unit_id) {
             $query = $query->where('training_schedule.unit_id', decryptId($request->unit_id));
+        }
+         if ($request->has('company_id') && $request->company_id) {
+            $query = $query->where('training_schedule.company_id', decryptId($request->company_id));
         }
         if ($request->has('department_id') && $request->department_id) {
             $query = $query->where('training_schedule.department_id', decryptId($request->department_id));

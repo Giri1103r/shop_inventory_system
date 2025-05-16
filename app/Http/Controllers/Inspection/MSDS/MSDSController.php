@@ -247,7 +247,7 @@ class MSDSController extends Controller
             $filename = "MSDS.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('msds/list'));
@@ -449,7 +449,7 @@ class MSDSController extends Controller
             $filename = "MSDS Details.pdf";
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             report($ex);
             Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('msds/list'));

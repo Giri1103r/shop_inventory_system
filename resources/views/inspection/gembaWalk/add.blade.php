@@ -218,7 +218,7 @@
                                                             </div>
 
 
-                                                            <div class="col-md-4 mt-2 file-upload-block"
+                                                            <div class="col-md-4 mt-2  form-input file-upload-block"
                                                                 id="file-upload-0">
                                                                 <label for="evidence_0"
                                                                     class="form-label require ">Evidence</label>
@@ -531,7 +531,7 @@
 
 
 
-                             <div class="col-md-4 mt-2 file-upload-block"
+                             <div class="col-md-4 mt-2 form-input file-upload-block"
                                                                 id="file-upload-0">
                                                                 <label for="evidence_0"
                                                                     class="form-label">Evidence</label>
@@ -701,7 +701,7 @@
                 $.validator.addMethod("filesize", function(value, element, maxSize) {
                     if (element.files.length === 0) return true;
                     return element.files[0].size <= maxSize;
-                }, "File size must be less than 10MB.");
+                }, "File size must be less than 15MB.");
 
                 $('#gembaWalkReportAdd').validate({
                     rules: {
@@ -714,11 +714,11 @@
                         gemba_walk_prepared_by: {
                             required: true,
                             //  extension: "jpg|jpeg|png",
-                             filesize: 10485760,
+                             filesize: 15728640,
                         },
                         gemba_walk_verified_by:{
                             required:true,
-                            filesize : 10485760,
+                            filesize: 15728640,
                         },
 
                         capa_remark:{
@@ -752,7 +752,7 @@
                         },
                         "gemba_walk[0][evidence]": {
                             required: true,
-                            filesize: 10485760,
+                            filesize: 15728640,
                         },
                         "gemba_walk[0][checklist_capa]": {
                             required: true,
@@ -792,11 +792,11 @@
                         gemba_walk_prepared_by: {
                             required: "Please upload a signature.",
                             // extension: "Only JPG, JPEG, and PNG files are allowed.",
-                            filesize: "File size must be less than 10MB."
+                            filesize: "File size must be less than 15MB."
                         },
                         gemba_walk_verified_by:{
                             required: "Please upload a signature.",
-                            filesize:"File size must be less than 10MB."
+                            filesize:"File size must be less than 15MB."
                         },
                         capa_remark:{
                             required: "Please enter a remark.",
@@ -821,7 +821,7 @@
                         "gemba_walk[0][evidence]": {
                             required: "Please upload an evidence file.",
                             // extension: "Only JPG, JPEG, PNG, and PDF files are allowed.",
-                            filesize: "File size must be less than 10MB."
+                            filesize: "File size must be less than 15MB."
                         },
                         "gemba_walk[0][checklist_capa]": {
                             required: "Please enter a CAPA.",
@@ -1011,11 +1011,11 @@
                     required: true,
                     // extension: "jpg|jpeg|png|pdf",
                     // filesize: 5 * 1024 * 1024,
-                     filesize: 10485760,
+                     filesize: 15728640,
                     messages: {
                         required: "Evidence file is required.",
                         // extension: "Only JPG, JPEG, PNG, and PDF files are allowed.",
-                        filesize: "File size must be less than 10MB."
+                        filesize: "File size must be less than 15MB."
                     }
                 });
             }

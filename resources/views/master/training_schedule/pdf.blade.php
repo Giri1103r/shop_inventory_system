@@ -42,7 +42,9 @@
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ $value->emp_name }}
                         </td>
-
+  <td style='padding: 7px;border: 0.5px solid'>
+                            {{ getCompanyname($value->company_id) }}
+                        </td>
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ $value->unit_name }}
                         </td>

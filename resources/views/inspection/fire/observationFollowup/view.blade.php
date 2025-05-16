@@ -163,7 +163,7 @@
                                     </div>
                                 </div>
                                 @if (
-                                    $observation->observation_status >= WAITING_FOR_EHS_OFFICER_VERIFICATION &&
+                                    $observation->observation_status >= WAITING_FOR_CAPA_ACTION &&
                                         $observation->observation_status != EHS_OFFICER_REJECTED &&
                                         $observation->observation_status != L1_MANAGER_REJECTED &&
                                         $observation->observation_status != L2_MANAGER_REJECTED)
@@ -301,10 +301,10 @@
                                 @endif
 
                                 @if (
-                                    $observation->observation_status >= WAITING_FOR_CAPA_ACTION &&
+                                  ($observation->observation_status == WAITING_FOR_CAPA_VERIFICATION &&
                                         $observation->observation_status != EHS_OFFICER_REJECTED &&
                                         $observation->observation_status != L1_MANAGER_REJECTED &&
-                                        $observation->observation_status != L2_MANAGER_REJECTED)
+                                        $observation->observation_status != L2_MANAGER_REJECTED))
                                     <div class="basic-form mx-3">
                                         <div class="row mt-3">
                                             <div class="card-header-inner">
@@ -352,7 +352,7 @@
                                 @endif
 
                                 @if (
-                                    $observation->observation_status >= WAITING_FOR_CAPA_VERIFICATION &&
+                                    $observation->observation_status >= WAITING_FOR_L1_VERIFICATION &&
                                         $observation->observation_status != EHS_OFFICER_REJECTED &&
                                         $observation->observation_status != L1_MANAGER_REJECTED &&
                                         $observation->observation_status != L2_MANAGER_REJECTED)
@@ -414,7 +414,7 @@
                                 @endif
 
                                 @if (
-                                    $observation->observation_status >= WAITING_FOR_L1_VERIFICATION &&
+                                    $observation->observation_status >= WAITING_FOR_L2_VERIFICATION &&
                                         $observation->observation_status != EHS_OFFICER_REJECTED &&
                                         $observation->observation_status != L1_MANAGER_REJECTED &&
                                         $observation->observation_status != L2_MANAGER_REJECTED)

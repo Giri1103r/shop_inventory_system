@@ -411,7 +411,7 @@ class FireSafetyEquipmentsController extends Controller
             $filename = "Fire Safety Equipment.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('fire/fire-safety/equipments/code-sheet/list'));
         }

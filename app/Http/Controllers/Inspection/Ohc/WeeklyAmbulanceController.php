@@ -214,8 +214,8 @@ class WeeklyAmbulanceController extends Controller
             $signature_upload = $this->user->getSignature();
             $document_no = $this->document_reference->selectUsingName('WeeklyAmbulanceInspectionChecklist');
             if (count($checklist_details) <= 0) {
-                Session::flash('error', __('inspection.checklist_add'));
-                return redirect()->back();
+                Session::flash('success', __('inspection.checklist_add'));
+                return redirect(admin_url('inspection/master/checklist-sub-type-data/add'));
             }
             $data = array(
                 'unit' => $unit,

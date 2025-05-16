@@ -141,7 +141,7 @@
                         minlength: 3,
                         maxlength: 2000,
                         noSpaces: true,
-                        pattern: /^[a-zA-Z0-9\s\-_'"()]*$/,
+
                         remote: {
                             url: '{{ admin_url('inspection/master/checklist-sub-type/unique') }}',
                             type: 'post',
@@ -173,7 +173,7 @@
                         minlength: "Minimum Characters should be 3",
                         maxlength: "Maximum Characters should not exceed 2000",
                         remote: "{{ __('Checklist Sub-Type Name should be unique') }}",
-                        pattern: "Only alphanumeric characters and -, _, ', \", () are allowed",
+                     
                     },
                     checklist_file: {
                         extension: "Only .jpg files are allowed. Please upload a valid image file.",

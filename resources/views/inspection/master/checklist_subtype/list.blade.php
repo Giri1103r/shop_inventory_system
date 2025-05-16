@@ -350,6 +350,16 @@
                                     types: types
                                 },
                                 success: function(response) {
+                                    if (response.status === 'warning') {
+                                        Swal.fire({
+                                            icon: 'warning',
+                                            title: 'Action Blocked',
+                                            text: response.msg,
+                                            confirmButtonColor: '#dc3545',
+                                        });
+                                        return;
+                                    }
+
                                     const Toast = Swal.mixin({
                                         toast: true,
                                         position: 'top-right',
@@ -357,19 +367,18 @@
                                         timer: 3000,
                                         timerProgressBar: true,
                                         didOpen: (toast) => {
-                                            toast.addEventListener(
-                                                'mouseenter',
-                                                Swal.stopTimer)
-                                            toast.addEventListener(
-                                                'mouseleave',
-                                                Swal.resumeTimer
-                                            )
+                                            toast.addEventListener('mouseenter',
+                                                Swal.stopTimer);
+                                            toast.addEventListener('mouseleave',
+                                                Swal.resumeTimer);
                                         }
                                     });
+
                                     Toast.fire({
                                         icon: 'success',
                                         title: response.msg
                                     });
+
                                     table.draw();
                                 },
                                 error: function(data) {

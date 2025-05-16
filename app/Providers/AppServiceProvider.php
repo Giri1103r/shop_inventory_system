@@ -377,13 +377,13 @@ class AppServiceProvider extends ServiceProvider
         defined('FIRE_PA_SYSTEM_INSPECTION') or define('FIRE_PA_SYSTEM_INSPECTION', 12);
         defined('DAILY_FIRE_PUMP') or define('DAILY_FIRE_PUMP', 19);
         defined('CO_TYPE_FIRE_EXTINGUISHER_INSPECTION') or define('CO_TYPE_FIRE_EXTINGUISHER_INSPECTION', 13);
-        defined('HOSE_BOX_INSPECTION') or define('HOSE_BOX_INSPECTION',9);
+        defined('HOSE_BOX_INSPECTION') or define('HOSE_BOX_INSPECTION', 9);
         defined('CARTRIDGE_TYPE_FIRE_EXTINGUISHER_INSPECTION') or define('CARTRIDGE_TYPE_FIRE_EXTINGUISHER_INSPECTION', 15);
-        defined('HOSE_REEL_INSPECTION') or define('HOSE_REEL_INSPECTION',10);
-        defined('FIRE_MODULAR_INSPECTION') or define('FIRE_MODULAR_INSPECTION',23);
+        defined('HOSE_REEL_INSPECTION') or define('HOSE_REEL_INSPECTION', 10);
+        defined('FIRE_MODULAR_INSPECTION') or define('FIRE_MODULAR_INSPECTION', 23);
         defined('HYDRANT_RISER') or define('HYDRANT_RISER', 4);
         defined('OBSERVATION_FOLLOWUP') or define('OBSERVATION_FOLLOWUP', 17);
-        
+
 
 
         // OPTIONS
@@ -425,14 +425,18 @@ class AppServiceProvider extends ServiceProvider
         defined('NOT_OK') or define('NOT_OK', 2);
 
         // Audit
-        defined('FIRE') or define('FIRE',1);
-        defined('HEALTH') or define('HEALTH',2);
-        defined('SAFETY') or define('SAFETY',3);
-        defined('MIS') or define('MIS',4);
+        defined('FIRE') or define('FIRE', 1);
+        defined('HEALTH') or define('HEALTH', 2);
+        defined('SAFETY') or define('SAFETY', 3);
+        defined('MIS') or define('MIS', 4);
 
         // Pass or Fail
-        defined('PASS')  or define('PASS',1);
-        defined('FAIL')  or define('FAIL',2);
+        defined('PASS')  or define('PASS', 1);
+        defined('FAIL')  or define('FAIL', 2);
+
+        //KPI
+        defined('LEADING')  or define('LEADING', 1);
+        defined('LAGGING')  or define('LAGGING', 2);
 
 
 

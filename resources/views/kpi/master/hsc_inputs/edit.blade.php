@@ -1,0 +1,164 @@
+@extends('admin.layouts.admin')
+@section('title', 'HSC Inputs')
+@section('pageurl', admin_url('kpi/master/hsc-inputs/list'))
+
+
+@section('content')
+    <div class="clearfix"></div>
+    <div class="page-titles">
+        <div class="d-flex align-items-center">
+
+        </div>
+
+    </div>
+
+    <div class="content-body  default-height">
+        <div class="container-fluid main-content">
+            <!-- row -->
+            <div class="row">
+
+                <div class="col-12">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                {{-- <h4 class="card-title">{{ __('master.company_add') }}</h4> --}}
+                                <div class="align-back-btc">
+                                    <x-button-back
+                                        href="{{ admin_url('kpi/master/hsc-inputs/list') }}"></x-button-back>
+                                </div>
+                            </div>
+
+                            <div class="card-body">
+
+                                <div class="basic-form">
+                                    <form method="POST" id="locationedit"
+                                        action="{{ admin_url('kpi/master/hsc-inputs/edit/submit') }}"
+                                        autocomplete="off">
+                                        @csrf
+                                        <input type="hidden" name="id" id="id"
+                                            value="{{ encryptId($leading_lagging->id) }}">
+
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">{{ __('common.type') }}</label>
+                                                    <select name="type" id="type"
+                                                        class=" form-control single-select" style="width: 100%">
+                                                        <option value="">Select Type</option>
+                                                        <option value="{{ encryptId(LEADING) }}"
+                                                            @if ($leading_lagging->type == LEADING) selected @endif>
+                                                            {{ __('common.leading') }}
+                                                        </option>
+                                                        <option value="{{ encryptId(LAGGING) }}"
+                                                            @if ($leading_lagging->type == LAGGING) selected @endif>
+                                                            {{ __('common.lagging') }}
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">{{ __('common.value') }}</label>
+                                                    <input type="text" name="value" id="value" class="form-control"
+                                                        placeholder="Value" value="{{ $leading_lagging->value }}">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <hr>
+                                        <div class="submit-button" style="text-align: right;">
+                                            <x-button-submit class="submit"></x-button-submit>
+                                            <x-button-reset class="submit"></x-button-reset>
+                                            <x-button-cancel
+                                                href="{{ admin_url('kpi/master/hsc-inputs/list') }}"></x-button-cancel>
+                                        </div>
+
+                                    </form>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </form>
+    </div>
+
+@stop
+
+@push('script')
+    <script type="text/javascript" nonce="projectcab">
+        $(document).ready(function() {
+            $('#resetform').on('click', function(e) {
+                e.preventDefault();
+                location.reload();
+            });
+        });
+
+        $(function() {
+            $('#locationedit').validate({
+                rules: {
+                    type: {
+                        required: true,
+                    },
+                    value: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 20,
+                        pattern: /^[a-zA-Z0-9\s\-_'"()]*$/,
+                        remote: {
+                            url: '{{ admin_url('kpi/master/hsc-inputs/unique') }}',
+                            type: 'post',
+                            data: {
+                                value: function() {
+                                    return $('#value').val();
+                                },
+                                type: function() {
+                                    return $('#type').val();
+                                },
+                                id: function() {
+                                    return $('#id').val();
+                                }
+                            }
+                        }
+                    },
+
+                },
+                messages: {
+                    type: {
+                        required: "{{ __('Type is Required') }}",
+                    },
+                    value: {
+                        required: "{{ __('Value is Required') }}",
+                        minlength: "{{ __('common.validate_min_length') }}",
+                        maxlength: "Maximum Characters should not exceed 20",
+                        pattern: "Only alphanumeric characters and -, _, ', \", () are allowed",
+                        remote: "{{ __('Value should be unique') }}"
+                    },
+
+                },
+                errorElement: 'span',
+                errorPlacement: function(error, element) {
+                    error.addClass('invalid-feedback');
+                    element.closest('.form-input').append(error);
+                },
+                highlight: function(element, errorClass, validClass) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function(element, errorClass, validClass) {
+                    $(element).removeClass('is-invalid');
+                },
+                submitHandler: function(form) {
+                    form.submit();
+
+                },
+                invalidHandler: function(event, validator) {
+                    var errors = validator.numberOfInvalids();
+                    validator.errorList.forEach(function(error) {
+
+                    });
+                }
+            });
+        });
+    </script>
+@endpush

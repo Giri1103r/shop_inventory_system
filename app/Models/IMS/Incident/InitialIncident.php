@@ -27,6 +27,7 @@ class InitialIncident extends Model
         'incident_date_time',
         'company_id',
         'unit_id',
+        'company_id',
         'shift',
         'location_id',
         'exact_location',
@@ -267,6 +268,7 @@ class InitialIncident extends Model
             'random_id' => $request->random_id,
             'incident_date_time' => DBdatetimeformat($request->incident_date_time),
             'unit_id' => decryptId($request->unit_id),
+            'company_id' => decryptId($request->company_id),
             'shift' => $request->shift,
             'location_id' => decryptId($request->location_id),
             'exact_location' => $request->exact_location,
@@ -413,6 +415,7 @@ class InitialIncident extends Model
         $update_array = array(
             'incident_date_time' => DBdatetimeformat($request->incident_date_time),
             'unit_id' => decryptId($request->unit_id),
+            'company_id' => decryptId($request->company_id),
             'shift' => $request->shift,
             'location_id' => decryptId($request->location_id),
             'exact_location' => $request->exact_location,
@@ -885,15 +888,25 @@ class InitialIncident extends Model
     {
         $query = DB::table('ims_initial_incident as iii')
             ->join('ims_master_incident_type as imit', 'iii.iir_type', '=', 'imit.id')
+            ->leftJoin('masters_unit', 'masters_unit.id', '=', 'iii.unit_id')
             ->where('iii.ua_uc_yes_no', 1)
             ->select(
                 'imit.incident_type_name',
+                'masters_unit.unit_name',
+                'iii.unit_id',
+                'iii.iir_type as incident_type_id',
                 DB::raw('COUNT(DISTINCT iii.id) as total_incident'),
                 DB::raw('SUM(CASE WHEN FIND_IN_SET("1", iii.ua_or_uc) > 0 THEN 1 ELSE 0 END) as unsafe_act'),
                 DB::raw('SUM(CASE WHEN FIND_IN_SET("2", iii.ua_or_uc) > 0 THEN 1 ELSE 0 END) as unsafe_condition'),
                 DB::raw('SUM(CASE WHEN FIND_IN_SET("3", iii.ua_or_uc) > 0 THEN 1 ELSE 0 END) as natural_causes'),
             )
-            ->groupBy('imit.incident_type_name')
+            ->groupBy(
+                'imit.incident_type_name',
+                'iii.unit_id',
+                'masters_unit.unit_name',
+                'iii.iir_type',
+                'imit.incident_type_name'
+            )
             ->orderBy('imit.incident_type_name');
         // Apply company Filter
         if ($request->CompanyId) {

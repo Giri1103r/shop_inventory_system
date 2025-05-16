@@ -364,7 +364,7 @@
                     signature_image: {
                         required: true,
                         extension: "png|jpeg|jpg",
-                       filesize: 10485760,
+                       filesize: 15728640,
                     },
                     date_of_inspection: {
                         required: true
@@ -389,7 +389,7 @@
                     signature_image: {
                         required: "Please upload your signature image.",
                         extension: "Allowed file types: PNG, JPEG, JPG.",
-                        filesize: "File must be less than 10 MB."
+                        filesize: "File must be less than 15MB."
                     },
 
                     date_of_inspection: {

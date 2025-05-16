@@ -101,8 +101,8 @@ class DailyVitalEquipmentController extends Controller
             $unit = $this->unit->getUnit();
             $document_no = $this->document_reference->selectUsingName('DailyVitalEquipment');
             if (count($checklistQuestions) <= 0) {
-                Session::flash('error', __('inspection.checklist_add'));
-                return redirect()->back();
+                Session::flash('success', __('inspection.checklist_add'));
+                return redirect(admin_url('inspection/master/checklist-sub-type-data/add'));
             }
             $data = array(
                 'checklist_details' => $checklistQuestions,

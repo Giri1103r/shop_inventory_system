@@ -25,50 +25,49 @@
                         <form action="" id="formsearch">
                             <div class="card-body">
 
-                                    <div class="row">
-                                        <div class="col-md-4 mb-3 form-input">
-                                            <label for="checklist"
-                                                class="form-label ">{{ __('inspection.checklist_type_name') }}</label>
-                                            <input type="text" name="category_name" id="category_name"
-                                                class="form-control">
-                                        </div>
-                                        <div class="col-md-4 mb-3 form-input">
-                                            <label for="emp_name" class="form-label ">From Date</label>
-                                            <div class="input-group date form-input custom-height">
-                                                <input type="text" class="form-control " name="from_date" id="from_date"
-                                                    autocomplete="off">
-                                                <div class="input-group-addon input-group-text">
-                                                    <span class="fa fa-calendar"></span>
-                                                </div>
-                                            </div>
-
-                                        </div>
-                                        <div class="col-md-4 mb-3 form-input">
-                                            <label for="emp_name" class="form-label ">To Date</label>
-                                            <div class="input-group date form-input  custom-height">
-                                                <input type="text" class="form-control " name="to_date" id="to_date"
-                                                    autocomplete="off">
-                                                <div class="input-group-addon input-group-text">
-                                                    <span class="fa fa-calendar"></span>
-                                                </div>
+                                <div class="row">
+                                    <div class="col-md-4 mb-3 form-input">
+                                        <label for="checklist"
+                                            class="form-label ">{{ __('inspection.checklist_type_name') }}</label>
+                                        <input type="text" name="category_name" id="category_name" class="form-control">
+                                    </div>
+                                    <div class="col-md-4 mb-3 form-input">
+                                        <label for="emp_name" class="form-label ">From Date</label>
+                                        <div class="input-group date form-input custom-height">
+                                            <input type="text" class="form-control " name="from_date" id="from_date"
+                                                autocomplete="off">
+                                            <div class="input-group-addon input-group-text">
+                                                <span class="fa fa-calendar"></span>
                                             </div>
                                         </div>
-                                        <div class="col-md-4 mb-3 form-input">
-                                            <label for="status" class="form-label ">{{ __('common.status') }}</label>
-                                            <select name="status" id="status" style="width: 100%"
-                                                class="form-control single-select">
-                                                <option value="">Select Status</option>
-                                                <option value="{{ encryptId(1) }}">Active</option>
-                                                <option value="{{ encryptId(0) }}">In-Active</option>
-                                            </select>
-                                        </div>
-                                        <div class="col-md-4 mt-3">
-                                            <x-button-search></x-button-search>
-                                            <x-button-reset></x-button-reset>
 
+                                    </div>
+                                    <div class="col-md-4 mb-3 form-input">
+                                        <label for="emp_name" class="form-label ">To Date</label>
+                                        <div class="input-group date form-input  custom-height">
+                                            <input type="text" class="form-control " name="to_date" id="to_date"
+                                                autocomplete="off">
+                                            <div class="input-group-addon input-group-text">
+                                                <span class="fa fa-calendar"></span>
+                                            </div>
                                         </div>
                                     </div>
-                             
+                                    <div class="col-md-4 mb-3 form-input">
+                                        <label for="status" class="form-label ">{{ __('common.status') }}</label>
+                                        <select name="status" id="status" style="width: 100%"
+                                            class="form-control single-select">
+                                            <option value="">Select Status</option>
+                                            <option value="{{ encryptId(1) }}">Active</option>
+                                            <option value="{{ encryptId(0) }}">In-Active</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4 mt-3">
+                                        <x-button-search></x-button-search>
+                                        <x-button-reset></x-button-reset>
+
+                                    </div>
+                                </div>
+
                             </div>
                         </form>
                         <hr>
@@ -316,6 +315,16 @@
                                     types: types
                                 },
                                 success: function(response) {
+                                    if (response.status === 'warning') {
+                                        Swal.fire({
+                                            icon: 'warning',
+                                            title: 'Action Blocked',
+                                            text: response.msg,
+                                            confirmButtonColor: '#dc3545',
+                                        });
+                                        return; // Do not proceed further
+                                    }
+
                                     const Toast = Swal.mixin({
                                         toast: true,
                                         position: 'top-right',
@@ -323,21 +332,21 @@
                                         timer: 3000,
                                         timerProgressBar: true,
                                         didOpen: (toast) => {
-                                            toast.addEventListener(
-                                                'mouseenter',
-                                                Swal.stopTimer)
-                                            toast.addEventListener(
-                                                'mouseleave',
-                                                Swal.resumeTimer
-                                            )
+                                            toast.addEventListener('mouseenter',
+                                                Swal.stopTimer);
+                                            toast.addEventListener('mouseleave',
+                                                Swal.resumeTimer);
                                         }
                                     });
+
                                     Toast.fire({
                                         icon: 'success',
                                         title: response.msg
                                     });
+
                                     table.draw();
                                 },
+
                                 error: function(data) {
                                     $.notify(data.responseJSON.msg, "error");
                                 }

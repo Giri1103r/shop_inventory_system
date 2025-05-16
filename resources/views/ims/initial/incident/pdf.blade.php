@@ -28,7 +28,13 @@
                             {{ $value->sr_no }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ getUnitname($value->unit_id)}}
+                            {{ getCompanyname($value->company_id) }}
+                        </td>
+                         <td style='padding: 7px;border: 0.5px solid'>
+                            {{ getLocationname($value->location_id) }}
+                        </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            {{ getUnitname($value->unit_id) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ $value->shift }}

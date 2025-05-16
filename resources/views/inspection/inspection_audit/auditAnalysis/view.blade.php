@@ -128,31 +128,40 @@
                                                         </div>
                                                     </div>
                                                     <div class="col-md-4 form-input">
-                                                        <label for="" class="form-label">Department Name </label>
-                                                        <div class="view_data">
-                                                            {{ $analysisData->department_name ?? '-' }}
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="col-md-4 form-input">
                                                         <label for="" class="form-label">Unit</label>
                                                         <div class="view_data">
                                                             {{ $analysisData->unit_name ?? '-' }}
                                                         </div>
                                                     </div>
 
+                                                    <div class="col-md-4 form-input">
+                                                        <label for="" class="form-label">Department Name </label>
+                                                        <div class="view_data">
+                                                            {{ $analysisData->department_name ?? '-' }}
+                                                        </div>
+                                                    </div>
+
+
                                                     <div class="col-md-4 form-input mt-2">
                                                         <label class="form-label">Marks Obtained (Monthly)</label>
                                                         <div class="view_data">
                                                             @php
-                                                                $marks = json_decode($analysisData->marks ?? '{}', true);
-                                                                $monthWithMark = collect($marks)->filter(function ($value) {
-                                                                    return $value != 0;
-                                                                })->first();
+                                                                $marks = json_decode(
+                                                                    $analysisData->marks ?? '{}',
+                                                                    true,
+                                                                );
+                                                                $monthWithMark = collect($marks)
+                                                                    ->filter(function ($value) {
+                                                                        return $value != 0;
+                                                                    })
+                                                                    ->first();
 
-                                                                $monthName = collect($marks)->filter(function ($value) {
-                                                                    return $value != 0;
-                                                                })->keys()->first();
+                                                                $monthName = collect($marks)
+                                                                    ->filter(function ($value) {
+                                                                        return $value != 0;
+                                                                    })
+                                                                    ->keys()
+                                                                    ->first();
                                                             @endphp
 
                                                             {{ $monthName ? ucfirst($monthName) . ' - ' . $monthWithMark : '-' }}

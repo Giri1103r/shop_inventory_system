@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Validator;
 use Spatie\SimpleExcel\SimpleExcelWriter;
 use Illuminate\Support\Facades\File;
 use App\Models\Master\Unit;
+use App\Models\Master\Company;
 use Illuminate\Support\Str;
 use PDF;
 use Mail;
@@ -52,6 +53,7 @@ class TrainingScheduleController extends Controller
     private $unit;
     private $nomination_process;
     private $training_statuslog;
+    private $company;
 
 
 
@@ -69,6 +71,7 @@ class TrainingScheduleController extends Controller
         $this->department = new Department();
         $this->user = new User();
         $this->unit = new Unit();
+        $this->company = new Company();
         $this->uploadlog = new UploadLog();
         $this->nomination_process = new NominationProcess();
     }
@@ -115,6 +118,12 @@ class TrainingScheduleController extends Controller
                         })
                         ->addColumn('created_by', function ($row) {
                             return getUsername($row->created_by);
+                        })
+                          ->addColumn('company_id', function ($row) {
+                            return getcompanyname($row->company_id);
+                        })
+                          ->addColumn('department_id', function ($row) {
+                            return getDepartment($row->department_id);
                         })
                         ->addColumn('action', function ($row) {
                             $btn = '';
@@ -205,7 +214,7 @@ class TrainingScheduleController extends Controller
                             // }
                             return $btn;
                         })
-                        ->rawColumns(['to_date', 'from_date', 'action', 'created_date', 'created_by', 'status']);
+                        ->rawColumns(['to_date', 'from_date', 'action', 'created_date', 'created_by',   'unit_id',  'department_id','status']);
                     if (Auth::user()->role != ROLE_USER) {
                         $datatables->setFilteredRecords($data['filter_records'])
                             ->setTotalRecords($data['total_records']);
@@ -222,12 +231,13 @@ class TrainingScheduleController extends Controller
         $unitList  = $this->unit->select('id', 'unit_name')->where('status', '1')->get();
         $topicList  = $this->topic->select('id', 'topic_name')->where('status', '1')->get();
         $employeeList  = $this->employee->select('id', 'emp_name')->whereRaw('FIND_IN_SET(' . ROLE_TRAINER . ', user_role)')->where('status', '1')->get();
-
+$companyList = $this->company->getCompany();
         $data = array(
             'departmentList' => $departmentList,
             'unitList' => $unitList,
             'topicList' => $topicList,
             'employeeList' => $employeeList,
+            'companyList' => $companyList,
         );
 
         return view('master.training_schedule.list', $data);
@@ -241,16 +251,19 @@ class TrainingScheduleController extends Controller
             $unitList  = $this->unit->select('id', 'unit_name')->where('status', '1')->get();
             $topicList  = $this->topic->select('id', 'topic_name')->where('status', '1')->get();
             $employeeList  = $this->employee->select('id', 'emp_name')->whereRaw('FIND_IN_SET(' . ROLE_TRAINER . ', user_role)')->where('status', '1')->get();
-               
+               $companyList = $this->company->getCompany();
             $data = array(
                 'departmentList' => $departmentList,
                 'unitList' => $unitList,
                 'topicList' => $topicList,
                 'employeeList' => $employeeList,
+                'companyList' => $companyList,
             );
             return view('master.training_schedule.add', $data);
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('training_schedule/list'));
         }
     }
 
@@ -468,6 +481,8 @@ class TrainingScheduleController extends Controller
             return view('master.training_schedule.attendance', $data);
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('training_schedule/list'));
         }
     }
     public function storeAttendance(Request $request)
@@ -963,7 +978,10 @@ class TrainingScheduleController extends Controller
                 }
             }
         } catch (Exception $ex) {
-            report($ex);
+         
+             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('training_schedule/list'));
         }
     }
 
@@ -1157,7 +1175,9 @@ class TrainingScheduleController extends Controller
             }
             return view('master.training_schedule.nomination', $data);
         } catch (Exception $ex) {
-            report($ex);
+           report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('training_schedule/list'));
         }
     }
 
@@ -1181,7 +1201,9 @@ class TrainingScheduleController extends Controller
 
             return view('master.training_schedule.edit', $data);
         } catch (Exception $error) {
-            report($error->getMessage());
+            report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('training_schedule/list'));
         }
     }
 
@@ -1417,8 +1439,9 @@ class TrainingScheduleController extends Controller
                 'End Time',
                 'Training Topic',
                 'Trainer',
-                'Unit',
-                'Department',
+                 __("common.company"),
+                __("common.unit"),
+               __("common.department"),
                 'Target Trainees',
                 'Venue/Location',
                 'Training Man Hours',
@@ -1439,6 +1462,7 @@ class TrainingScheduleController extends Controller
                 $export[] =  Displaytimeformat($data->end_time);
                 $export[] =  $data->topic_name;
                 $export[] =  $data->emp_name;
+                $export[] =  getCompanyname($data->company_id);
                 $export[] =  $data->unit_name;
                 $export[] =  $data->department_name;
                 $export[] =  $data->target_trainees;
@@ -1459,8 +1483,9 @@ class TrainingScheduleController extends Controller
                     $exportData
                 );
         } catch (Exception $ex) {
-
-            report($ex);
+ report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('training_schedule/list'));report($ex);
         }
     }
 
@@ -1484,8 +1509,9 @@ class TrainingScheduleController extends Controller
                 'End Time',
                 'Training Topic',
                 'Trainer',
-                'Unit',
-                'Department',
+                  __("common.company"),
+                __("common.unit"),
+               __("common.department"),
                 'Target Trainees',
                 'Venue/Location',
                 'Training Man Hours',
@@ -1523,7 +1549,9 @@ class TrainingScheduleController extends Controller
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 
-            report($ex);
+           report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('training_schedule/list'));
         }
     }
 
@@ -1561,8 +1589,9 @@ class TrainingScheduleController extends Controller
             $filename = "Certificate.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            report($ex);
-            return response()->json(['error' => 'Something went wrong while generating the PDF.']);
+           report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('training_schedule/list'));
         }
     }
     public function exportViewPdf(Request $request)
@@ -1617,8 +1646,9 @@ class TrainingScheduleController extends Controller
             $filename = "Training.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            report($ex);
-            return response()->json(['error' => 'Something went wrong while generating the PDF.']);
+         report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('training_schedule/list'));
         }
     }
 

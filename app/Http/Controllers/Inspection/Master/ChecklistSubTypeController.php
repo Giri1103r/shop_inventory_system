@@ -15,6 +15,7 @@ use App\Models\Inspection\Master\ChecklistFile;
 use App\Models\Inspection\Master\ChecklistType;
 use App\Models\Inspection\Master\ChecklistSubType;
 use App\Models\Inspection\Master\ChecklistOptionType;
+use App\Models\Inspection\Master\ChecklistSubTypeData;
 use Illuminate\Support\Facades\Response;
 
 class ChecklistSubTypeController extends Controller
@@ -22,6 +23,7 @@ class ChecklistSubTypeController extends Controller
 
     private $checklist_type;
     private $checklist_subtype;
+    private $checklist_subtype_data;
     private $checklist_file;
     private $upload_log;
     private $checklist_option;
@@ -30,6 +32,7 @@ class ChecklistSubTypeController extends Controller
     {
         $this->checklist_type = new ChecklistType();
         $this->checklist_subtype = new ChecklistSubType();
+        $this->checklist_subtype_data = new ChecklistSubTypeData();
         $this->checklist_file = new ChecklistFile();
         $this->checklist_option = new ChecklistOptionType();
     }
@@ -64,7 +67,6 @@ class ChecklistSubTypeController extends Controller
                             $btn = '<a href="' . admin_url('inspection/master/checklist-sub-type/view/' . encryptId($row->id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
                             if (CheckUserRole(ROLE_SUPERADMIN)) {
                                 $btn .= '<a href="' . admin_url('inspection/master/checklist-sub-type/edit/' . encryptId($row->id)) . '" class="edit-icon " title="' . __('common.edit') . '"><i class="fa-solid fa-pen-to-square"></i> ';
-
                             }
                             return $btn;
                         })
@@ -223,25 +225,21 @@ class ChecklistSubTypeController extends Controller
         }
     }
 
-    public function delete(Request $request)
-    {
-        try {
-            $id = decryptId($request->id);
-            $this->checklist_subtype->deleterecord($id);
-            $this->ptw_sub_cat->delete_all($id);
-            return response()->json(['status' => 'success', 'msg' => 'Checklist Category Successfully Deleted'], 200);
-        } catch (Exception $ex) {
-            return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
-        }
-    }
 
     public function statusChange(Request $request)
     {
         try {
             $id = decryptId($request->id);
-            $this->checklist_subtype->statuschange($id);
 
-            return response()->json(['status' => 'success', 'msg' => 'Checklist Category Status Changed Successfully!'], 200);
+            $checklistSubtypeData =   $this->checklist_subtype_data->Sub_type_statuschange($id);
+            if ($checklistSubtypeData) {
+                return response()->json(['status' => 'warning', 'msg' => 'Dependancy Master you Cannot make this In-active!'], 200);
+            } else {
+                 $this->checklist_subtype->statuschange($id);
+                 return response()->json(['status' => 'success', 'msg' => 'Checklist Category Status Changed Successfully!'], 200);
+            }
+
+
         } catch (Exception $ex) {
 
             return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
@@ -424,12 +422,12 @@ class ChecklistSubTypeController extends Controller
         }
     }
 
-    public function checklistSubTypeList(Request $request ,$checklistTypeId)
+    public function checklistSubTypeList(Request $request, $checklistTypeId)
     {
 
         $checklistTypeId = decryptId($checklistTypeId);
         $id = decryptId($request->id);
-        $checklistSubType = $this->checklist_subtype->ajaxList( $id , $checklistTypeId);
+        $checklistSubType = $this->checklist_subtype->ajaxList($id, $checklistTypeId);
 
         return response()->json($checklistSubType);
     }

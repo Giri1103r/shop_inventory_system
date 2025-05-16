@@ -475,14 +475,14 @@
                         device_image: {
                             required: true,
                             // extension: "jpg",
-                             filesize: 10485760,
+                             filesize: 15728640,
                         },
                         observation: {
                             required: true,
                         },
                         signature_image: {
                             required: true,
-                             filesize: 10485760,
+                             filesize: 15728640,
                         },
 
                     },
@@ -494,7 +494,7 @@
                         },
                         signature_image: {
                             required: 'Please upload your signature',
-                            filesize: 'File size should not exceed 10MB',
+                            filesize: 'File size should not exceed 15MB',
                         },
                         issue_date: {
                             required: "Date Of Audit is required",
@@ -560,7 +560,7 @@
                         device_image: {
                             required: "Please upload an image.",
                             // extension: "Only JPG files are allowed.",
-                             filesize: "File size should not exceed 10MB",
+                             filesize: "File size should not exceed 15MB",
                         },
                         observation: {
                             required: "Please add observation",

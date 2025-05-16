@@ -62,17 +62,49 @@
                                             </select>
                                         </div>
 
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="unit_id" class="form-label ">Unit</label>
-                                            <select name="unit_id" id="unit_id" class=" form-control single-select"
-                                                style="width: 100%">
-                                                <option value="">Select Unit</option>
-                                                @foreach ($unitList as $unit)
-                                                    <option value="{{ encryptId($unit->id) }}">
-                                                        {{ $unit->unit_name }}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
+                                       <div class="col-md-3 mb-3 ">
+                                                <div class="form-group form-input">
+                                                    <label for="company_id require" class="form-label require ">Company</label>
+                                                    <select name="company_id" id="company_id"
+                                                        class=" form-control single-select" style="width: 100%">
+                                                        <option value="">Select Company</option>
+                                                        @foreach ($companyList as $list)
+                                                            <option value="{{ encryptId($list->id) }}">
+                                                                {{ $list->company_name }}</option>
+                                                        @endforeach
+
+                                                    </select>
+                                                     <div class="text-danger"></div>
+                                                </div>
+
+
+                                            </div>
+                                           
+
+                                            <div class="col-md-3 mb-3 ">
+                                                <div class="form-group form-input">
+                                                    <label for="unit_id" class="form-label require">Unit</label>
+                                                    <select name="unit_id" id="unit_id"
+                                                        class="form-control single-select form-control-sm"
+                                                        style="width: 100%">
+                                                        <option value="">Select the Unit</option>
+
+                                                    </select>
+                                                     <div class="text-danger"></div>
+                                                </div>
+
+                                            </div>
+                                            <div class="col-md-3 mb-3">
+                                                <div class="form-group form-input">
+                                                    <label for="department_id" class="form-label require">Department
+                                                    </label>
+                                                    <select name="department_id" id="department_id"
+                                                        class=" form-control single-select" style="width: 100%">
+                                                        <option value="">Select Department </option>
+
+                                                    </select>
+                                                </div>
+                                            </div>
 
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="status" class="form-label ">{{ __('common.status') }}</label>
@@ -106,7 +138,9 @@
                                         <th>To Date </th>
                                         <th>Training Topic</th>
                                         <th>Trainer</th>
-                                        <th>Unit</th>
+                                        <th>{{ __('common.company') }}</th>
+                                     <th>{{ __('common.unit') }}</th>
+                                     <th>{{ __('common.department') }}</th>
                                         <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.created_by') }}</th>
                                         <th>{{ __('common.created_date') }}</th>
@@ -127,6 +161,57 @@
 
     @push('script')
         <script type="text/javascript">
+
+          $(document).on('change', '#company_id', function() {
+            var companyId = $(this).val();
+            if (companyId) {
+                $.ajax({
+                    url: "{{ admin_url('unit/get-unit-data') }}/" + companyId + "/0",
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#unit_id').empty().append(
+                            '<option value="">Select unit</option>');
+                        $.each(data, function(key, value) {
+                            $('#unit_id').append('<option value="' + value
+                                .id + '">' + value.name + '</option>');
+                        });
+                        $('#unit_id').trigger('change.');
+                    },
+                    error: function(xhr) {
+                        alert('Error fetching unit. Please try again.');
+                    }
+                });
+            } else {
+                $('#unit_id').empty().append('<option value="">Select unit</option>');
+                $('#unit_id').trigger('change.');
+            }
+        });
+            $(document).on('change', '#unit_id', function() {
+                var unitId = $(this).val();
+                if (unitId) {
+                    $.ajax({
+                        url: "{{ admin_url('department/ajax-list') }}/" + unitId + "/0",
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(data) {
+                            $('#department_id').empty().append(
+                                '<option value="">Select Department</option>');
+                            $.each(data, function(key, value) {
+                                $('#department_id').append('<option value="' + value
+                                    .id + '">' + value.name + '</option>');
+                            });
+                            $('#department_id').trigger('change.');
+                        },
+                        error: function(xhr) {
+                            alert('Error fetching department. Please try again.');
+                        }
+                    });
+                } else {
+                    $('#department_id').empty().append('<option value="">Select Department</option>');
+                    $('#department_id').trigger('change.');
+                }
+            });
             $(document).ready(function() {
                 var firstTh = $('.datatable-list thead th:first');
                 firstTh.removeClass('sorting_asc');
@@ -185,6 +270,8 @@
                             d.topic_id = $('#topic_id').val();
                             d.trainer_id = $('#trainer_id').val();
                             d.unit_id = $('#unit_id').val();
+                            d.department_id = $('#department_id').val();
+                            d.company_id = $('#company_id').val();
                             d.status = $('#status').val();
 
                         },
@@ -216,9 +303,17 @@
                             data: 'emp_name',
                             name: 'emp_name'
                         },
+                         {
+                            data: 'company_id',
+                            name: 'company_id'
+                        },
                         {
                             data: 'unit_name',
                             name: 'unit_name'
+                        },
+                          {
+                            data: 'department_id',
+                            name: 'department_id'
                         },
                         {
                             data: 'status',
@@ -266,6 +361,8 @@
                                         topic_id = $('#topic_id').val();
                                         trainer_id = $('#trainer_id').val();
                                         unit_id = $('#unit_id').val();
+                                        department_id = $('#department_id').val();
+                                        company_id = $('#company_id').val();
                                         status = $('#status').val();
 
                                         $(".dt-button").removeClass('processing');
@@ -277,6 +374,8 @@
                                             '&to_date=' + to_date +
                                             '&topic_id=' + topic_id +
                                             '&trainer_id=' + trainer_id +
+                                            '&company_id=' + company_id +
+                                            '&department_id=' + department_id +
                                             '&unit_id=' + unit_id +
                                             '&status=' + status
                                     }
@@ -291,6 +390,8 @@
                                         topic_id = $('#topic_id').val();
                                         trainer_id = $('#trainer_id').val();
                                         unit_id = $('#unit_id').val();
+                                        department_id = $('#department_id').val();
+                                        company_id = $('#company_id').val();
                                         status = $('#status').val();
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
@@ -301,6 +402,8 @@
                                             '&to_date=' + to_date +
                                             '&topic_id=' + topic_id +
                                             '&trainer_id=' + trainer_id +
+                                         '&company_id=' + company_id +
+                                            '&department_id=' + department_id +
                                             '&unit_id=' + unit_id +
                                             '&status=' + status
                                     }

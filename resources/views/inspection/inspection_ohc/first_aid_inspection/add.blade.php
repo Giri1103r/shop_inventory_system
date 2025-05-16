@@ -224,7 +224,7 @@
                         },
                         signature_image: {
                             required: true,
-                            filesize: 10485760,
+                            filesize: 15728640,
                         }
                     },
                     messages: {
