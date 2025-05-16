@@ -1187,30 +1187,50 @@ class SafetyPermit extends Model
         $request = request();
         $from_date = $request->input('Fromdate');
         $to_date = $request->input('Todate');
+        $company_id = $request->input('CompanyId');
 
+        // Base open query
         $openQuery = $this->whereNotIn('permit_status', [STATUS_CLOSED, STATUS_PERMIT_EXPIRED])
             ->where('permit_status', '>=', STATUS_EHS_VERIFICATION_PENDING)
             ->where('status', 1)
             ->where('trash', 'NO');
 
-        $closeQuery = $this->where('permit_status', STATUS_CLOSED)
-            ->orwhere('permit_status', STATUS_PERMIT_EXPIRED)
+        // Base close query with grouped OR condition
+        $closeQuery = $this->where(function ($query) {
+            $query->where('permit_status', STATUS_CLOSED)
+                ->orWhere('permit_status', STATUS_PERMIT_EXPIRED);
+        })
             ->where('status', 1)
             ->where('trash', 'NO');
 
-        if (!empty($from_date)) {
-            $openQuery->whereDate('created_at', '>=', DBDateformat($from_date));
-            $closeQuery->whereDate('created_at', '>=', DBDateformat($from_date));
+        // Apply company filter
+        if ($company_id) {
+            $companyId = decryptId($company_id);
+            $openQuery->where('company_id', $companyId);
+            $closeQuery->where('company_id', $companyId);
         }
 
-        if (!empty($to_date)) {
-            $openQuery->whereDate('created_at', '<=', DBDateformat($to_date));
-            $closeQuery->whereDate('created_at', '<=', DBDateformat($to_date));
+        // Apply date filters
+        if ($from_date && $to_date) {
+            $openQuery->whereBetween('created_at', [
+                DBdateformat($from_date),
+                DBdateformat($to_date) . ' 23:59:59'
+            ]);
+            $closeQuery->whereBetween('created_at', [
+                DBdateformat($from_date),
+                DBdateformat($to_date) . ' 23:59:59'
+            ]);
+        } elseif ($from_date) {
+            $openQuery->where('created_at', '>=', DBdateformat($from_date));
+            $closeQuery->where('created_at', '>=', DBdateformat($from_date));
+        } elseif ($to_date) {
+            $openQuery->where('created_at', '<=', DBdateformat($to_date) . ' 23:59:59');
+            $closeQuery->where('created_at', '<=', DBdateformat($to_date) . ' 23:59:59');
         }
 
+        // Execute counts
         $open_count = $openQuery->count();
         $close_count = $closeQuery->count();
-
 
         return [
             'PTW Open Count' => $open_count,
@@ -1218,22 +1238,33 @@ class SafetyPermit extends Model
         ];
     }
 
+
     public function GetTypeWiseCount()
     {
         $request = request();
         $from_date = $request->input('Fromdate');
         $to_date = $request->input('Todate');
-
+        $company_id = $request->input('CompanyId');
 
         $query = $this->where('status', 1)->where('trash', 'NO');
 
+        if ($company_id) {
+            $companyId = decryptId($company_id);
+            $query->where('company_id', $companyId);
+        }
 
-        if (!empty($from_date)) {
-            $query->whereDate('created_at', '>=', $from_date);
+
+        if ($from_date && $to_date) {
+            $query->whereBetween('created_at', [
+                DBdateformat($from_date),
+                DBdateformat($to_date) . ' 23:59:59'
+            ]);
+        } elseif ($from_date) {
+            $query->where('created_at', '>=', DBdateformat($from_date));
+        } elseif ($to_date) {
+            $query->where('created_at', '<=', DBdateformat($to_date) . ' 23:59:59');
         }
-        if (!empty($to_date)) {
-            $query->whereDate('created_at', '<=', $to_date);
-        }
+
 
         $data = $query->get();
 
@@ -1271,15 +1302,21 @@ class SafetyPermit extends Model
             ->where('ptw_safety.permit_status', STATUS_EHS_HOLD)
             ->groupBy('masters_unit.unit_name');
 
+        $company_id = $request->input('CompanyId');
+        if ($company_id) {
+            $companyId = decryptId($company_id);
+            $query->where('ptw_safety.company_id', $companyId);
+        }
+
         if ($request->Fromdate && $request->Todate) {
             $query->whereBetween('ptw_safety.created_at', [
                 DBdateformat($request->Fromdate),
-                DBdateformat($request->Todate)
+                DBdateformat($request->Todate) . ' 23:59:59'
             ]);
         } elseif ($request->Fromdate) {
             $query->where('ptw_safety.created_at', '>=', DBdateformat($request->Fromdate));
         } elseif ($request->Todate) {
-            $query->where('ptw_safety.created_at', '<=', DBdateformat($request->Todate));
+            $query->where('ptw_safety.created_at', '<=', DBdateformat($request->Todate) . ' 23:59:59');
         }
 
         $results = $query->get();

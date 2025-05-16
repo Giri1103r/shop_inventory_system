@@ -47,15 +47,24 @@ class HSCInputs extends Model
             $search = $request->search['value'];
 
             $query->where(function ($query) use ($search) {
-                $query
-                    ->orWhere('value', 'LIKE', '%' . $search . '%');
+               $query
+                    ->orWhere('company_management.company_name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('masters_location.location_name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('masters_unit.unit_name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('masters_department.department_name', 'LIKE', '%' . $search . '%');
             });
         }
-        if ($request->has('type') && $request->type) {
-            $query = $query->where('type', 'LIKE', '%' . decryptId($request->type) . '%');
+        if ($request->has('company_id') && $request->company_id) {
+                      $query = $query->where('kpi_hsc_inputs.company_id', decryptId($request->company_id));
         }
-        if ($request->has('value') && $request->value) {
-            $query = $query->where('value', 'LIKE', '%' . ($request->value) . '%');
+        if ($request->has('location_id') && $request->location_id) {
+                      $query = $query->where('kpi_hsc_inputs.location_id', decryptId($request->location_id));
+        }
+         if ($request->has('unit_id') && $request->unit_id) {
+                      $query = $query->where('kpi_hsc_inputs.unit_id', decryptId($request->unit_id));
+        }
+         if ($request->has('department_id') && $request->department_id) {
+                      $query = $query->where('kpi_hsc_inputs.department_id', decryptId($request->department_id));
         }
         if ($request->has('status') && $request->status) {
             $query = $query->where('kpi_hsc_inputs.status', decryptId($request->status));
@@ -160,20 +169,35 @@ class HSCInputs extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('kpi_hsc_inputs.*');
+        $query = $this->select('kpi_hsc_inputs.*', 'masters_location.location_name as location_name', 'masters_unit.unit_name as unit_name', 'company_management.company_name as company_name', 'masters_department.department_name as department_name')
+            ->leftjoin('masters_location', 'kpi_hsc_inputs.location_id', '=', 'masters_location.id')
+            ->leftjoin('masters_unit', 'kpi_hsc_inputs.unit_id', '=', 'masters_unit.id')
+            ->leftjoin('company_management', 'kpi_hsc_inputs.company_id', '=', 'company_management.id')
+            ->leftjoin('masters_department', 'kpi_hsc_inputs.department_id', '=', 'masters_department.id');
+
         if ($request->search != null || $request->search != '') {
             $search = $request->search;
 
             $query->where(function ($query) use ($search) {
                 $query
-                    ->orWhere('value', 'LIKE', '%' . $search . '%');
+                    ->orWhere('company_management.company_name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('masters_location.location_name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('masters_unit.unit_name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('masters_department.department_name', 'LIKE', '%' . $search . '%');
+
             });
         }
-        if ($request->has('type') && $request->type) {
-            $query = $query->where('type', 'LIKE', '%' . decryptId($request->type) . '%');
+       if ($request->has('company_id') && $request->company_id) {
+                      $query = $query->where('kpi_hsc_inputs.company_id', decryptId($request->company_id));
         }
-        if ($request->has('value') && $request->value) {
-            $query = $query->where('value', 'LIKE', '%' . ($request->value) . '%');
+        if ($request->has('location_id') && $request->location_id) {
+                      $query = $query->where('kpi_hsc_inputs.location_id', decryptId($request->location_id));
+        }
+         if ($request->has('unit_id') && $request->unit_id) {
+                      $query = $query->where('kpi_hsc_inputs.unit_id', decryptId($request->unit_id));
+        }
+         if ($request->has('department_id') && $request->department_id) {
+                      $query = $query->where('kpi_hsc_inputs.department_id', decryptId($request->department_id));
         }
         if ($request->has('status') && $request->status) {
             $query = $query->where('kpi_hsc_inputs.status', decryptId($request->status));

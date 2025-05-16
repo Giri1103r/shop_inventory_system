@@ -3074,12 +3074,18 @@ if (!function_exists('InspectionCount')) {
         ];
 
         $applyDateFilter = function ($query) use ($from_date, $to_date) {
-            if (!empty($from_date)) {
-                $query->whereDate('created_at', '>=', DBDateformat($from_date));
+
+            if ($from_date && $to_date) {
+                $query->whereBetween('created_at', [
+                    DBdateformat($from_date),
+                    DBdateformat($to_date) . ' 23:59:59'
+                ]);
+            } elseif ($from_date) {
+                $query->where('created_at', '>=', DBdateformat($from_date));
+            } elseif ($to_date) {
+                $query->where('created_at', '<=', DBdateformat($to_date) . ' 23:59:59');
             }
-            if (!empty($to_date)) {
-                $query->whereDate('created_at', '<=', DBDateformat($to_date));
-            }
+
             return $query;
         };
 
@@ -3122,17 +3128,25 @@ if (!function_exists('GetPTWTypes')) {
         return $details;
     }
 }
-function getPPERequestChartData($form_date, $to_date)
+function getPPERequestChartData($form_date, $to_date, $company_id)
 {
     $query = PpeRequest::selectRaw('unit_id, COUNT(*) as total')
         ->groupBy('unit_id');
 
-    if (!empty($form_date)) {
-        $query->whereDate('created_at', '>=', DBdateformat($form_date));
+    if ($company_id) {
+        $companyId = decryptId($company_id);
+        $query->where('company_id', $companyId);
     }
 
-    if (!empty($to_date)) {
-        $query->whereDate('created_at', '<=', DBdateformat($to_date));
+    if ($form_date && $to_date) {
+        $query->whereBetween('created_at', [
+            DBdateformat($form_date),
+            DBdateformat($to_date) . ' 23:59:59'
+        ]);
+    } elseif ($form_date) {
+        $query->where('created_at', '>=', DBdateformat($form_date));
+    } elseif ($to_date) {
+        $query->where('created_at', '<=', DBdateformat($to_date) . ' 23:59:59');
     }
 
     $rawData = $query->get();
@@ -3151,17 +3165,26 @@ function getPPERequestChartData($form_date, $to_date)
     ];
 }
 
-function getPTWAvgTimeChartData($form_date, $to_date)
+function getPTWAvgTimeChartData($form_date, $to_date, $company_id)
 {
     $query = SafetyPermit::where('permit_status', STATUS_CLOSED);
 
-    if (!empty($form_date)) {
-        $query->whereDate('created_at', '>=', DBdateformat($form_date));
+    if ($company_id) {
+        $companyId = decryptId($company_id);
+        $query->where('company_id', $companyId);
     }
 
-    if (!empty($to_date)) {
-        $query->whereDate('created_at', '<=', DBdateformat($to_date));
+    if ($form_date && $to_date) {
+        $query->whereBetween('created_at', [
+            DBdateformat($form_date),
+            DBdateformat($to_date) . ' 23:59:59'
+        ]);
+    } elseif ($form_date) {
+        $query->where('created_at', '>=', DBdateformat($form_date));
+    } elseif ($to_date) {
+        $query->where('created_at', '<=', DBdateformat($to_date) . ' 23:59:59');
     }
+
 
     $rawData = $query->selectRaw('unit_id, AVG(TIMESTAMPDIFF(SECOND, created_at, updated_at)) as avg_duration')
         ->groupBy('unit_id')
@@ -3212,17 +3235,25 @@ function getHazardUnitChartData($form_date, $to_date)
     ];
 }
 
-function getPPEAvailabilityChartData($form_date, $to_date)
+function getPPEAvailabilityChartData($form_date, $to_date, $company_id)
 {
     $query = PpeStockinventory::selectRaw('sub, SUM(quantity) as total_quantity')
         ->groupBy('sub');
 
-    if (!empty($form_date)) {
-        $query->whereDate('created_at', '>=', DBdateformat($form_date));
+    if ($company_id) {
+        $companyId = decryptId($company_id);
+        $query->where('company_id', $companyId);
     }
 
-    if (!empty($to_date)) {
-        $query->whereDate('created_at', '<=', DBdateformat($to_date));
+    if ($form_date && $to_date) {
+        $query->whereBetween('created_at', [
+            DBdateformat($form_date),
+            DBdateformat($to_date) . ' 23:59:59'
+        ]);
+    } elseif ($form_date) {
+        $query->where('created_at', '>=', DBdateformat($form_date));
+    } elseif ($to_date) {
+        $query->where('created_at', '<=', DBdateformat($to_date) . ' 23:59:59');
     }
 
     $rawData = $query->get();
