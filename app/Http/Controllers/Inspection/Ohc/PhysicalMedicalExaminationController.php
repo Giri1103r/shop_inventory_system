@@ -154,7 +154,7 @@ class PhysicalMedicalExaminationController extends Controller
             );
             return view('inspection.inspection_ohc.physical_medical_examination.add', $data);
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong!');
             return redirect(admin_url('ohc/physical-medical-examination/yearly/list'));
         }
@@ -172,7 +172,7 @@ class PhysicalMedicalExaminationController extends Controller
             Session::flash('success', __('common.created_msg'));
             return redirect(admin_url('ohc/physical-medical-examination/yearly/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong!');
             return redirect(admin_url('ohc/physical-medical-examination/yearly/list'));
         }
@@ -203,7 +203,7 @@ class PhysicalMedicalExaminationController extends Controller
             ];
             return view('inspection.inspection_ohc.physical_medical_examination.view', $data);
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong!');
             return redirect(admin_url('ohc/physical-medical-examination/yearly/list'));
         }

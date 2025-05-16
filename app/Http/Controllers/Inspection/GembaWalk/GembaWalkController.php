@@ -826,7 +826,7 @@ class GembaWalkController extends Controller
             $filename = "Gemba Walk Details.pdf";
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-          dd($ex);
+          report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('inspection/gemba-walk/list'));
         }
