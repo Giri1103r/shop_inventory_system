@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'Leading and Lagging Indicator')
-@section('pageurl', admin_url('kpi/master/leading-lagging/list'))
+@section('title', 'HSC Inputs')
+@section('pageurl', admin_url('kpi/master/hsc-inputs/list'))
 
 
 @section('content')
@@ -14,34 +14,56 @@
 
                         <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
                         @if (CheckUserPermission('import'))
-                            <x-button-import href="{{ admin_url('kpi/master/leading-lagging/import') }}"></x-button-import>
+                            <x-button-import href="{{ admin_url('kpi/master/hsc-inputs/import') }}"></x-button-import>
                         @endif
                         <x-button-add dataId="" class="add btn btn-primary ms-1"
-                            href="{{ admin_url('kpi/master/leading-lagging/add') }}">Add</x-button-add>
+                            href="{{ admin_url('kpi/master/hsc-inputs/add') }}">Add</x-button-add>
                     </div>
                     <div id="search" class="collapse">
                         <form action="" id="formsearch">
                             <div class="card-body">
                                 <div class="col-md-12">
                                     <div class="row">
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="type" class="form-label ">Select type</label>
-                                            <select name="type" id="type" class=" form-control single-select"
-                                                style="width: 100%">
-                                                <option value="">Select type</option>
-                                                <option value="{{ encryptId(LEADING) }}">
-                                                    {{ __('common.leading') }}</option>
-                                                <option value="{{ encryptId(LAGGING) }}">
-                                                    {{ __('common.lagging') }}</option>
-                                                </option>
-                                            </select>
+                                        <div class="col-md-4 mb-3">
+                                            <div class="form-group form-input">
+                                                <label class="form-label">{{ __('common.company') }}</label>
+                                                <select name="company_id" id="company_id"
+                                                    class=" form-control single-select" style="width: 100%">
+                                                    <option value="">Select Company Name</option>
+                                                    @foreach ($companies as $company)
+                                                        <option value="{{ encryptId($company->id) }}">
+                                                            {{ $company->company_name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
                                         </div>
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="value" class="form-label ">Enter Value</label>
-                                            <input type="text" name="value" id="value" class="form-control"
-                                                placeholder="Value">
+                                        <div class="col-md-4 mb-3">
+                                            <div class="form-group form-input">
+                                                <label class="form-label">{{ __('common.location') }}</label>
+                                                <select name="location_id" id="location_id"
+                                                    class=" form-control single-select" style="width: 100%">
+                                                    <option value="">Select Location</option>
+                                                </select>
+                                            </div>
                                         </div>
-
+                                        <div class="col-md-4 mb-3">
+                                            <div class="form-group form-input">
+                                                <label class="form-label">{{ __('common.unit') }}</label>
+                                                <select name="unit_id" id="unit_id" class=" form-control single-select"
+                                                    style="width: 100%">
+                                                    <option value="">Select Unit</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 mb-3">
+                                            <div class="form-group form-input">
+                                                <label class="form-label">{{ __('common.department') }}</label>
+                                                <select name="department_id" id="department_id"
+                                                    class=" form-control single-select" style="width: 100%">
+                                                    <option value="">Select Department</option>
+                                                </select>
+                                            </div>
+                                        </div>
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="status" class="form-label ">{{ __('common.status') }}</label>
                                             <select name="status" id="status" style="width: 100%"
@@ -73,8 +95,10 @@
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
-                                        <th>{{ __('common.type') }}</th>
-                                        <th>{{ __('common.value') }}</th>
+                                        <th>{{ __('common.company') }}</th>
+                                        <th>{{ __('common.location') }}</th>
+                                        <th>{{ __('common.unit') }}</th>
+                                        <th>{{ __('common.department') }}</th>
                                         <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.created_by') }}</th>
                                         <th>{{ __('common.created_date') }}</th>
@@ -98,6 +122,87 @@
             $(document).ready(function() {
                 var firstTh = $('.datatable-list thead th:first');
                 firstTh.removeClass('sorting_asc');
+
+                $(document).on('change', '#company_id', function() {
+                    var companyId = $(this).val();
+                    if (companyId) {
+                        $.ajax({
+                            url: "{{ admin_url('location/ajax-list') }}/" + companyId + "/0",
+                            type: 'GET',
+                            dataType: 'json',
+                            success: function(data) {
+                                $('#location_id').empty().append(
+                                    '<option value="">Select Location</option>');
+                                $.each(data, function(key, value) {
+                                    $('#location_id').append('<option value="' + value.id +
+                                        '">' + value
+                                        .name + '</option>');
+                                });
+                                $('#location_id').trigger('change.');
+                            },
+                            error: function(xhr) {
+                                alert('Error fetching locations. Please try again.');
+                            }
+                        });
+                    } else {
+                        $('#location_id').empty().append('<option value="">Select Location</option>');
+                        $('#location_id').trigger('change.');
+                    }
+                });
+
+                $(document).on('change', '#location_id', function() {
+                    var locationId = $(this).val();
+                    if (locationId) {
+                        $.ajax({
+                            url: "{{ admin_url('unit/ajax-list') }}/" + locationId + "/0",
+                            type: 'GET',
+                            dataType: 'json',
+                            success: function(data) {
+                                $('#unit_id').empty().append(
+                                    '<option value="">Select Unit</option>');
+                                $.each(data, function(key, value) {
+                                    $('#unit_id').append('<option value="' + value.id +
+                                        '">' + value
+                                        .name + '</option>');
+                                });
+                                $('#unit_id').trigger('change.');
+                            },
+                            error: function(xhr) {
+                                alert('Error fetching unit. Please try again.');
+                            }
+                        });
+                    } else {
+                        $('#unit_id').empty().append('<option value="">Select Unit</option>');
+                        $('#unit_id').trigger('change.');
+                    }
+                });
+
+                $(document).on('change', '#unit_id', function() {
+                    var unitId = $(this).val();
+                    if (unitId) {
+                        $.ajax({
+                            url: "{{ admin_url('department/ajax-list') }}/" + unitId + "/0",
+                            type: 'GET',
+                            dataType: 'json',
+                            success: function(data) {
+                                $('#department_id').empty().append(
+                                    '<option value="">Select Department</option>');
+                                $.each(data, function(key, value) {
+                                    $('#department_id').append('<option value="' + value
+                                        .id + '">' + value.name + '</option>');
+                                });
+                                $('#department_id').trigger('change.');
+                            },
+                            error: function(xhr) {
+                                alert('Error fetching unit. Please try again.');
+                            }
+                        });
+                    } else {
+                        $('#department_id').empty().append('<option value="">Select Department</option>');
+                        $('#department_id').trigger('change.');
+                    }
+                });
+
             });
 
             $(function() {
@@ -126,7 +231,7 @@
                     },
 
                     ajax: {
-                        url: "{{ admin_url('kpi/master/leading-lagging/list') }}",
+                        url: "{{ admin_url('kpi/master/hsc-inputs/list') }}",
                         type: 'POST',
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
@@ -152,12 +257,20 @@
                         },
 
                         {
-                            data: 'type',
-                            name: 'type'
+                            data: 'company_name',
+                            name: 'company_name'
                         },
                         {
-                            data: 'value',
-                            name: 'value'
+                            data: 'location_name',
+                            name: 'location_name'
+                        },
+                        {
+                            data: 'unit_name',
+                            name: 'unit_name'
+                        },
+                        {
+                            data: 'department_name',
+                            name: 'department_name'
                         },
 
                         {
@@ -208,7 +321,7 @@
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('kpi/master/leading-lagging/export/pdf') }}" +
+                                            "{{ admin_url('kpi/master/hsc-inputs/export/pdf') }}" +
                                             '?search=' + searchValue +
                                             '&type=' + type +
                                             '&value=' + value +
@@ -226,7 +339,7 @@
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('kpi/master/leading-lagging/export/excel') }}" +
+                                            "{{ admin_url('kpi/master/hsc-inputs/export/excel') }}" +
                                             '?search=' + searchValue +
                                             '&type=' + type +
                                             '&value=' + value +
@@ -267,12 +380,12 @@
                     var id = $(this).data('id');
                     var types = $(this).data('type');
                     if (types == 1) {
-                        var title = '{{ __('Do You want to In-Activate Leading and Lagging Details') }}';
+                        var title = '{{ __('Do You want to In-Activate HSC Inputs Details') }}';
                         var text = '{{ __('common.inactive') }}';
                         var btncolor = '#dc3545'
 
                     } else {
-                        var title = '{{ __('Do You want to Activate Leading and Lagging Details') }}';
+                        var title = '{{ __('Do You want to Activate HSC Inputs Details') }}';
                         var text = '{{ __('common.active') }}';
                         var btncolor = '#7ddc35'
                     }
@@ -292,7 +405,7 @@
 
                         if (result.value) {
                             $.ajax({
-                                url: "{{ admin_url('kpi/master/leading-lagging/status') }}",
+                                url: "{{ admin_url('kpi/master/hsc-inputs/status') }}",
                                 type: 'post',
 
                                 data: {
@@ -340,7 +453,7 @@
                     var id = $(this).data('id');
                     var login_id = $(this).data('login_id');
 
-                    var title = '{{ __('Do You want to Delete Leading and Lagging Management') }}';
+                    var title = '{{ __('Do You want to Delete HSC Inputs Management') }}';
                     var text = '{{ __('common.delete') }}';
                     var btncolor = '#dc3545'
 
@@ -360,7 +473,7 @@
 
                         if (result.value) {
                             $.ajax({
-                                url: "{{ admin_url('kpi/master/leading-lagging/delete') }}",
+                                url: "{{ admin_url('kpi/master/hsc-inputs/delete') }}",
                                 type: 'post',
                                 headers: {
                                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
@@ -399,7 +512,7 @@
                                         Swal.fire({
                                             icon: 'error',
                                             title: 'Error',
-                                            text: 'Leading and Lagging Deletion Failed: Module Dependencies Exist.',
+                                            text: 'HSC Inputs Deletion Failed: Module Dependencies Exist.',
                                         });
                                     } else {
                                         $.notify(data.responseJSON.msg, "error");

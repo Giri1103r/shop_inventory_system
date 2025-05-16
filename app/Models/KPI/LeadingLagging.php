@@ -167,10 +167,18 @@ class LeadingLagging extends Model
         return  $query->get();
     }
 
-
     public function selectOne($id)
     {
         return   $this->where('id', $id)->first();
+    }
+
+    public function getLeading()
+    {
+        return $this->where('type', LEADING)->get();
+    }
+    public function getLagging()
+    {
+        return $this->where('type', LAGGING)->get();
     }
 
     protected static function booted()

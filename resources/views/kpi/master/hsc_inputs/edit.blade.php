@@ -1,13 +1,12 @@
 @extends('admin.layouts.admin')
-@section('title', 'Leading and Lagging Indicator')
-@section('pageurl', admin_url('kpi/master/leading-lagging/list'))
+@section('title', 'HSC Inputs')
+@section('pageurl', admin_url('kpi/master/hsc-inputs/list'))
 
 
 @section('content')
     <div class="clearfix"></div>
     <div class="page-titles">
         <div class="d-flex align-items-center">
-            {{-- <h4 class="text-black">{{ __('Location Add') }}</h4> --}}
 
         </div>
 
@@ -22,19 +21,22 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
-                                <h4 class="card-title"></h4>
+                                {{-- <h4 class="card-title">{{ __('master.company_add') }}</h4> --}}
                                 <div class="align-back-btc">
                                     <x-button-back
-                                        href="{{ admin_url('kpi/master/leading-lagging/list') }}"></x-button-back>
+                                        href="{{ admin_url('kpi/master/hsc-inputs/list') }}"></x-button-back>
                                 </div>
                             </div>
 
                             <div class="card-body">
 
                                 <div class="basic-form">
-                                    <form method="POST" id="locationadd"
-                                        action="{{ admin_url('kpi/master/leading-lagging/add/submit') }}">
+                                    <form method="POST" id="locationedit"
+                                        action="{{ admin_url('kpi/master/hsc-inputs/edit/submit') }}"
+                                        autocomplete="off">
                                         @csrf
+                                        <input type="hidden" name="id" id="id"
+                                            value="{{ encryptId($leading_lagging->id) }}">
 
                                         <div class="row">
                                             <div class="col-md-4">
@@ -43,28 +45,31 @@
                                                     <select name="type" id="type"
                                                         class=" form-control single-select" style="width: 100%">
                                                         <option value="">Select Type</option>
-                                                        <option value="{{ encryptId(LEADING) }}">
-                                                            {{ __('common.leading') }}</option>
-                                                        <option value="{{ encryptId(LAGGING) }}">
-                                                            {{ __('common.lagging') }}</option>
+                                                        <option value="{{ encryptId(LEADING) }}"
+                                                            @if ($leading_lagging->type == LEADING) selected @endif>
+                                                            {{ __('common.leading') }}
+                                                        </option>
+                                                        <option value="{{ encryptId(LAGGING) }}"
+                                                            @if ($leading_lagging->type == LAGGING) selected @endif>
+                                                            {{ __('common.lagging') }}
+                                                        </option>
                                                     </select>
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">{{ __('common.value') }}</label>
-                                                    <input type="text" name="value" id="value"
-                                                        class="form-control" placeholder="Value">
+                                                    <input type="text" name="value" id="value" class="form-control"
+                                                        placeholder="Value" value="{{ $leading_lagging->value }}">
                                                 </div>
                                             </div>
-
                                         </div>
                                         <hr>
                                         <div class="submit-button" style="text-align: right;">
                                             <x-button-submit class="submit"></x-button-submit>
-                                            <x-button-reset class=""></x-button-reset>
+                                            <x-button-reset class="submit"></x-button-reset>
                                             <x-button-cancel
-                                                href="{{ admin_url('kpi/master/leading-lagging/list') }}"></x-button-cancel>
+                                                href="{{ admin_url('kpi/master/hsc-inputs/list') }}"></x-button-cancel>
                                         </div>
 
                                     </form>
@@ -89,17 +94,9 @@
                 location.reload();
             });
         });
+
         $(function() {
-
-
-            $(document).on('click', '#resetform', function() {
-                $('#locationadd .single-select').val('');
-                $('#locationadd .single-select').trigger('change');
-                setTimeout(function() {
-                    table.draw();
-                }, 150);
-            });
-            $('#locationadd').validate({
+            $('#locationedit').validate({
                 rules: {
                     type: {
                         required: true,
@@ -110,7 +107,7 @@
                         maxlength: 20,
                         pattern: /^[a-zA-Z0-9\s\-_'"()]*$/,
                         remote: {
-                            url: '{{ admin_url('kpi/master/leading-lagging/unique') }}',
+                            url: '{{ admin_url('kpi/master/hsc-inputs/unique') }}',
                             type: 'post',
                             data: {
                                 value: function() {
@@ -119,6 +116,9 @@
                                 type: function() {
                                     return $('#type').val();
                                 },
+                                id: function() {
+                                    return $('#id').val();
+                                }
                             }
                         }
                     },

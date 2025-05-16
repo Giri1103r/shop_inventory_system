@@ -84,11 +84,14 @@ return [
 
 
     //Leading and Lagging
-    'leading' => 'Leading',
-    'lagging' => 'Lagging',
+    'leading' => 'Leading Indicator',
+    'lagging' => 'Lagging Indicator',
     'type' => 'Type',
     'value' => 'Value',
-    'leading_lagging' => 'Leading and Lagging',
+    'year' => 'Year',
+    'month' => 'Month',
+    'financial_year' => 'Financial Year',
+    'leading_lagging' => 'Leading and Lagging Indicator',
 
 
 ];

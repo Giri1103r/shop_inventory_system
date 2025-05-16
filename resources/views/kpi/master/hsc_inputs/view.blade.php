@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'Leading and Lagging Indicator')
-@section('pageurl', admin_url('kpi/master/leading-lagging/list'))
+@section('title', 'HSC Inputs')
+@section('pageurl', admin_url('kpi/master/hsc-inputs/list'))
 
 
 @section('content')
@@ -24,7 +24,7 @@
                                 {{-- <h4 class="card-title">{{ __('master.company_add') }}</h4> --}}
                                 <div class="align-back-btc">
                                     <x-button-back
-                                        href="{{ admin_url('kpi/master/leading-lagging/list') }}"></x-button-back>
+                                        href="{{ admin_url('kpi/master/hsc-inputs/list') }}"></x-button-back>
 
                                 </div>
                             </div>
