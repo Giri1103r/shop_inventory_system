@@ -83,4 +83,12 @@ return [
     'unauthorized' => 'Access denied. You don\'t have permission to view this page.',
 
 
+    //Leading and Lagging
+    'leading' => 'Leading',
+    'lagging' => 'Lagging',
+    'type' => 'Type',
+    'value' => 'Value',
+    'leading_lagging' => 'Leading and Lagging',
+
+
 ];

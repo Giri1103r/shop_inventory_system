@@ -69,6 +69,7 @@ use App\Http\Controllers\OhcManagement\Report\MonthlyInventoryController;
 use App\Http\Controllers\OhcManagement\Report\YearlyInventoryController;
 use App\Http\Controllers\OhcManagement\OhcDashboardController;
 use App\Http\Controllers\KPI\KpiDashboardController;
+use App\Http\Controllers\KPI\Master\LeadingLaggingController;
 
 
 use Illuminate\Support\Facades\Route;
@@ -2523,8 +2524,6 @@ Route::middleware(['securityheader'])->group(function () {
             });
 
             Route::group(['prefix' => 'ohc/'], function () {
-
-
                 Route::group(['prefix' => 'weekly-ambulance/inspection/checklist'], function () {
                     Route::GET('/list', [WeeklyAmbulanceController::class, 'Index']);
                     Route::POST('/list', [WeeklyAmbulanceController::class, 'Index']);
@@ -2658,6 +2657,27 @@ Route::middleware(['securityheader'])->group(function () {
                     Route::POST('/lists', [FirstAiderlistController::class, 'Checklists']);
                     Route::GET('/employeename', [FirstAiderlistController::class, 'employeename']);
                     Route::GET('/employeedetails ', [FirstAiderlistController::class, 'employeedetails']);
+                });
+            });
+
+            Route::group(['prefix' => 'kpi/'], function () {
+                Route::group(['prefix' => 'master/leading-lagging'], function () {
+                    Route::GET('/list', [LeadingLaggingController::class, 'Index']);
+                    Route::POST('/list', [LeadingLaggingController::class, 'Index']);
+                    Route::GET('/add', [LeadingLaggingController::class, 'Add']);
+                    Route::POST('/add/submit', [LeadingLaggingController::class, 'Store']);
+                    Route::POST('/unique', [LeadingLaggingController::class, 'UniqueCheck']);
+                    Route::GET('/edit/{id}', [LeadingLaggingController::class, 'Edit']);
+                    Route::POST('/edit/submit', [LeadingLaggingController::class, 'Update']);
+                    Route::GET('/view/{id}', [LeadingLaggingController::class, 'View']);
+                    Route::POST('/delete', [LeadingLaggingController::class, 'Delete']);
+                    Route::POST('/status', [LeadingLaggingController::class, 'StatusChange']);
+                    Route::GET('/export/excel', [LeadingLaggingController::class, 'ExportExcel']);
+                    Route::GET('/export/pdf', [LeadingLaggingController::class, 'ExportPDF']);
+                    Route::GET('/import', [LeadingLaggingController::class, 'Import']);
+                    Route::POST('/import/Submit', [LeadingLaggingController::class, 'ImportSubmit']);
+                    Route::GET('/sample_download', [LeadingLaggingController::class, 'DownloadSample']);
+                    Route::POST('/lists', [LeadingLaggingController::class, 'Checklists']);
                 });
             });
         });
