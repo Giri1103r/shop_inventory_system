@@ -3,30 +3,35 @@
     $labels = array_keys($formattedData);
     $data = array_values($formattedData);
 @endphp
+
+<div id="IncidentTypeChart"></div>
+
 <script>
+    var incidentTypeIdMap = {!! json_encode($typeIdMap) !!};
+
     var options = {
         series: {!! json_encode($data) !!},
         chart: {
-            width: 380,
             type: 'donut',
+            width: 380,
             toolbar: {
-                show: false 
+                show: false
             },
+            events: {
+                dataPointSelection: function(event, chartContext, config) {
+                    var dataPointIndex = config.dataPointIndex;
+                    var incidentTypeName = chartContext.w.config.labels[dataPointIndex];
+                    var incidentTypeId = incidentTypeIdMap[incidentTypeName];
+                    if (incidentTypeId) {
+                        redirectToIms(incidentTypeId);
+                    }
+                }
+            }
         },
         labels: {!! json_encode($labels) !!},
         legend: {
-            position: 'bottom' 
+            position: 'bottom'
         },
-        responsive: [{
-            breakpoint: 480,
-            options: {
-                legend: {
-                    position: 'bottom',
-                    offsetX: 0,
-                    offsetY: 0
-                }
-            }
-        }],
         responsive: [{
             breakpoint: 480,
             options: {
@@ -34,11 +39,14 @@
                     width: 200
                 },
                 legend: {
-                    position: 'bottom'
+                    position: 'bottom',
+                    offsetX: 0,
+                    offsetY: 0
                 }
             }
         }]
     };
+
 
     var IncidentTypeChart = new ApexCharts(document.querySelector("#IncidentTypeChart"), options);
     IncidentTypeChart.render();
