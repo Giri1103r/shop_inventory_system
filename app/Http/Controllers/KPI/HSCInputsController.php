@@ -113,6 +113,10 @@ class HSCInputsController extends Controller
         $leading = $this->leading_lagging->getLeading();
         $lagging = $this->leading_lagging->getLagging();
 
+        if ($leading->isEmpty() || $lagging->isEmpty()) {
+            Session::flash('error', 'Leading or Lagging Indicator is missing');
+            
+        }
         $data = [
             'companies' => $companies,
             'locations' => $locations,
@@ -160,7 +164,6 @@ class HSCInputsController extends Controller
                 $lagging =  $this->lagging->store($hsc_inputs->id);
                 Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
-                dd($ex);
                 report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
@@ -252,7 +255,6 @@ class HSCInputsController extends Controller
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('kpi/master/hsc-inputs/list'));
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('kpi/master/hsc-inputs/list'));
