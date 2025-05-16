@@ -231,8 +231,8 @@ class ChecklistTypeController extends Controller
     {
         try {
             $id = decryptId($request->id);
+
             $this->checklist_type->statuschange($id);
-            // $this->checklist_sub_type->statuschange_all($id);
 
             return response()->json(['status' => 'success', 'msg' => 'Checklist type Status Changed Successfully!'], 200);
         } catch (Exception $ex) {

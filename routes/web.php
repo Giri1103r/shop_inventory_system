@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Artisan;
 
 use App\Http\Controllers\Auth\LoginController as AuthLoginController;
 
-use App\Http\Controllers\Admin\{LoginController, NotificationController, AdminController,BlockedController};
+use App\Http\Controllers\Admin\{LoginController, NotificationController, AdminController, BlockedController};
 use App\Http\Controllers\{SettingsController, LocalizationController, TestController};
 
 use App\Http\Controllers\Master\{PpeTypeController, PpeTypeMasterController, UserLogController, UserPermissionController, UploadLogController, UserController, UserRoleController};
@@ -71,6 +71,7 @@ use App\Http\Controllers\OhcManagement\Report\MonthlyInventoryController;
 use App\Http\Controllers\OhcManagement\Report\YearlyInventoryController;
 use App\Http\Controllers\OhcManagement\OhcDashboardController;
 use App\Http\Controllers\KPI\KpiDashboardController;
+use App\Http\Controllers\KPI\Master\LeadingLaggingController;
 
 Route::get('cache', function () {
     Artisan::call('optimize:clear');
@@ -1023,7 +1024,6 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/unique', [MedicalFitnessCertificateController::class, 'Uniquecheck']);
                 Route::post('/approvereject/submit', [MedicalFitnessCertificateController::class, 'doctorapproval']);
                 Route::post('/ehsheadapprove/submit', [MedicalFitnessCertificateController::class, 'ehsheadapproval']);
-
             });
 
 
@@ -1053,7 +1053,6 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/checkExistmedicineId', [MedicineReceivingController::class, 'checkExistmedicineId']);
                 Route::post('/close', [MedicineReceivingController::class, 'stockclosesubmit']);
                 Route::post('/pack-id', [MedicineReceivingController::class, 'packid']);
-
             });
             // Medicine Requistion
             Route::group(['prefix' => 'ohc/medicine-requisition'], function () {
@@ -1351,8 +1350,6 @@ Route::middleware(['securityheader'])->group(function () {
             });
 
             Route::group(['prefix' => 'ohc/'], function () {
-
-
                 Route::group(['prefix' => 'weekly-ambulance/inspection/checklist'], function () {
                     Route::GET('/list', [WeeklyAmbulanceController::class, 'Index']);
                     Route::POST('/list', [WeeklyAmbulanceController::class, 'Index']);
@@ -1451,7 +1448,6 @@ Route::middleware(['securityheader'])->group(function () {
                     Route::GET('/export/excel', [MedicalRequisitionSlipSecurityGateController::class, 'ExportExcel']);
                     Route::GET('/export/pdf', [MedicalRequisitionSlipSecurityGateController::class, 'ExportPDF']);
                     Route::POST('/safetyofficerapproval/submit', [MedicalRequisitionSlipSecurityGateController::class, 'safetyofficerapproval']);
-
                 });
 
                 Route::group(['prefix' => 'first-aid-box/daily-departmental'], function () {
@@ -1487,13 +1483,29 @@ Route::middleware(['securityheader'])->group(function () {
                     Route::POST('/lists', [FirstAiderlistController::class, 'Checklists']);
                     Route::GET('/employeename', [FirstAiderlistController::class, 'employeename']);
                     Route::GET('/employeedetails ', [FirstAiderlistController::class, 'employeedetails']);
-
-
                 });
             });
 
-
-
+            Route::group(['prefix' => 'kpi/'], function () {
+                Route::group(['prefix' => 'master/leading-lagging'], function () {
+                    Route::GET('/list', [LeadingLaggingController::class, 'Index']);
+                    Route::POST('/list', [LeadingLaggingController::class, 'Index']);
+                    Route::GET('/add', [LeadingLaggingController::class, 'Add']);
+                    Route::POST('/add/submit', [LeadingLaggingController::class, 'Store']);
+                    Route::POST('/unique', [LeadingLaggingController::class, 'UniqueCheck']);
+                    Route::GET('/edit/{id}', [LeadingLaggingController::class, 'Edit']);
+                    Route::POST('/edit/submit', [LeadingLaggingController::class, 'Update']);
+                    Route::GET('/view/{id}', [LeadingLaggingController::class, 'View']);
+                    Route::POST('/delete', [LeadingLaggingController::class, 'Delete']);
+                    Route::POST('/status', [LeadingLaggingController::class, 'StatusChange']);
+                    Route::GET('/export/excel', [LeadingLaggingController::class, 'ExportExcel']);
+                    Route::GET('/export/pdf', [LeadingLaggingController::class, 'ExportPDF']);
+                    Route::GET('/import', [LeadingLaggingController::class, 'Import']);
+                    Route::POST('/import/Submit', [LeadingLaggingController::class, 'ImportSubmit']);
+                    Route::GET('/sample_download', [LeadingLaggingController::class, 'DownloadSample']);
+                    Route::POST('/lists', [LeadingLaggingController::class, 'Checklists']);
+                });
+            });
         });
     });
 });
