@@ -14,6 +14,10 @@ return [
     'delete' => 'Delete',
     'approve' => 'Approve',
     'reject' => 'Reject',
+    'unit' => 'Unit',
+    'location' => 'Location',
+    'department' => 'Department',
+    'company' => 'Company',
     'paid' => 'Paid',
     'yes' => 'Yes',
     'no' => 'No',
@@ -77,6 +81,18 @@ return [
     'server_error' => 'Server error. Please try again later.',
     'something_went_wrong' => 'Something went Wrong!',
     'unauthorized' => 'Access denied. You don\'t have permission to view this page.',
+
+
+    //Leading and Lagging
+    'leading' => 'Leading Indicator',
+    'lagging' => 'Lagging Indicator',
+    'type' => 'Type',
+    'value' => 'Value',
+    'year' => 'Year',
+    'month' => 'Month',
+    'financial_year' => 'Financial Year',
+    'leading_lagging' => 'Leading and Lagging Indicator',
+    'hsc_inputs' => 'HSC Inputs',
 
 
 ];

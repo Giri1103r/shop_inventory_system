@@ -284,8 +284,8 @@ class SafetyPermit extends Model
             'time_from' => $request->time_from,
             'time_to' => $request->time_to,
             'unit_id' => decryptId($request->unit_id),
-            'company_id' => $company,
-            'location_id' => $location,
+            'company_id' => decryptId($request->company_id),
+            'location_id' => decryptId($request->location_id),
             'exact_location_job' => $request->exact_location_job,
             'job_location_area' => $request->job_location_area,
             'sub_permit' => $sub_permit,
@@ -324,7 +324,7 @@ class SafetyPermit extends Model
     public function updates($id)
     {
         $request = request();
-        //  dd($request);
+
         $safetypermit = $this->find($id);
         $company = Auth::user()->company_id;
         $location = Auth::user()->location_id;
@@ -333,8 +333,8 @@ class SafetyPermit extends Model
         $update_array['permit_id'] = $request->permit_id ?? $safetypermit->permit_id;
         $update_array['date'] = DBdateformat($request->date ?? $safetypermit->date);
         $update_array['to_date'] = DBdateformat($request->to_date ?? $safetypermit->to_date);
-        $update_array['company_id'] =  $company;
-        $update_array['location_id'] =  $location;
+        $update_array['company_id'] = decryptId($request->company_id) ?? $safetypermit->company_id;
+        $update_array['location_id'] = decryptId($request->location_id) ?? $safetypermit->location_id;
         $update_array['time_from'] = $request->time_from ?? $safetypermit->time_from;
         $update_array['time_to'] = $request->time_to ?? $safetypermit->time_to;
         $update_array['unit_id'] = decryptId($request->unit_id) ?? $safetypermit->unit_id;
@@ -627,9 +627,12 @@ class SafetyPermit extends Model
         $insert_array = array(
             'permit_id' => $newPermitID,
             'date' => DBdateformat(now()),
+            'to_date' => DBdateformat($safetypermit->to_date),
             'time_from' => $safetypermit->time_from,
             'time_to' => $request->time_to,
             'unit_id' => $safetypermit->unit_id,
+            'company_id' => $safetypermit->company_id,
+            'location_id' => $safetypermit->location_id,
             'exact_location_job' => $safetypermit->exact_location_job,
             'job_location_area' => $safetypermit->job_location_area,
             'sub_permit' => $safetypermit->sub_permit,
@@ -741,7 +744,11 @@ class SafetyPermit extends Model
             if (isset($data->sub_permit_images)) {
                 $data->sub_permit_images = explode(', ', $data->sub_permit_images);
             }
-            $protectiveEquip = json_decode($data->protective_equip, true);
+            // $protectiveEquip = json_decode($data->protective_equip, true);
+
+             $protectiveEquip =   !empty($data->protective_equip)
+                ? json_decode($data->protective_equip, true)
+                : null;
             $mappedProtectiveEquip = [];
 
             if ($protectiveEquip) {
@@ -781,7 +788,12 @@ class SafetyPermit extends Model
             $data->mapped_protective_equip = $mappedProtectiveEquip;
 
 
-            $equiment_involved = json_decode($data->equiment_involved, true);
+            // $equiment_involved = json_decode($data->equiment_involved, true);
+
+              $equiment_involved =   !empty($data->equiment_involved)
+                ? json_decode($data->equiment_involved, true)
+                : null;
+
             $mappedequiment_involved = [];
 
             if ($equiment_involved) {
@@ -821,7 +833,11 @@ class SafetyPermit extends Model
             $data->mapped_equiment_involved = $mappedequiment_involved;
 
 
-            $precaution_taken = json_decode($data->precaution_taken, true);
+            // $precaution_taken = json_decode($data->precaution_taken, true);
+
+            $precaution_taken =   !empty($data->precaution_taken)
+                ? json_decode($data->precaution_taken, true)
+                : null;
             $mappeprecaution_taken = [];
             if ($precaution_taken) {
                 foreach ($precaution_taken as $typeofWorkId => $checklistIds) {
@@ -857,7 +873,11 @@ class SafetyPermit extends Model
 
             $data->mapped_precaution_taken = $mappeprecaution_taken;
 
-            $equipment_checklist = json_decode($data->equipment_checklist, true);
+            // $equipment_checklist = json_decode($data->equipment_checklist, true);
+
+            $equipment_checklist =   !empty($data->equipment_checklist)
+                ? json_decode($data->equipment_checklist, true)
+                :null;
             $mappeequipment_checklist = [];
 
             if ($equipment_checklist) {
@@ -898,7 +918,12 @@ class SafetyPermit extends Model
             $data->mapped_equipment_checklist = $mappeequipment_checklist;
 
 
-            $safework_instruction = json_decode($data->safework_instruction, true);
+            // $safework_instruction = json_decode($data->safework_instruction, true);
+
+            $safework_instruction = !empty($data->safework_instruction)
+                ? json_decode($data->safework_instruction, true)
+                : null;
+
             $mappesafework_instruction = [];
 
             if ($safework_instruction) {
@@ -1165,30 +1190,50 @@ class SafetyPermit extends Model
         $request = request();
         $from_date = $request->input('Fromdate');
         $to_date = $request->input('Todate');
+        $company_id = $request->input('CompanyId');
 
+        // Base open query
         $openQuery = $this->whereNotIn('permit_status', [STATUS_CLOSED, STATUS_PERMIT_EXPIRED])
             ->where('permit_status', '>=', STATUS_EHS_VERIFICATION_PENDING)
             ->where('status', 1)
             ->where('trash', 'NO');
 
-        $closeQuery = $this->where('permit_status', STATUS_CLOSED)
-            ->orwhere('permit_status', STATUS_PERMIT_EXPIRED)
+        // Base close query with grouped OR condition
+        $closeQuery = $this->where(function ($query) {
+            $query->where('permit_status', STATUS_CLOSED)
+                ->orWhere('permit_status', STATUS_PERMIT_EXPIRED);
+        })
             ->where('status', 1)
             ->where('trash', 'NO');
 
-        if (!empty($from_date)) {
-            $openQuery->whereDate('created_at', '>=', DBDateformat($from_date));
-            $closeQuery->whereDate('created_at', '>=', DBDateformat($from_date));
+        // Apply company filter
+        if ($company_id) {
+            $companyId = decryptId($company_id);
+            $openQuery->where('company_id', $companyId);
+            $closeQuery->where('company_id', $companyId);
         }
 
-        if (!empty($to_date)) {
-            $openQuery->whereDate('created_at', '<=', DBDateformat($to_date));
-            $closeQuery->whereDate('created_at', '<=', DBDateformat($to_date));
+        // Apply date filters
+        if ($from_date && $to_date) {
+            $openQuery->whereBetween('created_at', [
+                DBdateformat($from_date),
+                DBdateformat($to_date) . ' 23:59:59'
+            ]);
+            $closeQuery->whereBetween('created_at', [
+                DBdateformat($from_date),
+                DBdateformat($to_date) . ' 23:59:59'
+            ]);
+        } elseif ($from_date) {
+            $openQuery->where('created_at', '>=', DBdateformat($from_date));
+            $closeQuery->where('created_at', '>=', DBdateformat($from_date));
+        } elseif ($to_date) {
+            $openQuery->where('created_at', '<=', DBdateformat($to_date) . ' 23:59:59');
+            $closeQuery->where('created_at', '<=', DBdateformat($to_date) . ' 23:59:59');
         }
 
+        // Execute counts
         $open_count = $openQuery->count();
         $close_count = $closeQuery->count();
-
 
         return [
             'PTW Open Count' => $open_count,
@@ -1196,22 +1241,33 @@ class SafetyPermit extends Model
         ];
     }
 
+
     public function GetTypeWiseCount()
     {
         $request = request();
         $from_date = $request->input('Fromdate');
         $to_date = $request->input('Todate');
-
+        $company_id = $request->input('CompanyId');
 
         $query = $this->where('status', 1)->where('trash', 'NO');
 
+        if ($company_id) {
+            $companyId = decryptId($company_id);
+            $query->where('company_id', $companyId);
+        }
 
-        if (!empty($from_date)) {
-            $query->whereDate('created_at', '>=', $from_date);
+
+        if ($from_date && $to_date) {
+            $query->whereBetween('created_at', [
+                DBdateformat($from_date),
+                DBdateformat($to_date) . ' 23:59:59'
+            ]);
+        } elseif ($from_date) {
+            $query->where('created_at', '>=', DBdateformat($from_date));
+        } elseif ($to_date) {
+            $query->where('created_at', '<=', DBdateformat($to_date) . ' 23:59:59');
         }
-        if (!empty($to_date)) {
-            $query->whereDate('created_at', '<=', $to_date);
-        }
+
 
         $data = $query->get();
 
@@ -1249,15 +1305,21 @@ class SafetyPermit extends Model
             ->where('ptw_safety.permit_status', STATUS_EHS_HOLD)
             ->groupBy('masters_unit.unit_name');
 
+        $company_id = $request->input('CompanyId');
+        if ($company_id) {
+            $companyId = decryptId($company_id);
+            $query->where('ptw_safety.company_id', $companyId);
+        }
+
         if ($request->Fromdate && $request->Todate) {
             $query->whereBetween('ptw_safety.created_at', [
                 DBdateformat($request->Fromdate),
-                DBdateformat($request->Todate)
+                DBdateformat($request->Todate) . ' 23:59:59'
             ]);
         } elseif ($request->Fromdate) {
             $query->where('ptw_safety.created_at', '>=', DBdateformat($request->Fromdate));
         } elseif ($request->Todate) {
-            $query->where('ptw_safety.created_at', '<=', DBdateformat($request->Todate));
+            $query->where('ptw_safety.created_at', '<=', DBdateformat($request->Todate) . ' 23:59:59');
         }
 
         $results = $query->get();

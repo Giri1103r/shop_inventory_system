@@ -103,7 +103,7 @@
                 time_24hr: true,
                 minuteIncrement: 5,
                 dateFormat: "H:i",
-               
+
             });
 
             console.log("Selected Date:", formattedSelectedDate);
@@ -111,7 +111,7 @@
         });
 
         $(document).ready(function() {
-            @if ($showAlert)
+            @if (!($showAlert))
                 Swal.fire({
                     title: 'Permit Extended',
                     text: 'This safety permit has already been extended.',

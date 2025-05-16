@@ -196,8 +196,8 @@ class MonthlyForkLiftInspectionController extends Controller
             $forklifts = $this->forklift_type->getForkLift();
             $document_no = $this->document_reference->selectUsingName('MonthlyForkliftInspectionChecklist');
             if (count($checklistQuestions) <= 0) {
-                Session::flash('error', __('inspection.checklist_add'));
-                return redirect()->back();
+                Session::flash('success', __('inspection.checklist_add'));
+                return redirect(admin_url('inspection/master/checklist-sub-type-data/add'));
             }
             $data = array(
                 'checklist_details' => $checklistQuestions,
@@ -660,7 +660,6 @@ class MonthlyForkLiftInspectionController extends Controller
                 $web_link =   admin_url('safety/forklift-inspection/monthly/verification/' . encryptId($inspection_details->id) . '/capa');
                 $to_status = L2_MANAGER_REJECTED;
                 $users = array_merge([$inspection_details->created_by], [$inspection_details->verified_by], [$inspection_details->l1_manager_verified_by]);
-
             }
 
             $mailsubject = 'Monthly Forklift Inspection';

@@ -146,6 +146,7 @@
                     },
                     signature_image: {
                         required: true,
+                        filesize: 15728640,
                     }
                 },
                 messages: {
@@ -156,6 +157,7 @@
                     },
                     signature_image: {
                         required: "Signature is Required",
+                        filesize:"Signature size must be under 15MB",
                     }
                 },
                 errorElement: 'div',

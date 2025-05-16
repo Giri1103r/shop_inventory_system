@@ -19,6 +19,7 @@ class GembaWalk extends Model
     protected $fillable = [
         'gemba_walk_auto_id',
         'document_reference_id',
+        'company_id',
         'date',
         'shift_id',
         'gemba_walk_status',
@@ -124,6 +125,7 @@ class GembaWalk extends Model
                 'document_reference_id' => $request->document_reference_id,
                 'date' => DBdateformat($request->document_upload_date),
                 'shift_id' => decryptId($request->shift),
+                'company_id' => Auth::user()->company_id,
                 'observation_needed' => decryptId($request->observation_needed),
                 'capa_needed' => decryptId($request->is_passed),
                 'gemba_walk_status' => GEMBA_WALK_INSPECTION_WAITING_FOR_FLOOR_MANAGER_VERIFICATION,
@@ -134,6 +136,7 @@ class GembaWalk extends Model
                 'document_reference_id' => $request->document_reference_id,
                 'date' => DBdateformat($request->document_upload_date),
                 'shift_id' => decryptId($request->shift),
+                'company_id' => Auth::user()->company_id,
                 'observation_needed' => decryptId($request->observation_needed),
                 'capa_needed' => decryptId($request->is_passed),
                 'gemba_walk_status' => GEMBA_WALK_INSPECTION_CLOSED,

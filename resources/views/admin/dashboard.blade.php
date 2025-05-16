@@ -23,7 +23,7 @@
                             </h4>
                         </div>
                         <div>
-                            {{-- <x-button-filter dataId="" class="search" href=""></x-button-filter> --}}
+                            <x-button-filter dataId="" class="search" href=""></x-button-filter>
 
                         </div>
                     </div>
@@ -36,7 +36,17 @@
                     <div class="card-body">
                         <div class="col-md-12">
                             <div class="row">
-
+                                <div class="col-md-3 mb-3 form-input">
+                                    <label for="company_id" class="form-label ">Company Name</label>
+                                    <select name="company_id" id="company_id" class=" form-control single-select"
+                                        style="width: 100%">
+                                        <option value="">Select Company Name</option>
+                                        @foreach ($companyList as $company)
+                                            <option value="{{ encryptId($company->id) }}">
+                                                {{ $company->company_name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
                                 <div class="col-md-3 form-input">
                                     <label for="fromDate" class="form-label">{{ __('From Date') }}</label>
                                     <div class="input-group date form-input">
@@ -631,6 +641,7 @@
             <script>
                 function redirectToIms(iirType, unitId, incidentId, injuryType, month, uauc, rcpa) {
 
+                    CompanyId = $("#company_id").val();
                     Fromdate = $("#fromDate").val();
                     Todate = $("#toDate").val();
                     // Create a form element
@@ -690,6 +701,12 @@
                     form.appendChild(inputrcpa);
 
 
+
+                    var inputCompanyId = document.createElement('input');
+                    inputCompanyId.setAttribute('type', 'hidden');
+                    inputCompanyId.setAttribute('name', 'CompanyId');
+                    inputCompanyId.setAttribute('value', CompanyId);
+                    form.appendChild(inputCompanyId);
 
                     var inputFromdate = document.createElement('input');
                     inputFromdate.setAttribute('type', 'hidden');
@@ -846,40 +863,43 @@
                 }
 
                 function filterDashboard() {
+                    CompanyId = $("#company_id").val();
                     Fromdate = $("#fromDate").val();
                     Todate = $("#toDate").val();
-                    TrainingHourSafetyDepartmentWise(Fromdate, Todate);
-                    PTWViolationHoldCompliance(Fromdate, Todate);
-                    IncidentsCount(Fromdate, Todate);
-                    heatmapofIms(Fromdate, Todate);
-                    IncidentType(Fromdate, Todate);
-                    TrainingCompletionCount(Fromdate, Todate);
-                    TypeofIIRCount(Fromdate, Todate);
-                    AccidentReportUnitWiseCount(Fromdate, Todate);
-                    LoadiirTypewiseUAUCCount(Fromdate, Todate);
-                    LoadnearMissCount(Fromdate, Todate);
-                    inspectionWiseCount(Fromdate, Todate);
-                    ptw_open_close_count(Fromdate, Todate);
-                    ptw_type_wise_count(Fromdate, Todate);
-                    LoadPPEAvailabilityChartCount(Fromdate, Todate);
-                    LoadPTWAvgTimeChartCount(Fromdate, Todate);
-                    LoadPPEIssuanceGroupWiseCount(Fromdate, Todate);
-                    loadinjurychart(Fromdate, Todate);
-                    LoadauditFindingsCount(Fromdate, Todate);
-                    LoadiirTypewiseRCPACount(Fromdate, Todate);
-                    GembaWalkObservationReport(Fromdate, Todate);
-                    uaucStaticReport(Fromdate, Todate);
-                    LoadDepartmentCount(Fromdate, Todate);
-                    loadfmonthwisetraining(Fromdate, Todate);
-                    LoadmonthewisePTWData(Fromdate, Todate);
-                    loadunitwisecount(Fromdate, Todate);
-                    loadtraining_count_status(Fromdate, Todate);
+
+                    TrainingHourSafetyDepartmentWise(CompanyId, Fromdate, Todate);
+                    PTWViolationHoldCompliance(CompanyId, Fromdate, Todate);
+                    IncidentsCount(CompanyId, Fromdate, Todate);
+                    heatmapofIms(CompanyId, Fromdate, Todate);
+                    IncidentType(CompanyId, Fromdate, Todate);
+                    TrainingCompletionCount(CompanyId, Fromdate, Todate);
+                    TypeofIIRCount(CompanyId, Fromdate, Todate);
+                    AccidentReportUnitWiseCount(CompanyId, Fromdate, Todate);
+                    LoadiirTypewiseUAUCCount(CompanyId, Fromdate, Todate);
+                    LoadnearMissCount(CompanyId, Fromdate, Todate);
+                    inspectionWiseCount(CompanyId, Fromdate, Todate);
+                    ptw_open_close_count(CompanyId, Fromdate, Todate);
+                    ptw_type_wise_count(CompanyId, Fromdate, Todate);
+                    LoadPPEAvailabilityChartCount(CompanyId, Fromdate, Todate);
+                    LoadPTWAvgTimeChartCount(CompanyId, Fromdate, Todate);
+                    LoadPPEIssuanceGroupWiseCount(CompanyId, Fromdate, Todate);
+                    loadinjurychart(CompanyId, Fromdate, Todate);
+                    LoadauditFindingsCount(CompanyId, Fromdate, Todate);
+                    LoadiirTypewiseRCPACount(CompanyId, Fromdate, Todate);
+                    GembaWalkObservationReport(CompanyId, Fromdate, Todate);
+                    uaucStaticReportData(CompanyId, Fromdate, Todate);
+                    LoadDepartmentCount(CompanyId, Fromdate, Todate);
+                    loadfmonthwisetraining(CompanyId, Fromdate, Todate);
+                    LoadmonthewisePTWData(CompanyId, Fromdate, Todate);
+                    loadunitwisecount(CompanyId, Fromdate, Todate);
+                    loadtraining_count_status(CompanyId, Fromdate, Todate);
                     // dailyObservation(Fromdate, Todate);
                 }
 
-                function LoadDepartmentCount(Fromdate = '', Todate = '') {
+                function LoadDepartmentCount(CompanyId = '', Fromdate = '', Todate = '') {
                     var url = "{{ admin_url('dashboard/department') }}"
                     var data = {
+                        CompanyId: CompanyId,
                         Fromdate: Fromdate,
                         Todate: Todate,
                     };
@@ -896,9 +916,10 @@
                 }
 
 
-                function loadfmonthwisetraining(Fromdate = '', Todate = '') {
+                function loadfmonthwisetraining(CompanyId = '', Fromdate = '', Todate = '') {
                     var url = "{{ admin_url('dashboard/monthwisetraining') }}"
                     var data = {
+                        CompanyId: CompanyId,
                         Fromdate: Fromdate,
                         Todate: Todate,
                     };
@@ -915,9 +936,10 @@
                     });
                 }
 
-                function loadtraining_count_status(Fromdate = '', Todate = '') {
+                function loadtraining_count_status(CompanyId = '', Fromdate = '', Todate = '') {
                     var url = "{{ admin_url('dashboard/trainingStatusCount') }}"
                     var data = {
+                        CompanyId: CompanyId,
                         Fromdate: Fromdate,
                         Todate: Todate,
                     };
@@ -934,9 +956,10 @@
                     });
                 }
 
-                function LoadiirTypewiseRCPACount(Fromdate = '', Todate = '') {
+                function LoadiirTypewiseRCPACount(CompanyId = '', Fromdate = '', Todate = '') {
                     var url = "{{ admin_url('dashboard/IIRTypeWiseRCPA') }}"
                     var data = {
+                        CompanyId: CompanyId,
                         Fromdate: Fromdate,
                         Todate: Todate,
                     };
@@ -953,9 +976,10 @@
                     });
                 }
 
-                function loadmonthewisecount(Fromdate = '', Todate = '') {
+                function loadmonthewisecount(CompanyId = '', Fromdate = '', Todate = '') {
                     var url = "{{ admin_url('dashboard/monthwiseptw') }}"
                     var data = {
+                        CompanyId: CompanyId,
                         Fromdate: Fromdate,
                         Todate: Todate,
                     };
@@ -973,9 +997,10 @@
                 }
 
 
-                function LoadauditFindingsCount(Fromdate = '', Todate = '') {
+                function LoadauditFindingsCount(CompanyId = '', Fromdate = '', Todate = '') {
                     var url = "{{ admin_url('dashboard/auditFindings') }}"
                     var data = {
+                        CompanyId: CompanyId,
                         Fromdate: Fromdate,
                         Todate: Todate,
                     };
@@ -992,9 +1017,10 @@
                     });
                 }
 
-                function IncidentsCount(Fromdate = '', Todate = '') {
+                function IncidentsCount(CompanyId = '', Fromdate = '', Todate = '') {
                     var url = "{{ admin_url('dashboard/total-incident') }}"
                     var data = {
+                        CompanyId: CompanyId,
                         Fromdate: Fromdate,
                         Todate: Todate,
                     };
@@ -1011,9 +1037,10 @@
                     });
                 }
 
-                function GembaWalkObservationReport(Fromdate = '', Todate = '') {
+                function GembaWalkObservationReport(CompanyId = '', Fromdate = '', Todate = '') {
                     var url = "{{ admin_url('dashboard/gemba-walk-observation') }}"
                     var data = {
+                        CompanyId: CompanyId,
                         Fromdate: Fromdate,
                         Todate: Todate,
                     };
@@ -1030,9 +1057,10 @@
                     });
                 }
 
-                function dailyObservation(Fromdate = '', Todate = '') {
+                function dailyObservation(CompanyId = '', Fromdate = '', Todate = '') {
                     var url = "{{ admin_url('dashboard/dailyObservation') }}"
                     var data = {
+                        CompanyId: CompanyId,
                         Fromdate: Fromdate,
                         Todate: Todate,
                     };
@@ -1049,9 +1077,10 @@
                     });
                 }
 
-                function heatmapofIms(Fromdate = '', Todate = '') {
+                function heatmapofIms(CompanyId = '', Fromdate = '', Todate = '') {
                     var url = "{{ admin_url('dashboard/heatmap-of-imsData') }}"
                     var data = {
+                        CompanyId: CompanyId,
                         Fromdate: Fromdate,
                         Todate: Todate,
                     };
@@ -1068,9 +1097,10 @@
                     });
                 }
 
-                function IncidentType(Fromdate = '', Todate = '') {
+                function IncidentType(CompanyId = '', Fromdate = '', Todate = '') {
                     var url = "{{ admin_url('dashboard/incident-type-chart') }}"
                     var data = {
+                        CompanyId: CompanyId,
                         Fromdate: Fromdate,
                         Todate: Todate,
                     };
@@ -1087,9 +1117,10 @@
                     });
                 }
 
-                function loadinjurychart(Fromdate = '', Todate = '') {
+                function loadinjurychart(CompanyId = '', Fromdate = '', Todate = '') {
                     var url = "{{ admin_url('dashboard/injurypart') }}"
                     var data = {
+                        CompanyId: CompanyId,
                         Fromdate: Fromdate,
                         Todate: Todate,
                     };
@@ -1107,9 +1138,10 @@
                 }
 
 
-                function LoadPTWAvgTimeChartCount(Fromdate = '', Todate = '') {
+                function LoadPTWAvgTimeChartCount(CompanyId = '', Fromdate = '', Todate = '') {
                     var url = "{{ admin_url('dashboard/PTWAvgTimeChart') }}"
                     var data = {
+                        CompanyId: CompanyId,
                         Fromdate: Fromdate,
                         Todate: Todate,
                     };
@@ -1126,9 +1158,10 @@
                     });
                 }
 
-                function LoadPPEAvailabilityChartCount(Fromdate = '', Todate = '') {
+                function LoadPPEAvailabilityChartCount(CompanyId = '', Fromdate = '', Todate = '') {
                     var url = "{{ admin_url('dashboard/PPEAvailabilityChart') }}"
                     var data = {
+                        CompanyId: CompanyId,
                         Fromdate: Fromdate,
                         Todate: Todate,
                     };
@@ -1145,9 +1178,10 @@
                     });
                 }
 
-                function ptw_type_wise_count(Fromdate = '', Todate = '') {
+                function ptw_type_wise_count(CompanyId = '', Fromdate = '', Todate = '') {
                     var url = "{{ admin_url('dashboard/ptw-type-wise-count') }}"
                     var data = {
+                        CompanyId: CompanyId,
                         Fromdate: Fromdate,
                         Todate: Todate,
                     };
@@ -1164,9 +1198,10 @@
                     });
                 }
 
-                function ptw_open_close_count(Fromdate = '', Todate = '') {
+                function ptw_open_close_count(CompanyId = '', Fromdate = '', Todate = '') {
                     var url = "{{ admin_url('dashboard/ptw-open-close') }}"
                     var data = {
+                        CompanyId: CompanyId,
                         Fromdate: Fromdate,
                         Todate: Todate,
                     };
@@ -1183,9 +1218,10 @@
                     });
                 }
 
-                function inspectionWiseCount(Fromdate = '', Todate = '') {
+                function inspectionWiseCount(CompanyId = '', Fromdate = '', Todate = '') {
                     var url = "{{ admin_url('dashboard/inspection-count') }}"
                     var data = {
+                        CompanyId: CompanyId,
                         Fromdate: Fromdate,
                         Todate: Todate,
                     };
@@ -1202,9 +1238,10 @@
                     });
                 }
 
-                function LoadnearMissCount(Fromdate = '', Todate = '') {
+                function LoadnearMissCount(CompanyId = '', Fromdate = '', Todate = '') {
                     var url = "{{ admin_url('dashboard/nearMissFrequency') }}"
                     var data = {
+                        CompanyId: CompanyId,
                         Fromdate: Fromdate,
                         Todate: Todate,
                     };
@@ -1221,9 +1258,10 @@
                     });
                 }
 
-                function LoadiirTypewiseUAUCCount(Fromdate = '', Todate = '') {
+                function LoadiirTypewiseUAUCCount(CompanyId = '', Fromdate = '', Todate = '') {
                     var url = "{{ admin_url('dashboard/IIRTypeWiseUAUC') }}"
                     var data = {
+                        CompanyId: CompanyId,
                         Fromdate: Fromdate,
                         Todate: Todate,
                     };
@@ -1240,9 +1278,10 @@
                     });
                 }
 
-                function AccidentReportUnitWiseCount(Fromdate = '', Todate = '') {
+                function AccidentReportUnitWiseCount(CompanyId = '', Fromdate = '', Todate = '') {
                     var url = "{{ admin_url('dashboard/AccidentReportUnitWiseCount') }}"
                     var data = {
+                        CompanyId: CompanyId,
                         Fromdate: Fromdate,
                         Todate: Todate,
                     };
@@ -1259,9 +1298,10 @@
                     });
                 }
 
-                function TypeofIIRCount(Fromdate = '', Todate = '') {
+                function TypeofIIRCount(CompanyId = '', Fromdate = '', Todate = '') {
                     var url = "{{ admin_url('dashboard/TypeofIIRCount') }}"
                     var data = {
+                        CompanyId: CompanyId,
                         Fromdate: Fromdate,
                         Todate: Todate,
                     };
@@ -1278,9 +1318,10 @@
                     });
                 }
 
-                function TrainingCompletionCount(Fromdate = '', Todate = '') {
+                function TrainingCompletionCount(CompanyId = '', Fromdate = '', Todate = '') {
                     var url = "{{ admin_url('dashboard/TrainingCompletionCount') }}"
                     var data = {
+                        CompanyId: CompanyId,
                         Fromdate: Fromdate,
                         Todate: Todate,
                     };
@@ -1297,9 +1338,10 @@
                     });
                 }
 
-                function TrainingHourSafetyDepartmentWise(Fromdate = '', Todate = '') {
+                function TrainingHourSafetyDepartmentWise(CompanyId = '', Fromdate = '', Todate = '') {
                     var url = "{{ admin_url('dashboard/training-hour-safety-department') }}"
                     var data = {
+                        CompanyId: CompanyId,
                         Fromdate: Fromdate,
                         Todate: Todate,
                     };
@@ -1316,9 +1358,10 @@
                     });
                 }
 
-                function PTWViolationHoldCompliance(Fromdate = '', Todate = '') {
+                function PTWViolationHoldCompliance(CompanyId = '', Fromdate = '', Todate = '') {
                     var url = "{{ admin_url('dashboard/ptw-hold-violation') }}"
                     var data = {
+                        CompanyId: CompanyId,
                         Fromdate: Fromdate,
                         Todate: Todate,
                     };
@@ -1335,9 +1378,10 @@
                     });
                 }
 
-                function uaucStaticReport(Fromdate = '', Todate = '') {
+                function uaucStaticReportData(CompanyId = '', Fromdate = '', Todate = '') {
                     var url = "{{ admin_url('dashboard/uauc-static-report') }}"
                     var data = {
+                        CompanyId: CompanyId,
                         Fromdate: Fromdate,
                         Todate: Todate,
                     };
@@ -1354,9 +1398,10 @@
                     });
                 }
 
-                function LoadmonthewisePTWData(Fromdate = '', Todate = '') {
+                function LoadmonthewisePTWData(CompanyId = '', Fromdate = '', Todate = '') {
                     var url = "{{ admin_url('dashboard/monthwiseptw') }}"
                     var data = {
+                        CompanyId: CompanyId,
                         Fromdate: Fromdate,
                         Todate: Todate,
                     };
@@ -1374,9 +1419,10 @@
                 }
 
 
-                function loadfmonthwisetraining(Fromdate = '', Todate = '') {
+                function loadfmonthwisetraining(CompanyId = '', Fromdate = '', Todate = '') {
                     var url = "{{ admin_url('dashboard/monthwisetraining') }}"
                     var data = {
+                        CompanyId: CompanyId,
                         Fromdate: Fromdate,
                         Todate: Todate,
                     };
@@ -1393,9 +1439,10 @@
                     });
                 }
 
-                function loadtraining_count_status(Fromdate = '', Todate = '') {
+                function loadtraining_count_status(CompanyId = '', Fromdate = '', Todate = '') {
                     var url = "{{ admin_url('dashboard/trainingStatusCount') }}"
                     var data = {
+                        CompanyId: CompanyId,
                         Fromdate: Fromdate,
                         Todate: Todate,
                     };
@@ -1412,9 +1459,10 @@
                     });
                 }
 
-                function loadunitwisecount(Fromdate = '', Todate = '') {
+                function loadunitwisecount(CompanyId = '', Fromdate = '', Todate = '') {
                     var url = "{{ admin_url('dashboard/unitwiseptw') }}"
                     var data = {
+                        CompanyId: CompanyId,
                         Fromdate: Fromdate,
                         Todate: Todate,
                     };
@@ -1433,9 +1481,10 @@
 
 
 
-                function LoadiirTypewiseRCPACount(Fromdate = '', Todate = '') {
+                function LoadiirTypewiseRCPACount(CompanyId = '', Fromdate = '', Todate = '') {
                     var url = "{{ admin_url('dashboard/IIRTypeWiseRCPA') }}"
                     var data = {
+                        CompanyId: CompanyId,
                         Fromdate: Fromdate,
                         Todate: Todate,
                     };
@@ -1452,9 +1501,10 @@
                     });
                 }
 
-                function LoadauditFindingsCount(Fromdate = '', Todate = '') {
+                function LoadauditFindingsCount(CompanyId = '', Fromdate = '', Todate = '') {
                     var url = "{{ admin_url('dashboard/auditFindings') }}"
                     var data = {
+                        CompanyId: CompanyId,
                         Fromdate: Fromdate,
                         Todate: Todate,
                     };
@@ -1471,9 +1521,10 @@
                     });
                 }
 
-                function TotalIncidentsCount(Fromdate = '', Todate = '') {
+                function TotalIncidentsCount(CompanyId = '', Fromdate = '', Todate = '') {
                     var url = "{{ admin_url('dashboard/total-incident') }}"
                     var data = {
+                        CompanyId: CompanyId,
                         Fromdate: Fromdate,
                         Todate: Todate,
                     };
@@ -1492,9 +1543,10 @@
 
 
 
-                function IncidentTypeChart(Fromdate = '', Todate = '') {
+                function IncidentTypeChart(CompanyId = '', Fromdate = '', Todate = '') {
                     var url = "{{ admin_url('dashboard/incident-type-chart') }}"
                     var data = {
+                        CompanyId: CompanyId,
                         Fromdate: Fromdate,
                         Todate: Todate,
                     };
@@ -1511,9 +1563,10 @@
                     });
                 }
 
-                function loadinjurychart(Fromdate = '', Todate = '') {
+                function loadinjurychart(CompanyId = '', Fromdate = '', Todate = '') {
                     var url = "{{ admin_url('dashboard/injurypart') }}"
                     var data = {
+                        CompanyId: CompanyId,
                         Fromdate: Fromdate,
                         Todate: Todate,
                     };
@@ -1530,9 +1583,10 @@
                     });
                 }
 
-                function LoadPPEIssuanceGroupWiseCount(Fromdate = '', Todate = '') {
+                function LoadPPEIssuanceGroupWiseCount(CompanyId = '', Fromdate = '', Todate = '') {
                     var url = "{{ admin_url('dashboard/PPEIssuanceGroupWise') }}"
                     var data = {
+                        CompanyId: CompanyId,
                         Fromdate: Fromdate,
                         Todate: Todate,
                     };
@@ -1549,9 +1603,10 @@
                     });
                 }
 
-                function LoadPTWAvgTimeChartCount(Fromdate = '', Todate = '') {
+                function LoadPTWAvgTimeChartCount(CompanyId = '', Fromdate = '', Todate = '') {
                     var url = "{{ admin_url('dashboard/PTWAvgTimeChart') }}"
                     var data = {
+                        CompanyId: CompanyId,
                         Fromdate: Fromdate,
                         Todate: Todate,
                     };
@@ -1568,9 +1623,10 @@
                     });
                 }
 
-                function LoadPPEAvailabilityChartCount(Fromdate = '', Todate = '') {
+                function LoadPPEAvailabilityChartCount(CompanyId = '', Fromdate = '', Todate = '') {
                     var url = "{{ admin_url('dashboard/PPEAvailabilityChart') }}"
                     var data = {
+                        CompanyId: CompanyId,
                         Fromdate: Fromdate,
                         Todate: Todate,
                     };
@@ -1587,9 +1643,10 @@
                     });
                 }
 
-                function ptw_type_wise_count(Fromdate = '', Todate = '') {
+                function ptw_type_wise_count(CompanyId = '', Fromdate = '', Todate = '') {
                     var url = "{{ admin_url('dashboard/ptw-type-wise-count') }}"
                     var data = {
+                        CompanyId: CompanyId,
                         Fromdate: Fromdate,
                         Todate: Todate,
                     };
@@ -1606,9 +1663,10 @@
                     });
                 }
 
-                function ptw_open_close_count(Fromdate = '', Todate = '') {
+                function ptw_open_close_count(CompanyId = '', Fromdate = '', Todate = '') {
                     var url = "{{ admin_url('dashboard/ptw-open-close') }}"
                     var data = {
+                        CompanyId: CompanyId,
                         Fromdate: Fromdate,
                         Todate: Todate,
                     };
@@ -1625,9 +1683,10 @@
                     });
                 }
 
-                function inspection_wise_count(Fromdate = '', Todate = '') {
+                function inspection_wise_count(CompanyId = '', Fromdate = '', Todate = '') {
                     var url = "{{ admin_url('dashboard/inspection-count') }}"
                     var data = {
+                        CompanyId: CompanyId,
                         Fromdate: Fromdate,
                         Todate: Todate,
                     };
@@ -1644,9 +1703,10 @@
                     });
                 }
 
-                function LoadnearMissCount(Fromdate = '', Todate = '') {
+                function LoadnearMissCount(CompanyId = '', Fromdate = '', Todate = '') {
                     var url = "{{ admin_url('dashboard/nearMissFrequency') }}"
                     var data = {
+                        CompanyId: CompanyId,
                         Fromdate: Fromdate,
                         Todate: Todate,
                     };
@@ -1663,9 +1723,10 @@
                     });
                 }
 
-                function LoadiirTypewiseUAUCCount(Fromdate = '', Todate = '') {
+                function LoadiirTypewiseUAUCCount(CompanyId = '', Fromdate = '', Todate = '') {
                     var url = "{{ admin_url('dashboard/IIRTypeWiseUAUC') }}"
                     var data = {
+                        CompanyId: CompanyId,
                         Fromdate: Fromdate,
                         Todate: Todate,
                     };
@@ -1682,9 +1743,10 @@
                     });
                 }
 
-                function AccidentReportUnitWiseCount(Fromdate = '', Todate = '') {
+                function AccidentReportUnitWiseCount(CompanyId = '', Fromdate = '', Todate = '') {
                     var url = "{{ admin_url('dashboard/AccidentReportUnitWiseCount') }}"
                     var data = {
+                        CompanyId: CompanyId,
                         Fromdate: Fromdate,
                         Todate: Todate,
                     };
@@ -1701,9 +1763,10 @@
                     });
                 }
 
-                function TypeofIIRCount(Fromdate = '', Todate = '') {
+                function TypeofIIRCount(CompanyId = '', Fromdate = '', Todate = '') {
                     var url = "{{ admin_url('dashboard/TypeofIIRCount') }}"
                     var data = {
+                        CompanyId: CompanyId,
                         Fromdate: Fromdate,
                         Todate: Todate,
                     };
@@ -1720,9 +1783,10 @@
                     });
                 }
 
-                function TrainingCompletionCount(Fromdate = '', Todate = '') {
+                function TrainingCompletionCount(CompanyId = '', Fromdate = '', Todate = '') {
                     var url = "{{ admin_url('dashboard/TrainingCompletionCount') }}"
                     var data = {
+                        CompanyId: CompanyId,
                         Fromdate: Fromdate,
                         Todate: Todate,
                     };
@@ -1739,9 +1803,10 @@
                     });
                 }
 
-                function TrainingHourSafetyDepartmentWise(Fromdate = '', Todate = '') {
+                function TrainingHourSafetyDepartmentWise(CompanyId = '', Fromdate = '', Todate = '') {
                     var url = "{{ admin_url('dashboard/training-hour-safety-department') }}"
                     var data = {
+                        CompanyId: CompanyId,
                         Fromdate: Fromdate,
                         Todate: Todate,
                     };
@@ -1758,9 +1823,10 @@
                     });
                 }
 
-                function PTWViolationHoldCompliance(Fromdate = '', Todate = '') {
+                function PTWViolationHoldCompliance(CompanyId = '', Fromdate = '', Todate = '') {
                     var url = "{{ admin_url('dashboard/ptw-hold-violation') }}"
                     var data = {
+                        CompanyId: CompanyId,
                         Fromdate: Fromdate,
                         Todate: Todate,
                     };
@@ -1777,9 +1843,10 @@
                     });
                 }
 
-                function uaucStaticReport(Fromdate = '', Todate = '') {
+                function uaucStaticReport(CompanyId = '', Fromdate = '', Todate = '') {
                     var url = "{{ admin_url('dashboard/uauc-static-report') }}"
                     var data = {
+                        CompanyId: CompanyId,
                         Fromdate: Fromdate,
                         Todate: Todate,
                     };
@@ -1797,10 +1864,6 @@
                 }
 
                 $(document).ready(function() {
-                    $('#resetform').on('click', function(e) {
-                        e.preventDefault();
-                        location.reload();
-                    });
                     const toDatePicker = flatpickr("#toDate", {
                         dateFormat: "d-m-Y",
                         minDate: "today",
@@ -1809,21 +1872,18 @@
                     flatpickr("#fromDate", {
                         dateFormat: "d-m-Y",
                         onChange: function(selectedDates, dateStr) {
-                            if (selectedDates.length > 0) {
-                                const fromDate = selectedDates[0];
-                                if (toDatePicker) {
-                                    toDatePicker.set("minDate",
-                                        dateStr);
-                                }
-                                $('#LoadDepartmentCount').html(dataAjx);
-
-
+                            if (selectedDates.length > 0 && toDatePicker) {
+                                toDatePicker.set("minDate", dateStr);
                             }
                         }
                     });
 
+                    $('#resetform').on('click', function(e) {
+                        e.preventDefault();
+                        location.reload();
+                    });
 
-
+                    // Initial load
                     filterDashboard();
                 });
             </script>

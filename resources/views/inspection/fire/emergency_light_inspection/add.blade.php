@@ -98,6 +98,16 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
+                                                    <label class="form-label require">{{ __('inspection.unit') }}</label>
+                                                    <select name="unit_id" id="unit_id"
+                                                        class=" form-control single-select" style="width: 100%">
+                                                        <option value="">Select Unit</option>
+
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
                                                     <label class="form-label require">Shift</label>
                                                     <select name="shift_id" id="shift_id"
                                                         class=" form-control single-select" style="width: 100%">
@@ -117,19 +127,7 @@
                                                         class="form-control">
                                                 </div>
                                             </div>
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label require">{{ __('inspection.unit') }}</label>
-                                                    <select name="unit_id" id="unit_id"
-                                                        class=" form-control single-select" style="width: 100%">
-                                                        <option value="">Select Unit</option>
-                                                        @foreach ($units as $unit)
-                                                            <option value="{{ encryptId($unit->id) }}">
-                                                                {{ $unit->unit_name }}</option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-                                            </div>
+
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label
@@ -162,9 +160,9 @@
                                                 @else
                                                     <div class="form-input col-md-12 mb-2">
                                                         <label class="form-label require">Signature</label>
-                                                        <input type="file" name="signature_image" id="signature_upload"
-                                                            class="form-control form-control-sm" accept="image/*"
-                                                            placeholder="Enter the image">
+                                                        <input type="file" name="signature_image"
+                                                            id="signature_upload" class="form-control form-control-sm"
+                                                            accept="image/*" placeholder="Enter the image">
                                                         <small>Allowed file types: jpg, jpeg, png</small>
                                                         <div id="signature_upload" class="text-danger"></div>
                                                     </div>
@@ -174,22 +172,16 @@
                                         </div>
                                         <hr>
                                         <div class="form-wrapper">
+                                            <div class="card-header-inner d-flex justify-content-between">
+                                                <h4 class="text-white">Emergency Light Inspection</h4>
+                                                <button class="btn btn-primary add-row mb-2 " type="button"
+                                                    id="add-row"
+                                                    style="margin-left: 10px;  margin-right: 10px; width: 84px;">
+                                                    Add
+                                                </button>
+                                            </div>
                                             <div class="row mt-4 form-set">
-                                                <div class="card-header-inner p-2">
-                                                    <h4 class="text-white">Emergency Light Inspection</h4>
-                                                </div>
 
-                                                <div class="d-flex justify-content-end align-items-center gap-2 m-2">
-                                                    <button class="btn btn-primary add-row" type="button" id="add-row"
-                                                        style="min-width: 130px;">
-                                                        Add
-                                                    </button>
-                                                    <button type="button"
-                                                        class="btn btn-danger remove-row d-flex align-items-center"
-                                                        style="min-width: 130px;">
-                                                        <i class="fa-solid fa-trash me-2"></i> Remove
-                                                    </button>
-                                                </div>
 
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
@@ -341,7 +333,12 @@
                                                         <textarea name="remarks[1]" id="remarks" class="form-control" style="resize: none;" rows="4"></textarea>
                                                     </div>
                                                 </div>
+                                                <div class="col-md-2 text-right  mt-4">
+                                                    <button class="btn btn-danger remove-row" type="button"
+                                                        style="margin:10px;"><i class="fa fa-trash"></i></button>
 
+                                                </div>
+                                                <hr>
                                             </div>
                                         </div>
                                         <div class="form-observation">
@@ -358,11 +355,13 @@
                                                         <div class="mb-2">
                                                             <label class="me-3">
                                                                 <input type="radio" name="observation_needed"
-                                                                    value="{{encryptId(1)}}" class="validate-radio-required"> Yes
+                                                                    value="{{ encryptId(1) }}"
+                                                                    class="validate-radio-required"> Yes
                                                             </label>
                                                             <label>
                                                                 <input type="radio" name="observation_needed"
-                                                                    value="{{encryptId(2)}}" class="validate-radio-required"> No
+                                                                    value="{{ encryptId(2) }}"
+                                                                    class="validate-radio-required"> No
                                                             </label>
                                                         </div>
 
@@ -395,6 +394,33 @@
 
     @push('script')
         <script type="text/javascript" nonce="projectcab">
+            // location based unit
+
+            $(document).on('change', '#location_id', function() {
+                var locationId = $(this).val();
+                if (locationId) {
+                    $.ajax({
+                        url: "{{ admin_url('unit/ajax-list') }}/" + locationId + "/0",
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(data) {
+                            $('#unit_id').empty().append(
+                                '<option value="">Select unit</option>');
+                            $.each(data, function(key, value) {
+                                $('#unit_id').append('<option value="' + value
+                                    .id + '">' + value.name + '</option>');
+                            });
+                            $('#unit_id').trigger('change.');
+                        },
+                        error: function(xhr) {
+                            alert('Error fetching unit. Please try again.');
+                        }
+                    });
+                } else {
+                    $('#unit_id').empty().append('<option value="">Select unit</option>');
+                    $('#unit_id').trigger('change.');
+                }
+            });
             $(document).ready(function() {
                 $('#resetform').on('click', function(e) {
                     e.preventDefault();
@@ -408,7 +434,7 @@
                 });
                 flatpickr("#next_due", {
                     dateFormat: "d-m-Y",
-                    minDate: new Date(),
+
                 });
             });
             $(function() {
@@ -459,8 +485,8 @@
                         },
                         "location[1]": {
                             required: true,
-                            minlength:3,
-                            maxlength:30,
+                            minlength: 3,
+                            maxlength: 30,
                         },
                         "quantity[1]": {
                             required: true,
@@ -473,30 +499,28 @@
                         },
                         "remarks[1]": {
                             required: true,
-                            minlength:3,
-                            maxlength:300,
+                            minlength: 3,
+                            maxlength: 300,
                         },
                         device_image: {
                             required: true,
                             // extension: "jpg",
-                             filesize: 10485760,
-
-
+                             filesize: 15728640
                         },
                         observation: {
                             required: true,
                         },
                         signature_image: {
                             required: true,
-                            filesize:10485760,
+                            filesize: 15728640
                         },
                         "capacity[1]": {
                             required: true,
                         },
                         "emergency_light_number[1]": {
                             required: true,
-                            minlength:3,
-                            maxlength:30,
+                            minlength: 3,
+                            maxlength: 30,
                         },
                         "condition_of_light[1]": {
                             required: true,
@@ -526,7 +550,7 @@
                         },
                         signature_image: {
                             required: 'Please upload your signature',
-                            filesize: "Image must be under 10MB."
+                            filesize: "Image must be under 15MB."
 
                         },
                         issue_date: {
@@ -598,7 +622,7 @@
                         device_image: {
                             required: "Please upload an image.",
                             // extension: "Only JPG files are allowed.",
-                            filesize: "Image must be under 10MB."
+                            filesize: "Image must be under 15MB."
                         },
                         observation: {
                             required: "Please add observation",
@@ -654,20 +678,10 @@
 
                     var newFormSet = `
                         <div class="row mt-4 form-set">
-                                                <div class="card-header-inner p-2">
-                                                    <h4 class="text-white">Emergency Light Inspection</h4>
-                                                </div>
 
-                                                <div class="d-flex justify-content-end gap-0 m-2">
-                                                    <button class="btn btn-primary add-row me-3" type="button"
-                                                        id="add-row" style="width: 84px;">
-                                                        Add
-                                                    </button>
-                                                    <button type="button" class="btn btn-danger remove-row">
-                                                        <i class="fa-solid fa-trash"></i> Remove
-                                                    </button>
 
-                                                </div>
+
+
                                                     <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
@@ -815,7 +829,12 @@
                                                         <textarea name="remarks[${form_set_count}]" id="remarks_${form_set_count}" class="form-control" style="resize: none;" rows="4"></textarea>
                                                     </div>
                                                 </div>
+ <div class="col-md-2 text-right  mt-4">
+                                                    <button class="btn btn-danger remove-row" type="button"
+                                                        style="margin:10px;"><i class="fa fa-trash"></i></button>
 
+                                                </div>
+                                                <hr>
                                             </div>
                     `;
 
@@ -872,8 +891,8 @@
                     });
                     $("input[name='location[" + form_set_count + "]']").rules('add', {
                         required: true,
-                        minlength:3,
-                        maxlength:30,
+                        minlength: 3,
+                        maxlength: 30,
                         messages: {
                             required: 'Please add the location',
                             minlength: "Minimum Characters should be 3",
@@ -882,8 +901,8 @@
                     });
                     $("input[name='emergency_light_number[" + form_set_count + "]']").rules('add', {
                         required: true,
-                        minlength:3,
-                        maxlength:30,
+                        minlength: 3,
+                        maxlength: 30,
                         messages: {
                             required: 'Please add the Emergency of Light',
                             minlength: "Minimum Characters should be 3",
@@ -906,8 +925,8 @@
 
                     $("textarea[name='remarks[" + form_set_count + "]']").rules('add', {
                         required: true,
-                        minlength:3,
-                        maxlength:30,
+                        minlength: 3,
+                        maxlength: 30,
                         messages: {
                             required: 'Please add the remarks',
                             minlength: "Minimum Characters should be 3",

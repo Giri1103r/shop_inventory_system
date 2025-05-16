@@ -1,4 +1,4 @@
-<div id="monthwisetraining"></div>
+z<div id="monthwisetraining"></div>
 
 <script>
     var chartData = @json($chartDataArray); // Pass data from the controller

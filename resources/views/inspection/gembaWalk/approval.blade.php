@@ -866,7 +866,7 @@
                     },
                     capa_image: {
                         required: true,
-                        filesize: 10485760,
+                        filesize: 15728640,
                     }
                 },
                 messages: {
@@ -881,7 +881,7 @@
                     },
                     capa_image: {
                         required: "Image is required",
-                        filesize: "File size should not exceed 10MB.",
+                        filesize: "File size should not exceed 15MB.",
 
                     }
                 },
@@ -921,7 +921,7 @@
                     },
                     gemba_walk_verified_by: {
                         required: true,
-                         filesize: 10485760,
+                         filesize: 15728640,
                     }
                 },
                 messages: {
@@ -936,7 +936,7 @@
                     },
                     gemba_walk_verified_by: {
                         required: "Signature is required",
-                        filesize: "File size should not exceed 10       MB.",
+                        filesize: "File size should not exceed 15MB.",
 
                     }
                 },

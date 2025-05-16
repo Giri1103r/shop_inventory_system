@@ -230,6 +230,18 @@
                                     </div>
 
                                     <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label ">Company</label>
+                                        <div class="view_data">
+                                            {{ getCompanyname($incident_report->company_id) }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label ">Location</label>
+                                        <div class="view_data">
+                                            {{ $incident_report->location_name }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">Unit</label>
                                         <div class="view_data">
                                             {{ getUnitname($incident_report->unit_id) }}
@@ -241,12 +253,7 @@
                                             {{ $incident_report->shift }}
                                         </div>
                                     </div>
-                                    <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label require">Location</label>
-                                        <div class="view_data">
-                                            {{ $incident_report->location_name }}
-                                        </div>
-                                    </div>
+                                  
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">Exact Location</label>
                                         <div class="view_data">

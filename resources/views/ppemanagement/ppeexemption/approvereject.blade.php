@@ -100,30 +100,31 @@
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">Files</label>
                                         @if (isset($ppefiles) && $ppefiles->count() > 0)
-                                        <div class="d-flex flex-wrap gap-2">
-                                            @foreach ($ppefiles as $file)
-                                            <p>
-                                                @php
-                                                    $fileExtension = strtolower(pathinfo($file->file_path, PATHINFO_EXTENSION));
-                                                @endphp
+                                            <div class="d-flex flex-wrap gap-2">
+                                                @foreach ($ppefiles as $file)
+                                                    <p>
+                                                        @php
+                                                            $fileExtension = strtolower(
+                                                                pathinfo($file->file_path, PATHINFO_EXTENSION),
+                                                            );
+                                                        @endphp
 
-                                                @if (in_array($fileExtension, ['docx', 'pdf', 'doc']))
-                                                    <a href="{{ asset('' . $file->file_path) }}" target="_blank">
-                                                        <i class="fa-solid fa-eye text-danger"></i> View
-                                                    </a>
-                                                @elseif (in_array($fileExtension, ['png', 'jpg', 'jpeg']))
-
-                                                    <a href="{{ asset('' . $file->file_path) }}" target="_blank">
-                                                        <img src="{{ asset('' . $file->file_path) }}" alt="image" style="max-width: 100px; max-height: 100px;">
-                                                    </a>
-                                                @else
-
-                                                    <span>{{ $file->file_path }}</span>
-                                                @endif
-                                            </p>
-                                        @endforeach
-                                        </div>
-
+                                                        @if (in_array($fileExtension, ['docx', 'pdf', 'doc']))
+                                                            <a href="{{ asset('' . $file->file_path) }}" target="_blank">
+                                                                <i class="fa-solid fa-eye text-danger"></i> View
+                                                            </a>
+                                                        @elseif (in_array($fileExtension, ['png', 'jpg', 'jpeg']))
+                                                            <a href="{{ asset('' . $file->file_path) }}" target="_blank">
+                                                                <img src="{{ asset('' . $file->file_path) }}"
+                                                                    alt="image"
+                                                                    style="max-width: 100px; max-height: 100px;">
+                                                            </a>
+                                                        @else
+                                                            <span>{{ $file->file_path }}</span>
+                                                        @endif
+                                                    </p>
+                                                @endforeach
+                                            </div>
                                         @else
                                             <p>No files are uploaded</p>
                                         @endif
@@ -136,52 +137,55 @@
                                         </div>
                                     </div>
                                 </div>
-
-                                <div class="row mt-2">
-                                    <div class="card-header-inner">
-                                        <h4 class="text-white">EHS Approval</h4>
+                                @if (checkUserRole(ROLE_EHS_HEAD))
+                                    <div class="row mt-2">
+                                        <div class="card-header-inner">
+                                            <h4 class="text-white">EHS Head Approval</h4>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="basic-form">
-                                    <form method="POST" id="requestApprovalForm"
-                                        action="{{ admin_url('ppe_exemption/approvereject/submit') }}">
-                                        @csrf
-                                        <input type="hidden" name="id" value="{{ $encryptid }}">
-                                        <div class="">
-                                            <div class="mb-3 row">
-                                                <div class="col-md-4 mb-3">
-                                                    <label for="approver_name" class="form-label require">Approver Name</label>
-                                                    <input type="text" class="form-control form-control-sm"
-                                                        id="approver_name" readonly value="{{ Auth::user()->name }}">
-                                                </div>
-                                                <div class="col-md-4 mb-3">
-                                                    <label for="date" class="form-label require">Date</label>
-                                                    <input type="text" class="form-control form-control-sm"
-                                                        id="date" name="date" readonly
-                                                        value="{{ date('d-m-Y H:i:s') }}">
-                                                </div>
-                                                <div class="col-md-12 mb-3">
-                                                    <div class="mb-1">
-                                                        <label for="remarks" class="form-label require">Remarks</label>
-                                                        <textarea class="form-control @error('remarks') is-invalid @enderror" id="remarks" name="remarks" rows="3"></textarea>
-                                                        <div class="text-danger" id="remarks_error"></div>
-                                                        @error('remarks')
-                                                            <span id="remark_error"
-                                                                class="text-danger">{{ $message }}</span>
-                                                        @enderror
+                                    <div class="basic-form">
+                                        <form method="POST" id="requestApprovalForm"
+                                            action="{{ admin_url('ppe_exemption/approvereject/submit') }}">
+                                            @csrf
+                                            <input type="hidden" name="id" value="{{ $encryptid }}">
+                                            <div class="">
+                                                <div class="mb-3 row">
+                                                    <div class="col-md-4 mb-3">
+                                                        <label for="approver_name" class="form-label require">Approver
+                                                            Name</label>
+                                                        <input type="text" class="form-control form-control-sm"
+                                                            id="approver_name" readonly value="{{ Auth::user()->name }}">
+                                                    </div>
+                                                    <div class="col-md-4 mb-3">
+                                                        <label for="date" class="form-label require">Date</label>
+                                                        <input type="text" class="form-control form-control-sm"
+                                                            id="date" name="date" readonly
+                                                            value="{{ date('d-m-Y H:i:s') }}">
+                                                    </div>
+                                                    <div class="col-md-12 mb-3">
+                                                        <div class="mb-1">
+                                                            <label for="remarks" class="form-label require">Remarks</label>
+                                                            <textarea class="form-control @error('remarks') is-invalid @enderror" id="remarks" name="remarks" rows="3"></textarea>
+                                                            <div class="text-danger" id="remarks_error"></div>
+                                                            @error('remarks')
+                                                                <span id="remark_error"
+                                                                    class="text-danger">{{ $message }}</span>
+                                                            @enderror
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <hr>
-                                        <div class="d-flex float-end gap-2 mx-auto">
-                                            <button type="submit" name="action" value="approve"
-                                                class="btn btn-success w-100">Approve</button>
-                                            <button type="submit" name="action" value="reject"
-                                                class="btn btn-danger w-100">Reject</button>
-                                        </div>
-                                    </form>
-                                </div>
+                                            <hr>
+                                            <div class="d-flex float-end gap-2 mx-auto">
+                                                <button type="submit" name="action" value="approve"
+                                                    class="btn btn-success w-100">Approve</button>
+                                                <button type="submit" name="action" value="reject"
+                                                    class="btn btn-danger w-100">Reject</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                @endif
+
 
 
                             </div>

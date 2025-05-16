@@ -312,6 +312,18 @@
                                     </div>
 
                                     <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label ">Company</label>
+                                        <div class="view_data">
+                                            {{ getCompanyname($incident_report->company_id) }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label ">Location</label>
+                                        <div class="view_data">
+                                            {{ $incident_report->location_name }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">Unit</label>
                                         <div class="view_data">
                                             {{ getUnitname($incident_report->unit_id) }}
@@ -323,12 +335,7 @@
                                             {{ $incident_report->shift }}
                                         </div>
                                     </div>
-                                    <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label require">Location</label>
-                                        <div class="view_data">
-                                            {{ $incident_report->location_name }}
-                                        </div>
-                                    </div>
+
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">Exact Location</label>
                                         <div class="view_data">
@@ -1718,11 +1725,11 @@
                 var newRow = `
     <tr id="RowRCPAView${form_set_count}">
         <td>
-            <input type="text" name="serial_number[${form_set_count}]" class="form-control" 
+            <input type="text" name="serial_number[${form_set_count}]" class="form-control"
                 placeholder="Serial Number" value="${newSerialNumber}" readonly>
         </td>
         <td>
-            <input type="text" name="rcpa[${form_set_count}]" class="form-control rcpa-input" 
+            <input type="text" name="rcpa[${form_set_count}]" class="form-control rcpa-input"
                 placeholder="Recommended Corrective & Preventive Action" value="">
         </td>
         <td>
@@ -1743,7 +1750,7 @@
             <textarea name="capa_remark[${form_set_count}]" class="form-control capa-remark" placeholder="Remark" rows="1"></textarea>
         </td>
         <td>
-            <button type="button" class="btn btn-sm removeRCPARow"> 
+            <button type="button" class="btn btn-sm removeRCPARow">
                 <i class="fa-solid fa-trash text-danger"></i>
             </button>
         </td>

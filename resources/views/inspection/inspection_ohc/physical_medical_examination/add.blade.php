@@ -602,7 +602,7 @@
                         signature_image: {
                             required: true,
                             extension: "png|jpeg|jpg",
-                            filesize: 5242880
+                            filesize: 15728640,
                         },
                         contact_number: {
                             required: true
@@ -768,7 +768,7 @@
                         signature_image: {
                             required: "Please upload your signature image.",
                             extension: "Allowed file types: PNG, JPEG, JPG.",
-                            filesize: "File must be less than 5 MB."
+                            filesize: "File must be less than 15MB."
                         },
 
                     },

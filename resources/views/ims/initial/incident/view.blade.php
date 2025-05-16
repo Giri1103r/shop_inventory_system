@@ -194,7 +194,7 @@
                                             {{ $incident_report->reported_department }}
                                         </div>
                                     </div>
-                                   
+
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">Time of reporting</label>
                                         <div class="view_data">
@@ -230,7 +230,18 @@
                                             {{ Displaydatetimeformat($incident_report->incident_date_time) }}
                                         </div>
                                     </div>
-
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label ">Company</label>
+                                        <div class="view_data">
+                                            {{ getCompanyname($incident_report->company_id) }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label ">Location</label>
+                                        <div class="view_data">
+                                            {{ $incident_report->location_name }}
+                                        </div>
+                                    </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">Unit</label>
                                         <div class="view_data">
@@ -238,17 +249,12 @@
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label require">Shift</label>
+                                        <label class="form-label ">Shift</label>
                                         <div class="view_data">
                                             {{ $incident_report->shift }}
                                         </div>
                                     </div>
-                                    <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label require">Location</label>
-                                        <div class="view_data">
-                                            {{ $incident_report->location_name }}
-                                        </div>
-                                    </div>
+
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">Exact Location</label>
                                         <div class="view_data">
@@ -461,7 +467,7 @@
                                             <label class="form-label view_label">Name of the
                                                 Witness</label>
                                             <div class="view_data">
-                                                {{ $getInvestigation->witness_name ?? "-"}}
+                                                {{ $getInvestigation->witness_name ?? '-' }}
                                             </div>
                                         </div>
                                         <div class="mb-3 col-md-4 form-input">
@@ -513,7 +519,7 @@
                                         <div class="mb-3 col-md-4 form-input">
                                             <label class="form-label view_label">Investigation Submission Time</label>
                                             <div class="view_data">
-                                                {{$getInvestigation->investigation_time }}
+                                                {{ $getInvestigation->investigation_time }}
                                             </div>
                                         </div>
                                         <div class="mb-3 col-md-4 form-input">
@@ -780,7 +786,8 @@
                                                                 @if ($item->capa_status == 1)
                                                                     <span class="badge bg-success">Open</span>
                                                                 @elseif($item->capa_status == 2)
-                                                                    <span class="badge bg-warning text-dark">In Progress</span>
+                                                                    <span class="badge bg-warning text-dark">In
+                                                                        Progress</span>
                                                                 @elseif($item->capa_status == 3)
                                                                     <span class="badge bg-secondary">Closed</span>
                                                                 @endif
@@ -878,7 +885,8 @@
                                                 </div>
                                             </div>
                                             <div class="mb-3 col-md-4 form-input">
-                                                <label class="form-label">Description of Corrective Action & Preventive Action</label>
+                                                <label class="form-label">Description of Corrective Action & Preventive
+                                                    Action</label>
                                                 <div class="view_data">
                                                     {{ $getrisklevel->description_ca }}
                                                 </div>

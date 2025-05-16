@@ -230,6 +230,18 @@
                                     </div>
 
                                     <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label ">Company</label>
+                                        <div class="view_data">
+                                            {{ getCompanyname($incident_report->company_id) }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label ">Location</label>
+                                        <div class="view_data">
+                                            {{ $incident_report->location_name }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">Unit</label>
                                         <div class="view_data">
                                             {{ getUnitname($incident_report->unit_id) }}
@@ -241,12 +253,7 @@
                                             {{ $incident_report->shift }}
                                         </div>
                                     </div>
-                                    <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label require">Location</label>
-                                        <div class="view_data">
-                                            {{ $incident_report->location_name }}
-                                        </div>
-                                    </div>
+
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">Exact Location</label>
                                         <div class="view_data">
@@ -459,7 +466,7 @@
                                             <label class="form-label view_label">Name of the
                                                 Witness</label>
                                             <div class="view_data">
-                                                {{ $getInvestigation->witness_name ?? "-"}}
+                                                {{ $getInvestigation->witness_name ?? '-' }}
                                             </div>
                                         </div>
                                         <div class="mb-3 col-md-4 form-input">
@@ -511,7 +518,7 @@
                                         <div class="mb-3 col-md-4 form-input">
                                             <label class="form-label view_label">Investigation Submission Time</label>
                                             <div class="view_data">
-                                                {{$getInvestigation->investigation_time }}
+                                                {{ $getInvestigation->investigation_time }}
                                             </div>
                                         </div>
                                         <div class="mb-3 col-md-4 form-input">
@@ -885,7 +892,8 @@
                                                 </div>
                                             </div>
                                             <div class="mb-3 col-md-4 form-input">
-                                                <label class="form-label">Description of Corrective Action & Preventive Action</label>
+                                                <label class="form-label">Description of Corrective Action & Preventive
+                                                    Action</label>
                                                 <div class="view_data">
                                                     {{ $getrisklevel->description_ca }}
                                                 </div>
@@ -922,9 +930,10 @@
                                                     @foreach ($capaEvidence as $key => $capaEvidence)
                                                         <div class="col-md-3 col-sm-6 mb-2">
                                                             <div class="existing-evidence text-center">
-                                                                <a href="{{ asset($capaEvidence->file_path) }}" target="_blank">
-                                                                    <img src="{{ asset($capaEvidence->file_path) }}" alt="Evidence"
-                                                                        class="img-fluid rounded shadow"
+                                                                <a href="{{ asset($capaEvidence->file_path) }}"
+                                                                    target="_blank">
+                                                                    <img src="{{ asset($capaEvidence->file_path) }}"
+                                                                        alt="Evidence" class="img-fluid rounded shadow"
                                                                         style="max-width: 20%; height: auto;">
                                                                 </a>
                                                             </div>
@@ -943,7 +952,7 @@
                                     </div>
                                 </div>
                             @endif
-                            @if($rcpa->incident_status == STATUS_INCIDENT_CLOSED || $rcpa->incident_status == STATUS_EHSAPPROVAL_REJECTED )
+                            @if ($rcpa->incident_status == STATUS_INCIDENT_CLOSED || $rcpa->incident_status == STATUS_EHSAPPROVAL_REJECTED)
                                 <div class="card-body ">
                                     <div class="row">
                                         <div class="card-header-inner">
@@ -998,20 +1007,20 @@
             });
             const maxUploads = 5;
 
-        $('#dynamic-add-more').on('click', function() {
-            let currentFileUploads = $('.file-upload-block').length;
+            $('#dynamic-add-more').on('click', function() {
+                let currentFileUploads = $('.file-upload-block').length;
 
-            if (currentFileUploads >= maxUploads) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Sorry!',
-                    text: 'Maximum 5 records only.',
-                });
-                return;
-            }
+                if (currentFileUploads >= maxUploads) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Sorry!',
+                        text: 'Maximum 5 records only.',
+                    });
+                    return;
+                }
 
-            // Create the new file upload block
-            let newFileUploadBlock = `
+                // Create the new file upload block
+                let newFileUploadBlock = `
                 <div class="col-md-4 mb-3 file-upload-block" id="file-upload-${currentFileUploads}">
                     <label for="evidence_${currentFileUploads}" class="form-label require">Evidence</label>
                     <input type="file" class="form-control  validate-file-required"
@@ -1025,57 +1034,57 @@
                 </div>
             `;
 
-            // Append new block
-            $('#file-upload-container').append(newFileUploadBlock);
+                // Append new block
+                $('#file-upload-container').append(newFileUploadBlock);
 
-            $('#evidence_' + currentFileUploads).rules("add", {
-                required: true,
-                extension: "png|jpeg|jpg|pdf|doc|docx|mp4",
-                messages: {
-                    required: "This field is required.",
-                    extension: "Allowed file types: png, jpeg, jpg",
-                }
+                $('#evidence_' + currentFileUploads).rules("add", {
+                    required: true,
+                    extension: "png|jpeg|jpg|pdf|doc|docx|mp4",
+                    messages: {
+                        required: "This field is required.",
+                        extension: "Allowed file types: png, jpeg, jpg",
+                    }
+                });
+
+
+            });
+
+            // Handling file input validation for dynamic removal of blocks (if applicable)
+            $(document).on('click', '.remove-upload-block', function() {
+                $(this).closest('.file-upload-block').remove();
             });
 
 
-        });
 
-        // Handling file input validation for dynamic removal of blocks (if applicable)
-        $(document).on('click', '.remove-upload-block', function() {
-            $(this).closest('.file-upload-block').remove();
-        });
+            $(document).on('change', 'input[type="file"]', function(event) {
+                let input = $(this);
+                let fileInputId = input.attr('id').split('_')[2];
+                let previewContainer = $('#preview-container-' + fileInputId);
 
+                previewContainer.html("");
 
+                let files = event.target.files;
+                if (files.length > 0) {
+                    Array.from(files).forEach(file => {
+                        if (file.type.startsWith("image/")) {
+                            let reader = new FileReader();
+                            reader.onload = function(e) {
+                                let img = $("<img>").attr("src", e.target.result)
+                                    .addClass("img-thumbnail")
+                                    .css({
+                                        width: "100px",
+                                        height: "100px",
+                                        objectFit: "cover",
+                                        marginRight: "5px"
+                                    });
 
-        $(document).on('change', 'input[type="file"]', function(event) {
-            let input = $(this);
-            let fileInputId = input.attr('id').split('_')[2];
-            let previewContainer = $('#preview-container-' + fileInputId);
-
-            previewContainer.html("");
-
-            let files = event.target.files;
-            if (files.length > 0) {
-                Array.from(files).forEach(file => {
-                    if (file.type.startsWith("image/")) {
-                        let reader = new FileReader();
-                        reader.onload = function(e) {
-                            let img = $("<img>").attr("src", e.target.result)
-                                .addClass("img-thumbnail")
-                                .css({
-                                    width: "100px",
-                                    height: "100px",
-                                    objectFit: "cover",
-                                    marginRight: "5px"
-                                });
-
-                            previewContainer.append(img);
-                        };
-                        reader.readAsDataURL(file);
-                    }
-                });
-            }
-        });
+                                previewContainer.append(img);
+                            };
+                            reader.readAsDataURL(file);
+                        }
+                    });
+                }
+            });
 
 
             $('#team_id,#reported_by').select2({

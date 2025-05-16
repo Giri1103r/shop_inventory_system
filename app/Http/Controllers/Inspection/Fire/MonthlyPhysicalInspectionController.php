@@ -455,7 +455,7 @@ class MonthlyPhysicalInspectionController extends Controller
             $filename = "Fire Equipment Monthly Physical Inspection Details.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('fire/equipment-monthly-physical-inspection/list'));
         }

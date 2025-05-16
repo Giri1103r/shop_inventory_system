@@ -577,13 +577,13 @@ class CronController extends Controller
                             try {
                                 $this->ppestock->store($item);
                             } catch (\Exception $e) {
-                                \Log::error('Failed to store item: ', [
+                                Log::error('Failed to store item: ', [
                                     'item' => $item,
                                     'error' => $e->getMessage()
                                 ]);
                             }
                         }
-                    } 
+                    }
                 } else {
                     return response()->json([
                         'message' => 'Failed to fetch data from API.',
