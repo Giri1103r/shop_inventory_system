@@ -227,6 +227,7 @@ class SafetyPermitController extends Controller
             'unitList' => $unitList,
             'status' => $status,
             'companyList' => $companyList,
+            'dashboard_search' => $request,
             // 'location' => $location,
         );
         return view('permit.safetypermit.list', $data);

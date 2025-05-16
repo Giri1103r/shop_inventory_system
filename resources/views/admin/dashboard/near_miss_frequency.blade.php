@@ -1,7 +1,7 @@
 <div id="nearMiss"></div>
 
 <script>
-    var chartData = {!! json_encode($chartData) !!};
+    var nearMissData = @json($chartData);
 
     var monthNames = [
         "January", "February", "March", "April", "May", "June",
@@ -9,7 +9,7 @@
     ];
 
     var monthData = Array(12).fill(0);
-    chartData.forEach(item => {
+    nearMissData.forEach(item => {
         const monthIndex = item.month - 1;
         monthData[monthIndex] = item.count;
     });
@@ -25,6 +25,18 @@
             toolbar: {
                 show: false
             },
+
+            events: {
+                dataPointSelection: function(event, chartContext, config) {
+                    var dataPointIndex = config.dataPointIndex;
+                    var selectedData = nearMissData.find(item => item.month === dataPointIndex + 1);
+                    if (selectedData) {
+                        var iirType = selectedData.iir_type;
+                        var month = selectedData.month;
+                        redirectToIms(iirType, '', '', '', month, '', '');
+                    }
+                }
+            }
         },
         plotOptions: {
             bar: {

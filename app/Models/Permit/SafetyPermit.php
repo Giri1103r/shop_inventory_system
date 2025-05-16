@@ -168,6 +168,9 @@ class SafetyPermit extends Model
             $query = $query->where('ptw_safety.permit_status',  $status);
         }
 
+        if ($request->has('dashboard_month') && $request->dashboard_month) {
+            $query = $query->whereMonth('ptw_safety.created_at', $request->dashboard_month);
+        }
         $data_count = $query;
         $total_records = $data_count->count();
         $query->orderBy('id', 'DESC');
