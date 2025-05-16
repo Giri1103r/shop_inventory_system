@@ -124,8 +124,8 @@ class FloorStretcherController extends Controller
             $getoption = string_to_array($options->type);
 
             if (count($checklistQuestions) <= 0) {
-                Session::flash('error', __('inspection.checklist_add'));
-                return redirect()->back();
+                Session::flash('success', __('inspection.checklist_add'));
+                return redirect(admin_url('inspection/master/checklist-sub-type-data/add'));
             }
 
             $data = array(

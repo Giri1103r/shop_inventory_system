@@ -32,13 +32,15 @@
 
                                 <div class="basic-form">
                                     <form method="POST" id="opdpatient"
-                                        action="{{ admin_url('ohc/prescribe-to-patient/add/submit') }}" enctype="multipart/form-data">
+                                        action="{{ admin_url('ohc/prescribe-to-patient/add/submit') }}"
+                                        enctype="multipart/form-data">
                                         @csrf
 
                                         <div class="row">
                                             <div class="col-md-4  mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label" for="is_outside_worker"> Is OutSide Worker/Employee</label><br>
+                                                    <label class="form-label" for="is_outside_worker"> Is OutSide
+                                                        Worker/Employee</label><br>
                                                     <input type="checkbox" id="is_outside_worker" name="is_outside_worker"
                                                         value="1">
                                                 </div>
@@ -85,7 +87,7 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Unit</label>
                                                     <input type="text" name="unit_id" id="unit_id"
-                                                        class="form-control ">
+                                                        class="form-control " readonly>
 
                                                 </div>
                                             </div>
@@ -93,7 +95,7 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Department</label>
                                                     <input type="text" name="department" id="department"
-                                                        class="form-control ">
+                                                        class="form-control " readonly>
 
                                                 </div>
                                             </div>
@@ -173,7 +175,8 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require" for="vital_checkup">Vital Checkup</label><br>
+                                                    <label class="form-label require" for="vital_checkup">Vital
+                                                        Checkup</label><br>
                                                     <input type="checkbox" id="vital_checkup" name="vital_checkup"
                                                         value="1">
                                                 </div>
@@ -203,7 +206,8 @@
 
                                             <div class="col-md-12 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label" for="first_aid_treatment">First Aid Treatment</label><br>
+                                                    <label class="form-label" for="first_aid_treatment">First Aid
+                                                        Treatment</label><br>
                                                     <input type="checkbox" id="first_aid_treatment"
                                                         name="first_aid_treatment" value="1">
                                                 </div>
@@ -269,7 +273,7 @@
                                                                         <div class="form-group form-input">
                                                                             <label for="quantity"
                                                                                 class="require">Quantity</label>
-                                                                            <input type="number"  name="quantity[0]"
+                                                                            <input type="number" name="quantity[0]"
                                                                                 id="quantity"
                                                                                 placeholder="Enter the quantity"
                                                                                 class="form-control">
@@ -398,7 +402,7 @@
                                                             <label for="Fitness" class="require">File Upload</label>
                                                             <input type="file" name="file" id="file"
                                                                 class="form-control">
-                                                                <small>Allowed file types: PDF, DOCX, DOC ,PNG,JPG,JPEG</small>
+                                                            <small>Allowed file types: PDF, DOCX, DOC ,PNG,JPG,JPEG</small>
                                                         </div>
                                                     </div>
                                                     <div class="col-md-8 mb-2">
@@ -465,7 +469,7 @@
                 noCalendar: true,
                 dateFormat: "H:i",
                 time_24hr: true,
-               
+
             });
 
 
@@ -538,7 +542,7 @@
                         }
                     });
                 } else {
-                    $('#emp_name, #mobile_no, #department').val('').prop('disabled', true);
+                    $('#emp_name, #mobile_no, #department').val('').prop('readonly', false);
                 }
             }
         });

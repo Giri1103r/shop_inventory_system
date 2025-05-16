@@ -440,19 +440,45 @@
                                                         value = "{{ $initialincident->incident_date_time }}">
                                                 </div>
                                             </div>
-                                            <div class="col-md-4">
+                                            <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Unit</label>
-                                                    <select name="unit_id" id="unit_id"
-                                                        class=" form-control single-select" style="width: 100%">
-                                                        <option value="">Select Unit</option>
-                                                        @foreach ($unitList as $unit)
-                                                            <option value="{{ encryptId($unit->id) }}"
-                                                                @if ($unit->id == $initialincident->unit_id) selected @endif>
-                                                                {{ $unit->unit_name }}
+                                                    <label class="form-label require">Company Name</label>
+                                                    <select name="company_id" id="company_id"
+                                                        class="form-control single-select" style="width: 100%">
+                                                        <option value="">Select Company Name</option>
+
+                                                        @foreach ($companyList as $list)
+                                                            <option value="{{ encryptId($list->id) }}"
+                                                                @if ($initialincident->company_id == $list->id) selected @endif>
+                                                                {{ $list->company_name }}
+                                                            </option>
                                                         @endforeach
 
+
                                                     </select>
+                                                     <div class="text-danger"></div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">Location Name</label>
+                                                    <select name="location_id" id="location_id"
+                                                        class=" form-control single-select" style="width: 100%">
+                                                        <option value="">Select Location Name</option>
+
+                                                    </select>
+                                                     <div class="text-danger"></div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">Unit Name</label>
+                                                    <select name="unit_id" id="unit_id"
+                                                        class=" form-control single-select" style="width: 100%">
+                                                        <option value="">Select Unit Name</option>
+
+                                                    </select>
+                                                     <div class="text-danger"></div>
                                                 </div>
                                             </div>
                                             <div class="col-md-4">
@@ -463,21 +489,7 @@
                                                 </div>
                                             </div>
 
-                                            <div class="col-md-4">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label require">Location</label>
-                                                    <select name="location_id" id="location_id"
-                                                        class=" form-control single-select" style="width: 100%">
-                                                        <option value="">Select Location</option>
-                                                        @foreach ($locationList as $location)
-                                                            <option value="{{ encryptId($location->id) }}"
-                                                                @if ($location->id == $initialincident->location_id) selected @endif>
-                                                                {{ $location->location_name }}
-                                                        @endforeach
 
-                                                    </select>
-                                                </div>
-                                            </div>
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Exact Location</label>
@@ -946,7 +958,7 @@
                                                         </div>
                                                         <!--Male total parts-->
                                                         <script type="text/template" id="tmp-male">
-                                                             
+
                                                                 <div class="img-wrap male">
                                                 <div class="canvas">
                                                 <canvas id='image1_canvas'></canvas>
@@ -1761,8 +1773,8 @@
                                         "none");
                                     if (!currentRow.find('input.department_hidden').length) {
                                         currentRow.append(`
-                                            <input type="hidden" class="department_hidden" 
-                                                name="${departmentDropdown.attr('name')}" 
+                                            <input type="hidden" class="department_hidden"
+                                                name="${departmentDropdown.attr('name')}"
                                                 value="${data.employee.department}">
                                         `);
                                     }
@@ -2544,7 +2556,7 @@
             var injuredPerson_others = $('#RowInjothersdata_' + getid).val();
             var injuredPerson_empName = $('#RowInjothersdata_' + getid).val();
             var injury_detail_id = $('#injury_detail_id_' + getid).val();
-            //    alert(injury_detail_id); 
+            //    alert(injury_detail_id);
             var errorcount = '0';
             var injuredPerson = '0';
             var injury_person_type = '0';
@@ -3505,5 +3517,87 @@
         });
 
         // injury script
+
+        // the unit location and company
+
+          $(document).ready(function() {
+
+            var initialCompanyId = $('#company_id').val();
+            var preselectedLocationId = "{{ encryptId($initialincident->location_id) ?? '0' }}";
+            var preselectedUnitId = "{{ encryptId($initialincident->unit_id) ?? '0' }}";
+
+            if (initialCompanyId) {
+                fetchLocations(initialCompanyId, preselectedLocationId, function() {
+                    var location_id = preselectedLocationId;
+                    fetchUnits(location_id, preselectedUnitId);
+
+                });
+            }
+
+            $('#company_id').on('change', function() {
+                var company_id = $(this).val();
+                fetchLocations(company_id, preselectedLocationId, function() {
+                    $('#location_id').trigger('change');
+                });
+            });
+
+            $('#location_id').on('change', function() {
+                var location_id = $(this).val();
+                fetchUnits(location_id, preselectedUnitId, function() {
+                    $('#unit_id').trigger('change');
+                });
+            });
+
+
+
+            function fetchLocations(company_id, preselectedLocationId, callback) {
+
+                if (company_id) {
+                    $.ajax({
+                        url: "{{ admin_url('location/ajax-list/') }}" + company_id + '/' +
+                            preselectedLocationId,
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(data) {
+                            $('#location_id').empty().append(
+                                '<option value="">Select Location</option>');
+                            $.each(data, function(key, value) {
+                                var selected = (value.id == preselectedLocationId) ?
+                                    'selected' : '';
+                                $('#location_id').append('<option value="' + value.id + '" ' +
+                                    selected + '>' + value.name + '</option>');
+                            });
+                            if (callback) callback();
+                        }
+                    });
+                } else {
+                    $('#location_id').empty().append('<option value="">Select Location</option>');
+                }
+            }
+
+            function fetchUnits(location_id, preselectedUnitId, callback) {
+                if (location_id) {
+                    $.ajax({
+                        url: "{{ admin_url('unit/ajax-list/') }}" + location_id + '/' + preselectedUnitId,
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(data) {
+                            $('#unit_id').empty().append('<option value="">Select Unit</option>');
+                            $.each(data, function(key, value) {
+                                var selected = (value.id == preselectedUnitId) ? 'selected' :
+                                    '';
+                                $('#unit_id').append('<option value="' + value.id + '" ' +
+                                    selected + '>' + value.name + '</option>');
+                            });
+                            if (callback) callback();
+                        }
+                    });
+                } else {
+                    $('#unit_id').empty().append('<option value="">Select Unit</option>');
+                }
+            }
+
+
+        });
     </script>
 @endpush

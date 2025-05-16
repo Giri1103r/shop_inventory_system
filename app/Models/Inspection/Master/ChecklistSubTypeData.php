@@ -187,7 +187,23 @@ class ChecklistSubTypeData extends Model
         return $this->where('id', $id)->update($update_data);
     }
 
+    public function statuschange_all($id)
+    {
+        $request = request();
+        $datas = $this->where('checklist_type_id', $id)->where('status', 1)->get();
+        if ($datas->count() > 0) {
+            return true;
+        }
+    }
 
+     public function Sub_type_statuschange($id)
+    {
+        $request = request();
+        $datas = $this->where('checklist_sub_type_id', $id)->where('status', 1)->get();
+        if ($datas->count() > 0) {
+            return true;
+        }
+    }
     public function UniqueCheck($subcategory_name, $category_id)
     {
 

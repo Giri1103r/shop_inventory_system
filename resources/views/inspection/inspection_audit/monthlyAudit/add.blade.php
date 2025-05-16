@@ -35,23 +35,19 @@
                                     <div class="basic-form">
 
                                         <div class="form-wrapper">
-                                            <div class="row mt-4 form-set">
-                                                <div class="card-header-inner p-2">
-                                                    <h4 class="text-white">Monthly Audit Plan</h4>
-                                                </div>
 
-                                                <div class="d-flex justify-content-end align-items-center gap-2 m-2">
-                                                    <button class="btn btn-primary add-row" type="button" id="add-row"
-                                                        style="min-width: 130px;">
-                                                        Add
-                                                    </button>
+                                            <div class="card-header-inner d-flex justify-content-between">
+                                                <h4 class="text-white">Monthly Audit Plan</h4>
+                                                <button class="btn btn-primary add-row mb-2 " type="button" id="add-row"
+                                                    style="margin-left: 10px;  margin-right: 10px; width: 84px;">
+                                                    Add
+                                                </button>
+                                            </div>
 
-                                                    <button type="button"
-                                                        class="btn btn-danger remove-row d-flex align-items-center"
-                                                        style="min-width: 130px;">
-                                                        <i class="fa-solid fa-trash me-2"></i> Remove
-                                                    </button>
-                                                </div>
+
+                                            <div class="row mt-4   form-set">
+
+
 
 
                                                 <div class="col-md-4 mb-3">
@@ -83,7 +79,7 @@
                                                             Task Name</label>
                                                         <select name="task_name[1]" id="task_name[1]"
                                                             class=" form-control single-select" style="width: 100%">
-                                                            <option value="">Select Unit</option>
+                                                            <option value="">Select Task</option>
                                                             @foreach ($audit_task as $task)
                                                                 <option value="{{ encryptId($task->id) }}">
                                                                     {{ $task->task_name }}</option>
@@ -165,7 +161,7 @@
                                                     </div>
                                                 </div>
 
-                                                <div class="col-md-4 mt-2">
+                                                <div class="col-md-4 mb-2 mt-2">
                                                     <div class="form-group form-input require">
                                                         <label class="form-label">Remark</label>
                                                         <textarea class="form-control" name="remark[1]" id="remark[1]"></textarea>
@@ -173,11 +169,19 @@
                                                     </div>
                                                 </div>
 
+                                                <div class="col-md-2 text-right mt-4">
+                                                    <button class="btn btn-danger remove-row" type="button"
+                                                        style="margin:10px;"><i class="fa fa-trash"></i></button>
+
+                                                </div>
 
 
+                                                <hr>
 
 
                                             </div>
+
+
                                         </div>
 
                                         <div class="submit-button" style="text-align: right;">
@@ -320,22 +324,12 @@
                 let newSerialNumber = 'HTR-' + ('00000' + serial_number).slice(-5);
 
                 var newFormSet = `
-                        <div class="row mt-4 form-set">
-                                               <div class="card-header-inner p-2">
-                                                    <h4 class="text-white">Monthly Audit Plan</h4>
-                                                </div>
+                        <div class="row mt-4 mb-2 form-set">
 
                                                 <div class="d-flex justify-content-end align-items-center gap-2 m-2">
-                                                    <button class="btn btn-primary add-row" type="button" id="add-row"
-                                                        style="min-width: 130px;">
-                                                        Add
-                                                    </button>
 
-                                                    <button type="button"
-                                                        class="btn btn-danger remove-row d-flex align-items-center"
-                                                        style="min-width: 130px;">
-                                                        <i class="fa-solid fa-trash me-2"></i> Remove
-                                                    </button>
+
+
                                                 </div>
 
                                                 <div class="col-md-4 mb-3">
@@ -368,7 +362,7 @@
                                                             Task Name</label>
                                                         <select name="task_name[${form_set_count}]" id="task_name[${form_set_count}]"
                                                             class=" form-control single-select" style="width: 100%">
-                                                            <option value="">Select Unit</option>
+                                                            <option value="">Select Task</option>
                                                             @foreach ($audit_task as $task)
                                                                 <option value="{{ encryptId($task->id) }}">
                                                                     {{ $task->task_name }}</option>
@@ -436,9 +430,9 @@
                                                 </div>
 
                                                 <div class="col-md-4 mb-2">
-                                                    <label class="form-label ">Status (Yes/No)</label>
+                                                    <label class="form-label " for="status[${form_set_count}]">Status (Yes/No)</label>
                                                     <div class="mb-3 form-input">
-                                                        <input type="radio" name="status[${form_set_count}]"
+                                                        <input type="radio" name="status[${form_set_count}]" 
                                                             value="1">
                                                         <label for="yes">YES</label>
 
@@ -458,16 +452,21 @@
                                                     </div>
                                                 </div>
 
-                                                <div class="col-md-4 mt-2">
+                                                <div class="col-md-4 mb-2  mt-2">
                                                     <div class="form-group form-input require">
                                                         <label class="form-label">Remark</label>
                                                         <textarea class="form-control" name="remark[${form_set_count}]" id="remark[${form_set_count}]"></textarea>
 
                                                     </div>
                                                 </div>
+                                                   <div class="col-md-2 text-right  mt-4">
+                                                    <button class="btn btn-danger remove-row" type="button"
+                                                        style="margin:10px;"><i class="fa fa-trash"></i></button>
 
-
+                                                </div>
+ <hr>
                                             </div>
+
                     `;
 
                 let newFormSetElement = $(newFormSet);

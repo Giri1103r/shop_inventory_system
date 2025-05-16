@@ -1,6 +1,14 @@
 @extends('admin.layouts.admin')
 @section('title', 'Initial Incident')
 @section('pageurl', admin_url('incident/initial-incident/list'))
+@php
+
+    $dash_unit_id =
+        isset($dashboard_search['unit_id']) && $dashboard_search['unit_id'] != ''
+            ? $dashboard_search['unit_id'] : '';
+    // $Fromdate = isset($dashboard_search['Fromdate']) ? $dashboard_search['Fromdate'] : '';
+    // $Todate = isset($dashboard_search['Todate']) ? $dashboard_search['Todate'] : '';
+@endphp
 
 
 @section('content')
@@ -34,13 +42,14 @@
                                                 <input type="text" name="sr_no" id="sr_no" class=" form-control ">
                                             </div>
                                         </div>
+
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="inspectiontype" class="form-label ">Unit</label>
                                             <select name="unit_id" id="unit_id" class=" form-control single-select"
                                                 style="width: 100%">
                                                 <option value="">Select Unit</option>
                                                 @foreach ($unitList as $unit)
-                                                    <option value="{{ encryptId($unit->id) }}">
+                                                    <option   @if ($dash_unit_id == $unit->id) selected @endif value="{{ encryptId($unit->id) }}">
                                                         {{ $unit->unit_name }}</option>
                                                 @endforeach
 
@@ -51,7 +60,7 @@
                                             <label for="emp_name" class="form-label ">From Date</label>
                                             <div class="input-group date form-input custom-height">
                                                 <input type="text" class="form-control " name="from_date" id="from_date"
-                                                    autocomplete="off">
+                                                    autocomplete="off" >
                                                 <div class="input-group-addon input-group-text">
                                                     <span class="fa fa-calendar"></span>
                                                 </div>
@@ -62,7 +71,7 @@
                                             <label for="emp_name" class="form-label ">To Date</label>
                                             <div class="input-group date form-input  custom-height">
                                                 <input type="text" class="form-control " name="to_date" id="to_date"
-                                                    autocomplete="off">
+                                                    autocomplete="off" >
                                                 <div class="input-group-addon input-group-text">
                                                     <span class="fa fa-calendar"></span>
                                                 </div>
@@ -160,6 +169,11 @@
 
         $(function() {
             /* Datatable */
+
+            var dash_iirtype_id =  '{{ isset($dashboard_search['iir_type']) && $dashboard_search['iir_type'] != ''
+            ? $dashboard_search['iir_type'] : ''}}';
+
+
             var table = $('.datatable-list').DataTable({
                 autoWidth: false,
                 responsive: true,
@@ -192,6 +206,7 @@
                     },
                     data: function(d) {
                         d.sr_no = $('#sr_no').val();
+                        d.dash_iirtype_id = dash_iirtype_id;
                         d.unit_id = $('#unit_id').val();
                         d.from_date = $('#from_date').val();
                         d.to_date = $('#to_date').val();
@@ -269,6 +284,7 @@
                                 action: function(e, dt, button, config) {
                                     var searchValue = $('#datatable-list_filter input').val();
                                     var sr_no = $('#sr_no').val();
+                                    var dash_iirtype_id = dash_iirtype_id;
                                     var unit_id = $('#unit_id').val();
                                     var from_date = $('#from_date').val();
                                     var to_date = $('#to_date').val();
@@ -281,6 +297,7 @@
                                         "{{ admin_url('incident/initial-incident/export/pdf') }}" +
                                         '?search=' + searchValue +
                                         '&sr_no=' + sr_no +
+                                        '&dash_iirtype_id=' + dash_iirtype_id +
                                         '&unit_id=' + unit_id +
                                         '&from_date=' + from_date +
                                         '&to_date=' + to_date +
@@ -295,6 +312,7 @@
 
                                     var searchValue = $('#datatable-list_filter input').val();
                                     var sr_no = $('#sr_no').val();
+                                    var dash_iirtype_id = dash_iirtype_id;
                                     var unit_id = $('#unit_id').val();
                                     var from_date = $('#from_date').val();
                                     var to_date = $('#to_date').val();
@@ -305,6 +323,7 @@
                                     window.location.href =
                                         "{{ admin_url('incident/initial-incident/export/excel') }}" +
                                         '?search=' + searchValue +
+                                        '&dash_iirtype_id=' + dash_iirtype_id +
                                         '&sr_no=' + sr_no +
                                         '&unit_id=' + unit_id +
                                         '&from_date=' + from_date +

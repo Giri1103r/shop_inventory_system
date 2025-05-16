@@ -245,6 +245,7 @@ class SafetyPermitController extends Controller
             $getinstruction = $this->safework->selectchecklist();
             $getprecaution = $this->precaution->selectchecklist();
             $getchecklist = $this->checklist->selectchecklist();
+            $companyList = $this->company->getcompany();
             $data = array(
                 'unitList' => $unitList,
                 'typeofwork' => $typeofwork,
@@ -253,10 +254,10 @@ class SafetyPermitController extends Controller
                 'getprecaution' => $getprecaution,
                 'getchecklist' => $getchecklist,
                 'getinstruction' => $getinstruction,
+                'companyList' => $companyList,
             );
             return view('permit.safetypermit.add', $data);
         } catch (Exception $ex) {
-            report($ex);
             report($ex);
             Session::flash('error', 'Something went wrong Please try again after some time');
             return redirect(admin_url('safetypermit/list'));
@@ -481,7 +482,7 @@ class SafetyPermitController extends Controller
 
 
             $workman = $this->workmaninvolved->getWorkmaninvolved($id);
-
+            $companyList = $this->company->getcompany();
 
             $data = [
                 'unitList' => $unitList,
@@ -497,6 +498,7 @@ class SafetyPermitController extends Controller
                 'equipmentInvolved' => $equipmentInvolved,
                 'protectiveEquipment' => $protectiveEquipment,
                 'workman' => $workman,
+                'companyList' => $companyList,
             ];
 
             return view('permit.safetypermit.edit', $data);
@@ -740,13 +742,7 @@ class SafetyPermitController extends Controller
                 }
             }
 
-            // $userids = User::where('id', $safetypermit->verified_by)->pluck('id')->toArray();
-            // $users = User::where('id', $safetypermit->verified_by)->pluck('id')->get();
-            // dd($userids,$safetypermit->verified_by);
-            // $users = User::where($notifywhere)->whereRaw('FIND_IN_SET(' . $user_role . ', role)')->get();
-            /**
-             * Send Web notification
-             */
+
 
             $notificationData = array(
                 'notification_type' => 3,
@@ -1913,18 +1909,6 @@ class SafetyPermitController extends Controller
 
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
-            // $mpdf = new \Mpdf\Mpdf([
-            //     'fontDir' => array_merge((new Mpdf\Config\ConfigVariables())->getDefaults()['fontDir'], [
-            //         public_path('assets/fonts/Noto_Sans_Devanagari'),
-            //     ]),
-            //     'fontdata' => array_merge((new Mpdf\Config\FontVariables())->getDefaults()['fontdata'], [
-            //         'NotoSansDevanagari' => [
-            //             'R' => 'NotoSansDevanagari-Regular.ttf',
-            //             'B' => 'NotoSansDevanagari-Bold.ttf',
-            //         ],
-            //     ]),
-            //     'default_font' => 'NotoSansDevanagari',
-            // ]);
             $html = view('permit.safetypermit.exportpdf', $data)->render();
             $mpdf->WriteHTML($html);
             $filename = "Safety Permit  " . $safetypermit->permit_id . ".pdf";
@@ -1932,7 +1916,8 @@ class SafetyPermitController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
-            report($ex);
+            Session::flash('error', 'Something went wrong plese try again after some time');
+            return redirect(admin_url('safetypermit/list'));
         }
     }
 
@@ -1944,13 +1929,15 @@ class SafetyPermitController extends Controller
 
             $data = [
                 'safetypermit' => $safetypermit,
-                'showAlert' => $safetypermit->reference_id != null, // Pass a flag to the view
-                'totime' => $safetypermit->time_to, // Pass a flag to the view
+                'showAlert' => $safetypermit->reference_id != null,
+                'totime' => $safetypermit->time_to,
             ];
 
             return view('permit.safetypermit.permitextension', $data);
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error', 'Something went wrong plese try again after some time');
+            return redirect(admin_url('safetypermit/list'));
         }
     }
 
@@ -1964,12 +1951,6 @@ class SafetyPermitController extends Controller
             $safetypermit = $this->safetypermit->permitData($id);
             $workmanInvolved = $this->workmaninvolved->getworkmanData($id);
             $duplicateData = $this->safetypermit->Duplicatepermitdata($id);
-
-            // if ($duplicateData) {
-            //    Session::flash('error','You have already created the Permit for this ID');
-            //    return redirect('safetypermit/list');
-            // }
-
 
             $newSafetypermit = $this->safetypermit->CreateData($safetypermit, $id);
             $this->workmaninvolved->CreateExpireData($newSafetypermit, $workmanInvolved);

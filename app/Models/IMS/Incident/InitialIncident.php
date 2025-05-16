@@ -26,6 +26,7 @@ class InitialIncident extends Model
         'random_id',
         'incident_date_time',
         'unit_id',
+        'company_id',
         'shift',
         'location_id',
         'exact_location',
@@ -97,11 +98,8 @@ class InitialIncident extends Model
         if ($request->has('sr_no') && $request->sr_no) {
             $query = $query->where('sr_no',  $request->sr_no);
         }
-        if ($request->has('unit_id') && $request->unit_id) {
 
-            $unit_id = decryptId($request->unit_id);
-            $query = $query->where('unit_id', 'LIKE', $unit_id);
-        }
+
         if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
             $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
@@ -115,7 +113,7 @@ class InitialIncident extends Model
         }
         if ($request->has('incident_status') && $request->incident_status) {
 
-            $query = $query->where('incident_status', decryptId($request->incident_status));
+            $query = $query->where('ims_initial_incident.incident_status', decryptId($request->incident_status));
         }
 
         if ($request->has('status') && $request->status) {
@@ -123,7 +121,13 @@ class InitialIncident extends Model
             $query = $query->where('ims_initial_incident.status', decryptId($request->status));
         }
 
+        if ($request->has('dash_iirtype_id') && $request->dash_iirtype_id) {
+            $query = $query->where('ims_initial_incident.iir_type', ($request->dash_iirtype_id));
+        }
+        if ($request->has('unit_id') && $request->unit_id) {
 
+            $query = $query->where('ims_initial_incident.unit_id', decryptId($request->unit_id));
+        }
         $data_count = $query;
         $total_records = $data_count->count();
 
@@ -263,6 +267,7 @@ class InitialIncident extends Model
             'random_id' => $request->random_id,
             'incident_date_time' => DBdatetimeformat($request->incident_date_time),
             'unit_id' => decryptId($request->unit_id),
+            'company_id' => decryptId($request->company_id),
             'shift' => $request->shift,
             'location_id' => decryptId($request->location_id),
             'exact_location' => $request->exact_location,
@@ -282,11 +287,48 @@ class InitialIncident extends Model
         );
         return $this->create($insert_array);
     }
+    // public function getTotalIncidentCountData($request)
+    // {
+    //     $query = DB::table('ims_initial_incident')
+    //         ->select(
+    //             'masters_unit.unit_name',
+    //             'ims_master_incident_type.incident_type_name',
+    //             DB::raw('COUNT(ims_initial_incident.id) as incident_count')
+    //         )
+    //         ->leftJoin('masters_unit', 'masters_unit.id', '=', 'ims_initial_incident.unit_id')
+    //         ->leftJoin('ims_master_incident_type', 'ims_master_incident_type.id', '=', 'ims_initial_incident.iir_type')
+    //         ->whereNotNull('ims_initial_incident.id');
+
+    //     // Date Filters
+    //     if ($request->Fromdate && $request->Todate) {
+    //         $query->whereBetween('ims_initial_incident.created_at', [
+    //             DBdateformat($request->Fromdate),
+    //             DBdateformat($request->Todate)
+    //         ]);
+    //     } elseif ($request->Fromdate) {
+    //         $query->where('ims_initial_incident.created_at', '>=', DBdateformat($request->Fromdate));
+    //     } elseif ($request->Todate) {
+    //         $query->where('ims_initial_incident.created_at', '<=', DBdateformat($request->Todate));
+    //     }
+
+    //     // Role-Based Filtering
+    //     if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_ADMIN) || CheckUserRole(ROLE_EHS_HEAD)) {
+    //         // all data
+    //     } elseif (Auth::user()->role == ROLE_USER) {
+    //         $query->where('ims_initial_incident.created_by', Auth::id());
+    //     }
+
+    //     return $query->groupBy('masters_unit.unit_name', 'ims_master_incident_type.incident_type_name')
+    //         ->orderBy('masters_unit.unit_name')
+    //         ->get();
+    // }
     public function getTotalIncidentCountData($request)
     {
         $query = DB::table('ims_initial_incident')
             ->select(
+                'ims_initial_incident.unit_id',
                 'masters_unit.unit_name',
+                'ims_initial_incident.iir_type as incident_type_id',
                 'ims_master_incident_type.incident_type_name',
                 DB::raw('COUNT(ims_initial_incident.id) as incident_count')
             )
@@ -313,10 +355,16 @@ class InitialIncident extends Model
             $query->where('ims_initial_incident.created_by', Auth::id());
         }
 
-        return $query->groupBy('masters_unit.unit_name', 'ims_master_incident_type.incident_type_name')
+        return $query->groupBy(
+            'ims_initial_incident.unit_id',
+            'masters_unit.unit_name',
+            'ims_initial_incident.iir_type',
+            'ims_master_incident_type.incident_type_name'
+        )
             ->orderBy('masters_unit.unit_name')
             ->get();
     }
+
     public function getIncidentTypeCountData($request)
     {
         $query = DB::table('ims_initial_incident')
@@ -388,6 +436,7 @@ class InitialIncident extends Model
         $update_array = array(
             'incident_date_time' => DBdatetimeformat($request->incident_date_time),
             'unit_id' => decryptId($request->unit_id),
+            'company_id' => decryptId($request->company_id),
             'shift' => $request->shift,
             'location_id' => decryptId($request->location_id),
             'exact_location' => $request->exact_location,
@@ -843,15 +892,25 @@ class InitialIncident extends Model
     {
         $query = DB::table('ims_initial_incident as iii')
             ->join('ims_master_incident_type as imit', 'iii.iir_type', '=', 'imit.id')
+            ->leftJoin('masters_unit', 'masters_unit.id', '=', 'iii.unit_id')
             ->where('iii.ua_uc_yes_no', 1)
             ->select(
                 'imit.incident_type_name',
+                'masters_unit.unit_name',
+                'iii.unit_id',
+                'iii.iir_type as incident_type_id',
                 DB::raw('COUNT(DISTINCT iii.id) as total_incident'),
                 DB::raw('SUM(CASE WHEN FIND_IN_SET("1", iii.ua_or_uc) > 0 THEN 1 ELSE 0 END) as unsafe_act'),
                 DB::raw('SUM(CASE WHEN FIND_IN_SET("2", iii.ua_or_uc) > 0 THEN 1 ELSE 0 END) as unsafe_condition'),
                 DB::raw('SUM(CASE WHEN FIND_IN_SET("3", iii.ua_or_uc) > 0 THEN 1 ELSE 0 END) as natural_causes'),
             )
-            ->groupBy('imit.incident_type_name')
+            ->groupBy(
+                'imit.incident_type_name',
+                'iii.unit_id',
+                'masters_unit.unit_name',
+                'iii.iir_type',
+                'imit.incident_type_name'
+            )
             ->orderBy('imit.incident_type_name');
 
 
@@ -947,7 +1006,7 @@ class InitialIncident extends Model
                 DB::raw('SUM(CASE WHEN FIND_IN_SET("1", iii.ua_or_uc) > 0 THEN 1 ELSE 0 END) as ua_total'),
                 DB::raw('SUM(CASE WHEN FIND_IN_SET("1", iii.ua_or_uc) > 0 AND iii.status != 4 THEN 1 ELSE 0 END) as ua_open'),
                 DB::raw('SUM(CASE WHEN FIND_IN_SET("1", iii.ua_or_uc) > 0 AND iii.status = 4 THEN 1 ELSE 0 END) as ua_closed'),
- 
+
                 DB::raw('SUM(CASE WHEN FIND_IN_SET("2", iii.ua_or_uc) > 0 THEN 1 ELSE 0 END) as uc_total'),
                 DB::raw('SUM(CASE WHEN FIND_IN_SET("2", iii.ua_or_uc) > 0 AND iii.status != 4 THEN 1 ELSE 0 END) as uc_open'),
                 DB::raw('SUM(CASE WHEN FIND_IN_SET("2", iii.ua_or_uc) > 0 AND iii.status = 4 THEN 1 ELSE 0 END) as uc_closed')
@@ -955,7 +1014,7 @@ class InitialIncident extends Model
             ->where('iii.ua_uc_yes_no', 1)
             ->groupBy('mu.unit_name')
             ->orderBy('mu.unit_name');
- 
+
         if ($request->Fromdate && $request->Todate) {
             $query->whereBetween('iii.created_at', [
                 DBdateformat($request->Fromdate),
@@ -966,7 +1025,7 @@ class InitialIncident extends Model
         } elseif ($request->Todate) {
             $query->where('iii.created_at', '<=', DBdateformat($request->Todate));
         }
- 
+
         return $query->get(); // returns multiple rows
     }
 

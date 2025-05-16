@@ -66,6 +66,7 @@ class InitialIncidentController extends Controller
     private $incident_body_parts;
     private $rcpa;
     private $work;
+    private $company;
 
 
     public function __construct()
@@ -93,6 +94,7 @@ class InitialIncidentController extends Controller
         $this->injury_details = new InjuryDetails();
         $this->rcpa = new Rcpa();
         $this->work = new Work();
+        $this->company = new Company();
     }
 
 
@@ -125,6 +127,12 @@ class InitialIncidentController extends Controller
                         ->addColumn('unit_name', function ($row) {
                             return getUnitname($row->unit_id);
                         })
+                        //  ->addColumn('company_id', function ($row) {
+                        //     return getCompanyname($row->company_id);
+                        // })
+                        //  ->addColumn('location_id', function ($row) {
+                        //     return getLocationname($row->location_id);
+                        // })
                         ->addColumn('created_at', function ($row) {
                             return Displaydateformat($row->created_at);
                         })
@@ -166,11 +174,14 @@ class InitialIncidentController extends Controller
                 }
             }
         }
+        $companyList = $this->company->getcompany();
         $unitList  = $this->unit->select('id', 'unit_name')->where('status', '1')->get();
         $status = Incidentstatus::select('id', 'status_name')->where('status', '1')->get();
         $data = array(
             'unitList' => $unitList,
+            'companyList' => $companyList,
             'status' => $status,
+            'dashboard_search' => $request,
         );
 
         return view('ims.initial.incident.list', $data);
@@ -300,11 +311,11 @@ class InitialIncidentController extends Controller
                                 $btn .= '<a href="' . admin_url('incident/initial-incident/ehsApproval/' . encryptId($row->id) . '/' . encryptId($row->incident_id)) . '" class=" " title="Review"><i class="fa-solid fa-circle-check" style="color:rgb(0, 37, 132);"></i> ';
                             }
                             if ($row->incident_status == 6 && (CheckUserRole(ROLE_SUPERADMIN) || $row->responsibility == Auth::id())) {
-                                $btn .= '<a href="' . admin_url('incident/initial-incident/caSubmission/' . encryptId($row->id) . '/' . encryptId($row->incident_id)) . '" 
-                                            class="edit-icon" 
+                                $btn .= '<a href="' . admin_url('incident/initial-incident/caSubmission/' . encryptId($row->id) . '/' . encryptId($row->incident_id)) . '"
+                                            class="edit-icon"
                                             title="' . __('Corrective Action') . '">';
-                                $btn .= '<img src="' . public_image('common/ca.png') . '" 
-                                            alt="' . __('common.edit') . '" 
+                                $btn .= '<img src="' . public_image('common/ca.png') . '"
+                                            alt="' . __('common.edit') . '"
                                             style="width: 20px;">';
                                 $btn .= '</a>';
                             }
@@ -344,10 +355,11 @@ class InitialIncidentController extends Controller
             $incTypeList  = $this->inctype->select('id', 'incident_type_name')->where('status', '1')->get();
 
             $body_parts = $this->incident_body_parts->delete_temprow();
-
+            $companyList = $this->company->getcompany();
             $randomID = getsequence('IncidentRandomID');
             $data = array(
                 'unitList' => $unitList,
+                'companyList' => $companyList,
                 'locationList' => $locationList,
                 'incTypeList' => $incTypeList,
                 'randomID' => $randomID,
@@ -356,10 +368,12 @@ class InitialIncidentController extends Controller
             return view('ims.initial.incident.add', $data);
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('incident/initial-incident/list'));
         }
     }
 
-  
+
     public function employeename(Request $request)
     {
         $name = $request->input('search');
@@ -374,7 +388,7 @@ class InitialIncidentController extends Controller
             ->map(function ($employee) {
                 return [
                     'id' =>  $employee->emp_id,
-                    'text' => $employee->emp_name . ' - ' . $employee->emp_id ,
+                    'text' => $employee->emp_name . ' - ' . $employee->emp_id,
                 ];
             });
 
@@ -388,7 +402,7 @@ class InitialIncidentController extends Controller
             ->map(function ($worker) {
                 return [
                     'id' =>  $worker->emp_id,
-                    'text' => $worker->emp_name . ' - ' . $worker->emp_id ,
+                    'text' => $worker->emp_name . ' - ' . $worker->emp_id,
                 ];
             });
 
@@ -845,12 +859,13 @@ class InitialIncidentController extends Controller
             $unitList  = $this->unit->select('id', 'unit_name')->where('status', '1')->get();
             $locationList  = $this->location->select('id', 'location_name')->where('status', '1')->get();
             $incTypeList  = $this->inctype->select('id', 'incident_type_name')->where('status', '1')->get();
-
+            $companyList = $this->company->getcompany();
             $body_parts = $this->incident_body_parts->delete_temprow();
             $data = array(
                 'unitList' => $unitList,
                 'locationList' => $locationList,
                 'incTypeList' => $incTypeList,
+                'companyList' => $companyList,
                 'initialincident' => $initialincident,
                 'initialincidentevidence' => $initialincidentevidence,
                 'injury_details' => $injury_details,
@@ -860,7 +875,9 @@ class InitialIncidentController extends Controller
 
             return view('ims.initial.incident.edit', $data);
         } catch (Exception $error) {
-            report($error->getMessage());
+            report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('incident/initial-incident/list'));
         }
     }
 
@@ -914,6 +931,7 @@ class InitialIncidentController extends Controller
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('incident/initial-incident/list'));
         } catch (Exception $ex) {
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('incident/initial-incident/list'));
         }
@@ -985,6 +1003,8 @@ class InitialIncidentController extends Controller
             return view('ims.initial.incident.review', $data);
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('incident/initial-incident/list'));
         }
     }
 
@@ -1039,6 +1059,8 @@ class InitialIncidentController extends Controller
             return view('ims.initial.incident.ehsApproval', $data);
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('incident/initial-incident/list'));
         }
     }
 
@@ -1093,6 +1115,8 @@ class InitialIncidentController extends Controller
             return view('ims.initial.incident.ehsApproval', $data);
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('incident/initial-incident/list'));
         }
     }
 
@@ -1272,6 +1296,8 @@ class InitialIncidentController extends Controller
             return view('ims.initial.incident.investigation', $data);
         } catch (Exception $error) {
             report($error);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('incident/initial-incident/list'));
         }
     }
 
@@ -1462,7 +1488,9 @@ class InitialIncidentController extends Controller
 
             return view('ims.initial.incident.riskanalysis', $data);
         } catch (Exception $error) {
-            report($error->getMessage());
+            report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('incident/initial-incident/list'));
         }
     }
 
@@ -1733,7 +1761,9 @@ class InitialIncidentController extends Controller
             return redirect(admin_url('incident/initial-incident/calist'));
         } catch (Exception $ex) {
 
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
+
             return redirect(admin_url('incident/initial-incident/calist'));
         }
     }
@@ -1859,6 +1889,8 @@ class InitialIncidentController extends Controller
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('incident/initial-incident/list'));
         }
     }
 
@@ -1933,6 +1965,8 @@ class InitialIncidentController extends Controller
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('incident/initial-incident/list'));
         }
     }
 
@@ -1950,7 +1984,9 @@ class InitialIncidentController extends Controller
             $header = [
                 __("common.sno"),
                 'Sr. No',
-                'Unit',
+                __("common.company"),
+                __("common.location"),
+                __("common.unit"),
                 'Shift',
                 // 'From Status',
                 'Approve Status',
@@ -1965,6 +2001,8 @@ class InitialIncidentController extends Controller
                 $export = [];
                 $export[] =  $i;
                 $export[] =  $data->sr_no;
+                $export[] =  getcompanyname($data->company_id);
+                $export[] =  getlocationname($data->location_id);
                 $export[] =  getUnitname($data->unit_id);
                 $export[] =  $data->shift;
                 // $export[] =  $data->to_status;
@@ -1986,6 +2024,8 @@ class InitialIncidentController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('incident/initial-incident/list'));
         }
     }
 
@@ -2003,7 +2043,9 @@ class InitialIncidentController extends Controller
             $header = [
                 __("common.sno"),
                 'Sr. No',
-                'Unit',
+                __("common.company"),
+                __("common.location"),
+                __("common.unit"),
                 'Shift',
                 // 'From Status',
                 'Approve Status',
@@ -2042,6 +2084,8 @@ class InitialIncidentController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('incident/initial-incident/list'));
         }
     }
 

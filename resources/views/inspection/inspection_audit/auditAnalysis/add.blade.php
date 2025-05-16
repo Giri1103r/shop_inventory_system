@@ -107,19 +107,6 @@
                                                     </div>
                                                     <div class="col-md-4 mt-2">
                                                         <div class="form-group form-input">
-                                                            <label class="form-label require">Department Name</label>
-                                                            <select name="audit[1][department_id]" id="department_id_1"
-                                                                class="form-control single-select" style="width: 100%">
-                                                                <option value="">Select Department</option>
-                                                                @foreach ($departmentList as $department)
-                                                                    <option value="{{ encryptId($department->id) }}">
-                                                                        {{ $department->department_name }}</option>
-                                                                @endforeach
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-4 mt-2">
-                                                        <div class="form-group form-input">
                                                             <label class="form-label require">Unit Name</label>
                                                             <select name="audit[1][unit_id]" id="unit_id_1"
                                                                 class="form-control single-select" style="width: 100%">
@@ -131,6 +118,20 @@
                                                             </select>
                                                         </div>
                                                     </div>
+                                                    <div class="col-md-4 mt-2">
+                                                        <div class="form-group form-input">
+                                                            <label class="form-label require">Department Name</label>
+                                                            <select name="audit[1][department_id]" id="department_id_1"
+                                                                class="form-control single-select" style="width: 100%">
+                                                                <option value="">Select Department</option>
+                                                                {{-- @foreach ($departmentList as $department)
+                                                                    <option value="{{ encryptId($department->id) }}">
+                                                                        {{ $department->department_name }}</option>
+                                                                @endforeach --}}
+                                                            </select>
+                                                        </div>
+                                                    </div>
+
                                                     <div class="col-md-4 mt-2">
                                                         <div class="form-group form-input">
                                                             <label class="form-label require">Year</label>
@@ -222,6 +223,34 @@
 
 @push('script')
     <script type="text/javascript" nonce="projectcab">
+        $(document).on('change', '[id^="unit_id_"]', function() {
+            var unitId = $(this).val();
+            var index = this.id.split('_')[2]; 
+            var departmentSelect = $('#department_id_' + index);
+
+            if (unitId) {
+                $.ajax({
+                    url: "{{ admin_url('department/ajax-list') }}/" + unitId + "/0",
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        departmentSelect.empty().append('<option value="">Select Department</option>');
+                        $.each(data, function(key, value) {
+                            departmentSelect.append('<option value="' + value.id + '">' + value
+                                .name + '</option>');
+                        });
+                        departmentSelect.trigger('change');
+                    },
+                    error: function(xhr) {
+                        alert('Error fetching department. Please try again.');
+                    }
+                });
+            } else {
+                departmentSelect.empty().append('<option value="">Select Department</option>');
+                departmentSelect.trigger('change');
+            }
+        });
+
         document.addEventListener("DOMContentLoaded", function() {
 
             function initializeFlatpickr() {

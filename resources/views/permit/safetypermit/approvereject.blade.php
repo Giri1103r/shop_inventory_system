@@ -43,12 +43,19 @@
                                         {{ isset($safetypermit->to_date) ? Displaydateformat($safetypermit->to_date) : '' }}
                                     </div>
                                 </div>
-                                <div class="mb-3 col-md-4 form-input">
+                                                               <div class="mb-3 col-md-4 form-input">
                                     <label class="form-label view_label">{{ __('Company') }}</label>
                                     <div class="view_data">
                                         {{ getCompanyname(isset($safetypermit->company_id) ? ($safetypermit->company_id) : '') }}
                                     </div>
                                 </div>
+                                 <div class="mb-3 col-md-4 form-input">
+                                    <label class="form-label view_label">{{ __('Location') }}</label>
+                                    <div class="view_data">
+                                        {{ getLocationname(isset($safetypermit->location_id) ? ($safetypermit->location_id) : '') }}
+                                    </div>
+                                </div>
+                                
                                 <div class="mb-3 col-md-4 form-input">
                                     <label class="form-label view_label">{{ __('Time(From)') }}</label>
                                     <div class="view_data">

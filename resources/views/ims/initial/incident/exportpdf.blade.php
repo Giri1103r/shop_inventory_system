@@ -84,7 +84,7 @@
                     <td border="0" style="width:35%;float:left;text-align:left;">
                         <img src="{{ url('public/assets/images/logo-dark.png') }}" style="width:125px;height:50px;">
                     </td>
-                    
+
                     <td border="0"
                         style="width:30%;float:right;text-align:center;font-size: 24px;font-weight:bold;font-family: Georgia, serif;">
                         {{ $incident_report->sr_no }}
@@ -226,6 +226,20 @@
                     {{ Displaydatetimeformat($incident_report->incident_date_time) }}
                 </td>
             </tr>
+           <tr>
+                <td width="50%" style="padding:5px;"><b>Company</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;">
+                    {{ getCompanyname($incident_report->company_id) }}
+                </td>
+            </tr>
+             <tr>
+                <td width="50%" style="padding:5px;"><b>Location</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;">
+                    {{ $incident_report->location_name }}
+                </td>
+            </tr>
             <tr>
                 <td width="50%" style="padding:5px;"><b>Unit</b></td>
                 <td width="2%" style="padding:5px;">:</td>
@@ -240,13 +254,7 @@
                     {{ $incident_report->shift }}
                 </td>
             </tr>
-            <tr>
-                <td width="50%" style="padding:5px;"><b>Location</b></td>
-                <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;">
-                    {{ $incident_report->location_name }}
-                </td>
-            </tr>
+           
             {{-- <tr>
                 <td width="50%" style="padding:5px;"><b>IIR Type</b></td>
                 <td width="2%" style="padding:5px;">:</td>

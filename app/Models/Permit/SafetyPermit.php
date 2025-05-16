@@ -117,7 +117,8 @@ class SafetyPermit extends Model
             $query = $this->select('ptw_safety.*', 'masters_unit.unit_name', 'ptw_status.status_name', 'ptw_status.bg_color')->leftJoin('masters_unit', 'masters_unit.id', '=', 'ptw_safety.unit_id')->leftJoin('ptw_status', 'ptw_status.id', '=', 'ptw_safety.permit_status')->where('ptw_safety.unit_id', $unit_id);
         } elseif (in_array(ROLE_EHS_HEAD, $userRole)) {
             $query = $this->select('ptw_safety.*', 'masters_unit.unit_name', 'ptw_status.status_name', 'ptw_status.bg_color')->leftJoin('masters_unit', 'masters_unit.id', '=', 'ptw_safety.unit_id')->leftJoin('ptw_status', 'ptw_status.id', '=', 'ptw_safety.permit_status');
-        } else {
+        }
+        else {
             $query = $this->select('ptw_safety.*', 'masters_unit.unit_name', 'ptw_status.status_name', 'ptw_status.bg_color')->leftJoin('masters_unit', 'masters_unit.id', '=', 'ptw_safety.unit_id')->leftJoin('ptw_status', 'ptw_status.id', '=', 'ptw_safety.permit_status')->where('ptw_safety.created_by', $empid);
         }
         $org_total =  $query;
@@ -281,8 +282,8 @@ class SafetyPermit extends Model
             'time_from' => $request->time_from,
             'time_to' => $request->time_to,
             'unit_id' => decryptId($request->unit_id),
-            'company_id' => $company,
-            'location_id' => $location,
+            'company_id' => decryptId($request->company_id),
+            'location_id' =>decryptId($request->location_id),
             'exact_location_job' => $request->exact_location_job,
             'job_location_area' => $request->job_location_area,
             'sub_permit' => $sub_permit,
@@ -321,7 +322,7 @@ class SafetyPermit extends Model
     public function updates($id)
     {
         $request = request();
-        //  dd($request);
+
         $safetypermit = $this->find($id);
         $company = Auth::user()->company_id;
         $location = Auth::user()->location_id;
@@ -330,8 +331,8 @@ class SafetyPermit extends Model
         $update_array['permit_id'] = $request->permit_id ?? $safetypermit->permit_id;
         $update_array['date'] = DBdateformat($request->date ?? $safetypermit->date);
         $update_array['to_date'] = DBdateformat($request->to_date ?? $safetypermit->to_date);
-        $update_array['company_id'] =  $company;
-        $update_array['location_id'] =  $location;
+        $update_array['company_id'] = decryptId($request->company_id) ?? $safetypermit->company_id;
+        $update_array['location_id'] = decryptId($request->location_id) ?? $safetypermit->location_id;
         $update_array['time_from'] = $request->time_from ?? $safetypermit->time_from;
         $update_array['time_to'] = $request->time_to ?? $safetypermit->time_to;
         $update_array['unit_id'] = decryptId($request->unit_id) ?? $safetypermit->unit_id;
@@ -624,9 +625,12 @@ class SafetyPermit extends Model
         $insert_array = array(
             'permit_id' => $newPermitID,
             'date' => DBdateformat(now()),
+            'to_date' => DBdateformat($safetypermit->to_date),
             'time_from' => $safetypermit->time_from,
             'time_to' => $request->time_to,
             'unit_id' => $safetypermit->unit_id,
+            'company_id' => $safetypermit->company_id,
+            'location_id' => $safetypermit->location_id,
             'exact_location_job' => $safetypermit->exact_location_job,
             'job_location_area' => $safetypermit->job_location_area,
             'sub_permit' => $safetypermit->sub_permit,

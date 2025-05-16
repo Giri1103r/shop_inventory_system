@@ -154,6 +154,12 @@
                                             {{ isset($training_schedule->emp_name) ? $training_schedule->emp_name : '' }}
                                         </div>
                                     </div>
+                                       <div class="mb-3 col-md-4 form-input">
+                                                    <label class="form-label view_label">Compnay</label>
+                                                    <div class="view_data">
+                                                        {{ getCompanyname(isset($training_schedule->company_id) ? $training_schedule->company_id : '') }}
+                                                    </div>
+                                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">Unit</label>
                                         <div class="view_data">

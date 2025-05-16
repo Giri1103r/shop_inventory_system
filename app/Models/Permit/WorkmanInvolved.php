@@ -91,7 +91,7 @@ class WorkmanInvolved extends Model
 
     public function getWorkmaninvolved($id)
     {
-        return WorkmanInvolved::where('permit_id', $id)->where('trash','NO')->where('status',1)->get();
+        return WorkmanInvolved::where('permit_id', $id)->where('trash', 'NO')->where('status', 1)->get();
     }
 
     public function store($permit_id)
@@ -106,10 +106,10 @@ class WorkmanInvolved extends Model
 
         if (isset($empIds)) {
 
-            $insert_array = []; // Initialize an empty array to hold all records
+            $insert_array = [];
 
             foreach ($empIds as $index => $empId) {
-                $insert_array[] = array(  // Add each record to the array
+                $insert_array[] = array(
                     'permit_id' => $permit_id,
                     'emp_id' => $empId,
                     'workman_name' => $workmanNames[$index],
@@ -120,7 +120,7 @@ class WorkmanInvolved extends Model
                 );
             }
 
-            // Insert all records at once
+
             return $this->insert($insert_array);
         }
     }
@@ -130,8 +130,9 @@ class WorkmanInvolved extends Model
     public function CreateExpireData($newSafetypermit, $workmanInvolved)
     {
         if ($workmanInvolved->isNotEmpty()) {
+            $insert_array = [];
             foreach ($workmanInvolved as $workman) {
-                $insert_array = [
+                $insert_array[] = [
                     'permit_id' => $newSafetypermit->id,
                     'emp_id' => $workman->emp_id,
                     'workman_name' => $workman->workman_name,
@@ -140,15 +141,16 @@ class WorkmanInvolved extends Model
                     'nature_of_job' => $workman->nature_of_job,
                     'created_by' => Auth::id(),
                 ];
-
-                return  $this->insert($insert_array);
             }
+
+            return $this->insert($insert_array);
         }
     }
 
-    public function getworkmanData($id){
+    public function getworkmanData($id)
+    {
 
-         return WorkmanInvolved::where('permit_id',$id)->get();
+        return WorkmanInvolved::where('permit_id', $id)->get();
     }
 
     // public function updates($id)
