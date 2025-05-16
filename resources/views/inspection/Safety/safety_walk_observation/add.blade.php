@@ -392,7 +392,7 @@
                             },
                             signature_image: {
                                 required: true,
-                                 filesize: 10485760,
+                                filesize: 15728640,
                             },
                             "inspection_date": {
                                 required: true,
@@ -413,7 +413,7 @@
                             },
                             "checklist_file[1]": {
                                 required: true,
-                                filesize: 10485760,
+                               filesize: 15728640,
                             },
 
 
@@ -471,7 +471,7 @@
                             },
                             signature_image: {
                                 required: "Signature is required",
-                                 filesize: "File size must be less than 10MB."
+                                 filesize: "File size must be less than 15MB."
                             },
                             "inspection_date": {
                                 required: "Inspection Date is required",
@@ -534,7 +534,7 @@
                             },
                             "checklist_file[1]": {
                                 required: "Image is Required",
-                                 filesize: "File size must be less than 10MB."
+                                 filesize: "File size must be less than 15MB."
                             },
 
                             "emp_id[1]": {
@@ -741,10 +741,10 @@
 
                 $("input[name='checklist_file[" + form_set_current_count + "]']").rules('add', {
                     required: true,
-                     filesize: 10485760,
+                    filesize: 15728640,
                     messages: {
                         required: 'Image is Required',
-                         filesize: "File size must be less than 10MB."
+                         filesize: "File size must be less than 15MB."
                     }
                 });
 

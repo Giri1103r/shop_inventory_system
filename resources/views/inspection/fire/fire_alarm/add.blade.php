@@ -313,11 +313,11 @@
                                                         <div class="mb-2">
                                                             <label class="me-3">
                                                                 <input type="radio" name="observation"
-                                                                    value="{{encryptId(1)}}"> Yes
+                                                                    value="{{ encryptId(1) }}"> Yes
                                                             </label>
                                                             <label>
                                                                 <input type="radio" name="observation"
-                                                                    value="{{encryptId(2)}}"> No
+                                                                    value="{{ encryptId(2) }}"> No
                                                             </label>
                                                         </div>
 
@@ -429,12 +429,12 @@
                         "resource_code[1]": {
                             required: true,
                             uniqueItemCode: true,
-                            minlength:3,
+                            minlength: 3,
                             maxlength: 30,
                         },
                         "approach[1]": {
                             required: true,
-                            minlength:3,
+                            minlength: 3,
                             maxlength: 300,
                         },
                         "glass[1]": {
@@ -454,21 +454,21 @@
                         },
                         "remarks[1]": {
                             required: true,
-                            minlength:3,
+                            minlength: 3,
                             maxlength: 300,
                         },
 
                         device_image: {
                             required: true,
                             // extension: "jpg",
-                             filesize: 10485760,
+                            filesize: 15728640,
                         },
                         observation: {
                             required: true,
                         },
                         signature_image: {
                             required: true,
-                             filesize: 10485760,
+                            filesize: 15728640,
                         },
 
                     },
@@ -480,7 +480,7 @@
                         },
                         signature_image: {
                             required: 'Please upload your signature',
-                            filesize: 'File size should not exceed 10MB',
+                            filesize: 'File size should not exceed 15MB',
                         },
                         issue_date: {
                             required: "Date Of Audit is required",
@@ -544,7 +544,7 @@
                         device_image: {
                             required: "Please upload an image.",
                             // extension: "Only JPG files are allowed.",
-                             filesize: "File size should not exceed 10MB",
+                            filesize: "File size should not exceed 15MB",
                         },
                         observation: {
                             required: "Please add observation",
@@ -746,7 +746,7 @@
                     $("input[name='resource_code[" + form_set_count + "]']").rules('add', {
                         required: true,
                         uniqueItemCode: true,
-                        minlength:3,
+                        minlength: 3,
                         maxlength: 30,
                         messages: {
                             required: 'Please enter the resource code',
@@ -790,7 +790,7 @@
 
                     $("textarea[name='approach[" + form_set_count + "]']").rules('add', {
                         required: true,
-                        minlength:3,
+                        minlength: 3,
                         maxlength: 300,
                         messages: {
                             required: 'Please enter the approach details',
@@ -801,7 +801,7 @@
 
                     $("textarea[name='remarks[" + form_set_count + "]']").rules('add', {
                         required: true,
-                        minlength:3,
+                        minlength: 3,
                         maxlength: 30,
                         messages: {
                             required: 'Please enter remarks',

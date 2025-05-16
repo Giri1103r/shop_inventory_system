@@ -221,10 +221,10 @@
                                                                 {{ __('inspection.hose_types') }}
                                                             </option>
                                                             @foreach ($types as $types)
-                                                            <option value="{{ encryptId($types->id) }}">
-                                                                {{ $types->name }}</option>
-                                                                @endforeach
-                                                            </select>
+                                                                <option value="{{ encryptId($types->id) }}">
+                                                                    {{ $types->name }}</option>
+                                                            @endforeach
+                                                        </select>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 mb-2">
@@ -308,11 +308,13 @@
                                                         <div class="mb-2">
                                                             <label class="me-3">
                                                                 <input type="radio" name="observation"
-                                                                    value="{{encryptId(1)}}" class="validate-radio-required"> Yes
+                                                                    value="{{ encryptId(1) }}"
+                                                                    class="validate-radio-required"> Yes
                                                             </label>
                                                             <label>
                                                                 <input type="radio" name="observation"
-                                                                    value="{{encryptId(2)}}" class="validate-radio-required"> No
+                                                                    value="{{ encryptId(2) }}"
+                                                                    class="validate-radio-required"> No
                                                             </label>
                                                         </div>
 
@@ -422,8 +424,8 @@
                         "hose_box_no[1]": {
                             required: true,
                             uniqueItemCode: true,
-                            minlength:3,
-                            maxlength:30,
+                            minlength: 3,
+                            maxlength: 30,
                         },
                         "type[1]": {
                             required: true,
@@ -441,13 +443,13 @@
                         },
                         "approach[1]": {
                             required: true,
-                            minlength:3,
-                            maxlength:300,
+                            minlength: 3,
+                            maxlength: 300,
                         },
                         "remarks[1]": {
                             required: true,
-                            minlength:3,
-                            maxlength:300,
+                            minlength: 3,
+                            maxlength: 300,
                         },
                         "hose_types[1]": {
                             required: true,
@@ -462,14 +464,14 @@
                         device_image: {
                             required: true,
                             // extension: "jpg",
-                            filesize: 10485760,
+                            filesize: 15728640,
                         },
                         observation: {
                             required: true,
                         },
                         signature_image: {
                             required: true,
-                             filesize: 10485760,
+                            filesize: 15728640,
                         },
 
                     },
@@ -481,7 +483,7 @@
                         },
                         signature_image: {
                             required: 'Please upload your signature',
-                            filesize: 'File size should not exceed 10MB',
+                            filesize: 'File size should not exceed 15MB',
                         },
                         issue_date: {
                             required: "Date Of Audit is required",
@@ -551,7 +553,7 @@
                         device_image: {
                             required: "Please upload an image.",
                             // extension: "Only JPG files are allowed.",
-                            filesize: "File size should not exceed 10MB",
+                            filesize: "File size should not exceed 15MB",
                         },
                         observation: {
                             required: "Please add observation",
@@ -767,8 +769,8 @@
                     $("input[name='hose_box_no[" + form_set_count + "]']").rules('add', {
                         required: true,
                         uniqueItemCode: true,
-                        minlength:3,
-                        maxlength:30,
+                        minlength: 3,
+                        maxlength: 30,
                         messages: {
                             required: 'Please enter the hose box no',
                             uniqueItemCode: 'Hose Box No must be unique',
@@ -818,8 +820,8 @@
 
                     $("textarea[name='approach[" + form_set_count + "]']").rules('add', {
                         required: true,
-                        minlength:3,
-                        maxlength:300,
+                        minlength: 3,
+                        maxlength: 300,
                         messages: {
                             required: 'Please enter the approach detail',
                             minlength: "Minimum Characters should be 3",
@@ -829,8 +831,8 @@
 
                     $("textarea[name='remarks[" + form_set_count + "]']").rules('add', {
                         required: true,
-                        minlength:3,
-                        maxlength:300,
+                        minlength: 3,
+                        maxlength: 300,
                         messages: {
                             required: 'Please enter remarks',
                             minlength: "Minimum Characters should be 3",

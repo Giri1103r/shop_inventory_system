@@ -44,7 +44,7 @@
                                         <input type="hidden" name="inspection_type" value="{{ $inspection_type }}">
                                         <input type="hidden" name="inspection_id" value="{{ $inspection_id }}">
                                         <div class="row">
-                                            <div class="col-md-4 mb-2">
+                                            <div class="col-md-4 mb-2 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Observation ID</label>
                                                     <input type="text" name="observation_id" id = "observation_id"
@@ -52,24 +52,24 @@
                                                         value="{{ getSequence('Observation') }}">
                                                 </div>
                                             </div>
-                                            <div class="col-md-4 form-input">
+                                            <div class="col-md-4 mb-2 form-input">
                                                 <label class="form-label">Doc. No</label>
                                                 <input type="text" class="form-control" name="doc_no" id="doc_no"
                                                     readonly value="{{ $staticDocno->doc_no }}">
                                             </div>
 
-                                            <div class="col-md-4 form-input">
+                                            <div class="col-md-4 mb-2 form-input">
                                                 <label class="form-label">Issue Dt.</label>
                                                 <input type="text" class="form-control" name="issue_date" id="issue_date"
                                                     readonly value="{{ Displaydateformat($staticDocno->issue_date) }}">
                                             </div>
 
-                                            <div class="col-md-4 form-input mb-2">
+                                            <div class="col-md-4 mb-2 form-input mb-2">
                                                 <label class="form-label">Rev. & Dt.</label>
                                                 <input type="text" class="form-control" name="rev_dt" id="rev_dt"
                                                     readonly value="{{ $staticDocno->rev_dt }}">
                                             </div>
-                                            <div class="col-md-4">
+                                            <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Date of Inspection</label>
                                                     <input type="text" id="date_of_inspection" name="date_of_inspection"
@@ -82,20 +82,19 @@
 
                                         <div class="row mt-4">
                                             <div id="form-wrapper">
+                                                <div class="card-header-inner d-flex justify-content-between">
+                                                    <h4 class="text-white">Observation</h4>
+                                                    <button class="btn btn-primary add-row mb-2 " type="button"
+                                                        id="add-row"
+                                                        style="margin-left: 10px;  margin-right: 10px; width: 84px;">
+                                                        Add
+                                                    </button>
+                                                </div>
                                                 <div class="form-set mb-3">
-                                                    <div class="card-header-inner">
-                                                        <h4 class="text-white">Observation</h4>
-                                                    </div>
-                                                    <div class="d-flex justify-content-end">
-                                                        <button class="btn btn-primary add-row me-3" type="button"
-                                                            id="add-row" style="width: 84px;">Add</button>
-                                                        <button type="button" class="btn btn-danger remove-row">
-                                                            <i class="fa-solid fa-trash"></i> Remove
-                                                        </button>
-                                                    </div>
+
 
                                                     <div class="row">
-                                                        <div class="col-md-4">
+                                                        <div class="col-md-4 mb-2">
                                                             <div class="form-group form-input">
                                                                 <label class="form-label require">Serial Number</label>
                                                                 <input type="text" name="obs[1][serial_number]"
@@ -103,7 +102,7 @@
                                                                     value="OBS-CHECKLIST-00001" readonly>
                                                             </div>
                                                         </div>
-                                                        <div class="col-md-4">
+                                                        <div class="col-md-4 mb-2">
                                                             <div class="form-group form-input">
                                                                 <label class="form-label require">Unit Name</label>
                                                                 <select name="obs[1][unit_id]" id="unit_id_1"
@@ -117,7 +116,7 @@
                                                                 </select>
                                                             </div>
                                                         </div>
-                                                        <div class="col-md-4">
+                                                        <div class="col-md-4 mb-2">
                                                             <div class="form-group form-input">
                                                                 <label class="form-label require">Department Name</label>
                                                                 <select name="obs[1][department_id]" id="department_id_1"
@@ -128,7 +127,7 @@
                                                                 </select>
                                                             </div>
                                                         </div>
-                                                        <div class="col-md-4">
+                                                        <div class="col-md-4 mb-2">
                                                             <div class="form-group form-input">
                                                                 <label class="form-label require">Name of Equipment</label>
                                                                 <input type="text" id="year_1"
@@ -136,7 +135,7 @@
                                                                     placeholder="Name of Equipment" value="">
                                                             </div>
                                                         </div>
-                                                        <div class="col-md-4">
+                                                        <div class="col-md-4 mb-2">
                                                             <div class="form-group form-input">
                                                                 <label class="form-label require">Resource Code of
                                                                     Equipment</label>
@@ -146,7 +145,7 @@
                                                                     value="">
                                                             </div>
                                                         </div>
-                                                        <div class="col-md-4">
+                                                        <div class="col-md-4 mb-2">
                                                             <div class="form-group form-input">
                                                                 <label class="form-label require">Observation</label>
                                                                 <input type="text" id="year_1"
@@ -154,7 +153,7 @@
                                                                     placeholder="Observation" value="">
                                                             </div>
                                                         </div>
-                                                        <div class="col-md-4">
+                                                        <div class="col-md-4 mb-2">
                                                             <div class="form-group form-input">
                                                                 <label class="form-label require">Date of Observation /
                                                                     Inspection</label>
@@ -163,7 +162,7 @@
                                                                     value="">
                                                             </div>
                                                         </div>
-                                                        <div class="col-md-4">
+                                                        <div class="col-md-4 mb-2">
                                                             <div class="form-group form-input">
                                                                 <label class="form-label require">Observation of the
                                                                     Month</label>
@@ -172,12 +171,18 @@
                                                                     value="">
                                                             </div>
                                                         </div>
+                                                        <div class="col-md-2 text-right  mt-4">
+                                                            <button class="btn btn-danger remove-row" type="button"
+                                                                style="margin:10px;"><i class="fa fa-trash"></i></button>
+
+                                                        </div>
+
+                                                        <hr>
                                                     </div>
 
                                                 </div>
                                             </div>
                                         </div>
-                                        <hr>
                                         <div class="submit-button" style="text-align: right;">
                                             <x-button-submit class="submit"></x-button-submit>
                                             <x-button-reset class="submit"></x-button-reset>
@@ -198,41 +203,41 @@
 
     @push('script')
         <script type="text/javascript" nonce="projectcab">
-   $(document).on('change', '.unit-select', function() {
-                        let unitId = $(this).val();
-                        let row = $(this).closest(
-                        '.row'); // adjust if you're using <tr> or other structure
+            $(document).on('change', '.unit-select', function() {
+                let unitId = $(this).val();
+                let row = $(this).closest(
+                    '.row'); // adjust if you're using <tr> or other structure
 
-                        let departmentSelect = row.find('.department-select');
-                        departmentSelect.empty().append('<option value="">Select Department</option>');
+                let departmentSelect = row.find('.department-select');
+                departmentSelect.empty().append('<option value="">Select Department</option>');
 
-                        if (unitId) {
-                            $.ajax({
-                                url: "{{ admin_url('department/ajax-list') }}/" + unitId +
-                                    "/0",
-                                type: 'GET',
-                                dataType: 'json',
-                                success: function(data) {
-                                    $.each(data, function(key, value) {
-                                        departmentSelect.append('<option value="' +
-                                            value.id + '">' + value
-                                            .name + '</option>');
-                                    });
-                                    departmentSelect.trigger('change');
-                                },
-                                error: function() {
-                                    Swal.fire({
-                                        icon: 'error',
-                                        title: 'Error',
-                                        text: 'Failed to fetch departments. Please try again.'
-                                    });
-                                }
+                if (unitId) {
+                    $.ajax({
+                        url: "{{ admin_url('department/ajax-list') }}/" + unitId +
+                            "/0",
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(data) {
+                            $.each(data, function(key, value) {
+                                departmentSelect.append('<option value="' +
+                                    value.id + '">' + value
+                                    .name + '</option>');
+                            });
+                            departmentSelect.trigger('change');
+                        },
+                        error: function() {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'Failed to fetch departments. Please try again.'
                             });
                         }
                     });
-          $('.select2').select2({
-                        width: '100%'
-                    });
+                }
+            });
+            $('.select2').select2({
+                width: '100%'
+            });
             $(document).ready(function() {
                 $('#resetform').on('click', function(e) {
                     e.preventDefault();
@@ -275,27 +280,16 @@
 
                     var newFormSet = `
                         <div class="form-set mb-3">
-                            <div class="card-header-inner">
-                                <h4 class="text-white">Observation</h4>
-                            </div>
-                            <div class="d-flex justify-content-end">
-                                <button class="btn btn-primary add-row me-3" type="button"
-                                    id="add-row" style="width: 84px;">
-                                    Add
-                                </button>
-                                <button type="button" class="btn btn-danger remove-row">
-                                    <i class="fa-solid fa-trash"></i> Remove
-                                </button>
-                            </div>
+
                             <div class="row">
-                                <div class="col-md-4">
+                                <div class="col-md-4 mb-2">
                                     <div class="form-group form-input">
                                         <label class="form-label require">Serial Number</label>
                                         <input type="text" name="obs[${form_set_count}][serial_number]" class="form-control" placeholder="Serial Number" value="${newSerialNumber}" readonly>
                                     </div>
                                 </div>
 
-                                    <div class="col-md-4">
+                                    <div class="col-md-4 mb-2">
                                         <div class="form-group form-input">
                                             <label class="form-label require">Unit Name</label>
                                             <select name="obs[${form_set_count}][unit_id]" id="unit_id_${form_set_count}" class="form-control  unit-select select2">
@@ -306,7 +300,7 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-4 mb-2">
                                         <div class="form-group form-input">
                                             <label class="form-label require">Department Name</label>
                                             <select name="obs[${form_set_count}][department_id]" id="department_id_${form_set_count}" class="form-control select2 department-select" style="width: 100%">
@@ -315,36 +309,42 @@
                                             </select>
                                         </div>
                                     </div>
-                                <div class="col-md-4 mt-2">
+                                <div class="col-md-4 mb-2 mt-2">
                                     <div class="form-group form-input">
                                         <label class="form-label require">Name of Equipment</label>
                                         <input name="obs[${form_set_count}][equipment_name]" class="form-control" placeholder="Enter the Equipment name ">
                                     </div>
                                 </div>
-                                <div class="col-md-4 mt-2">
+                                <div class="col-md-4 mb-2 mt-2">
                                     <div class="form-group form-input">
                                         <label class="form-label require">Resource Code of Equipment</label>
                                         <input name="obs[${form_set_count}][equipment_code]" class="form-control" placeholder="Enter the Resource Code">
                                     </div>
                                 </div>
-                                <div class="col-md-4 mt-2">
+                                <div class="col-md-4 mb-2 mt-2">
                                     <div class="form-group form-input">
                                         <label class="form-label require">Observation</label>
                                         <input name="obs[${form_set_count}][observation]" class="form-control" placeholder="Enter the Observation">
                                     </div>
                                 </div>
-                                <div class="col-md-4 mt-2">
+                                <div class="col-md-4 mb-2 mt-2">
                                     <div class="form-group form-input">
                                         <label class="form-label require">Date of Observation / Inspection</label>
                                         <input name="obs[${form_set_count}][date]"  id="date_${form_set_count}" class="form-control" placeholder="Date">
                                     </div>
                                 </div>
-                                <div class="col-md-4 mt-2">
+                                <div class="col-md-4 mb-2 mt-2">
                                     <div class="form-group form-input">
                                         <label class="form-label require">Observation of the Month</label>
                                         <input name="obs[${form_set_count}][month]" id="month_${form_set_count}" class="form-control" placeholder="Month">
                                     </div>
                                 </div>
+                                 <div class="col-md-2 text-right  mt-4">
+                                                    <button class="btn btn-danger remove-row" type="button"
+                                                        style="margin:10px;"><i class="fa fa-trash"></i></button>
+
+                                                </div>
+                                                 <hr>
                             </div>
                         </div>
                     `;
@@ -444,7 +444,7 @@
                     $(document).on('change', '.unit-select', function() {
                         let unitId = $(this).val();
                         let row = $(this).closest(
-                        '.row'); // adjust if you're using <tr> or other structure
+                            '.row'); // adjust if you're using <tr> or other structure
 
                         let departmentSelect = row.find('.department-select');
                         departmentSelect.empty().append('<option value="">Select Department</option>');

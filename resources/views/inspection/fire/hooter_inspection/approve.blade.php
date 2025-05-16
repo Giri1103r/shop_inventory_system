@@ -840,7 +840,7 @@
                     },
                     signature_image: {
                         required: true,
-                        filesize: 10485760,
+                        filesize: 15728640
                     }
                 },
                 messages: {
@@ -851,7 +851,7 @@
                     },
                     signature_image: {
                         required: "Signature is Required",
-                        filesize: "Image must be under 10MB."
+                        filesize: "Image must be under 15MB."
                     }
                 },
                 errorElement: 'div',
@@ -889,7 +889,7 @@
                     },
                     signature_image: {
                         required: true,
-                        filesize: 10485760,
+                        filesize: 15728640
                     }
                 },
                 messages: {
@@ -900,7 +900,7 @@
                     },
                     signature_image: {
                         required: "Signature is Required",
-                        filesize: "Image must be under 10MB."
+                        filesize: "Image must be under 15MB."
                     }
                 },
                 errorElement: 'div',
@@ -934,7 +934,7 @@
                     },
                     signature_image: {
                         required: true,
-                        filesize: 10485760,
+                       filesize: 15728640
                     }
                 },
                 messages: {
@@ -945,7 +945,7 @@
                     },
                     signature_image: {
                         required: "Signature is Required",
-                        filesize: "Image must be under 10MB."
+                        filesize: "Image must be under 15MB."
                     }
                 },
                 errorElement: 'div',
@@ -979,7 +979,7 @@
                     },
                     signature_image: {
                         required: true,
-                        filesize: 10485760,
+                        filesize: 15728640
                     }
                 },
                 messages: {
@@ -990,7 +990,7 @@
                     },
                     signature_image: {
                         required: "Signature is Required",
-                        filesize: "Image must be under 10MB."
+                        filesize: "Image must be under 15MB."
                     }
                 },
                 errorElement: 'div',

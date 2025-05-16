@@ -117,8 +117,7 @@ class SafetyPermit extends Model
             $query = $this->select('ptw_safety.*', 'masters_unit.unit_name', 'ptw_status.status_name', 'ptw_status.bg_color')->leftJoin('masters_unit', 'masters_unit.id', '=', 'ptw_safety.unit_id')->leftJoin('ptw_status', 'ptw_status.id', '=', 'ptw_safety.permit_status')->where('ptw_safety.unit_id', $unit_id);
         } elseif (in_array(ROLE_EHS_HEAD, $userRole)) {
             $query = $this->select('ptw_safety.*', 'masters_unit.unit_name', 'ptw_status.status_name', 'ptw_status.bg_color')->leftJoin('masters_unit', 'masters_unit.id', '=', 'ptw_safety.unit_id')->leftJoin('ptw_status', 'ptw_status.id', '=', 'ptw_safety.permit_status');
-        }
-        else {
+        } else {
             $query = $this->select('ptw_safety.*', 'masters_unit.unit_name', 'ptw_status.status_name', 'ptw_status.bg_color')->leftJoin('masters_unit', 'masters_unit.id', '=', 'ptw_safety.unit_id')->leftJoin('ptw_status', 'ptw_status.id', '=', 'ptw_safety.permit_status')->where('ptw_safety.created_by', $empid);
         }
         $org_total =  $query;
@@ -283,7 +282,7 @@ class SafetyPermit extends Model
             'time_to' => $request->time_to,
             'unit_id' => decryptId($request->unit_id),
             'company_id' => decryptId($request->company_id),
-            'location_id' =>decryptId($request->location_id),
+            'location_id' => decryptId($request->location_id),
             'exact_location_job' => $request->exact_location_job,
             'job_location_area' => $request->job_location_area,
             'sub_permit' => $sub_permit,
@@ -742,7 +741,11 @@ class SafetyPermit extends Model
             if (isset($data->sub_permit_images)) {
                 $data->sub_permit_images = explode(', ', $data->sub_permit_images);
             }
-            $protectiveEquip = json_decode($data->protective_equip, true);
+            // $protectiveEquip = json_decode($data->protective_equip, true);
+
+             $protectiveEquip =   !empty($data->protective_equip)
+                ? json_decode($data->protective_equip, true)
+                : null;
             $mappedProtectiveEquip = [];
 
             if ($protectiveEquip) {
@@ -782,7 +785,12 @@ class SafetyPermit extends Model
             $data->mapped_protective_equip = $mappedProtectiveEquip;
 
 
-            $equiment_involved = json_decode($data->equiment_involved, true);
+            // $equiment_involved = json_decode($data->equiment_involved, true);
+
+              $equiment_involved =   !empty($data->equiment_involved)
+                ? json_decode($data->equiment_involved, true)
+                : null;
+
             $mappedequiment_involved = [];
 
             if ($equiment_involved) {
@@ -822,7 +830,11 @@ class SafetyPermit extends Model
             $data->mapped_equiment_involved = $mappedequiment_involved;
 
 
-            $precaution_taken = json_decode($data->precaution_taken, true);
+            // $precaution_taken = json_decode($data->precaution_taken, true);
+
+            $precaution_taken =   !empty($data->precaution_taken)
+                ? json_decode($data->precaution_taken, true)
+                : null;
             $mappeprecaution_taken = [];
             if ($precaution_taken) {
                 foreach ($precaution_taken as $typeofWorkId => $checklistIds) {
@@ -858,7 +870,11 @@ class SafetyPermit extends Model
 
             $data->mapped_precaution_taken = $mappeprecaution_taken;
 
-            $equipment_checklist = json_decode($data->equipment_checklist, true);
+            // $equipment_checklist = json_decode($data->equipment_checklist, true);
+
+            $equipment_checklist =   !empty($data->equipment_checklist)
+                ? json_decode($data->equipment_checklist, true)
+                :null;
             $mappeequipment_checklist = [];
 
             if ($equipment_checklist) {
@@ -899,7 +915,12 @@ class SafetyPermit extends Model
             $data->mapped_equipment_checklist = $mappeequipment_checklist;
 
 
-            $safework_instruction = json_decode($data->safework_instruction, true);
+            // $safework_instruction = json_decode($data->safework_instruction, true);
+
+            $safework_instruction = !empty($data->safework_instruction)
+                ? json_decode($data->safework_instruction, true)
+                : null;
+
             $mappesafework_instruction = [];
 
             if ($safework_instruction) {
