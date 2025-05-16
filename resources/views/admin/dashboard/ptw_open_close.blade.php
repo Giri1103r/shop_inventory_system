@@ -7,12 +7,25 @@
 
     <script>
         var open_close = @json($active_close_count);
+        var openStatus = "{{ $openStatusEncrypted }}";
+        var closeStatus = "{{ $closeStatusEncrypted }}";
 
         var options = {
             series: Object.values(open_close),
             chart: {
                 width: 380,
                 type: 'pie',
+                events: {
+                    dataPointSelection: function(event, chartContext, config) {
+                        var seriesIndex = config.seriesIndex;
+
+                        if (seriesIndex === 0) {
+                            redirectToPTW('', '', '', '{{ $closeStatusEncrypted }}');
+                        } else if (seriesIndex === 1) {
+                            redirectToPTW('', '', '', '{{ $openStatusEncrypted }}');
+                        }
+                    }
+                }
             },
             labels: Object.keys(open_close),
             legend: {

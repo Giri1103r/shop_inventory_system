@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'OHC HYGIENE CLEANING CHECKLIST Approval')
+@section('title', 'OHC HYGIENE CLEANING CHECKLIST')
 @section('pageurl', admin_url('ohc/first-aid-record/list'))
 
 @section('content')

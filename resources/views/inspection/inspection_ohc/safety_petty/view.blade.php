@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Safety Petty Logbook View')
+@section('title', 'Safety Petty Logbook')
 @section('pageurl', admin_url('ohc/safety-petty-logbook/list'))
 
 @section('content')

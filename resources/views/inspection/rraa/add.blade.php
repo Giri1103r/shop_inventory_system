@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'RRAA Add')
+@section('title', 'RRAA ')
 @section('pageurl', admin_url('rraa/ohc_fire_environment_compliance/list'))
 
 @section('content')

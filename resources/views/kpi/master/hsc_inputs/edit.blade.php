@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
 @section('title', 'HSC Inputs')
-@section('pageurl', admin_url('kpi/master/hsc-inputs/list'))
+@section('pageurl', admin_url('kpi/hsc-inputs/list'))
 
 
 @section('content')
@@ -24,7 +24,7 @@
                             <div class="card-header">
                                 <h4 class="card-title"></h4>
                                 <div class="align-back-btc">
-                                    <x-button-back href="{{ admin_url('kpi/master/hsc-inputs/list') }}"></x-button-back>
+                                    <x-button-back href="{{ admin_url('kpi/hsc-inputs/list') }}"></x-button-back>
                                 </div>
                             </div>
 
@@ -32,7 +32,7 @@
 
                                 <div class="basic-form">
                                     <form method="POST" id="hscinputsadd"
-                                        action="{{ admin_url('kpi/master/hsc-inputs/edit/submit') }}">
+                                        action="{{ admin_url('kpi/hsc-inputs/edit/submit') }}">
                                         @csrf
 
                                         <input type="hidden" name="id" id="id"
@@ -147,7 +147,7 @@
                                             <x-button-submit class="submit"></x-button-submit>
                                             <x-button-reset class=""></x-button-reset>
                                             <x-button-cancel
-                                                href="{{ admin_url('kpi/master/hsc-inputs/list') }}"></x-button-cancel>
+                                                href="{{ admin_url('kpi/hsc-inputs/list') }}"></x-button-cancel>
                                         </div>
 
                                     </form>

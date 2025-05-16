@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Daily Fire Pump House Inspection Show')
+@section('title', 'Daily Fire Pump House Inspection')
 @section('pageurl', admin_url('fire/daily-fire-pump-house-inspection/list'))
 
 @section('content')

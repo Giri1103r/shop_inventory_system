@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
 @section('title', 'HSC Inputs')
-@section('pageurl', admin_url('kpi/master/hsc-inputs/list'))
+@section('pageurl', admin_url('kpi/hsc-inputs/list'))
 
 
 @section('content')
@@ -14,10 +14,10 @@
 
                         <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
                         @if (CheckUserPermission('import'))
-                            <x-button-import href="{{ admin_url('kpi/master/hsc-inputs/import') }}"></x-button-import>
+                            <x-button-import href="{{ admin_url('kpi/hsc-inputs/import') }}"></x-button-import>
                         @endif
                         <x-button-add dataId="" class="add btn btn-primary ms-1"
-                            href="{{ admin_url('kpi/master/hsc-inputs/add') }}">Add</x-button-add>
+                            href="{{ admin_url('kpi/hsc-inputs/add') }}">Add</x-button-add>
                     </div>
                     <div id="search" class="collapse">
                         <form action="" id="formsearch" autocomplete="off">
@@ -259,7 +259,7 @@
                     },
 
                     ajax: {
-                        url: "{{ admin_url('kpi/master/hsc-inputs/list') }}",
+                        url: "{{ admin_url('kpi/hsc-inputs/list') }}",
                         type: 'POST',
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
@@ -365,7 +365,7 @@
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('kpi/master/hsc-inputs/export/pdf') }}" +
+                                            "{{ admin_url('kpi/hsc-inputs/export/pdf') }}" +
                                             '?search=' + searchValue +
                                             '&company_id=' + company_id +
                                             '&location_id=' + location_id +
@@ -393,7 +393,7 @@
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('kpi/master/hsc-inputs/export/excel') }}" +
+                                            "{{ admin_url('kpi/hsc-inputs/export/excel') }}" +
                                             '?search=' + searchValue +
                                             '&company_id=' + company_id +
                                             '&location_id=' + location_id +
@@ -463,7 +463,7 @@
 
                         if (result.value) {
                             $.ajax({
-                                url: "{{ admin_url('kpi/master/hsc-inputs/status') }}",
+                                url: "{{ admin_url('kpi/hsc-inputs/status') }}",
                                 type: 'post',
 
                                 data: {
@@ -531,7 +531,7 @@
 
                         if (result.value) {
                             $.ajax({
-                                url: "{{ admin_url('kpi/master/hsc-inputs/delete') }}",
+                                url: "{{ admin_url('kpi/hsc-inputs/delete') }}",
                                 type: 'post',
                                 headers: {
                                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]')

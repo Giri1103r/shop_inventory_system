@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', ' First Aid Equipment Add')
+@section('title', ' First Aid Equipment')
 @section('pageurl', admin_url('ohc/master/first-aid-stock/list'))
 
 

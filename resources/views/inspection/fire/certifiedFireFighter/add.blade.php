@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Certified Fire Fighter Add')
+@section('title', 'Certified Fire Fighter')
 @section('pageurl', admin_url('fire/certified-fire-fighter/list'))
 
 
@@ -60,9 +60,15 @@
 
                                                 <div class="col-md-4 form-input">
                                                     <label class="form-label">Issue Dt.</label>
-                                                    <input type="text" class="form-control" name="issue_date"
-                                                        id="issue_date" readonly
-                                                        value="{{ Displaydateformat($staticDocno->issue_date) }}">
+
+                                                    <div class="input-group date form-input custom-height">
+                                                        <input type="text" class="form-control" name="issue_date"
+                                                            id="issue_date" readonly
+                                                            value="{{ Displaydateformat($staticDocno->issue_date) }}">
+                                                        <div class="input-group-addon input-group-text">
+                                                            <span class="fa fa-calendar"></span>
+                                                        </div>
+                                                    </div>
                                                 </div>
 
                                                 <div class="col-md-4 form-input mt-2">
@@ -80,7 +86,7 @@
                                             <div class="row">
                                                 <div class="card-header-inner d-flex justify-content-between">
                                                     <h4 class="text-white">Certified Fire Fighter Details</h4>
-                                                    <button class="btn btn-primary addmorebutton"
+                                                    <button class="btn btn-primary addmorebutton mb-2"
                                                         data-block='lesson_learned_block' data-row='lesson_learned_row'
                                                         type="button" id="dynamic-add-more"
                                                         style="margin-left: 10px; width: 84px;">

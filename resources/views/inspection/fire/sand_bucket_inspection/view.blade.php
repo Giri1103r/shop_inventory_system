@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Sand Bucket Inspection View')
+@section('title', 'Sand Bucket Inspection')
 @section('pageurl', admin_url('fire/fire-sand-bucket-inspection/list'))
 @section('content')
     <div class="clearfix"></div>

@@ -26,6 +26,14 @@
             height: 350,
             toolbar: {
                 show: false
+            },
+            events: {
+                dataPointSelection: function(event, chartContext, config) {
+                    var dataPointIndex = config.dataPointIndex;
+                    var selectedUnit = unitData[dataPointIndex];
+                    var unitId = selectedUnit.unit_id;
+                    redirectToPTW('', unitId, '');
+                }
             }
         },
         plotOptions: {

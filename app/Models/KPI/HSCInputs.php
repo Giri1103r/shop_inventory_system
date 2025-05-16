@@ -70,7 +70,7 @@ class HSCInputs extends Model
             $query = $query->where('kpi_hsc_inputs.month', ($request->month));
         }
         if ($request->has('year') && $request->year) {
-            $query = $query->where('kpi_hsc_inputs.year', ($request->year));
+            $query = $query->where('kpi_hsc_inputs.calendar_year', ($request->year));
         }
         if ($request->has('status') && $request->status) {
             $query = $query->where('kpi_hsc_inputs.status', decryptId($request->status));
