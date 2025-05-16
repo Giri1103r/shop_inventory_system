@@ -115,7 +115,7 @@ class HSCInputsController extends Controller
 
         if ($leading->isEmpty() || $lagging->isEmpty()) {
             Session::flash('error', 'Leading or Lagging Indicator is missing');
-            
+            return redirect(admin_url('kpi/master/hsc-inputs/list'));
         }
         $data = [
             'companies' => $companies,
