@@ -538,7 +538,7 @@
                             maxlength: 600,
                         },
                         signature_image:{
-                            filesize: 10485760,
+                           filesize: 15728640,
                         }
 
 
@@ -575,7 +575,7 @@
 
                         },
                         signature_image:{
-                            filesize: 'File size should not exceed 10MB',
+                            filesize: 'File size should not exceed 15MB',
                         }
                     },
                     errorElement: 'span',
