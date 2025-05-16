@@ -380,11 +380,11 @@
                             $(this).rules('add', {
                                 required: true,
                                 accept: "image/jpeg, image/png, image/jpg",
-                                filesize: 10485760,
+                                 filesize: 15728640,
                                 messages: {
                                     required: "Please upload an image.",
                                     accept: "Only JPG, JPEG, and PNG files are allowed.",
-                                    filesize: "File size should not exceed 10MB",
+                                     filesize: "File size should not exceed 15MB",
                                 }
                             });
                         });

@@ -38,21 +38,11 @@
                     var seriesIndex = config.seriesIndex;
                     var dataPointIndex = config.dataPointIndex;
 
-                    var incidentType = chartContext.w.config.series[seriesIndex].name;
-                    var unit = chartContext.w.config.xaxis.categories[dataPointIndex];
+                    var incidentTypeName = chartContext.w.config.xaxis.categories[dataPointIndex];
+                    var selectedItem = iirChartData.find(item => item.incident_type_name === incidentTypeName);
 
-                    var incidentTypeObj = chartData[
-                        incidentType];
-
-                    if (incidentTypeObj) {
-                        var unitObj = incidentTypeObj[unit];
-
-                        if (unitObj) {
-                            var iirType = unitObj.incident_type_id;
-                            var unitId = unitObj.unit_id;
-                            redirectToIms(iirType, unitId);
-                        }
-                    }
+                    var iirType = selectedItem.iir_type;
+                    redirectToIms(iirType, '', '', '', '', uauc, '');
                 }
             }
         },

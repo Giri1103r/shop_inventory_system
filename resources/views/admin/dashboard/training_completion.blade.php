@@ -14,22 +14,39 @@
         labels: ['Closed Trainings (%)', 'Open Trainings (%)'],
         colors: ['#28a745', '#dc3545'],
         dataLabels: {
-            formatter: function (val) {
+            enabled: true,
+            formatter: function(val, opts) {
                 return val.toFixed(2) + '%';
             }
         },
         legend: {
             position: 'bottom'
-        }
-      
+        },
+        responsive: [{
+            breakpoint: 480,
+            options: {
+                chart: {
+                    width: 200
+                },
+                legend: {
+                    position: 'bottom',
+                    offsetX: 0,
+                    offsetY: 0
+                }
+            }
+        }]
     };
 
-    var TrainingCompletionChart = new ApexCharts(document.querySelector("#TrainingCompletion"), TrainingCompletionOptions);
+    var TrainingCompletionChart = new ApexCharts(document.querySelector("#TrainingCompletion"),
+        TrainingCompletionOptions);
     TrainingCompletionChart.render();
 
     // Download button functionality
     $("#TrainingCompletion_download").off("click").on("click", function() {
-        TrainingCompletionChart.dataURI().then(({ imgURI, blob }) => {
+        TrainingCompletionChart.dataURI().then(({
+            imgURI,
+            blob
+        }) => {
             const link = document.createElement('a');
             link.href = imgURI;
             link.download = 'training_completion_chart.png';

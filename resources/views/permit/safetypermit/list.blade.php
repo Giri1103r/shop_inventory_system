@@ -1,6 +1,13 @@
 @extends('admin.layouts.admin')
 @section('title', 'Safety Permit')
 @section('pageurl', admin_url('safetypermit/list'))
+@php
+
+    $dash_unit_id =
+        isset($dashboard_search['unit_id']) && $dashboard_search['unit_id'] != '' ? $dashboard_search['unit_id'] : '';
+
+@endphp
+
 @section('content')
     <div class="container-fluid">
         <div class="row">
@@ -50,15 +57,31 @@
 
                                             </select>
                                         </div>
+                                        @if ($dash_unit_id != '')
+                                            <div class="col-md-3 mb-3 form-input">
+                                                <label for="inspectiontype" class="form-label ">Unit</label>
+                                                <select name="unit_id" id="unit_id" class=" form-control single-select"
+                                                    style="width: 100%">
+                                                    <option value="">Select Unit</option>
+                                                    @foreach ($unitList as $unit)
+                                                        <option @if ($dash_unit_id == $unit->id) selected @endif
+                                                            value="{{ encryptId($unit->id) }}">
+                                                            {{ $unit->unit_name }}</option>
+                                                    @endforeach
 
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="unit_id" class="form-label">Unit</label>
-                                            <select name="unit_id" id="unit_id"
-                                                class="form-control single-select form-control-sm" style="width: 100%">
-                                                <option value="">Select the Unit</option>
+                                                </select>
+                                            </div>
+                                        @else
+                                            <div class="col-md-3 mb-3 form-input">
+                                                <label for="unit_id" class="form-label">Unit</label>
+                                                <select name="unit_id" id="unit_id"
+                                                    class="form-control single-select form-control-sm" style="width: 100%">
+                                                    <option value="">Select the Unit</option>
 
-                                            </select>
-                                        </div>
+                                                </select>
+                                            </div>
+                                        @endif
+
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="emp_name" class="form-label ">From Date</label>
                                             <div class="input-group date form-input custom-height">
@@ -236,6 +259,9 @@
 
         $(function() {
             /* Datatable */
+
+            var dashboard_month =
+                '{{ isset($dashboard_search['month']) && $dashboard_search['month'] != '' ? $dashboard_search['month'] : '' }}';
             var table = $('.datatable-list').DataTable({
                 autoWidth: false,
                 responsive: true,
@@ -274,6 +300,7 @@
                         d.from_date = $('#from_date').val();
                         d.to_date = $('#to_date').val();
                         d.status = $('#status').val();
+                        d.dashboard_month = dashboard_month;
 
                     },
                     error: function(xhr, error, code) {
@@ -362,6 +389,7 @@
                                     location_id = $('#location_id').val();
                                     to_date = $('#to_date').val();
                                     status = $('#status').val();
+                                    dashboard_month = dashboard_month;
 
                                     $(".dt-button").removeClass('processing');
                                     $('body').click();
@@ -369,6 +397,7 @@
                                         "{{ admin_url('safetypermit/export/pdf') }}" +
                                         '?search=' + searchValue +
                                         '&permit_id=' + permit_id +
+                                        '&dashboard_month=' + dashboard_month +
                                         '&company_id=' + company_id +
                                         '&location_id=' + location_id +
                                         '&unit_id=' + unit_id +
@@ -390,6 +419,7 @@
                                     from_date = $('#from_date').val();
                                     to_date = $('#to_date').val();
                                     status = $('#status').val();
+                                    dashboard_month = dashboard_month;
 
                                     $(".dt-button").removeClass('processing');
                                     $('body').click();
@@ -397,6 +427,7 @@
                                         "{{ admin_url('safetypermit/export/excel') }}" +
                                         '?search=' + searchValue +
                                         '&permit_id=' + permit_id +
+                                        '&dashboard_month=' + dashboard_month +
                                         '&company_id=' + company_id +
                                         '&location_id=' + location_id +
                                         '&unit_id=' + unit_id +

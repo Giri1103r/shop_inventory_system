@@ -550,9 +550,11 @@
                     },
                     'signature_givenby_image[1]': {
                         required: true,
+                        filesize: 15728640,
                     },
                     'signature_receivedby_image[1]': {
                         required: true,
+                        filesize: 15728640,
                     }
                 },
                 messages: {
@@ -590,9 +592,11 @@
                     },
                     'signature_givenby_image[1]': {
                         required: "Signature Given by Image is Required",
+                         filesize: "File must be less than 15MB."
                     },
                     'signature_receivedby_image[1]': {
                         required: "Signature Received by Image is Required",
+                         filesize: "File must be less than 15MB."
                     }
                 },
                 errorElement: 'span',

@@ -365,37 +365,22 @@ class TrainingSchedule extends Model
         // Start query
         $query = self::query();
 
+        // Apply company Filter
+        if ($request->CompanyId) {
+            $company_id = decryptId($request->CompanyId);
+            $query->where('training_schedule.company_id', $company_id);
+        }
+
+        // Date Filters
         if ($request->Fromdate && $request->Todate) {
-            $query->whereBetween('training_schedule.created_at', [DBdateformat($request->Fromdate), DBdateformat($request->Todate)]);
+            $query->whereBetween('training_schedule.created_at', [
+                DBdateformat($request->Fromdate),
+                DBdateformat($request->Todate) . ' 23:59:59'
+            ]);
         } elseif ($request->Fromdate) {
             $query->where('training_schedule.created_at', '>=', DBdateformat($request->Fromdate));
         } elseif ($request->Todate) {
-            $query->where('training_schedule.created_at', '<=', DBdateformat($request->Todate));
-        }
-
-        if (CheckUserRole(ROLE_ADMIN) || CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_HEAD)) {
-            // No additional restrictions for these roles
-        } elseif (CheckUserRole(ROLE_TRAINER)) {
-            $trainer = DB::table('masters_employee')
-                ->select('id', 'emp_id')
-                ->where('emp_id', Auth::user()->employee_id)
-                ->first();
-            if ($trainer) {
-                $query->where('trainer_id', $trainer->id);
-            }
-        } else {
-            $nomination = DB::table('masters_employee')
-                ->select('id', 'emp_id')
-                ->where('emp_id', Auth::user()->employee_id)
-                ->first();
-            if ($nomination) {
-                $query->whereExists(function ($subQuery) use ($nomination) {
-                    $subQuery->select(DB::raw(1))
-                        ->from('training_nomination_process')
-                        ->whereColumn('training_nomination_process.training_schedule_id', 'training_schedule.id')
-                        ->where('training_nomination_process.employee_id', $nomination->id);
-                });
-            }
+            $query->where('training_schedule.created_at', '<=', DBdateformat($request->Todate) . ' 23:59:59');
         }
         // Select and group data by year and month
         $results = $query->selectRaw(
@@ -421,45 +406,22 @@ class TrainingSchedule extends Model
         $query = $this->leftJoin('masters_department', 'training_schedule.department_id', '=', 'masters_department.id');
 
 
-        // Apply factory filter if provided
-        // if ($request->Factory && isset($request->Factory)) {
-        //     $factoryIds = arrayDecrypt($request->Factory);
-        //     $query = $query->whereIn('uauc_main_uaucnotification.factory_id', $factoryIds);
-        // }
+        // Apply company Filter
+        if ($request->CompanyId) {
+            $company_id = decryptId($request->CompanyId);
+            $query->where('training_schedule.company_id', $company_id);
+        }
 
-        // Apply date filters if provided
+        // Date Filters
         if ($request->Fromdate && $request->Todate) {
-            $query->whereBetween('training_schedule.created_at', [DBdateformat($request->Fromdate), DBdateformat($request->Todate)]);
+            $query->whereBetween('training_schedule.created_at', [
+                DBdateformat($request->Fromdate),
+                DBdateformat($request->Todate) . ' 23:59:59'
+            ]);
         } elseif ($request->Fromdate) {
             $query->where('training_schedule.created_at', '>=', DBdateformat($request->Fromdate));
         } elseif ($request->Todate) {
-            $query->where('training_schedule.created_at', '<=', DBdateformat($request->Todate));
-        }
-
-
-        if (CheckUserRole(ROLE_ADMIN) || CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_HEAD)) {
-            // No additional restrictions for these roles
-        } elseif (CheckUserRole(ROLE_TRAINER)) {
-            $trainer = DB::table('masters_employee')
-                ->select('id', 'emp_id')
-                ->where('emp_id', Auth::user()->employee_id)
-                ->first();
-            if ($trainer) {
-                $query->where('trainer_id', $trainer->id);
-            }
-        } else {
-            $nomination = DB::table('masters_employee')
-                ->select('id', 'emp_id')
-                ->where('emp_id', Auth::user()->employee_id)
-                ->first();
-            if ($nomination) {
-                $query->whereExists(function ($subQuery) use ($nomination) {
-                    $subQuery->select(DB::raw(1))
-                        ->from('training_nomination_process')
-                        ->whereColumn('training_nomination_process.training_schedule_id', 'training_schedule.id')
-                        ->where('training_nomination_process.employee_id', $nomination->id);
-                });
-            }
+            $query->where('training_schedule.created_at', '<=', DBdateformat($request->Todate) . ' 23:59:59');
         }
         $query = $query->selectRaw('masters_department.department_name, COUNT(*) as count')
             ->groupBy('training_schedule.department_id', 'masters_department.department_name')->orderBy('count', 'desc');
@@ -471,37 +433,22 @@ class TrainingSchedule extends Model
         $request = request();
         $query = $this->where('training_schedule.status', '1');
 
+        // Apply company Filter
+        if ($request->CompanyId) {
+            $company_id = decryptId($request->CompanyId);
+            $query->where('training_schedule.company_id', $company_id);
+        }
+
+        // Date Filters
         if ($request->Fromdate && $request->Todate) {
-            $query->whereBetween('training_schedule.created_at', [DBdateformat($request->Fromdate), DBdateformat($request->Todate)]);
+            $query->whereBetween('training_schedule.created_at', [
+                DBdateformat($request->Fromdate),
+                DBdateformat($request->Todate) . ' 23:59:59'
+            ]);
         } elseif ($request->Fromdate) {
             $query->where('training_schedule.created_at', '>=', DBdateformat($request->Fromdate));
         } elseif ($request->Todate) {
-            $query->where('training_schedule.created_at', '<=', DBdateformat($request->Todate));
-        }
-
-        if (CheckUserRole(ROLE_ADMIN) || CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_HEAD)) {
-            // No additional restrictions for these roles
-        } elseif (CheckUserRole(ROLE_TRAINER)) {
-            $trainer = DB::table('masters_employee')
-                ->select('id', 'emp_id')
-                ->where('emp_id', Auth::user()->employee_id)
-                ->first();
-            if ($trainer) {
-                $query->where('trainer_id', $trainer->id);
-            }
-        } else {
-            $nomination = DB::table('masters_employee')
-                ->select('id', 'emp_id')
-                ->where('emp_id', Auth::user()->employee_id)
-                ->first();
-            if ($nomination) {
-                $query->whereExists(function ($subQuery) use ($nomination) {
-                    $subQuery->select(DB::raw(1))
-                        ->from('training_nomination_process')
-                        ->whereColumn('training_nomination_process.training_schedule_id', 'training_schedule.id')
-                        ->where('training_nomination_process.employee_id', $nomination->id);
-                });
-            }
+            $query->where('training_schedule.created_at', '<=', DBdateformat($request->Todate) . ' 23:59:59');
         }
 
         // Select and aggregate the counts
@@ -732,21 +679,22 @@ class TrainingSchedule extends Model
                 DB::raw('ROUND(SUM(CASE WHEN training_status != 8 THEN 1 ELSE 0 END) * 100.0 / COUNT(id), 2) as open_percentage')
             );
 
+        // Apply company Filter
+        if ($request->CompanyId) {
+            $company_id = decryptId($request->CompanyId);
+            $query->where('company_id', $company_id);
+        }
+
         // Date Filters
         if ($request->Fromdate && $request->Todate) {
             $query->whereBetween('created_at', [
                 DBdateformat($request->Fromdate),
-                DBdateformat($request->Todate)
+                DBdateformat($request->Todate) . ' 23:59:59'
             ]);
         } elseif ($request->Fromdate) {
             $query->where('created_at', '>=', DBdateformat($request->Fromdate));
         } elseif ($request->Todate) {
-            $query->where('created_at', '<=', DBdateformat($request->Todate));
-        }
-
-        if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_ADMIN)) {
-        } elseif (Auth::user()->role == ROLE_USER) {
-            $query->where('created_by', Auth::id());
+            $query->where('created_at', '<=', DBdateformat($request->Todate) . ' 23:59:59');
         }
 
         return $query->first(); // only one row
@@ -766,16 +714,22 @@ class TrainingSchedule extends Model
             ->groupBy('training_masters_topic.topic_name', 'masters_department.department_name');
 
 
+        // Apply company Filter
+        if ($request->CompanyId) {
+            $company_id = decryptId($request->CompanyId);
+            $query->where('training_schedule.company_id', $company_id);
+        }
 
+        // Date Filters
         if ($request->Fromdate && $request->Todate) {
             $query->whereBetween('training_schedule.created_at', [
                 DBdateformat($request->Fromdate),
-                DBdateformat($request->Todate)
+                DBdateformat($request->Todate) . ' 23:59:59'
             ]);
         } elseif ($request->Fromdate) {
             $query->where('training_schedule.created_at', '>=', DBdateformat($request->Fromdate));
         } elseif ($request->Todate) {
-            $query->where('training_schedule.created_at', '<=', DBdateformat($request->Todate));
+            $query->where('training_schedule.created_at', '<=', DBdateformat($request->Todate) . ' 23:59:59');
         }
 
         return $query->get();

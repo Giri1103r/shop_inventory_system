@@ -492,17 +492,17 @@
                             minlength: 3,
                             maxlength: 300,
                         },
-                        device_image: {
+                     device_image: {
                             required: true,
-                            // extension: "jpg",
-                            filesize: 10485760
+                            filesize: 15728640
                         },
+
                         observation: {
                             required: true,
                         },
                         signature_image: {
                             required: true,
-                            filesize: 10485760
+                            filesize: 15728640
 
                         },
 
@@ -515,7 +515,7 @@
                         },
                         signature_image: {
                             required: 'Please upload your signature',
-                            filesize: "Image must be under 10MB."
+                            filesize: "Image must be under 15MB."
 
                         },
                         issue_date: {
@@ -566,7 +566,7 @@
                         device_image: {
                             required: "Please upload an image.",
                             extension: "Only JPG files are allowed.",
-                            filesize: "Image must be under 10MB."
+                            filesize: "Image must be under 15MB."
                         },
                         observation: {
                             required: "Please add observation",

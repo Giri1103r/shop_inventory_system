@@ -367,7 +367,7 @@
                         },
                         signature_image:{
                             required: true,
-                            filesize: 10485760,
+                            filesize: 15728640,
                         }
 
                     },
@@ -390,7 +390,7 @@
                         },
                         signature_image:{
                             required: "Signature Image is required",
-                            filesize: "File size should not exceed 10 MB",
+                            filesize: "File size should not exceed 15 MB",
                         }
                         resource_code: {
                             required: 'Recource Code is requried',

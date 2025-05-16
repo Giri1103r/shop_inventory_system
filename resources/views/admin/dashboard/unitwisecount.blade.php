@@ -1,13 +1,13 @@
 <div id="unitwiseptw"></div>
 
 <script>
-    var unitData = @json($unitData); 
+    var unitData = @json($unitData);
     var categories = unitData.map(function(unit) {
-        return unit.unit_name; 
+        return unit.unit_name;
     });
 
     var permitCounts = unitData.map(function(unit) {
-        return unit.permit_count; 
+        return unit.permit_count;
     });
 
     var customColors = [
@@ -19,26 +19,34 @@
     var options = {
         series: [{
             name: 'Permit Count',
-            data: permitCounts 
+            data: permitCounts
         }],
         chart: {
             type: 'bar',
             height: 350,
             toolbar: {
-                show: false 
+                show: false
+            },
+            events: {
+                dataPointSelection: function(event, chartContext, config) {
+                    var dataPointIndex = config.dataPointIndex;
+                    var selectedUnit = unitData[dataPointIndex];
+                    var unitId = selectedUnit.unit_id;
+                    redirectToPTW('', unitId, '');
+                }
             }
         },
         plotOptions: {
             bar: {
-                horizontal: false, 
+                horizontal: false,
                 columnWidth: '55%',
                 endingShape: 'rounded',
                 distributed: true
             },
         },
-        colors: customColors, 
+        colors: customColors,
         dataLabels: {
-            enabled: true 
+            enabled: true
         },
         stroke: {
             show: true,
@@ -46,14 +54,14 @@
             colors: ['transparent']
         },
         xaxis: {
-            categories: categories, 
+            categories: categories,
             title: {
-                text: 'Unit Name' 
+                text: 'Unit Name'
             }
         },
         yaxis: {
             title: {
-                text: 'Permit Count' 
+                text: 'Permit Count'
             }
         },
         fill: {

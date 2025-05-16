@@ -167,20 +167,22 @@ class LeadingLagging extends Model
         return  $query->get();
     }
 
-
     public function selectOne($id)
     {
         return   $this->where('id', $id)->first();
     }
 
+    public function getLeading()
+    {
+        return $this->where('type', LEADING)->where('status', 1)->get();
+    }
+    public function getLagging()
+    {
+        return $this->where('type', LAGGING)->where('status', 1)->get();
+    }
+
     protected static function booted()
     {
         static::addGlobalScope(new TrashScope('kpi_master_leading_lagging'));
-
-        static::created(function ($model) {
-
-            $uniqueId = 'LOC-' . str_pad($model->id, 5, '0', STR_PAD_LEFT);
-            $model->update(['location_id' => $uniqueId]);
-        });
     }
 }

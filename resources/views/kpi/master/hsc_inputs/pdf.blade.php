@@ -1,5 +1,5 @@
 @extends('admin.layouts.pdf')
-@section('title', 'Leading and Lagging Indicator')
+@section('title', 'HSC Inputs')
 @section('content')
 
     <div style="width:100%;">
@@ -25,12 +25,24 @@
                             {{ $i }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ isset($value->type) ? ($value->type == LEADING ? __('common.leading') : __('common.lagging')) : '' }}
+                            {{ $value->company_name }}
+
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
-                            {{ $value->value }}
+                            {{ $value->location_name }}
                         </td>
-
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            {{ $value->unit_name }}
+                        </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            {{ $value->department_name }}
+                        </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            {{ \Carbon\Carbon::create()->month((int) $value->month)->format('F') }}
+                        </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            {{ $value->calendar_year }}
+                        </td>
                         <td style='padding: 7px;border: 0.5px solid'>
                             @php
                                 $status = $value->status == 1 ? 'Active' : 'In-Active';

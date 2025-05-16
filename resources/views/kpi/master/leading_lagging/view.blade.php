@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Leading and Lagging')
+@section('title', 'Leading and Lagging Indicator')
 @section('pageurl', admin_url('kpi/master/leading-lagging/list'))
 
 
