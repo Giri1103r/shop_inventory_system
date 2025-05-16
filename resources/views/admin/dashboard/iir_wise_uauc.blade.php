@@ -33,28 +33,7 @@
             toolbar: {
                 show: false
             },
-            events: {
-                dataPointSelection: function(event, chartContext, config) {
-                    var seriesIndex = config.seriesIndex;
-                    var dataPointIndex = config.dataPointIndex;
-
-                    var incidentType = chartContext.w.config.series[seriesIndex].name;
-                    var unit = chartContext.w.config.xaxis.categories[dataPointIndex];
-
-                    var incidentTypeObj = chartData[
-                        incidentType];
-
-                    if (incidentTypeObj) {
-                        var unitObj = incidentTypeObj[unit];
-
-                        if (unitObj) {
-                            var iirType = unitObj.incident_type_id;
-                            var unitId = unitObj.unit_id;
-                            redirectToIms(iirType, unitId);
-                        }
-                    }
-                }
-            }
+       
         },
         plotOptions: {
             bar: {
