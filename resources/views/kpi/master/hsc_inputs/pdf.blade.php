@@ -31,11 +31,17 @@
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ $value->location_name }}
                         </td>
-                         <td style='padding: 7px;border: 0.5px solid'>
+                        <td style='padding: 7px;border: 0.5px solid'>
                             {{ $value->unit_name }}
                         </td>
-                         <td style='padding: 7px;border: 0.5px solid'>
+                        <td style='padding: 7px;border: 0.5px solid'>
                             {{ $value->department_name }}
+                        </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            {{ \Carbon\Carbon::create()->month((int) $value->month)->format('F') }}
+                        </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
+                            {{ $value->calendar_year }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
                             @php

@@ -20,7 +20,7 @@
                             href="{{ admin_url('kpi/master/hsc-inputs/add') }}">Add</x-button-add>
                     </div>
                     <div id="search" class="collapse">
-                        <form action="" id="formsearch">
+                        <form action="" id="formsearch" autocomplete="off">
                             <div class="card-body">
                                 <div class="col-md-12">
                                     <div class="row">
@@ -64,6 +64,20 @@
                                                 </select>
                                             </div>
                                         </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group form-input">
+                                                <label class="form-label">{{ __('common.year') }}</label>
+                                                <input type="text" name="year" id="year" class="form-control"
+                                                    placeholder="Enter Year">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group form-input">
+                                                <label class="form-label ">{{ __('common.month') }}</label>
+                                                <input type="text" name="month" id="month" class="form-control"
+                                                    placeholder="Enter Month">
+                                            </div>
+                                        </div>
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="status" class="form-label ">{{ __('common.status') }}</label>
                                             <select name="status" id="status" style="width: 100%"
@@ -99,6 +113,8 @@
                                         <th>{{ __('common.location') }}</th>
                                         <th>{{ __('common.unit') }}</th>
                                         <th>{{ __('common.department') }}</th>
+                                        <th>{{ __('common.month') }}</th>
+                                        <th>{{ __('common.year') }}</th>
                                         <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.created_by') }}</th>
                                         <th>{{ __('common.created_date') }}</th>
@@ -122,6 +138,18 @@
             $(document).ready(function() {
                 var firstTh = $('.datatable-list thead th:first');
                 firstTh.removeClass('sorting_asc');
+
+                $('#year').datepicker({
+                    format: 'yyyy',
+                    minViewMode: 2,
+                    autoclose: true
+                });
+
+                $('#month').datepicker({
+                    format: 'mm',
+                    minViewMode: 1,
+                    autoclose: true
+                });
 
                 $(document).on('change', '#company_id', function() {
                     var companyId = $(this).val();
@@ -243,6 +271,8 @@
                             d.unit_id = $('#unit_id').val();
                             d.department_id = $('#department_id').val();
                             d.status = $('#status').val();
+                            d.year = $('#year').val();
+                            d.month = $('#month').val();
 
                         },
                         error: function(xhr, error, code) {
@@ -273,6 +303,14 @@
                         {
                             data: 'department_name',
                             name: 'department_name'
+                        },
+                        {
+                            data: 'month',
+                            name: 'month'
+                        },
+                        {
+                            data: 'calendar_year',
+                            name: 'calendar_year'
                         },
 
                         {
@@ -321,6 +359,8 @@
                                         unit_id = $('#unit_id').val();
                                         department_id = $('#department_id').val();
                                         status = $('#status').val();
+                                        year = $('#year').val();
+                                        month = $('#month').val();
 
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
@@ -331,6 +371,8 @@
                                             '&location_id=' + location_id +
                                             '&unit_id=' + unit_id +
                                             '&department_id=' + department_id +
+                                            '&month=' + month +
+                                            '&year=' + year +
                                             '&status=' + status
                                     }
                                 },
@@ -344,6 +386,10 @@
                                         unit_id = $('#unit_id').val();
                                         department_id = $('#department_id').val();
                                         status = $('#status').val();
+                                        year = $('#year').val();
+                                        month = $('#month').val();
+
+
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
@@ -353,6 +399,8 @@
                                             '&location_id=' + location_id +
                                             '&unit_id=' + unit_id +
                                             '&department_id=' + department_id +
+                                            '&month=' + month +
+                                            '&year=' + year +
                                             '&status=' + status
                                     }
                                 },

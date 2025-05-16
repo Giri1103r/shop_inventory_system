@@ -47,7 +47,7 @@ class HSCInputs extends Model
             $search = $request->search['value'];
 
             $query->where(function ($query) use ($search) {
-               $query
+                $query
                     ->orWhere('company_management.company_name', 'LIKE', '%' . $search . '%')
                     ->orWhere('masters_location.location_name', 'LIKE', '%' . $search . '%')
                     ->orWhere('masters_unit.unit_name', 'LIKE', '%' . $search . '%')
@@ -55,16 +55,22 @@ class HSCInputs extends Model
             });
         }
         if ($request->has('company_id') && $request->company_id) {
-                      $query = $query->where('kpi_hsc_inputs.company_id', decryptId($request->company_id));
+            $query = $query->where('kpi_hsc_inputs.company_id', decryptId($request->company_id));
         }
         if ($request->has('location_id') && $request->location_id) {
-                      $query = $query->where('kpi_hsc_inputs.location_id', decryptId($request->location_id));
+            $query = $query->where('kpi_hsc_inputs.location_id', decryptId($request->location_id));
         }
-         if ($request->has('unit_id') && $request->unit_id) {
-                      $query = $query->where('kpi_hsc_inputs.unit_id', decryptId($request->unit_id));
+        if ($request->has('unit_id') && $request->unit_id) {
+            $query = $query->where('kpi_hsc_inputs.unit_id', decryptId($request->unit_id));
         }
-         if ($request->has('department_id') && $request->department_id) {
-                      $query = $query->where('kpi_hsc_inputs.department_id', decryptId($request->department_id));
+        if ($request->has('department_id') && $request->department_id) {
+            $query = $query->where('kpi_hsc_inputs.department_id', decryptId($request->department_id));
+        }
+        if ($request->has('month') && $request->month) {
+            $query = $query->where('kpi_hsc_inputs.month', ($request->month));
+        }
+        if ($request->has('year') && $request->year) {
+            $query = $query->where('kpi_hsc_inputs.year', ($request->year));
         }
         if ($request->has('status') && $request->status) {
             $query = $query->where('kpi_hsc_inputs.status', decryptId($request->status));
@@ -105,6 +111,7 @@ class HSCInputs extends Model
     public function store()
     {
         $request = request();
+        $financialStartYear = explode('-', $request->financial_year)[0];
         $insert_array = array(
             'company_id' => decryptId($request->company_id),
             'location_id' => decryptId($request->location_id),
@@ -112,7 +119,7 @@ class HSCInputs extends Model
             'department_id' => decryptId($request->department_id),
             'calendar_year' => $request->year,
             'month' => $request->month,
-            'financial_year' => $request->financial_year,
+            'financial_year'  => $financialStartYear,
             'created_by' => Auth::id()
         );
         return $this->create($insert_array);
@@ -124,7 +131,7 @@ class HSCInputs extends Model
         $request = request();
 
         $update_array = array(
-           'company_id' => decryptId($request->company_id),
+            'company_id' => decryptId($request->company_id),
             'location_id' => decryptId($request->location_id),
             'unit_id' => decryptId($request->unit_id),
             'department_id' => decryptId($request->department_id),
@@ -184,20 +191,25 @@ class HSCInputs extends Model
                     ->orWhere('masters_location.location_name', 'LIKE', '%' . $search . '%')
                     ->orWhere('masters_unit.unit_name', 'LIKE', '%' . $search . '%')
                     ->orWhere('masters_department.department_name', 'LIKE', '%' . $search . '%');
-
             });
         }
-       if ($request->has('company_id') && $request->company_id) {
-                      $query = $query->where('kpi_hsc_inputs.company_id', decryptId($request->company_id));
+        if ($request->has('company_id') && $request->company_id) {
+            $query = $query->where('kpi_hsc_inputs.company_id', decryptId($request->company_id));
         }
         if ($request->has('location_id') && $request->location_id) {
-                      $query = $query->where('kpi_hsc_inputs.location_id', decryptId($request->location_id));
+            $query = $query->where('kpi_hsc_inputs.location_id', decryptId($request->location_id));
         }
-         if ($request->has('unit_id') && $request->unit_id) {
-                      $query = $query->where('kpi_hsc_inputs.unit_id', decryptId($request->unit_id));
+        if ($request->has('unit_id') && $request->unit_id) {
+            $query = $query->where('kpi_hsc_inputs.unit_id', decryptId($request->unit_id));
         }
-         if ($request->has('department_id') && $request->department_id) {
-                      $query = $query->where('kpi_hsc_inputs.department_id', decryptId($request->department_id));
+        if ($request->has('department_id') && $request->department_id) {
+            $query = $query->where('kpi_hsc_inputs.department_id', decryptId($request->department_id));
+        }
+        if ($request->has('month') && $request->month) {
+            $query = $query->where('kpi_hsc_inputs.month', ($request->month));
+        }
+        if ($request->has('year') && $request->year) {
+            $query = $query->where('kpi_hsc_inputs.year', ($request->year));
         }
         if ($request->has('status') && $request->status) {
             $query = $query->where('kpi_hsc_inputs.status', decryptId($request->status));

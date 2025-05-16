@@ -32,7 +32,7 @@
 
                                 <div class="basic-form">
                                     <form method="POST" id="hscinputsadd"
-                                        action="{{ admin_url('kpi/master/hsc-inputs/add/submit') }}">
+                                        action="{{ admin_url('kpi/master/hsc-inputs/add/submit') }}" autocomplete="off">
                                         @csrf
 
                                         <div class="row">

@@ -3,16 +3,17 @@
 namespace App\Http\Controllers\KPI;
 
 use Exception;
+use Carbon\Carbon;
+use App\Models\Master\Unit;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use App\Models\KPI\HSCInputs;
+use App\Models\Master\Company;
+use App\Models\Master\Location;
+use App\Models\Master\Department;
+use App\Models\KPI\LeadingLagging;
+use App\Http\Controllers\Controller;
 use App\Models\KPI\HSCInputsLagging;
 use App\Models\KPI\HSCInputsLeading;
-use App\Models\KPI\LeadingLagging;
-use App\Models\Master\Company;
-use App\Models\Master\Department;
-use App\Models\Master\Location;
-use App\Models\Master\Unit;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Response;
@@ -67,6 +68,9 @@ class HSCInputsController extends Controller
                         ->addColumn('created_by', function ($row) {
                             return getUsername($row->created_by);
                         })
+                        ->addColumn('month', function ($row) {
+                            return Carbon::create()->month((int) $row->month)->format('F');
+                        })
                         ->addColumn('action', function ($row) {
                             $btn = '';
                             $btn = '<a href="' . admin_url('kpi/master/hsc-inputs/view/' . encryptId($row->id)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
@@ -80,6 +84,7 @@ class HSCInputsController extends Controller
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
+                    dd($ex);
                     report($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
@@ -286,6 +291,8 @@ class HSCInputsController extends Controller
                 __("common.location"),
                 __("common.unit"),
                 __("common.department"),
+                __("common.month"),
+                __("common.year"),
                 __("common.status"),
                 __("common.created_by"),
                 __("common.created_date"),
@@ -300,6 +307,8 @@ class HSCInputsController extends Controller
                 $export[] =  $data->location_name;
                 $export[] =  $data->unit_name;
                 $export[] =  $data->department_name;
+                $export[] = Carbon::create()->month($data->month)->format('F');
+                $export[] =  $data->calendar_year;
                 $export[] =  $data->status == 1 ? 'Active' : 'In-Active';
                 $export[] =  getusername($data->created_by);
                 $export[] =  Displaydateformat($data->created_at);
@@ -336,6 +345,8 @@ class HSCInputsController extends Controller
                 __("common.location"),
                 __("common.unit"),
                 __("common.department"),
+                __("common.month"),
+                __("common.year"),
                 __("common.status"),
                 __("common.created_by"),
                 __("common.created_date"),
