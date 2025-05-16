@@ -74,6 +74,7 @@ use App\Models\Inspection\Fire\EmergencyLightInspectionDetails;
 use App\Models\Inspection\Fire\MonthlyPhysicalInspectionFileUpload;
 use App\Models\Inspection\MSDS\Master\Chemical;
 use App\Models\Inspection\MSDS\Master\NFARating;
+use App\Models\KPI\LeadingLagging;
 use App\Models\Master\PpeStockinventory;
 
 if (!function_exists('get_encryptVal')) {
@@ -2603,6 +2604,24 @@ if (!function_exists('getMonth')) {
             }
         }
     }
+    if (!function_exists('getLeadingName')) {
+        function getLeadingName($type_id)
+        {
+            $data = LeadingLagging::where('type', LEADING)->where('id', $type_id)->first();
+            if ($data) {
+                return $data->value;
+            }
+        }
+    }
+    if (!function_exists('getLaggingName')) {
+        function getLaggingName($type_id)
+        {
+            $data = LeadingLagging::where('type', LAGGING)->where('id', $type_id)->first();
+            if ($data) {
+                return $data->value;
+            }
+        }
+    }
 
     // gemba Walk
 
@@ -3086,15 +3105,14 @@ if (!function_exists('InspectionCount')) {
 
 
 // Get PTW Types
-if(!function_exists('GetPTWTypes'))
-{
+if (!function_exists('GetPTWTypes')) {
     function GetPTWTypes()
     {
-        $data = TypeofWork::where('status',1)->where('trash','NO')->get();
+        $data = TypeofWork::where('status', 1)->where('trash', 'NO')->get();
 
         $details = [];
 
-        foreach($data as $data){
+        foreach ($data as $data) {
             $details[] = [
                 'id' => $data->id,
                 'work_name' => $data->work_name,
@@ -3102,7 +3120,6 @@ if(!function_exists('GetPTWTypes'))
         }
 
         return $details;
-
     }
 }
 function getPPERequestChartData($form_date, $to_date)
@@ -3136,7 +3153,7 @@ function getPPERequestChartData($form_date, $to_date)
 
 function getPTWAvgTimeChartData($form_date, $to_date)
 {
-    $query = SafetyPermit::where('permit_status',STATUS_CLOSED);
+    $query = SafetyPermit::where('permit_status', STATUS_CLOSED);
 
     if (!empty($form_date)) {
         $query->whereDate('created_at', '>=', DBdateformat($form_date));
@@ -3223,4 +3240,3 @@ function getPPEAvailabilityChartData($form_date, $to_date)
         'series' => $series,
     ];
 }
-

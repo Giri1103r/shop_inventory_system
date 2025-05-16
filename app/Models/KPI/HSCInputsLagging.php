@@ -39,4 +39,21 @@ class HSCInputsLagging extends Model
             $this->create($update_array);
         }
     }
+    public function updates($id)
+    {
+        $request = Request();
+        foreach ($request->lagging_input as $index => $value) {
+            $update_array = [
+                'hsc_inputs_id' => $id,
+                'lagging_id' => $index,
+                'value' => $value,
+                'updated_by' => Auth::id(),
+            ];
+            $this->where('hsc_inputs_id', $id)->update($update_array);
+        }
+    }
+    public function selectUsingLagging($id)
+    {
+        return $this->where('hsc_inputs_id', $id)->get();
+    }
 }

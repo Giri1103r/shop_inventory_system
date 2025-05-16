@@ -39,4 +39,22 @@ class HSCInputsLeading extends Model
             $this->create($insert_array);
         }
     }
+    public function updates($id)
+    {
+        $request = Request();
+        foreach ($request->leading_input as $index => $value) {
+            $insert_array = [
+                'hsc_inputs_id' => $id,
+                'leading_id' => $index,
+                'value' => $value,
+                'updated_by' => Auth::id(),
+            ];
+            $this->where('hsc_inputs_id', $id)->update($insert_array);
+        }
+    }
+
+    public function selectUsingLeading($id)
+    {
+        return $this->where('hsc_inputs_id', $id)->get();
+    }
 }

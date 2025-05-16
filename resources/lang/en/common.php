@@ -92,6 +92,7 @@ return [
     'month' => 'Month',
     'financial_year' => 'Financial Year',
     'leading_lagging' => 'Leading and Lagging Indicator',
+    'hsc_inputs' => 'HSC Inputs',
 
 
 ];

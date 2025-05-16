@@ -115,8 +115,13 @@ class HSCInputs extends Model
         $request = request();
 
         $update_array = array(
-            'type' => decryptId($request->type),
-            'value' => $request->value,
+           'company_id' => decryptId($request->company_id),
+            'location_id' => decryptId($request->location_id),
+            'unit_id' => decryptId($request->unit_id),
+            'department_id' => decryptId($request->department_id),
+            'calendar_year' => $request->year,
+            'month' => $request->month,
+            'financial_year' => $request->financial_year,
             'updated_by' => Auth::id()
         );
         return $this->where('id', $id)->update($update_array);

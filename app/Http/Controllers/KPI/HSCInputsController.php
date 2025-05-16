@@ -156,14 +156,12 @@ class HSCInputsController extends Controller
                 Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
                 dd($ex);
-
                 report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
             return redirect(admin_url('kpi/master/hsc-inputs/list'));
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('kpi/master/hsc-inputs/list'));
@@ -176,9 +174,14 @@ class HSCInputsController extends Controller
             $id = decryptId($request->id);
             if (Auth::check()) {
                 $hsc_inputs = $this->hsc_inputs->selectOne($id);
+                $leadings = $this->leading->selectUsingLeading($hsc_inputs->id);
+                $laggings = $this->lagging->selectUsingLagging($hsc_inputs->id);
 
                 $data = array(
                     'hsc_inputs' => $hsc_inputs,
+                    'leadings' => $leadings,
+                    'laggings' => $laggings,
+
                 );
             }
             return view('kpi.master.hsc_inputs.view', $data);
@@ -191,10 +194,17 @@ class HSCInputsController extends Controller
     {
         try {
             $id = decryptId($request->id);
-            $hsc_inputs = $this->hsc_inputs->find($id);
+            $hsc_inputs = $this->hsc_inputs->selectOne($id);
+            $leadings = $this->leading->selectUsingLeading($hsc_inputs->id);
+            $laggings = $this->lagging->selectUsingLagging($hsc_inputs->id);
+            $companies = $this->company->getCompany();
 
             $data = array(
                 'hsc_inputs' => $hsc_inputs,
+                'leadings' => $leadings,
+                'laggings' => $laggings,
+                'companies' => $companies,
+
             );
 
             return view('kpi.master.hsc_inputs.edit', $data);
@@ -208,25 +218,36 @@ class HSCInputsController extends Controller
         try {
             $id = decryptId($request->id);
             $rules = [
-
-                'type' => 'required',
-                'value' => 'required',
+                'company_id' => 'required',
+                'location_id' => 'required',
+                'unit_id' => 'required',
+                'department_id' => 'required',
+                'year' => 'required',
+                'month' => 'required',
+                'financial_year' => 'required',
             ];
             $messages = [
-                'type.required' => 'Please Select Type',
-                'value.required' => 'Please Enter Value',
-
+                'company_id.required' => 'Please Select Type',
+                'location_id.required' => 'Please Select Type',
+                'unit_id.required' => 'Please Select Type',
+                'department_id.required' => 'Please Select Type',
+                'year.required' => 'Please Enter Value',
+                'month.required' => 'Please Enter Value',
+                'financial_year.required' => 'Please Enter Value',
             ];
             $validator = Validator::make($request->all(), $rules, $messages);
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator)->withInput();
             }
 
-            $this->hsc_inputs->updates($id);
+            $hsc_inputs = $this->hsc_inputs->updates($id);
+            $leading =  $this->leading->updates($id);
+            $lagging =  $this->lagging->updates($id);
 
             Session::flash('success', 'Your data has been updated successfully!');
             return redirect(admin_url('kpi/master/hsc-inputs/list'));
         } catch (Exception $ex) {
+            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('kpi/master/hsc-inputs/list'));
