@@ -161,8 +161,9 @@ class FireCheckListFollowUpObservation extends Model
         return $data;
     }
 
-    public function getInspection($id){
-        return $this->where('inspection_id',$id)->first();
+    public function getInspection($id)
+    {
+        return $this->where('inspection_id', $id)->first();
     }
 
     public function EHSOfficerUpdate($id)
@@ -180,11 +181,12 @@ class FireCheckListFollowUpObservation extends Model
     {
         $request = request();
         $update_array = array(
-            'closed_date' => DBdateformat($request->closed_date),
-            'capa_date' => DBdateformat($request->date),
-            'capa_status' => decryptId($request->capa_status),
+            'closed_date' => !empty($request->closed_date) ? DBdateformat($request->closed_date) : null,
+            'capa_date' => !empty($request->date) ? DBdateformat($request->date) : null,
+            'capa_status' => $request->capa_status,
             'capa_remarks' => $request->capa_remarks,
         );
+
         return $this->where('id', $id)->update($update_array);
     }
 
@@ -199,7 +201,7 @@ class FireCheckListFollowUpObservation extends Model
         $this->where('id', $id)->update($update_array);
     }
 
-    public function levelOneManagerSubmit($id,$remarks)
+    public function levelOneManagerSubmit($id, $remarks)
     {
         $request = request();
         $update_array = [
@@ -210,7 +212,7 @@ class FireCheckListFollowUpObservation extends Model
         $this->where('id', $id)->update($update_array);
     }
 
-    public function levelTwoManagerSubmit($id,$remarks)
+    public function levelTwoManagerSubmit($id, $remarks)
     {
         $request = request();
         $update_array = [

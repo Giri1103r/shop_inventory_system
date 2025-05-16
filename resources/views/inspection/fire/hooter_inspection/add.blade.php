@@ -30,7 +30,8 @@
                                         action="{{ admin_url('fire/hooter-inspection/add/submit') }}" autocomplete="off"
                                         enctype="multipart/form-data">
                                         @csrf
-                                        <input type="hidden" name="document_reference_id" value="{{ encryptId($document_no->id) }}">
+                                        <input type="hidden" name="document_reference_id"
+                                            value="{{ encryptId($document_no->id) }}">
                                         <div class="row">
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
@@ -89,6 +90,19 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
+                                                    <label class="form-label require">{{ __('inspection.unit') }}</label>
+                                                    <select name="unit_id" id="unit_id"
+                                                        class=" form-control single-select" style="width: 100%">
+                                                        <option value="">Select Unit</option>
+
+                                                    </select>
+                                                </div>
+                                                @error('unit_id')
+                                                    <div class="error">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
                                                     <label class="form-label require">Shift</label>
                                                     <select name="shift_id" id="shift_id"
                                                         class=" form-control single-select" style="width: 100%">
@@ -115,23 +129,7 @@
                                                     <div class="error">{{ $message }}</div>
                                                 @enderror
                                             </div>
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label require">{{ __('inspection.unit') }}</label>
-                                                    <select name="unit_id" id="unit_id"
-                                                        class=" form-control single-select" style="width: 100%">
-                                                        <option value="">Select Unit</option>
-                                                        @foreach ($units as $unit)
-                                                            <option value="{{ encryptId($unit->id) }}"
-                                                                {{ old('unit_id.1') == encryptId($unit->id) ? 'selected' : '' }}>
-                                                                {{ $unit->unit_name }}</option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-                                                @error('unit_id')
-                                                    <div class="error">{{ $message }}</div>
-                                                @enderror
-                                            </div>
+
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label
@@ -184,26 +182,17 @@
                                         </div>
                                         <hr>
                                         <div class="form-wrapper">
+                                            <div class="card-header-inner d-flex justify-content-between">
+                                                <h4 class="text-white">Hooter Inspection Checklist</h4>
+                                                <button class="btn btn-primary add-row mb-2 " type="button"
+                                                    id="add-row"
+                                                    style="margin-left: 10px;  margin-right: 10px; width: 84px;">
+                                                    Add
+                                                </button>
+                                            </div>
                                             <div class="row mt-4 form-set">
-                                                <div class="card-header-inner p-2">
-                                                    <h4 class="text-white">Hooter Inspection Checklist</h4>
-                                                </div>
 
-                                                <div class="d-flex justify-content-end align-items-center gap-2 m-2">
-                                                    <button class="btn btn-primary add-row" type="button" id="add-row"
-                                                        style="min-width: 130px;">
-                                                        Add
-                                                    </button>
-                                                    {{-- <button class="btn btn-primary add-obs" type="button" id="add-obs"
-                                                        style="min-width: 160px;">
-                                                        Add Observation
-                                                    </button> --}}
-                                                    <button type="button"
-                                                        class="btn btn-danger remove-row d-flex align-items-center"
-                                                        style="min-width: 130px;">
-                                                        <i class="fa-solid fa-trash me-2"></i> Remove
-                                                    </button>
-                                                </div>
+
 
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
@@ -316,6 +305,11 @@
                                                 </div>
 
 
+                                                <div class="col-md-2 text-right  mt-4">
+                                                    <button class="btn btn-danger remove-row" type="button"
+                                                        style="margin:10px;"><i class="fa fa-trash"></i></button>
+
+                                                </div>
                                             </div>
                                         </div>
                                         <div class="form-observation">
@@ -361,6 +355,33 @@
 
     @push('script')
         <script type="text/javascript" nonce="projectcab">
+            // location based unit
+
+            $(document).on('change', '#location_id', function() {
+                var locationId = $(this).val();
+                if (locationId) {
+                    $.ajax({
+                        url: "{{ admin_url('unit/ajax-list') }}/" + locationId + "/0",
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(data) {
+                            $('#unit_id').empty().append(
+                                '<option value="">Select unit</option>');
+                            $.each(data, function(key, value) {
+                                $('#unit_id').append('<option value="' + value
+                                    .id + '">' + value.name + '</option>');
+                            });
+                            $('#unit_id').trigger('change.');
+                        },
+                        error: function(xhr) {
+                            alert('Error fetching unit. Please try again.');
+                        }
+                    });
+                } else {
+                    $('#unit_id').empty().append('<option value="">Select unit</option>');
+                    $('#unit_id').trigger('change.');
+                }
+            });
             $(document).ready(function() {
                 $('#resetform').on('click', function(e) {
                     e.preventDefault();
@@ -422,7 +443,7 @@
                         },
                         "check_items[1]": {
                             required: true,
-                            minlength:3,
+                            minlength: 3,
                             maxlength: 300,
                         },
                         "quantity[1]": {
@@ -433,12 +454,12 @@
                         },
                         "resource_code[1]": {
                             required: true,
-                            minlength:3,
-                            maxlength:30,
+                            minlength: 3,
+                            maxlength: 30,
                         },
                         "remarks[1]": {
                             required: true,
-                            minlength:3,
+                            minlength: 3,
                             maxlength: 300,
                         },
                         device_image: {
@@ -571,20 +592,7 @@
 
                     var newFormSet = `
                         <div class="row mt-4 form-set">
-                                                <div class="card-header-inner p-2">
-                                                    <h4 class="text-white">Hooter Inspection Checklist</h4>
-                                                </div>
 
-                                                <div class="d-flex justify-content-end gap-0 m-2">
-                                                    <button class="btn btn-primary add-row me-3" type="button"
-                                                        id="add-row" style="width: 84px;">
-                                                        Add
-                                                    </button>
-                                                    <button type="button" class="btn btn-danger remove-row">
-                                                        <i class="fa-solid fa-trash"></i> Remove
-                                                    </button>
-
-                                                </div>
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
@@ -662,7 +670,11 @@
 
                                                     </div>
                                                 </div>
+                                                <div class="col-md-2 text-right mb-1  mt-4">
+                                                    <button class="btn btn-danger remove-row" type="button"
+                                                        style="margin:10px;"><i class="fa fa-trash"></i></button>
 
+                                                </div>
                                             </div>
                     `;
 
@@ -682,8 +694,8 @@
 
                     $("input[name='resource_code[" + form_set_count + "]']").rules('add', {
                         required: true,
-                        minlength:3,
-                        maxlength:30,
+                        minlength: 3,
+                        maxlength: 30,
                         messages: {
                             required: 'Please add the resource code',
                             minlength: "Minimum Characters should be 3",
@@ -700,8 +712,8 @@
 
                     $("textarea[name='check_items[" + form_set_count + "]']").rules('add', {
                         required: true,
-                        minlength:3,
-                        maxlength:300,
+                        minlength: 3,
+                        maxlength: 300,
                         messages: {
                             required: 'Please add the condition of the hooter',
                             minlength: "Minimum Characters should be 3",
@@ -711,8 +723,8 @@
 
                     $("textarea[name='remarks[" + form_set_count + "]']").rules('add', {
                         required: true,
-                        minlength:3,
-                        maxlength:300,
+                        minlength: 3,
+                        maxlength: 300,
                         messages: {
                             required: 'Please add the remarks',
                             minlength: "Minimum Characters should be 3",

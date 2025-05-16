@@ -135,31 +135,31 @@ class SafetyPermitController extends Controller
                             <i class="fa-solid fa-check-to-slot text-success"></i>
                         </a>';
                             }
+                            if (!empty($row->to_date)) {
+                                $permitDate = date('Y-m-d', strtotime($row->to_date));
+                                $nextDay = date('Y-m-d', strtotime($permitDate . ' +1 day'));
+                                $today = date('Y-m-d');
+                                $toTime = Carbon::parse($row->time_to);
+                                $currentTime = Carbon::now();
 
-                            $permitDate = date('Y-m-d', strtotime($row->to_date));
-                            $nextDay = date('Y-m-d', strtotime($permitDate . ' +1 day'));
-                            $today = date('Y-m-d');
-                            $toTime = Carbon::parse($row->time_to); // Ensure it's a Carbon instance
-                            $currentTime = Carbon::now();
-
-                            if ($today == $nextDay) {
-                                if (
-                                    $row->permit_status == STATUS_PERMIT_EXPIRED &&
-                                    $currentTime->lessThanOrEqualTo($toTime) &&
-                                    ($row->created_by == Auth::id() || CheckUserRole(ROLE_SUPERADMIN))
-                                ) {
-                                    $btn .= '<a href="' . admin_url('safetypermit/permitExtension/' . encryptId($row->id)) . '"
+                                if ($today == $nextDay) {
+                                    if (
+                                        $row->permit_status == STATUS_PERMIT_EXPIRED &&
+                                        $currentTime->lessThanOrEqualTo($toTime) &&
+                                        ($row->created_by == Auth::id() || CheckUserRole(ROLE_SUPERADMIN))
+                                    ) {
+                                        $btn .= '<a href="' . admin_url('safetypermit/permitExtension/' . encryptId($row->id)) . '"
                                     class="permitExtension" title="' . __('Permit Extension') . '">
                                     <i class="fa fa-external-link"></i></a>';
-                                }
-                            } else if (($permitDate == $today) && ($row->permit_status == STATUS_PERMIT_EXPIRED)
-                                && ($row->created_by == Auth::id() || CheckUserRole(ROLE_SUPERADMIN))
-                            ) {
-                                $btn .= '<a href="' . admin_url('safetypermit/permitExtension/' . encryptId($row->id)) . '"
+                                    }
+                                } else if (($permitDate == $today) && ($row->permit_status == STATUS_PERMIT_EXPIRED)
+                                    && ($row->created_by == Auth::id() || CheckUserRole(ROLE_SUPERADMIN))
+                                ) {
+                                    $btn .= '<a href="' . admin_url('safetypermit/permitExtension/' . encryptId($row->id)) . '"
                                 class="permitExtension" title="' . __('Permit Extension') . '">
                                 <i class="fa fa-external-link"></i></a>';
+                                }
                             }
-
 
                             if (CheckUserPermission('view')) {
                                 $btn .= '<a href="' . admin_url('safetypermit/view/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="' . __('common.view') . '">
@@ -404,8 +404,13 @@ class SafetyPermitController extends Controller
             if (Auth::check()) {
                 $safetypermit = $this->safetypermit->selectOne($id);
                 $workmaninvolved = $this->safetypermit->workmaninvolved($id);
-                $stateIsolationLoto = json_decode($safetypermit->state_isolation_loto);
-                $confined_space_entry = json_decode($safetypermit->confined_space_entry);
+                $stateIsolationLoto = !empty($safetypermit->state_isolation_loto)
+                    ? json_decode($safetypermit->state_isolation_loto, true)
+                    : null;
+
+                $confined_space_entry = !empty($safetypermit->confined_space_entry)
+                    ? json_decode($safetypermit->confined_space_entry, true)
+                    : null;
 
                 $status_log = $this->statuslog->selectOne($id);
 
