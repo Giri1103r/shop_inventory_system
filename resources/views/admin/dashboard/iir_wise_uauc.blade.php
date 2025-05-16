@@ -33,7 +33,7 @@
             toolbar: {
                 show: false
             },
-            
+       
         },
         plotOptions: {
             bar: {

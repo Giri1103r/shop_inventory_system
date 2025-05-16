@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', ' Daily Departmental First Aid Box Approval')
+@section('title', ' Daily Departmental First Aid Box')
 @section('pageurl', admin_url('ohc/first-aid-box/daily-departmental/list'))
 
 @push('style')

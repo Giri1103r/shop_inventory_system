@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Fire Modular Inspection Approve')
+@section('title', 'Fire Modular Inspection')
 @section('pageurl', admin_url('fire/fire-modular-inspection/checklist/list'))
 @section('content')
     <div class="clearfix"></div>

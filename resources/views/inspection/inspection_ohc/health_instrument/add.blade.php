@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Health Instrument Calibration Add')
+@section('title', 'Health Instrument Calibration')
 @section('pageurl', admin_url('ohc/first-aider/list'))
 
 @section('content')

@@ -24,7 +24,7 @@
                                 <div class="col-md-12">
                                     <div class="row">
 
-                                        <div class="col-md-3 mb-2">
+                                        <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
                                                 <label class="form-label require">{{ __('inspection.location') }}</label>
                                                 <select name="location_id" id="location_id"
@@ -39,7 +39,7 @@
                                             </div>
                                         </div>
 
-                                        <div class="col-md-3 mb-3 form-input">
+                                        <div class="col-md-4 mb-3 form-input">
                                             <label class="form-label require">Shift</label>
                                             <select name="shift_id" id="shift_id" class=" form-control single-select"
                                                 style="width: 100%">
@@ -50,7 +50,7 @@
                                                 @endforeach
                                             </select>
                                         </div>
-                                        <div class="col-md-3 mb-3 form-input">
+                                        <div class="col-md-4 mb-3 form-input">
 
                                             <label class="form-label require">{{ __('inspection.unit') }}</label>
                                             <select name="unit_id" id="unit_id" class=" form-control single-select"
@@ -62,7 +62,7 @@
                                                 @endforeach
                                             </select>
                                         </div>
-                                        <div class="col-md-3 mb-3 form-input">
+                                        <div class="col-md-4 mb-3 form-input">
 
                                             <label class="form-label require">{{ __('inspection.frequency') }}</label>
                                             <select name="frequency_id" id="frequency_id"
@@ -75,7 +75,7 @@
                                             </select>
                                         </div>
 
-                                        <div class="col-md-3 mb-3 form-input">
+                                        <div class="col-md-4 mb-3 form-input">
                                             <label for="inspection_status"
                                                 class="form-label ">{{ __('common.status') }}</label>
                                             <select name="inspection_status" id="inspection_status" style="width: 100%"
@@ -116,7 +116,7 @@
                                             </div>
                                         </div>
 
-                                        <div class="col-md-3 mt-3">
+                                        <div class="col-md-4 mt-3">
                                             <x-button-search></x-button-search>
                                             <x-button-reset></x-button-reset>
 

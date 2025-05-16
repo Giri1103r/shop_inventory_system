@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Cartridge Type Fire Extinguisher Inspection Add')
+@section('title', 'Cartridge Type Fire Extinguisher Inspection')
 @section('pageurl', admin_url('fire/fire-extinguisher/cartridge/list'))
 @section('content')
     <div class="clearfix"></div>
@@ -19,7 +19,8 @@
                         <div class="card">
                             <div class="card-header">
                                 <div class="align-back-btc">
-                                    <x-button-back href="{{ admin_url('fire/fire-extinguisher/cartridge/list') }}"></x-button-back>
+                                    <x-button-back
+                                        href="{{ admin_url('fire/fire-extinguisher/cartridge/list') }}"></x-button-back>
                                 </div>
                             </div>
 
@@ -27,8 +28,8 @@
 
                                 <div class="basic-form mx-3">
                                     <form method="POST" id="cotypefireAdd"
-                                        action="{{ admin_url('fire/fire-extinguisher/cartridge/add/submit') }}" autocomplete="off"
-                                        enctype="multipart/form-data">
+                                        action="{{ admin_url('fire/fire-extinguisher/cartridge/add/submit') }}"
+                                        autocomplete="off" enctype="multipart/form-data">
                                         @csrf
 
                                         <div class="row">
@@ -36,33 +37,66 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">{{ __('inspection.doc_no') }}</label>
                                                     <input type="text" name="doc_no" id = "doc_no" class="form-control"
-                                                        placeholder="Document Number"
-                                                        value="{{ $document_no->doc_no }}" readonly>
+                                                        placeholder="Document Number" value="{{ $document_no->doc_no }}"
+                                                        readonly>
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label
                                                         class="form-label require">{{ __('inspection.issue_date') }}</label>
-                                                    <input type="text" name="issue_date" id = ""
-                                                        class="form-control" placeholder="Issued Date"
-                                                        value="{{ displaydateformat($document_no->issue_date) }}" readonly>
+
+
+                                                    <div class="input-group date form-input  custom-height">
+                                                        <input type="text" name="issue_date" id = ""
+                                                            class="form-control" placeholder="Issued Date"
+                                                            value="{{ displaydateformat($document_no->issue_date) }}"
+                                                            readonly>
+                                                        <div class="input-group-addon input-group-text">
+                                                            <span class="fa fa-calendar"></span>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label
                                                         class="form-label require">{{ __('inspection.rev_date') }}</label>
-                                                    <input type="text" name="rev_date" id = "rev_date" placeholder="Revision & Data"
-                                                        class="form-control" value="{{ $document_no->rev_dt }}" readonly>
+                                                    <input type="text" name="rev_date" id = "rev_date"
+                                                        placeholder="Revision & Data" class="form-control"
+                                                        value="{{ $document_no->rev_dt }}" readonly>
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label
                                                         class="form-label require">{{ __('inspection.inspection_date') }}</label>
-                                                    <input type="text" name="inspection_date" id = "inspection_date"
-                                                        class="form-control" value="{{old('inspection_date')}}" placeholder="Date of Inspection">
+
+
+                                                    <div class="input-group date form-input  custom-height">
+                                                        <input type="text" name="inspection_date" id = "inspection_date"
+                                                            class="form-control" value="{{ old('inspection_date') }}"
+                                                            placeholder="Date of Inspection">
+                                                        <div class="input-group-addon input-group-text">
+                                                            <span class="fa fa-calendar"></span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                             <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label
+                                                        class="form-label require">{{ __('inspection.next_due') }}</label>
+
+
+                                                    <div class="input-group date form-input  custom-height">
+                                                        <input type="text" name="next_due" id = "next_due"
+                                                            class="form-control" value="{{ old('next_due') }}"
+                                                            placeholder="Next Due On">
+                                                        <div class="input-group-addon input-group-text">
+                                                            <span class="fa fa-calendar"></span>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -81,6 +115,16 @@
                                                     </select>
                                                 </div>
                                             </div>
+                                             <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">{{ __('inspection.unit') }}</label>
+                                                    <select name="unit_id" id="unit_id"
+                                                        class=" form-control single-select" style="width: 100%">
+                                                        <option value="">Select Unit</option>
+
+                                                    </select>
+                                                </div>
+                                            </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Shift</label>
@@ -95,28 +139,8 @@
                                                     </select>
                                                 </div>
                                             </div>
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label
-                                                        class="form-label require">{{ __('inspection.next_due') }}</label>
-                                                    <input type="text" name="next_due" id = "next_due"
-                                                        class="form-control" value="{{ old('next_due') }}" placeholder="Next Due On">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label require">{{ __('inspection.unit') }}</label>
-                                                    <select name="unit_id" id="unit_id"
-                                                        class=" form-control single-select" style="width: 100%">
-                                                        <option value="">Select Unit</option>
-                                                        @foreach ($units as $unit)
-                                                            <option value="{{ encryptId($unit->id) }}"
-                                                                {{ old('unit_id') == encryptId($unit->id) ? 'selected' : '' }}>
-                                                                {{ $unit->unit_name }}</option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-                                            </div>
+
+
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label
@@ -165,7 +189,8 @@
                                         <div class="form-wrapper">
                                             <div class="row mt-4 form-set">
                                                 <div class="card-header-inner p-2">
-                                                    <h4 class="text-white">Cartridge Type Fire Extinguisher Inspection Checklist</h4>
+                                                    <h4 class="text-white">Cartridge Type Fire Extinguisher Inspection
+                                                        Checklist</h4>
                                                 </div>
 
                                                 <div class="d-flex justify-content-end align-items-center gap-2 m-2">
@@ -191,10 +216,9 @@
                                                 </div>
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">FIRE POINT NO</label>
-                                                       <input type="text" name="fire_point_no[1]" id="fire_point_no" class="form-control"
-                                                       placeholder="Fire Point No">
+                                                        <label class="form-label require">FIRE POINT NO</label>
+                                                        <input type="text" name="fire_point_no[1]" id="fire_point_no"
+                                                            class="form-control" placeholder="Fire Point No">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 mb-2">
@@ -244,16 +268,16 @@
                                                 </div>
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">Capacity</label>
-                                                       <input type="text" name="capacity[1]" id="capacity" placeholder="Capacity" class="form-control">
+                                                        <label class="form-label require">Capacity</label>
+                                                        <input type="text" name="capacity[1]" id="capacity"
+                                                            placeholder="Capacity" class="form-control">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">Quantity</label>
-                                                       <input type="text" name="quantity[1]" id="quantity" placeholder="Quantity" class="form-control">
+                                                        <label class="form-label require">Quantity</label>
+                                                        <input type="text" name="quantity[1]" id="quantity"
+                                                            placeholder="Quantity" class="form-control">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 mb-2">
@@ -274,14 +298,13 @@
                                                 </div>
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">Handle</label>
+                                                        <label class="form-label require">Handle</label>
                                                         <select name="handle[1]" id="handle"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Handle</option>
                                                             <option value="{{ encryptId(GOOD) }}"
                                                                 {{ old('handle.1') == encryptId(GOOD) ? 'selected' : '' }}>
-                                                               GOOD
+                                                                GOOD
                                                             </option>
                                                             <option value="{{ encryptId(DAMAGED) }}"
                                                                 {{ old('handle.1') == encryptId(DAMAGED) ? 'selected' : '' }}>
@@ -292,8 +315,7 @@
                                                 </div>
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">Wheel</label>
+                                                        <label class="form-label require">Wheel</label>
                                                         <select name="wheel[1]" id="wheel"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Wheel</option>
@@ -308,9 +330,10 @@
                                                 </div>
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">Weight of Cartridge</label>
-                                                       <input type="text" name="weight_of_cartidge[1]" placeholder="Weight of Cartridge" id="weight_of_cartidge" class="form-control">
+                                                        <label class="form-label require">Weight of Cartridge</label>
+                                                        <input type="text" name="weight_of_cartidge[1]"
+                                                            placeholder="Weight of Cartridge" id="weight_of_cartidge"
+                                                            class="form-control">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 mb-2">
@@ -334,9 +357,9 @@
                                                 </div>
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">Approach</label>
-                                                        <input type="text" name="approach[1]" placeholder="Approach" id="approach" class="form-control">
+                                                        <label class="form-label require">Approach</label>
+                                                        <input type="text" name="approach[1]" placeholder="Approach"
+                                                            id="approach" class="form-control">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-12 mb-2">
@@ -353,7 +376,8 @@
                                         <div class="form-observation">
                                             <div class="row mt-4 form-obs">
                                                 <div class="card-header-inner p-2">
-                                                    <h4 class="text-white">Cartridge Type Fire Extinguisher Inspection Observation</h4>
+                                                    <h4 class="text-white">Cartridge Type Fire Extinguisher Inspection
+                                                        Observation</h4>
                                                 </div>
 
                                                 <div class="col-md-12 mb-2">
@@ -364,11 +388,13 @@
                                                         <div class="mb-2">
                                                             <label class="me-3">
                                                                 <input type="radio" name="observation_needed"
-                                                                    value="{{encryptId(1)}}" class="validate-radio-required"> Yes
+                                                                    value="{{ encryptId(1) }}"
+                                                                    class="validate-radio-required"> Yes
                                                             </label>
                                                             <label>
                                                                 <input type="radio" name="observation_needed"
-                                                                    value="{{encryptId(2)}}" class="validate-radio-required"> No
+                                                                    value="{{ encryptId(2) }}"
+                                                                    class="validate-radio-required"> No
                                                             </label>
                                                         </div>
                                                     </div>
@@ -398,17 +424,53 @@
 
     @push('script')
         <script type="text/javascript" nonce="projectcab">
+            $(document).on('change', '#location_id', function() {
+                var locationId = $(this).val();
+                if (locationId) {
+                    $.ajax({
+                        url: "{{ admin_url('unit/ajax-list') }}/" + locationId + "/0",
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(data) {
+                            $('#unit_id').empty().append(
+                                '<option value="">Select unit</option>');
+                            $.each(data, function(key, value) {
+                                $('#unit_id').append('<option value="' + value
+                                    .id + '">' + value.name + '</option>');
+                            });
+                            $('#unit_id').trigger('change.');
+                        },
+                        error: function(xhr) {
+                            alert('Error fetching unit. Please try again.');
+                        }
+                    });
+                } else {
+                    $('#unit_id').empty().append('<option value="">Select unit</option>');
+                    $('#unit_id').trigger('change.');
+                }
+            });
             $(document).ready(function() {
                 $('#resetform').on('click', function(e) {
                     e.preventDefault();
                     location.reload();
                 });
-                flatpickr("#inspection_date", {
+
+
+                var fromDatepicker = flatpickr("#inspection_date", {
                     dateFormat: "d-m-Y",
-                });
-                flatpickr("#next_due", {
+                    onChange: function(selectedDates) {
+                        if (selectedDates.length > 0) {
+                            var startDate = selectedDates[0];
+                            toDatepicker.set('minDate', startDate);
+                            toDatepicker.clear();
+                        }
+                    }
+
+                })
+
+                var toDatepicker = flatpickr("#next_due", {
                     dateFormat: "d-m-Y",
-                    minDate: new Date(),
+
                 });
             });
             $(function() {
@@ -882,7 +944,7 @@
                     $("input[name='quantity[" + form_set_count + "]']").rules('add', {
                         required: true,
                         noSpaces: true,
-                        number:true,
+                        number: true,
                         messages: {
                             required: 'Please Enter the Quantity',
                             noSpaces: 'Quantity cannot be empty or only spaces',
@@ -948,20 +1010,20 @@
                     form_set_count++;
                     updatePageIndices();
 
-                      $(document).on('click', '#add-obs', function() {
-                    let observationFormsets = $('.form-observation .form-obs').length;
+                    $(document).on('click', '#add-obs', function() {
+                        let observationFormsets = $('.form-observation .form-obs').length;
 
-                    if (currentFormSets >= maxObsSets) {
-                        Swal.fire({
-                            icon: 'warning',
-                            title: 'Maximum Detector Inspection Observation Limit Reached',
-                            text: 'You can only add up to 5 Detector Inspection Observation.',
-                            confirmButtonColor: '#3085d6'
-                        });
-                        return;
-                    }
+                        if (currentFormSets >= maxObsSets) {
+                            Swal.fire({
+                                icon: 'warning',
+                                title: 'Maximum Detector Inspection Observation Limit Reached',
+                                text: 'You can only add up to 5 Detector Inspection Observation.',
+                                confirmButtonColor: '#3085d6'
+                            });
+                            return;
+                        }
 
-                    var newObsSet = `
+                        var newObsSet = `
                         <div class="row mt-4 form-obs">
                                                 <div class="card-header-inner p-2">
                                                     <h4 class="text-white">Detector Inspection Observation</h4>
@@ -995,7 +1057,7 @@
                                             </div>
                     `;
 
-                });
+                    });
 
                 });
 

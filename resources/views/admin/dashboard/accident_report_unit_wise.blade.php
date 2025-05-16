@@ -1,6 +1,8 @@
 <div id="AccidentReportChart"></div>
 
 <script>
+    var lookup = {!! json_encode($formattedData['lookup']) !!};
+
     var options = {
         series: [{
                 name: 'Major',
@@ -17,17 +19,34 @@
         ],
         chart: {
             type: 'bar',
-            height: 400,
+            height: 350,
             toolbar: {
                 show: false
             },
+            events: {
+                dataPointSelection: function(event, chartContext, config) {
+                    var seriesName = chartContext.w.config.series[config.seriesIndex].name;
+                    var unitName = chartContext.w.config.xaxis.categories[config.dataPointIndex];
+
+                    var selected = lookup[seriesName] && lookup[seriesName][unitName];
+                    if (selected) {
+                        var unitId = selected.unit_id;
+                        var injuryType = selected.injury_type;
+                        alert(unitId);
+                        alert(injuryType);
+                        redirectToIms('',unitId, '',injuryType);
+                    }
+                }
+            }
         },
+
         plotOptions: {
             bar: {
                 horizontal: false,
                 columnWidth: '55%',
-                endingShape: 'rounded'
-            }
+                borderRadius: 5,
+                borderRadiusApplication: 'end'
+            },
         },
         dataLabels: {
             enabled: true
@@ -61,7 +80,7 @@
         legend: {
             position: 'bottom'
         },
-        colors: ['#EF4444', '#FACC15', '#6366F1'] 
+        colors: ['#EF4444', '#FACC15', '#6366F1']
     };
 
     var chart = new ApexCharts(document.querySelector("#AccidentReportChart"), options);

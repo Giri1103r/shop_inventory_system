@@ -77,22 +77,23 @@ class SandBucketInspection extends Model
         }
 
         if (isset($request->unit) && $request->unit) {
-            $query = $query->where('inspection_fire_sand_bucket.unit', 'LIKE', '%' . decryptId($request->unit) . '%');
+            $query = $query->where('inspection_fire_sand_bucket.unit',  decryptId($request->unit));
         }
         if (isset($request->shift) && $request->shift) {
-            $query = $query->where('inspection_fire_sand_bucket.shift', 'LIKE', '%' . decryptId($request->shift) . '%');
+            $query = $query->where('inspection_fire_sand_bucket.shift',  decryptId($request->shift));
         }
         if (isset($request->location) && $request->location) {
-            $query = $query->where('inspection_fire_sand_bucket.location', 'LIKE', '%' . decryptId($request->location) . '%');
+            $query = $query->where('inspection_fire_sand_bucket.location',  decryptId($request->location));
         }
         if (isset($request->frequency) && $request->frequency) {
-            $query = $query->where('inspection_fire_sand_bucket.frequency', 'LIKE', '%' . decryptId($request->frequency) . '%');
+            $query = $query->where('inspection_fire_sand_bucket.frequency',  decryptId($request->frequency));
         }
-        if (isset($request->date_of_inspection) && $request->date_of_inspection) {
-            $query = $query->where('inspection_fire_sand_bucket.date_of_inspection', 'LIKE', '%' . DBdateformat($request->date_of_inspection) . '%');
+        if (isset($request->inspection_date) && $request->inspection_date) {
+            
+            $query = $query->where('inspection_fire_sand_bucket.date_of_inspection',  DBdateformat($request->inspection_date));
         }
         if (isset($request->next_due) && $request->next_due) {
-            $query = $query->where('inspection_fire_sand_bucket.next_due', 'LIKE', '%' . DBdateformat($request->next_due) . '%');
+            $query = $query->where('inspection_fire_sand_bucket.next_due',  DBdateformat($request->next_due));
         }
         if (isset($request->inspection_status) && $request->inspection_status) {
             $query = $query->where('inspection_fire_sand_bucket.inspection_status', decryptId($request->inspection_status));

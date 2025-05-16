@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Hooter Inspection View')
+@section('title', 'Hooter Inspection')
 @section('pageurl', admin_url('fire/hooter-inspection/list'))
 @section('content')
     <div class="clearfix"></div>

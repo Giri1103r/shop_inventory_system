@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Certified Fire Fighter Show')
+@section('title', 'Certified Fire Fighter')
 @section('pageurl', admin_url('fire/certified-fire-fighter/list'))
 
 
@@ -150,7 +150,7 @@
 
                                                         </div>
                                                     </div>
-                                                   
+
 
                                                 </div>
                                                 <hr>

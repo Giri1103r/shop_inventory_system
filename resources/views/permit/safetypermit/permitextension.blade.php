@@ -111,7 +111,7 @@
         });
 
         $(document).ready(function() {
-            @if (!($showAlert))
+            @if (($showAlert))
                 Swal.fire({
                     title: 'Permit Extended',
                     text: 'This safety permit has already been extended.',

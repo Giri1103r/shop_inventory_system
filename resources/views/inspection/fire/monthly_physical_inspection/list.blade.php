@@ -24,14 +24,20 @@
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
                                                 <label
-                                                    class="form-label require">{{ __('inspection.inspection_date') }}</label>
-                                                <input type="text" name="inspection_date" id = "inspection_date"
-                                                    class="form-control inspection_date">
+                                                    class="form-label">{{ __('inspection.inspection_date') }}</label>
+
+                                                <div class="input-group date form-input custom-height">
+                                                    <input type="text" name="inspection_date" id = "inspection_date"
+                                                        class="form-control inspection_date">
+                                                    <div class="input-group-addon input-group-text">
+                                                        <span class="fa fa-calendar"></span>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
-                                                <label class="form-label require">{{ __('inspection.location') }}</label>
+                                                <label class="form-label">{{ __('inspection.location') }}</label>
                                                 <select name="location_id" id="location_id"
                                                     class=" form-control single-select" style="width: 100%">
                                                     <option value="">Select {{ __('inspection.location') }}
@@ -49,7 +55,7 @@
                                         </div>
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
-                                                <label class="form-label require">{{ __('inspection.unit') }}</label>
+                                                <label class="form-label">{{ __('inspection.unit') }}</label>
                                                 <select name="unit_id" id="unit_id" class=" form-control single-select"
                                                     style="width: 100%">
                                                     <option value="">Select Unit</option>
@@ -65,7 +71,7 @@
                                             @enderror
                                         </div>
 
-                                         <div class="col-md-4 mb-3 form-input">
+                                        <div class="col-md-4 mb-3 form-input">
                                             <label for="emp_name" class="form-label ">From Date</label>
                                             <div class="input-group date form-input custom-height">
                                                 <input type="text" class="form-control " name="from_date" id="from_date"
@@ -80,8 +86,8 @@
                                         <div class="col-md-4 mb-3 form-input">
                                             <label for="emp_name" class="form-label ">To Date</label>
                                             <div class="input-group date form-input  custom-height">
-                                                <input type="text" class="form-control " name="to_date"
-                                                    id="to_date" autocomplete="off">
+                                                <input type="text" class="form-control " name="to_date" id="to_date"
+                                                    autocomplete="off">
                                                 <div class="input-group-addon input-group-text">
                                                     <span class="fa fa-calendar"></span>
                                                 </div>
@@ -126,6 +132,31 @@
 
     @push('script')
         <script type="text/javascript">
+            $(document).on('change', '#location_id', function() {
+                var locationId = $(this).val();
+                if (locationId) {
+                    $.ajax({
+                        url: "{{ admin_url('unit/ajax-list') }}/" + locationId + "/0",
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(data) {
+                            $('#unit_id').empty().append(
+                                '<option value="">Select unit</option>');
+                            $.each(data, function(key, value) {
+                                $('#unit_id').append('<option value="' + value
+                                    .id + '">' + value.name + '</option>');
+                            });
+                            $('#unit_id').trigger('change.');
+                        },
+                        error: function(xhr) {
+                            alert('Error fetching unit. Please try again.');
+                        }
+                    });
+                } else {
+                    $('#unit_id').empty().append('<option value="">Select unit</option>');
+                    $('#unit_id').trigger('change.');
+                }
+            });
             $(document).ready(function() {
                 var firstTh = $('.datatable-list thead th:first');
                 firstTh.removeClass('sorting_asc');
@@ -192,7 +223,7 @@
                             d.inspection_date = $('#inspection_date').val();
                             d.location_id = $('#location_id').val();
                             d.unit_id = $('#unit_id').val();
-                             d.from_date = $('#from_date').val();
+                            d.from_date = $('#from_date').val();
                             d.to_date = $('#to_date').val();
                         },
                         error: function(xhr, error, code) {
@@ -252,7 +283,7 @@
                                         inspection_date = $('#inspection_date').val();
                                         location_id = $('#location_id').val();
                                         unit_id = $('#unit_id').val();
-                                           var from_date = $('#from_date').val();
+                                        var from_date = $('#from_date').val();
                                         var to_date = $('#to_date').val();
 
 
@@ -263,7 +294,7 @@
                                             '?search=' + searchValue +
                                             '&inspection_date=' + inspection_date +
                                             '&location_id=' + location_id +
-                                             '&from_date=' + from_date +
+                                            '&from_date=' + from_date +
                                             '&to_date=' + to_date +
                                             '&unit_id=' + unit_id
                                     }
@@ -276,7 +307,7 @@
                                         inspection_date = $('#inspection_date').val();
                                         location_id = $('#location_id').val();
                                         unit_id = $('#unit_id').val();
-                                           var from_date = $('#from_date').val();
+                                        var from_date = $('#from_date').val();
                                         var to_date = $('#to_date').val();
 
                                         $(".dt-button").removeClass('processing');
@@ -286,7 +317,7 @@
                                             '?search=' + searchValue +
                                             '&inspection_date=' + inspection_date +
                                             '&location_id=' + location_id +
-                                             '&from_date=' + from_date +
+                                            '&from_date=' + from_date +
                                             '&to_date=' + to_date +
                                             '&unit_id=' + unit_id
                                     }

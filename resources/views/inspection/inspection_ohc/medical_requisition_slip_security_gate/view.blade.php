@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', ' Medical Requisition Slip- Fdo & Security Gate Show')
+@section('title', ' Medical Requisition Slip- Fdo & Security Gate ')
 @section('pageurl', admin_url('ohc/medical-requisition-slip/fdo-security-gate/list'))
 
 @push('style')

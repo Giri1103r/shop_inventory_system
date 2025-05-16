@@ -642,7 +642,7 @@ class SafetyPermit extends Model
         $insert_array = array(
             'permit_id' => $newPermitID,
             'date' => DBdateformat(now()),
-            'to_date' => DBdateformat($safetypermit->to_date),
+            'to_date' => DBdateformat($request->date),
             'time_from' => $safetypermit->time_from,
             'time_to' => $request->time_to,
             'unit_id' => $safetypermit->unit_id,
@@ -674,7 +674,6 @@ class SafetyPermit extends Model
             'assigned_job' => $safetypermit->assigned_job,
             'attendance_toolbox_talk' => $safetypermit->attendance_toolbox_talk,
             'permit_status' => STATUS_EHS_VERIFICATION_PENDING,
-            'reference_id' => $safetypermit->id,
             'created_by' => Auth::id(),
         );
 
@@ -1178,6 +1177,12 @@ class SafetyPermit extends Model
     {
         return SafetyPermit::where('reference_id', $id)->exists();
     }
+
+    public function PermitExtensionUpdate($id)
+    {
+        return $this->where('id', $id)->update(['reference_id' => $id]);
+    }
+
 
     protected static function booted()
     {
