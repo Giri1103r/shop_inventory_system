@@ -261,8 +261,10 @@ class HSCInputsController extends Controller
 
             $header = [
                 __("common.sno"),
-                __("common.type"),
-                __("common.value"),
+                __("common.company"),
+                __("common.location"),
+                __("common.unit"),
+                __("common.department"),
                 __("common.status"),
                 __("common.created_by"),
                 __("common.created_date"),
@@ -273,8 +275,10 @@ class HSCInputsController extends Controller
 
                 $export = [];
                 $export[] =  $i;
-                $export[] = $data->type == LEADING ? __('common.leading') : __('common.lagging');
-                $export[] =  $data->value;
+                $export[] = $data->company_name;
+                $export[] =  $data->location_name;
+                $export[] =  $data->unit_name;
+                $export[] =  $data->department_name;
                 $export[] =  $data->status == 1 ? 'Active' : 'In-Active';
                 $export[] =  getusername($data->created_by);
                 $export[] =  Displaydateformat($data->created_at);
@@ -284,7 +288,7 @@ class HSCInputsController extends Controller
                 $i++;
             }
 
-            $writer = SimpleExcelWriter::streamDownload('Leading and Lagging.xlsx')
+            $writer = SimpleExcelWriter::streamDownload('HSC Input.xlsx')
                 ->addHeader($header)
                 ->addRows(
                     $exportData
@@ -307,17 +311,20 @@ class HSCInputsController extends Controller
 
             $header = [
                 __("common.sno"),
-                __("common.type"),
-                __("common.value"),
+                __("common.company"),
+                __("common.location"),
+                __("common.unit"),
+                __("common.department"),
                 __("common.status"),
                 __("common.created_by"),
                 __("common.created_date"),
             ];
 
+
             $data = array(
                 'header' => $header,
                 'content' => $allData,
-                'pagetitle' => "Leading and Lagging Details",
+                'pagetitle' => "HSC Input",
             );
 
             $property = [
@@ -339,7 +346,7 @@ class HSCInputsController extends Controller
 
             $mpdf->WriteHTML($html);
 
-            $filename = "Leading and Lagging Master.pdf";
+            $filename = "HSC Input.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);

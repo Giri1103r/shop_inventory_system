@@ -238,8 +238,10 @@
                                 .attr('content')
                         },
                         data: function(d) {
-                            d.type = $('#type').val();
-                            d.value = $('#value').val();
+                            d.company_id = $('#company_id').val();
+                            d.location_id = $('#location_id').val();
+                            d.unit_id = $('#unit_id').val();
+                            d.department_id = $('#department_id').val();
                             d.status = $('#status').val();
 
                         },
@@ -314,8 +316,10 @@
                                     text: '{{ __('common.pdf') }}',
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
-                                        type = $('#type').val();
-                                        value = $('#value').val();
+                                        company_id = $('#company_id').val();
+                                        location_id = $('#location_id').val();
+                                        unit_id = $('#unit_id').val();
+                                        department_id = $('#department_id').val();
                                         status = $('#status').val();
 
                                         $(".dt-button").removeClass('processing');
@@ -323,8 +327,10 @@
                                         window.location.href =
                                             "{{ admin_url('kpi/master/hsc-inputs/export/pdf') }}" +
                                             '?search=' + searchValue +
-                                            '&type=' + type +
-                                            '&value=' + value +
+                                            '&company_id=' + company_id +
+                                            '&location_id=' + location_id +
+                                            '&unit_id=' + unit_id +
+                                            '&department_id=' + department_id +
                                             '&status=' + status
                                     }
                                 },
@@ -333,16 +339,20 @@
                                     text: '{{ __('common.excel') }}',
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
-                                        type = $('#type').val();
-                                        value = $('#value').val();
+                                        company_id = $('#company_id').val();
+                                        location_id = $('#location_id').val();
+                                        unit_id = $('#unit_id').val();
+                                        department_id = $('#department_id').val();
                                         status = $('#status').val();
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
                                             "{{ admin_url('kpi/master/hsc-inputs/export/excel') }}" +
                                             '?search=' + searchValue +
-                                            '&type=' + type +
-                                            '&value=' + value +
+                                            '&company_id=' + company_id +
+                                            '&location_id=' + location_id +
+                                            '&unit_id=' + unit_id +
+                                            '&department_id=' + department_id +
                                             '&status=' + status
                                     }
                                 },
