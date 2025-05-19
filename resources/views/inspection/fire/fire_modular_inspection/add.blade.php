@@ -199,27 +199,15 @@
                                         </div>
                                         <hr>
                                         <div class="form-wrapper">
+                                            <div class="card-header-inner d-flex justify-content-between">
+                                                <h4 class="text-white ms-2">Fire Modular Inspection Checklist</h4>
+                                                <button class="btn btn-primary add-row mb-2 " type="button"
+                                                    id="add-row"
+                                                    style="margin-left: 10px;  margin-right: 10px; width: 84px;">
+                                                    Add
+                                                </button>
+                                            </div>
                                             <div class="row mt-4 form-set">
-                                                <div class="card-header-inner p-2">
-                                                    <h4 class="text-white">Fire Modular Inspection Checklist</h4>
-                                                </div>
-
-                                                <div class="d-flex justify-content-end align-items-center gap-2 m-2">
-                                                    <button class="btn btn-primary add-row" type="button" id="add-row"
-                                                        style="min-width: 130px;">
-                                                        Add
-                                                    </button>
-                                                    {{-- <button class="btn btn-primary add-obs" type="button" id="add-obs"
-                                                        style="min-width: 160px;">
-                                                        Add Observation
-                                                    </button> --}}
-                                                    <button type="button"
-                                                        class="btn btn-danger remove-row d-flex align-items-center"
-                                                        style="min-width: 130px;">
-                                                        <i class="fa-solid fa-trash me-2"></i> Remove
-                                                    </button>
-                                                </div>
-
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
@@ -352,7 +340,11 @@
                                                     @enderror
                                                 </div>
 
+                                                <div class="col-md-2 text-right  mt-4">
+                                                    <button class="btn btn-danger remove-row" type="button"
+                                                        style="margin:10px;"><i class="fa fa-trash"></i></button>
 
+                                                </div>
                                             </div>
                                         </div>
                                         <div class="form-observation">
@@ -698,20 +690,7 @@
 
                     var newFormSet = `
                         <div class="row mt-4 form-set">
-                                                <div class="card-header-inner p-2">
-                                                    <h4 class="text-white">Fire Modular Inspection Checklist</h4>
-                                                </div>
 
-                                                <div class="d-flex justify-content-end gap-0 m-2">
-                                                    <button class="btn btn-primary add-row me-3" type="button"
-                                                        id="add-row" style="width: 84px;">
-                                                        Add
-                                                    </button>
-                                                    <button type="button" class="btn btn-danger remove-row">
-                                                        <i class="fa-solid fa-trash"></i> Remove
-                                                    </button>
-
-                                                </div>
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
@@ -824,7 +803,11 @@
 
                                                     </div>
                                                 </div>
+                                                 <div class="col-md-2 text-right  mt-4">
+                                                    <button class="btn btn-danger remove-row" type="button"
+                                                        style="margin:10px;"><i class="fa fa-trash"></i></button>
 
+                                                </div>
                                             </div>
                     `;
 

@@ -68,6 +68,7 @@
                                                             <span class="fa fa-calendar"></span>
                                                         </div>
                                                     </div>
+ </div>
 
                                                     <div class="col-md-4 form-input mt-2">
                                                         <label class="form-label">Rev. & Dt.</label>

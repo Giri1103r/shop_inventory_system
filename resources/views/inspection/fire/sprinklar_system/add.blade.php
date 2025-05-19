@@ -407,11 +407,7 @@
                     e.preventDefault();
                     location.reload();
                 });
-                flatpickr("#issue_date", {
-                    dateFormat: "d-m-Y",
-                });
-
-
+               
                 var fromDatepicker = flatpickr("#inspection_date", {
                     dateFormat: "d-m-Y",
                     onChange: function(selectedDates) {
