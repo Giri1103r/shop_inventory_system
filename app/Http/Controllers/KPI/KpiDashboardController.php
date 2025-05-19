@@ -29,7 +29,6 @@ class KpiDashboardController extends Controller
 
     public function index(Request $request)
     {
-
         if (Auth::check()) {
             $user = Auth::user();
             $data = [];
@@ -38,7 +37,7 @@ class KpiDashboardController extends Controller
     }
 
 
-  
+
     public function getChart1(Request $request)
     {
         try {
@@ -52,7 +51,7 @@ class KpiDashboardController extends Controller
             report($ex);
         }
     }
-  
+
     public function getChart2(Request $request)
     {
         try {
@@ -66,7 +65,7 @@ class KpiDashboardController extends Controller
             report($ex);
         }
     }
-  
+
     public function getChart3(Request $request)
     {
         try {
@@ -93,7 +92,7 @@ class KpiDashboardController extends Controller
             report($ex);
         }
     }
-  
+
     public function getChart5(Request $request)
     {
         try {
@@ -159,7 +158,7 @@ class KpiDashboardController extends Controller
             report($ex);
         }
     }
- 
+
     public function getChart10(Request $request)
     {
         try {
@@ -316,7 +315,7 @@ class KpiDashboardController extends Controller
             report($ex);
         }
     }
- 
+
 
     public function getTrainingCompletionCount(Request $request)
     {
