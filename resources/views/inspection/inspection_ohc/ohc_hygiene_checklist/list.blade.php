@@ -27,7 +27,13 @@
                                         <div class="col-md-4 mb-3 form-input">
                                             <label for="issue_date"
                                                 class="form-label ">{{ __('inspection.inspection_date') }}</label>
-                                            <input type="text" name="issue_date" id="issue_date" class="form-control">
+
+                                            <div class="input-group date form-input custom-height">
+                                                 <input type="text" name="issue_date" id="issue_date" class="form-control">
+                                                <div class="input-group-addon input-group-text">
+                                                    <span class="fa fa-calendar"></span>
+                                                </div>
+                                            </div>
                                         </div>
                                         <div class="col-md-4 form-input">
                                             <label for="inspection_status"
@@ -203,7 +209,7 @@
                             data: 'checklist_status',
                             name: 'checklist_status',
                         },
-                         {
+                        {
                             data: 'inspection_created_at',
                             name: 'inspection_created_at',
                         },

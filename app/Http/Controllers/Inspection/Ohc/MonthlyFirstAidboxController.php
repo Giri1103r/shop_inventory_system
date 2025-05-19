@@ -171,9 +171,11 @@ class MonthlyFirstAidboxController extends Controller
             return view('inspection.inspection_ohc.monthly_first_aid_audit_checklist.add', $data);
         } catch (Exception $ex) {
              report($ex);
+            Session::flash('error', 'Something went wrong !');
+            return redirect(admin_url('ohc/first-aid-box/monthly-audit/list'));
         }
     }
-    // store
+
     public function Store(Request $request)
     {
         try {
@@ -220,7 +222,9 @@ class MonthlyFirstAidboxController extends Controller
             ];
             return view('inspection.inspection_ohc.monthly_first_aid_audit_checklist.view', $data);
         } catch (Exception $ex) {
-             report($ex);
+            report($ex);
+            Session::flash('error', 'Something went wrong !');
+            return redirect(admin_url('ohc/first-aid-box/monthly-audit/list'));
         }
     }
     // general pdf

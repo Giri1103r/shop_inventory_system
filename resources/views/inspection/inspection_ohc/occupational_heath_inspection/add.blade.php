@@ -315,12 +315,6 @@
                 location.reload();
             });
         });
-
-        var IssueDatepicker = flatpickr("#issue_date", {
-            dateFormat: "d-m-Y",
-            minDate: new Date()
-
-        });
         var Datepicker = flatpickr("#date_of_inspection", {
             dateFormat: "d-m-Y",
             minDate: new Date()

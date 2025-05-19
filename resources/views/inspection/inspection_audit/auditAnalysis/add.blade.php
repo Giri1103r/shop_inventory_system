@@ -68,9 +68,15 @@
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Issue Dt.</label>
-                                                    <input type="text" name ="issue_date" id="issue_date"
-                                                        class="form-control"
-                                                        value="{{ Displaydateformat($staticDocno->issue_date) }}" readonly>
+                                                    <div class="input-group date form-input custom-height">
+                                                        <input type="text" name ="issue_date" id="issue_date"
+                                                            class="form-control"
+                                                            value="{{ Displaydateformat($staticDocno->issue_date) }}"
+                                                            readonly>
+                                                        <div class="input-group-addon input-group-text">
+                                                            <span class="fa fa-calendar"></span>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
 
@@ -225,7 +231,7 @@
     <script type="text/javascript" nonce="projectcab">
         $(document).on('change', '[id^="unit_id_"]', function() {
             var unitId = $(this).val();
-            var index = this.id.split('_')[2]; 
+            var index = this.id.split('_')[2];
             var departmentSelect = $('#department_id_' + index);
 
             if (unitId) {

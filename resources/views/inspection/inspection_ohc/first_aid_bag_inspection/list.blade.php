@@ -25,36 +25,29 @@
                                             <div class="form-group form-input">
                                                 <label
                                                     class="form-label require">{{ __('inspection.inspection_date') }}</label>
-                                                <input type="text" name="inspection_date" id = "inspection_date"
-                                                    class="form-control inspection_date">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4 mb-3 form-input">
-                                            <label for="emp_name" class="form-label ">From Date</label>
-                                            <div class="input-group date form-input custom-height">
-                                                <input type="text" class="form-control " name="from_date" id="from_date"
-                                                    autocomplete="off">
-                                                <div class="input-group-addon input-group-text">
-                                                    <span class="fa fa-calendar"></span>
-                                                </div>
-                                            </div>
 
-                                        </div>
-                                        <div class="col-md-4 mb-3 form-input">
-                                            <label for="emp_name" class="form-label ">To Date</label>
-                                            <div class="input-group date form-input  custom-height">
-                                                <input type="text" class="form-control " name="to_date" id="to_date"
-                                                    autocomplete="off">
-                                                <div class="input-group-addon input-group-text">
-                                                    <span class="fa fa-calendar"></span>
+                                                <div class="input-group date form-input custom-height">
+                                                    <input type="text" name="inspection_date" id = "inspection_date"
+                                                        class="form-control inspection_date">
+                                                    <div class="input-group-addon input-group-text">
+                                                        <span class="fa fa-calendar"></span>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
+
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
                                                 <label class="form-label require">{{ __('inspection.next_due') }}</label>
-                                                <input type="text" name="next_due" id = "next_due"
-                                                    class="form-control next_due">
+
+
+                                                <div class="input-group date form-input custom-height">
+                                                    <input type="text" name="next_due" id = "next_due"
+                                                        class="form-control next_due">
+                                                    <div class="input-group-addon input-group-text">
+                                                        <span class="fa fa-calendar"></span>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                         <div class="col-md-4 mb-2">
@@ -78,10 +71,7 @@
                                                 <select name="unit" id="unit" class=" form-control single-select"
                                                     style="width: 100%">
                                                     <option value="">Select Unit</option>
-                                                    @foreach ($units as $unit)
-                                                        <option value="{{ encryptId($unit->id) }}">
-                                                            {{ $unit->unit_name }}</option>
-                                                    @endforeach
+
                                                 </select>
                                             </div>
                                         </div>
@@ -99,15 +89,27 @@
                                             </div>
                                         </div>
 
-                                        {{-- <div class="col-md-4 mb-3 form-input">
-                                            <label for="status" class="form-label ">{{ __('common.status') }}</label>
-                                            <select name="status" id="status" style="width: 100%"
-                                                class="form-control single-select">
-                                                <option value="">Select Status</option>
-                                                <option value="{{ encryptId(1) }}">Active</option>
-                                                <option value="{{ encryptId(0) }}">In-Active</option>
-                                            </select>
-                                        </div> --}}
+                                        <div class="col-md-4 mb-3 form-input">
+                                            <label for="emp_name" class="form-label ">From Date</label>
+                                            <div class="input-group date form-input custom-height">
+                                                <input type="text" class="form-control " name="from_date" id="from_date"
+                                                    autocomplete="off">
+                                                <div class="input-group-addon input-group-text">
+                                                    <span class="fa fa-calendar"></span>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="col-md-4 mb-3 form-input">
+                                            <label for="emp_name" class="form-label ">To Date</label>
+                                            <div class="input-group date form-input  custom-height">
+                                                <input type="text" class="form-control " name="to_date" id="to_date"
+                                                    autocomplete="off">
+                                                <div class="input-group-addon input-group-text">
+                                                    <span class="fa fa-calendar"></span>
+                                                </div>
+                                            </div>
+                                        </div>
                                         <div class="col-md-4 mt-3">
                                             <x-button-search></x-button-search>
                                             <x-button-reset></x-button-reset>
@@ -161,6 +163,31 @@
                     dateFormat: "d-m-Y",
                 });
 
+            });
+            $(document).on('change', '#location', function() {
+                var locationId = $(this).val();
+                if (locationId) {
+                    $.ajax({
+                        url: "{{ admin_url('unit/ajax-list') }}/" + locationId + "/0",
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(data) {
+                            $('#unit').empty().append(
+                                '<option value="">Select Unit</option>');
+                            $.each(data, function(key, value) {
+                                $('#unit').append('<option value="' + value
+                                    .id + '">' + value.name + '</option>');
+                            });
+                            $('#unit').trigger('change.');
+                        },
+                        error: function(xhr) {
+                            alert('Error fetching unit. Please try again.');
+                        }
+                    });
+                } else {
+                    $('#unit').empty().append('<option value="">Select unit</option>');
+                    $('#unit').trigger('change.');
+                }
             });
             $(document).ready(function() {
                 var fromDatepicker = flatpickr("#from_date", {
@@ -254,7 +281,7 @@
                             data: 'frequency_name',
                             name: 'frequency_name',
                         },
- {
+                        {
                             data: 'inspection_created_at',
                             name: 'inspection_created_at',
                         },

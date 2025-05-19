@@ -147,15 +147,25 @@
                                                                 </td>
                                                                 <td>
                                                                     <div class="form-input">
-                                                                        <input class="form-control" type="number" min="1"
+                                                                        <input class="form-control" type="number"
+                                                                            min="1"
                                                                             name="available_quantity[{{ $medicines->id }}]" />
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="form-input">
-                                                                        <input class="form-control expired_date"
-                                                                            type="date"
-                                                                            name="expired_date[{{ $medicines->id }}]" />
+
+
+                                                                        <div
+                                                                            class="input-group date form-input custom-height">
+                                                                            <input class="form-control expired_date"
+                                                                                type="date"
+                                                                                name="expired_date[{{ $medicines->id }}]" />
+                                                                            <div
+                                                                                class="input-group-addon input-group-text">
+                                                                                <span class="fa fa-calendar"></span>
+                                                                            </div>
+                                                                        </div>
                                                                     </div>
                                                                 </td>
 
@@ -284,8 +294,8 @@
                     },
                     remark_by: {
                         required: true,
-                        minlength:3,
-                        maxlength:300,
+                        minlength: 3,
+                        maxlength: 300,
 
                     }
                 },
@@ -383,8 +393,8 @@
                 $('textarea[name^="remarks"]').each(function() {
                     $(this).rules('add', {
                         required: true,
-                        minlength:3,
-                        maxlength:300,
+                        minlength: 3,
+                        maxlength: 300,
                         messages: {
                             required: "Remarks is required",
                             minlength: "Minimum 3 characters required",

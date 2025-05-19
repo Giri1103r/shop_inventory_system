@@ -52,9 +52,15 @@
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Issue Date</label>
-                                                    <input type="text" name ="issue_date" id="issue_date"
-                                                        class="form-control" placeholder="Issue Date"
-                                                        value="{{ displaydateformat($document_no->issue_date) }}" readonly>
+                                                    <div class="input-group date form-input custom-height">
+                                                        <input type="text" name ="issue_date" id="issue_date"
+                                                            class="form-control" placeholder="Issue Date"
+                                                            value="{{ displaydateformat($document_no->issue_date) }}"
+                                                            readonly>
+                                                        <div class="input-group-addon input-group-text">
+                                                            <span class="fa fa-calendar"></span>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
 
@@ -79,19 +85,16 @@
                                             </div>
 
                                             <div id="form-wrapper">
+                                                <div class="card-header-inner d-flex justify-content-between">
+                                                    <h4 class="text-white ms-2">Safety Petty Logbook CheckList</h4>
+                                                    <button class="btn btn-primary add-row mb-2 " type="button"
+                                                        id="add-row"
+                                                        style="margin-left: 10px;  margin-right: 10px; width: 84px;">
+                                                        Add
+                                                    </button>
+                                                </div>
                                                 <div class="form-set mb-3">
-                                                    <div class="card-header-inner">
-                                                        <h4 class="text-white">Safety Petty Logbook CheckList</h4>
-                                                    </div>
-                                                    <div class="d-flex justify-content-end">
-                                                        <button class="btn btn-primary add-row me-3" type="button"
-                                                            id="add-row" style="width: 84px;">
-                                                            Add
-                                                        </button>
-                                                        <button type="button" class="btn btn-danger remove-row">
-                                                            <i class="fa-solid fa-trash"></i> Remove
-                                                        </button>
-                                                    </div>
+
                                                     <div class="row">
                                                         <div class="col-md-4 mt-2">
                                                             <div class="form-group form-input">
@@ -208,6 +211,12 @@
                                                                 <textarea name="remark[1]" class="form-control" placeholder="Remark" rows="3"></textarea>
                                                             </div>
                                                         </div>
+
+                                                        <div class="col-md-2 text-right  mt-4">
+                                                            <button class="btn btn-danger remove-row" type="button"
+                                                                style="margin:10px;"><i class="fa fa-trash"></i></button>
+
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -290,9 +299,11 @@
                         type: 'GET',
                         dataType: 'json',
                         success: function(data) {
-                            departmentSelect.empty().append('<option value="">Select Department</option>');
+                            departmentSelect.empty().append(
+                                '<option value="">Select Department</option>');
                             $.each(data, function(key, value) {
-                                departmentSelect.append('<option value="' + value.id + '">' + value.name + '</option>');
+                                departmentSelect.append('<option value="' + value.id +
+                                    '">' + value.name + '</option>');
                             });
                             departmentSelect.trigger('change');
                         },
@@ -592,11 +603,11 @@
                     },
                     'signature_givenby_image[1]': {
                         required: "Signature Given by Image is Required",
-                         filesize: "File must be less than 15MB."
+                        filesize: "File must be less than 15MB."
                     },
                     'signature_receivedby_image[1]': {
                         required: "Signature Received by Image is Required",
-                         filesize: "File must be less than 15MB."
+                        filesize: "File must be less than 15MB."
                     }
                 },
                 errorElement: 'span',
@@ -656,18 +667,7 @@
 
                 var newFormSet = `
                     <div class="form-set mb-3">
-                        <div class="card-header-inner">
-                            <h4 class="text-white">Safety Petty Logbook CheckList</h4>
-                        </div>
-                        <div class="d-flex justify-content-end">
-                            <button class="btn btn-primary add-row me-3" type="button"
-                                id="add-row" style="width: 84px;">
-                                Add
-                            </button>
-                            <button type="button" class="btn btn-danger remove-row">
-                                <i class="fa-solid fa-trash"></i> Remove
-                            </button>
-                        </div>
+
                         <div class="row">
                             <div class="col-md-4 mt-2">
                                 <div class="form-group form-input">
@@ -781,7 +781,11 @@
                                         placeholder="Remark"></textarea>
                                 </div>
                             </div>
+ <div class="col-md-2 text-right  mt-4">
+                                                            <button class="btn btn-danger remove-row" type="button"
+                                                                style="margin:10px;"><i class="fa fa-trash"></i></button>
 
+                                                        </div>
                         </div>
                     </div>
                 `;
@@ -816,13 +820,13 @@
                     noSpaces: true,
                     uniqueItemCode: true,
                     remote: {
-                            url: '{{ admin_url('ohc/safety-petty-logbook/unique') }}',
-                            type: 'post',
-                            data: {
-                                location_type_name: function() {
-                                    return $('#employee_code').val();
-                                }
+                        url: '{{ admin_url('ohc/safety-petty-logbook/unique') }}',
+                        type: 'post',
+                        data: {
+                            location_type_name: function() {
+                                return $('#employee_code').val();
                             }
+                        }
                     },
                     messages: {
                         required: 'Employee Code is required',
@@ -910,34 +914,34 @@
                 const receivedBySelector = '#amnt_receivedby_id-' + form_set_count;
 
                 $(givenBySelector).select2({
-                        ajax: {
-                            url: '{{ admin_url('ohc/safety-petty-logbook/employeeid') }}',
-                            dataType: 'json',
-                            delay: 250,
-                            data: function(params) {
-                                return {
-                                    search: params.term
-                                };
-                            },
-                            processResults: function(data) {
-                                return {
-                                    results: $.map(data, function(item) {
-                                        return {
-                                            id: item.id,
-                                            text: item.text
-                                        };
-                                    })
-                                };
-                            },
-                            error: function(xhr, status, error) {
-                                // console.log('Error during AJAX call:', error);
-                                // console.log('Response:', xhr.responseText);
-                            }
+                    ajax: {
+                        url: '{{ admin_url('ohc/safety-petty-logbook/employeeid') }}',
+                        dataType: 'json',
+                        delay: 250,
+                        data: function(params) {
+                            return {
+                                search: params.term
+                            };
                         },
-                        minimumInputLength: 1,
-                        dropdownCssClass: 'form-control',
-                        selectionCssClass: 'form-control'
-                    });
+                        processResults: function(data) {
+                            return {
+                                results: $.map(data, function(item) {
+                                    return {
+                                        id: item.id,
+                                        text: item.text
+                                    };
+                                })
+                            };
+                        },
+                        error: function(xhr, status, error) {
+                            // console.log('Error during AJAX call:', error);
+                            // console.log('Response:', xhr.responseText);
+                        }
+                    },
+                    minimumInputLength: 1,
+                    dropdownCssClass: 'form-control',
+                    selectionCssClass: 'form-control'
+                });
 
 
                 $(receivedBySelector).select2({
@@ -1099,8 +1103,10 @@
                     $(this).find('input[name^="amount"]').attr('name', 'amount[' + (index + 1) + ']');
                     $(this).find('select[name^="amnt_givenby_id"]').attr('name', 'amnt_givenby_id[' + (
                         index + 1) + ']');
-                    $(this).find('input[name^="signature_givenby_image"]').attr('name', 'signature_givenby_image[' + (index + 1) + ']');
-                    $(this).find('input[name^="signature_receivedby_image"]').attr('name', 'signature_receivedby_image[' + (index + 1) + ']');
+                    $(this).find('input[name^="signature_givenby_image"]').attr('name',
+                        'signature_givenby_image[' + (index + 1) + ']');
+                    $(this).find('input[name^="signature_receivedby_image"]').attr('name',
+                        'signature_receivedby_image[' + (index + 1) + ']');
                     $(this).find('select[name^="amnt_receivedby_id"]').attr('name', 'amnt_receivedby_id[' +
                         (index + 1) + ']');
                     $(this).find('textarea[name^="description"]').attr('name', 'description[' + (index +

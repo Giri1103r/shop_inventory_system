@@ -425,11 +425,7 @@
             });
         });
 
-        var IssueDatepicker = flatpickr("#issue_date", {
-            dateFormat: "d-m-Y",
-            minDate: new Date()
-
-        });
+      
         var Datepicker = flatpickr("#date", {
             dateFormat: "d-m-Y",
             minDate: new Date()

@@ -52,9 +52,17 @@
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Issue Date</label>
-                                                    <input type="text" name ="issue_date" id="issue_date"
-                                                        class="form-control" placeholder="Issue Date" value="{{ displaydateformat($document_no->issue_date) }}"
-                                                        readonly>
+
+
+                                                    <div class="input-group date form-input custom-height">
+                                                        <input type="text" name ="issue_date" id="issue_date"
+                                                            class="form-control" placeholder="Issue Date"
+                                                            value="{{ displaydateformat($document_no->issue_date) }}"
+                                                            readonly>
+                                                        <div class="input-group-addon input-group-text">
+                                                            <span class="fa fa-calendar"></span>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
 
@@ -62,24 +70,24 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Revision & Data</label>
                                                     <input type="text" name ="revision_date" class="form-control"
-                                                        placeholder="Revision Date"
-                                                        value="{{ $document_no->rev_dt }}" readonly>
+                                                        placeholder="Revision Date" value="{{ $document_no->rev_dt }}"
+                                                        readonly>
                                                 </div>
                                             </div>
 
                                             <div class="col-md-4 mt-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Month</label>
-                                                    <input type="text" name="month" id="month"
-                                                        class="form-control" placeholder="Month" value="">
+                                                    <input type="text" name="month" id="month" class="form-control"
+                                                        placeholder="Month" value="">
                                                 </div>
                                             </div>
 
                                             <div class="col-md-4 mt-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Year</label>
-                                                    <input type="text" name="year" id="year"
-                                                        class="form-control" placeholder="Year" value="">
+                                                    <input type="text" name="year" id="year" class="form-control"
+                                                        placeholder="Year" value="">
                                                 </div>
                                             </div>
 
@@ -95,19 +103,16 @@
                                             </div>
 
                                             <div id="form-wrapper">
+                                                <div class="card-header-inner d-flex justify-content-between">
+                                                    <h4 class="text-white ms-2">First Aid Record CheckList</h4>
+                                                    <button class="btn btn-primary add-row mb-2 " type="button"
+                                                        id="add-row"
+                                                        style="margin-left: 10px;  margin-right: 10px; width: 84px;">
+                                                        Add
+                                                    </button>
+                                                </div>
                                                 <div class="form-set mb-3">
-                                                    <div class="card-header-inner">
-                                                        <h4 class="text-white">First Aid Record CheckList</h4>
-                                                    </div>
-                                                    <div class="d-flex justify-content-end">
-                                                        <button class="btn btn-primary add-row me-3" type="button"
-                                                            id="add-row" style="width: 84px;">
-                                                            Add
-                                                        </button>
-                                                        <button type="button" class="btn btn-danger remove-row">
-                                                            <i class="fa-solid fa-trash"></i> Remove
-                                                        </button>
-                                                    </div>
+
                                                     <div class="row">
                                                         <div class="col-md-4 mt-2">
                                                             <div class="form-group form-input">
@@ -135,7 +140,8 @@
                                                             <div class="form-group form-input">
                                                                 <label class="form-label require">Department</label>
                                                                 <select name="department_id[1]" id="department_id"
-                                                                    class="form-control single-select" style="width: 100%">
+                                                                    class="form-control single-select"
+                                                                    style="width: 100%">
                                                                     <option value="">Select Department</option>
                                                                 </select>
                                                             </div>
@@ -180,7 +186,11 @@
                                                                 <textarea name="remark[1]" rows="3" class="form-control" placeholder="Remark"></textarea>
                                                             </div>
                                                         </div>
+                                                        <div class="col-md-2 text-right  mt-4">
+                                                            <button class="btn btn-danger remove-row" type="button"
+                                                                style="margin:10px;"><i class="fa fa-trash"></i></button>
 
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -485,18 +495,7 @@
 
                 var newFormSet = `
                 <div class="form-set mb-3">
-                    <div class="card-header-inner">
-                        <h4 class="text-white">First Aid Record CheckList</h4>
-                    </div>
-                    <div class="d-flex justify-content-end">
-                         <button class="btn btn-primary add-row me-3" type="button"
-                            id="add-row" style="width: 84px;">
-                            Add
-                        </button>
-                        <button type="button" class="btn btn-danger remove-row">
-                            <i class="fa-solid fa-trash"></i> Remove
-                        </button>
-                    </div>
+
                     <div class="row">
                         <div class="col-md-4 mt-2">
                             <div class="form-group form-input">
@@ -564,7 +563,11 @@
                                     placeholder="Remark"></textarea>
                             </div>
                         </div>
+ <div class="col-md-2 text-right  mt-4">
+                                                            <button class="btn btn-danger remove-row" type="button"
+                                                                style="margin:10px;"><i class="fa fa-trash"></i></button>
 
+                                                        </div>
                     </div>
                 </div>`;
 
