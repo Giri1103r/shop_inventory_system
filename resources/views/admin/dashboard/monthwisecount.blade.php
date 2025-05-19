@@ -35,7 +35,6 @@
             bar: {
                 horizontal: false,
                 columnWidth: '55%',
-                endingShape: 'rounded',
                 distributed: true
             },
         },

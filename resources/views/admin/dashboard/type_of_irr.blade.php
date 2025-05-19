@@ -1,8 +1,14 @@
 <div id="typeOfIIRChart"></div>
 
 <script>
-      var incidentTypeIdMap = {!! json_encode($formattedData['idMap']) !!};
+    var incidentTypeIdMap = {!! json_encode($formattedData['idMap']) !!};
 
+    var dynamicColors = [
+        '#3B5998', '#26A69A', '#FFC300', '#6C3483', '#E74C3C', '#3498DB',
+        '#1ABC9C', '#9B59B6', '#F39C12', '#2ECC71', '#E67E22', '#34495E'
+    ];
+    var barCount = incidentTypeIdMap.length;
+    var colors = dynamicColors.slice(0, barCount);
     var options = {
         series: [{
             name: 'Incident Count',
@@ -29,11 +35,12 @@
         plotOptions: {
             bar: {
                 horizontal: false,
-                columnWidth: '55%',
-                borderRadius: 5,
+                columnWidth: '25%',
+                distributed: true,
                 borderRadiusApplication: 'end'
             },
         },
+        colors: colors,
         xaxis: {
             categories: {!! json_encode($formattedData['labels']) !!},
             title: {

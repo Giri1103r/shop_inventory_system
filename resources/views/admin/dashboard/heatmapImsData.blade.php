@@ -33,6 +33,7 @@
                 radius: 4,
                 useFillColorAsStroke: true,
             }
+           
         },
 
         xaxis: {
@@ -55,7 +56,7 @@
             }
         },
         legend: {
-            show: false 
+            show: false
             // Hide default legend
         }
     };

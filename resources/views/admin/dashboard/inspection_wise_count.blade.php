@@ -27,10 +27,10 @@
         },
         plotOptions: {
             bar: {
-                borderRadius: 10,
+                columnWidth: '25%',
                 borderRadiusApplication: 'end',
                 horizontal: false,
-                distributed: true // Important for per-bar color
+                distributed: true
             }
         },
         colors: colors,

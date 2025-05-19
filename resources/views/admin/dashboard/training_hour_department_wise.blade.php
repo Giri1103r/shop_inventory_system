@@ -32,7 +32,7 @@
         },
         plotOptions: {
             bar: {
-                borderRadius: 10,
+                columnWidth: '25%',
                 horizontal: false,
                 distributed: true // ✅ Enables individual bar colors
             }
