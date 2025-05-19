@@ -126,7 +126,9 @@ class SafetyPettyController extends Controller
             ];
             return view('inspection.inspection_ohc.safety_petty.add', $data);
         } catch (Exception $ex) {
-            report($ex);
+           report($ex);
+            Session::flash('error',  __('common.message_error'));
+            return redirect(admin_url('ohc/safety-petty-logbook/list'));
         }
     }
 
@@ -404,7 +406,7 @@ class SafetyPettyController extends Controller
 
                 $dataRow = $headerRow + 1;
                 $sheet->mergeCells("A{$dataRow}:B{$dataRow}")->setCellValue("A{$dataRow}", '1');
-                $sheet->mergeCells("C{$dataRow}:D{$dataRow}")->setCellValue("C{$dataRow}", getUsername($data->employee_name) ?? '');
+                $sheet->mergeCells("C{$dataRow}:D{$dataRow}")->setCellValue("C{$dataRow}", ($data->employee_name) ?? '');
                 $sheet->mergeCells("E{$dataRow}:F{$dataRow}")->setCellValue("E{$dataRow}", $data->employee_code ?? '');
                 $sheet->mergeCells("G{$dataRow}:H{$dataRow}")->setCellValue("G{$dataRow}", getDepartment($data->department) ?? '');
                 $sheet->mergeCells("I{$dataRow}:J{$dataRow}")->setCellValue("I{$dataRow}", getUnitname($data->unit) ?? '');
@@ -661,7 +663,7 @@ class SafetyPettyController extends Controller
 
             $row = 5;
             $sheet->mergeCells("A{$row}:B{$row}")->setCellValue("A{$row}", '1');
-            $sheet->mergeCells("C{$row}:D{$row}")->setCellValue("C{$row}", getUsername($sfty_petty_details->employee_name) ?? '');
+            $sheet->mergeCells("C{$row}:D{$row}")->setCellValue("C{$row}", ($sfty_petty_details->employee_name) ?? '');
             $sheet->mergeCells("E{$row}:F{$row}")->setCellValue("E{$row}", $sfty_petty_details->employee_code ?? '');
             $sheet->mergeCells("G{$row}:H{$row}")->setCellValue("G{$row}", getDepartment($sfty_petty_details->department) ?? '');
             $sheet->mergeCells("I{$row}:J{$row}")->setCellValue("I{$row}", getUnitname($sfty_petty_details->unit) ?? '');

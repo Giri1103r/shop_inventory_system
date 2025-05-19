@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Session;
 
 class OhcSignature extends Model
 {
@@ -75,7 +76,9 @@ class OhcSignature extends Model
                 $data =    $this->create($insert_array);
             }
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
+            Session::flash('error',  __('common.message_error'));
+            return redirect()->back();
         }
     }
 
@@ -115,7 +118,9 @@ class OhcSignature extends Model
                 return $this->create($insert_array);
             }
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
+            Session::flash('error',  __('common.message_error'));
+            return redirect()->back();
         }
     }
 
@@ -157,6 +162,8 @@ class OhcSignature extends Model
             }
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error',  __('common.message_error'));
+            return redirect()->back();
         }
     }
 

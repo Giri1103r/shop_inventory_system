@@ -104,25 +104,25 @@
                                                                     value="SPLB-00001" readonly>
                                                             </div>
                                                         </div>
-
-                                                        <div class="col-md-4 mt-2">
-                                                            <div class="form-group form-input">
-                                                                <label class="form-label require">Employee Name </label>
-                                                                <select name="emp_id[1]" id="emp_id"
-                                                                    class="form-control single-select" style="width: 100%">
-                                                                    <option value="">Select Employee Name</option>
-                                                                </select>
-                                                            </div>
-                                                        </div>
-
                                                         <div class="col-md-4 mt-2">
                                                             <div class="form-group form-input">
                                                                 <label class="form-label require">Employee Code</label>
-                                                                <input type="text" name="employee_code[1]"
-                                                                    id="employee_code" class="form-control"
-                                                                    placeholder="Employee Code" value="">
+                                                                <select name="employee_code[1]" id="employee_code"
+                                                                    class="form-control single-select" style="width: 100%">
+                                                                    <option value="">Select Employee Code</option>
+                                                                </select>
                                                             </div>
                                                         </div>
+                                                        <div class="col-md-4 mt-2">
+                                                            <div class="form-group form-input">
+                                                                <label class="form-label require">Employee Name </label>
+                                                                <input type="text" name="emp_name[1]" id="emp_name"
+                                                                    class="form-control" placeholder="Employee Name"
+                                                                    value="" readonly>
+                                                            </div>
+                                                        </div>
+
+
 
                                                         <div class="col-md-4 mt-2">
                                                             <div class="form-group form-input">
@@ -152,9 +152,14 @@
                                                         <div class="col-md-4 mt-2">
                                                             <div class="form-group form-input">
                                                                 <label class="form-label require">Date</label>
-                                                                <input type="text" name ="date[1]" id="date"
-                                                                    class="form-control date-picker" placeholder="Date"
-                                                                    value="">
+                                                                <div class="input-group date form-input custom-height">
+                                                                    <input type="text" name ="date[1]" id="date"
+                                                                        class="form-control date-picker"
+                                                                        placeholder="Date" value="">
+                                                                    <div class="input-group-addon input-group-text">
+                                                                        <span class="fa fa-calendar"></span>
+                                                                    </div>
+                                                                </div>
                                                             </div>
                                                         </div>
 
@@ -317,9 +322,10 @@
                 }
             });
 
-            $('#emp_id').select2({
+            // getting the employee/worker details
+            $('#employee_code').select2({
                 ajax: {
-                    url: '{{ admin_url('ohc/safety-petty-logbook/employeeid') }}',
+                    url: '{{ admin_url('ohc/prescribe-to-patient/fetchemployeename') }}',
                     dataType: 'json',
                     delay: 250,
                     data: function(params) {
@@ -343,10 +349,43 @@
                 selectionCssClass: 'form-control'
             });
 
+            // department and number & emp name
+
+            $(document).on('change', '#employee_code', function() {
+                var empId = $(this).val();
+
+
+
+                if (empId) {
+                    $.ajax({
+                        url: "{{ admin_url('ohc/prescribe-to-patient/emp-details/') }}" +
+                            empId,
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(response) {
+                            if (response.employee) {
+                                $('#emp_name').val(response.employee.emp_name).prop(
+                                    'readonly', true);
+
+
+                            } else {
+                                alert("No employee details found.");
+                            }
+                        },
+                        error: function(xhr) {
+                            alert('Error fetching employee details. Please try again.');
+                        }
+                    });
+                } else {
+                    $('#emp_name').val('').prop('readonly', false);
+                }
+
+            });
+
             function initEmpSelect2(selector) {
                 $(selector).select2({
                     ajax: {
-                        url: '{{ admin_url('ohc/safety-petty-logbook/employeeid') }}',
+                        url: '{{ admin_url('ohc/prescribe-to-patient/fetchemployeename') }}',
                         dataType: 'json',
                         delay: 250,
                         data: function(params) {
@@ -371,7 +410,39 @@
                     placeholder: "Select Employee Name",
                     width: '100%'
                 });
+
+                // Bind change event specific to the current selector
+                $(selector).off('change').on('change', function() {
+                    var empId = $(this).val();
+                    var formIndex = $(this).attr('id').split('-')[1]; // e.g., "employee_code-0" → 0
+                    var nameInput = `#emp_name-${formIndex}`;
+
+                    if (empId) {
+                        $.ajax({
+                            url: "{{ admin_url('ohc/prescribe-to-patient/emp-details/') }}" +
+                                empId,
+                            type: 'GET',
+                            dataType: 'json',
+                            success: function(response) {
+                                if (response.employee) {
+                                    $(nameInput).val(response.employee.emp_name).prop(
+                                        'readonly', true);
+                                } else {
+                                    alert("No employee details found.");
+                                    $(nameInput).val('').prop('readonly', false);
+                                }
+                            },
+                            error: function(xhr) {
+                                alert('Error fetching employee details. Please try again.');
+                                $(nameInput).val('').prop('readonly', false);
+                            }
+                        });
+                    } else {
+                        $(nameInput).val('').prop('readonly', false);
+                    }
+                });
             }
+
 
             $('#amnt_givenby_id').select2({
                 ajax: {
@@ -513,7 +584,7 @@
 
             $('#sftyAdd').validate({
                 rules: {
-                    'emp_id[1]': {
+                    'emp_name[1]': {
                         required: true,
                     },
                     'employee_code[1]': {
@@ -569,7 +640,7 @@
                     }
                 },
                 messages: {
-                    'emp_id[1]': {
+                    'emp_name[1]': {
                         required: "Employee Name is Required",
                     },
                     'employee_code[1]': {
@@ -675,25 +746,24 @@
                                     <input type="text" name="serial_number[${form_set_count}]" class="form-control" placeholder="Serial Number" value="${newSerialNumber}" readonly>
                                 </div>
                             </div>
-
                             <div class="col-md-4 mt-2">
-                                <div class="form-group form-input">
-                                    <label class="form-label require">Employee Name </label>
-                                    <select name="emp_id[${form_set_count}]" id="emp_id-${form_set_count}"
-                                        class="form-control single-select" style="width: 100%">
-                                        <option value="">Select Employee Name</option>
-                                    </select>
-                                </div>
-                            </div>
+                                                            <div class="form-group form-input">
+                                                                <label class="form-label require">Employee Code</label>
+                                                                <select name="employee_code[${form_set_count}]" id="employee_code-${form_set_count}"
+                                                                    class="form-control single-select" style="width: 100%">
+                                                                    <option value="">Select Employee Code</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-4 mt-2">
+                                                            <div class="form-group form-input">
+                                                                <label class="form-label require">Employee Name </label>
+                                                                <input type="text" name="emp_name[${form_set_count}]"
+                                                                    id="emp_name-${form_set_count}" class="form-control"
+                                                                    placeholder="Employee Name" value="" readonly>
+                                                            </div>
+                                                        </div>
 
-                            <div class="col-md-4 mt-2">
-                                <div class="form-group form-input">
-                                    <label class="form-label require">Employee Code</label>
-                                    <input type="text" name="employee_code[${form_set_count}]"
-                                        id="employee_code-${form_set_count}" class="form-control"
-                                        placeholder="Employee Code" value="">
-                                </div>
-                            </div>
 
                             <div class="col-md-4 mt-2">
                                 <div class="form-group form-input">
@@ -722,9 +792,16 @@
                             <div class="col-md-4 mt-2">
                                 <div class="form-group form-input">
                                     <label class="form-label require">Date</label>
-                                    <input type="text" name ="date[${form_set_count}]" id="date-${form_set_count}"
+
+                                         <div class="input-group date form-input custom-height">
+                                                                   <input type="text" name ="date[${form_set_count}]" id="date-${form_set_count}"
                                         class="form-control date-picker" placeholder="Date"
                                         value="">
+
+                                                                    <div class="input-group-addon input-group-text">
+                                                                        <span class="fa fa-calendar"></span>
+                                                                    </div>
+                                                                </div>
                                 </div>
                             </div>
 
@@ -808,7 +885,7 @@
                     });
                 });
 
-                $("select[name='emp_id[" + form_set_count + "]']").rules('add', {
+                $("select[name='emp_name[" + form_set_count + "]']").rules('add', {
                     required: true,
                     messages: {
                         required: 'Employee Name is required',
@@ -900,7 +977,7 @@
 
                 initializeNewFormSet(form_set_count);
                 initDatePicker(`#date-${form_set_count}`);
-                initEmpSelect2(`#emp_id-${form_set_count}`);
+                initEmpSelect2(`#employee_code-${form_set_count}`);
                 form_set_count++;
 
                 updatePageIndices();
