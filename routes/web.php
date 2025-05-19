@@ -141,6 +141,7 @@ use App\Http\Controllers\{SettingsController, LocalizationController, TestContro
 use App\Http\Controllers\Inspection\Environment\DgSetStackEmissionMonitoringController;
 use App\Http\Controllers\OhcManagement\Opd\FirstAidController as OpdFirstAidController;
 use App\Http\Controllers\Admin\{LoginController, NotificationController, AdminController, BlockedController};
+use App\Http\Controllers\KPI\LeadingLaggingDashboardController;
 use App\Http\Controllers\Master\{PpeTypeController, PpeTypeMasterController, UserLogController, UserPermissionController, UploadLogController, UserController, UserRoleController};
 
 Route::get('cache', function () {
@@ -323,6 +324,11 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('chart19', [KpiDashboardController::class, 'getChart19']);
                 Route::get('chart20', [KpiDashboardController::class, 'getChart20']);
                 Route::get('chart21', [KpiDashboardController::class, 'getChart21']);
+
+                Route::group(['prefix' =>  'leading-lagging/'], function () {
+                    Route::get('', [LeadingLaggingDashboardController::class, 'index']);
+                    Route::get('leadingchart1', [LeadingLaggingDashboardController::class, 'getLeadingChart1']);
+                });
             });
 
             /**
