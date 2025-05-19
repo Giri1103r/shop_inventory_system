@@ -55,7 +55,7 @@ class ComplianceCategoryController extends Controller
                             $btn = '';
                             $btn = '<a href="' . admin_url('audit/master/compliance_category/view/' . encryptId($row->id)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
                             $btn .= '<a href="' . admin_url('audit/master/compliance_category/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
-                            // $btn .= '<a href="javascript:void(0);"  data-id="' . encryptId($row->id) . '" class="recordDelete" title="Delete"><i class="fa-solid fa-trash text-danger" ></i></i></a> ';
+
                             return $btn;
                         })
                         ->rawColumns(['action', 'created_date', 'created_by', 'status'])
@@ -99,7 +99,6 @@ class ComplianceCategoryController extends Controller
             ];
             $validator = Validator::make($request->all(), $rules, $messages);
             if ($validator->fails()) {
-                dd($validator);
                 return redirect()->back()->withErrors($validator)->withInput();
             }
 

@@ -21,7 +21,7 @@ use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\RichText\RichText;
 use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 use App\Mail\Inspection\Safety\SafetyInspection;
-use App\Models\Inspection\Ohc\monthlyMedicineStore;
+use App\Models\Inspection\Ohc\MonthlyMedicineStore;
 use App\Mail\Inspection\Ohc\FloorStretcher as OhcFloorStretcher;
 
 class MonthlyMedicineStoreController extends Controller
@@ -33,7 +33,7 @@ class MonthlyMedicineStoreController extends Controller
 
     public function __construct()
     {
-        $this->medicine_checklist = new monthlyMedicineStore();
+        $this->medicine_checklist = new MonthlyMedicineStore();
         $this->medicine = new Medicine();
         $this->signature = new OhcSignature();
     }

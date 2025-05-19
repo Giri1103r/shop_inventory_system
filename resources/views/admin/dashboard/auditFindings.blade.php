@@ -39,7 +39,7 @@
             },
             plotOptions: {
                 bar: {
-                    borderRadius: 8,
+                   columnWidth: '25%',
                     horizontal: false,
                     distributed: true
                 }

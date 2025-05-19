@@ -15,8 +15,7 @@
         plotOptions: {
             bar: {
                 horizontal: false,
-                columnWidth: '55%',
-                borderRadius: 5,
+              columnWidth: '25%',
                 borderRadiusApplication: 'end'
             }
         },

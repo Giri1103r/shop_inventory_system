@@ -29,9 +29,9 @@
 
                     var incidentTypeName = chartContext.w.config.xaxis.categories[dataPointIndex];
                     var selectedItem = iirChartData.find(item => item.incident_type_name === incidentTypeName);
-                   
+
                     var iirType = selectedItem.iir_type;
-                  
+
                     if (seriesIndex === 0) {
                         redirectToIms(iirType, '', '', '', '', '', );
                     } else if (seriesIndex === 1) {
@@ -45,8 +45,8 @@
         plotOptions: {
             bar: {
                 horizontal: false,
-                columnWidth: '55%',
-                borderRadius: 5,
+              columnWidth: '25%',
+             
                 borderRadiusApplication: 'end'
             }
         },

@@ -30,7 +30,7 @@
         plotOptions: {
             bar: {
                 horizontal: false,
-                borderRadius: 10,
+               columnWidth: '25%',
                 dataLabels: {
                     total: {
                         enabled: true,

@@ -25,16 +25,29 @@
                                             <div class="form-group form-input">
                                                 <label
                                                     class="form-label require">{{ __('inspection.inspection_date') }}</label>
-                                                <input type="text" name="inspection_date" id = "inspection_date"
-                                                    class="form-control inspection_date">
+
+                                                <div class="input-group date form-input custom-height">
+                                                    <input type="text" name="inspection_date" id = "inspection_date"
+                                                        class="form-control inspection_date">
+                                                    <div class="input-group-addon input-group-text">
+                                                        <span class="fa fa-calendar"></span>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
 
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
                                                 <label class="form-label require">{{ __('inspection.next_due') }}</label>
-                                                <input type="text" name="next_due" id = "next_due"
-                                                    class="form-control next_due">
+
+
+                                                <div class="input-group date form-input custom-height">
+                                                    <input type="text" name="next_due" id = "next_due"
+                                                        class="form-control next_due">
+                                                    <div class="input-group-addon input-group-text">
+                                                        <span class="fa fa-calendar"></span>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                         <div class="col-md-4 mb-3 form-input">
@@ -201,7 +214,7 @@
                             data: 'inspection_status',
                             name: 'inspection_status',
                         },
-                         {
+                        {
                             data: 'created_date',
                             name: 'created_date',
                         },

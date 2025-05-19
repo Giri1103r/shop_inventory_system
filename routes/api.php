@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\{LoginController, NotificationController, AdminController};
+use App\Http\Controllers\Api\Inspection\Audit\AuditAssessmentController;
 use App\Http\Controllers\Api\MasterController;
 use App\Http\Controllers\Api\Permit\SafetyPermitController;
 use App\Http\Controllers\Api\Ppemanagement\PpeExemptionController;
@@ -40,15 +41,15 @@ Route::middleware('api')->prefix('v1')->group(function () {
          * Master Routes
          */
 
-         Route::post('/master/employee/dropdown', [MasterController::class, 'employee']);
-         Route::post('/master/worker/dropdown', [MasterController::class, 'worker']);
-         Route::post('/master/company/dropdown', [MasterController::class, 'company']);
-         Route::post('/master/location/dropdown', [MasterController::class, 'location']);
-         Route::post('/master/unit/dropdown', [MasterController::class, 'unit']);
-         Route::post('/master/department/dropdown', [MasterController::class, 'department']);
+        Route::post('/master/employee/dropdown', [MasterController::class, 'employee']);
+        Route::post('/master/worker/dropdown', [MasterController::class, 'worker']);
+        Route::post('/master/company/dropdown', [MasterController::class, 'company']);
+        Route::post('/master/location/dropdown', [MasterController::class, 'location']);
+        Route::post('/master/unit/dropdown', [MasterController::class, 'unit']);
+        Route::post('/master/department/dropdown', [MasterController::class, 'department']);
 
 
-         Route::group(['prefix' => 'ppe/master'], function () {
+        Route::group(['prefix' => 'ppe/master'], function () {
             Route::post('/ppetype', [PpemanagementController::class, 'ppetype']);
             Route::post('/ppemaster', [PpemanagementController::class, 'ppemaster']);
         });
@@ -56,7 +57,6 @@ Route::middleware('api')->prefix('v1')->group(function () {
             Route::post('/ppetype', [PpemanagementController::class, 'ppetype']);
             Route::post('/ppemaster', [PpemanagementController::class, 'ppemaster']);
             Route::post('/ppestock', [PpemanagementController::class, 'ppestock']);
-
         });
         Route::group(['prefix' => 'ppe/pperequest'], function () {
             Route::post('/list', [PperequestController::class, 'list']);
@@ -65,15 +65,12 @@ Route::middleware('api')->prefix('v1')->group(function () {
             Route::post('/hodapproval', [PperequestController::class, 'hodapproval']);
             Route::post('/ehsapproval', [PperequestController::class, 'ehsapproval']);
             Route::post('/smapproval', [PperequestController::class, 'smapproval']);
-
-
         });
         Route::group(['prefix' => 'ppe/ppeexemption'], function () {
             Route::post('/list', [PpeExemptionController::class, 'list']);
             Route::post('/store', [PpeExemptionController::class, 'store']);
             Route::post('/view', [PpeExemptionController::class, 'view']);
             Route::post('/approval', [PpeExemptionController::class, 'approvereject']);
-
         });
 
         Route::group(['prefix' => 'ptw/safetypermit'], function () {
@@ -83,20 +80,22 @@ Route::middleware('api')->prefix('v1')->group(function () {
             Route::post('/approval', [SafetyPermitController::class, 'ehsapproval']);
             Route::post('/qrcode', [SafetyPermitController::class, 'qrcode']);
             Route::post('/reassignEmployeeList', [SafetyPermitController::class, 'getReassignEmployee']);
-
-
         });
         Route::group(['prefix' => 'trainng/master/dropdown/'], function () {
             Route::post('/topiclist', [TrainingSheducleController::class, 'topiclist']);
             Route::post('/venulist', [TrainingSheducleController::class, 'venulist']);
-
         });
         Route::group(['prefix' => 'trainng/training-schedule/'], function () {
             Route::post('list', [TrainingSheducleController::class, 'list']);
             Route::post('view', [TrainingSheducleController::class, 'view']);
             Route::post('attendance-recoder', [TrainingSheducleController::class, 'storeAttendance']);
             Route::post('post-assessment', [TrainingSheducleController::class, 'endTrainingStore']);
+        });
 
+        Route::group(['prefix' => 'inspection/audit/audit-assessment/'], function () {
+            Route::post('list', [AuditAssessmentController::class, 'list']);
+            Route::post('view', [AuditAssessmentController::class, 'view']);
+            Route::post('add', [AuditAssessmentController::class, 'add']);
         });
     });
 });

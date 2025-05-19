@@ -13,8 +13,7 @@
         plotOptions: {
             bar: {
                 horizontal: false,
-                columnWidth: '55%',
-                borderRadius: 5,
+                columnWidth: '25%',
                 borderRadiusApplication: 'end'
             }
         },
@@ -29,7 +28,7 @@
         xaxis: {
             categories: {!! json_encode($units) !!}
         },
-       
+
         fill: {
             opacity: 1
         },
