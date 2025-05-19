@@ -71,27 +71,20 @@
             </div>
 
             <div class="row">
-                <div class="col-xl-6 col-xxl-6">
-                    <div class="card view_card">
-                        <div class="card-header">
-                            <h4 class="text-white">CHART1</h4>
-                            <a class="fas fa-arrow-alt-circle-down chartdownload" id="LoadChart1_download"></a>
+                <div class="col-md-3">
+                    <div class="row h-50">
+                        <div class="card view_card">
+                            <div class="card-header">
+                                <h4 class="text-white">{{ getLeadingName(LEADING_CATEGORY_1) }}</h4>
+                                <a class="fas fa-arrow-alt-circle-down chartdownload" id="stakcedLeadingChartDownload"></a>
+                            </div>
+                            <div class="card-body px-0 pt-0 dlab-scroll height450" id="stakcedLeadingChart">
+                            </div>
                         </div>
-                        <div class="card-body px-0 pt-0 dlab-scroll height450" id="LoadChart1Count"> </div>
-
-                    </div>
-                </div>
-                <div class="col-xl-6 col-xxl-6">
-                    <div class="card view_card">
-                        <div class="card-header">
-                            <h4 class="text-white">CHART2</h4>
-                            <a class="fas fa-arrow-alt-circle-down chartdownload" id="LoadChart2_download"></a>
-                        </div>
-                        <div class="card-body px-0 pt-0 dlab-scroll height450" id="LoadChart2Count"> </div>
-
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
 
@@ -103,7 +96,7 @@
         function filterDashboard() {
             Fromdate = $("#fromDate").val();
             Todate = $("#toDate").val();
-            LoadChart1Count(Fromdate, Todate);
+            leadingStackedChart(Fromdate, Todate);
             LoadChart2Count(Fromdate, Todate);
             LoadChart3Count(Fromdate, Todate);
             LoadChart4Count(Fromdate, Todate);
@@ -127,20 +120,21 @@
 
         }
 
-        function LoadChart1Count(Fromdate = '', Todate = '') {
-            var url = "{{ admin_url('kpi/dashboard/chart1') }}"
+        function leadingStackedChart(CompanyId = '', Fromdate = '', Todate = '') {
+            var url = "{{ admin_url('kpi/dashboard/leading-lagging/leading/chart1') }}"
             var data = {
+                CompanyId: CompanyId,
                 Fromdate: Fromdate,
                 Todate: Todate,
             };
-            $('#LoadChart1Count').html('');
+            $('#stakcedLeadingChart').html('');
             $.ajax({
                 type: 'get',
                 url: url,
                 data: data,
                 cache: false,
                 success: function(dataAjx) {
-                    $('#LoadChart1Count').html(dataAjx);
+                    $('#stakcedLeadingChart').html(dataAjx);
                 }
             });
         }
