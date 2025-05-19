@@ -3,6 +3,7 @@
 namespace App\Models\KPI;
 
 use App\Scopes\TrashScope;
+use Google\Rpc\Context\AttributeContext\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;

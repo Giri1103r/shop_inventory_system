@@ -71,27 +71,42 @@
             </div>
 
             <div class="row">
-                <div class="col-xl-6 col-xxl-6">
-                    <div class="card view_card">
-                        <div class="card-header">
-                            <h4 class="text-white">CHART1</h4>
-                            <a class="fas fa-arrow-alt-circle-down chartdownload" id="LoadChart1_download"></a>
+                <div class="col-md-3">
+                    <div class="row h-50">
+                        <div class="card view_card">
+                            <div class="card-header">
+                                <h4 class="text-white">{{ getLeadingName(LEADING_CATEGORY_1) }}</h4>
+                                <a class="fas fa-arrow-alt-circle-down chartdownload" id="stakcedLeadingChartDownload"></a>
+                            </div>
+                            <div class="card-body px-0 pt-0 dlab-scroll height450" id="stakcedLeadingChart">
+                            </div>
                         </div>
-                        <div class="card-body px-0 pt-0 dlab-scroll height450" id="LoadChart1Count"> </div>
-
-                    </div>
-                </div>
-                <div class="col-xl-6 col-xxl-6">
-                    <div class="card view_card">
-                        <div class="card-header">
-                            <h4 class="text-white">CHART2</h4>
-                            <a class="fas fa-arrow-alt-circle-down chartdownload" id="LoadChart2_download"></a>
-                        </div>
-                        <div class="card-body px-0 pt-0 dlab-scroll height450" id="LoadChart2Count"> </div>
-
                     </div>
                 </div>
             </div>
+            <div class="row">
+
+                <div class="col-xl-6 col-xxl-6">
+                    <div class="card view_card responsive">
+                        <div class="card-header">
+                            <h4 class="text-white">Lagging Indicator Line</h4>
+                            <a class="fas fa-arrow-alt-circle-down chartdownload" id="lagging_line_download"></a>
+                        </div>
+                        <div id="lagging_line_count"></div>
+                    </div>
+                </div>
+
+                <div class="col-xl-6 col-xxl-6">
+                    <div class="card view_card responsive">
+                        <div class="card-header">
+                            <h4 class="text-white">Lagging Indicator Doughnut</h4>
+                            <a class="fas fa-arrow-alt-circle-down chartdownload" id="lagging_doughnut_download"></a>
+                        </div>
+                        <div id="doughnut_count"></div>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 
@@ -103,7 +118,7 @@
         function filterDashboard() {
             Fromdate = $("#fromDate").val();
             Todate = $("#toDate").val();
-            LoadChart1Count(Fromdate, Todate);
+            leadingStackedChart(Fromdate, Todate);
             LoadChart2Count(Fromdate, Todate);
             LoadChart3Count(Fromdate, Todate);
             LoadChart4Count(Fromdate, Todate);
@@ -124,23 +139,66 @@
             LoadChart19Count(Fromdate, Todate);
             LoadChart20Count(Fromdate, Todate);
             LoadChart21Count(Fromdate, Todate);
+            lagging_line(Fromdate, Todate);
+            lagging_doughnut(Fromdate, Todate);
 
         }
 
-        function LoadChart1Count(Fromdate = '', Todate = '') {
-            var url = "{{ admin_url('kpi/dashboard/chart1') }}"
+        // CompanyId = '', CompanyId = '',  CompanyId = '', 
+
+        function lagging_line(Fromdate = '', Todate = '') {
+            var url = "{{ admin_url('kpi/dashboard/leading-lagging/lagging-line') }}"
             var data = {
+                // CompanyId: CompanyId,
                 Fromdate: Fromdate,
                 Todate: Todate,
             };
-            $('#LoadChart1Count').html('');
+            $('#lagging_line_count').html('');
             $.ajax({
                 type: 'get',
                 url: url,
                 data: data,
                 cache: false,
                 success: function(dataAjx) {
-                    $('#LoadChart1Count').html(dataAjx);
+                    $('#lagging_line_count').html(dataAjx);
+                }
+            });
+        }
+
+        function lagging_doughnut(Fromdate = '', Todate = '') {
+            var url = "{{ admin_url('kpi/dashboard/leading-lagging/lagging-indicator') }}"
+            var data = {
+                // CompanyId: CompanyId,
+                Fromdate: Fromdate,
+                Todate: Todate,
+            };
+            $('#doughnut_count').html('');
+            $.ajax({
+                type: 'get',
+                url: url,
+                data: data,
+                cache: false,
+                success: function(dataAjx) {
+                    $('#doughnut_count').html(dataAjx);
+                }
+            });
+        }
+
+        function leadingStackedChart(CompanyId = '', Fromdate = '', Todate = '') {
+            var url = "{{ admin_url('kpi/dashboard/leading-lagging/leading/chart1') }}"
+            var data = {
+                CompanyId: CompanyId,
+                Fromdate: Fromdate,
+                Todate: Todate,
+            };
+            $('#stakcedLeadingChart').html('');
+            $.ajax({
+                type: 'get',
+                url: url,
+                data: data,
+                cache: false,
+                success: function(dataAjx) {
+                    $('#stakcedLeadingChart').html(dataAjx);
                 }
             });
         }

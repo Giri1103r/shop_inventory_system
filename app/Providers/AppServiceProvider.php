@@ -439,6 +439,11 @@ class AppServiceProvider extends ServiceProvider
         defined('LAGGING')  or define('LAGGING', 2);
 
 
+        //KPI LEADING CATEGORY
+        defined('LEADING_CATEGORY_1') or define('LEADING_CATEGORY_1', 1);
+        defined('LEADING_CATEGORY_2') or define('LEADING_CATEGORY_2', 2);
+
+
 
         View::composer('*', function ($view) {
 

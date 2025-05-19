@@ -327,7 +327,9 @@ Route::middleware(['securityheader'])->group(function () {
 
                 Route::group(['prefix' =>  'leading-lagging/'], function () {
                     Route::get('', [LeadingLaggingDashboardController::class, 'index']);
-                    Route::get('leadingchart1', [LeadingLaggingDashboardController::class, 'getLeadingChart1']);
+                    Route::get('leading/chart1', [LeadingLaggingDashboardController::class, 'getChart1']);
+                    Route::GET('lagging-line',[LeadingLaggingDashboardController::class,'LaggingIndicatorLine']);
+                    Route::GET('lagging-indicator',[LeadingLaggingDashboardController::class,'LaggingDoughNut']);
                 });
             });
 
@@ -355,8 +357,6 @@ Route::middleware(['securityheader'])->group(function () {
             Route::post('administration/role/import/submit', [UserRoleController::class, 'importSubmit']);
             Route::get('administration/role/list/{companyId}', [UserRoleController::class, 'list']);
             Route::get('administration/role/sampledownload', [UserRoleController::class, 'DownloadSample']);
-
-
 
 
             Route::get('administration/users/list', [UserController::class, 'index']);
