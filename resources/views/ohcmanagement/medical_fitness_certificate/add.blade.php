@@ -92,7 +92,15 @@
                                                     <small>Allowed file types: PDF, DOCX, DOC</small>
                                                 </div>
                                             </div>
-
+                                            <div class="col-md-12 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">Chief Complaint</label>
+                                                    <textarea name="cheif_complaint" id="cheif_complaint" class="form-control " cols="30" rows="5"></textarea>
+                                                    @error('cheif_complaint')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
+                                                </div>
+                                            </div>
                                             <div class="col-md-12 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Remarks</label>
@@ -219,6 +227,11 @@
                         minlength: 3,
                         maxlength: 600,
                     },
+                    cheif_complaint: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 600,
+                    },
                 },
                 messages: {
                     emp_id: {
@@ -241,6 +254,11 @@
                         required: "Remarks are required.",
                         minlength: "Remarks should have at least 3 characters.",
                         maxlength: "Remarks should not exceed 600 characters.",
+                    },
+                    cheif_complaint: {
+                        required: "Cheif Complaint are required.",
+                        minlength: "Cheif Complaint should have at least 3 characters.",
+                        maxlength: "Cheif Complaint should not exceed 600 characters.",
                     },
                 },
                 errorElement: 'span',
