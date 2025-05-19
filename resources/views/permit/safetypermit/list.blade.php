@@ -262,6 +262,10 @@
 
             var dashboard_month =
                 '{{ isset($dashboard_search['month']) && $dashboard_search['month'] != '' ? $dashboard_search['month'] : '' }}';
+            var dashboard_openCloseStatus =
+                '{{ isset($dashboard_search['openclose']) && $dashboard_search['openclose'] != '' ? $dashboard_search['openclose'] : '' }}';
+           
+
             var table = $('.datatable-list').DataTable({
                 autoWidth: false,
                 responsive: true,
@@ -301,6 +305,7 @@
                         d.to_date = $('#to_date').val();
                         d.status = $('#status').val();
                         d.dashboard_month = dashboard_month;
+                        d.dashboard_openCloseStatus = dashboard_openCloseStatus;
 
                     },
                     error: function(xhr, error, code) {
@@ -390,6 +395,7 @@
                                     to_date = $('#to_date').val();
                                     status = $('#status').val();
                                     dashboard_month = dashboard_month;
+                                    dashboard_openCloseStatus = dashboard_openCloseStatus;
 
                                     $(".dt-button").removeClass('processing');
                                     $('body').click();
@@ -398,6 +404,7 @@
                                         '?search=' + searchValue +
                                         '&permit_id=' + permit_id +
                                         '&dashboard_month=' + dashboard_month +
+                                        '&dashboard_openCloseStatus=' + dashboard_openCloseStatus +
                                         '&company_id=' + company_id +
                                         '&location_id=' + location_id +
                                         '&unit_id=' + unit_id +
@@ -420,6 +427,8 @@
                                     to_date = $('#to_date').val();
                                     status = $('#status').val();
                                     dashboard_month = dashboard_month;
+                                    dashboard_openCloseStatus = dashboard_openCloseStatus;
+
 
                                     $(".dt-button").removeClass('processing');
                                     $('body').click();
@@ -428,6 +437,7 @@
                                         '?search=' + searchValue +
                                         '&permit_id=' + permit_id +
                                         '&dashboard_month=' + dashboard_month +
+                                        '&dashboard_openCloseStatus=' + dashboard_openCloseStatus +
                                         '&company_id=' + company_id +
                                         '&location_id=' + location_id +
                                         '&unit_id=' + unit_id +

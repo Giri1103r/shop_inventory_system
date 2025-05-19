@@ -27,8 +27,7 @@
                     var dataPointIndex = config.dataPointIndex;
                     var monthName = chartContext.w.config.xaxis.categories[dataPointIndex];
                     var month = new Date(Date.parse(monthName + " 1, 2000")).getMonth() + 1;
-                    // alert(123);
-                    redirectToPTW('', '', month);
+                    redirectToPTW('', '', month,'');
                 }
             }
         },

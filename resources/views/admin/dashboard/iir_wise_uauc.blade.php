@@ -33,18 +33,7 @@
             toolbar: {
                 show: false
             },
-            events: {
-                dataPointSelection: function(event, chartContext, config) {
-                    var seriesIndex = config.seriesIndex;
-                    var dataPointIndex = config.dataPointIndex;
-
-                    var incidentTypeName = chartContext.w.config.xaxis.categories[dataPointIndex];
-                    var selectedItem = iirChartData.find(item => item.incident_type_name === incidentTypeName);
-
-                    var iirType = selectedItem.iir_type;
-                    redirectToIms(iirType, '', '', '', '', uauc, '');
-                }
-            }
+       
         },
         plotOptions: {
             bar: {

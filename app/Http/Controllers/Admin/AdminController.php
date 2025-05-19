@@ -126,7 +126,7 @@ class AdminController extends Controller
                 }
             }
         } catch (\Exception $ex) {
-            dd($ex);
+            report($ex);
             return back()->with('error', 'Failed to load heatmap incident data.');
         }
     }
@@ -164,7 +164,7 @@ class AdminController extends Controller
             Session::flash('success', 'User profile is updated successfully!');
             return redirect(admin_url('profile'));
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             return "Error";
         }
     }
@@ -200,7 +200,7 @@ class AdminController extends Controller
 
             return redirect(admin_url('profile'));
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong. Please try again later.');
             return redirect(admin_url('profile'));
         }
@@ -228,7 +228,7 @@ class AdminController extends Controller
             Session::flash('success', 'User profile is updated successfully!');
             return redirect(admin_url('profile'));
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             return "Error";
         }
     }
@@ -259,7 +259,7 @@ class AdminController extends Controller
 
             return redirect(admin_url('profile'));
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Please try after sometimes!');
             return redirect()->back();
         }
@@ -270,9 +270,9 @@ class AdminController extends Controller
     {
         try {
             $chartData = $this->incident_ims->getTotalIncidentCountData($request);
-            // if ($chartData->isEmpty()) {
-            //     return response()->json('<div class="border-0 pb-3" style="margin-top: 166px;"><h4 style="text-align: center;">No data Found.</h4></div>');
-            // }
+            if ($chartData->isEmpty()) {
+                return response()->json('<div class="border-0 pb-3" style="margin-top: 166px;"><h4 style="text-align: center;">No data Found.</h4></div>');
+            }
             $formattedData = [];
             $incidentTypeIds = [];
             $unitIds = [];
@@ -292,7 +292,6 @@ class AdminController extends Controller
                     'unit_id' => $row->unit_id,
                 ];
             }
-            // dd($chartData);
             return view('admin.dashboard.totalIncidentsCount', [
                 'formattedData' => $formattedData,
                 'incidentTypeIds' => $incidentTypeIds,
@@ -302,7 +301,7 @@ class AdminController extends Controller
                 'chartData' => $chartData,
             ]);
         } catch (\Exception $ex) {
-            dd($ex);
+            report($ex);
             return back()->with('error', 'Failed to load unit-wise incident data.');
         }
     }
@@ -314,7 +313,6 @@ class AdminController extends Controller
             if ($chartData->isEmpty()) {
                 return response()->json('<div class="border-0 pb-3" style="margin-top: 166px;"><h4 style="text-align: center;">No data Found.</h4></div>');
             }
-
             $formattedData = [];
             $typeIdMap = [];
 
@@ -330,7 +328,7 @@ class AdminController extends Controller
                 'getdashdata' => $request,
             ]);
         } catch (\Exception $ex) {
-            dd($ex);
+            report($ex);
             return back()->with('error', 'Failed to load incident type chart data.');
         }
     }
@@ -394,7 +392,7 @@ class AdminController extends Controller
                 'getdashdata' => $request,
             ]);
         } catch (\Exception $ex) {
-            dd($ex);
+            report($ex);
             return back()->with('error', 'Failed to load heatmap incident data.');
         }
     }
@@ -407,6 +405,19 @@ class AdminController extends Controller
 
             $inspection_wise_count = InspectionCount($from_date, $to_date);
 
+            $return_flag = true;
+            foreach ($inspection_wise_count as $index => $values) {
+                if ($values == 0) {
+                    $return_flag = false;
+                } else {
+                    $return_flag = true;
+                }
+            }
+
+            if ($return_flag == false) {
+                return response()->json('<div class="border-0 pb-3" style="margin-top: 166px;"><h4 style="text-align: center;">No data Found.</h4></div>');
+            }
+
             $data = [
                 'inspection_wise_count' => $inspection_wise_count,
                 'from_date' => $from_date,
@@ -415,7 +426,7 @@ class AdminController extends Controller
 
             return view('admin.dashboard.inspection_wise_count', $data);
         } catch (\Exception $ex) {
-            dd($ex);
+            report($ex);
         }
     }
 
@@ -430,14 +441,33 @@ class AdminController extends Controller
             ];
             $active_close_count = $this->ptw->ActiveVsClose();
 
+            $return_flag = true;
+            foreach ($active_close_count as $index => $values) {
+                if ($values == 0) {
+                    $return_flag = false;
+                } else {
+                    $return_flag = true;
+                }
+            }
+
+            if ($return_flag == false) {
+                return response()->json('<div class="border-0 pb-3" style="margin-top: 166px;"><h4 style="text-align: center;">No data Found.</h4></div>');
+            }
+
+
+
+            $openEncrypted = encryptId(1);
+            $closeEncrypted = encryptId(2);
             $data = [
                 'active_close_count' => $active_close_count,
                 'dates' => $dates,
+                'openStatusEncrypted' => $openEncrypted,
+                'closeStatusEncrypted' => $closeEncrypted,
             ];
 
             return view('admin.dashboard.ptw_open_close', $data);
         } catch (\Exception $ex) {
-            dd($ex);
+            report($ex);
         }
     }
 
@@ -454,12 +484,12 @@ class AdminController extends Controller
 
             $work_wise_count = $this->ptw->GetTypeWiseCount();
 
-            // if (empty($work_wise_count) || array_sum($work_wise_count) === 0) {
-            //     return response()->json([
-            //         'html' => '<div class="border-0 pb-3" style="margin-top: 150px;"><h4 style="text-align: center;">No data Found.</h4></div>',
-            //         'status' => 'empty'
-            //     ]);
-            // }
+            if (count($work_wise_count) < 0) {
+                return response()->json([
+                    'html' => '<div class="border-0 pb-3" style="margin-top: 150px;"><h4 style="text-align: center;">No data Found.</h4></div>',
+                    'status' => 'empty'
+                ]);
+            }
             $data = [
                 'work_wise_count' => $work_wise_count,
                 'dates' => $dates,
@@ -467,7 +497,7 @@ class AdminController extends Controller
 
             return view('admin.dashboard.ptw_type_wise_count', $data);
         } catch (\Exception $ex) {
-            dd($ex);
+            report($ex);
         }
     }
 
@@ -505,7 +535,7 @@ class AdminController extends Controller
                 'getdashdata' => (object) $dates
             ]);
         } catch (\Exception $ex) {
-            dd($ex);
+            report($ex);
         }
     }
 
@@ -529,7 +559,7 @@ class AdminController extends Controller
             }
             return view('admin.dashboard.ptw_hold_wise_count', $data);
         } catch (\Exception $ex) {
-            dd($ex);
+            report($ex);
         }
     }
 
@@ -546,7 +576,7 @@ class AdminController extends Controller
                 'chartData' => $chartData,
             ]);
         } catch (\Exception $ex) {
-            dd($ex);
+            report($ex);
         }
     }
 
@@ -564,7 +594,7 @@ class AdminController extends Controller
                 'chartData' => $chartData,
             ]);
         } catch (\Exception $ex) {
-            dd($ex);
+            report($ex);
         }
     }
 
@@ -577,12 +607,25 @@ class AdminController extends Controller
             $company_id = $request->input('CompanyId');
             $chartData = getPPEAvailabilityChartData($form_date, $to_date, $company_id);
 
+            $return_flag = true;
+            foreach ($chartData as $index => $values) {
+                if ($values == 0) {
+                    $return_flag = false;
+                } else {
+                    $return_flag = true;
+                }
+            }
+
+            if ($return_flag == false) {
+                return response()->json('<div class="border-0 pb-3" style="margin-top: 166px;"><h4 style="text-align: center;">No data Found.</h4></div>');
+            }
+
             return view('admin.dashboard.chartPPEAvailability', [
                 'getdashdata' => $request,
                 'chartData' => $chartData,
             ]);
         } catch (\Exception $ex) {
-            dd($ex);
+            report($ex);
         }
     }
 
@@ -608,7 +651,7 @@ class AdminController extends Controller
                 'getdashdata' => $request,
             ]);
         } catch (\Exception $ex) {
-            dd($ex);
+            report($ex);
             return back()->with('error', 'Failed to load training completion data.');
         }
     }
@@ -621,20 +664,24 @@ class AdminController extends Controller
             if ($chartData->isEmpty()) {
                 return response()->json('<div class="border-0 pb-3" style="margin-top: 166px;"><h4 style="text-align: center;">No data Found.</h4></div>');
             }
+
             $formattedData = [
                 'labels' => $chartData->pluck('incident_type_name'),
                 'counts' => $chartData->pluck('total'),
+                'idMap' => $chartData->mapWithKeys(function ($item) {
+                    return [$item->incident_type_name => $item->incident_type_id];
+                }),
             ];
-
             return view('admin.dashboard.type_of_irr', [
                 'formattedData' => $formattedData,
-                'getdashdata' => $request,
+
             ]);
         } catch (\Exception $ex) {
-            dd($ex);
+            report($ex);
             return back()->with('error', 'Failed to load Type of IIR data.');
         }
     }
+
 
     public function getAccidentReportUnitWiseCount(Request $request)
     {
@@ -644,24 +691,39 @@ class AdminController extends Controller
             if ($chartData->isEmpty()) {
                 return response()->json('<div class="border-0 pb-3" style="margin-top: 166px;"><h4 style="text-align: center;">No data Found.</h4></div>');
             }
+
+            // Build lookup structure for JS click event
+            $lookup = [];
+            foreach ($chartData as $item) {
+                $lookup['Major'][$item->unit_name] = [
+                    'unit_id' => $item->unit_id,
+                    'injury_type' => 1
+                ];
+                $lookup['Minor'][$item->unit_name] = [
+                    'unit_id' => $item->unit_id,
+                    'injury_type' => 2
+                ];
+                $lookup['Fatal'][$item->unit_name] = [
+                    'unit_id' => $item->unit_id,
+                    'injury_type' => 3
+                ];
+            }
+
             $formattedData = [
                 'labels' => $chartData->pluck('unit_name'),
                 'major' => $chartData->pluck('major'),
                 'minor' => $chartData->pluck('minor'),
                 'fatal' => $chartData->pluck('fatal'),
+                'lookup' => $lookup
             ];
-
             return view('admin.dashboard.accident_report_unit_wise', [
                 'formattedData' => $formattedData,
-                'getdashdata' => $request,
+                'getdashdata' => $request
             ]);
         } catch (\Exception $ex) {
-            dd($ex);
             return back()->with('error', 'Failed to load unit-wise accident data.');
         }
     }
-
-
     public function getInjurypart(Request $request)
     {
         try {
@@ -671,7 +733,7 @@ class AdminController extends Controller
             );
             return view('admin.dashboard.injurypartchart', $data);
         } catch (\Exception $ex) {
-            dd($ex);
+            report($ex);
         }
     }
 
@@ -732,7 +794,7 @@ class AdminController extends Controller
 
             return view('admin.dashboard.iir_wise_rcpa', $data);
         } catch (\Exception $ex) {
-            dd($ex);
+            report($ex);
         }
     }
 
@@ -747,6 +809,8 @@ class AdminController extends Controller
                 return response()->json('<div class="border-0 pb-3" style="margin-top: 166px;"><h4 style="text-align: center;">No data Found.</h4></div>');
             }
 
+
+
             $chartDataSeries = [
                 'Unsafe Act' => [],
                 'Unsafe Condition' => [],
@@ -757,7 +821,7 @@ class AdminController extends Controller
             foreach ($chartData as $data) {
                 $categories[] = $data['unit_name'];
                 foreach ($chartDataSeries as $key => $value) {
-                    $chartDataSeries[$key][] = $data[$key];
+                    $chartDataSeries[$key][] = isset($data[$key]) ? $data[$key] : 0;
                 }
             }
 
@@ -773,8 +837,8 @@ class AdminController extends Controller
                 'chartData' => $chartData
             ]);
         } catch (\Exception $ex) {
-            dd($ex);
-            dd($ex);
+            report($ex);
+
             return back()->with('error', 'Failed to load unit-wise incident data.');
         }
     }
@@ -817,7 +881,7 @@ class AdminController extends Controller
                 'chartData' => $chartData
             ]);
         } catch (\Exception $ex) {
-            dd($ex);
+            report($ex);
             return back()->with('error', 'Failed to load unit-wise incident data.');
         }
     }
@@ -837,7 +901,7 @@ class AdminController extends Controller
 
             return view('admin.dashboard.iir_wise_uauc', $data);
         } catch (\Exception $ex) {
-            dd($ex);
+            report($ex);
         }
     }
 
@@ -871,7 +935,7 @@ class AdminController extends Controller
 
             return view('admin.dashboard.unit_wise_uauc', compact('series', 'units', 'request'));
         } catch (\Exception $ex) {
-            dd($ex);
+            report($ex);
         }
     }
 
@@ -890,7 +954,7 @@ class AdminController extends Controller
 
             return view('admin.dashboard.near_miss_frequency', $data);
         } catch (\Exception $ex) {
-            dd($ex);
+            report($ex);
         }
     }
     public function auditFindings(Request $request)
@@ -933,7 +997,7 @@ class AdminController extends Controller
                 'auditAnalysisCount' => $auditAnalysisCount,
                 'interUnitCount' => $interUnitCount,
                 'auditMonthlyCount' => $auditMonthlyCount,
-                'hasData' => ($auditAssessmentCount + $auditAnalysisCount + $interUnitCount + $auditMonthlyCount) > 0,
+                'hasData' => $total,
                 'getdashdata' => (object)[
                     'Fromdate' => $request->Fromdate,
                     'Todate' => $request->Todate,
@@ -942,7 +1006,7 @@ class AdminController extends Controller
 
             return view('admin.dashboard.auditFindings', $data);
         } catch (\Exception $ex) {
-            dd($ex);
+            report($ex);
             return back()->withErrors('An error occurred while processing the audit findings.');
         }
     }
@@ -997,14 +1061,12 @@ class AdminController extends Controller
                 ];
             });
 
-            // dd($result);
 
             return view('admin.dashboard.unitwisecount', [
-                'unit' => $unit,
                 'unitData' => $result,
             ]);
         } catch (\Exception $ex) {
-            dd($ex);
+            report($ex);
             return back()->withErrors('An error occurred');
         }
     }
@@ -1012,54 +1074,65 @@ class AdminController extends Controller
 
     public function monthwiseptw(Request $request)
     {
-        $permitCountsQuery = $this->ptw
-            ->selectRaw('MONTH(created_at) as month, YEAR(created_at) as year, COUNT(*) as permit_count')
-            ->where('status', 1)
-            ->where('trash', 'NO');
+        try {
+            $permitCountsQuery = $this->ptw
+                ->selectRaw('MONTH(created_at) as month, YEAR(created_at) as year, COUNT(*) as permit_count')
+                ->where('status', 1)
+                ->where('trash', 'NO');
 
-        $company_id = $request->input('CompanyId');
-        if ($company_id) {
-            $companyId = decryptId($company_id);
-            $permitCountsQuery->where('company_id', $companyId);
-        }
-
-        if ($request->Fromdate && $request->Todate) {
-            $permitCountsQuery->whereBetween('created_at', [
-                DBdateformat($request->Fromdate),
-                DBdateformat($request->Todate) . ' 23:59:59'
-            ]);
-        } elseif ($request->Fromdate) {
-            $permitCountsQuery->where('created_at', '>=', DBdateformat($request->Fromdate));
-        } elseif ($request->Todate) {
-            $permitCountsQuery->where('created_at', '<=', DBdateformat($request->Todate) . ' 23:59:59');
-        }
-        $permitCounts = $permitCountsQuery
-            ->groupBy('year', 'month')
-            ->orderBy('year')
-            ->orderBy('month')
-            ->get();
-
-        $result = [];
-        $currentYear = date('Y');
-        for ($month = 1; $month <= 12; $month++) {
-            $result[$month] = 0;
-        }
-
-        foreach ($permitCounts as $count) {
-            if ($count->year == $currentYear) {
-                $result[$count->month] = $count->permit_count;
+            $company_id = $request->input('CompanyId');
+            if ($company_id) {
+                $companyId = decryptId($company_id);
+                $permitCountsQuery->where('company_id', $companyId);
             }
-        }
-        // dd($result);
 
-        return view('admin.dashboard.monthwisecount', [
-            'monthlyCounts' => $result,
-        ]);
+            if ($request->Fromdate && $request->Todate) {
+                $permitCountsQuery->whereBetween('created_at', [
+                    DBdateformat($request->Fromdate),
+                    DBdateformat($request->Todate) . ' 23:59:59'
+                ]);
+            } elseif ($request->Fromdate) {
+                $permitCountsQuery->where('created_at', '>=', DBdateformat($request->Fromdate));
+            } elseif ($request->Todate) {
+                $permitCountsQuery->where('created_at', '<=', DBdateformat($request->Todate) . ' 23:59:59');
+            }
+            $permitCounts = $permitCountsQuery
+                ->groupBy('year', 'month')
+                ->orderBy('year')
+                ->orderBy('month')
+                ->get();
+
+            $result = [];
+            $currentYear = date('Y');
+            for ($month = 1; $month <= 12; $month++) {
+                $result[$month] = 0;
+            }
+
+            foreach ($permitCounts as $count) {
+                if ($count->year == $currentYear) {
+                    $result[$count->month] = $count->permit_count;
+                }
+            }
+
+            if (count($permitCounts) <  0) {
+                return response()->json('<div class="border-0 pb-3" style="margin-top: 166px;"><h4 style="text-align: center;">No data Found.</h4></div>');
+            }
+            return view('admin.dashboard.monthwisecount', [
+                'monthlyCounts' => $result,
+            ]);
+        } catch (\Exception $ex) {
+            report($ex);
+            return back()->withErrors('An error occurred');
+        }
     }
     public function gettrainingStatusCount(Request $request)
     {
         try {
             $chartData = $this->training_schedule->getTrainingCount();
+
+            if ($chartData) {
+                return response()->json('<div class="border-0 pb-3" style="margin-top: 166px;"><h4 style="text-align: center;">No data Found.</h4></div>');
+            }
 
             // Prepare data for the pie chart
             $chartDataArray = [
@@ -1074,7 +1147,7 @@ class AdminController extends Controller
             ];
             return view('admin.dashboard.trainingstatusCount', $data);
         } catch (\Exception $ex) {
-            dd($ex); // Debug any errors during execution
+            report($ex); // Debug any errors during execution
         }
     }
 
@@ -1083,6 +1156,9 @@ class AdminController extends Controller
     {
         try {
             $chartData = $this->training_schedule->getDepartmentData();
+            if ($chartData->isEmpty()) {
+                return response()->json('<div class="border-0 pb-3" style="margin-top: 166px;"><h4 style="text-align: center;">No data Found.</h4></div>');
+            }
             $departmentDetails = $this->department->select('department_name', 'id')->get();
 
             // Initialize chartDataArray with all departments having count 0
@@ -1109,7 +1185,7 @@ class AdminController extends Controller
 
             return view('admin.dashboard.departmentData', $data);
         } catch (\Exception $ex) {
-            dd($ex); // Debug any errors during execution
+            report($ex); // Debug any errors during execution
         }
     }
 
@@ -1118,6 +1194,10 @@ class AdminController extends Controller
         try {
             // Fetch chart data
             $chartData = $this->training_schedule->monthwiseTrainingCountData();
+
+            if ($chartData->isEmpty()) {
+                return response()->json('<div class="border-0 pb-3" style="margin-top: 166px;"><h4 style="text-align: center;">No data Found.</h4></div>');
+            }
 
             // Initialize count arrays for each month
             $overallCounts = array_fill(1, 12, 0);
@@ -1165,7 +1245,7 @@ class AdminController extends Controller
                 'chartDataArray' => $chartDataArray
             ]);
         } catch (\Exception $ex) {
-            dd($ex);
+            report($ex);
             return back()->with('error', 'Failed to load month-wise Training data.');
         }
     }

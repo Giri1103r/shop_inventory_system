@@ -213,7 +213,6 @@ class SafetyPermitController extends Controller
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
-
                     report($ex);
                     return response()->json(['status' => 'error', 'msg' => __('ptw.please_try_after_some_time')], 406);
                 }
