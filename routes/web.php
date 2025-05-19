@@ -328,6 +328,8 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::group(['prefix' =>  'leading-lagging/'], function () {
                     Route::get('', [LeadingLaggingDashboardController::class, 'index']);
                     Route::get('leading/chart1', [LeadingLaggingDashboardController::class, 'getChart1']);
+                    Route::GET('lagging-line',[LeadingLaggingDashboardController::class,'LaggingIndicatorLine']);
+                    Route::GET('lagging-indicator',[LeadingLaggingDashboardController::class,'LaggingDoughNut']);
                 });
             });
 

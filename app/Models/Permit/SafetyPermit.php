@@ -173,10 +173,9 @@ class SafetyPermit extends Model
             $openCloseStatus = decryptId($request->dashboard_openCloseStatus);
             if ($openCloseStatus == "1") {
                 $query = $query->whereNotIn('permit_status', [STATUS_CLOSED, STATUS_PERMIT_EXPIRED])
-                ->where('permit_status', '>=', STATUS_EHS_VERIFICATION_PENDING)
-                ->where('ptw_safety.status', 1)
-                ->where('ptw_safety.trash', 'NO');
-                
+                    ->where('permit_status', '>=', STATUS_EHS_VERIFICATION_PENDING)
+                    ->where('ptw_safety.status', 1)
+                    ->where('ptw_safety.trash', 'NO');
             } else {
 
                 $query = $query->where('permit_status', STATUS_CLOSED)->orWhere('permit_status', STATUS_PERMIT_EXPIRED);
@@ -372,7 +371,11 @@ class SafetyPermit extends Model
             $protective_equip[$safetydata] = $ProtectiveequipData;
         }
 
-        $existingProtectiveEquip = json_decode($safetypermit->protective_equip, true) ?? [];
+        // $existingProtectiveEquip = json_decode($safetypermit->protective_equip, true) ?? [];
+
+        $existingProtectiveEquip =   !empty($safetypermit->protective_equip)
+            ? json_decode($safetypermit->protective_equip, true)
+            : [];
 
         $update_array['protective_equip'] = !empty($protective_equip) && $protective_equip !== $existingProtectiveEquip
             ? json_encode($protective_equip)
@@ -389,7 +392,11 @@ class SafetyPermit extends Model
             $equiment_involved[$safetydata] = $equipInvoleData;
         }
 
-        $existingEquipInvolve = json_decode($safetypermit->equiment_involved, true) ?? [];
+        // $existingEquipInvolve = json_decode($safetypermit->equiment_involved, true) ?? [];
+
+        $existingEquipInvolve =   !empty($safetypermit->equiment_involved)
+            ? json_decode($safetypermit->equiment_involved, true)
+            : [];
 
         $update_array['equiment_involved'] = !empty($equiment_involved) && $equiment_involved !== $existingEquipInvolve
             ? json_encode($equiment_involved)
@@ -407,7 +414,11 @@ class SafetyPermit extends Model
             $precaution_taken[$safetydata] = $EquipPrecautionData;
         }
 
-        $existingPrecaution = json_decode($safetypermit->precaution_taken, true) ?? [];
+        // $existingPrecaution = json_decode($safetypermit->precaution_taken, true) ?? [];
+
+        $existingPrecaution =   !empty($safetypermit->precaution_taken)
+            ? json_decode($safetypermit->precaution_taken, true)
+            : [];
 
         $update_array['precaution_taken'] = !empty($precaution_taken) && $precaution_taken !== $existingPrecaution
             ? json_encode($precaution_taken)
@@ -424,7 +435,11 @@ class SafetyPermit extends Model
             $equipment_checklist[$safetydata] = $EquipChecklistData;
         }
 
-        $existingChecklistEquip = json_decode($safetypermit->equipment_checklist, true) ?? [];
+        // $existingChecklistEquip = json_decode($safetypermit->equipment_checklist, true) ?? [];
+
+        $existingChecklistEquip =   !empty($safetypermit->equipment_checklist)
+            ? json_decode($safetypermit->equipment_checklist, true)
+            : [];
 
         $update_array['equipment_checklist'] = !empty($equipment_checklist) && $equipment_checklist !== $existingChecklistEquip
             ? json_encode($equipment_checklist)
@@ -440,7 +455,11 @@ class SafetyPermit extends Model
             $safework_instruction[$safetydata] = $equipIntructionData;
         }
 
-        $existingEquip = json_decode($safetypermit->safework_instruction, true) ?? [];
+        // $existingEquip = json_decode($safetypermit->safework_instruction, true) ?? [];
+
+        $existingEquip =   !empty($safetypermit->safework_instruction)
+            ? json_decode($safetypermit->safework_instruction, true)
+            : [];
 
         $update_array['safework_instruction'] = !empty($safework_instruction) && $safework_instruction !== $existingEquip
             ? json_encode($safework_instruction)

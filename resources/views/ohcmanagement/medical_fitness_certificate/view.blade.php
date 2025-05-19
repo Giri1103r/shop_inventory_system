@@ -101,6 +101,12 @@
                                             {{ displaydateformat(isset($medicalfitness->created_at) ? $medicalfitness->created_at : '') }}
                                         </div>
                                     </div>
+                                    <div class="mb-3 col-md-8 form-input">
+                                        <label class="form-label view_label">{{ __('Chief Complaint') }}</label>
+                                        <div class="view_data">
+                                            {{ isset($medicalfitness->cheif_complaint) ? $medicalfitness->cheif_complaint : '' }}
+                                        </div>
+                                    </div>
                                     <div class="mb-3 col-md-12 form-input">
                                         <label class="form-label view_label">{{ __('Remarks') }}</label>
                                         <div class="view_data">
