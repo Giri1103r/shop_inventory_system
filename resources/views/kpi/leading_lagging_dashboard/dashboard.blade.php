@@ -84,6 +84,28 @@
                     </div>
                 </div>
             </div>
+            <div class="row">
+
+                <div class="col-xl-6 col-xxl-6">
+                    <div class="card view_card responsive">
+                        <div class="card-header">
+                            <h4 class="text-white">Lagging Indicator Line</h4>
+                            <a class="fas fa-arrow-alt-circle-down chartdownload" id="lagging_line_download"></a>
+                        </div>
+                        <div id="lagging_line_count"></div>
+                    </div>
+                </div>
+
+                <div class="col-xl-6 col-xxl-6">
+                    <div class="card view_card responsive">
+                        <div class="card-header">
+                            <h4 class="text-white">Lagging Indicator Doughnut</h4>
+                            <a class="fas fa-arrow-alt-circle-down chartdownload" id="lagging_doughnut_download"></a>
+                        </div>
+                        <div id="doughnut_count"></div>
+                    </div>
+                </div>
+            </div>
 
         </div>
     </div>
@@ -117,7 +139,49 @@
             LoadChart19Count(Fromdate, Todate);
             LoadChart20Count(Fromdate, Todate);
             LoadChart21Count(Fromdate, Todate);
+            lagging_line(Fromdate, Todate);
+            lagging_doughnut(Fromdate, Todate);
 
+        }
+
+        // CompanyId = '', CompanyId = '',  CompanyId = '', 
+
+        function lagging_line(Fromdate = '', Todate = '') {
+            var url = "{{ admin_url('kpi/dashboard/leading-lagging/lagging-line') }}"
+            var data = {
+                // CompanyId: CompanyId,
+                Fromdate: Fromdate,
+                Todate: Todate,
+            };
+            $('#lagging_line_count').html('');
+            $.ajax({
+                type: 'get',
+                url: url,
+                data: data,
+                cache: false,
+                success: function(dataAjx) {
+                    $('#lagging_line_count').html(dataAjx);
+                }
+            });
+        }
+
+        function lagging_doughnut(Fromdate = '', Todate = '') {
+            var url = "{{ admin_url('kpi/dashboard/leading-lagging/lagging-indicator') }}"
+            var data = {
+                // CompanyId: CompanyId,
+                Fromdate: Fromdate,
+                Todate: Todate,
+            };
+            $('#doughnut_count').html('');
+            $.ajax({
+                type: 'get',
+                url: url,
+                data: data,
+                cache: false,
+                success: function(dataAjx) {
+                    $('#doughnut_count').html(dataAjx);
+                }
+            });
         }
 
         function leadingStackedChart(CompanyId = '', Fromdate = '', Todate = '') {
