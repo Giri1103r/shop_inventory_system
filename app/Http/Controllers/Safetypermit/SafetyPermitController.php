@@ -213,7 +213,6 @@ class SafetyPermitController extends Controller
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
-
                     report($ex);
                     return response()->json(['status' => 'error', 'msg' => __('ptw.please_try_after_some_time')], 406);
                 }
@@ -227,6 +226,7 @@ class SafetyPermitController extends Controller
             'unitList' => $unitList,
             'status' => $status,
             'companyList' => $companyList,
+            'dashboard_search' => $request,
             // 'location' => $location,
         );
         return view('permit.safetypermit.list', $data);
@@ -1934,7 +1934,7 @@ class SafetyPermitController extends Controller
 
             $data = [
                 'safetypermit' => $safetypermit,
-                'showAlert' => $safetypermit->reference_id != null,
+                'showAlert' => $safetypermit->reference_id ,
                 'totime' => $safetypermit->time_to,
             ];
 
@@ -1956,7 +1956,7 @@ class SafetyPermitController extends Controller
             $safetypermit = $this->safetypermit->permitData($id);
             $workmanInvolved = $this->workmaninvolved->getworkmanData($id);
             $duplicateData = $this->safetypermit->Duplicatepermitdata($id);
-
+            $updatePermitExtension = $this->safetypermit->PermitExtensionUpdate($id);
             $newSafetypermit = $this->safetypermit->CreateData($safetypermit, $id);
             $this->workmaninvolved->CreateExpireData($newSafetypermit, $workmanInvolved);
             $permit_status = STATUS_PERMIT_EXTENDED;

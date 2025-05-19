@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Observation FollowUp Approve')
+@section('title', 'Observation FollowUp')
 @section('pageurl', admin_url('fire/checklist-observation/list'))
 @section('content')
     <div class="clearfix"></div>

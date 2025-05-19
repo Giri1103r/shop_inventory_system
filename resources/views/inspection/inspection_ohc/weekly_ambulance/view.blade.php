@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Weekly Ambulance Inspection Checklist Show')
+@section('title', 'Weekly Ambulance Inspection Checklist')
 @section('pageurl', admin_url('ohc/weekly-ambulance/inspection/checklist/list'))
 
 @push('style')

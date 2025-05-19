@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Emergency Light Inspection Add')
+@section('title', 'Emergency Light Inspection')
 @section('pageurl', admin_url('fire/emergency-light-inspection/list'))
 @section('content')
     <div class="clearfix"></div>
@@ -77,10 +77,33 @@
                                                 <div class="form-group form-input">
                                                     <label
                                                         class="form-label require">{{ __('inspection.inspection_date') }}</label>
-                                                    <input type="text" name="inspection_date" id = "inspection_date"
-                                                        class="form-control">
+
+
+                                                    <div class="input-group date form-input custom-height">
+                                                        <input type="text" name="inspection_date" id = "inspection_date"
+                                                            class="form-control">
+                                                        <div class="input-group-addon input-group-text">
+                                                            <span class="fa fa-calendar"></span>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label
+                                                        class="form-label require">{{ __('inspection.next_due') }}</label>
+
+
+                                                    <div class="input-group date form-input custom-height">
+                                                        <input type="text" name="next_due" id = "next_due"
+                                                            class="form-control">
+                                                        <div class="input-group-addon input-group-text">
+                                                            <span class="fa fa-calendar"></span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label
@@ -117,14 +140,6 @@
                                                                 {{ $shift->shift }}</option>
                                                         @endforeach
                                                     </select>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label
-                                                        class="form-label require">{{ __('inspection.next_due') }}</label>
-                                                    <input type="text" name="next_due" id = "next_due"
-                                                        class="form-control">
                                                 </div>
                                             </div>
 
@@ -173,7 +188,7 @@
                                         <hr>
                                         <div class="form-wrapper">
                                             <div class="card-header-inner d-flex justify-content-between">
-                                                <h4 class="text-white">Emergency Light Inspection</h4>
+                                                <h4 class="text-white ms-3">Emergency Light Inspection</h4>
                                                 <button class="btn btn-primary add-row mb-2 " type="button"
                                                     id="add-row"
                                                     style="margin-left: 10px;  margin-right: 10px; width: 84px;">
@@ -426,13 +441,20 @@
                     e.preventDefault();
                     location.reload();
                 });
-                flatpickr("#issue_date", {
+              
+                var fromDatepicker = flatpickr("#inspection_date", {
                     dateFormat: "d-m-Y",
-                });
-                flatpickr("#inspection_date", {
-                    dateFormat: "d-m-Y",
-                });
-                flatpickr("#next_due", {
+                    onChange: function(selectedDates) {
+                        if (selectedDates.length > 0) {
+                            var startDate = selectedDates[0];
+                            toDatepicker.set('minDate', startDate);
+                            toDatepicker.clear();
+                        }
+                    }
+
+                })
+
+                var toDatepicker = flatpickr("#next_due", {
                     dateFormat: "d-m-Y",
 
                 });

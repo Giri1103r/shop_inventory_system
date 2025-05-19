@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Checklist Observation Follow-up Add')
+@section('title', 'Checklist Observation Follow-up')
 @section('pageurl', admin_url('fire/checklist-observation/list'))
 
 
@@ -60,8 +60,15 @@
 
                                             <div class="col-md-4 mb-2 form-input">
                                                 <label class="form-label">Issue Dt.</label>
-                                                <input type="text" class="form-control" name="issue_date" id="issue_date"
-                                                    readonly value="{{ Displaydateformat($staticDocno->issue_date) }}">
+                                            
+                                                <div class="input-group date form-input custom-height">
+                                                    <input type="text" class="form-control" name="issue_date"
+                                                        id="issue_date" readonly
+                                                        value="{{ Displaydateformat($staticDocno->issue_date) }}">
+                                                    <div class="input-group-addon input-group-text">
+                                                        <span class="fa fa-calendar"></span>
+                                                    </div>
+                                                </div>
                                             </div>
 
                                             <div class="col-md-4 mb-2 form-input mb-2">
@@ -72,9 +79,16 @@
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Date of Inspection</label>
-                                                    <input type="text" id="date_of_inspection" name="date_of_inspection"
-                                                        class="form-control" placeholder="Date of Inspection"
-                                                        value="">
+
+
+                                                    <div class="input-group date form-input custom-height">
+                                                        <input type="text" id="date_of_inspection"
+                                                            name="date_of_inspection" class="form-control"
+                                                            placeholder="Date of Inspection" value="">
+                                                        <div class="input-group-addon input-group-text">
+                                                            <span class="fa fa-calendar"></span>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
 

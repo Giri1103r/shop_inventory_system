@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Hooter Inspection Add')
+@section('title', 'Hooter Inspection')
 @section('pageurl', admin_url('fire/hooter-inspection/list'))
 @section('content')
     <div class="clearfix"></div>
@@ -45,9 +45,17 @@
                                                 <div class="form-group form-input">
                                                     <label
                                                         class="form-label require">{{ __('inspection.issue_date') }}</label>
-                                                    <input type="text" name="issue_date" id = "issue_date"
-                                                        class="form-control" placeholder="Issued Date"
-                                                        value="{{ Displaydateformat($document_no->issue_date) }}" readonly>
+
+
+                                                    <div class="input-group date form-input custom-height">
+                                                        <input type="text" name="issue_date" id = "issue_date"
+                                                            class="form-control" placeholder="Issued Date"
+                                                            value="{{ Displaydateformat($document_no->issue_date) }}"
+                                                            readonly>
+                                                        <div class="input-group-addon input-group-text">
+                                                            <span class="fa fa-calendar"></span>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -62,10 +70,33 @@
                                                 <div class="form-group form-input">
                                                     <label
                                                         class="form-label require">{{ __('inspection.inspection_date') }}</label>
-                                                    <input type="text" name="inspection_date" id = "inspection_date"
-                                                        class="form-control" value="{{ old('inspection_date') }}">
+
+
+                                                    <div class="input-group date form-input custom-height">
+                                                        <input type="text" name="inspection_date" id = "inspection_date"
+                                                            class="form-control" value="{{ old('inspection_date') }}">
+                                                        <div class="input-group-addon input-group-text">
+                                                            <span class="fa fa-calendar"></span>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                                 @error('inspection_date')
+                                                    <div class="error">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label
+                                                        class="form-label require">{{ __('inspection.next_due') }}</label>
+                                                    <div class="input-group date form-input custom-height">
+                                                        <input type="text" name="next_due" id = "next_due"
+                                                            class="form-control" value="{{ old('next_due') }}">
+                                                        <div class="input-group-addon input-group-text">
+                                                            <span class="fa fa-calendar"></span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                @error('next_due')
                                                     <div class="error">{{ $message }}</div>
                                                 @enderror
                                             </div>
@@ -118,17 +149,7 @@
                                                     <div class="error">{{ $message }}</div>
                                                 @enderror
                                             </div>
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label
-                                                        class="form-label require">{{ __('inspection.next_due') }}</label>
-                                                    <input type="text" name="next_due" id = "next_due"
-                                                        class="form-control" value="{{ old('next_due') }}">
-                                                </div>
-                                                @error('next_due')
-                                                    <div class="error">{{ $message }}</div>
-                                                @enderror
-                                            </div>
+
 
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
@@ -183,7 +204,7 @@
                                         <hr>
                                         <div class="form-wrapper">
                                             <div class="card-header-inner d-flex justify-content-between">
-                                                <h4 class="text-white">Hooter Inspection Checklist</h4>
+                                                <h4 class="text-white ms-2" >Hooter Inspection Checklist</h4>
                                                 <button class="btn btn-primary add-row mb-2 " type="button"
                                                     id="add-row"
                                                     style="margin-left: 10px;  margin-right: 10px; width: 84px;">
@@ -387,15 +408,22 @@
                     e.preventDefault();
                     location.reload();
                 });
-                flatpickr("#issue_date", {
+               
+                var fromDatepicker = flatpickr("#inspection_date", {
                     dateFormat: "d-m-Y",
-                });
-                flatpickr("#inspection_date", {
+                    onChange: function(selectedDates) {
+                        if (selectedDates.length > 0) {
+                            var startDate = selectedDates[0];
+                            toDatepicker.set('minDate', startDate);
+                            toDatepicker.clear();
+                        }
+                    }
+
+                })
+
+                var toDatepicker = flatpickr("#next_due", {
                     dateFormat: "d-m-Y",
-                });
-                flatpickr("#next_due", {
-                    dateFormat: "d-m-Y",
-                    minDate: new Date(),
+
                 });
             });
             $(function() {

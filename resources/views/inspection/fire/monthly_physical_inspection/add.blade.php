@@ -48,10 +48,16 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.issue_date') }}</label>
-                                                        <input type="text" name="issue_date" id = ""
-                                                            class="form-control" placeholder="Issued Date"
-                                                            value="{{ displaydateformat($document_no->issue_date) }}"
-                                                            readonly>
+
+                                                        <div class="input-group date form-input custom-height">
+                                                            <input type="text" name="issue_date" id = ""
+                                                                class="form-control" placeholder="Issued Date"
+                                                                value="{{ displaydateformat($document_no->issue_date) }}"
+                                                                readonly>
+                                                            <div class="input-group-addon input-group-text">
+                                                                <span class="fa fa-calendar"></span>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 mb-2">
@@ -67,8 +73,15 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.inspection_date') }}</label>
-                                                        <input type="text" name="inspection_date" id = "inspection_date"
-                                                            class="form-control inspection_date">
+
+
+                                                        <div class="input-group date form-input custom-height">
+                                                            <input type="text" name="inspection_date"
+                                                                id = "inspection_date" class="form-control inspection_date">
+                                                            <div class="input-group-addon input-group-text">
+                                                                <span class="fa fa-calendar"></span>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 mb-2">
@@ -97,11 +110,7 @@
                                                         <select name="unit_id" id="unit_id"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Unit</option>
-                                                            @foreach ($units as $unit)
-                                                                <option value="{{ encryptId($unit->id) }}"
-                                                                    {{ old('unit_id') == encryptId($unit->id) ? 'selected' : '' }}>
-                                                                    {{ $unit->unit_name }}</option>
-                                                            @endforeach
+
                                                         </select>
                                                     </div>
                                                     @error('unit_id')
@@ -258,7 +267,31 @@
                         dateFormat: "d-m-Y",
                     });
 
-
+                    $(document).on('change', '#location_id', function() {
+                        var locationId = $(this).val();
+                        if (locationId) {
+                            $.ajax({
+                                url: "{{ admin_url('unit/ajax-list') }}/" + locationId + "/0",
+                                type: 'GET',
+                                dataType: 'json',
+                                success: function(data) {
+                                    $('#unit_id').empty().append(
+                                        '<option value="">Select unit</option>');
+                                    $.each(data, function(key, value) {
+                                        $('#unit_id').append('<option value="' + value
+                                            .id + '">' + value.name + '</option>');
+                                    });
+                                    $('#unit_id').trigger('change.');
+                                },
+                                error: function(xhr) {
+                                    alert('Error fetching unit. Please try again.');
+                                }
+                            });
+                        } else {
+                            $('#unit_id').empty().append('<option value="">Select unit</option>');
+                            $('#unit_id').trigger('change.');
+                        }
+                    });
                     $('.emp_id').select2({
                         ajax: {
                             url: '{{ admin_url('ohc/safety-petty-logbook/employeeid') }}',

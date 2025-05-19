@@ -5,178 +5,215 @@
 
 @section('content')
     <div class="container-fluid">
-            <div class="row">
-                <div class="col-12">
+        <div class="row">
+            <div class="col-12">
 
-                    <div class="card">
-                        <h4 class="card-title"></h4>
-                        <div class="d-flex justify-content-end p-2">
+                <div class="card">
+                    <h4 class="card-title"></h4>
+                    <div class="d-flex justify-content-end p-2">
 
-                            <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
-                            {{-- @if (CheckUserPermission('add')) --}}
-                            <x-button-add dataId="" class="add btn btn-primary ms-1"
-                                href="{{ admin_url('fire/hose-box-inspection/add') }}">Add</x-button-add>
-                            {{-- @endif --}}
-                        </div>
-                        <div id="search" class="collapse">
-                            <form action="" id="formsearch">
-                                <div class="card-body">
-                                    <div class="col-md-12">
-                                        <div class="row">
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label
-                                                        class="form-label require">{{ __('inspection.inspection_date') }}</label>
+                        <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
+                        {{-- @if (CheckUserPermission('add')) --}}
+                        <x-button-add dataId="" class="add btn btn-primary ms-1"
+                            href="{{ admin_url('fire/hose-box-inspection/add') }}">Add</x-button-add>
+                        {{-- @endif --}}
+                    </div>
+                    <div id="search" class="collapse">
+                        <form action="" id="formsearch">
+                            <div class="card-body">
+                                <div class="col-md-12">
+                                    <div class="row">
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label
+                                                    class="form-label require">{{ __('inspection.inspection_date') }}</label>
+
+
+                                                <div class="input-group date form-input custom-height">
                                                     <input type="text" name="inspection_date" id = "inspection_date"
                                                         class="form-control">
+                                                    <div class="input-group-addon input-group-text">
+                                                        <span class="fa fa-calendar"></span>
+                                                    </div>
                                                 </div>
                                             </div>
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label require">{{ __('inspection.next_due') }}</label>
-                                                    <input type="text" name="next_due" id = "next_due" class="form-control">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label require">{{ __('inspection.location') }}</label>
-                                                    <select name="location" id="location" class=" form-control single-select"
-                                                        style="width: 100%">
-                                                        <option value="">Select {{ __('inspection.location') }}
-                                                        </option>
-                                                        @foreach ($locations as $location)
-                                                            <option value="{{ encryptId($location->id) }}">
-                                                                {{ $location->location_name }}</option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label require">Shift</label>
-                                                    <select name="shift" id="shift" class=" form-control single-select"
-                                                        style="width: 100%">
-                                                        <option value="">Select Shift</option>
-                                                        @foreach ($shifts as $shift)
-                                                            <option value="{{ encryptId($shift->id) }}">
-                                                                {{ $shift->shift }}</option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-                                            </div>
+                                        </div>
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label require">{{ __('inspection.next_due') }}</label>
 
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label require">{{ __('inspection.unit') }}</label>
-                                                    <select name="unit" id="unit" class=" form-control single-select"
-                                                        style="width: 100%">
-                                                        <option value="">Select Unit</option>
-                                                        @foreach ($units as $unit)
-                                                            <option value="{{ encryptId($unit->id) }}">
-                                                                {{ $unit->unit_name }}</option>
-                                                        @endforeach
-                                                    </select>
+                                                <div class="input-group date form-input custom-height">
+                                                    <input type="text" name="next_due" id = "next_due"
+                                                        class="form-control">
+                                                    <div class="input-group-addon input-group-text">
+                                                        <span class="fa fa-calendar"></span>
+                                                    </div>
                                                 </div>
                                             </div>
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label require">{{ __('inspection.frequency') }}</label>
-                                                    <select name="frequency" id="frequency" class=" form-control single-select"
-                                                        style="width: 100%">
-                                                        <option value="">Select Frequency</option>
-                                                        @foreach ($frequency as $frequency)
-                                                            <option value="{{ encryptId($frequency->id) }}">
-                                                                {{ $frequency->frequency_name }}</option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-md-4 mb-3 form-input">
-                                                <label for="inspection_status"
-                                                    class="form-label ">{{ __('common.status') }}</label>
-                                                <select name="inspection_status" id="inspection_status" style="width: 100%"
-                                                    class="form-control single-select">
-                                                    <option value="">Select Status</option>
-                                                    <option value="{{ encryptId('1') }}">WAITING FOR EHS OFFICER VERIFICATION
+                                        </div>
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label require">{{ __('inspection.location') }}</label>
+                                                <select name="location" id="location" class=" form-control single-select"
+                                                    style="width: 100%">
+                                                    <option value="">Select {{ __('inspection.location') }}
                                                     </option>
-                                                    <option value="{{ encryptId('2') }}">WAITING FOR CAPA ACTION</option>
-                                                    <option value="{{ encryptId('3') }}">WAITING FOR CAPA VERIFICATION</option>
-                                                    <option value="{{ encryptId('4') }}">WAITING FOR L1 VERIFICATION</option>
-                                                    <option value="{{ encryptId('5') }}">WAITING FOR L2 VERIFICATION</option>
-                                                    <option value="{{ encryptId('6') }}">CLOSED</option>
-                                                    <option value="{{ encryptId('7') }}">EHS OFFICER REJECTED</option>
-                                                    <option value="{{ encryptId('8') }}">L1 MANAGER REJECTED</option>
-                                                    <option value="{{ encryptId('9') }}">L2 MANAGER REJECTED</option>
+                                                    @foreach ($locations as $location)
+                                                        <option value="{{ encryptId($location->id) }}">
+                                                            {{ $location->location_name }}</option>
+                                                    @endforeach
                                                 </select>
                                             </div>
+                                        </div>
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label require">{{ __('inspection.unit') }}</label>
+                                                <select name="unit" id="unit" class=" form-control single-select"
+                                                    style="width: 100%">
+                                                    <option value="">Select Unit</option>
 
-                                            <div class="col-md-4 mb-3 form-input">
-                                                <label for="emp_name" class="form-label ">From Date</label>
-                                                <div class="input-group date form-input custom-height">
-                                                    <input type="text" class="form-control " name="from_date" id="from_date"
-                                                        autocomplete="off">
-                                                    <div class="input-group-addon input-group-text">
-                                                        <span class="fa fa-calendar"></span>
-                                                    </div>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label require">Shift</label>
+                                                <select name="shift" id="shift" class=" form-control single-select"
+                                                    style="width: 100%">
+                                                    <option value="">Select Shift</option>
+                                                    @foreach ($shifts as $shift)
+                                                        <option value="{{ encryptId($shift->id) }}">
+                                                            {{ $shift->shift }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+
+
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label require">{{ __('inspection.frequency') }}</label>
+                                                <select name="frequency" id="frequency" class=" form-control single-select"
+                                                    style="width: 100%">
+                                                    <option value="">Select Frequency</option>
+                                                    @foreach ($frequency as $frequency)
+                                                        <option value="{{ encryptId($frequency->id) }}">
+                                                            {{ $frequency->frequency_name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4 mb-3 form-input">
+                                            <label for="inspection_status"
+                                                class="form-label ">{{ __('common.status') }}</label>
+                                            <select name="inspection_status" id="inspection_status" style="width: 100%"
+                                                class="form-control single-select">
+                                                <option value="">Select Status</option>
+                                                <option value="{{ encryptId('1') }}">WAITING FOR EHS OFFICER VERIFICATION
+                                                </option>
+                                                <option value="{{ encryptId('2') }}">WAITING FOR CAPA ACTION</option>
+                                                <option value="{{ encryptId('3') }}">WAITING FOR CAPA VERIFICATION</option>
+                                                <option value="{{ encryptId('4') }}">WAITING FOR L1 VERIFICATION</option>
+                                                <option value="{{ encryptId('5') }}">WAITING FOR L2 VERIFICATION</option>
+                                                <option value="{{ encryptId('6') }}">CLOSED</option>
+                                                <option value="{{ encryptId('7') }}">EHS OFFICER REJECTED</option>
+                                                <option value="{{ encryptId('8') }}">L1 MANAGER REJECTED</option>
+                                                <option value="{{ encryptId('9') }}">L2 MANAGER REJECTED</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="col-md-4 mb-3 form-input">
+                                            <label for="emp_name" class="form-label ">From Date</label>
+                                            <div class="input-group date form-input custom-height">
+                                                <input type="text" class="form-control " name="from_date" id="from_date"
+                                                    autocomplete="off">
+                                                <div class="input-group-addon input-group-text">
+                                                    <span class="fa fa-calendar"></span>
                                                 </div>
-
                                             </div>
 
-                                            <div class="col-md-4 mb-3 form-input">
-                                                <label for="emp_name" class="form-label ">To Date</label>
-                                                <div class="input-group date form-input  custom-height">
-                                                    <input type="text" class="form-control " name="to_date"
-                                                        id="to_date" autocomplete="off">
-                                                    <div class="input-group-addon input-group-text">
-                                                        <span class="fa fa-calendar"></span>
-                                                    </div>
+                                        </div>
+
+                                        <div class="col-md-4 mb-3 form-input">
+                                            <label for="emp_name" class="form-label ">To Date</label>
+                                            <div class="input-group date form-input  custom-height">
+                                                <input type="text" class="form-control " name="to_date"
+                                                    id="to_date" autocomplete="off">
+                                                <div class="input-group-addon input-group-text">
+                                                    <span class="fa fa-calendar"></span>
                                                 </div>
                                             </div>
+                                        </div>
 
-                                            <div class="col-md-3 mt-3">
-                                                <x-button-search></x-button-search>
-                                                <x-button-reset></x-button-reset>
+                                        <div class="col-md-3 mt-3">
+                                            <x-button-search></x-button-search>
+                                            <x-button-reset></x-button-reset>
 
-                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </form>
-                            <hr>
-                        </div>
-
-
-                        <div class="card-body">
-                            <div class="table-responsive">
-                                <table id="datatable-list"
-                                    class="table primary-table-bordered table-bordered table-striped display responsive nowrap w-100 mt-2 datatable-list">
-                                    <thead class="thead-primary">
-                                        <tr>
-                                            <th>{{ __('common.sno') }}</th>
-                                            <th>{{ __('inspection.inspection_date') }}</th>
-                                            <th>{{ __('inspection.next_due') }}</th>
-                                            <th>{{ __('inspection.location') }}</th>
-                                            <th>{{ __('inspection.shifts') }}</th>
-                                            <th>{{ __('inspection.unit') }}</th>
-                                            <th>{{ __('inspection.frequency') }}</th>
-                                            <th>{{ __('common.status') }}</th>
-                                            <th style="text-align: center !important;">{{ __('common.action') }}</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody></tbody>
-                                </table>
                             </div>
+                        </form>
+                        <hr>
+                    </div>
+
+
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table id="datatable-list"
+                                class="table primary-table-bordered table-bordered table-striped display responsive nowrap w-100 mt-2 datatable-list">
+                                <thead class="thead-primary">
+                                    <tr>
+                                        <th>{{ __('common.sno') }}</th>
+                                        <th>{{ __('inspection.inspection_date') }}</th>
+                                        <th>{{ __('inspection.next_due') }}</th>
+                                        <th>{{ __('inspection.location') }}</th>
+                                        <th>{{ __('inspection.shifts') }}</th>
+                                        <th>{{ __('inspection.unit') }}</th>
+                                        <th>{{ __('inspection.frequency') }}</th>
+                                        <th>{{ __('common.status') }}</th>
+                                        <th style="text-align: center !important;">{{ __('common.action') }}</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
     </div>
 
 @stop
 
 @push('script')
     <script type="text/javascript">
+        $(document).on('change', '#location', function() {
+            var locationId = $(this).val();
+            if (locationId) {
+                $.ajax({
+                    url: "{{ admin_url('unit/ajax-list') }}/" + locationId + "/0",
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#unit').empty().append(
+                            '<option value="">Select Unit</option>');
+                        $.each(data, function(key, value) {
+                            $('#unit').append('<option value="' + value
+                                .id + '">' + value.name + '</option>');
+                        });
+                        $('#unit').trigger('change.');
+                    },
+                    error: function(xhr) {
+                        alert('Error fetching unit. Please try again.');
+                    }
+                });
+            } else {
+                $('#unit').empty().append('<option value="">Select unit</option>');
+                $('#unit').trigger('change.');
+            }
+        });
         flatpickr("#next_due", {
             dateFormat: "Y-m-d",
         });

@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Fire MockDrill Observation Add')
+@section('title', 'Fire MockDrill Observation')
 @section('pageurl', admin_url('fire/fire-mock-drill-observation/list'))
 @section('content')
     <div class="clearfix"></div>
@@ -44,9 +44,15 @@
                                                 <div class="form-group form-input">
                                                     <label
                                                         class="form-label require">{{ __('inspection.issue_date') }}</label>
-                                                    <input type="text" name="issue_date" id = "issue_date"
-                                                        class="form-control" placeholder="Issued Date"
-                                                        value="{{ displaydateformat($document_no->issue_date) }}" readonly>
+                                                    <div class="input-group date form-input custom-height">
+                                                        <input type="text" name="issue_date" id = "issue_date"
+                                                            class="form-control" placeholder="Issued Date"
+                                                            value="{{ displaydateformat($document_no->issue_date) }}"
+                                                            readonly>
+                                                        <div class="input-group-addon input-group-text">
+                                                            <span class="fa fa-calendar"></span>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -63,8 +69,13 @@
                                                 <div class="form-group form-input">
                                                     <label
                                                         class="form-label require">{{ __('inspection.inspection_date') }}</label>
-                                                    <input type="text" name="inspection_date" id = "inspection_date"
-                                                        class="form-control inspection_date" value="">
+                                                    <div class="input-group date form-input custom-height">
+                                                        <input type="text" name="inspection_date" id = "inspection_date"
+                                                            class="form-control inspection_date" value="">
+                                                        <div class="input-group-addon input-group-text">
+                                                            <span class="fa fa-calendar"></span>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                             <div class="col-md-4 form-group form-input mb-2">
@@ -88,23 +99,17 @@
                                         <hr>
                                         {{-- Current Month Observation --}}
                                         <div class="form-wrapper-current">
+                                            <div class="card-header-inner d-flex justify-content-between">
+                                                <h4 class="text-white ms-2"> {{ __('inspection.fire_mock_drill_observation') }}</h4>
+                                                <button class="btn btn-primary add-row mb-2 " type="button" id="add-row-current"
+                                                    style="margin-left: 10px;  margin-right: 10px; width: 84px;">
+                                                    Add
+                                                </button>
+                                            </div>
                                             <div class="row mt-4 form-set-current">
-                                                <div class="card-header-inner p-2">
-                                                    <h4 class="text-white">
-                                                        {{ __('inspection.fire_mock_drill_observation') }}
-                                                    </h4>
-                                                </div>
 
-                                                <div class="d-flex justify-content-end gap-0 m-2">
-                                                    <button class="btn btn-primary add-row me-3" type="button"
-                                                        id="add-row-current" style="width: 84px;">
-                                                        Add
-                                                    </button>
-                                                    <button type="button" class="btn btn-danger remove-row-current">
-                                                        <i class="fa-solid fa-trash"></i> Remove
-                                                    </button>
 
-                                                </div>
+
 
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
@@ -201,7 +206,11 @@
                                                         <textarea name="remarks[1]" id="remarks" class="form-control" style="resize: none;"></textarea>
                                                     </div>
                                                 </div>
+                                                <div class="col-md-2 text-right  mt-4">
+                                                    <button class="btn btn-danger remove-row-current" type="button"
+                                                        style="margin:10px;"><i class="fa fa-trash"></i></button>
 
+                                                </div>
                                             </div>
                                         </div>
 
@@ -240,9 +249,7 @@
                 flatpickr(".inspection_date", {
                     dateFormat: "d-m-Y",
                 });
-                flatpickr("#issue_date", {
-                    dateFormat: "d-m-Y",
-                });
+
                 flatpickr(".date_of_observation", {
                     dateFormat: "d-m-Y",
                 });
@@ -338,7 +345,7 @@
                             },
                             signature_image: {
                                 required: "Signature is required",
-                                 filesize: "File size should not exceed 15MB",
+                                filesize: "File size should not exceed 15MB",
                             },
                             "inspection_date": {
                                 required: "Inspection Date is required",
@@ -453,20 +460,7 @@
 
                 var newCurrentFormSet = `
                         <div class="row mt-4 form-set-current">
-                                                <div class="card-header-inner p-2">
-                                                    <h4 class="text-white">{{ __('inspection.fire_mock_drill_observation') }}</h4>
-                                                </div>
 
-                                                <div class="d-flex justify-content-end gap-0 m-2">
-                                                    <button class="btn btn-primary add-row-current me-3" type="button"
-                                                        id="add-row-current" style="width: 84px;">
-                                                        Add
-                                                    </button>
-                                                    <button type="button" class="btn btn-danger remove-row-current">
-                                                        <i class="fa-solid fa-trash"></i> Remove
-                                                    </button>
-
-                                                </div>
 
 
                                               <div class="col-md-4 mb-2">
@@ -566,6 +560,13 @@
                                                         <textarea name="remarks[${form_set_current_count}]" id="remarks" class="form-control remarks" style="resize: none;"></textarea>
                                                     </div>
                                                 </div>
+                                                 <div class="col-md-2 text-right  mt-4">
+                                                    <button class="btn btn-danger remove-row-current" type="button"
+                                                        style="margin:10px;"><i class="fa fa-trash"></i></button>
+
+                                                </div>
+                                                 </div>
+                                                  </div>
                     `;
 
                 let newFormCurrentSetElement = $(newCurrentFormSet); // Convert string to jQuery object

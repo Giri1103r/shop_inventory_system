@@ -184,7 +184,7 @@ class EmergencyLightInspectionController extends Controller
         $frequency = $this->frequency->getFrequency();
         $shifts = $this->shift->getShiftname();
         $data = array(
-            'locations'=>$location,
+            'locations' => $location,
             'units' => $unit,
             'frequency' => $frequency,
             'shifts' => $shifts,
@@ -310,6 +310,7 @@ class EmergencyLightInspectionController extends Controller
                 Session::flash('success', 'Your data added successfully');
                 return redirect(admin_url('fire/checklist-observation/add/' . encryptId($inspection_type) . '/' . encryptId($id)));
             } else {
+                Session::flash('success', 'Your data added successfully');
                 return redirect(admin_url('fire/emergency-light-inspection/list'));
             }
             Session::flash('success', 'Your data added successfully');
@@ -672,7 +673,6 @@ class EmergencyLightInspectionController extends Controller
                 $web_link =   admin_url('fire/emergency-light-inspection/verification/' . encryptId($inspection_details->id) . '/capa');
                 $to_status = L2_MANAGER_REJECTED;
                 $users = array_merge([$inspection_details->created_by], [$inspection_details->verified_by], [$inspection_details->l1_manager_verified_by]);
-
             }
 
             $mailsubject = 'Fire Emergency Light Inspection';
@@ -936,7 +936,7 @@ class EmergencyLightInspectionController extends Controller
                 $drawing->setHeight(70);
                 $drawing->setWorksheet($sheet);
                 $sheet->getRowDimension($row + 2)->setRowHeight(40);
-            }else {
+            } else {
                 $sheet->setCellValue("A{$row}", "Inspection has not been  started");
             }
             // Label + Name
@@ -961,17 +961,17 @@ class EmergencyLightInspectionController extends Controller
                 $drawing->setHeight(70);
                 $drawing->setWorksheet($sheet);
                 $sheet->getRowDimension($row + 2)->setRowHeight(40);
-            }else {
+            } else {
                 $sheet->setCellValue("I{$row}", "Inspection has not been  started");
             }
-                        // Label + Name
-                $sheet->setCellValue("I" . ($row + 3), "Verified By: " . getUserName($data->verified_by));
-                $sheet->mergeCells("I" . ($row + 3) . ":N" . ($row + 3));
+            // Label + Name
+            $sheet->setCellValue("I" . ($row + 3), "Verified By: " . getUserName($data->verified_by));
+            $sheet->mergeCells("I" . ($row + 3) . ":N" . ($row + 3));
 
-                $sheet->getStyle("I$row:N" . ($row + 3))->applyFromArray([
-                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
-                ]);
+            $sheet->getStyle("I$row:N" . ($row + 3))->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+            ]);
 
             $sheet->mergeCells("O$row:U" . ($row + 2));
             if (file_exists($ApprovedSignature)) {
@@ -986,7 +986,7 @@ class EmergencyLightInspectionController extends Controller
                 $drawing->setHeight(70);
                 $drawing->setWorksheet($sheet);
                 $sheet->getRowDimension($row + 2)->setRowHeight(60);
-            }else {
+            } else {
                 $sheet->setCellValue("O{$row}", "Inspection has not been  started");
             }
             // Label + Name
@@ -1280,7 +1280,7 @@ class EmergencyLightInspectionController extends Controller
                     $drawing->setHeight(70);
                     $drawing->setWorksheet($sheet);
                     $sheet->getRowDimension($row + 2)->setRowHeight(40);
-                }else {
+                } else {
                     $sheet->setCellValue("A{$row}", "Prepared By:\nInspection not yet started");
                 }
                 // Label + Name
@@ -1305,19 +1305,19 @@ class EmergencyLightInspectionController extends Controller
                     $drawing->setHeight(70);
                     $drawing->setWorksheet($sheet);
                     $sheet->getRowDimension($row + 2)->setRowHeight(40);
-                }else {
+                } else {
                     $sheet->setCellValue("I{$row}", "Inspection has not been Verified yet");
                 }
-                    // Label + Name
-                    $sheet->setCellValue("I" . ($row + 3), "Verified By: " . getUserName($data->verified_by));
-                    $sheet->mergeCells("I" . ($row + 3) . ":N" . ($row + 3));
+                // Label + Name
+                $sheet->setCellValue("I" . ($row + 3), "Verified By: " . getUserName($data->verified_by));
+                $sheet->mergeCells("I" . ($row + 3) . ":N" . ($row + 3));
 
-                    $sheet->getStyle("I$row:N" . ($row + 3))->applyFromArray([
-                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
-                    ]);
+                $sheet->getStyle("I$row:N" . ($row + 3))->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                ]);
 
-                    $sheet->mergeCells("O$row:U" . ($row + 2));
+                $sheet->mergeCells("O$row:U" . ($row + 2));
                 if (file_exists($ApprovedSignature)) {
 
                     $drawing = new Drawing();
@@ -1330,17 +1330,17 @@ class EmergencyLightInspectionController extends Controller
                     $drawing->setHeight(70);
                     $drawing->setWorksheet($sheet);
                     $sheet->getRowDimension($row + 2)->setRowHeight(60);
-                }else {
+                } else {
                     $sheet->setCellValue("O{$row}", "Inspection has not been Approved yet");
                 }
-                    // Label + Name
-                    $sheet->setCellValue("O" . ($row + 3), "Approved By: " . getUserName($data->approved_by));
-                    $sheet->mergeCells("O" . ($row + 3) . ":U" . ($row + 3));
+                // Label + Name
+                $sheet->setCellValue("O" . ($row + 3), "Approved By: " . getUserName($data->approved_by));
+                $sheet->mergeCells("O" . ($row + 3) . ":U" . ($row + 3));
 
-                    $sheet->getStyle("O$row:U" . ($row + 3))->applyFromArray([
-                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
-                    ]);
+                $sheet->getStyle("O$row:U" . ($row + 3))->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                ]);
                 $row = $row + 5;
             }
 

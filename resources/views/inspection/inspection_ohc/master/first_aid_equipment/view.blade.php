@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', ' First Aid Equipment Show')
+@section('title', ' First Aid Equipment')
 @section('pageurl', admin_url('ohc/master/first-aid-stock/list'))
 
 @push('style')
@@ -84,10 +84,10 @@
                                         <label class="form-label view_label">{{ __('common.status') }}</label>
                                         <div class="view_data">
                                             @if ($first_aid_equipment->status == 1)
-                                                 {{ __('common.active') }} 
+                                                 {{ __('common.active') }}
                                             @else
                                                 {{ __('common.inactive') }}
-                                            @endif 
+                                            @endif
 
                                         </div>
                                     </div>

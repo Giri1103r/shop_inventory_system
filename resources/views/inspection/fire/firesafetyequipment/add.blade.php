@@ -60,112 +60,123 @@
 
                                                 <div class="col-md-4 form-input">
                                                     <label class="form-label">Issue Dt.</label>
-                                                    <input type="text" class="form-control" name="issue_date"
-                                                        id="issue_date" readonly
-                                                        value="{{ Displaydateformat($staticDocno->issue_date) }}">
+                                                    <div class="input-group date form-input custom-height">
+                                                        <input type="text" class="form-control" name="issue_date"
+                                                            id="issue_date" readonly
+                                                            value="{{ Displaydateformat($staticDocno->issue_date) }}">
+                                                        <div class="input-group-addon input-group-text">
+                                                            <span class="fa fa-calendar"></span>
+                                                        </div>
+                                                    </div>
+ </div>
+
+                                                    <div class="col-md-4 form-input mt-2">
+                                                        <label class="form-label">Rev. & Dt.</label>
+                                                        <input type="text" class="form-control" name="rev_dt"
+                                                            id="rev_dt" readonly value="{{ $staticDocno->rev_dt }}">
+                                                    </div>
+
+
+
                                                 </div>
 
-                                                <div class="col-md-4 form-input mt-2">
-                                                    <label class="form-label">Rev. & Dt.</label>
-                                                    <input type="text" class="form-control" name="rev_dt" id="rev_dt"
-                                                        readonly value="{{ $staticDocno->rev_dt }}">
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="row">
+                                                    <div class="card-header-inner d-flex justify-content-between">
+                                                        <h4 class="text-white">Fire Safety Equipments Details</h4>
+                                                        <button class="btn btn-primary mb-2 addmorebutton"
+                                                            data-block='lesson_learned_block' data-row='lesson_learned_row'
+                                                            type="button" id="dynamic-add-more"
+                                                            style="margin-left: 10px; width: 84px;">
+                                                            Add
+                                                        </button>
+                                                    </div>
                                                 </div>
 
+                                                <div id="lesson_learned_block">
+                                                    <div class="row lesson_learned_row" style="margin-top: 20px;">
+
+                                                        <div class="col-md-4 form-input">
+                                                            <label class="form-label require">SR NO</label>
+                                                            <input type="text" class="form-control" name="fire[1][sr_no]"
+                                                                id="sr_no_1" readonly value="SNO-0001">
+                                                        </div>
+
+                                                        <div class="col-md-4 form-input">
+                                                            <label class="form-label require">Name of Fire & Safety
+                                                                Equipment</label>
+                                                            <input type="text" class="form-control"
+                                                                name="fire[1][name_of_fire_safety]"
+                                                                id="name_of_fire_safety_1">
+                                                        </div>
+
+                                                        <div class="col-md-4 form-input">
+                                                            <label class="form-label require">Resource Code
+                                                                No</label>
+                                                            <input type="text" class="form-control"
+                                                                name="fire[1][resource_code]" id="resource_code_1">
+                                                        </div>
+
+
+                                                        <div class="col-md-4 form-input mt-2">
+                                                            <label class="form-label require">Series Code</label>
+                                                            <input type="text" name="fire[1][series_code]"
+                                                                class="form-control" id="series_code_1">
+                                                        </div>
+
+                                                        <div class="col-md-4 form-input">
+                                                            <label for="" class="form-label require">Unit</label>
+                                                            <select class="form-control single-select"
+                                                                name="fire[1][unit_id]" style="width: 100%"
+                                                                id="unit_id_1">
+                                                                <option value="">Select Unit</option>
+                                                                @foreach ($unitList as $list)
+                                                                    <option value="{{ encryptId($list->id) }}">
+                                                                        {{ $list->unit_name }}</option>
+                                                                @endforeach
+                                                            </select>
+                                                        </div>
+
+
+                                                        <div class="col-md-4 form-input mt-2">
+                                                            <label class="form-label require">Allotted Series
+                                                                Code</label>
+                                                            <input type="text" name="fire[1][allotted_series_code]"
+                                                                class="form-control" id="allotted_series_code_1">
+                                                        </div>
+
+                                                        <div class="col-md-4 form-input mt-2">
+                                                            <label class="form-label require">Total Allotted
+                                                                Code</label>
+                                                            <input type="text" name="fire[1][total_allotted_code]"
+                                                                class="form-control" id="total_allotted_code_1">
+                                                        </div>
+                                                        <div class="col-md-4 form-input mt-2">
+                                                            <label class="form-label">Remark</label>
+                                                            <textarea name="fire[1][remark]" class="form-control" id="remark_1"> </textarea>
+                                                        </div>
+
+
+                                                        <div class="col-md-2 text-right mt-2">
+                                                            <button class="btn btn-danger removerowdata" type="button"
+                                                                style="margin:10px;"><i class="fa fa-trash"></i></button>
+
+                                                        </div>
+
+
+                                                    </div>
+                                                    <hr>
+                                                </div>
 
 
                                             </div>
-
-                                        </div>
-                                        <div class="card-body">
-                                            <div class="row">
-                                                <div class="card-header-inner d-flex justify-content-between">
-                                                    <h4 class="text-white">Fire Safety Equipments Details</h4>
-                                                    <button class="btn btn-primary mb-2 addmorebutton"
-                                                        data-block='lesson_learned_block' data-row='lesson_learned_row'
-                                                        type="button" id="dynamic-add-more"
-                                                        style="margin-left: 10px; width: 84px;">
-                                                        Add
-                                                    </button>
-                                                </div>
+                                            <div class="submit-button" style="text-align: right;">
+                                                <x-button-submit class="submit"></x-button-submit>
+                                                <x-button-reset class=""></x-button-reset>
+                                                <x-button-cancel
+                                                    href="{{ admin_url('fire/fire-safety/equipments/code-sheet/list') }}"></x-button-cancel>
                                             </div>
-
-                                            <div id="lesson_learned_block">
-                                                <div class="row lesson_learned_row" style="margin-top: 20px;">
-
-                                                    <div class="col-md-4 form-input">
-                                                        <label class="form-label require">SR NO</label>
-                                                        <input type="text" class="form-control" name="fire[1][sr_no]"
-                                                            id="sr_no_1" readonly value="SNO-0001">
-                                                    </div>
-
-                                                    <div class="col-md-4 form-input">
-                                                        <label class="form-label require">Name of Fire & Safety Equipment</label>
-                                                        <input type="text" class="form-control"
-                                                            name="fire[1][name_of_fire_safety]" id="name_of_fire_safety_1">
-                                                    </div>
-
-                                                    <div class="col-md-4 form-input">
-                                                        <label class="form-label require">Resource Code No</label>
-                                                        <input type="text" class="form-control"
-                                                            name="fire[1][resource_code]" id="resource_code_1">
-                                                    </div>
-
-
-                                                    <div class="col-md-4 form-input mt-2">
-                                                        <label class="form-label require">Series Code</label>
-                                                        <input type="text" name="fire[1][series_code]"
-                                                            class="form-control" id="series_code_1">
-                                                    </div>
-
-                                                    <div class="col-md-4 form-input">
-                                                        <label for="" class="form-label require">Unit</label>
-                                                        <select class="form-control single-select" name="fire[1][unit_id]"
-                                                            style="width: 100%" id="unit_id_1">
-                                                            <option value="">Select Unit</option>
-                                                            @foreach ($unitList as $list)
-                                                                <option value="{{ encryptId($list->id) }}">
-                                                                    {{ $list->unit_name }}</option>
-                                                            @endforeach
-                                                        </select>
-                                                    </div>
-
-
-                                                    <div class="col-md-4 form-input mt-2">
-                                                        <label class="form-label require">Allotted Series Code</label>
-                                                        <input type="text" name="fire[1][allotted_series_code]"
-                                                            class="form-control" id="allotted_series_code_1">
-                                                    </div>
-
-                                                    <div class="col-md-4 form-input mt-2">
-                                                        <label class="form-label require">Total Allotted Code</label>
-                                                        <input type="text" name="fire[1][total_allotted_code]"
-                                                            class="form-control" id="total_allotted_code_1">
-                                                    </div>
-                                                    <div class="col-md-4 form-input mt-2">
-                                                        <label class="form-label">Remark</label>
-                                                        <textarea name="fire[1][remark]" class="form-control" id="remark_1"> </textarea>
-                                                    </div>
-
-
-                                                    <div class="col-md-2 text-right mt-2">
-                                                        <button class="btn btn-danger removerowdata" type="button"
-                                                            style="margin:10px;"><i class="fa fa-trash"></i></button>
-
-                                                    </div>
-
-
-                                                </div>
-                                                <hr>
-                                            </div>
-
-
-                                        </div>
-                                        <div class="submit-button" style="text-align: right;">
-                                            <x-button-submit class="submit"></x-button-submit>
-                                            <x-button-reset class=""></x-button-reset>
-                                            <x-button-cancel
-                                                href="{{ admin_url('fire/fire-safety/equipments/code-sheet/list') }}"></x-button-cancel>
-                                        </div>
 
                                     </form>
                                 </div>
@@ -438,73 +449,73 @@
 
             $('#addfire').validate({
                 rules: {
-                'fire[1][name_of_fire_safety]': {
-                    required: true,
-                    minlength: 3,
-                    maxlength: 200,
-                    pattern: /^[a-zA-Z0-9\s\-_'"()]*$/
+                    'fire[1][name_of_fire_safety]': {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 200,
+                        pattern: /^[a-zA-Z0-9\s\-_'"()]*$/
+                    },
+                    'fire[1][resource_code]': {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 100
+                    },
+                    'fire[1][series_code]': {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 100
+                    },
+                    'fire[1][allotted_series_code]': {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 100
+                    },
+                    'fire[1][total_allotted_code]': {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 100
+                    },
+                    'fire[1][remark]': {
+                        required: true,
+                    },
+                    'fire[1][unit_id]': {
+                        required: true,
+                    },
                 },
-                'fire[1][resource_code]': {
-                    required: true,
-                    minlength: 3,
-                    maxlength: 100
+                messages: {
+                    'fire[1][name_of_fire_safety]': {
+                        required: "The name is required",
+                        minlength: "The name must be at least 3 characters long.",
+                        maxlength: "The name cannot exceed 200 characters.",
+                        pattern: "Only letters, numbers, spaces, and special characters (-, _, ', \", ()) are allowed."
+                    },
+                    'fire[1][resource_code]': {
+                        required: "Resource code is required",
+                        minlength: "Resource code must be exactly 3 digits.",
+                        maxlength: "Resource code must be exactly 100 digits."
+                    },
+                    'fire[1][series_code]': {
+                        required: "Series code is required",
+                        minlength: "Series code must be at least 3 characters long.",
+                        maxlength: "Series code cannot exceed 100 characters."
+                    },
+                    'fire[1][allotted_series_code]': {
+                        required: "Allotted series code is required",
+                        minlength: "Allotted series code must be at least 3 characters long.",
+                        maxlength: "Allotted series code cannot exceed 100 characters."
+                    },
+                    'fire[1][total_allotted_code]': {
+                        required: "Total allotted code is required",
+                        minlength: "Total allotted code must be at least 3 characters long.",
+                        maxlength: "Total allotted code cannot exceed 100 characters."
+                    },
+                    'fire[1][remark]': {
+                        required: "Remark is required",
+                    },
+                    'fire[1][unit_id]': {
+                        required: "Unit is required",
+                    },
                 },
-                'fire[1][series_code]': {
-                    required: true,
-                    minlength: 3,
-                    maxlength: 100
-                },
-                'fire[1][allotted_series_code]': {
-                    required: true,
-                    minlength: 3,
-                    maxlength: 100
-                },
-                'fire[1][total_allotted_code]': {
-                    required: true,
-                    minlength: 3,
-                    maxlength: 100
-                },
-                'fire[1][remark]': {
-                    required: true,
-                },
-                'fire[1][unit_id]': {
-                    required: true,
-                },
-            },
-            messages: {
-                'fire[1][name_of_fire_safety]': {
-                    required: "The name is required",
-                    minlength: "The name must be at least 3 characters long.",
-                    maxlength: "The name cannot exceed 200 characters.",
-                    pattern: "Only letters, numbers, spaces, and special characters (-, _, ', \", ()) are allowed."
-                },
-                'fire[1][resource_code]': {
-                    required: "Resource code is required",
-                    minlength: "Resource code must be exactly 3 digits.",
-                    maxlength: "Resource code must be exactly 100 digits."
-                },
-                'fire[1][series_code]': {
-                    required: "Series code is required",
-                    minlength: "Series code must be at least 3 characters long.",
-                    maxlength: "Series code cannot exceed 100 characters."
-                },
-                'fire[1][allotted_series_code]': {
-                    required: "Allotted series code is required",
-                    minlength: "Allotted series code must be at least 3 characters long.",
-                    maxlength: "Allotted series code cannot exceed 100 characters."
-                },
-                'fire[1][total_allotted_code]': {
-                    required: "Total allotted code is required",
-                    minlength: "Total allotted code must be at least 3 characters long.",
-                    maxlength: "Total allotted code cannot exceed 100 characters."
-                },
-                'fire[1][remark]': {
-                    required: "Remark is required",
-                },
-                'fire[1][unit_id]': {
-                    required: "Unit is required",
-                },
-            },
 
                 submitHandler: function(form) {
                     form.submit();

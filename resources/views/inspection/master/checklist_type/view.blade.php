@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Checklist Type Show')
+@section('title', 'Checklist Type')
 @section('pageurl', admin_url('inspection/master/checklist-type/list'))
 
 @push('style')

@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Hydrant and Riser Add')
+@section('title', 'Hydrant and Riser')
 @section('pageurl', admin_url('fire/hydrant-riser-inspection/list'))
 @section('content')
     <div class="clearfix"></div>
@@ -19,7 +19,8 @@
                         <div class="card">
                             <div class="card-header">
                                 <div class="align-back-btc">
-                                    <x-button-back href="{{ admin_url('fire/hydrant-riser-inspection/list') }}"></x-button-back>
+                                    <x-button-back
+                                        href="{{ admin_url('fire/hydrant-riser-inspection/list') }}"></x-button-back>
                                 </div>
                             </div>
 
@@ -27,8 +28,8 @@
 
                                 <div class="basic-form mx-3">
                                     <form method="POST" id="eyewashAdd"
-                                        action="{{ admin_url('fire/hydrant-riser-inspection/add/submit') }}" autocomplete="off"
-                                        enctype="multipart/form-data">
+                                        action="{{ admin_url('fire/hydrant-riser-inspection/add/submit') }}"
+                                        autocomplete="off" enctype="multipart/form-data">
                                         @csrf
 
                                         <div class="row">
@@ -44,9 +45,17 @@
                                                 <div class="form-group form-input">
                                                     <label
                                                         class="form-label require">{{ __('inspection.issue_date') }}</label>
-                                                    <input type="text" name="issue_date" id = ""
-                                                        class="form-control" placeholder="Issued Date"
-                                                        value="{{ displaydateformat($document_no->issue_date) }}" readonly>
+
+
+                                                    <div class="input-group date form-input custom-height">
+                                                        <input type="text" name="issue_date" id = ""
+                                                            class="form-control" placeholder="Issued Date"
+                                                            value="{{ displaydateformat($document_no->issue_date) }}"
+                                                            readonly>
+                                                        <div class="input-group-addon input-group-text">
+                                                            <span class="fa fa-calendar"></span>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -61,12 +70,37 @@
                                                 <div class="form-group form-input">
                                                     <label
                                                         class="form-label require">{{ __('inspection.inspection_date') }}</label>
-                                                    <input type="text" name="inspection_date" id = "inspection_date"
-                                                        class="form-control" value="{{old('inspection_date')}}">
+
+
+                                                    <div class="input-group date form-input custom-height">
+                                                        <input type="text" name="inspection_date" id = "inspection_date"
+                                                            class="form-control" value="{{ old('inspection_date') }}">
+                                                        <div class="input-group-addon input-group-text">
+                                                            <span class="fa fa-calendar"></span>
+                                                        </div>
+                                                    </div>
                                                     @error('inspection_date')
                                                         <div class="error">{{ $message }}</div>
                                                     @enderror
                                                 </div>
+                                            </div>
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label
+                                                        class="form-label require">{{ __('inspection.next_due') }}</label>
+
+
+                                                    <div class="input-group date form-input custom-height">
+                                                        <input type="text" name="next_due" id = "next_due"
+                                                            class="form-control" value="{{ old('next_due') }}">
+                                                        <div class="input-group-addon input-group-text">
+                                                            <span class="fa fa-calendar"></span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                @error('next_due')
+                                                    <div class="error">{{ $message }}</div>
+                                                @enderror
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
@@ -89,6 +123,19 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
+                                                    <label class="form-label require">{{ __('inspection.unit') }}</label>
+                                                    <select name="unit_id" id="unit_id"
+                                                        class=" form-control single-select" style="width: 100%">
+                                                        <option value="">Select Unit</option>
+
+                                                    </select>
+                                                </div>
+                                                @error('unit_id')
+                                                    <div class="error">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
                                                     <label class="form-label require">Shift</label>
                                                     <select name="shift_id" id="shift_id"
                                                         class=" form-control single-select" style="width: 100%">
@@ -104,34 +151,8 @@
                                                     <div class="error">{{ $message }}</div>
                                                 @enderror
                                             </div>
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label
-                                                        class="form-label require">{{ __('inspection.next_due') }}</label>
-                                                    <input type="text" name="next_due" id = "next_due"
-                                                        class="form-control" value="{{ old('next_due') }}">
-                                                </div>
-                                                @error('next_due')
-                                                    <div class="error">{{ $message }}</div>
-                                                @enderror
-                                            </div>
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label require">{{ __('inspection.unit') }}</label>
-                                                    <select name="unit_id" id="unit_id"
-                                                        class=" form-control single-select" style="width: 100%">
-                                                        <option value="">Select Unit</option>
-                                                        @foreach ($units as $unit)
-                                                            <option value="{{ encryptId($unit->id) }}"
-                                                                {{ old('unit_id') == encryptId($unit->id) ? 'selected' : '' }}>
-                                                                {{ $unit->unit_name }}</option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-                                                @error('unit_id')
-                                                    <div class="error">{{ $message }}</div>
-                                                @enderror
-                                            </div>
+
+
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label
@@ -176,30 +197,20 @@
                                                 @endif
                                             </div>
                                             <input type="hidden" name="document_reference_id"
-                                            value="{{ encryptId($document_no->id) }}">
+                                                value="{{ encryptId($document_no->id) }}">
                                         </div>
                                         <hr>
                                         <div class="form-wrapper">
+                                            <div class="card-header-inner d-flex justify-content-between">
+                                                <h4 class="text-white ms-3">Hydrant And Riser Inspection Checklist</h4>
+                                                <button class="btn btn-primary add-row mb-2 " type="button"
+                                                    id="add-row"
+                                                    style="margin-left: 10px;  margin-right: 10px; width: 84px;">
+                                                    Add
+                                                </button>
+                                            </div>
                                             <div class="row mt-4 form-set">
-                                                <div class="card-header-inner p-2">
-                                                    <h4 class="text-white">Hydrant And Riser Inspection Checklist</h4>
-                                                </div>
 
-                                                <div class="d-flex justify-content-end align-items-center gap-2 m-2">
-                                                    <button class="btn btn-primary add-row" type="button" id="add-row"
-                                                        style="min-width: 130px;">
-                                                        Add
-                                                    </button>
-                                                    {{-- <button class="btn btn-primary add-obs" type="button" id="add-obs"
-                                                        style="min-width: 160px;">
-                                                        Add Observation
-                                                    </button> --}}
-                                                    <button type="button"
-                                                        class="btn btn-danger remove-row d-flex align-items-center"
-                                                        style="min-width: 130px;">
-                                                        <i class="fa-solid fa-trash me-2"></i> Remove
-                                                    </button>
-                                                </div>
 
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
@@ -222,11 +233,9 @@
                                                 </div>
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">Hydrant No</label>
-                                                        <input type="text" name="hydrant_no[1]"
-                                                            id = "hydrant_no" class="form-control"
-                                                            value="{{ old('hydrant_no.1') }}">
+                                                        <label class="form-label require">Hydrant No</label>
+                                                        <input type="text" name="hydrant_no[1]" id = "hydrant_no"
+                                                            class="form-control" value="{{ old('hydrant_no.1') }}">
                                                     </div>
                                                     @error('hydrant_no.1')
                                                         <div class="error">{{ $message }}</div>
@@ -234,8 +243,7 @@
                                                 </div>
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">Lugs</label>
+                                                        <label class="form-label require">Lugs</label>
                                                         <select name="lugs[1]" id="lugs[1]"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Lugs</option>
@@ -251,8 +259,7 @@
 
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">Rubber Washer</label>
+                                                        <label class="form-label require">Rubber Washer</label>
                                                         <select name="rubber_washer[1]" id="rubber_washer[1]"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Lugs</option>
@@ -268,8 +275,7 @@
 
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">Check Nut</label>
+                                                        <label class="form-label require">Check Nut</label>
                                                         <select name="check_nut[1]" id="check_nut[1]"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Check Nut </option>
@@ -285,8 +291,7 @@
 
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">Spindle Wheel</label>
+                                                        <label class="form-label require">Spindle Wheel</label>
                                                         <select name="spindle_wheel[1]" id="spindle_wheel[1]"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Spindle Wheel </option>
@@ -302,8 +307,7 @@
 
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">Blank Cap</label>
+                                                        <label class="form-label require">Blank Cap</label>
                                                         <select name="blank_cap[1]" id="blank_cap[1]"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Blank Cap </option>
@@ -319,8 +323,7 @@
 
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">Female Coupling</label>
+                                                        <label class="form-label require">Female Coupling</label>
                                                         <select name="female_coupling[1]" id="female_coupling[1]"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Female Coupling</option>
@@ -336,8 +339,7 @@
 
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">Lever</label>
+                                                        <label class="form-label require">Lever</label>
                                                         <select name="lever[1]" id="lever[1]"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Lever</option>
@@ -354,8 +356,8 @@
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label class="form-label require">Flow Test</label>
-                                                        <input type="text" name="flow_test[1]" id = "flow_test[1]" class="form-control"
-                                                            placeholder="Enter the Flow Test">
+                                                        <input type="text" name="flow_test[1]" id = "flow_test[1]"
+                                                            class="form-control" placeholder="Enter the Flow Test">
                                                     </div>
                                                 </div>
 
@@ -384,8 +386,7 @@
 
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">Condition of ISV</label>
+                                                        <label class="form-label require">Condition of ISV</label>
                                                         <select name="condition_of_ivs[1]" id="condition_of_ivs[1]"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Condition of ISV </option>
@@ -400,8 +401,7 @@
                                                 </div>
                                                 <div class="col-md-12 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">Approach</label>
+                                                        <label class="form-label require">Approach</label>
                                                         <textarea name="approach[1]" id="approach[1]" class="form-control" style="resize: none;">{{ old('approach.1') }}</textarea>
 
                                                     </div>
@@ -421,7 +421,12 @@
                                                         <div class="error">{{ $message }}</div>
                                                     @enderror
                                                 </div>
+                                                <div class="col-md-2 text-right  mt-4">
+                                                    <button class="btn btn-danger remove-row" type="button"
+                                                        style="margin:10px;"><i class="fa fa-trash"></i></button>
 
+                                                </div>
+                                                <hr>
 
                                             </div>
                                         </div>
@@ -431,14 +436,7 @@
                                                     <h4 class="text-white">Hydrant And Riser Observation</h4>
                                                 </div>
 
-                                                {{-- <div class="col-md-12 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.obs') }}</label>
-                                                        <textarea name="observation" id="remarks" class="form-control" style="resize: none;"></textarea>
 
-                                                    </div>
-                                                </div> --}}
 
                                                 <div class="col-md-12 mb-2">
                                                     <div class="form-group form-input">
@@ -449,11 +447,11 @@
                                                         <div class="mb-2">
                                                             <label class="me-3">
                                                                 <input type="radio" name="observation_needed"
-                                                                    value="{{encryptId(1)}}"> Yes
+                                                                    value="{{ encryptId(1) }}"> Yes
                                                             </label>
                                                             <label>
                                                                 <input type="radio" name="observation_needed"
-                                                                    value="{{encryptId(2)}}"> No
+                                                                    value="{{ encryptId(2) }}"> No
                                                             </label>
                                                         </div>
 
@@ -485,20 +483,54 @@
 
     @push('script')
         <script type="text/javascript" nonce="projectcab">
+            // location based unit
+
+            $(document).on('change', '#location_id', function() {
+                var locationId = $(this).val();
+                if (locationId) {
+                    $.ajax({
+                        url: "{{ admin_url('unit/ajax-list') }}/" + locationId + "/0",
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(data) {
+                            $('#unit_id').empty().append(
+                                '<option value="">Select unit</option>');
+                            $.each(data, function(key, value) {
+                                $('#unit_id').append('<option value="' + value
+                                    .id + '">' + value.name + '</option>');
+                            });
+                            $('#unit_id').trigger('change.');
+                        },
+                        error: function(xhr) {
+                            alert('Error fetching unit. Please try again.');
+                        }
+                    });
+                } else {
+                    $('#unit_id').empty().append('<option value="">Select unit</option>');
+                    $('#unit_id').trigger('change.');
+                }
+            });
             $(document).ready(function() {
                 $('#resetform').on('click', function(e) {
                     e.preventDefault();
                     location.reload();
                 });
-                flatpickr("#issue_date", {
+               
+                var fromDatepicker = flatpickr("#inspection_date", {
                     dateFormat: "d-m-Y",
-                });
-                flatpickr("#inspection_date", {
+                    onChange: function(selectedDates) {
+                        if (selectedDates.length > 0) {
+                            var startDate = selectedDates[0];
+                            toDatepicker.set('minDate', startDate);
+                            toDatepicker.clear();
+                        }
+                    }
+
+                })
+
+                var toDatepicker = flatpickr("#next_due", {
                     dateFormat: "d-m-Y",
-                });
-                flatpickr("#next_due", {
-                    dateFormat: "d-m-Y",
-                    minDate: new Date(),
+
                 });
             });
             $(function() {
@@ -585,11 +617,11 @@
                         "lever[1]": {
                             required: true,
                         },
-                         "flow_test[1]": {
+                        "flow_test[1]": {
                             required: true,
                             number: true
                         },
-                         "physical_condition[1]": {
+                        "physical_condition[1]": {
                             required: true,
                         },
                         "condition_of_ivs[1]": {
@@ -674,10 +706,10 @@
                         "female_coupling[1]": {
                             required: "Please add the Female Coupling",
                         },
-                         "lever[1]": {
+                        "lever[1]": {
                             required: "Please select the Lever",
                         },
-                         "flow_test[1]": {
+                        "flow_test[1]": {
                             required: "Please add the Flow Test result (e.g., liters/minute)",
                             number: "Please enter a valid numeric value (e.g., 12.5)"
 
@@ -760,25 +792,6 @@
 
                     var newFormSet = `
                         <div class="row mt-4 form-set">
-                                                <div class="card-header-inner p-2">
-                                                    <h4 class="text-white">Hydrant And Riser Inspection Checklist</h4>
-                                                </div>
-
-                                                <div class="d-flex justify-content-end align-items-center gap-2 m-2">
-                                                    <button class="btn btn-primary add-row" type="button" id="add-row"
-                                                        style="min-width: 130px;">
-                                                        Add
-                                                    </button>
-                                                    {{-- <button class="btn btn-primary add-obs" type="button" id="add-obs"
-                                                        style="min-width: 160px;">
-                                                        Add Observation
-                                                    </button> --}}
-                                                    <button type="button"
-                                                        class="btn btn-danger remove-row d-flex align-items-center"
-                                                        style="min-width: 130px;">
-                                                        <i class="fa-solid fa-trash me-2"></i> Remove
-                                                    </button>
-                                                </div>
 
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
@@ -1001,7 +1014,12 @@
                                                     @enderror
                                                 </div>
 
+  <div class="col-md-2 text-right  mt-4">
+                                                    <button class="btn btn-danger remove-row" type="button"
+                                                        style="margin:10px;"><i class="fa fa-trash"></i></button>
 
+                                                </div>
+                                                <hr>
                                             </div>
                     `;
 

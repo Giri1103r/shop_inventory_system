@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Co2 Type Fire Extinguisher Inspection View')
+@section('title', 'Co2 Type Fire Extinguisher Inspection')
 @section('pageurl', admin_url('fire/fire-extinguisher/co2/list'))
 @section('content')
     <div class="clearfix"></div>

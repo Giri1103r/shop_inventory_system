@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'OHC Daily Vital Equipment Add')
+@section('title', 'OHC Daily Vital Equipment')
 @section('pageurl', admin_url('ohc/daily-vital-equipment/list'))
 
 

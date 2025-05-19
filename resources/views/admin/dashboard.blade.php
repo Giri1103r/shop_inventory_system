@@ -312,7 +312,7 @@
                             <h4 class="text-white">Total Incidents (YTD)</h4>
                             <a class="fas fa-arrow-alt-circle-down chartdownload" id="total_incidents_download"></a>
                         </div>
-                        <div class="card-body px-0 pt-0 dlab-scroll height450" id="TotalIncidentsCount"> </div>
+                        <div class="card-body px-0 pt-0 dlab-scroll height450" id="TotalIncidentsCountDiv"> </div>
 
                     </div>
                 </div>
@@ -324,7 +324,7 @@
                             <h4 class="text-white">Incident Type</h4>
                             <a class="fas fa-arrow-alt-circle-down chartdownload" id="IncidentType_download"></a>
                         </div>
-                        <div id="IncidentTypeChart"></div>
+                        <div id="IncidentTypeChartDiv"></div>
                     </div>
                 </div>
                 <div class="col-xl-6 col-xxl-6">
@@ -333,7 +333,7 @@
                             <h4 class="text-white">Training Completion</h4>
                             <a class="fas fa-arrow-alt-circle-down chartdownload" id="TrainingCompletion_download"></a>
                         </div>
-                        <div id="TrainingCompletionCount"></div>
+                        <div id="TrainingCompletionCountDiv"></div>
                     </div>
                 </div>
             </div>
@@ -344,7 +344,7 @@
                             <h4 class="text-white">Heatmap of IMS Data</h4>
                             <a class="fas fa-arrow-alt-circle-down chartdownload" id="heatmapofImsData_download"></a>
                         </div>
-                        <div class="card-body px-0 pt-0 dlab-scroll height450" id="heatmapofImsData"> </div>
+                        <div class="card-body px-0 pt-0 dlab-scroll height450" id="heatmapofImsDataDiv"> </div>
 
                     </div>
                 </div>
@@ -356,7 +356,7 @@
                             <h4 class="text-white">Type of IIR</h4>
                             <a class="fas fa-arrow-alt-circle-down chartdownload" id="TypeofIIR_download"></a>
                         </div>
-                        <div id="TypeofIIRCount"></div>
+                        <div id="TypeofIIRCountDiv"></div>
                     </div>
                 </div>
             </div>
@@ -368,7 +368,7 @@
                             <a class="fas fa-arrow-alt-circle-down chartdownload"
                                 id="AccidentReportUnitWise_download"></a>
                         </div>
-                        <div id="AccidentReportUnitWiseCount"></div>
+                        <div id="AccidentReportUnitWiseCountDiv"></div>
                     </div>
                 </div>
             </div>
@@ -379,7 +379,7 @@
                             <h4 class="text-white">IIR Type Wise UAUC</h4>
                             <a class="fas fa-arrow-alt-circle-down chartdownload" id="iirTypewiseUAUC_download"></a>
                         </div>
-                        <div class="card-body px-0 pt-0 dlab-scroll height450" id="iirTypewiseUAUCCount"> </div>
+                        <div class="card-body px-0 pt-0 dlab-scroll height450" id="iirTypewiseUAUCCountDiv"> </div>
                     </div>
                 </div>
             </div>
@@ -390,7 +390,7 @@
                             <h4 class="text-white">IIR Type Wise RCPA</h4>
                             <a class="fas fa-arrow-alt-circle-down chartdownload" id="iirTypewiseRCPA_download"></a>
                         </div>
-                        <div class="card-body px-0 pt-0 dlab-scroll height450" id="iirTypewiseRCPACount"> </div>
+                        <div class="card-body px-0 pt-0 dlab-scroll height450" id="iirTypewiseRCPACountDiv"> </div>
 
                     </div>
                 </div>
@@ -402,7 +402,7 @@
                             <h4 class="text-white">Monthly Near Miss Frequency Rate</h4>
                             <a class="fas fa-arrow-alt-circle-down chartdownload" id="nearMiss_download"></a>
                         </div>
-                        <div class="card-body px-0 pt-0 dlab-scroll height450" id="nearMissCount"> </div>
+                        <div class="card-body px-0 pt-0 dlab-scroll height450" id="nearMissCountDiv"> </div>
                     </div>
                 </div>
             </div>
@@ -413,7 +413,7 @@
                             <h4 class="text-white">Inspection Type Wise Count</h4>
                             <a class="fas fa-arrow-alt-circle-down chartdownload" id="inspection_wise_count_download"></a>
                         </div>
-                        <div class="card-body px-0 pt-0 dlab-scroll height450" id="inspection_wise_count"> </div>
+                        <div class="card-body px-0 pt-0 dlab-scroll height450" id="inspection_wise_countDiv"> </div>
 
                     </div>
                 </div>
@@ -426,7 +426,7 @@
                             <h4 class="text-white">PTW Type Wise Count</h4>
                             <a class="fas fa-arrow-alt-circle-down chartdownload" id="ptw_type_wise_download"></a>
                         </div>
-                        <div class="card-body px-0 pt-0 dlab-scroll height450" id="ptw_type_wise_count"></div>
+                        <div class="card-body px-0 pt-0 dlab-scroll height450" id="ptw_type_wise_countDiv"></div>
 
                     </div>
                 </div>
@@ -453,7 +453,7 @@
                                 <a class="fas fa-arrow-alt-circle-down chartdownload"
                                     id="LoadPPEIssuanceGroupWise_download"></a>
                             </div>
-                            <div id="LoadPPEIssuanceGroupWiseCount"></div>
+                            <div id="LoadPPEIssuanceGroupWiseCountDiv"></div>
                         </div>
                     </div>
                 </div>
@@ -463,7 +463,7 @@
                             <div class="card-header">
                                 <h4 class="text-white">Injury Report - Based On Body Parts</h4>
                             </div>
-                            <div class="card-body" id="loadinjurychart"></div>
+                            <div class="card-body" id="loadinjurychartDiv"></div>
                         </div>
                     </div>
                 </div>
@@ -476,7 +476,7 @@
                                 <a class="fas fa-arrow-alt-circle-down chartdownload"
                                     id="LoadTrainingHourSafetyDepartmentWise_download"></a>
                             </div>
-                            <div id="LoadTrainingHourSafetyDepartmentWise_Count"></div>
+                            <div id="LoadTrainingHourSafetyDepartmentWise_CountDiv"></div>
                         </div>
                     </div>
                 </div>
@@ -490,7 +490,7 @@
                                 <a class="fas fa-arrow-alt-circle-down chartdownload"
                                     id="LoadPtwHoldViolation_download"></a>
                             </div>
-                            <div id="LoadPtwHoldViolation_Count"></div>
+                            <div id="LoadPtwHoldViolation_CountDiv"></div>
                         </div>
                     </div>
                 </div>
@@ -502,7 +502,7 @@
                                 <h4 class="text-white">Type Of Audit Findings</h4>
                                 <a class="fas fa-arrow-alt-circle-down chartdownload" id="auditFindings_download"></a>
                             </div>
-                            <div id="LoadauditFindingsCount"></div>
+                            <div id="LoadauditFindingsCountDiv"></div>
                         </div>
                     </div>
                 </div>
@@ -513,7 +513,7 @@
                                 <h4 class="text-white">PTW Open Close</h4>
                                 <a class="fas fa-arrow-alt-circle-down chartdownload" id="ptw_open_close_download"></a>
                             </div>
-                            <div class="card-body px-0 pt-0 dlab-scroll height450" id="ptw_open_close_count"> </div>
+                            <div class="card-body px-0 pt-0 dlab-scroll height450" id="ptw_open_close_countDiv"> </div>
 
                         </div>
                     </div>
@@ -524,7 +524,7 @@
                                 <a class="fas fa-arrow-alt-circle-down chartdownload"
                                     id="LoadPPEAvailabilityChart_download"></a>
                             </div>
-                            <div id="LoadPPEAvailabilityChartCount"></div>
+                            <div id="LoadPPEAvailabilityChartCountDiv"></div>
                         </div>
                     </div>
                 </div>
@@ -536,7 +536,7 @@
                                 <h4 class="text-white ">Month Wise PTW</h4>
                                 <a class="fas fa-arrow-alt-circle-down chartdownload" id="monthwiseptw_download"></a>
                             </div>
-                            <div class="card-body px-0 pt-0 dlab-scroll height450" id="monthwiseptw">
+                            <div class="card-body px-0 pt-0 dlab-scroll height450" id="monthwiseptwDiv">
 
                             </div>
                         </div>
@@ -549,7 +549,7 @@
                                 <h4 class="text-white">Unsafe Act / Unsafe Condition Static Report</h4>
                                 <a class="fas fa-arrow-alt-circle-down chartdownload" id="uaucstaticreport_download"></a>
                             </div>
-                            <div id="uaucStaticReport"></div>
+                            <div id="uaucStaticReportDiv"></div>
                         </div>
                     </div>
                 </div>
@@ -560,7 +560,7 @@
                                 <h4 class="text-white">MONTH WISE TRAINING COUNT</h4>
                                 <a class="fas fa-arrow-alt-circle-down chartdownload" id="monthwisetraining_download"></a>
                             </div>
-                            <div class="card-body px-0 pt-0 dlab-scroll height450" id="Loadmonthwisetraining"> </div>
+                            <div class="card-body px-0 pt-0 dlab-scroll height450" id="LoadmonthwisetrainingDiv"> </div>
 
                         </div>
                     </div>
@@ -572,7 +572,7 @@
                                 <h4 class="text-white ">Unit Wise PTW</h4>
                                 <a class="fas fa-arrow-alt-circle-down chartdownload" id="unitwiseptw_download"></a>
                             </div>
-                            <div class="card-body px-0 pt-0 dlab-scroll height450" id="unitwiseptw">
+                            <div class="card-body px-0 pt-0 dlab-scroll height450" id="unitwiseptwDiv">
 
                             </div>
                         </div>
@@ -588,7 +588,7 @@
                                 <a class="fas fa-arrow-alt-circle-down chartdownload"
                                     id="LoadDepartmentCount_download"></a>
                             </div>
-                            <div class="card-body px-0 pt-0 dlab-scroll height450" id="LoadDepartmentCount">
+                            <div class="card-body px-0 pt-0 dlab-scroll height450" id="LoadDepartmentCountDiv">
                             </div>
 
 
@@ -604,7 +604,7 @@
                                 <h4 class="text-white">Gemba Walk Potential Hazard 6's Observation Report</h4>
                                 <a class="fas fa-arrow-alt-circle-down chartdownload" id="gembaWalkDownload"></a>
                             </div>
-                            <div id="gembaWalk"></div>
+                            <div id="gembaWalkDiv"></div>
                         </div>
                     </div>
                 </div>
@@ -628,7 +628,7 @@
                                 <h4 class="text-white">TRAINING STATUS COUNT</h4>
                                 <a class="fas fa-arrow-alt-circle-down chartdownload" id="training_count_download"></a>
                             </div>
-                            <div id="trainingStatusPieChart"></div>
+                            <div id="trainingStatusPieChartDiv"></div>
                         </div>
                     </div>
                 </div>
@@ -725,6 +725,144 @@
                     form.submit();
                 }
 
+                function redirectToImsRCPA(iirType, unitId, incidentId, injuryType, month, uauc, rcpa) {
+
+                    Fromdate = $("#fromDate").val();
+                    Todate = $("#toDate").val();
+                    // Create a form element
+                    var form = document.createElement('form');
+                    form.setAttribute('method', 'post');
+                    form.setAttribute('action', "{{ admin_url('incident/initial-incident/calist') }}");
+
+                    // Add CSRF token field
+                    var csrfToken = document.createElement('input');
+                    csrfToken.type = 'hidden';
+                    csrfToken.name = '_token';
+                    csrfToken.value = '{{ csrf_token() }}';
+                    form.appendChild(csrfToken);
+
+                    // Create hidden input fields for each POST data
+                    var inputiirType = document.createElement('input');
+                    inputiirType.setAttribute('type', 'hidden');
+                    inputiirType.setAttribute('name', 'iir_type');
+                    inputiirType.setAttribute('value', iirType);
+                    form.appendChild(inputiirType);
+
+                    var inputincidentId = document.createElement('input');
+                    inputincidentId.setAttribute('type', 'hidden');
+                    inputincidentId.setAttribute('name', 'incident_id');
+                    inputincidentId.setAttribute('value', incidentId);
+                    form.appendChild(inputincidentId);
+
+
+                    var inputunitId = document.createElement('input');
+                    inputunitId.setAttribute('type', 'hidden');
+                    inputunitId.setAttribute('name', 'unit_id');
+                    inputunitId.setAttribute('value', unitId);
+                    form.appendChild(inputunitId);
+
+                    var inputinjuryType = document.createElement('input');
+                    inputinjuryType.setAttribute('type', 'hidden');
+                    inputinjuryType.setAttribute('name', 'injury_type');
+                    inputinjuryType.setAttribute('value', injuryType);
+                    form.appendChild(inputinjuryType);
+
+                    var inputmonth = document.createElement('input');
+                    inputmonth.setAttribute('type', 'hidden');
+                    inputmonth.setAttribute('name', 'month');
+                    inputmonth.setAttribute('value', month);
+                    form.appendChild(inputmonth);
+
+                    var inputuauc = document.createElement('input');
+                    inputuauc.setAttribute('type', 'hidden');
+                    inputuauc.setAttribute('name', 'uauc');
+                    inputuauc.setAttribute('value', uauc);
+                    form.appendChild(inputuauc);
+
+                    var inputrcpa = document.createElement('input');
+                    inputrcpa.setAttribute('type', 'hidden');
+                    inputrcpa.setAttribute('name', 'rcpa');
+                    inputrcpa.setAttribute('value', rcpa);
+                    form.appendChild(inputrcpa);
+
+
+
+                    var inputFromdate = document.createElement('input');
+                    inputFromdate.setAttribute('type', 'hidden');
+                    inputFromdate.setAttribute('name', 'Fromdate');
+                    inputFromdate.setAttribute('value', Fromdate);
+                    form.appendChild(inputFromdate);
+
+                    var inputTodate = document.createElement('input');
+                    inputTodate.setAttribute('type', 'hidden');
+                    inputTodate.setAttribute('name', 'Todate');
+                    inputTodate.setAttribute('value', Todate);
+                    form.appendChild(inputTodate);
+
+                    // Append the form to the body and submit it
+                    document.body.appendChild(form);
+                    form.submit();
+                }
+
+                function redirectToPTW(PTWID, unitId, month, openclose) {
+
+                    Fromdate = $("#fromDate").val();
+                    Todate = $("#toDate").val();
+                    // Create a form element
+                    var form = document.createElement('form');
+                    form.setAttribute('method', 'post');
+                    form.setAttribute('action', "{{ admin_url('safetypermit/list') }}");
+
+                    // Add CSRF token field
+                    var csrfToken = document.createElement('input');
+                    csrfToken.type = 'hidden';
+                    csrfToken.name = '_token';
+                    csrfToken.value = '{{ csrf_token() }}';
+                    form.appendChild(csrfToken);
+
+                    var inputPermitId = document.createElement('input');
+                    inputPermitId.setAttribute('type', 'hidden');
+                    inputPermitId.setAttribute('name', 'permit_id');
+                    inputPermitId.setAttribute('value', PTWID);
+                    form.appendChild(inputPermitId);
+
+
+                    var inputunitId = document.createElement('input');
+                    inputunitId.setAttribute('type', 'hidden');
+                    inputunitId.setAttribute('name', 'unit_id');
+                    inputunitId.setAttribute('value', unitId);
+                    form.appendChild(inputunitId);
+
+
+                    var inputmonth = document.createElement('input');
+                    inputmonth.setAttribute('type', 'hidden');
+                    inputmonth.setAttribute('name', 'month');
+                    inputmonth.setAttribute('value', month);
+                    form.appendChild(inputmonth);
+
+                    var inputopenclose = document.createElement('input');
+                    inputopenclose.setAttribute('type', 'hidden');
+                    inputopenclose.setAttribute('name', 'openclose');
+                    inputopenclose.setAttribute('value', openclose);
+                    form.appendChild(inputopenclose);
+
+                    var inputFromdate = document.createElement('input');
+                    inputFromdate.setAttribute('type', 'hidden');
+                    inputFromdate.setAttribute('name', 'Fromdate');
+                    inputFromdate.setAttribute('value', Fromdate);
+                    form.appendChild(inputFromdate);
+
+                    var inputTodate = document.createElement('input');
+                    inputTodate.setAttribute('type', 'hidden');
+                    inputTodate.setAttribute('name', 'Todate');
+                    inputTodate.setAttribute('value', Todate);
+                    form.appendChild(inputTodate);
+
+                    // Append the form to the body and submit it
+                    document.body.appendChild(form);
+                    form.submit();
+                }
+
                 function redirectopermanage(link) {
                     var url = "{{ admin_url('') }}" + link;
                     window.location.href = url;
@@ -771,14 +909,14 @@
                         Fromdate: Fromdate,
                         Todate: Todate,
                     };
-                    $('#LoadDepartmentCount').html('');
+                    $('#LoadDepartmentCountDiv').html('');
                     $.ajax({
                         type: 'get',
                         url: url,
                         data: data,
                         cache: false,
                         success: function(dataAjx) {
-                            $('#LoadDepartmentCount').html(dataAjx);
+                            $('#LoadDepartmentCountDiv').html(dataAjx);
                         }
                     });
                 }
@@ -791,7 +929,7 @@
                         Fromdate: Fromdate,
                         Todate: Todate,
                     };
-                    $('#Loadmonthwisetraining').html('');
+                    $('#LoadmonthwisetrainingDiv').html('');
                     $.ajax({
                         type: 'get',
                         url: url,
@@ -799,7 +937,7 @@
                         cache: false,
                         success: function(dataAjx) {
 
-                            $('#Loadmonthwisetraining').html(dataAjx);
+                            $('#LoadmonthwisetrainingDiv').html(dataAjx);
                         }
                     });
                 }
@@ -811,7 +949,7 @@
                         Fromdate: Fromdate,
                         Todate: Todate,
                     };
-                    $('#trainingStatusPieChart').html('');
+                    $('#trainingStatusPieChartDiv').html('');
                     $.ajax({
                         type: 'get',
                         url: url,
@@ -819,7 +957,7 @@
                         cache: false,
                         success: function(dataAjx) {
 
-                            $('#trainingStatusPieChart').html(dataAjx);
+                            $('#trainingStatusPieChartDiv').html(dataAjx);
                         }
                     });
                 }
@@ -831,7 +969,7 @@
                         Fromdate: Fromdate,
                         Todate: Todate,
                     };
-                    $('#iirTypewiseRCPACount').html('');
+                    $('#iirTypewiseRCPACountDiv').html('');
                     $.ajax({
                         type: 'get',
                         url: url,
@@ -839,7 +977,7 @@
                         cache: false,
                         success: function(dataAjx) {
 
-                            $('#iirTypewiseRCPACount').html(dataAjx);
+                            $('#iirTypewiseRCPACountDiv').html(dataAjx);
                         }
                     });
                 }
@@ -851,7 +989,7 @@
                         Fromdate: Fromdate,
                         Todate: Todate,
                     };
-                    $('#monthwiseptw').html('');
+                    $('#monthwiseptwDiv').html('');
                     $.ajax({
                         type: 'get',
                         url: url,
@@ -859,7 +997,7 @@
                         cache: false,
                         success: function(dataAjx) {
 
-                            $('#monthwiseptw').html(dataAjx);
+                            $('#monthwiseptwDiv').html(dataAjx);
                         }
                     });
                 }
@@ -872,7 +1010,7 @@
                         Fromdate: Fromdate,
                         Todate: Todate,
                     };
-                    $('#LoadauditFindingsCount').html('');
+                    $('#LoadauditFindingsCountDiv').html('');
                     $.ajax({
                         type: 'get',
                         url: url,
@@ -880,7 +1018,7 @@
                         cache: false,
                         success: function(dataAjx) {
 
-                            $('#LoadauditFindingsCount').html(dataAjx);
+                            $('#LoadauditFindingsCountDiv').html(dataAjx);
                         }
                     });
                 }
@@ -892,15 +1030,14 @@
                         Fromdate: Fromdate,
                         Todate: Todate,
                     };
-                    $('#TotalIncidentsCount').html('');
+                    $('#TotalIncidentsCountDiv').html('');
                     $.ajax({
                         type: 'get',
                         url: url,
                         data: data,
                         cache: false,
                         success: function(dataAjx) {
-
-                            $('#TotalIncidentsCount').html(dataAjx);
+                            $('#TotalIncidentsCountDiv').html(dataAjx);
                         }
                     });
                 }
@@ -912,7 +1049,7 @@
                         Fromdate: Fromdate,
                         Todate: Todate,
                     };
-                    $('#gembaWalk').html('');
+                    $('#gembaWalkDiv').html('');
                     $.ajax({
                         type: 'get',
                         url: url,
@@ -920,7 +1057,7 @@
                         cache: false,
                         success: function(dataAjx) {
 
-                            $('#gembaWalk').html(dataAjx);
+                            $('#gembaWalkDiv').html(dataAjx);
                         }
                     });
                 }
@@ -952,7 +1089,7 @@
                         Fromdate: Fromdate,
                         Todate: Todate,
                     };
-                    $('#heatmapofImsData').html('');
+                    $('#heatmapofImsDataDiv').html('');
                     $.ajax({
                         type: 'get',
                         url: url,
@@ -960,7 +1097,7 @@
                         cache: false,
                         success: function(dataAjx) {
 
-                            $('#heatmapofImsData').html(dataAjx);
+                            $('#heatmapofImsDataDiv').html(dataAjx);
                         }
                     });
                 }
@@ -972,7 +1109,7 @@
                         Fromdate: Fromdate,
                         Todate: Todate,
                     };
-                    $('#IncidentTypeChart').html('');
+                    $('#IncidentTypeChartDiv').html('');
                     $.ajax({
                         type: 'get',
                         url: url,
@@ -980,7 +1117,7 @@
                         cache: false,
                         success: function(dataAjx) {
 
-                            $('#IncidentTypeChart').html(dataAjx);
+                            $('#IncidentTypeChartDiv').html(dataAjx);
                         }
                     });
                 }
@@ -992,7 +1129,7 @@
                         Fromdate: Fromdate,
                         Todate: Todate,
                     };
-                    $('#loadinjurychart').html('');
+                    $('#loadinjurychartDiv').html('');
                     $.ajax({
                         type: 'get',
                         url: url,
@@ -1000,7 +1137,7 @@
                         cache: false,
                         success: function(dataAjx) {
 
-                            $('#loadinjurychart').html(dataAjx);
+                            $('#loadinjurychartDiv').html(dataAjx);
                         }
                     });
                 }
@@ -1033,7 +1170,7 @@
                         Fromdate: Fromdate,
                         Todate: Todate,
                     };
-                    $('#LoadPPEAvailabilityChartCount').html('');
+                    $('#LoadPPEAvailabilityChartCountDiv').html('');
                     $.ajax({
                         type: 'get',
                         url: url,
@@ -1041,7 +1178,7 @@
                         cache: false,
                         success: function(dataAjx) {
 
-                            $('#LoadPPEAvailabilityChartCount').html(dataAjx);
+                            $('#LoadPPEAvailabilityChartCountDiv').html(dataAjx);
                         }
                     });
                 }
@@ -1053,7 +1190,7 @@
                         Fromdate: Fromdate,
                         Todate: Todate,
                     };
-                    $('#ptw_type_wise_count').html('');
+                    $('#ptw_type_wise_countDiv').html('');
                     $.ajax({
                         type: 'get',
                         url: url,
@@ -1061,7 +1198,7 @@
                         cache: false,
                         success: function(dataAjx) {
 
-                            $('#ptw_type_wise_count').html(dataAjx);
+                            $('#ptw_type_wise_countDiv').html(dataAjx);
                         }
                     });
                 }
@@ -1073,7 +1210,7 @@
                         Fromdate: Fromdate,
                         Todate: Todate,
                     };
-                    $('#ptw_open_close_count').html('');
+                    $('#ptw_open_close_countDiv').html('');
                     $.ajax({
                         type: 'get',
                         url: url,
@@ -1081,7 +1218,7 @@
                         cache: false,
                         success: function(dataAjx) {
 
-                            $('#ptw_open_close_count').html(dataAjx);
+                            $('#ptw_open_close_countDiv').html(dataAjx);
                         }
                     });
                 }
@@ -1093,7 +1230,7 @@
                         Fromdate: Fromdate,
                         Todate: Todate,
                     };
-                    $('#inspection_wise_count').html('');
+                    $('#inspection_wise_countDiv').html('');
                     $.ajax({
                         type: 'get',
                         url: url,
@@ -1101,7 +1238,7 @@
                         cache: false,
                         success: function(dataAjx) {
 
-                            $('#inspection_wise_count').html(dataAjx);
+                            $('#inspection_wise_countDiv').html(dataAjx);
                         }
                     });
                 }
@@ -1113,7 +1250,7 @@
                         Fromdate: Fromdate,
                         Todate: Todate,
                     };
-                    $('#nearMissCount').html('');
+                    $('#nearMissCountDiv').html('');
                     $.ajax({
                         type: 'get',
                         url: url,
@@ -1121,7 +1258,7 @@
                         cache: false,
                         success: function(dataAjx) {
 
-                            $('#nearMissCount').html(dataAjx);
+                            $('#nearMissCountDiv').html(dataAjx);
                         }
                     });
                 }
@@ -1133,7 +1270,7 @@
                         Fromdate: Fromdate,
                         Todate: Todate,
                     };
-                    $('#iirTypewiseUAUCCount').html('');
+                    $('#iirTypewiseUAUCCountDiv').html('');
                     $.ajax({
                         type: 'get',
                         url: url,
@@ -1141,7 +1278,7 @@
                         cache: false,
                         success: function(dataAjx) {
 
-                            $('#iirTypewiseUAUCCount').html(dataAjx);
+                            $('#iirTypewiseUAUCCountDiv').html(dataAjx);
                         }
                     });
                 }
@@ -1153,7 +1290,7 @@
                         Fromdate: Fromdate,
                         Todate: Todate,
                     };
-                    $('#AccidentReportUnitWiseCount').html('');
+                    $('#AccidentReportUnitWiseCountDiv').html('');
                     $.ajax({
                         type: 'get',
                         url: url,
@@ -1161,7 +1298,7 @@
                         cache: false,
                         success: function(dataAjx) {
 
-                            $('#AccidentReportUnitWiseCount').html(dataAjx);
+                            $('#AccidentReportUnitWiseCountDiv').html(dataAjx);
                         }
                     });
                 }
@@ -1173,7 +1310,7 @@
                         Fromdate: Fromdate,
                         Todate: Todate,
                     };
-                    $('#TypeofIIRCount').html('');
+                    $('#TypeofIIRCountDiv').html('');
                     $.ajax({
                         type: 'get',
                         url: url,
@@ -1181,7 +1318,7 @@
                         cache: false,
                         success: function(dataAjx) {
 
-                            $('#TypeofIIRCount').html(dataAjx);
+                            $('#TypeofIIRCountDiv').html(dataAjx);
                         }
                     });
                 }
@@ -1193,7 +1330,7 @@
                         Fromdate: Fromdate,
                         Todate: Todate,
                     };
-                    $('#TrainingCompletionCount').html('');
+                    $('#TrainingCompletionCountDiv').html('');
                     $.ajax({
                         type: 'get',
                         url: url,
@@ -1201,7 +1338,7 @@
                         cache: false,
                         success: function(dataAjx) {
 
-                            $('#TrainingCompletionCount').html(dataAjx);
+                            $('#TrainingCompletionCountDiv').html(dataAjx);
                         }
                     });
                 }
@@ -1213,7 +1350,7 @@
                         Fromdate: Fromdate,
                         Todate: Todate,
                     };
-                    $('#LoadTrainingHourSafetyDepartmentWise_Count').html('');
+                    $('#LoadTrainingHourSafetyDepartmentWise_CountDiv').html('');
                     $.ajax({
                         type: 'get',
                         url: url,
@@ -1221,7 +1358,7 @@
                         cache: false,
                         success: function(dataAjx) {
 
-                            $('#LoadTrainingHourSafetyDepartmentWise_Count').html(dataAjx);
+                            $('#LoadTrainingHourSafetyDepartmentWise_CountDiv').html(dataAjx);
                         }
                     });
                 }
@@ -1233,7 +1370,7 @@
                         Fromdate: Fromdate,
                         Todate: Todate,
                     };
-                    $('#LoadPtwHoldViolation_Count').html('');
+                    $('#LoadPtwHoldViolation_CountDiv').html('');
                     $.ajax({
                         type: 'get',
                         url: url,
@@ -1241,7 +1378,7 @@
                         cache: false,
                         success: function(dataAjx) {
 
-                            $('#LoadPtwHoldViolation_Count').html(dataAjx);
+                            $('#LoadPtwHoldViolation_CountDiv').html(dataAjx);
                         }
                     });
                 }
@@ -1253,7 +1390,7 @@
                         Fromdate: Fromdate,
                         Todate: Todate,
                     };
-                    $('#uaucStaticReport').html('');
+                    $('#uaucStaticReportDiv').html('');
                     $.ajax({
                         type: 'get',
                         url: url,
@@ -1261,7 +1398,7 @@
                         cache: false,
                         success: function(dataAjx) {
 
-                            $('#uaucStaticReport').html(dataAjx);
+                            $('#uaucStaticReportDiv').html(dataAjx);
                         }
                     });
                 }
@@ -1273,7 +1410,7 @@
                         Fromdate: Fromdate,
                         Todate: Todate,
                     };
-                    $('#monthwiseptw').html('');
+                    $('#monthwiseptwDiv').html('');
                     $.ajax({
                         type: 'get',
                         url: url,
@@ -1281,52 +1418,12 @@
                         cache: false,
                         success: function(dataAjx) {
 
-                            $('#monthwiseptw').html(dataAjx);
+                            $('#monthwiseptwDiv').html(dataAjx);
                         }
                     });
                 }
 
-
-                function loadfmonthwisetraining(CompanyId = '', Fromdate = '', Todate = '') {
-                    var url = "{{ admin_url('dashboard/monthwisetraining') }}"
-                    var data = {
-                        CompanyId: CompanyId,
-                        Fromdate: Fromdate,
-                        Todate: Todate,
-                    };
-                    $('#Loadmonthwisetraining').html('');
-                    $.ajax({
-                        type: 'get',
-                        url: url,
-                        data: data,
-                        cache: false,
-                        success: function(dataAjx) {
-
-                            $('#Loadmonthwisetraining').html(dataAjx);
-                        }
-                    });
-                }
-
-                function loadtraining_count_status(CompanyId = '', Fromdate = '', Todate = '') {
-                    var url = "{{ admin_url('dashboard/trainingStatusCount') }}"
-                    var data = {
-                        CompanyId: CompanyId,
-                        Fromdate: Fromdate,
-                        Todate: Todate,
-                    };
-                    $('#trainingStatusPieChart').html('');
-                    $.ajax({
-                        type: 'get',
-                        url: url,
-                        data: data,
-                        cache: false,
-                        success: function(dataAjx) {
-
-                            $('#trainingStatusPieChart').html(dataAjx);
-                        }
-                    });
-                }
-
+             
                 function loadunitwisecount(CompanyId = '', Fromdate = '', Todate = '') {
                     var url = "{{ admin_url('dashboard/unitwiseptw') }}"
                     var data = {
@@ -1334,7 +1431,7 @@
                         Fromdate: Fromdate,
                         Todate: Todate,
                     };
-                    $('#unitwiseptw').html('');
+                    $('#unitwiseptwDiv').html('');
                     $.ajax({
                         type: 'get',
                         url: url,
@@ -1342,114 +1439,13 @@
                         cache: false,
                         success: function(dataAjx) {
 
-                            $('#unitwiseptw').html(dataAjx);
+                            $('#unitwiseptwDiv').html(dataAjx);
                         }
                     });
                 }
 
 
 
-                function LoadiirTypewiseRCPACount(CompanyId = '', Fromdate = '', Todate = '') {
-                    var url = "{{ admin_url('dashboard/IIRTypeWiseRCPA') }}"
-                    var data = {
-                        CompanyId: CompanyId,
-                        Fromdate: Fromdate,
-                        Todate: Todate,
-                    };
-                    $('#iirTypewiseRCPACount').html('');
-                    $.ajax({
-                        type: 'get',
-                        url: url,
-                        data: data,
-                        cache: false,
-                        success: function(dataAjx) {
-
-                            $('#iirTypewiseRCPACount').html(dataAjx);
-                        }
-                    });
-                }
-
-                function LoadauditFindingsCount(CompanyId = '', Fromdate = '', Todate = '') {
-                    var url = "{{ admin_url('dashboard/auditFindings') }}"
-                    var data = {
-                        CompanyId: CompanyId,
-                        Fromdate: Fromdate,
-                        Todate: Todate,
-                    };
-                    $('#LoadauditFindingsCount').html('');
-                    $.ajax({
-                        type: 'get',
-                        url: url,
-                        data: data,
-                        cache: false,
-                        success: function(dataAjx) {
-
-                            $('#LoadauditFindingsCount').html(dataAjx);
-                        }
-                    });
-                }
-
-                function TotalIncidentsCount(CompanyId = '', Fromdate = '', Todate = '') {
-                    var url = "{{ admin_url('dashboard/total-incident') }}"
-                    var data = {
-                        CompanyId: CompanyId,
-                        Fromdate: Fromdate,
-                        Todate: Todate,
-                    };
-                    $('#TotalIncidentsCount').html('');
-                    $.ajax({
-                        type: 'get',
-                        url: url,
-                        data: data,
-                        cache: false,
-                        success: function(dataAjx) {
-
-                            $('#TotalIncidentsCount').html(dataAjx);
-                        }
-                    });
-                }
-
-
-
-                function IncidentTypeChart(CompanyId = '', Fromdate = '', Todate = '') {
-                    var url = "{{ admin_url('dashboard/incident-type-chart') }}"
-                    var data = {
-                        CompanyId: CompanyId,
-                        Fromdate: Fromdate,
-                        Todate: Todate,
-                    };
-                    $('#IncidentTypeChart').html('');
-                    $.ajax({
-                        type: 'get',
-                        url: url,
-                        data: data,
-                        cache: false,
-                        success: function(dataAjx) {
-
-                            $('#IncidentTypeChart').html(dataAjx);
-                        }
-                    });
-                }
-
-                function loadinjurychart(CompanyId = '', Fromdate = '', Todate = '') {
-                    var url = "{{ admin_url('dashboard/injurypart') }}"
-                    var data = {
-                        CompanyId: CompanyId,
-                        Fromdate: Fromdate,
-                        Todate: Todate,
-                    };
-                    $('#loadinjurychart').html('');
-                    $.ajax({
-                        type: 'get',
-                        url: url,
-                        data: data,
-                        cache: false,
-                        success: function(dataAjx) {
-
-                            $('#loadinjurychart').html(dataAjx);
-                        }
-                    });
-                }
 
                 function LoadPPEIssuanceGroupWiseCount(CompanyId = '', Fromdate = '', Todate = '') {
                     var url = "{{ admin_url('dashboard/PPEIssuanceGroupWise') }}"
@@ -1458,7 +1454,7 @@
                         Fromdate: Fromdate,
                         Todate: Todate,
                     };
-                    $('#LoadPPEIssuanceGroupWiseCount').html('');
+                    $('#LoadPPEIssuanceGroupWiseCountDiv').html('');
                     $.ajax({
                         type: 'get',
                         url: url,
@@ -1466,7 +1462,7 @@
                         cache: false,
                         success: function(dataAjx) {
 
-                            $('#LoadPPEIssuanceGroupWiseCount').html(dataAjx);
+                            $('#LoadPPEIssuanceGroupWiseCountDiv').html(dataAjx);
                         }
                     });
                 }
@@ -1491,245 +1487,7 @@
                     });
                 }
 
-                function LoadPPEAvailabilityChartCount(CompanyId = '', Fromdate = '', Todate = '') {
-                    var url = "{{ admin_url('dashboard/PPEAvailabilityChart') }}"
-                    var data = {
-                        CompanyId: CompanyId,
-                        Fromdate: Fromdate,
-                        Todate: Todate,
-                    };
-                    $('#LoadPPEAvailabilityChartCount').html('');
-                    $.ajax({
-                        type: 'get',
-                        url: url,
-                        data: data,
-                        cache: false,
-                        success: function(dataAjx) {
-
-                            $('#LoadPPEAvailabilityChartCount').html(dataAjx);
-                        }
-                    });
-                }
-
-                function ptw_type_wise_count(CompanyId = '', Fromdate = '', Todate = '') {
-                    var url = "{{ admin_url('dashboard/ptw-type-wise-count') }}"
-                    var data = {
-                        CompanyId: CompanyId,
-                        Fromdate: Fromdate,
-                        Todate: Todate,
-                    };
-                    $('#ptw_type_wise_count').html('');
-                    $.ajax({
-                        type: 'get',
-                        url: url,
-                        data: data,
-                        cache: false,
-                        success: function(dataAjx) {
-
-                            $('#ptw_type_wise_count').html(dataAjx);
-                        }
-                    });
-                }
-
-                function ptw_open_close_count(CompanyId = '', Fromdate = '', Todate = '') {
-                    var url = "{{ admin_url('dashboard/ptw-open-close') }}"
-                    var data = {
-                        CompanyId: CompanyId,
-                        Fromdate: Fromdate,
-                        Todate: Todate,
-                    };
-                    $('#ptw_open_close_count').html('');
-                    $.ajax({
-                        type: 'get',
-                        url: url,
-                        data: data,
-                        cache: false,
-                        success: function(dataAjx) {
-
-                            $('#ptw_open_close_count').html(dataAjx);
-                        }
-                    });
-                }
-
-                function inspection_wise_count(CompanyId = '', Fromdate = '', Todate = '') {
-                    var url = "{{ admin_url('dashboard/inspection-count') }}"
-                    var data = {
-                        CompanyId: CompanyId,
-                        Fromdate: Fromdate,
-                        Todate: Todate,
-                    };
-                    $('#inspection_wise_count').html('');
-                    $.ajax({
-                        type: 'get',
-                        url: url,
-                        data: data,
-                        cache: false,
-                        success: function(dataAjx) {
-
-                            $('#inspection_wise_count').html(dataAjx);
-                        }
-                    });
-                }
-
-                function LoadnearMissCount(CompanyId = '', Fromdate = '', Todate = '') {
-                    var url = "{{ admin_url('dashboard/nearMissFrequency') }}"
-                    var data = {
-                        CompanyId: CompanyId,
-                        Fromdate: Fromdate,
-                        Todate: Todate,
-                    };
-                    $('#nearMissCount').html('');
-                    $.ajax({
-                        type: 'get',
-                        url: url,
-                        data: data,
-                        cache: false,
-                        success: function(dataAjx) {
-
-                            $('#nearMissCount').html(dataAjx);
-                        }
-                    });
-                }
-
-                function LoadiirTypewiseUAUCCount(CompanyId = '', Fromdate = '', Todate = '') {
-                    var url = "{{ admin_url('dashboard/IIRTypeWiseUAUC') }}"
-                    var data = {
-                        CompanyId: CompanyId,
-                        Fromdate: Fromdate,
-                        Todate: Todate,
-                    };
-                    $('#iirTypewiseUAUCCount').html('');
-                    $.ajax({
-                        type: 'get',
-                        url: url,
-                        data: data,
-                        cache: false,
-                        success: function(dataAjx) {
-
-                            $('#iirTypewiseUAUCCount').html(dataAjx);
-                        }
-                    });
-                }
-
-                function AccidentReportUnitWiseCount(CompanyId = '', Fromdate = '', Todate = '') {
-                    var url = "{{ admin_url('dashboard/AccidentReportUnitWiseCount') }}"
-                    var data = {
-                        CompanyId: CompanyId,
-                        Fromdate: Fromdate,
-                        Todate: Todate,
-                    };
-                    $('#AccidentReportUnitWiseCount').html('');
-                    $.ajax({
-                        type: 'get',
-                        url: url,
-                        data: data,
-                        cache: false,
-                        success: function(dataAjx) {
-
-                            $('#AccidentReportUnitWiseCount').html(dataAjx);
-                        }
-                    });
-                }
-
-                function TypeofIIRCount(CompanyId = '', Fromdate = '', Todate = '') {
-                    var url = "{{ admin_url('dashboard/TypeofIIRCount') }}"
-                    var data = {
-                        CompanyId: CompanyId,
-                        Fromdate: Fromdate,
-                        Todate: Todate,
-                    };
-                    $('#TypeofIIRCount').html('');
-                    $.ajax({
-                        type: 'get',
-                        url: url,
-                        data: data,
-                        cache: false,
-                        success: function(dataAjx) {
-
-                            $('#TypeofIIRCount').html(dataAjx);
-                        }
-                    });
-                }
-
-                function TrainingCompletionCount(CompanyId = '', Fromdate = '', Todate = '') {
-                    var url = "{{ admin_url('dashboard/TrainingCompletionCount') }}"
-                    var data = {
-                        CompanyId: CompanyId,
-                        Fromdate: Fromdate,
-                        Todate: Todate,
-                    };
-                    $('#TrainingCompletionCount').html('');
-                    $.ajax({
-                        type: 'get',
-                        url: url,
-                        data: data,
-                        cache: false,
-                        success: function(dataAjx) {
-
-                            $('#TrainingCompletionCount').html(dataAjx);
-                        }
-                    });
-                }
-
-                function TrainingHourSafetyDepartmentWise(CompanyId = '', Fromdate = '', Todate = '') {
-                    var url = "{{ admin_url('dashboard/training-hour-safety-department') }}"
-                    var data = {
-                        CompanyId: CompanyId,
-                        Fromdate: Fromdate,
-                        Todate: Todate,
-                    };
-                    $('#LoadTrainingHourSafetyDepartmentWise_Count').html('');
-                    $.ajax({
-                        type: 'get',
-                        url: url,
-                        data: data,
-                        cache: false,
-                        success: function(dataAjx) {
-
-                            $('#LoadTrainingHourSafetyDepartmentWise_Count').html(dataAjx);
-                        }
-                    });
-                }
-
-                function PTWViolationHoldCompliance(CompanyId = '', Fromdate = '', Todate = '') {
-                    var url = "{{ admin_url('dashboard/ptw-hold-violation') }}"
-                    var data = {
-                        CompanyId: CompanyId,
-                        Fromdate: Fromdate,
-                        Todate: Todate,
-                    };
-                    $('#LoadPtwHoldViolation_Count').html('');
-                    $.ajax({
-                        type: 'get',
-                        url: url,
-                        data: data,
-                        cache: false,
-                        success: function(dataAjx) {
-
-                            $('#LoadPtwHoldViolation_Count').html(dataAjx);
-                        }
-                    });
-                }
-
-                function uaucStaticReport(CompanyId = '', Fromdate = '', Todate = '') {
-                    var url = "{{ admin_url('dashboard/uauc-static-report') }}"
-                    var data = {
-                        CompanyId: CompanyId,
-                        Fromdate: Fromdate,
-                        Todate: Todate,
-                    };
-                    $('#uaucStaticReport').html('');
-                    $.ajax({
-                        type: 'get',
-                        url: url,
-                        data: data,
-                        cache: false,
-                        success: function(dataAjx) {
-
-                            $('#uaucStaticReport').html(dataAjx);
-                        }
-                    });
-                }
+            
 
                 $(document).ready(function() {
                     const toDatePicker = flatpickr("#toDate", {

@@ -1,6 +1,8 @@
 <div id="typeOfIIRChart"></div>
 
 <script>
+      var incidentTypeIdMap = {!! json_encode($formattedData['idMap']) !!};
+
     var options = {
         series: [{
             name: 'Incident Count',
@@ -8,17 +10,29 @@
         }],
         chart: {
             type: 'bar',
-            height: 400,
+            height: 350,
             toolbar: {
                 show: false
             },
+            events: {
+                dataPointSelection: function(event, chartContext, config) {
+                    var dataPointIndex = config.dataPointIndex;
+                    var incidentTypeName = chartContext.w.config.xaxis.categories[dataPointIndex];
+                    var incidentTypeId = incidentTypeIdMap[incidentTypeName];
+
+                    if (incidentTypeId) {
+                        redirectToIms(incidentTypeId);
+                    }
+                }
+            }
         },
         plotOptions: {
             bar: {
                 horizontal: false,
-                borderRadius: 6,
-                distributed: true
-            }
+                columnWidth: '55%',
+                borderRadius: 5,
+                borderRadiusApplication: 'end'
+            },
         },
         xaxis: {
             categories: {!! json_encode($formattedData['labels']) !!},
@@ -35,15 +49,15 @@
             enabled: true
         },
         colors: [
-            '#1E90FF', 
-            '#32CD32', 
-            '#FF6347', 
-            '#FFD700', 
-            '#6A5ACD', 
-            '#00CED1', 
-            '#DC143C', 
-            '#FFA500', 
-            '#2E8B57', 
+            '#1E90FF',
+            '#32CD32',
+            '#FF6347',
+            '#FFD700',
+            '#6A5ACD',
+            '#00CED1',
+            '#DC143C',
+            '#FFA500',
+            '#2E8B57',
             '#8B4513'
         ],
 

@@ -27,14 +27,28 @@
                                             <div class="form-group form-input">
                                                 <label
                                                     class="form-label require">{{ __('inspection.inspection_date') }}</label>
-                                                <input type="text" name="inspection_date" id = "inspection_date"
-                                                    class="form-control">
+
+                                                <div class="input-group date form-input custom-height">
+                                                    <input type="text" name="inspection_date" id = "inspection_date"
+                                                        class="form-control">
+                                                    <div class="input-group-addon input-group-text">
+                                                        <span class="fa fa-calendar"></span>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
                                                 <label class="form-label require">{{ __('inspection.next_due') }}</label>
-                                                <input type="text" name="next_due" id = "next_due" class="form-control">
+
+
+                                                <div class="input-group date form-input custom-height">
+                                                    <input type="text" name="next_due" id = "next_due"
+                                                        class="form-control">
+                                                    <div class="input-group-addon input-group-text">
+                                                        <span class="fa fa-calendar"></span>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                         <div class="col-md-4 mb-2">
@@ -53,6 +67,16 @@
                                         </div>
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
+                                                <label class="form-label require">{{ __('inspection.unit') }}</label>
+                                                <select name="unit" id="unit" class=" form-control single-select"
+                                                    style="width: 100%">
+                                                    <option value="">Select Unit</option>
+
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
                                                 <label class="form-label require">Shift</label>
                                                 <select name="shift" id="shift" class=" form-control single-select"
                                                     style="width: 100%">
@@ -65,19 +89,7 @@
                                             </div>
                                         </div>
 
-                                        <div class="col-md-4 mb-2">
-                                            <div class="form-group form-input">
-                                                <label class="form-label require">{{ __('inspection.unit') }}</label>
-                                                <select name="unit" id="unit" class=" form-control single-select"
-                                                    style="width: 100%">
-                                                    <option value="">Select Unit</option>
-                                                    @foreach ($units as $unit)
-                                                        <option value="{{ encryptId($unit->id) }}">
-                                                            {{ $unit->unit_name }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                        </div>
+
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
                                                 <label class="form-label require">{{ __('inspection.frequency') }}</label>
@@ -176,6 +188,31 @@
 
     @push('script')
         <script type="text/javascript">
+            $(document).on('change', '#location', function() {
+                var locationId = $(this).val();
+                if (locationId) {
+                    $.ajax({
+                        url: "{{ admin_url('unit/ajax-list') }}/" + locationId + "/0",
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(data) {
+                            $('#unit').empty().append(
+                                '<option value="">Select unit</option>');
+                            $.each(data, function(key, value) {
+                                $('#unit').append('<option value="' + value
+                                    .id + '">' + value.name + '</option>');
+                            });
+                            $('#unit').trigger('change.');
+                        },
+                        error: function(xhr) {
+                            alert('Error fetching unit. Please try again.');
+                        }
+                    });
+                } else {
+                    $('#unit').empty().append('<option value="">Select unit</option>');
+                    $('#unit').trigger('change.');
+                }
+            });
             flatpickr("#next_due", {
                 dateFormat: "d-m-Y",
             });
@@ -188,7 +225,7 @@
                 firstTh.removeClass('sorting_asc');
 
 
-                  var fromDatepicker = flatpickr("#from_date", {
+                var fromDatepicker = flatpickr("#from_date", {
                     dateFormat: "d-m-Y",
                     onChange: function(selectedDates) {
                         if (selectedDates.length > 0) {
@@ -248,7 +285,7 @@
                             d.unit = $('#unit').val();
                             d.frequency = $('#frequency').val();
                             d.inspection_status = $('#inspection_status').val();
-                             d.from_date = $('#from_date').val();
+                            d.from_date = $('#from_date').val();
                             d.to_date = $('#to_date').val();
 
                         },
@@ -329,7 +366,7 @@
                                         unit = $('#unit').val();
                                         frequency = $('#frequency').val();
                                         inspection_status = $('#inspection_status').val();
-                                         var from_date = $('#from_date').val();
+                                        var from_date = $('#from_date').val();
                                         var to_date = $('#to_date').val();
 
                                         $(".dt-button").removeClass('processing');
@@ -343,7 +380,7 @@
                                             '&shift=' + shift +
                                             '&unit=' + unit +
                                             '&frequency=' + frequency +
-                                             '&from_date=' + from_date +
+                                            '&from_date=' + from_date +
                                             '&to_date=' + to_date +
                                             '&inspection_status=' + inspection_status
                                     }
@@ -360,9 +397,9 @@
                                         unit = $('#unit').val();
                                         frequency = $('#frequency').val();
                                         inspection_status = $('#inspection_status').val();
-                                         var from_date = $('#from_date').val();
+                                        var from_date = $('#from_date').val();
                                         var to_date = $('#to_date').val();
-                                        
+
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
@@ -374,7 +411,7 @@
                                             '&shift=' + shift +
                                             '&unit=' + unit +
                                             '&frequency=' + frequency +
-                                             '&from_date=' + from_date +
+                                            '&from_date=' + from_date +
                                             '&to_date=' + to_date +
                                             '&inspection_status=' + inspection_status
                                     }
