@@ -60,10 +60,8 @@ class TaskMasterController extends Controller
                         ->addColumn('action', function ($row) {
                             $btn = '';
                             $btn = '<a href="' . admin_url('audit/master/task/view/' . encryptId($row->id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
-                            // if (CheckUserRole(ROLE_SUPERADMIN)) {
+
                             $btn .= '<a href="' . admin_url('audit/master/task/edit/' . encryptId($row->id)) . '" class="edit-icon " title="' . __('common.edit') . '"><i class="fa-solid fa-pen-to-square"></i> ';
-                            $btn .= '<a href="javascript:void(0);"  data-id="' . encryptId($row->id) . '"  class="recordDelete" title="' . __('common.delete') . '"><i class="fa-solid fa-trash text-danger" ></i></i></a> ';
-                            // }
                             return $btn;
                         })
                         ->rawColumns(['action', 'created_date', 'created_by', 'status'])
@@ -116,7 +114,7 @@ class TaskMasterController extends Controller
                 $this->audit_task->store();
                 Session::flash('success', __('Your data has been created successfully'));
             } catch (Exception $ex) {
-   report($ex);
+               report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
             return redirect(admin_url('audit/master/task/list'));

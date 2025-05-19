@@ -80,8 +80,16 @@
                                                             <td
                                                                 style="border: 1px solid black; text-align: center; padding: 12px;">
                                                                 <div class="form-input">
-                                                                    <input type="date" class="issue_date form-control"
-                                                                        name="issue_date" value="{{ old('issue_date') }}" />
+
+                                                                    <div class="input-group date form-input custom-height">
+                                                                        <input type="date"
+                                                                            class="issue_date form-control"
+                                                                            name="issue_date"
+                                                                            value="{{ old('issue_date') }}" />
+                                                                        <div class="input-group-addon input-group-text">
+                                                                            <span class="fa fa-calendar"></span>
+                                                                        </div>
+                                                                    </div>
                                                                     @error('issue_date')
                                                                         <div class="error">{{ $message }}</div>
                                                                     @enderror
@@ -151,8 +159,14 @@
                                                     </div>
                                                     <div class="col-md-4 form-group form-input mb-2">
                                                         <label class="form-label ">{{ __('inspection.date') }}</label>
-                                                        <input type="text" name="date" id = "date"
-                                                            class="form-control" value="{{ todayDate() }}" readonly>
+
+                                                        <div class="input-group date form-input custom-height">
+                                                            <input type="text" name="date" id = "date"
+                                                                class="form-control" value="{{ todayDate() }}" readonly>
+                                                            <div class="input-group-addon input-group-text">
+                                                                <span class="fa fa-calendar"></span>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                     <div class="col-md-4 form-group form-input mb-2">
                                                         @if (isset(Auth::user()->signature_upload))
@@ -234,7 +248,7 @@
                             },
                             signature_image: {
                                 required: true,
-                               filesize: 15728640,
+                                filesize: 15728640,
                             },
                             remarks: {
                                 required: true,
