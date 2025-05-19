@@ -230,7 +230,7 @@
 
                                                             <div class="col-md-4 mt-2">
                                                                 <div class="form-group form-input">
-                                                                    <label class="form-label require">CAPA</label>
+                                                                    <label class="form-label require">Recommended CAPA</label>
                                                                     <input type="text"
                                                                         name="gemba_walk[0][checklist_capa]"
                                                                         id="checklist_capa" class="form-control"
@@ -344,7 +344,7 @@
                                                 <div class="form-capa">
                                                     <div class="row mt-4">
                                                         <div class="card-header-inner p-2">
-                                                            <h4 class="text-white">CAPA Action</h4>
+                                                            <h4 class="text-white">Recommended CAPA Action</h4>
                                                         </div>
 
                                                         <div class="col-md-12 mb-2">

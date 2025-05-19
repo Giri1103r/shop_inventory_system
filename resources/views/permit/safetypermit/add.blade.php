@@ -78,7 +78,7 @@
                                                         @endforeach
 
                                                     </select>
-                                                     <div class="text-danger"></div>
+                                                    <div class="text-danger"></div>
                                                 </div>
 
 
@@ -92,7 +92,7 @@
                                                         <option value="">Select the Location</option>
 
                                                     </select>
-                                                     <div class="text-danger"></div>
+                                                    <div class="text-danger"></div>
                                                 </div>
 
                                             </div>
@@ -106,7 +106,7 @@
                                                         <option value="">Select the Unit</option>
 
                                                     </select>
-                                                     <div class="text-danger"></div>
+                                                    <div class="text-danger"></div>
                                                 </div>
 
                                             </div>
@@ -181,6 +181,111 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <p class="fw-bold fs-5 mt-3">List of Workman involved in Job</span>
+                                        </p>
+                                        <div class="row">
+                                            <div class="col-md-4 mt-3">
+                                                <div class="form-group form-input">
+                                                    <div class="gap-2">
+                                                        <label class="form-check form-check-inline">
+                                                            <input type="radio" name="request_for_work_man"
+                                                                id="request_for_workman_employee" class="form-check-input"
+                                                                value="1">
+                                                            <span class="form-check-label">Employee</span>
+                                                        </label>
+                                                        <label class="form-check form-check-inline">
+                                                            <input type="radio" name="request_for_work_man"
+                                                                id="request_for_workman_worker" class="form-check-input"
+                                                                value="2">
+                                                            <span class="form-check-label">Worker</span>
+                                                        </label>
+                                                        <label class="form-check form-check-inline">
+                                                            <input type="radio" name="request_for_work_man"
+                                                                id="request_for_workman_visitor" class="form-check-input"
+                                                                value="3">
+                                                            <span class="form-check-label">Visitor</span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 col-sm-6 col-12 mb-3">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label">Employee Code / Visitor ID</label>
+                                                    <div class="col-sm-6" style="width: 100%">
+                                                        <select name="employee_code" id="employee_code"
+                                                            style="width: 100%" class="single-select form-control">
+                                                            <option value="">Select Employee ID</option>
+                                                        </select>
+                                                    </div>
+
+                                                    <div class="text-danger"></div>
+                                                </div>
+                                            </div>
+
+
+
+                                            <div class="col-md-4 col-sm-6 col-12 mb-3">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label">Name of Workman</label>
+                                                    <input type="text" name="workman_name" id="workman_name"
+                                                        class="form-control" readonly>
+                                                    <div class="text-danger"></div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 col-sm-6 col-12 mb-3">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label">Designation</label>
+                                                    <input type="text" name="workman_desig" id="workman_desig"
+                                                        class="form-control" readonly>
+                                                    <div class="text-danger"></div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4 col-sm-6 col-12 mb-3">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label">Department / Company</label>
+                                                    <div class="col-sm-6" style="width: 100%">
+                                                        <select name="workman_dept" id="workman_dept" style="width: 100%"
+                                                            class="single-select form-control">
+                                                            <option value="">Select Department</option>
+                                                        </select>
+                                                    </div>
+
+                                                    <div class="text-danger"></div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 col-sm-6 col-12 mb-3">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label">Nature of Job</label>
+                                                    <input type="text" name="nature_of_job" id="nature_of_job"
+                                                        class="form-control">
+                                                    <div class="text-danger"></div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 col-sm-6 col-12 mb-3 d-flex align-items-end">
+                                                <x-button-add dataId="" class="add btn btn-primary"
+                                                    href="{{ admin_url('ptw/typeofworkmaster/add') }}">Add</x-button-add>
+                                            </div>
+                                        </div>
+                                        <div class="table-responsive mt-3">
+                                            <table class="table table-bordered text-center">
+                                                <thead class=" text-white" style="background-color:#5b626b">
+                                                    <tr>
+                                                        <th>Employee Code / Visitor ID</th>
+                                                        <th>Name of Workman</th>
+                                                        <th>Designation</th>
+                                                        <th>Department / Company</th>
+                                                        <th>Nature of Job</th>
+                                                        <th>Actions</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="workman-list-entries">
+
+                                                </tbody>
+                                            </table>
+                                        </div>
+
+                                        <hr>
 
                                         <div class="row border p-3 mx-1">
                                             <div class="col-12 col-md-6 mb-3">
@@ -802,109 +907,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <p class="fw-bold fs-5 mt-3">List of Workman involved in Job</span>
-                                        </p>
-                                        <div class="row">
-                                            <div class="col-md-4 mt-3">
-                                                <div class="form-group form-input">
-                                                    <div class="gap-2">
-                                                        <label class="form-check form-check-inline">
-                                                            <input type="radio" name="request_for_work_man"
-                                                                id="request_for_workman_employee" class="form-check-input"
-                                                                value="1">
-                                                            <span class="form-check-label">Employee</span>
-                                                        </label>
-                                                        <label class="form-check form-check-inline">
-                                                            <input type="radio" name="request_for_work_man"
-                                                                id="request_for_workman_worker" class="form-check-input"
-                                                                value="2">
-                                                            <span class="form-check-label">Worker</span>
-                                                        </label>
-                                                        <label class="form-check form-check-inline">
-                                                            <input type="radio" name="request_for_work_man"
-                                                                id="request_for_workman_visitor" class="form-check-input"
-                                                                value="3">
-                                                            <span class="form-check-label">Visitor</span>
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4 col-sm-6 col-12 mb-3">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label">Employee Code / Visitor ID</label>
-                                                    <div class="col-sm-6" style="width: 100%">
-                                                        <select name="employee_code" id="employee_code"
-                                                            style="width: 100%" class="single-select form-control">
-                                                            <option value="">Select Employee ID</option>
-                                                        </select>
-                                                    </div>
 
-                                                    <div class="text-danger"></div>
-                                                </div>
-                                            </div>
-
-
-
-                                            <div class="col-md-4 col-sm-6 col-12 mb-3">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label">Name of Workman</label>
-                                                    <input type="text" name="workman_name" id="workman_name"
-                                                        class="form-control" readonly>
-                                                    <div class="text-danger"></div>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4 col-sm-6 col-12 mb-3">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label">Designation</label>
-                                                    <input type="text" name="workman_desig" id="workman_desig"
-                                                        class="form-control" readonly>
-                                                    <div class="text-danger"></div>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-md-4 col-sm-6 col-12 mb-3">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label">Department / Company</label>
-                                                    <div class="col-sm-6" style="width: 100%">
-                                                        <select name="workman_dept" id="workman_dept" style="width: 100%"
-                                                            class="single-select form-control">
-                                                            <option value="">Select Department</option>
-                                                        </select>
-                                                    </div>
-
-                                                    <div class="text-danger"></div>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4 col-sm-6 col-12 mb-3">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label">Nature of Job</label>
-                                                    <input type="text" name="nature_of_job" id="nature_of_job"
-                                                        class="form-control">
-                                                    <div class="text-danger"></div>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4 col-sm-6 col-12 mb-3 d-flex align-items-end">
-                                                <x-button-add dataId="" class="add btn btn-primary"
-                                                    href="{{ admin_url('ptw/typeofworkmaster/add') }}">Add</x-button-add>
-                                            </div>
-                                        </div>
-                                        <div class="table-responsive mt-3">
-                                            <table class="table table-bordered text-center">
-                                                <thead class=" text-white" style="background-color:#5b626b">
-                                                    <tr>
-                                                        <th>Employee Code / Visitor ID</th>
-                                                        <th>Name of Workman</th>
-                                                        <th>Designation</th>
-                                                        <th>Department / Company</th>
-                                                        <th>Nature of Job</th>
-                                                        <th>Actions</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody id="workman-list-entries">
-
-                                                </tbody>
-                                            </table>
-                                        </div>
 
                                         <div class="row mt-2">
                                             <div class="col-12 col-md-6">
@@ -2241,7 +2244,7 @@
         // validation
 
         $(document).ready(function() {
-          
+
             $.validator.addMethod("regex", function(value, element, regexp) {
                 return this.optional(element) || regexp.test(value);
             }, "Please check your input.");

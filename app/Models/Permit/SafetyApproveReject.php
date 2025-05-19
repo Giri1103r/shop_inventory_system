@@ -187,6 +187,7 @@ class SafetyApproveReject extends Model
                 ptw_aprove_reject.remarks,
                 ptw_aprove_reject.approve_reject_status,
                 ptw_aprove_reject.approve_reject_type,
+                ptw_aprove_reject.created_at,
                 ptw_aprove_reject.trash,
                 GROUP_CONCAT(DISTINCT ptw_aprove_reject_ehs_file.file_path SEPARATOR ",") AS file_paths
             ')
@@ -204,6 +205,7 @@ class SafetyApproveReject extends Model
                 'ptw_aprove_reject.remarks',
                 'ptw_aprove_reject.approve_reject_status',
                 'ptw_aprove_reject.approve_reject_type',
+                'ptw_aprove_reject.created_at',
                 'ptw_aprove_reject.trash'
             )
             ->first();

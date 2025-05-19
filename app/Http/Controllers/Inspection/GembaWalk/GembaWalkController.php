@@ -952,7 +952,7 @@ class GembaWalkController extends Controller
                 'Description',
                 'Hazard',
                 'Image',
-                'CAPA',
+                'Recommended CAPA',
                 'Date of Compliance',
                 'Responsible Person',
                 'Status',
@@ -1270,7 +1270,7 @@ class GembaWalkController extends Controller
                     $sheet->getColumnDimension($col)->setWidth($width);
                 }
 
-                $headers = ['Sr.', 'Location', 'Unit', 'Date of Observation', 'Observation Type', 'Description', 'Hazard', 'Image', 'CAPA', 'Date of Compliance', 'Responsible Person', 'Status', 'Remark', 'Observation'];
+                $headers = ['Sr.', 'Location', 'Unit', 'Date of Observation', 'Observation Type', 'Description', 'Hazard', 'Image', 'Recommended CAPA', 'Date of Compliance', 'Responsible Person', 'Status', 'Remark', 'Observation'];
                 $col = 'A';
                 foreach ($headers as $header) {
                     $sheet->setCellValue("{$col}" . ($row + 4), $header);
