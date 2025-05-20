@@ -25,11 +25,7 @@ use App\Http\Controllers\Api\{LoginController, NotificationController, AdminCont
 
 Route::middleware('api')->prefix('v1')->group(function () {
 
-    Route::group(['prefix' => 'hooter-inspection/'],function(){
-        Route::post('list',[HooterInspectionController::class,'List']);
-        Route::post('add',[HooterInspectionController::class,'Add']);
-        Route::post('view',[HooterInspectionController::class,'View']);
-    });
+
 
 
     Route::post('login', [LoginController::class, 'login']);
@@ -132,6 +128,14 @@ Route::middleware('api')->prefix('v1')->group(function () {
                     Route::post('list', [InterUnitAuditController::class, 'list']);
                     Route::post('view', [InterUnitAuditController::class, 'view']);
                     Route::post('add', [InterUnitAuditController::class, 'add']);
+                });
+            });
+
+            Route::group(['prefix' => 'fire/'], function () {
+                Route::group(['prefix' => 'hooter-inspection/'], function () {
+                    Route::post('list', [HooterInspectionController::class, 'List']);
+                    Route::post('add', [HooterInspectionController::class, 'Add']);
+                    Route::post('view', [HooterInspectionController::class, 'View']);
                 });
             });
         });
