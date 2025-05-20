@@ -1,18 +1,19 @@
 <?php
 
-use App\Http\Controllers\Api\{LoginController, NotificationController, AdminController};
-use App\Http\Controllers\Api\Inspection\Audit\AuditAnalysisController;
-use App\Http\Controllers\Api\Inspection\Audit\AuditAssessmentController;
-use App\Http\Controllers\Api\Inspection\Audit\InterUnitAuditController;
-use App\Http\Controllers\Api\Inspection\Audit\MonthlyAuditController;
-use App\Http\Controllers\Api\MasterController;
-use App\Http\Controllers\Api\Permit\SafetyPermitController;
-use App\Http\Controllers\Api\Ppemanagement\PpeExemptionController;
-use App\Http\Controllers\Api\Ppemanagement\PpemanagementController;
-use App\Http\Controllers\Api\Ppemanagement\PperequestController;
-use App\Http\Controllers\Api\Trainig\TrainingSheducleController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\MasterController;
+use App\Http\Controllers\Api\Permit\SafetyPermitController;
+use App\Http\Controllers\Api\Ppemanagement\PperequestController;
+use App\Http\Controllers\Api\Trainig\TrainingSheducleController;
+use App\Http\Controllers\Api\Ppemanagement\PpeExemptionController;
+use App\Http\Controllers\Api\Ppemanagement\PpemanagementController;
+use App\Http\Controllers\Api\Inspection\Audit\MonthlyAuditController;
+use App\Http\Controllers\Api\Inspection\Audit\AuditAnalysisController;
+use App\Http\Controllers\Api\Inspection\Audit\InterUnitAuditController;
+use App\Http\Controllers\Api\Inspection\Audit\AuditAssessmentController;
+use App\Http\Controllers\Api\Inspection\Fire\HooterInspectionController;
+use App\Http\Controllers\Api\{LoginController, NotificationController, AdminController};
 
 // Route::get('/user', function (Request $request) {
 //     return $request->user();
@@ -23,6 +24,12 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::middleware('api')->prefix('v1')->group(function () {
+
+    Route::group(['prefix' => 'hooter-inspection/'],function(){
+        Route::post('list',[HooterInspectionController::class,'List']);
+        Route::post('add',[HooterInspectionController::class,'Add']);
+        Route::post('view',[HooterInspectionController::class,'View']);
+    });
 
 
     Route::post('login', [LoginController::class, 'login']);
