@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Gemba Walk')
+@section('title', 'Gemba Walk View')
 @section('pageurl', admin_url('gemba-walk/list'))
 
 @section('content')
@@ -87,19 +87,30 @@
                                             </div>
                                         </div>
 
-                                    </div>
 
 
+                                         <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label">Responsibile Person</label>
+                                                <div class="view_data">
+                                                    {{ getUsername(isset($gembaWalk->responsible_person_id) ? $gembaWalk->responsible_person_id : '') }}
+                                                </div>
+                                            </div>
+                                        </div>
 
-                                    <div class="m-2">
-                                        <div class="col-md-4 form-group form-input mb-2">
-                                            <label class="form-label"
-                                                style="display: block; ">{{ __('inspection.signature') }}</label>
-                                                <img src="{{ admin_url($gembaWalk_approved_singnature) }}"
-                                                alt="Signature Upload" style="width: 100px; margin-top:-10px">
+                                        <div class="mb-2 col-md-4">
+                                            <div class=" form-group form-input mb-2">
+                                                <label class="form-label"
+                                                    style="display: block; ">{{ __('inspection.signature') }}</label>
+                                                    <img src="{{ admin_url($gembaWalk_approved_singnature) }}"
+                                                    alt="Signature Upload" style="width: 100px; margin-top:-10px">
 
+                                            </div>
                                         </div>
                                     </div>
+
+
+
 
 
                                     <div class="row">
@@ -138,14 +149,14 @@
                                             </div>
                                         </div>
 
-                                        <div class="col-md-4 mb-2">
+                                        {{-- <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
                                                 <label class="form-label">Date of Observation</label>
                                                 <div class="view_data">
                                                     {{ displaydateformat(isset($gembaWalk->date_of_observation) ? $gembaWalk->date_of_observation : '') }}
                                                 </div>
                                             </div>
-                                        </div>
+                                        </div> --}}
 
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
@@ -183,14 +194,7 @@
                                             </div>
                                         </div>
 
-                                        <div class="col-md-4 mb-2">
-                                            <div class="form-group form-input">
-                                                <label class="form-label">Responsibility ID</label>
-                                                <div class="view_data">
-                                                    {{ getEmployeename(isset($gembaWalk->responsibility_id) ? $gembaWalk->responsibility_id : '') }}
-                                                </div>
-                                            </div>
-                                        </div>
+
 
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
@@ -209,16 +213,16 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-md-4 mb-2">
+                                        {{-- <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
                                                 <label class="form-label">Date of Observation</label>
                                                 <div class="view_data">
                                                     {{ displaydateformat(isset($gembaWalk->date_of_compliance) ? $gembaWalk->date_of_compliance : '') }}
                                                 </div>
                                             </div>
-                                        </div>
+                                        </div> --}}
 
-                                        <div class="col-md-4 mb-2">
+                                        {{-- <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
                                                 <label
                                                     class="form-label require">Observation</label>
@@ -226,7 +230,7 @@
                                                     {{ $gembaWalk->observation_needed == '1' ? 'YES' : 'NO' }}
                                                 </div>
                                             </div>
-                                        </div>
+                                        </div> --}}
 
                                         {{-- <div class="col-md-12 mb-2">
                                             <div class="form-group form-input">
@@ -280,7 +284,7 @@
                                         $gembaWalk->gemba_walk_status == GEMBA_WALK_INSPECTION_REJECTED)
                                     <div class="row mt-3">
                                         <div class="card-header-inner">
-                                            <h4 class="text-white"> Recommended CAPA Action</h4>
+                                            <h4 class="text-white">Recommended CAPA Action</h4>
                                         </div>
                                     </div>
                                     <div class="row">
@@ -354,7 +358,7 @@
                                 @if ($gembaWalk->gemba_walk_status == GEMBA_WALK_INSPECTION_WAITING_FOR_EHS_OFFICER_VERIFICATION)
                                     <div class="row mt-3">
                                         <div class="card-header-inner">
-                                            <h4 class="text-white">CAPA Action</h4>
+                                            <h4 class="text-white">Recommended CAPA Action</h4>
                                         </div>
                                     </div>
                                     <div class="row">
@@ -485,7 +489,7 @@
 
                                         <div class="row mt-3">
                                             <div class="card-header-inner">
-                                                <h4 class="text-white">CAPA Action</h4>
+                                                <h4 class="text-white">Recommended CAPA Action</h4>
                                             </div>
                                         </div>
                                         <div class="row">
@@ -569,7 +573,7 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label ">{{ __('inspection.date') }}</label>
+                                                    <label class="form-label ">Date of Compliance</label>
                                                     <div class="view_data">
                                                         {{ Displaydateformat($gembaWalk_ehs_floor_manager_details->created_at) }}
                                                     </div>

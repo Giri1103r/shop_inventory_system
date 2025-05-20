@@ -3271,3 +3271,43 @@ function getPPEAvailabilityChartData($form_date, $to_date, $company_id)
         'series' => $series,
     ];
 }
+
+
+// API Helpers 
+if (!function_exists('GetStatusValue')) {
+    function GetStatusValue($id)
+    {
+        switch ($id) {
+            case WAITING_FOR_EHS_OFFICER_VERIFICATION:
+                $text = "Waiting For EHS Officer Verification";
+                break;
+            case WAITING_FOR_CAPA_ACTION:
+                $text = "Waiting For CAPA Action";
+                break;
+            case WAITING_FOR_CAPA_VERIFICATION:
+                $text = "Waiting For CAPA Verification";
+                break;
+            case WAITING_FOR_L1_VERIFICATION:
+                $text = "Waiting For Level-1 Manager Verification";
+                break;
+            case WAITING_FOR_L2_VERIFICATION:
+                $text = "Waiting For Level-2 Manager Verification";
+                break;
+            case INSPECTION_APPROVED:
+                $text = "CLOSED";
+                break;
+            case L2_MANAGER_REJECTED:
+                $text = "LEVEL 2 OFFICER REJECTED - WAITING FOR CAPA ACTION";
+                break;
+            case L1_MANAGER_REJECTED:
+                $text = "LEVEL 1 OFFICER REJECTED - WAITING FOR CAPA ACTION";
+                break;
+            case EHS_OFFICER_REJECTED:
+                $text = "EHS OFFICER REJECTED - WAITING FOR CAPA ACTION";
+                break;
+            default:
+                $text = "Unknown";
+        }
+        return $text;
+    }
+}

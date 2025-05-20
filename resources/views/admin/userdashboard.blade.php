@@ -35,7 +35,7 @@
                 <div class="col-xl-12">
                     <div class="dashboard-header d-flex align-items-center justify-content-between flex-wrap">
                         <div class="d-flex align-items-center dz-head-title">
-                            <h4 class="m-0">Welcome Back, {{ Auth::user()->name }}!</h4>
+                            <h4 class="m-0">Welcome {{ Auth::user()->name }}!</h4>
                         </div>
                     </div>
                 </div>

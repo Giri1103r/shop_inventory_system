@@ -74,7 +74,7 @@
                                                 class="form-control single-select">
                                                 <option value="">Select Status</option>
                                                 <option value="{{ encryptId(2) }}">Doctor Approval Pending</option>
-                                         
+
                                                 <option value="{{ encryptId(6) }}">Doctor Rejected</option>
                                                 <option value="{{ encryptId(4) }}">EHS Head Approval Pending</option>
                                                 <option value="{{ encryptId(5) }}">EHS Approved</option>
@@ -102,6 +102,7 @@
                                         <th>Employee ID/ Worker ID</th>
                                         <th>Employee Name/ Worker Worker Name</th>
                                         <th>Date</th>
+                                        <th>Cheif Complaint</th>
                                         <th>Remarks</th>
                                         <th>Approve Status</th>
                                         <th data-priority="1">Action</th>
@@ -283,6 +284,10 @@
                 {
                     data: 'date',
                     name: 'date'
+                },
+                {
+                    data: 'cheif_complaint',
+                    name: 'cheif_complaint'
                 },
                 {
                     data: 'remarks',

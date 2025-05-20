@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Gemba Walk Details| KARAM</title>
+    <title>Gemba Walk Inspection| KARAM</title>
 
     <style>
         .badge {
@@ -240,11 +240,11 @@
                             <th>Hazard</th>
                             <th>Image</th>
                             <th>Recommended CAPA</th>
-                            <th>Date of Compliance</th>
-                            <th>Responsible Person</th>
+                            {{-- <th>Date of Compliance</th> --}}
+                            {{-- <th>Responsible Person</th> --}}
                             <th>Status</th>
                             <th>Remark</th>
-                            <th>Observation</th>
+                            {{-- <th>Observation</th> --}}
 
 
                         </tr>
@@ -268,11 +268,11 @@
                                     @endif
                                 </td>
                                 <td>{{ $gembaWalk->capa ?? 'N/A' }}</td>
-                                <td>{{ displaydateformat($gembaWalk->date_of_compliance ?? 'N/A') }}</td>
-                                <td>{{ getEmployeename($gembaWalk->responsibility_id ?? 'N/A') }}</td>
+                                {{-- <td>{{ displaydateformat($gembaWalk->date_of_compliance ?? 'N/A') }}</td> --}}
+                                {{-- <td>{{ getEmployeename($gembaWalk->responsibility_id ?? 'N/A') }}</td> --}}
                                 <td>{{ getGembaWalkStatus($gembaWalk->gemba_walk_checklist_status ?? 'N/A') }}</td>
                                 <td>{{ $gembaWalk->remark ?? 'N/A' }}</td>
-                                <td>{{ $gembaWalk->observation_needed == '1' ? 'YES' : 'NO' }}</td>
+                                {{-- <td>{{ $gembaWalk->observation_needed == '1' ? 'YES' : 'NO' }}</td> --}}
 
                                 {{-- <td>
                                     @if (!empty($gembaWalk->observation))
@@ -466,7 +466,7 @@
                 @endif
                 @if (isset($gembaWalk_ehs_floor_manager_details->created_at))
                     <tr>
-                        <td width="50%" style="padding:5px;"><b>{{ __('inspection.date') }}</b></td>
+                        <td width="50%" style="padding:5px;"><b>Date of Compliance</b></td>
                         <td width="2%" style="padding:5px;">:</td>
                         <td width="48%" style="padding:5px;">
                             {{ Displaydateformat($gembaWalk_ehs_floor_manager_details->created_at) }}</td>
@@ -597,7 +597,7 @@
                     @endif
                     @if (isset($gembaWalk_ehs_floor_manager_details->created_at))
                         <tr>
-                            <td width="50%" style="padding:5px;"><b>{{ __('inspection.date') }}</b></td>
+                            <td width="50%" style="padding:5px;"><b>Date of Compliance</b></td>
                             <td width="2%" style="padding:5px;">:</td>
                             <td width="48%" style="padding:5px;">
                                 {{ Displaydateformat($gembaWalk_ehs_floor_manager_details->created_at) }}</td>
