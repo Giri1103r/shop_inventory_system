@@ -24,6 +24,7 @@ use App\Models\Inspection\GembaWalk\GembaWalkInspectionEhsFile;
 use App\Models\Inspection\GembaWalk\GembaWalkInspectionEhsApproval;
 use App\Models\Inspection\InspectionStaticDocno;
 use App\Models\Inspection\Master\Shift;
+use App\Models\Master\Company;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
@@ -48,6 +49,7 @@ class GembaWalkController extends Controller
     private $statusLog;
     private $document_reference;
     private $shift;
+    private $company;
 
 
 
@@ -67,6 +69,7 @@ class GembaWalkController extends Controller
         $this->statusLog = new GembaWalkStatusLog();
         $this->document_reference = new InspectionStaticDocno();
         $this->shift = new Shift();
+        $this->company = new Company();
     }
 
 
@@ -108,7 +111,7 @@ class GembaWalkController extends Controller
                                 $btn = '<a href="' . admin_url('inspection/gemba-walk/view/' . encryptId($row->gemba_walk_id)) . ' "class=" me-1"  title="View "><i class="fa-solid fa-eye"></i></a> ';
 
 
-                                if (($row->gemba_walk_status == GEMBA_WALK_INSPECTION_WAITING_FOR_FLOOR_MANAGER_VERIFICATION || $row->gemba_walk_status == GEMBA_WALK_INSPECTION_REJECTED) && (CheckUserRole(ROLE_FLOOR_MANAGER) || isAdmin())) {
+                                if (($row->gemba_walk_status == GEMBA_WALK_INSPECTION_WAITING_FOR_FLOOR_MANAGER_VERIFICATION || $row->gemba_walk_status == GEMBA_WALK_INSPECTION_REJECTED) && (CheckUserRole(ROLE_FLOOR_MANAGER)  || isAdmin())) {
                                     $btn .= '<a href="' . admin_url('inspection/gemba-walk/floor-manager/' . encryptId($row->gemba_walk_id)) . '"class=" me-1" title="' . 'Floor Manager Action' . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                                 }
 
@@ -157,6 +160,7 @@ class GembaWalkController extends Controller
             $employeeList = $this->employee->getEmployeeList();
             $document_no = $this->document_reference->selectUsingName('GembaWalk');
             $shift = $this->shift->getShiftname();
+            $companyList = $this->company->getcompany();
 
 
             $data = array(
@@ -165,6 +169,7 @@ class GembaWalkController extends Controller
                 'employeeList' => $employeeList,
                 'document_no' => $document_no,
                 'shift' => $shift,
+                'companyList'=>$companyList
 
             );
             return view('inspection.gembaWalk.add', $data);
@@ -190,8 +195,8 @@ class GembaWalkController extends Controller
                 'gemba_walk.*.checklist_description' => 'nullable|string',
                 'gemba_walk.*.hazard' => 'nullable|string',
                 'gemba_walk.*.checklist_capa' => 'nullable|string',
-                'gemba_walk.*.date_of_compliance' => 'nullable',
-                'gemba_walk.*.responsibility_id' => 'nullable',
+                // 'gemba_walk.*.date_of_compliance' => 'nullable',
+                // 'gemba_walk.*.responsibility_id' => 'nullable',
                 'gemba_walk.*.current_status' => 'nullable|string',
                 'gemba_walk.*.checklist_remark' => 'nullable|string',
             ];
@@ -211,7 +216,7 @@ class GembaWalkController extends Controller
                 'gemba_walk.*.checklist_description.string' => 'Checklist description must be a valid text.',
                 'gemba_walk.*.hazard.string' => 'Hazard must be a valid text.',
                 'gemba_walk.*.checklist_capa.string' => 'Checklist CAPA must be a valid text.',
-                'gemba_walk.*.date_of_compliance.date_format' => 'Date of compliance must be in the format dd-mm-yyyy.',
+                // 'gemba_walk.*.date_of_compliance.date_format' => 'Date of compliance must be in the format dd-mm-yyyy.',
                 'gemba_walk.*.checklist_remark.string' => 'Checklist remark must be a valid text.',
             ];
 
@@ -230,6 +235,7 @@ class GembaWalkController extends Controller
             $gembaWalkChecklist = $this->gembaWalkCheckList->store($gembaWalk->id);
 
             if ($gembaWalk->capa_needed == "2") {
+                $resposible_person = decryptId($request->responsible_person_id);
                 $capa_type = GEMBA_WALK_INSPECTION_PASS_L1;
 
                 $gembaWalk_ehs = $this->gembaWalkInspectionEhsAprroval->capaSubmit($gembaWalk_id, $capa_type);
@@ -241,8 +247,8 @@ class GembaWalkController extends Controller
                 $to_status = GEMBA_WALK_INSPECTION_WAITING_FOR_FLOOR_MANAGER_VERIFICATION;
                 //mail
                 $mailsubject = 'Gemba Walk CAPA Action  Report has been Submitted';
-                $user_roles = [ROLE_FLOOR_MANAGER, ROLE_EHS_OFFICER, ROLE_UNIT_HEAD, ROLE_EHS_HEAD];
-                $userids = [];
+                $user_roles = [ROLE_EHS_OFFICER, ROLE_UNIT_HEAD, ROLE_EHS_HEAD];
+                $userids = [$resposible_person];
                 $users = collect();
 
                 foreach ($user_roles as $user_role) {
@@ -305,7 +311,7 @@ class GembaWalkController extends Controller
 
                 $this->statusLog->create($insert_array);
             } else {
-
+                $resposible_person = decryptId($request->responsible_person_id);
                 $gembaWalk_status = GEMBA_WALK_INSPECTION_CLOSED;
                 $capa_type = GEMBA_WALK_INSPECTION_PASS;
                 // $gembaWalk_id = decryptId($request->id);
@@ -316,8 +322,8 @@ class GembaWalkController extends Controller
 
                 //mail
                 $mailsubject = 'Gemba Walk has been Approved';
-                $user_roles = [ROLE_FLOOR_MANAGER, ROLE_EHS_OFFICER, ROLE_UNIT_HEAD, ROLE_EHS_HEAD];
-                $userids = [];
+                $user_roles = [ROLE_EHS_OFFICER, ROLE_UNIT_HEAD, ROLE_EHS_HEAD];
+                $userids = [$resposible_person];
                 $users = collect();
 
                 foreach ($user_roles as $user_role) {
@@ -384,7 +390,7 @@ class GembaWalkController extends Controller
             }
 
         } catch (Exception $ex) {
-          report($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('inspection/gemba-walk/list'));
         }
@@ -496,6 +502,8 @@ class GembaWalkController extends Controller
             $gembaWalk_inspection_file = $this->gembaWalkInspectionEhsFile->capaFileSubmit($gembaWalk_id, $ehs_id, $upload_status);
 
             $gemba_Walk_status = $this->gembaWalk->updateStatus($gembaWalk_id, $gembaWalk_status);
+            $inspection_closed = $this->gembaWalk->updateAprrovel($gembaWalk_id);
+
 
             $user_role = ROLE_EHS_OFFICER;
 
@@ -624,15 +632,16 @@ class GembaWalkController extends Controller
                 $gembaWalk_status = GEMBA_WALK_INSPECTION_CLOSED;
 
                 $gembaWalk_ehs = $this->gembaWalkInspectionEhsAprroval->capaSubmit($gembaWalk_id, $capa_type);
-                $inspection_closed = $this->gembaWalk->updateAprrovel($gembaWalk_id);
 
                 $gembaWalk_singnature = $this->gembaWalkChecklistFile->storeVerifiedSignature($gembaWalk_id);
                 $gembaWalk_status = $this->gembaWalk->updateStatus($gembaWalk_id, $gembaWalk_status);
+                $resposible_person_id = $this->gembaWalk->getResponsiblePerson($gembaWalk_id);
+                $get_ehs_review = $this->gembaWalkInspectionEhsAprroval->getApproveStatus($gembaWalk_id);
 
                 // mail
                 $mailsubject = 'Gemba Walk has been Approved';
-                $user_roles = [ROLE_FLOOR_MANAGER, ROLE_EHS_OFFICER, ROLE_UNIT_HEAD, ROLE_EHS_HEAD];
-                $userids = [];
+                $user_roles = [ROLE_EHS_OFFICER, ROLE_UNIT_HEAD, ROLE_EHS_HEAD];
+                $userids = [$resposible_person_id];
                 $users = collect();
 
                 foreach ($user_roles as $user_role) {
@@ -644,7 +653,6 @@ class GembaWalkController extends Controller
                 }
 
                 $userids = array_unique($userids);
-                $get_ehs_review = $this->gembaWalkInspectionEhsAprroval->getApproveStatus($gembaWalk_id);
                 $to_status = GEMBA_WALK_INSPECTION_CLOSED;
 
                 if ($users->count() > 0) {
@@ -700,10 +708,11 @@ class GembaWalkController extends Controller
                 $gembaWalk_ehs = $this->gembaWalkInspectionEhsAprroval->capaSubmit($gembaWalk_id, $capa_type);
 
                 $gembaWalk_status = $this->gembaWalk->updateStatus($gembaWalk_id, $gembaWalk_status);
+                $resposible_person_id = $this->gembaWalk->getResponsiblePerson($gembaWalk_id);
 
                 $mailsubject = 'GembaWalk Report has been Rejected by EHS Officer';
-                $user_roles = [ROLE_FLOOR_MANAGER, ROLE_EHS_OFFICER, ROLE_UNIT_HEAD, ROLE_EHS_HEAD];
-                $userids = [];
+                $user_roles = [ROLE_EHS_OFFICER, ROLE_UNIT_HEAD, ROLE_EHS_HEAD];
+                $userids = [$resposible_person_id];
                 $users = collect();
 
                 foreach ($user_roles as $user_role) {
@@ -844,6 +853,8 @@ class GembaWalkController extends Controller
             $gembaWalk_verified_singnature = GetSignature($getUserId->verified_by, $id, $type);
             $document_no = $this->document_reference->selectOne($getUserId->document_reference_id);
 
+
+
             $spreadsheet = new Spreadsheet();
             $sheet = $spreadsheet->getActiveSheet();
 
@@ -860,9 +871,9 @@ class GembaWalkController extends Controller
                 $drawing->setWorksheet($sheet);
             }
 
-            $sheet->mergeCells('A1:B3'); // Merge first
+            $sheet->mergeCells('A1:C3'); // Merge first
 
-            $sheet->getStyle('A1:B3')->applyFromArray([
+            $sheet->getStyle('A1:C3')->applyFromArray([
                 'alignment' => [
                     'horizontal' => Alignment::HORIZONTAL_CENTER,
                     'vertical' => Alignment::VERTICAL_CENTER,
@@ -878,9 +889,9 @@ class GembaWalkController extends Controller
 
 
 
-            $sheet->mergeCells("C1:K3");
-            $sheet->setCellValue("C1", "Gemba Walk Report");
-            $sheet->getStyle("C1")->applyFromArray([
+            $sheet->mergeCells("D1:H3");
+            $sheet->setCellValue("D1", "Gemba Walk Report");
+            $sheet->getStyle("D1")->applyFromArray([
                 'font' => ['bold' => true, 'size' => 16],
                 'alignment' => [
                     'horizontal' => Alignment::HORIZONTAL_CENTER,
@@ -894,13 +905,13 @@ class GembaWalkController extends Controller
             $gemba = $gembaWalk_details->first();
             $sheet->getRowDimension(4)->setRowHeight(30);
 
-            $sheet->mergeCells("A4:G4");
+            $sheet->mergeCells("A4:F4");
             $sheet->setCellValue("A4", "Date: " . Displaydateformat($gemba->date));
 
-            $sheet->mergeCells("H4:N4");
-            $sheet->setCellValue("H4", "Shift: " . getShift($gemba->shift_id));
+            $sheet->mergeCells("G4:K4");
+            $sheet->setCellValue("G4", "Shift: " . getShift($gemba->shift_id));
 
-            $sheet->getStyle('A4:N4')->applyFromArray([
+            $sheet->getStyle('A4:K4')->applyFromArray([
                 'font' => [
                     'bold' => true,
                     'size' => 12,
@@ -915,9 +926,9 @@ class GembaWalkController extends Controller
 
 
             $headerLabels = [
-                'L1:M1' => 'Doc. No.',
-                'L2:M2' => 'Issue Dt.',
-                'L3:M3' => 'Rev. & Dt.',
+                'I1:J1' => 'Doc. No.',
+                'I2:J2' => 'Issue Dt.',
+                'I3:J3' => 'Rev. & Dt.',
             ];
 
             foreach ($headerLabels as $cellRange => $label) {
@@ -933,11 +944,11 @@ class GembaWalkController extends Controller
                 ]);
             }
 
-            $sheet->setCellValue("N1", $document_no->doc_no);
-            $sheet->setCellValue("N2", Displaydateformat($document_no->issue_date));
-            $sheet->setCellValue("N3", $document_no->rev_dt);
+            $sheet->setCellValue("K1", $document_no->doc_no);
+            $sheet->setCellValue("K2", Displaydateformat($document_no->issue_date));
+            $sheet->setCellValue("K3", $document_no->rev_dt);
 
-            $sheet->getStyle("L1:N3")->applyFromArray([
+            $sheet->getStyle("I1:K3")->applyFromArray([
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE, 'color' => ['argb' => '000000']]],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
             ]);
@@ -953,11 +964,11 @@ class GembaWalkController extends Controller
                 'Hazard',
                 'Image',
                 'Recommended CAPA',
-                'Date of Compliance',
-                'Responsible Person',
+                // 'Date of Compliance',
+                // 'Responsible Person',
                 'Status',
                 'Remark',
-                'Observation'
+                // 'Observation'
             ];
 
             $col = 'A';
@@ -1003,13 +1014,9 @@ class GembaWalkController extends Controller
                 }
 
                 $sheet->setCellValue("I{$row}", $data->capa ?? '');
-                $sheet->setCellValue("J{$row}", displayDateFormat($data->date_of_compliance ?? ''));
-                $sheet->setCellValue("K{$row}", getEmployeename($data->responsibility_id ?? ''));
-                $sheet->setCellValue("L{$row}", getGembaWalkStatus($data->status ?? ''));
-                $sheet->setCellValue("M{$row}", $data->remark ?? '');
-                $sheet->setCellValue("N{$row}", $data->observation_needed == '1' ? 'YES' : 'NO');
-
-                $sheet->getStyle("A{$row}:N{$row}")->applyFromArray([
+                $sheet->setCellValue("J{$row}", getGembaWalkStatus($data->status ?? ''));
+                $sheet->setCellValue("K{$row}", $data->remark ?? '');
+                $sheet->getStyle("A{$row}:K{$row}")->applyFromArray([
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                     'alignment' => ['vertical' => Alignment::VERTICAL_CENTER],
                 ]);
@@ -1018,7 +1025,7 @@ class GembaWalkController extends Controller
                 $sr++;
             }
 
-            foreach (range('A', 'N') as $col) {
+            foreach (range('A', 'K') as $col) {
                 if ($col !== 'H') {
                     $sheet->getColumnDimension($col)->setAutoSize(true);
                 }
@@ -1027,8 +1034,8 @@ class GembaWalkController extends Controller
             $sheet->getRowDimension($signatureRowStart)->setRowHeight(80);
 
             // === Prepared By ===
-            $sheet->mergeCells("A{$signatureRowStart}:G{$signatureRowStart}");
-            $sheet->getStyle("A{$signatureRowStart}:G{$signatureRowStart}")->applyFromArray([
+            $sheet->mergeCells("A{$signatureRowStart}:F{$signatureRowStart}");
+            $sheet->getStyle("A{$signatureRowStart}:F{$signatureRowStart}")->applyFromArray([
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                 'alignment' => [
                     'horizontal' => Alignment::HORIZONTAL_CENTER,
@@ -1055,8 +1062,8 @@ class GembaWalkController extends Controller
             }
 
             // === Verified By ===
-            $sheet->mergeCells("H{$signatureRowStart}:N{$signatureRowStart}");
-            $sheet->getStyle("H{$signatureRowStart}:N{$signatureRowStart}")->applyFromArray([
+            $sheet->mergeCells("G{$signatureRowStart}:K{$signatureRowStart}");
+            $sheet->getStyle("G{$signatureRowStart}:K{$signatureRowStart}")->applyFromArray([
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                 'alignment' => [
                     'horizontal' => Alignment::HORIZONTAL_CENTER,
@@ -1064,23 +1071,22 @@ class GembaWalkController extends Controller
                     'wrapText' => false,
                 ],
             ]);
-
             if (file_exists($gembaWalk_verified_singnature)) {
                 $drawing = new Drawing();
                 $drawing->setName('Signature');
                 $drawing->setDescription('Verified By');
                 $drawing->setPath($gembaWalk_verified_singnature);
-                $drawing->setCoordinates("K{$signatureRowStart}");
+                $drawing->setCoordinates("I{$signatureRowStart}");
                 $drawing->setOffsetX(5);
                 $drawing->setOffsetY(5);
                 $drawing->setHeight(60);
                 $drawing->setWorksheet($sheet);
-                $sheet->setCellValue("H{$signatureRowStart}", "\n\n\nVerified By:\n" . getUsername($gemba->verified_by));
+                $sheet->setCellValue("G{$signatureRowStart}", "\n\n\nVerified By:\n" . getUsername($gemba->verified_by));
             } else {
-                $sheet->setCellValue("H{$signatureRowStart}", "Not Verified Yet");
+                $sheet->setCellValue("G{$signatureRowStart}", "Not Verified Yet");
             }
 
-            $sheet->getStyle("A{$signatureRowStart}:N{$signatureRowStart}")->applyFromArray([
+            $sheet->getStyle("A{$signatureRowStart}:K{$signatureRowStart}")->applyFromArray([
                 'borders' => [
                     'outline' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['argb' => '000000']],
                 ],
@@ -1143,7 +1149,7 @@ class GembaWalkController extends Controller
             $mpdf->WriteHTML($html);
 
             $filename = "Gemba Walk.pdf";
-            $mpdf->Output($filename, 'D');
+            $mpdf->Output($filename, 'd');
         } catch (Exception $ex) {
           report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
@@ -1173,34 +1179,34 @@ class GembaWalkController extends Controller
                 $type = GEMBA_WALK;
 
                 $preparedBySignature = GetSignature($getUserId->created_by ?? '', $id, $type);
-                $verifiedSignature = GetSignature($getUserId->updated_by ?? '', $id, $type);
+                $verifiedSignature = GetSignature($getUserId->verified_by ?? '', $id, $type);
                 $document_no = $this->document_reference->selectOne($getUserId->document_reference_id ?? '');
                 $currentRow = $row;
 
                 $logoPath = public_path('assets/images/logo-dark.png');
                 if (file_exists($logoPath)) {
-                    $sheet->mergeCells("A$currentRow:B" . ($currentRow + 2));
+                    $sheet->mergeCells("A$currentRow:C" . ($currentRow + 2));
 
                     $drawing = new Drawing();
                     $drawing->setName('Logo');
                     $drawing->setPath($logoPath);
-                    $drawing->setCoordinates('A' . $currentRow);
+                    $drawing->setCoordinates('B' . $currentRow);
                     $drawing->setOffsetX(5);
                     $drawing->setOffsetY(5);
                     $drawing->setHeight(60);
                     $drawing->setWorksheet($sheet);
                 }
 
-                $sheet->mergeCells("A{$currentRow}:B" . ($currentRow + 2));
-                $sheet->getStyle("A{$currentRow}:B" . ($currentRow + 2))->applyFromArray([
+                $sheet->mergeCells("A{$currentRow}:C" . ($currentRow + 2));
+                $sheet->getStyle("A{$currentRow}:C" . ($currentRow + 2))->applyFromArray([
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                     'borders' => ['outline' => ['borderStyle' => Border::BORDER_THIN]],
                 ]);
 
-                $sheet->mergeCells("C{$currentRow}:K" . ($currentRow + 2));
-                $sheet->setCellValue("C{$currentRow}", "Gemba Walk Report");
+                $sheet->mergeCells("D{$currentRow}:H" . ($currentRow + 2));
+                $sheet->setCellValue("D{$currentRow}", "Gemba Walk Report");
 
-                $sheet->getStyle("C{$currentRow}:K" . ($currentRow + 2))->applyFromArray([
+                $sheet->getStyle("D{$currentRow}:K" . ($currentRow + 2))->applyFromArray([
                     'font' => ['bold' => true, 'size' => 16],
                     'alignment' => [
                         'horizontal' => Alignment::HORIZONTAL_CENTER,
@@ -1217,25 +1223,25 @@ class GembaWalkController extends Controller
 
                 $gemba = $gembaWalk_details->first();
 
-                $sheet->mergeCells("A" . ($currentRow + 3) . ":G" . ($currentRow + 3));
-                $sheet->mergeCells("H" . ($currentRow + 3) . ":N" . ($currentRow + 3));
+                $sheet->mergeCells("A" . ($currentRow + 3) . ":F" . ($currentRow + 3));
+                $sheet->mergeCells("G" . ($currentRow + 3) . ":K" . ($currentRow + 3));
                 $sheet->setCellValue("A" . ($currentRow + 3), "Date: " . Displaydateformat($gemba->date));
-                $sheet->setCellValue("H" . ($currentRow + 3), "Shift: " . getShift($gemba->shift_id));
-                $sheet->getStyle("A" . ($currentRow + 3) . ":N" . ($currentRow + 3))->applyFromArray([
+                $sheet->setCellValue("G" . ($currentRow + 3), "Shift: " . getShift($gemba->shift_id));
+                $sheet->getStyle("A" . ($currentRow + 3) . ":K" . ($currentRow + 3))->applyFromArray([
                     'font' => ['bold' => true],
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                 ]);
 
-                $sheet->mergeCells("L{$currentRow}:M{$currentRow}")->setCellValue("L{$currentRow}", 'Doc. No.');
-                $sheet->mergeCells("L" . ($currentRow + 1) . ":M" . ($currentRow + 1))->setCellValue("L" . ($currentRow + 1), 'Issue Dt.');
-                $sheet->mergeCells("L" . ($currentRow + 2) . ":M" . ($currentRow + 2))->setCellValue("L" . ($currentRow + 2), 'Rev. & Dt.');
+                $sheet->mergeCells("I{$currentRow}:J{$currentRow}")->setCellValue("I{$currentRow}", 'Doc. No.');
+                $sheet->mergeCells("I" . ($currentRow + 1) . ":J" . ($currentRow + 1))->setCellValue("I" . ($currentRow + 1), 'Issue Dt.');
+                $sheet->mergeCells("I" . ($currentRow + 2) . ":J" . ($currentRow + 2))->setCellValue("I" . ($currentRow + 2), 'Rev. & Dt.');
 
-                $sheet->setCellValue("N{$currentRow}", $document_no->doc_no ?? '');
-                $sheet->setCellValue("N" . ($currentRow + 1), Displaydateformat($document_no->issue_date ?? ''));
-                $sheet->setCellValue("N" . ($currentRow + 2), $document_no->rev_dt ?? '');
+                $sheet->setCellValue("K{$currentRow}", $document_no->doc_no ?? '');
+                $sheet->setCellValue("K" . ($currentRow + 1), Displaydateformat($document_no->issue_date ?? ''));
+                $sheet->setCellValue("K" . ($currentRow + 2), $document_no->rev_dt ?? '');
 
-                $sheet->getStyle("L{$currentRow}:N" . ($currentRow + 2))->applyFromArray([
+                $sheet->getStyle("I{$currentRow}:K" . ($currentRow + 2))->applyFromArray([
                     'borders' => [
                         'allBorders' => [
                             'borderStyle' => Border::BORDER_DOUBLE,
@@ -1258,19 +1264,16 @@ class GembaWalkController extends Controller
                     'F' => 15,
                     'G' => 20,
                     'H' => 20,
-                    'I' => 15,
-                    'J' => 20,
+                    'I' => 25,
+                    'J' => 15,
                     'K' => 25,
-                    'L' => 15,
-                    'M' => 25,
-                    'N' => 15,
                 ];
 
                 foreach ($columnWidths as $col => $width) {
                     $sheet->getColumnDimension($col)->setWidth($width);
                 }
 
-                $headers = ['Sr.', 'Location', 'Unit', 'Date of Observation', 'Observation Type', 'Description', 'Hazard', 'Image', 'Recommended CAPA', 'Date of Compliance', 'Responsible Person', 'Status', 'Remark', 'Observation'];
+                $headers = ['Sr.', 'Location', 'Unit', 'Date of Observation', 'Observation Type', 'Description', 'Hazard', 'Image', 'Recommended CAPA','Status', 'Remark'];
                 $col = 'A';
                 foreach ($headers as $header) {
                     $sheet->setCellValue("{$col}" . ($row + 4), $header);
@@ -1307,13 +1310,10 @@ class GembaWalkController extends Controller
                     }
 
                     $sheet->setCellValue("I{$detIL_row}", $data->capa ?? '');
-                    $sheet->setCellValue("J{$detIL_row}", displayDateFormat($data->date_of_compliance ?? ''));
-                    $sheet->setCellValue("K{$detIL_row}", getEmployeename($data->responsibility_id ?? ''));
-                    $sheet->setCellValue("L{$detIL_row}", getGembaWalkStatus($data->status ?? ''));
-                    $sheet->setCellValue("M{$detIL_row}", $data->remark ?? '');
-                    $sheet->setCellValue("N{$detIL_row}", $data->observation_needed == '1' ? 'YES' : 'NO');
+                    $sheet->setCellValue("J{$detIL_row}", getGembaWalkStatus($data->status ?? ''));
+                    $sheet->setCellValue("K{$detIL_row}", $data->remark ?? '');
 
-                    $sheet->getStyle("A{$detIL_row}:N{$detIL_row}")->applyFromArray([
+                    $sheet->getStyle("A{$detIL_row}:K{$detIL_row}")->applyFromArray([
                         'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                         'alignment' => ['vertical' => Alignment::VERTICAL_CENTER],
                     ]);
@@ -1326,8 +1326,8 @@ class GembaWalkController extends Controller
                 $sheet->getRowDimension($signatureRowStart)->setRowHeight(80);
 
                 // === Prepared By ===
-                $sheet->mergeCells("A{$signatureRowStart}:G{$signatureRowStart}");
-                $sheet->getStyle("A{$signatureRowStart}:G{$signatureRowStart}")->applyFromArray([
+                $sheet->mergeCells("A{$signatureRowStart}:F{$signatureRowStart}");
+                $sheet->getStyle("A{$signatureRowStart}:F{$signatureRowStart}")->applyFromArray([
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                     'alignment' => [
                         'horizontal' => Alignment::HORIZONTAL_CENTER,
@@ -1354,8 +1354,8 @@ class GembaWalkController extends Controller
                 }
 
                 // === Verified By ===
-                $sheet->mergeCells("H{$signatureRowStart}:N{$signatureRowStart}");
-                $sheet->getStyle("H{$signatureRowStart}:N{$signatureRowStart}")->applyFromArray([
+                $sheet->mergeCells("G{$signatureRowStart}:K{$signatureRowStart}");
+                $sheet->getStyle("G{$signatureRowStart}:K{$signatureRowStart}")->applyFromArray([
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                     'alignment' => [
                         'horizontal' => Alignment::HORIZONTAL_CENTER,
@@ -1369,17 +1369,17 @@ class GembaWalkController extends Controller
                     $drawing->setName('Signature');
                     $drawing->setDescription('Verified By');
                     $drawing->setPath($verifiedSignature);
-                    $drawing->setCoordinates("K{$signatureRowStart}");
+                    $drawing->setCoordinates("I{$signatureRowStart}");
                     $drawing->setOffsetX(5);
                     $drawing->setOffsetY(5);
                     $drawing->setHeight(60);
                     $drawing->setWorksheet($sheet);
-                    $sheet->setCellValue("H{$signatureRowStart}", "\n\n\nVerified By:\n" . getUsername($gemba->verified_by));
+                    $sheet->setCellValue("G{$signatureRowStart}", "\n\n\nVerified By:\n" . getUsername($gemba->responsible_person_id));
                 } else {
-                    $sheet->setCellValue("H{$signatureRowStart}", "Not Verified Yet");
+                    $sheet->setCellValue("G{$signatureRowStart}", "Not Verified Yet");
                 }
 
-                $sheet->getStyle("A{$signatureRowStart}:N{$signatureRowStart}")->applyFromArray([
+                $sheet->getStyle("A{$signatureRowStart}:K{$signatureRowStart}")->applyFromArray([
                     'borders' => [
                         'outline' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['argb' => '000000']],
                     ],
@@ -1387,7 +1387,7 @@ class GembaWalkController extends Controller
 
                 $row = $signatureRowStart + 7;
 
-                $sheet->getStyle("A{$currentRow}:N{$signatureRowStart}")->applyFromArray([
+                $sheet->getStyle("A{$currentRow}:K{$signatureRowStart}")->applyFromArray([
                     'borders' => [
                         'outline' => ['borderStyle' => Border::BORDER_THICK, 'color' => ['argb' => '000000']],
                     ],
@@ -1407,4 +1407,31 @@ class GembaWalkController extends Controller
             return redirect(admin_url('inspection/gemba-walk/list'));
         }
     }
+
+    public function getEmployeeName(Request $request)
+    {
+        $name = $request->input('search');
+
+        $employees = Employee::where(function ($query) use ($name) {
+            $query->where('emp_name', 'like', '%' . $name . '%')
+                ->orWhere('emp_id', 'like', '%' . $name . '%');
+        })
+            ->whereRaw('FIND_IN_SET(?, user_role)', [21])
+            ->where('status', 1)
+            ->limit(10)
+            ->get();
+
+        return response()->json(
+            $employees->map(function ($employee) {
+                return [
+                    'id' => encryptId($employee->login_id),
+                    'text' => $employee->emp_name . ' - ' . $employee->emp_id,
+                ];
+            })
+        );
+    }
+
+
+
+
 }
