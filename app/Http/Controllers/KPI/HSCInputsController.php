@@ -11,6 +11,7 @@ use App\Models\Master\Company;
 use App\Models\Master\Location;
 use App\Models\Master\Department;
 use App\Models\KPI\LeadingLagging;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Models\KPI\HSCInputsLagging;
 use App\Models\KPI\HSCInputsLeading;
@@ -159,11 +160,14 @@ class HSCInputsController extends Controller
                 return redirect()->back()->withErrors($validator)->withInput();
             }
             try {
+                // DB::beginTransaction();
                 $hsc_inputs =  $this->hsc_inputs->store();
                 $leading =  $this->leading->store($hsc_inputs->id);
                 $lagging =  $this->lagging->store($hsc_inputs->id);
+                // DB::commit();
                 Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
+                // DB::rollback();
                 report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
