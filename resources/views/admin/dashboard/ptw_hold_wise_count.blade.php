@@ -26,7 +26,7 @@
         },
         plotOptions: {
             bar: {
-                borderRadius: 10,
+                columnWidth: '10%',
                 horizontal: false,
                 distributed: true
             }
@@ -68,7 +68,12 @@
             }
         },
         tooltip: {
-            custom: function({ series, seriesIndex, dataPointIndex, w }) {
+            custom: function({
+                series,
+                seriesIndex,
+                dataPointIndex,
+                w
+            }) {
                 const unit = w.globals.labels[dataPointIndex];
                 const val = series[seriesIndex][dataPointIndex];
                 return `

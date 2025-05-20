@@ -39,8 +39,7 @@
         plotOptions: {
             bar: {
                 horizontal: false,
-                columnWidth: '55%',
-                endingShape: 'rounded',
+                columnWidth: '25%',
                 distributed: true
             },
         },

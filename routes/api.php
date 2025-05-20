@@ -1,5 +1,5 @@
 <?php
-
+use App\Http\Controllers\Api\Inspection\GembaWalk\GembaWalkController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\MasterController;
@@ -131,6 +131,13 @@ Route::middleware('api')->prefix('v1')->group(function () {
                     Route::post('view', [InterUnitAuditController::class, 'view']);
                     Route::post('add', [InterUnitAuditController::class, 'add']);
                 });
+            });
+
+            // gembaWalk
+            Route::group(['prefix' => 'gemba-walk/'], function () {
+                Route::post('list', [GembaWalkController::class, 'list']);
+                Route::post('add', [GembaWalkController::class, 'store']);
+                Route::post('view', [GembaWalkController::class, 'view']);
             });
 
             Route::group(['prefix' => 'fire/'], function () {

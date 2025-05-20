@@ -12,17 +12,31 @@
     display: flex;
     justify-content: space-between;
 }
+
 .dashboard_card .card-header {
-    background-color: #262b65;
+    background-color: #5e67d2;
     color: #FFFFFF;
     padding: 10px;
     display: flex;
     justify-content: space-between;
 }
-.chartdownload{
+
+#ptw_open_close_countDiv,
+#IncidentTypeChartDiv, #TrainingCompletionCountDiv,#LoadPPEAvailabilityChartCountDiv {
+    height: 400px;
+
+    overflow: hidden;
+
+    display: flex;
+    flex-direction: column;
+}
+
+
+.chartdownload {
     color: white;
     font-size: 20px;
 }
+
 .view_card {
     border-radius: 5px;
 }
