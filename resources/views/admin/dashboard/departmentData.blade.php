@@ -51,7 +51,7 @@
         plotOptions: {
             bar: {
                 horizontal: false,
-                columnWidth: '25%',
+                columnWidth: '10%',
                 dataLabels: {
                     total: {
                         enabled: true,
