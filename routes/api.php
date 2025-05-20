@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\Inspection\Audit\AuditAnalysisController;
 use App\Http\Controllers\Api\Inspection\Audit\AuditAssessmentController;
 use App\Http\Controllers\Api\Inspection\Audit\InterUnitAuditController;
 use App\Http\Controllers\Api\Inspection\Audit\MonthlyAuditController;
+use App\Http\Controllers\Api\Inspection\GembaWalk\GembaWalkController;
 use App\Http\Controllers\Api\MasterController;
 use App\Http\Controllers\Api\Permit\SafetyPermitController;
 use App\Http\Controllers\Api\Ppemanagement\PpeExemptionController;
@@ -126,6 +127,13 @@ Route::middleware('api')->prefix('v1')->group(function () {
                     Route::post('view', [InterUnitAuditController::class, 'view']);
                     Route::post('add', [InterUnitAuditController::class, 'add']);
                 });
+            });
+            
+            // gembaWalk
+            Route::group(['prefix' => 'gemba-walk/'], function () {
+                Route::post('list', [GembaWalkController::class, 'list']);
+                Route::post('add', [GembaWalkController::class, 'store']);
+                Route::post('view', [GembaWalkController::class, 'view']);
             });
         });
     });
