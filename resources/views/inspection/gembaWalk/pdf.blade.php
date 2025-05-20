@@ -213,8 +213,7 @@
                     <th>Hazard</th>
                     <th>Image</th>
                     <th>Recommended Corrective & Preventive</th>
-                    <th>Date of Compliance</th>
-                    <th>Responsible</th>
+                    {{-- <th>Responsible</th> --}}
                     <th>Status</th>
                     <th>Remark</th>
                 </tr>
@@ -237,8 +236,7 @@
                             @endif
                         </td>
                         <td>{{ $gembaWalk->capa ?? 'N/A' }}</td>
-                        <td>{{ displaydateformat($gembaWalk->date_of_compliance ?? 'N/A') }}</td>
-                        <td>{{ getEmployeename($gembaWalk->responsibility_id ?? 'N/A') }}</td>
+                        {{-- <td>{{ getEmployeename($gembaWalk->responsibility_id ?? 'N/A') }}</td> --}}
                         <td>{{ getGembaWalkStatus($gembaWalk->gemba_walk_checklist_status ?? 'N/A') }}</td>
                         <td>{{ $gembaWalk->remark ?? 'N/A' }}</td>
                     </tr>
@@ -256,12 +254,14 @@
                 <th colspan="7" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">
                     <img src="{{ admin_url($createdSignature) }}" alt="Signature Upload"
                         style="width: 150px; margin-top: -10px;" />
-                    <div style="margin-top: 5px;">Prepared By</div>
+
+                    <div style="margin-top: 5px;">Prepared By : {{getUsername($firstItem->created_by)}} </div>
+
                 </th>
                 <th colspan="7" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">
                     <img src="{{ admin_url($verifiedSignature) }}" alt="Signature Upload"
                         style="width: 150px; margin-top: -10px;" />
-                    <div style="margin-top: 5px;">Verified By</div>
+                    <div style="margin-top: 5px;">Verified By: {{getUsername($firstItem->responsible_person_id)}}</div>
                 </th>
             </tr>
         </table>

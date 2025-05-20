@@ -990,8 +990,8 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('add', [GembaWalkController::class, 'add']);
                 Route::post('add/submit', [GembaWalkController::class, 'store']);
                 Route::get('view/{id}', [GembaWalkController::class, 'view']);
-                Route::get('capa-verification/{id}', [GembaWalkController::class, 'approvals']);
-                Route::post('capa/submit', [GembaWalkController::class, 'CAPASubmit']);
+                // Route::get('capa-verification/{id}', [GembaWalkController::class, 'approvals']);
+                // Route::post('capa/submit', [GembaWalkController::class, 'CAPASubmit']);
                 Route::get('floor-manager/{id}', [GembaWalkController::class, 'review']);
                 Route::post('floor-manager/review/submit', [GembaWalkController::class, 'capaReviewSubmit']);
                 Route::get('ehs-officer/{id}', [GembaWalkController::class, 'ehsOfficerReview']);
@@ -1000,6 +1000,8 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('generalExcel/{id}', [GembaWalkController::class, 'generalExcel']);
                 Route::get('export/pdf', [GembaWalkController::class, 'exportPdf']);
                 Route::get('export/excel', [GembaWalkController::class, 'exportExcel']);
+                Route::get('employeeName', [GembaWalkController::class, 'getEmployeeName']);
+
             });
 
             Route::group(['prefix' => 'environment/'], function () {
@@ -2615,6 +2617,7 @@ Route::middleware(['securityheader'])->group(function () {
                 });
 
                 Route::group(['prefix' => 'medical-requisition-slip/fdo-security-gate'], function () {
+                    
                     Route::GET('/list', [MedicalRequisitionSlipSecurityGateController::class, 'Index']);
                     Route::POST('/list', [MedicalRequisitionSlipSecurityGateController::class, 'Index']);
                     Route::GET('/add', [MedicalRequisitionSlipSecurityGateController::class, 'Add']);

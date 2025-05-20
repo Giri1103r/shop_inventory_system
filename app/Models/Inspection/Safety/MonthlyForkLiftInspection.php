@@ -57,7 +57,7 @@ class MonthlyForkLiftInspection extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_forklift_inpsection_monthly.*', 'inspection_shift_option.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*', 'inspection_forklift_inpsection_monthly.id as inspection_id' , 'inspection_forklift_inpsection_monthly.created_at as inspection_created_at')
+        $query = $this->select('inspection_forklift_inpsection_monthly.*', 'inspection_shift_option.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*', 'inspection_forklift_inpsection_monthly.id as inspection_id', 'inspection_forklift_inpsection_monthly.created_at as inspection_created_at')
             ->leftJoin('masters_location', 'inspection_forklift_inpsection_monthly.location', '=', 'masters_location.id')
             ->leftJoin('inspection_shift_option', 'inspection_forklift_inpsection_monthly.shift', '=', 'inspection_shift_option.id')
             ->leftJoin('masters_unit', 'inspection_forklift_inpsection_monthly.unit', '=', 'masters_unit.id')
@@ -181,6 +181,40 @@ class MonthlyForkLiftInspection extends Model
             'frequency' => decryptId($request->frequency_id),
             'identification_no' => $request->identification_no,
             'forklift_type' => decryptId($request->forklift_type),
+            'capacity' => $request->capacity,
+            'created_by' => Auth::id(),
+            'responses' => $respones,
+            'inspection_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,
+        ];
+        return $this->create($insert_array);
+    }
+
+    public function store_api()
+    {
+        $request = request();
+
+        $responses = $request->checklist;
+
+        foreach ($responses as $index => $respones) {
+            foreach ($respones as $question => $value) {
+                $encoded_data[$question] = [
+                    'question_id' => $question,
+                    'answer' => $value,
+                    'remarks' => $request->remarks[$index][$question],
+                ];
+            }
+        }
+        $respones = json_encode($encoded_data);
+        $insert_array = [
+            'document_reference_id' => ($request->document_reference_id),
+            'date_of_inspection' => DBdateformat($request->inspection_date),
+            'location' => ($request->location_id),
+            'shift' => ($request->shift_id),
+            'next_due' => DBdateformat($request->next_due),
+            'unit' => ($request->unit_id),
+            'frequency' => ($request->frequency_id),
+            'identification_no' => $request->identification_no,
+            'forklift_type' => ($request->forklift_type),
             'capacity' => $request->capacity,
             'created_by' => Auth::id(),
             'responses' => $respones,
@@ -316,7 +350,7 @@ class MonthlyForkLiftInspection extends Model
             });
         }
 
-   if ($request->has('from_date') && !empty($request->from_date)) {
+        if ($request->has('from_date') && !empty($request->from_date)) {
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
             $query->where('inspection_forklift_inpsection_monthly.created_at', '>=', $startDate);
         }
