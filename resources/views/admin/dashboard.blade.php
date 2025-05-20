@@ -19,7 +19,7 @@
                 <div class="col-xl-12">
                     <div class="coin-warpper d-flex align-items-center justify-content-between flex-wrap">
                         <div class="d-flex align-items-center dz-head-title">
-                            <h4 class="m-0 " style="padding-left: 10px;">Welcome Back {{ Auth::user()->name }}!
+                            <h4 class="m-0 " style="padding-left: 10px;">Welcome {{ Auth::user()->name }}!
                             </h4>
                         </div>
                         <div>
@@ -81,7 +81,7 @@
                 </form>
             </div>
 
-            <div class="card view_card">
+            <div class="card dashboard_card">
 
                 <div class="card-body">
                     <div class="row">
@@ -305,9 +305,93 @@
                     </div>
                 </div>
             </div>
+
+            <div class = "row">
+                <div class="col-xl-12 col-xxl-12">
+                    <div class="card dashboard_card">
+                        <div class="card-header">
+                            <h4 class="text-white ">Month Wise PTW</h4>
+                            <a class="fas fa-arrow-alt-circle-down chartdownload" id="monthwiseptw_download"></a>
+                        </div>
+                        <div class="card-body px-0 pt-0 dlab-scroll height450" id="monthwiseptwDiv">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="row">
                 <div class="col-xl-12 col-xxl-12">
-                    <div class="card view_card">
+                    <div class="card dashboard_card">
+                        <div class="card-header">
+                            <h4 class="text-white">PTW Type Wise Count</h4>
+                            <a class="fas fa-arrow-alt-circle-down chartdownload" id="ptw_type_wise_download"></a>
+                        </div>
+                        <div class="card-body px-0 pt-0 dlab-scroll height450" id="ptw_type_wise_countDiv"></div>
+
+                    </div>
+                </div>
+            </div>
+            <div class = "row">
+                <div class="col-xl-12 col-xxl-12">
+                    <div class="card dashboard_card">
+                        <div class="card-header">
+                            <h4 class="text-white ">Unit Wise PTW</h4>
+                            <a class="fas fa-arrow-alt-circle-down chartdownload" id="unitwiseptw_download"></a>
+                        </div>
+                        <div class="card-body px-0 pt-0 dlab-scroll height450" id="unitwiseptwDiv">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xl-12 col-xxl-12">
+                    <div class="card dashboard_card responsive">
+                        <div class="card-header">
+                            <h4 class="text-white">PTW – Violation Hold for Compliance</h4>
+                            <a class="fas fa-arrow-alt-circle-down chartdownload" id="LoadPtwHoldViolation_download"></a>
+                        </div>
+                        <div id="LoadPtwHoldViolation_CountDiv"></div>
+                    </div>
+                </div>
+            </div>
+            <div class = "row">
+                <div class="col-xl-6 col-xxl-6">
+                    <div class="card dashboard_card">
+                        <div class="card-header">
+                            <h4 class="text-white">PTW Open Close</h4>
+                            <a class="fas fa-arrow-alt-circle-down chartdownload" id="ptw_open_close_download"></a>
+                        </div>
+                        <div class="card-body px-0 pt-0 dlab-scroll height450" id="ptw_open_close_countDiv"> </div>
+
+                    </div>
+                </div>
+                <div class="col-xl-6 col-xxl-6">
+                    <div class="card dashboard_card">
+                        <div class="card-header">
+                            <h4 class="text-white">PPE Availability</h4>
+                            <a class="fas fa-arrow-alt-circle-down chartdownload"
+                                id="LoadPPEAvailabilityChart_download"></a>
+                        </div>
+                        <div id="LoadPPEAvailabilityChartCountDiv"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xl-12 col-xxl-12">
+                    <div class="card dashboard_card">
+                        <div class="card-header">
+                            <h4 class="text-white">PPE Issuance Group Wise</h4>
+                            <a class="fas fa-arrow-alt-circle-down chartdownload"
+                                id="LoadPPEIssuanceGroupWise_download"></a>
+                        </div>
+                        <div id="LoadPPEIssuanceGroupWiseCountDiv"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xl-12 col-xxl-12">
+                    <div class="card dashboard_card">
                         <div class="card-header">
                             <h4 class="text-white">Total Incidents (YTD)</h4>
                             <a class="fas fa-arrow-alt-circle-down chartdownload" id="total_incidents_download"></a>
@@ -319,7 +403,7 @@
             </div>
             <div class="row">
                 <div class="col-xl-6 col-xxl-6">
-                    <div class="card view_card">
+                    <div class="card dashboard_card">
                         <div class="card-header">
                             <h4 class="text-white">Incident Type</h4>
                             <a class="fas fa-arrow-alt-circle-down chartdownload" id="IncidentType_download"></a>
@@ -328,7 +412,7 @@
                     </div>
                 </div>
                 <div class="col-xl-6 col-xxl-6">
-                    <div class="card view_card">
+                    <div class="card dashboard_card">
                         <div class="card-header">
                             <h4 class="text-white">Training Completion</h4>
                             <a class="fas fa-arrow-alt-circle-down chartdownload" id="TrainingCompletion_download"></a>
@@ -339,7 +423,7 @@
             </div>
             <div class="row">
                 <div class="col-xl-12 col-xxl-12">
-                    <div class="card view_card">
+                    <div class="card dashboard_card">
                         <div class="card-header">
                             <h4 class="text-white">Heatmap of IMS Data</h4>
                             <a class="fas fa-arrow-alt-circle-down chartdownload" id="heatmapofImsData_download"></a>
@@ -351,7 +435,7 @@
             </div>
             <div class="row">
                 <div class="col-xl-12 col-xxl-12">
-                    <div class="card view_card">
+                    <div class="card dashboard_card">
                         <div class="card-header">
                             <h4 class="text-white">Type of IIR</h4>
                             <a class="fas fa-arrow-alt-circle-down chartdownload" id="TypeofIIR_download"></a>
@@ -362,7 +446,7 @@
             </div>
             <div class="row">
                 <div class="col-xl-12 col-xxl-12">
-                    <div class="card view_card">
+                    <div class="card dashboard_card">
                         <div class="card-header">
                             <h4 class="text-white">Accident Report Unit Wise</h4>
                             <a class="fas fa-arrow-alt-circle-down chartdownload"
@@ -374,7 +458,7 @@
             </div>
             <div class="row">
                 <div class="col-xl-12 col-xxl-12">
-                    <div class="card view_card">
+                    <div class="card dashboard_card">
                         <div class="card-header">
                             <h4 class="text-white">IIR Type Wise UAUC</h4>
                             <a class="fas fa-arrow-alt-circle-down chartdownload" id="iirTypewiseUAUC_download"></a>
@@ -385,7 +469,7 @@
             </div>
             <div class="row">
                 <div class="col-xl-12 col-xxl-12">
-                    <div class="card view_card">
+                    <div class="card dashboard_card">
                         <div class="card-header">
                             <h4 class="text-white">IIR Type Wise RCPA</h4>
                             <a class="fas fa-arrow-alt-circle-down chartdownload" id="iirTypewiseRCPA_download"></a>
@@ -397,7 +481,7 @@
             </div>
             <div class="row">
                 <div class="col-xl-12 col-xxl-12">
-                    <div class="card view_card">
+                    <div class="card dashboard_card">
                         <div class="card-header">
                             <h4 class="text-white">Monthly Near Miss Frequency Rate</h4>
                             <a class="fas fa-arrow-alt-circle-down chartdownload" id="nearMiss_download"></a>
@@ -408,7 +492,7 @@
             </div>
             <div class="row">
                 <div class="col-xl-12 col-xxl-12">
-                    <div class="card view_card">
+                    <div class="card dashboard_card">
                         <div class="card-header">
                             <h4 class="text-white">Inspection Type Wise Count</h4>
                             <a class="fas fa-arrow-alt-circle-down chartdownload" id="inspection_wise_count_download"></a>
@@ -419,24 +503,13 @@
                 </div>
 
             </div>
-            <div class="row">
-                <div class="col-xl-12 col-xxl-12">
-                    <div class="card view_card">
-                        <div class="card-header">
-                            <h4 class="text-white">PTW Type Wise Count</h4>
-                            <a class="fas fa-arrow-alt-circle-down chartdownload" id="ptw_type_wise_download"></a>
-                        </div>
-                        <div class="card-body px-0 pt-0 dlab-scroll height450" id="ptw_type_wise_countDiv"></div>
 
-                    </div>
-                </div>
-            </div>
 
 
             <div class="row">
 
                 {{-- <div class="col-xl-12 col-xxl-12">
-                    <div class="card view_card">
+                    <div class="card dashboard_card">
                         <div class="card-header">
                             <h4 class="text-white">PTW Average time between initial to closed</h4>
                             <a class="fas fa-arrow-alt-circle-down chartdownload" id="LoadPTWAvgTimeChart_download"></a>
@@ -445,21 +518,10 @@
                     </div>
                 </div>
             </div> --}}
+
                 <div class="row">
                     <div class="col-xl-12 col-xxl-12">
-                        <div class="card view_card">
-                            <div class="card-header">
-                                <h4 class="text-white">PPE Issuance Group Wise</h4>
-                                <a class="fas fa-arrow-alt-circle-down chartdownload"
-                                    id="LoadPPEIssuanceGroupWise_download"></a>
-                            </div>
-                            <div id="LoadPPEIssuanceGroupWiseCountDiv"></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-xl-12 col-xxl-12">
-                        <div class="card view_card">
+                        <div class="card dashboard_card">
                             <div class="card-header">
                                 <h4 class="text-white">Injury Report - Based On Body Parts</h4>
                             </div>
@@ -470,7 +532,7 @@
 
                 <div class="row">
                     <div class="col-xl-12 col-xxl-12">
-                        <div class="card view_card responsive">
+                        <div class="card dashboard_card responsive">
                             <div class="card-header">
                                 <h4 class="text-white">Training Hour of Safety Department Wise</h4>
                                 <a class="fas fa-arrow-alt-circle-down chartdownload"
@@ -482,22 +544,11 @@
                 </div>
 
 
-                <div class="row">
-                    <div class="col-xl-12 col-xxl-12">
-                        <div class="card view_card responsive">
-                            <div class="card-header">
-                                <h4 class="text-white">PTW – Violation Hold for Compliance</h4>
-                                <a class="fas fa-arrow-alt-circle-down chartdownload"
-                                    id="LoadPtwHoldViolation_download"></a>
-                            </div>
-                            <div id="LoadPtwHoldViolation_CountDiv"></div>
-                        </div>
-                    </div>
-                </div>
+
 
                 <div class = "row">
                     <div class="col-xl-12 col-xxl-12">
-                        <div class="card view_card">
+                        <div class="card dashboard_card">
                             <div class="card-header">
                                 <h4 class="text-white">Type Of Audit Findings</h4>
                                 <a class="fas fa-arrow-alt-circle-down chartdownload" id="auditFindings_download"></a>
@@ -506,45 +557,12 @@
                         </div>
                     </div>
                 </div>
-                <div class = "row">
-                    <div class="col-xl-6 col-xxl-6">
-                        <div class="card view_card">
-                            <div class="card-header">
-                                <h4 class="text-white">PTW Open Close</h4>
-                                <a class="fas fa-arrow-alt-circle-down chartdownload" id="ptw_open_close_download"></a>
-                            </div>
-                            <div class="card-body px-0 pt-0 dlab-scroll height450" id="ptw_open_close_countDiv"> </div>
 
-                        </div>
-                    </div>
-                    <div class="col-xl-6 col-xxl-6">
-                        <div class="card view_card">
-                            <div class="card-header">
-                                <h4 class="text-white">PPE Availability</h4>
-                                <a class="fas fa-arrow-alt-circle-down chartdownload"
-                                    id="LoadPPEAvailabilityChart_download"></a>
-                            </div>
-                            <div id="LoadPPEAvailabilityChartCountDiv"></div>
-                        </div>
-                    </div>
-                </div>
 
-                <div class = "row">
-                    <div class="col-xl-12 col-xxl-12">
-                        <div class="card view_card">
-                            <div class="card-header">
-                                <h4 class="text-white ">Month Wise PTW</h4>
-                                <a class="fas fa-arrow-alt-circle-down chartdownload" id="monthwiseptw_download"></a>
-                            </div>
-                            <div class="card-body px-0 pt-0 dlab-scroll height450" id="monthwiseptwDiv">
 
-                            </div>
-                        </div>
-                    </div>
-                </div>
                 <div class="row">
                     <div class="col-xl-12 col-xxl-12">
-                        <div class="card view_card responsive">
+                        <div class="card dashboard_card responsive">
                             <div class="card-header">
                                 <h4 class="text-white">Unsafe Act / Unsafe Condition Static Report</h4>
                                 <a class="fas fa-arrow-alt-circle-down chartdownload" id="uaucstaticreport_download"></a>
@@ -553,9 +571,10 @@
                         </div>
                     </div>
                 </div>
+
                 <div class="row">
                     <div class="col-xl-12 col-xxl-12">
-                        <div class="card view_card">
+                        <div class="card dashboard_card">
                             <div class="card-header">
                                 <h4 class="text-white">MONTH WISE TRAINING COUNT</h4>
                                 <a class="fas fa-arrow-alt-circle-down chartdownload" id="monthwisetraining_download"></a>
@@ -565,24 +584,11 @@
                         </div>
                     </div>
                 </div>
-                <div class = "row">
-                    <div class="col-xl-12 col-xxl-12">
-                        <div class="card view_card">
-                            <div class="card-header">
-                                <h4 class="text-white ">Unit Wise PTW</h4>
-                                <a class="fas fa-arrow-alt-circle-down chartdownload" id="unitwiseptw_download"></a>
-                            </div>
-                            <div class="card-body px-0 pt-0 dlab-scroll height450" id="unitwiseptwDiv">
-
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
 
                 <div class="row">
                     <div class="col-xl-12 col-xxl-12">
-                        <div class="card view_card">
+                        <div class="card dashboard_card">
                             <div class="card-header">
                                 <h4 class="text-white">DEPARTMENT WISE TRAINING COUNT</h4>
                                 <a class="fas fa-arrow-alt-circle-down chartdownload"
@@ -599,7 +605,7 @@
 
                 <div class="row">
                     <div class="col-xl-12 col-xxl-12">
-                        <div class="card view_card responsive">
+                        <div class="card dashboard_card responsive">
                             <div class="card-header">
                                 <h4 class="text-white">Gemba Walk Potential Hazard 6's Observation Report</h4>
                                 <a class="fas fa-arrow-alt-circle-down chartdownload" id="gembaWalkDownload"></a>
@@ -610,7 +616,7 @@
                 </div>
                 {{-- <div class="row">
                     <div class="col-xl-12 col-xxl-12">
-                        <div class="card view_card responsive">
+                        <div class="card dashboard_card responsive">
                             <div class="card-header">
                                 <h4 class="text-white">Daily 6's Observation Report Monthly Static Report</h4>
                                 <a class="fas fa-arrow-alt-circle-down chartdownload" id="dailyObservationDownload"></a>
@@ -623,7 +629,7 @@
                 <div class="row">
 
                     <div class="col-xl-6 col-xxl-6">
-                        <div class="card view_card responsive">
+                        <div class="card dashboard_card responsive">
                             <div class="card-header">
                                 <h4 class="text-white">TRAINING STATUS COUNT</h4>
                                 <a class="fas fa-arrow-alt-circle-down chartdownload" id="training_count_download"></a>
@@ -1423,7 +1429,7 @@
                     });
                 }
 
-             
+
                 function loadunitwisecount(CompanyId = '', Fromdate = '', Todate = '') {
                     var url = "{{ admin_url('dashboard/unitwiseptw') }}"
                     var data = {
@@ -1487,7 +1493,7 @@
                     });
                 }
 
-            
+
 
                 $(document).ready(function() {
                     const toDatePicker = flatpickr("#toDate", {

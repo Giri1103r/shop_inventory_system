@@ -12,6 +12,13 @@
     display: flex;
     justify-content: space-between;
 }
+.dashboard_card .card-header {
+    background-color: #262b65;
+    color: #FFFFFF;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+}
 .chartdownload{
     color: white;
     font-size: 20px;
