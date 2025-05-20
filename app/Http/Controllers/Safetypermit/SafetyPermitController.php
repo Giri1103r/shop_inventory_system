@@ -1930,7 +1930,7 @@ class SafetyPermitController extends Controller
             $html = view('permit.safetypermit.exportpdf', $data)->render();
             $mpdf->WriteHTML($html);
             $filename = "Safety Permit  " . $safetypermit->permit_id . ".pdf";
-            return $mpdf->Output($filename, 'D');
+            return $mpdf->Output($filename, 'd');
         } catch (Exception $ex) {
 
             report($ex);

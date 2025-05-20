@@ -1,7 +1,7 @@
 <html>
 
 <head>
-    <title>Safety Permit | KARAM</title>
+    <title>Safety Work Permit | KARAM</title>
     <meta charset="UTF-8">
     <style>
         .badge {
@@ -86,7 +86,7 @@
                     </td>
                     <td border="0"
                         style="width:50%;float:right;text-align:right;font-size: 24px;font-weight:bold;font-family: Georgia, serif;">
-                        Safety Permit
+                        Safety Work Permit
                     </td>
                 </tr>
             </table>
@@ -118,7 +118,7 @@
                 <tr>
                     <td
                         style="width:100%;background-color: #ce0f1f;color:#FFF;font-weight:bold;padding: 10px 10px 10px;">
-                        Safety Permit
+                        Safety Work Permit
                     </td>
                 </tr>
             </table>
@@ -164,7 +164,7 @@
             </tr>
 
             <tr>
-                <td width="50%" style="padding:5px;"><b>Time(To)</b></td>
+                <td width="50%" style="padding:5px;"><b>Unit</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
                     {{ getUnitname(isset($safetypermit->unit_id) ? $safetypermit->unit_id : '') }}</td>
@@ -251,7 +251,7 @@
                 <td width="50%" style="padding:5px;"><b>Job Description</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
-                    {{ isset($safetypermit->job_location_area) ? $safetypermit->job_location_area : '' }}</td>
+                    {{ isset($safetypermit->job_description) ? $safetypermit->job_description : '' }}</td>
             </tr>
         </table>
 
@@ -316,6 +316,81 @@
                 </td>
             </tr>
         </table>
+
+          <div style="width:100%;">
+        <table style="width:100%;">
+            <tr>
+                <td
+                    style="width:100%;background-color: #6c757d;color:#fff;font-weight:bold;padding: 10px 10px 10px;">
+                    List of Workman involved in Job
+                </td>
+            </tr>
+        </table>
+    </div>
+    <br>
+    <div class="table-responsive">
+        <div class="col-md-12">
+            <table class="table table-bordered table-hover">
+                <thead class=" text-white" style="background-color:#5b626b">
+                    <tr>
+                        <th>Employee Code / Visitor ID</th>
+                        <th>Name of Workman</th>
+                        <th>Designation</th>
+                        <th>Department / Company</th>
+                        <th>Nature of Job</th>
+                    </tr>
+                </thead>
+
+                <tbody id="workman-list-entries">
+                    @if (empty($workmaninvolved) ||
+                            $workmaninvolved->every(function ($item) {
+                                return is_null($item->emp_id) &&
+                                    is_null($item->workman_name) &&
+                                    is_null($item->workman_desig) &&
+                                    is_null($item->department_name) &&
+                                    is_null($item->nature_of_job);
+                            }))
+                        <tr>
+                            <td colspan="5" class="text-center">No data is available</td>
+                        </tr>
+                    @else
+                        @foreach ($workmaninvolved as $workman)
+                            <tr>
+                                <td>{{ $workman->emp_id }}</td>
+                                <td>{{ $workman->workman_name }}</td>
+                                <td>{{ $workman->workman_desig }}</td>
+                                <td>{{ $workman->department_name }}</td>
+                                <td>{{ $workman->nature_of_job }}</td>
+                            </tr>
+                        @endforeach
+                    @endif
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+    <br>
+
+    <table width="100%" style="width:100%;">
+        <tr>
+            <td width="20%" style="padding:5px;"><b>Are all above employee competent for
+                    assigned job & physically fit for duty (Yes/No)</b></td>
+            <td width="2%" style="padding:5px;">:</td>
+            <td width="48%" style="padding:5px;">
+                @if ($safetypermit->assigned_job == 1)
+                    <b><i class="fa-solid fa-check" style="color: #267709; width: 15px;">✔</i></b>
+                @endif
+            </td>
+        </tr>
+
+        <tr>
+            <td width="20%" style="padding:5px;"><b>Total number of attendance in Tool box Talk</b></td>
+            <td width="2%" style="padding:5px;">:</td>
+            <td width="48%" style="padding:5px;">
+                {{ $safetypermit->attendance_toolbox_talk }}
+            </td>
+        </tr>
+    </table>
 
 
         <div style="width:100%;">
@@ -661,80 +736,9 @@
         </tr>
     </table>
 
-    <div style="width:100%;">
-        <table style="width:100%;">
-            <tr>
-                <td
-                    style="width:100%;background-color: #6c757d;color:#fff;font-weight:bold;padding: 10px 10px 10px;">
-                    List of Workman involved in Job
-                </td>
-            </tr>
-        </table>
-    </div>
-    <br>
-    <div class="table-responsive">
-        <div class="col-md-12">
-            <table class="table table-bordered table-hover">
-                <thead class=" text-white" style="background-color:#5b626b">
-                    <tr>
-                        <th>Employee Code / Visitor ID</th>
-                        <th>Name of Workman</th>
-                        <th>Designation</th>
-                        <th>Department / Company</th>
-                        <th>Nature of Job</th>
-                    </tr>
-                </thead>
 
-                <tbody id="workman-list-entries">
-                    @if (empty($workmaninvolved) ||
-                            $workmaninvolved->every(function ($item) {
-                                return is_null($item->emp_id) &&
-                                    is_null($item->workman_name) &&
-                                    is_null($item->workman_desig) &&
-                                    is_null($item->department_name) &&
-                                    is_null($item->nature_of_job);
-                            }))
-                        <tr>
-                            <td colspan="5" class="text-center">No data is available</td>
-                        </tr>
-                    @else
-                        @foreach ($workmaninvolved as $workman)
-                            <tr>
-                                <td>{{ $workman->emp_id }}</td>
-                                <td>{{ $workman->workman_name }}</td>
-                                <td>{{ $workman->workman_desig }}</td>
-                                <td>{{ $workman->department_name }}</td>
-                                <td>{{ $workman->nature_of_job }}</td>
-                            </tr>
-                        @endforeach
-                    @endif
-                </tbody>
-            </table>
 
-        </div>
-    </div>
-    <br>
 
-    <table width="100%" style="width:100%;">
-        <tr>
-            <td width="20%" style="padding:5px;"><b>Are all above employee competent for
-                    assigned job & physically fit for duty (Yes/No)</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                @if ($safetypermit->assigned_job == 1)
-                    <b><i class="fa-solid fa-check" style="color: #267709; width: 15px;">✔</i></b>
-                @endif
-            </td>
-        </tr>
-
-        <tr>
-            <td width="20%" style="padding:5px;"><b>Total number of attendance in Tool box Talk</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ $safetypermit->attendance_toolbox_talk }}
-            </td>
-        </tr>
-    </table>
     @if (isset($getEhSverification) && $safetypermit['permit_status'] >= 2)
         <div style="width:100%;">
             <table style="width:100%;">
@@ -747,22 +751,23 @@
             </table>
         </div>
         <table>
+       
             <tr>
-                <td width="50%" style="padding:5px;"><b>Approver Name</b></td>
+                <td width="50%" style="padding:5px;"><b>{{ __('Approver Name') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
                     {{ isset($getEhSverification->approve_reject_by) ? $getEhSverification->approve_reject_by : '' }}
                 </td>
             </tr>
             <tr>
-                <td width="50%" style="padding:5px;"><b>Approved Date</b></td>
+                <td width="50%" style="padding:5px;"><b>{{ __('Date') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
                     {{ displaydateformat(isset($getEhSverification->date) ? $getEhSverification->date : '') }}
                 </td>
             </tr>
             <tr>
-                <td width="50%" style="padding:5px;"><b>Approved Time</b></td>
+                <td width="50%" style="padding:5px;"><b>{{ __('Time') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
                     {{ displaytimeformat($getEhSverification && $getEhSverification->created_at ? $getEhSverification->created_at : '') }}
@@ -864,21 +869,21 @@
         <table>
             @foreach ($getpermitextensionapproval as $getpermitextensionapproval)
                 <tr>
-                    <td width="50%" style="padding:5px;"><b>Approver Name</b></td>
+                    <td width="50%" style="padding:5px;"><b>{{ __('ptw.approver_name') }}</b></td>
                     <td width="2%" style="padding:5px;">:</td>
                     <td width="48%" style="padding:5px;">
                         {{ isset($getpermitextensionapproval->approve_reject_by) ? $getpermitextensionapproval->approve_reject_by : '' }}
                     </td>
                 </tr>
                 <tr>
-                    <td width="50%" style="padding:5px;"><b>Approved Date</b></td>
+                    <td width="50%" style="padding:5px;"><b>{{ __('ptw.inspection_date') }}</b></td>
                     <td width="2%" style="padding:5px;">:</td>
                     <td width="48%" style="padding:5px;">
                         {{ displaydateformat(isset($getpermitextensionapproval->date) ? $getpermitextensionapproval->date : '') }}
                     </td>
                 </tr>
                 <tr>
-                    <td width="50%" style="padding:5px;"><b>Approved Time</b></td>
+                    <td width="50%" style="padding:5px;"><b>{{ __('ptw.inspection_approve_time') }}</b></td>
                     <td width="2%" style="padding:5px;">:</td>
                     <td width="48%" style="padding:5px;">
                         {{ displaytimeformat(null != $getpermitextensionapproval->created_at ? $getpermitextensionapproval->created_at : '') }}
@@ -905,28 +910,28 @@
                 <tr>
                     <td
                         style="width:100%;background-color: #ce0f1f;color:#FFF;font-weight:bold;padding: 10px 10px 10px;">
-                        EHS Approval
+                        Forwarded to Plant Head Aproval
                     </td>
                 </tr>
             </table>
         </div>
         <table>
             <tr>
-                <td width="50%" style="padding:5px;"><b>Approver Name</b></td>
+                <td width="50%" style="padding:5px;"><b>{{ __('ptw.approver_name') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
                     {{ isset($getEhsapproval->approve_reject_by) ? $getEhsapproval->approve_reject_by : '' }}
                 </td>
             </tr>
             <tr>
-                <td width="50%" style="padding:5px;"><b>Approved Date</b></td>
+                <td width="50%" style="padding:5px;"><b>{{ __('ptw.inspection_date') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
                     {{ displaydateformat(isset($getEhsapproval->date) ? $getEhsapproval->date : '') }}
                 </td>
             </tr>
             <tr>
-                <td width="50%" style="padding:5px;"><b>Approved Time</b></td>
+                <td width="50%" style="padding:5px;"><b>{{ __('ptw.inspection_approve_time') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
                     {{ displaytimeformat(null != $getEhsapproval->created_at ? $getEhsapproval->created_at : '') }}
@@ -958,21 +963,21 @@
         </div>
         <table>
             <tr>
-                <td width="50%" style="padding:5px;"><b>Approver Name</b></td>
+                <td width="50%" style="padding:5px;"><b>{{ __('ptw.approver_name') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
                     {{ isset($getplantheadapproval->approve_reject_by) ? $getplantheadapproval->approve_reject_by : '' }}
                 </td>
             </tr>
             <tr>
-                <td width="50%" style="padding:5px;"><b>Approved Date</b></td>
+                <td width="50%" style="padding:5px;"><b>{{ __('ptw.inspection_date') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
                     {{ displaydateformat(isset($getplantheadapproval->date) ? $getplantheadapproval->date : '') }}
                 </td>
             </tr>
             <tr>
-                <td width="50%" style="padding:5px;"><b>Approved Time</b></td>
+                <td width="50%" style="padding:5px;"><b>{{ __('ptw.inspection_approve_time') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
                     {{ displaytimeformat(null != $getplantheadapproval->created_at ? $getplantheadapproval->created_at : '') }}

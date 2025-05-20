@@ -59,16 +59,29 @@ class PpeStockInventoryController extends Controller
                         ->addColumn('action', function ($row) {
                             $btn = '';
 
-                            if(CheckUserPermission('view')){
+                            if (CheckUserPermission('view')) {
                                 $btn .= '<a href="' . admin_url('ppe_stock_inventory/view/' . encryptId($row->id)) . '" class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
                             }
-                            if(CheckUserPermission('edit')){
+                            if (CheckUserPermission('edit')) {
                                 $btn .= '<a href="' . admin_url('ppe_stock_inventory/edit/' . encryptId($row->id)) . '" class="" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a> ';
                             }
                             return $btn;
                         })
 
-                        ->rawColumns(['action', 'created_at', 'created_by', 'status'])
+                        ->addColumn('item_code', function ($row) {
+                            $org = $row->org ?? '-';
+                            $inventory_item_code = $row->inventory_item_id ?? '-';
+                            $ppeName = $row->ppe_name ?? '-';
+                            $sub = $row->sub ?? '-';
+                            $uom = $row->uom ?? '-';
+
+                            $tooltip = " Org: {$org}; Inventory ID: {$inventory_item_code}; Name: {$ppeName}; Sub: {$sub}; UOM: {$uom}";
+
+                            return '<span title="' . e($tooltip) . '">' . e($row->item_code) . '</span>';
+                        })
+
+
+                        ->rawColumns(['action', 'created_at', 'created_by', 'status', 'item_code'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()

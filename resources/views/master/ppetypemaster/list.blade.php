@@ -107,12 +107,12 @@
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
                                         <th>Item Code</th>
-                                        <th>PPE Name</th>
-                                        <th>PPE Type</th>
-                                        <th>PPE Standard</th>
+                                        {{-- <th>PPE Name</th> --}}
+                                        {{-- <th>PPE Type</th> --}}
+                                        {{-- <th>PPE Standard</th> --}}
                                         <th>{{ __('common.status') }}</th>
-                                        <th>{{ __('common.created_by') }}</th>
-                                        <th>{{ __('common.created_date') }}</th>
+                                        {{-- <th>{{ __('common.created_by') }}</th> --}}
+                                        {{-- <th>{{ __('common.created_date') }}</th> --}}
                                         <th>{{ __('common.action') }}</th>
                                     </tr>
                                 </thead>
@@ -215,31 +215,31 @@
                         data: 'item_code',
                         name: 'item_code'
                     },
-                    {
-                        data: 'ppe_name',
-                        name: 'ppe_name'
-                    },
-                    {
-                        data: 'ppe_type',
-                        name: 'ppe_type'
-                    },
-                    {
-                        data: 'ppe_standard',
-                        name: 'ppe_standard'
-                    },
+                    // {
+                    //     data: 'ppe_name',
+                    //     name: 'ppe_name'
+                    // },
+                    // {
+                    //     data: 'ppe_type',
+                    //     name: 'ppe_type'
+                    // },
+                    // {
+                    //     data: 'ppe_standard',
+                    //     name: 'ppe_standard'
+                    // },
 
                     {
                         data: 'status',
                         name: 'status'
                     },
-                    {
-                        data: 'created_by',
-                        name: 'created_by'
-                    },
-                    {
-                        data: 'created_at',
-                        name: 'created_at'
-                    },
+                    // {
+                    //     data: 'created_by',
+                    //     name: 'created_by'
+                    // },
+                    // {
+                    //     data: 'created_at',
+                    //     name: 'created_at'
+                    // },
                     {
                         data: 'action',
                         name: 'action',
