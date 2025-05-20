@@ -77,7 +77,7 @@ class MonthlyForkLiftInspection extends BaseController
             }
 
             if (!empty($search)) {
-                $searchDate = DBdateformat($search);
+                $searchDate = ($search);
                 $query->where(function ($query) use ($searchDate) {
                     $query->orWhere('masters_unit.unit_name', $searchDate)
                         ->orWhere('masters_location.location_name', $searchDate)

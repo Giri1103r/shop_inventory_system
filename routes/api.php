@@ -15,6 +15,7 @@ use App\Http\Controllers\Api\Inspection\Audit\AuditAssessmentController;
 use App\Http\Controllers\Api\Inspection\Fire\HooterInspectionController;
 use App\Http\Controllers\Api\Inspection\Safety\MonthlyForkLiftInspection;
 use App\Http\Controllers\Api\{LoginController, NotificationController, AdminController};
+use App\Http\Controllers\Api\Inspection\Safety\ForkliftInspection;
 
 // Route::get('/user', function (Request $request) {
 //     return $request->user();
@@ -149,6 +150,12 @@ Route::middleware('api')->prefix('v1')->group(function () {
             Route::post('list', [MonthlyForkLiftInspection::class, 'list']);
             Route::post('add', [MonthlyForkLiftInspection::class, 'store']);
             Route::post('view', [MonthlyForkLiftInspection::class, 'view']);
+        });
+
+        Route::group(['prefix' => 'safety/forklift-inspection/'], function () {
+            Route::post('list', [ForkliftInspection::class, 'list']);
+            Route::post('add', [ForkliftInspection::class, 'store']);
+            Route::post('view', [ForkliftInspection::class, 'view']);
         });
     });
 });
