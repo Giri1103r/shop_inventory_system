@@ -1,7 +1,10 @@
 <?php
 
 use App\Http\Controllers\Api\{LoginController, NotificationController, AdminController};
+use App\Http\Controllers\Api\Inspection\Audit\AuditAnalysisController;
 use App\Http\Controllers\Api\Inspection\Audit\AuditAssessmentController;
+use App\Http\Controllers\Api\Inspection\Audit\InterUnitAuditController;
+use App\Http\Controllers\Api\Inspection\Audit\MonthlyAuditController;
 use App\Http\Controllers\Api\MasterController;
 use App\Http\Controllers\Api\Permit\SafetyPermitController;
 use App\Http\Controllers\Api\Ppemanagement\PpeExemptionController;
@@ -92,10 +95,38 @@ Route::middleware('api')->prefix('v1')->group(function () {
             Route::post('post-assessment', [TrainingSheducleController::class, 'endTrainingStore']);
         });
 
-        Route::group(['prefix' => 'inspection/audit/audit-assessment/'], function () {
-            Route::post('list', [AuditAssessmentController::class, 'list']);
-            Route::post('view', [AuditAssessmentController::class, 'view']);
-            Route::post('add', [AuditAssessmentController::class, 'add']);
+        Route::group(['prefix' => 'inspection/'], function () {
+            Route::group(['prefix' => 'audit/'], function () {
+                Route::group(['prefix' => 'audit-assessment/'], function () {
+                    Route::post('list', [AuditAssessmentController::class, 'list']);
+                    Route::post('view', [AuditAssessmentController::class, 'view']);
+                    Route::post('add', [AuditAssessmentController::class, 'add']);
+                });
+
+                Route::group(['prefix' => 'audit-analysis/'], function () {
+                    Route::post('list', [AuditAnalysisController::class, 'list']);
+                    Route::post('view', [AuditAnalysisController::class, 'view']);
+                    Route::post('add', [AuditAnalysisController::class, 'add']);
+                });
+
+                Route::group(['prefix' => 'monthly-audit/'], function () {
+                    Route::post('list', [MonthlyAuditController::class, 'list']);
+                    Route::post('view', [MonthlyAuditController::class, 'view']);
+                    Route::post('add', [MonthlyAuditController::class, 'add']);
+                });
+
+                Route::group(['prefix' => 'monthly-audit/'], function () {
+                    Route::post('list', [MonthlyAuditController::class, 'list']);
+                    Route::post('view', [MonthlyAuditController::class, 'view']);
+                    Route::post('add', [MonthlyAuditController::class, 'add']);
+                });
+
+                Route::group(['prefix' => 'inter-unit-audit/'], function () {
+                    Route::post('list', [InterUnitAuditController::class, 'list']);
+                    Route::post('view', [InterUnitAuditController::class, 'view']);
+                    Route::post('add', [InterUnitAuditController::class, 'add']);
+                });
+            });
         });
     });
 });

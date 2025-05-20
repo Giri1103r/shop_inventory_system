@@ -300,9 +300,7 @@
                 flatpickr(".inspection_date", {
                     dateFormat: "d-m-Y",
                 });
-                flatpickr("#issue_date", {
-                    dateFormat: "d-m-Y",
-                });
+
 
                 $(function() {
                     $.validator.addMethod("noSpaces", function(value, element) {
@@ -795,8 +793,8 @@
                 if (currentFormSets <= minFormCurrentSets) {
                     Swal.fire({
                         icon: 'warning',
-                        title: 'Minimum Observtion Required',
-                        text: 'At least one Observation is required.',
+                        title: 'Minimum ForkLift Inspection Required',
+                        text: 'At least one ForkLift Inspection is required.',
                         confirmButtonColor: '#3085d6'
                     });
                     return;
