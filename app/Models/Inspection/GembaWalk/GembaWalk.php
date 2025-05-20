@@ -25,6 +25,7 @@ class GembaWalk extends Model
         'gemba_walk_status',
         'observation_needed',
         'capa_needed',
+        'responsible_person_id',
         'status',
         'trash',
         'created_by',
@@ -50,6 +51,11 @@ class GembaWalk extends Model
 
         $org_total =  $query;
         $org_total_counts = $org_total->count();
+
+        if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_OFFICER)) {
+        } else if (CheckUserRole(ROLE_FLOOR_MANAGER)) {
+            $query->where('inspection_gemba_walk.responsible_person_id', Auth::id());
+        }
 
         if ($request->search['value'] != null || $request->search['value'] != '') {
             $search = $request->search['value'];
@@ -128,6 +134,7 @@ class GembaWalk extends Model
                 'company_id' => Auth::user()->company_id,
                 'observation_needed' => decryptId($request->observation_needed),
                 'capa_needed' => decryptId($request->is_passed),
+                'responsible_person_id'=>decryptId($request->responsible_person_id),
                 'gemba_walk_status' => GEMBA_WALK_INSPECTION_WAITING_FOR_FLOOR_MANAGER_VERIFICATION,
                 'created_by' => Auth::id(),
             );
@@ -139,6 +146,7 @@ class GembaWalk extends Model
                 'company_id' => Auth::user()->company_id,
                 'observation_needed' => decryptId($request->observation_needed),
                 'capa_needed' => decryptId($request->is_passed),
+                'responsible_person_id'=>decryptId($request->responsible_person_id),
                 'gemba_walk_status' => GEMBA_WALK_INSPECTION_CLOSED,
                 'created_by' => Auth::id(),
                 'verified_by' => Auth::id()
@@ -307,6 +315,15 @@ class GembaWalk extends Model
         $query = $results->groupBy('gemba_walk_id');
 
         return  $query;
+    }
+
+    public function getResponsiblePerson($id){
+            $data = $this->where('inspection_gemba_walk.id', $id)->where('status', 1)->first();
+            if($data != null){
+                return $data->responsible_person_id;
+            }
+
+            return false;
     }
 
 
