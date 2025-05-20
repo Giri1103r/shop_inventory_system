@@ -239,7 +239,7 @@
                             <th>Description</th>
                             <th>Hazard</th>
                             <th>Image</th>
-                            <th>CAPA</th>
+                            <th>Recommended CAPA</th>
                             <th>Date of Compliance</th>
                             <th>Responsible Person</th>
                             <th>Status</th>
@@ -309,7 +309,7 @@
                 <tr>
                     <td
                         style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                        CAPA Action
+                         Recommended CAPA Action
                     </td>
                 </tr>
             </table>
@@ -379,7 +379,7 @@
                     <tr>
                         <td
                             style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                            CAPA Action
+                            Recommended CAPA Action
                         </td>
                     </tr>
                 </table>
@@ -511,7 +511,7 @@
                     <tr>
                         <td
                             style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                            CAPA Action
+                            Recommended CAPA Action
                         </td>
                     </tr>
                 </table>

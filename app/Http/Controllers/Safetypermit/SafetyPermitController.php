@@ -674,8 +674,21 @@ class SafetyPermitController extends Controller
             if (Auth::check()) {
                 $safetypermit = $this->safetypermit->selectOne($id);
                 $workmaninvolved = $this->safetypermit->workmaninvolved($id);
-                $stateIsolationLoto = json_decode($safetypermit->state_isolation_loto);
-                $confined_space_entry = json_decode($safetypermit->confined_space_entry);
+
+                  $confined_space_entry = [];
+            $stateIsolationLoto = [];
+          
+
+            if (!empty($safetypermit->confined_space_entry)) {
+                $confined_space_entry = json_decode($safetypermit->confined_space_entry, true);
+            }
+
+            if (!empty($safetypermit->state_isolation_loto)) {
+                $stateIsolationLoto = json_decode($safetypermit->state_isolation_loto, true);
+            }
+
+
+
                 $getEhSverification =   $this->approvereject->getEhSverification($id);
                 $getEhsapproval =   $this->approvereject->getEhsapproval($id);
                 $getplantheadapproval =   $this->approvereject->getplantheadapproval($id);
@@ -1917,7 +1930,7 @@ class SafetyPermitController extends Controller
             $html = view('permit.safetypermit.exportpdf', $data)->render();
             $mpdf->WriteHTML($html);
             $filename = "Safety Permit  " . $safetypermit->permit_id . ".pdf";
-            return $mpdf->Output($filename, 'D');
+            return $mpdf->Output($filename, 'd');
         } catch (Exception $ex) {
 
             report($ex);

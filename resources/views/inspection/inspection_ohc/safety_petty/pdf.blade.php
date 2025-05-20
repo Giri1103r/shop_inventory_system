@@ -219,7 +219,7 @@
                 <td colspan="2" style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
                     {{ $loop->iteration }}</td>
                 <td colspan="4" style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
-                    {{ getUsername($details->employee_name) }}
+                    {{ ($details->employee_name) }}
                 </td>
                 <td colspan="4" style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
                     {{ isset($details->employee_code) ? $details->employee_code : '' }}

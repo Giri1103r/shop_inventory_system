@@ -176,7 +176,7 @@
 
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
-                                                <label class="form-label">CAPA</label>
+                                                <label class="form-label">Recommended CAPA</label>
                                                 <div class="view_data">
                                                     {{ isset($gembaWalk->capa) ? $gembaWalk->capa : '' }}
                                                 </div>
@@ -280,7 +280,7 @@
                                         $gembaWalk->gemba_walk_status == GEMBA_WALK_INSPECTION_REJECTED)
                                     <div class="row mt-3">
                                         <div class="card-header-inner">
-                                            <h4 class="text-white">CAPA Action</h4>
+                                            <h4 class="text-white"> Recommended CAPA Action</h4>
                                         </div>
                                     </div>
                                     <div class="row">

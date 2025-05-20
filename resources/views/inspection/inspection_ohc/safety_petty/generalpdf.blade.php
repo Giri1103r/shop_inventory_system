@@ -230,7 +230,7 @@
                 <tr>
                     <td style="border: 2px solid black; padding: 8px;">{{ $i++ }}</td>
                     <td style="border: 2px solid black; padding: 8px;">{{ isset($sfty_petty_details->serial_number) ? $sfty_petty_details->serial_number : '' }}</td>
-                    <td style="border: 2px solid black; padding: 8px;">{{ getUsername($sfty_petty_details->employee_name) }}</td>
+                    <td style="border: 2px solid black; padding: 8px;">{{ ($sfty_petty_details->employee_name) }}</td>
                     <td style="border: 2px solid black; padding: 8px;"> {{ isset($sfty_petty_details->employee_code) ? $sfty_petty_details->employee_code : '' }}</td>
                     <td style="border: 2px solid black; padding: 8px;">{{ getDepartment($sfty_petty_details->department) }}</td>
                     <td style="border: 2px solid black; padding: 8px;">{{ getUnitname($sfty_petty_details->unit) }}</td>

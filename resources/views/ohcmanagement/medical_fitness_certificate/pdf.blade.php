@@ -37,6 +37,9 @@
                           {{ displaydateformat($value->date) }}
                       </td>
                       <td style='padding: 7px;border: 0.5px solid'>
+                          {{ $value->cheif_complaint}}
+                      </td>
+                        <td style='padding: 7px;border: 0.5px solid'>
                           {{ $value->remarks }}
                       </td>
                       <td style='padding: 7px; border: 0.5px solid'>

@@ -145,7 +145,7 @@ class SafetyPettyDetails extends Model
             $insert_array = array(
                 'document_reference_id' => decryptId($request->document_reference_id),
                 'serial_number' => $request->serial_number[$index],
-                'employee_name' => $request->emp_id[$index],
+                'employee_name' => $request->emp_name[$index],
                 'employee_code' => $request->employee_code[$index],
                 'department' => decryptId($request->department_id[$index]),
                 'unit' => decryptId($request->unit_id[$index]),

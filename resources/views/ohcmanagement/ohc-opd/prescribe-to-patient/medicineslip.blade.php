@@ -284,8 +284,8 @@
                 </tr>
                 <tr>
                     <td colspan="3" style="border: 1px solid black; height:30;">Signature Safety Department</td>
-                    <td colspan="9" style="border: 1px solid black; height:30;">Hospital
-                        Address:{{isset($hospital->address) ? $opdpatient->address : ''}}</td>
+                    <td colspan="9" style="border: 1px solid black; height:30;"> <strong>Hospital  Address:</strong>
+                       {{isset($hospital->address) ? $opdpatient->address : ''}}</td>
 
                 </tr>
                 <tr>
@@ -296,7 +296,8 @@
                 <tr>
                     <td colspan="4"
                         style="border: 1px solid black; height:30px; text-align: center; vertical-align: middle;">
-                       {{ isset($hospital->hospital_name) ? $opdpatient->hospital_name : ''}} <br>{{isset($hospital->mobile_no) ? $hospital->mobile_no :''}}  <br> {{isset($hospital->tel_no) ? $hospital->tel_no :''}}
+                   <strong>Hospital
+                        Details:</strong>     {{ isset($hospital->hospital_name) ? $opdpatient->hospital_name : ''}} <br>{{isset($hospital->mobile_no) ? $hospital->mobile_no :''}}  <br> {{isset($hospital->tel_no) ? $hospital->tel_no :''}}
                     </td>
                     <td colspan="4"
                         style="border: 1px solid black; height:30px; text-align: center; vertical-align: middle;">
