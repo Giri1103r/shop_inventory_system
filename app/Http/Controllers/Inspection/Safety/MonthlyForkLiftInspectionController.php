@@ -268,6 +268,8 @@ class MonthlyForkLiftInspectionController extends Controller
             $forklift_inspection = $this->forklift->store();
             $id = $forklift_inspection->id;
             $signature_update = $this->signature->signatureUpload(MONTHLY_FORKLIFT_INSPECTION, $forklift_inspection->id);
+
+            //Web notification
             $ehsOfficer = GetEHSOfficer();
             $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
             $mailsubject = 'Monthly Forklift Inspection';
@@ -288,6 +290,7 @@ class MonthlyForkLiftInspectionController extends Controller
             );
             notificationSave($notificationData);
 
+            //Mail Notification
             $title = 'Fire Associate create the Monthly ForkLift Inspection';
             foreach ($ehsOfficers as $user) {
                 $email_id = getUseremail($user);
@@ -303,6 +306,7 @@ class MonthlyForkLiftInspectionController extends Controller
                 Mail::to($email_id)->queue(new SafetyInspection($details));
             }
 
+            //Log
             $insert_array = [
                 'type' => MONTHLY_FORKLIFT_INSPECTION,
                 'inspection_id' => $forklift_inspection->id,

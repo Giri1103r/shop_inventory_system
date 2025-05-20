@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\Inspection\Audit\AuditAnalysisController;
 use App\Http\Controllers\Api\Inspection\Audit\AuditAssessmentController;
 use App\Http\Controllers\Api\Inspection\Audit\InterUnitAuditController;
 use App\Http\Controllers\Api\Inspection\Audit\MonthlyAuditController;
+use App\Http\Controllers\Api\Inspection\Safety\MonthlyForkLiftInspection;
 use App\Http\Controllers\Api\MasterController;
 use App\Http\Controllers\Api\Permit\SafetyPermitController;
 use App\Http\Controllers\Api\Ppemanagement\PpeExemptionController;
@@ -127,6 +128,16 @@ Route::middleware('api')->prefix('v1')->group(function () {
                     Route::post('add', [InterUnitAuditController::class, 'add']);
                 });
             });
+        });
+
+        Route::post('shift/list', [MonthlyForkLiftInspection::class, 'shift']);
+        Route::post('frequency/list', [MonthlyForkLiftInspection::class, 'frequency']);
+        Route::post('forklift_type/list', [MonthlyForkLiftInspection::class, 'forklift_type']);
+
+        Route::group(['prefix' => 'safety/safety-gallery-inspection/'], function () {
+            Route::post('list', [MonthlyForkLiftInspection::class, 'list']);
+            Route::post('add', [MonthlyForkLiftInspection::class, 'store']);
+            Route::post('view', [MonthlyForkLiftInspection::class, 'view']);
         });
     });
 });
