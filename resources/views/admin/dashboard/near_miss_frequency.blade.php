@@ -40,7 +40,7 @@
         },
         plotOptions: {
             bar: {
-                borderRadius: 10,
+                columnWidth: '50%',
                 dataLabels: {
                     position: 'top',
                 },

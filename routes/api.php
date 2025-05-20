@@ -1,19 +1,20 @@
 <?php
-
-use App\Http\Controllers\Api\{LoginController, NotificationController, AdminController};
-use App\Http\Controllers\Api\Inspection\Audit\AuditAnalysisController;
-use App\Http\Controllers\Api\Inspection\Audit\AuditAssessmentController;
-use App\Http\Controllers\Api\Inspection\Audit\InterUnitAuditController;
-use App\Http\Controllers\Api\Inspection\Audit\MonthlyAuditController;
 use App\Http\Controllers\Api\Inspection\GembaWalk\GembaWalkController;
-use App\Http\Controllers\Api\MasterController;
-use App\Http\Controllers\Api\Permit\SafetyPermitController;
-use App\Http\Controllers\Api\Ppemanagement\PpeExemptionController;
-use App\Http\Controllers\Api\Ppemanagement\PpemanagementController;
-use App\Http\Controllers\Api\Ppemanagement\PperequestController;
-use App\Http\Controllers\Api\Trainig\TrainingSheducleController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\MasterController;
+use App\Http\Controllers\Api\Permit\SafetyPermitController;
+use App\Http\Controllers\Api\Ppemanagement\PperequestController;
+use App\Http\Controllers\Api\Trainig\TrainingSheducleController;
+use App\Http\Controllers\Api\Ppemanagement\PpeExemptionController;
+use App\Http\Controllers\Api\Ppemanagement\PpemanagementController;
+use App\Http\Controllers\Api\Inspection\Audit\MonthlyAuditController;
+use App\Http\Controllers\Api\Inspection\Audit\AuditAnalysisController;
+use App\Http\Controllers\Api\Inspection\Audit\InterUnitAuditController;
+use App\Http\Controllers\Api\Inspection\Audit\AuditAssessmentController;
+use App\Http\Controllers\Api\Inspection\Fire\HooterInspectionController;
+use App\Http\Controllers\Api\Inspection\Safety\MonthlyForkLiftInspection;
+use App\Http\Controllers\Api\{LoginController, NotificationController, AdminController};
 
 // Route::get('/user', function (Request $request) {
 //     return $request->user();
@@ -24,6 +25,8 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::middleware('api')->prefix('v1')->group(function () {
+
+
 
 
     Route::post('login', [LoginController::class, 'login']);
@@ -128,13 +131,31 @@ Route::middleware('api')->prefix('v1')->group(function () {
                     Route::post('add', [InterUnitAuditController::class, 'add']);
                 });
             });
-            
+
             // gembaWalk
             Route::group(['prefix' => 'gemba-walk/'], function () {
                 Route::post('list', [GembaWalkController::class, 'list']);
                 Route::post('add', [GembaWalkController::class, 'store']);
                 Route::post('view', [GembaWalkController::class, 'view']);
             });
+
+            Route::group(['prefix' => 'fire/'], function () {
+                Route::group(['prefix' => 'hooter-inspection/'], function () {
+                    Route::post('list', [HooterInspectionController::class, 'List']);
+                    Route::post('add', [HooterInspectionController::class, 'Add']);
+                    Route::post('view', [HooterInspectionController::class, 'View']);
+                });
+            });
+        });
+
+        Route::post('shift/list', [MonthlyForkLiftInspection::class, 'shift']);
+        Route::post('frequency/list', [MonthlyForkLiftInspection::class, 'frequency']);
+        Route::post('forklift_type/list', [MonthlyForkLiftInspection::class, 'forklift_type']);
+
+        Route::group(['prefix' => 'safety/safety-gallery-inspection/'], function () {
+            Route::post('list', [MonthlyForkLiftInspection::class, 'list']);
+            Route::post('add', [MonthlyForkLiftInspection::class, 'store']);
+            Route::post('view', [MonthlyForkLiftInspection::class, 'view']);
         });
     });
 });

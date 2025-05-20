@@ -45,7 +45,7 @@
                 bar: {
                     horizontal: false,
                     distributed: true,
-                    columnWidth: '25%',
+                    columnWidth: '50px',
                     dataLabels: {
                         total: {
                             enabled: true,
@@ -55,8 +55,9 @@
                             }
                         }
                     }
-                },
+                }
             },
+
             colors: colors,
             xaxis: {
                 categories: {!! json_encode($chartData['labels']) !!}
