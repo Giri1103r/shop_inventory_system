@@ -122,15 +122,14 @@
                     <div class="row gx-0">
 
                         <div class="col-md-2 gx-0">
-                            <div class="card bg-yellow" style="width: 200px; height: 300px;">
-                                <div class="card-header mt-2 ">
+                            <div class="card bg-yellow h-100 w-100"> <!-- Ensure full width -->
+                                <div class="card-header mt-2 mb-0">
                                     <h3 class="m-0">Operating Management</h3>
                                 </div>
-
-                                <div class="card-body" style="overflow: hidden;">
+                                <div class="card-body mt-0" style="overflow: hidden;">
                                     <div class="container-fluid p-0">
                                         @foreach ($masterLink as $item)
-                                            <div class="row g-0 mb-1">
+                                            <div class="row mb-2">
                                                 <div class="col">
                                                     <div class="d-flex justify-content-between align-items-center p-0.5">
                                                         <a href="{{ admin_url($item['link']) }}"
@@ -142,12 +141,11 @@
                                                 </div>
                                             </div>
                                         @endforeach
-
                                     </div>
                                 </div>
-
                             </div>
                         </div>
+
 
                         <div class="col-md-10 gx-0">
                             <div class="row gx-0">
@@ -332,7 +330,7 @@
                                             style = "box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06);">
                                             <div class="media ai-icon" style="display: flex; align-items: center;">
                                                 <span class="me-3 bgl-primary text-primary" style="flex-shrink: 0;">
-                                                   
+
 
 
                                                 </span>
