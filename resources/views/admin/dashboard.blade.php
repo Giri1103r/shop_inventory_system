@@ -122,21 +122,24 @@
                     <div class="row gx-0">
 
                         <div class="col-md-2 gx-0">
-                            <div class="card bg-yellow h-100 w-100"> <!-- Ensure full width -->
-                                <div class="card-header mt-2 mb-0">
-                                    <h3 class="m-0">Operating Management</h3>
+                            <div class="card bg-yellow h-100 w-100">
+                                <div class="card-header py-2">
+                                    <h5 class="m-0 text-center text-white">Operating Management</h5>
                                 </div>
-                                <div class="card-body mt-0" style="overflow: hidden;">
+                                <div class="card-body pt-2 pb-2">
                                     <div class="container-fluid p-0">
                                         @foreach ($masterLink as $item)
                                             <div class="row mb-2">
                                                 <div class="col">
-                                                    <div class="d-flex justify-content-between align-items-center p-0.5">
+                                                    <div
+                                                        class="d-flex justify-content-between align-items-center flex-wrap">
                                                         <a href="{{ admin_url($item['link']) }}"
-                                                            class="text-decoration-none text-dark m-0">
+                                                            class="text-decoration-none text-dark me-2 text-truncate"
+                                                            style="max-width: calc(100% - 50px);">
                                                             {{ $item['name'] ?? '' }}
                                                         </a>
-                                                        <span class="badge bg-primary">{{ $item['count'] ?? 0 }}</span>
+                                                        <span
+                                                            class="badge bg-primary text-wrap">{{ $item['count'] ?? 0 }}</span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -145,6 +148,7 @@
                                 </div>
                             </div>
                         </div>
+
 
 
                         <div class="col-md-10 gx-0">
