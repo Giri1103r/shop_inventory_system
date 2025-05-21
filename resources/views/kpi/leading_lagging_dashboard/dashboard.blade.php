@@ -292,44 +292,61 @@
             leadingContainer.html('');
             laggingContainer.html('');
 
-            leadings.forEach(item => {
+            if (leadings.length > 0) {
+                leadings.forEach(item => {
+                    leadingContainer.append(`
+                <div class="col-xl-3 col-lg-3 col-sm-3 p-2">
+                    <div class="widget-stat card card-dashbaord"
+                        style="cursor: pointer;background-image: linear-gradient(to right, #a3f0dc 0%, #83aeee 100%);">
+                        <div class="card-body"
+                            style="box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06);">
+                            <div class="media ai-icon" style="display: flex; align-items: center;">
+                                <div class="media-body" style="display: block;">
+                                    <p class="mb-1" style="color:black;">${item.name}</p>
+                                    <h4 class="mb-0 fw-bold ">${item.value}</h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `);
+                });
+            } else {
                 leadingContainer.append(`
-                        <div class="col-xl-3 col-lg-3 col-sm-3 p-2">
-                            <div class="widget-stat card card-dashbaord"
-                                style="cursor: pointer;background-image: linear-gradient(to right, #a3f0dc 0%, #83aeee 100%);">
-                                <div class="card-body"
-                                    style="box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06);">
-                                    <div class="media ai-icon" style="display: flex; align-items: center;">
-                                        <div class="media-body" style="display: block;">
-                                            <p class="mb-1" style="color:black;">${item.name}</p>
-                                            <h4 class="mb-0 ">${item.value}</h4>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    `);
-            });
+            <div class="col-12 text-center text-black py-4">
+                No data found
+            </div>
+        `);
+            }
 
-            laggings.forEach(item => {
-                laggingContainer.append(`
-                        <div class="col-xl-3 col-lg-3 col-sm-3 p-2">
-                            <div class="widget-stat card card-dashbaord"
-                                style="cursor: pointer;background-image: linear-gradient(to right, #d44f4a 0%, #ee8383 100%);">
-                                <div class="card-body"
-                                    style="box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06);">
-                                    <div class="media ai-icon" style="display: flex; align-items: center;">
-                                        <div class="media-body" style="display: block;">
-                                            <p class="mb-1 text-white fw-bold" >${item.name}</p>
-                                            <h4 class="mb-0 text-white fw-bold">${item.value}</h4>
-                                        </div>
-                                    </div>
+            if (laggings.length > 0) {
+                laggings.forEach(item => {
+                    laggingContainer.append(`
+                <div class="col-xl-3 col-lg-3 col-sm-3 p-2">
+                    <div class="widget-stat card card-dashbaord"
+                        style="cursor: pointer;background-image: linear-gradient(to right, #d44f4a 0%, #ee8383 100%);">
+                        <div class="card-body"
+                            style="box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06);">
+                            <div class="media ai-icon" style="display: flex; align-items: center;">
+                                <div class="media-body" style="display: block;">
+                                    <p class="mb-1 text-white fw-bold">${item.name}</p>
+                                    <h4 class="mb-0 text-white fw-bold">${item.value}</h4>
                                 </div>
                             </div>
                         </div>
-                    `);
-            });
+                    </div>
+                </div>
+            `);
+                });
+            } else {
+                laggingContainer.append(`
+            <div class="col-12 text-center text-black py-4">
+                No data found
+            </div>
+        `);
+            }
         }
+
 
         $(document).ready(function() {
 

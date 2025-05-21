@@ -131,6 +131,8 @@ class SignatureUpload extends Model
                 'created_by'     => Auth::id(),
                 'trash'          => 'NO',
             ]);
+        }else{
+            dd(2);
         }
     }
 }
