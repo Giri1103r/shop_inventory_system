@@ -122,32 +122,34 @@
                     <div class="row gx-0">
 
                         <div class="col-md-2 gx-0">
-                            <div class="card bg-yellow" style="width: 200px; height: 300px;">
-                                <div class="card-header mt-2 ">
-                                    <h3 class="m-0">Operating Management</h3>
+                            <div class="card bg-yellow h-100 w-100">
+                                <div class="card-header py-2">
+                                    <h5 class="m-0 text-center text-white">Operating Management</h5>
                                 </div>
-
-                                <div class="card-body" style="overflow: hidden;">
+                                <div class="card-body pt-2 pb-2">
                                     <div class="container-fluid p-0">
                                         @foreach ($masterLink as $item)
-                                            <div class="row g-0 mb-1">
+                                            <div class="row mb-2">
                                                 <div class="col">
-                                                    <div class="d-flex justify-content-between align-items-center p-0.5">
+                                                    <div
+                                                        class="d-flex justify-content-between align-items-center flex-wrap">
                                                         <a href="{{ admin_url($item['link']) }}"
-                                                            class="text-decoration-none text-dark m-0">
+                                                            class="text-decoration-none text-dark me-2 text-truncate"
+                                                            style="max-width: calc(100% - 50px);">
                                                             {{ $item['name'] ?? '' }}
                                                         </a>
-                                                        <span class="badge bg-primary">{{ $item['count'] ?? 0 }}</span>
+                                                        <span
+                                                            class="badge bg-primary text-wrap">{{ $item['count'] ?? 0 }}</span>
                                                     </div>
                                                 </div>
                                             </div>
                                         @endforeach
-
                                     </div>
                                 </div>
-
                             </div>
                         </div>
+
+
 
                         <div class="col-md-10 gx-0">
                             <div class="row gx-0">
@@ -159,27 +161,7 @@
                                             style = "box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06);">
                                             <div class="media ai-icon" style="display: flex; align-items: center;">
                                                 <span class="me-3 bgl-primary text-primary" style="flex-shrink: 0;">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="100" height="50"
-                                                        viewBox="0 0 64 64" fill="none">
 
-                                                        <rect x="14" y="8" width="36" height="48" rx="4"
-                                                            ry="4" fill="#e0e0e0" stroke="#333" stroke-width="2" />
-                                                        <rect x="24" y="4" width="16" height="8" rx="2"
-                                                            ry="2" fill="#ccc" stroke="#333"
-                                                            stroke-width="2" />
-
-
-                                                        <path d="M32 32c-6.627 0-12 5.373-12 12h24c0-6.627-5.373-12-12-12z"
-                                                            fill="#fcd34d" stroke="#333" stroke-width="2" />
-                                                        <path d="M26 32v-4c0-3.314 2.686-6 6-6s6 2.686 6 6v4"
-                                                            stroke="#333" stroke-width="2" fill="none" />
-
-
-                                                        <line x1="20" y1="44" x2="44"
-                                                            y2="44" stroke="#666" stroke-width="2" />
-                                                        <line x1="20" y1="50" x2="40"
-                                                            y2="50" stroke="#666" stroke-width="2" />
-                                                    </svg>
 
                                                 </span>
                                                 <div class="media-body" style="display: block;">
@@ -203,23 +185,7 @@
                                             style = "box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06);">
                                             <div class="media ai-icon" style="display: flex; align-items: center;">
                                                 <span class="me-3 bgl-primary text-primary" style="flex-shrink: 0;">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="100" height="50"
-                                                        viewBox="0 0 64 64" fill="none">
-                                                        <!-- Helmet -->
-                                                        <path d="M32 28c-6.627 0-12 5.373-12 12h24c0-6.627-5.373-12-12-12z"
-                                                            fill="#fcd34d" stroke="#333" stroke-width="2" />
-                                                        <path d="M26 28v-4c0-3.314 2.686-6 6-6s6 2.686 6 6v4"
-                                                            stroke="#333" stroke-width="2" fill="none" />
 
-                                                        <!-- Prohibition Slash -->
-                                                        <circle cx="32" cy="40" r="16" stroke="#e11d48"
-                                                            stroke-width="3" fill="none" />
-                                                        <line x1="22" y1="30" x2="42"
-                                                            y2="50" stroke="#e11d48" stroke-width="3" />
-
-                                                        <!-- Optional text hint -->
-                                                        <!-- <text x="14" y="58" font-size="8" fill="#444">Exempt</text> -->
-                                                    </svg>
 
                                                 </span>
                                                 <div class="media-body" style="display: block;">
@@ -244,28 +210,7 @@
                                             style = "box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06);">
                                             <div class="media ai-icon" style="display: flex; align-items: center;">
                                                 <span class="me-3 bgl-primary text-primary" style="flex-shrink: 0;">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="100" height="50"
-                                                        viewBox="0 0 64 64" fill="none">
-                                                        <!-- Clipboard -->
-                                                        <rect x="14" y="10" width="36" height="44" rx="4"
-                                                            ry="4" fill="#f3f4f6" stroke="#4b5563"
-                                                            stroke-width="2" />
-                                                        <rect x="24" y="6" width="16" height="8" rx="2"
-                                                            ry="2" fill="#d1d5db" stroke="#4b5563"
-                                                            stroke-width="2" />
 
-                                                        <!-- Checkmark -->
-                                                        <circle cx="32" cy="44" r="10" fill="#10b981"
-                                                            stroke="#065f46" stroke-width="2" />
-                                                        <path d="M28 44l3 3 5-5" stroke="white" stroke-width="2"
-                                                            fill="none" />
-
-                                                        <!-- Form lines -->
-                                                        <line x1="20" y1="28" x2="44"
-                                                            y2="28" stroke="#9ca3af" stroke-width="2" />
-                                                        <line x1="20" y1="34" x2="44"
-                                                            y2="34" stroke="#9ca3af" stroke-width="2" />
-                                                    </svg>
 
 
                                                 </span>
@@ -290,20 +235,7 @@
                                             style = "box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06);">
                                             <div class="media ai-icon" style="display: flex; align-items: center;">
                                                 <span class="me-3 bgl-primary text-primary" style="flex-shrink: 0;">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60"
-                                                        viewBox="0 0 64 64" fill="none">
-                                                        <!-- Book base -->
-                                                        <path d="M10 48V16a4 4 0 0 1 4-4h36a4 4 0 0 1 4 4v32"
-                                                            fill="#fef3c7" stroke="#92400e" stroke-width="2" />
-                                                        <path d="M10 48h44" stroke="#92400e" stroke-width="2" />
 
-                                                        <!-- Graduation cap -->
-                                                        <path d="M32 10L16 16l16 6 16-6-16-6z" fill="#facc15"
-                                                            stroke="#92400e" stroke-width="2" />
-                                                        <line x1="32" y1="16" x2="32"
-                                                            y2="26" stroke="#92400e" stroke-width="2" />
-                                                        <circle cx="32" cy="26" r="2" fill="#92400e" />
-                                                    </svg>
 
 
                                                 </span>
@@ -328,30 +260,6 @@
                                             style = "box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06);">
                                             <div class="media ai-icon" style="display: flex; align-items: center;">
                                                 <span class="me-3 bgl-primary text-primary" style="flex-shrink: 0;">
-                                                    <svg width="50" height="50" viewBox="0 0 64 64"
-                                                        fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                        <rect width="64" height="64" rx="8"
-                                                            fill="#F4F4F4" />
-                                                        <rect x="16" y="8" width="32" height="38" rx="4"
-                                                            fill="#FFF" stroke="#555" stroke-width="2" />
-                                                        <rect x="20" y="12" width="24" height="6" rx="2"
-                                                            fill="#E0E0E0" />
-                                                        <circle cx="24" cy="24" r="2" fill="#4CAF50" />
-                                                        <rect x="28" y="23" width="16" height="2" rx="1"
-                                                            fill="#999" />
-                                                        <circle cx="24" cy="30" r="2" fill="#4CAF50" />
-                                                        <rect x="28" y="29" width="16" height="2" rx="1"
-                                                            fill="#999" />
-                                                        <circle cx="24" cy="36" r="2" fill="#F44336" />
-                                                        <rect x="28" y="35" width="16" height="2" rx="1"
-                                                            fill="#999" />
-                                                        <circle cx="48" cy="48" r="6" stroke="#1976D2"
-                                                            stroke-width="2" />
-                                                        <line x1="52.2" y1="52.2" x2="58"
-                                                            y2="58" stroke="#1976D2" stroke-width="2"
-                                                            stroke-linecap="round" />
-                                                    </svg>
-
 
 
                                                 </span>
@@ -376,34 +284,6 @@
                                             style = "box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06);">
                                             <div class="media ai-icon" style="display: flex; align-items: center;">
                                                 <span class="me-3 bgl-primary text-primary" style="flex-shrink: 0;">
-                                                    <svg width="50" height="60" viewBox="0 0 64 64"
-                                                        xmlns="http://www.w3.org/2000/svg">
-                                                        <rect width="64" height="64" rx="8"
-                                                            fill="#F0F4F8" />
-
-                                                        <!-- Chart Base -->
-                                                        <rect x="10" y="18" width="44" height="30" rx="2"
-                                                            fill="white" stroke="#B0BEC5" stroke-width="1.5" />
-
-                                                        <!-- Bar Graphs -->
-                                                        <rect x="16" y="38" width="4" height="6"
-                                                            fill="#42A5F5" />
-                                                        <rect x="22" y="34" width="4" height="10"
-                                                            fill="#42A5F5" />
-                                                        <rect x="28" y="28" width="4" height="16"
-                                                            fill="#42A5F5" />
-                                                        <rect x="34" y="24" width="4" height="20"
-                                                            fill="#42A5F5" />
-                                                        <rect x="40" y="30" width="4" height="14"
-                                                            fill="#42A5F5" />
-
-                                                        <!-- Magnifying Glass -->
-                                                        <circle cx="48" cy="48" r="5" stroke="#1976D2"
-                                                            stroke-width="2" fill="none" />
-                                                        <line x1="51.5" y1="51.5" x2="58"
-                                                            y2="58" stroke="#1976D2" stroke-width="2"
-                                                            stroke-linecap="round" />
-                                                    </svg>
 
 
 
@@ -429,43 +309,6 @@
                                             style = "box-shadow: 0 4px 6px rgba(128, 42, 116, 0.103), 0 1px 3px rgba(61, 26, 156, 0.329);">
                                             <div class="media ai-icon" style="display: flex; align-items: center;">
                                                 <span class="me-3 bgl-primary text-primary" style="flex-shrink: 0;">
-                                                    <svg width="60" height="50" viewBox="0 0 64 64"
-                                                        xmlns="http://www.w3.org/2000/svg">
-                                                        <rect width="64" height="64" rx="8"
-                                                            fill="#F0F4F8" />
-
-                                                        <!-- Calendar Base -->
-                                                        <rect x="12" y="16" width="40" height="36" rx="3"
-                                                            fill="white" stroke="#90A4AE" stroke-width="2" />
-                                                        <line x1="12" y1="24" x2="52"
-                                                            y2="24" stroke="#90A4AE" stroke-width="1.5" />
-
-                                                        <!-- Calendar Rings -->
-                                                        <rect x="18" y="20" width="4" height="4" rx="1"
-                                                            fill="#42A5F5" />
-                                                        <rect x="26" y="20" width="4" height="4" rx="1"
-                                                            fill="#42A5F5" />
-                                                        <rect x="34" y="20" width="4" height="4" rx="1"
-                                                            fill="#42A5F5" />
-
-                                                        <!-- Calendar Dates -->
-                                                        <circle cx="20" cy="30" r="1.5" fill="#42A5F5" />
-                                                        <circle cx="28" cy="30" r="1.5" fill="#42A5F5" />
-                                                        <circle cx="36" cy="30" r="1.5" fill="#42A5F5" />
-                                                        <circle cx="44" cy="30" r="1.5" fill="#42A5F5" />
-
-                                                        <circle cx="20" cy="38" r="1.5" fill="#42A5F5" />
-                                                        <circle cx="28" cy="38" r="1.5" fill="#42A5F5" />
-                                                        <circle cx="36" cy="38" r="1.5" fill="#42A5F5" />
-                                                        <circle cx="44" cy="38" r="1.5" fill="#42A5F5" />
-
-                                                        <!-- Magnifying Glass -->
-                                                        <circle cx="48" cy="48" r="5" stroke="#1976D2"
-                                                            stroke-width="2" fill="none" />
-                                                        <line x1="51.5" y1="51.5" x2="58"
-                                                            y2="58" stroke="#1976D2" stroke-width="2"
-                                                            stroke-linecap="round" />
-                                                    </svg>
 
 
 
@@ -491,54 +334,6 @@
                                             style = "box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06);">
                                             <div class="media ai-icon" style="display: flex; align-items: center;">
                                                 <span class="me-3 bgl-primary text-primary" style="flex-shrink: 0;">
-                                                    <svg width="100" height="50" viewBox="0 0 64 64"
-                                                        xmlns="http://www.w3.org/2000/svg">
-                                                        <rect width="64" height="64" rx="8"
-                                                            fill="#F0F4F8" />
-
-                                                        <!-- Unit 1 -->
-                                                        <rect x="10" y="16" width="18" height="20" rx="2"
-                                                            fill="#FFFFFF" stroke="#90A4AE" stroke-width="1.5" />
-                                                        <circle cx="16" cy="22" r="1.5" fill="#4CAF50" />
-                                                        <rect x="20" y="21.5" width="6" height="1.5"
-                                                            fill="#B0BEC5" />
-                                                        <circle cx="16" cy="28" r="1.5" fill="#4CAF50" />
-                                                        <rect x="20" y="27.5" width="6" height="1.5"
-                                                            fill="#B0BEC5" />
-
-                                                        <!-- Unit 2 -->
-                                                        <rect x="36" y="28" width="18" height="20" rx="2"
-                                                            fill="#FFFFFF" stroke="#90A4AE" stroke-width="1.5" />
-                                                        <circle cx="42" cy="34" r="1.5" fill="#4CAF50" />
-                                                        <rect x="46" y="33.5" width="6" height="1.5"
-                                                            fill="#B0BEC5" />
-                                                        <circle cx="42" cy="40" r="1.5" fill="#4CAF50" />
-                                                        <rect x="46" y="39.5" width="6" height="1.5"
-                                                            fill="#B0BEC5" />
-
-                                                        <!-- Arrows between units -->
-                                                        <path d="M28 26 L36 30 M36 30 L32 32" stroke="#1976D2"
-                                                            stroke-width="2" fill="none"
-                                                            marker-end="url(#arrowhead)" />
-                                                        <path d="M36 36 L28 40 M28 40 L32 42" stroke="#1976D2"
-                                                            stroke-width="2" fill="none"
-                                                            marker-end="url(#arrowhead)" />
-
-                                                        <!-- Arrowhead definition -->
-                                                        <defs>
-                                                            <marker id="arrowhead" markerWidth="6" markerHeight="6"
-                                                                refX="3" refY="3" orient="auto">
-                                                                <polygon points="0 0, 6 3, 0 6" fill="#1976D2" />
-                                                            </marker>
-                                                        </defs>
-
-                                                        <!-- Magnifying Glass -->
-                                                        <circle cx="50" cy="14" r="5" stroke="#1976D2"
-                                                            stroke-width="2" fill="none" />
-                                                        <line x1="53.5" y1="17.5" x2="58"
-                                                            y2="22" stroke="#1976D2" stroke-width="2"
-                                                            stroke-linecap="round" />
-                                                    </svg>
 
 
 

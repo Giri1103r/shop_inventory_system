@@ -141,6 +141,12 @@ class AppServiceProvider extends ServiceProvider
         defined('STATUS_EHS_OFFICER_UPDATED') or define('STATUS_EHS_OFFICER_UPDATED', 16);
 
 
+        // Company Management
+
+        defined('COMPANY_PNI') or define('COMPANY_PNI', 1);
+        defined('COMPANY_PNS') or define('COMPANY_PNS', 2);
+        defined('COMPANY_KPSL') or define('COMPANY_KPSL', 3);
+
         // OHC Management
 
         // Medicine Approval
