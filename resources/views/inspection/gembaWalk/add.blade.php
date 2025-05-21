@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Gemba Walk ')
+@section('title', 'Gemba Walk Add')
 @section('pageurl', admin_url('gemba-walk/add'))
 
 @section('content')
@@ -120,6 +120,18 @@
                                                     @endif
                                                 </div>
 
+                                                 <div class="col-md-4 mt-2">
+                                                        <div class="form-group form-input">
+                                                            <label for="responsible_person_id"
+                                                                class="form-label require">Responsible Person</label>
+                                                            <select name="responsible_person_id"
+                                                                id="responsible_person_id"
+                                                                class="form-control single-select" style="width: 100%">
+                                                                <option value="">Select Responsible Person</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+
 
                                                 <input type="hidden" name="document_reference_id"
                                                     value="{{ $document_no->id }}">
@@ -238,7 +250,7 @@
                                                                 </div>
                                                             </div>
 
-                                                            <div class="col-md-4 mt-2">
+                                                            {{-- <div class="col-md-4 mt-2">
                                                                 <div class="form-group form-input">
                                                                     <label class="form-label require">Date of Compliance
                                                                     </label>
@@ -264,7 +276,7 @@
                                                                         @endforeach
                                                                     </select>
                                                                 </div>
-                                                            </div>
+                                                            </div> --}}
 
                                                             <div class="col-md-4 mt-2">
                                                                 <div class="form-group  form-input">
@@ -452,6 +464,34 @@
 
         $(document).ready(function() {
 
+             $('#responsible_person_id').select2({
+                    ajax: {
+                        url: "{{ url('inspection/gemba-walk/employeeName') }}",
+                        dataType: 'json',
+                        delay: 250,
+                        data: function(params) {
+                            return {
+                                search: params.term
+                            };
+                        },
+                        processResults: function(data) {
+                            return {
+                                results: $.map(data, function(item) {
+                                    return {
+                                        id: item.id,
+                                        text: item.text
+                                    };
+                                })
+                            };
+                        },
+                        error: function(xhr, textStatus, errorThrown) {
+                            console.log("Error in AJAX request:", textStatus, errorThrown);
+                        }
+                    },
+                    minimumInputLength: 1,
+                    dropdownCssClass: 'form-control',
+                    selectionCssClass: 'form-control'
+                });
             flatpickr("#document_upload_date", {
                 dateFormat: "d-m-Y"
             });
@@ -548,24 +588,7 @@
                             </div>
 
 
-                            <div class="col-md-4 form-input mt-2">
-                                <label class="form-label date">Date of Compliance</label>
-                                <input type="text" name="gemba_walk[${checklistIndex}][date_of_compliance]"
-                                    id="date_of_compliance_${checklistIndex}" class="form-control date_of_compliance">
-                            </div>
 
-                            <div class="col-md-4 form-input mt-2">
-                                <label class="form-label">Responsibility</label>
-                                <select name="gemba_walk[${checklistIndex}][responsibility_id]" id="responsibility_id_${checklistIndex}"
-                                    class="form-control single-select" style="width: 100%">
-                                    <option value="">Select Responsibility Person</option>
-                                    </option>
-                                        @foreach ($employeeList as $employee)
-                                            <option value="{{ encryptId($unit->id) }}">
-                                                {{ $employee->emp_name }}</option>
-                                        @endforeach
-                                </select>
-                            </div>
 
                             <div class="col-md-4 form-input mt-2">
                                 <label class="form-label">Status</label>
@@ -724,6 +747,9 @@
                         capa_remark:{
                             required:true,
                         },
+                        responsible_person_id:{
+                            required:true,
+                        },
 
                         "gemba_walk[0][location_id]": {
                             required: true
@@ -800,6 +826,9 @@
                         },
                         capa_remark:{
                             required: "Please enter a remark.",
+                        },
+                        responsible_person_id:{
+                            required: "Please select a responsible person."
                         },
                         "gemba_walk[0][location_id]": "Please select a location.",
                         "gemba_walk[0][unit_id]": "Please select a unit.",

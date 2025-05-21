@@ -43,10 +43,10 @@
                     var unit = chartContext.w.config.xaxis.categories[dataPointIndex];
 
                     var incidentTypeObj = lookup[
-                    incidentType]; 
+                    incidentType];
 
                     if (incidentTypeObj) {
-                        var unitObj = incidentTypeObj[unit]; 
+                        var unitObj = incidentTypeObj[unit];
 
                         if (unitObj) {
                             var iirType = unitObj.incident_type_id;
@@ -61,8 +61,8 @@
         plotOptions: {
             bar: {
                 horizontal: false,
-                columnWidth: '55%',
-                borderRadius: 5,
+                columnWidth: '50%',
+             
                 borderRadiusApplication: 'end'
             },
         },

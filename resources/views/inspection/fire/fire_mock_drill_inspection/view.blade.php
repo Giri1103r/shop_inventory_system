@@ -576,6 +576,7 @@
                                         </div>
                                     </div>
                                 @endif
+                                
                                 <div class="row">
                                     <div class="card-header-inner">
                                         <h4 class="text-white">{{ __('inspection.status_log') }}</h4>

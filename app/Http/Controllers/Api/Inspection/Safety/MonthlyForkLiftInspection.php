@@ -5,25 +5,43 @@ namespace App\Http\Controllers\Api\Inspection\Safety;
 use Exception;
 use App\Models\UploadLog;
 use App\Models\Master\Unit;
-use App\Models\Master\Topic;
-use App\Models\Master\Venue;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
-use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Master\TrainingSchedule;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Validator;
+use App\Http\Controllers\Api\BaseController;
+use App\Mail\Inspection\Safety\SafetyInspection;
+use App\Models\Inspection\InspectionStaticDocno;
+use App\Models\Inspection\Master\Frequency;
+use App\Models\Inspection\Master\Shift;
+use App\Models\Inspection\Safety\SafetyStatusLog;
+use App\Models\Inspection\Safety\MonthlyForkLiftInspection as SafetyMonthlyForkLiftInspection;
+use App\Models\Inspection\Safety\SignatureUpload;
+use App\Models\Master\ForkLiftType;
 
-class MonthlyForkLiftInspection extends Controller
+class MonthlyForkLiftInspection extends BaseController
 {
     private $unit;
     private $uploadlog;
-    
+    private $forklift_inspection;
+    private $document_reference;
+    private $statusLog;
+    private $signature;
+    private $forklift_type;
+    private $frequency;
+    private $shift;
+
     public function __construct()
     {
-
         $this->unit = new Unit();
         $this->uploadlog = new UploadLog();
+        $this->forklift_inspection = new SafetyMonthlyForkLiftInspection();
+        $this->document_reference = new InspectionStaticDocno();
+        $this->statusLog = new SafetyStatusLog();
+        $this->signature = new SignatureUpload();
+        $this->forklift_type = new ForkLiftType();
+        $this->frequency = new Frequency();
+        $this->shift = new Shift();
     }
 
     public function list()
@@ -35,108 +53,77 @@ class MonthlyForkLiftInspection extends Controller
                     $search = $request->search;
                 }
             }
-            $traning_schedule_array = TrainingSchedule::select('training_schedule.*', 'masters_unit.unit_name', 'masters_employee.emp_name', 'masters_department.department_name', 'training_masters_topic.topic_name', 'training_masters_venue.name_of_the_conference_hall');
-            $traning_schedule_array = $traning_schedule_array->leftJoin('masters_unit', 'training_schedule.unit_id', '=', 'masters_unit.id');
-            $traning_schedule_array = $traning_schedule_array->leftJoin('masters_employee', 'training_schedule.trainer_id', '=', 'masters_employee.id');
-            $traning_schedule_array = $traning_schedule_array->leftJoin('masters_department', 'training_schedule.department_id', '=', 'masters_department.id');
-            $traning_schedule_array = $traning_schedule_array->leftJoin('training_masters_topic', 'training_schedule.topic_id', '=', 'training_masters_topic.id');
-            $traning_schedule_array = $traning_schedule_array->leftJoin('training_masters_venue', 'training_schedule.venue_id', '=', 'training_masters_venue.id');
-            $org_total =  $traning_schedule_array;
-            $org_total_counts = $org_total->count();
+            $query = SafetyMonthlyForkLiftInspection::select(
+                'inspection_forklift_inpsection_monthly.*',
+                'inspection_shift_option.*',
+                'masters_unit.*',
+                'masters_location.*',
+                'inspection_frequency_option.*',
+                'inspection_forklift_inpsection_monthly.id as inspection_id',
+                'inspection_forklift_inpsection_monthly.created_at as inspection_created_at'
+            )
+                ->leftJoin('masters_location', 'inspection_forklift_inpsection_monthly.location', '=', 'masters_location.id')
+                ->leftJoin('inspection_shift_option', 'inspection_forklift_inpsection_monthly.shift', '=', 'inspection_shift_option.id')
+                ->leftJoin('masters_unit', 'inspection_forklift_inpsection_monthly.unit', '=', 'masters_unit.id')
+                ->leftJoin('inspection_frequency_option', 'inspection_forklift_inpsection_monthly.frequency', '=', 'inspection_frequency_option.id')
+                ->leftJoin('inspection_static_docno', 'inspection_forklift_inpsection_monthly.document_reference_id', '=', 'inspection_static_docno.id');
 
-            /**
-             * Role Based list view condition start
-             */
+            $org_total_counts = $query->count();
 
-            if (CheckUserRole(ROLE_SUPERADMIN)) {
-                $traning_schedule_array->where('training_schedule.trash', 'NO');
-            } elseif (CheckUserRole(ROLE_ADMIN)) {
-                $traning_schedule_array->where('training_schedule.trash', 'NO');
-            } elseif (CheckUserRole(ROLE_EHS_HEAD)) {
-                $traning_schedule_array->where('training_schedule.trash', 'NO');
-            } elseif (CheckUserRole(ROLE_TRAINER)) {
-                $trainer = DB::table('masters_employee')
-                    ->select('id', 'emp_id')
-                    ->where('emp_id', Auth::user()->employee_id)
-                    ->first();
-                if ($trainer) {
-                    $traning_schedule_array->where('training_schedule.trainer_id', $trainer->id)
-                        ->where('training_schedule.trash', 'NO');
-                }
-            } elseif (Auth::user()->role != ROLE_TRAINER || Auth::user()->role != ROLE_EHS_HEAD || Auth::user()->role != ROLE_SUPERADMIN || Auth::user()->role != ROLE_ADMIN) {
-                $nomination = DB::table('masters_employee')
-                    ->select('id', 'emp_id')
-                    ->where('emp_id', Auth::user()->employee_id)
-                    ->first();
-
-                if ($nomination) {
-                    $traning_schedule_array->where(function ($q) use ($nomination) {
-                        $q->whereExists(function ($subQuery) use ($nomination) {
-                            $subQuery->select(DB::raw(1))
-                                ->from('training_nomination_process')
-                                ->whereColumn('training_nomination_process.training_schedule_id', 'training_schedule.id')
-                                ->where('training_nomination_process.employee_id', $nomination->id);
-                        });
-                    })->where('training_schedule.trash', 'NO');
-                }
+            if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_OFFICER) || CheckUserRole(ROLE_L1_MANAGER) || CheckUserRole(ROLE_L2_MANAGER)) {
+            } else if (CheckUserRole(ROLE_FIRE_ASSOCIATES)) {
+                $query->where('inspection_forklift_inpsection_monthly.created_by', Auth::id());
             }
 
             if (!empty($search)) {
-                $searchDate = DBdateformat($search);
-
-                $traning_schedule_array->where(function ($query) use ($searchDate) {
-                    $query->orWhereDate('training_schedule.from_date', $searchDate)
-                        ->orWhereDate('training_schedule.to_date', $searchDate);
+                $searchDate = ($search);
+                $query->where(function ($query) use ($searchDate) {
+                    $query->orWhere('masters_unit.unit_name', $searchDate)
+                        ->orWhere('masters_location.location_name', $searchDate)
+                        ->orWhere('inspection_shift_option.shift', $searchDate)
+                        ->orWhere('inspection_frequency_option.frequency_name', $searchDate);
                 });
             }
 
+            $query_array = $query->orderBy('inspection_forklift_inpsection_monthly.id', 'DESC')->paginate($request->input('per_page', 10));
 
-            $traning_schedule_array = $traning_schedule_array->orderBy('training_schedule.id', 'DESC')->paginate($request->input('per_page', 10));
+            $inspection_list = $query_array->toArray();
 
-            $traning_schedule_list = $traning_schedule_array->toArray();
-
-            if (empty($traning_schedule_list['data'])) {
+            if (empty($inspection_list['data'])) {
                 return $this->sendError('No records found.', [], 404);
             }
 
-
             $data_array = [];
-            foreach ($traning_schedule_list['data'] as $listdata) {
+            foreach ($inspection_list['data'] as $datas) {
                 $data = [];
-                $data['id'] = $listdata['id'] ?? '';
-                $data['from_date'] = Displaydateformat($listdata['from_date'] ?? '');
-                $data['to_date'] = Displaydateformat($listdata['to_date'] ?? '');
-                $data['topic_name'] = $listdata['topic_name'] ?? '';
-                $data['trainer_id'] = getEmployeename($listdata['trainer_id'] ?? '');
-                $status = $listdata['training_status'] ?? null;
-                $data['training_status'] =
-                    in_array($status, [1, 2, 4, 5]) ? 'Training Pending' : ($status == 8 ? 'Training Completed' : (in_array($status, [6, 7]) ? 'Training in Progress' : ($status == 3 ? 'Training Rejected' : 'Unknown Status')));
-                $data['status'] = $listdata['status'] == 1 ? 'Active' : 'In-Active';
-                $data['created_by'] = getUsername($listdata['created_by'] ?? '');
-                $data['created_at'] = Displaydateformat($listdata['created_at'] ?? '');
-
-
-
+                $data['id'] = $datas['id'] ?? '';
+                $data['date_of_inspection'] = Displaydateformat($datas['date_of_inspection']);
+                $data['next_due'] = Displaydateformat($datas['next_due']);
+                $data['location_name'] = ($datas['location_name'] ?? '');
+                $data['shift_name'] = ($datas['shift'] ?? '');
+                $data['unit_name'] = ($datas['unit_name'] ?? '');
+                $data['frequency_name'] = ($datas['frequency_name'] ?? '');
+                $data['inspection_status'] = getInspectionStatus($datas['inspection_status'] ?? '');
+                $data['created_by'] = getUsername($datas['created_by'] ?? '');
+                $data['created_at'] = Displaydateformat($datas['created_at'] ?? '');
                 $data_array[] = $data;
             }
 
-
-            $traning_schedule_details = [
-                'per_page' => $traning_schedule_list['per_page'] ?? 0,
-                'current_page' => $traning_schedule_list['current_page'] ?? 0,
-                'from' => $traning_schedule_list['from'] ?? 0,
-                'to' => $traning_schedule_list['to'] ?? 0,
-                'total' => $traning_schedule_list['total'] ?? 0,
-                'total_page' => $traning_schedule_list['last_page'] ?? 0,
+            $inspection_details = [
+                'per_page' => $inspection_list['per_page'] ?? 0,
+                'current_page' => $inspection_list['current_page'] ?? 0,
+                'from' => $inspection_list['from'] ?? 0,
+                'to' => $inspection_list['to'] ?? 0,
+                'total' => $inspection_list['total'] ?? 0,
+                'total_page' => $inspection_list['last_page'] ?? 0,
                 'list' => $data_array,
             ];
 
-
             $success = [
-                'traning_schedule_details' => $traning_schedule_details
+                'inspection_details' => $inspection_details
             ];
 
-            return $this->sendResponse($success, 'Training Details');
+            return $this->sendResponse($success, 'Inspection Details');
         } else {
             return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
         }
@@ -148,139 +135,186 @@ class MonthlyForkLiftInspection extends Controller
         try {
             if (Auth::user()) {
                 $id = $request->id;
+                $inspection = $this->forklift_inspection
+                    ->leftJoin('inspection_static_docno', 'inspection_forklift_inpsection_monthly.document_reference_id', '=', 'inspection_static_docno.id')
+                    ->where('inspection_forklift_inpsection_monthly.id', $id)
+                    ->select(
+                        'inspection_forklift_inpsection_monthly.*',
+                        'inspection_static_docno.*',
+                        'inspection_forklift_inpsection_monthly.id as inspection_id',
+                        'inspection_forklift_inpsection_monthly.created_by as inspection_created_by',
+                        'inspection_forklift_inpsection_monthly.updated_at as inspection_updated_at',
+                    )
+                    ->first();
 
-                $training_schedule = $this->training_schedule->selectOne($id);
-                $nominationProcessList = $this->nomination_process->getNomination($training_schedule->id);
-                $trainingAssessmentList = $this->training_assessment_feedback->getAssessment($training_schedule->id);
-                $attendanceDate = $request->attendance_date;
-                $trainingAttendanceList = $this->training_attendance
-                    ->where('status', 1)
-                    ->where('training_schedule_id', $training_schedule->id)
-                    ->when($attendanceDate, function ($query, $attendanceDate) {
-                        return $query->whereDate('attendance_date', DBdateformat($attendanceDate));
-                    })
-                    ->get();
-                $statusLog = $this->training_statuslog->where('training_schedule_id', $training_schedule->id)->where('training_status', 3)->get();
-                $trainingAssessmentList = $this->training_assessment_feedback->getAssessment($training_schedule->id);
-                // Status Log
-                $EhsStatusLog = [];
+                $inspection_responses = json_decode($inspection->responses, true);
 
-                foreach ($statusLog as $log) {
-                    $EhsStatusLog[] = [
-                        'date' => Displaydateformat($log->created_at),
-                        'remarks' => $log->remarks,
+                $responses = [];
+                foreach ($inspection_responses as $inspection_response) {
+                    $data = [
+                        'question_name' => GetChecklistTypeDate($inspection_response['question_id']),
+                        'answer' => $inspection_response['answer'],
+                        'remarks' => $inspection_response['remarks'],
+                    ];
+                    $responses[] = $data;
+                }
+                $signature = GetSafetySignature(
+                    $inspection->inspection_created_by,
+                    $inspection->inspection_id,
+                    MONTHLY_FORKLIFT_INSPECTION,
+                );
+
+                $statuslog = $this->statusLog->selectOne($id, MONTHLY_FORKLIFT_INSPECTION);
+
+                if (count($statuslog) > 0) {
+                    foreach ($statuslog as $key => $status) {
+                        $statuslog[$key]->from_status = getInspectionStatus($status->from_status);
+                        $statuslog[$key]->to_status = getInspectionStatus($status->to_status);
+                        $statuslog[$key]->remarks = getInspectionStatus($status->remarks);
+                        $statuslog[$key]->approved_by = getUsername($status->approved_by);
+                        $statuslog[$key]->created_by = getUsername($status->created_by);
+                        $statuslog[$key]->created_at = Displaydateformat($status->created_at);
+                    }
+                } else {
+                    $statuslog = null;
+                }
+
+                $inspection_details = [
+                    'id' => $inspection->inspection_id,
+                    'issue_date' => Displaydateformat($inspection->issue_date),
+                    'doc_no' => $inspection->doc_no,
+                    'rev_dt' => $inspection->rev_dt,
+                    'date_of_inspection' => Displaydateformat($inspection->date_of_inspection),
+                    'next_due' => Displaydateformat($inspection->next_due),
+                    'location' => getLocationname($inspection->location),
+                    'shift' => getShiftname($inspection->shift),
+                    'unit' => getUnitname($inspection->unit),
+                    'frequency' => getFrequencyname($inspection->frequency),
+                    'identification_no' => $inspection->identification_no,
+                    'forklift_type' => GetForkLiftType($inspection->forklift_type),
+                    'capacity' => $inspection->capacity,
+                    'remarks' => $inspection->remarks ?? '',
+                    'responses' => $responses,
+                    'inspection_creator_signature' => admin_url($signature),
+                ];
+
+                if (!empty($inspection->verified_by)) {
+                    $updated_time = GetSafetyUpdatedTime(
+                        $inspection->verified_by,
+                        $inspection->inspection_id,
+                        MONTHLY_FORKLIFT_INSPECTION,
+                        WAITING_FOR_EHS_OFFICER_VERIFICATION,
+                    );
+
+                    $verifier_signature = GetSafetySignature(
+                        $inspection->verified_by,
+                        $inspection->inspection_id,
+                        MONTHLY_FORKLIFT_INSPECTION,
+                    );
+
+                    $inspection_details += [
+                        'inspection_verified_by' => getUsername($inspection->verified_by),
+                        'inspection_verified_at' => Displaydateformat($updated_time->created_at),
+                        'verifier_signature' => $verifier_signature,
+                        'capa_recomendation' => !empty($inspection->capa_recomendation) ? $inspection->capa_recomendation : $inspection->remarks,
                     ];
                 }
-                // Nomination Process
-                $nominationList = [];
+                // CAPA Remarks by Inspection Creator
+                if (!empty($inspection->capa_remarks)) {
+                    $capa_creator_time = GetSafetyUpdatedTime(
+                        $inspection->inspection_created_by,
+                        $inspection->inspection_id,
+                        MONTHLY_FORKLIFT_INSPECTION,
+                        WAITING_FOR_CAPA_ACTION,
+                    );
 
-                foreach ($nominationProcessList as $nomination) {
-                    $nominationList[] = [
-                        'id' => $nomination->id,
-                        'training_schedule_id' => $nomination->training_schedule_id,
-                        'emp_worker' => $nomination->emp_worker == 1 ? 'Employee' : 'Worker',
-                        'employee_id' => $nomination->emp_id,
-                        'department_id' => $nomination->department_name,
-                        'employee_name' => $nomination->emp_name,
-                        'email_id' => $nomination->email,
-                        'employee_type' => $nomination->employee_type,
-                        'last_training_attended_on' => $nomination->last_training_attended_on,
-                        'last_training_attended_topic' => $nomination->topic_name,
-                        'topic_id' => $nomination->topic_id,
-                        'from_date' => Displaydateformat($nomination->from_date),
-                        'to_date' => Displaydateformat($nomination->to_date),
-
-
+                    $inspection_details += [
+                        'capa_remarks' => $inspection->capa_remarks,
+                        'capa_created_by' => getUsername($inspection->inspection_created_by),
+                        'capa_created_at' => Displaydateformat($capa_creator_time->created_at),
+                        'capa_creator_signature' => admin_url($signature),
                     ];
                 }
 
-                // training attendance list
+                if (!empty($inspection->capa_ehs_remarks) && !empty($inspection->verified_by)) {
+                    $ehs_updated_time = GetSafetyUpdatedTime(
+                        $inspection->verified_by,
+                        $inspection->inspection_id,
+                        MONTHLY_FORKLIFT_INSPECTION,
+                        WAITING_FOR_CAPA_VERIFICATION,
+                    );
 
-                $AttendanceList = [];
-                foreach ($trainingAttendanceList as $attendance) {
-                    $AttendanceList[] = [
-                        'attendance_id' => $attendance->id,
-                        'training_schedule_id' => $attendance->training_schedule_id,
-                        'attendance_date' => Displaydateformat($attendance->attendance_date),
-                        'employee_name' => $attendance->emp_name,
-                        'email' => $attendance->email,
-                        'checked' => $attendance->attendance_status == 1 ? 'Yes' : 'No',
-                    ];
-                }
-                // training assessment list
-                $AssessmentList = [];
+                    $ehs_signature = GetSafetySignature(
+                        $inspection->verified_by,
+                        $inspection->inspection_id,
+                        MONTHLY_FORKLIFT_INSPECTION,
+                    );
 
-                foreach ($trainingAssessmentList as $assessment) {
-                    $AssessmentList[] = [
-                        'employee_name' => $assessment->emp_name,
-                        'checked' => $assessment->attended_status == 1 ? 'Yes' : 'No',
-                        'mark' => $assessment->mark,
-                        'assessment' =>   $assessment->assessment == 1 ? 'Pass' : ($assessment->mark == 2 ? 'Fail' : 'Not Attended'),
-                        'feed_back' => !empty($assessment->feedback) ? strip_tags($assessment->feedback) : '-',
+                    $inspection_details += [
+                        'capa_ehs_remarks' => $inspection->capa_ehs_remarks,
+                        'capa_ehs_by' => getUsername($inspection->verified_by),
+                        'capa_ehs_at' => Displaydateformat($ehs_updated_time->created_at),
+                        'capa_ehs_signature' => admin_url($ehs_signature),
                     ];
                 }
 
-                // training feed back
 
-                $trainingFeedbackList = collect();
+                if (!empty($inspection->l1_manager_verified_by)) {
+                    $l1_signature = GetSafetySignature(
+                        $inspection->l1_manager_verified_by,
+                        $inspection->inspection_id,
+                        MONTHLY_FORKLIFT_INSPECTION,
+                    );
 
-                foreach ($trainingAssessmentList as $assessment) {
-                    $feedbackList = $this->training_feedback->getfeedbackList($assessment->id);
-                    $trainingFeedbackList = $trainingFeedbackList->merge($feedbackList);
-                }
+                    $l1_updated_time = GetSafetyUpdatedTime(
+                        $inspection->l1_manager_verified_by,
+                        $inspection->inspection_id,
+                        MONTHLY_FORKLIFT_INSPECTION,
+                        WAITING_FOR_L1_VERIFICATION,
+                    );
 
-                $feedBack = [];
-                foreach ($trainingFeedbackList as $feedback) {
-                    $feedBack[] = [
-                        'employee_id' => $feedback->emp_id,
-                        'employee_name' => $feedback->emp_name,
-                        'trainer_feedback' => $feedback->trainer_feedback,
-                        'training_feedback' => $feedback->training_feedback,
+                    $inspection_details += [
+                        'l1_verified_by' => getUsername($inspection->l1_manager_verified_by),
+                        'l1_remarks' => $inspection->level_one_manager_remarks ?? '',
+                        'l1_updated_time' => Displaydateformat($l1_updated_time->created_at),
+                        'l1_signature' => admin_url($l1_signature),
                     ];
                 }
-                $ehsData = [];
 
-                if (!empty($EhsStatusLog)) {
-                    $ehsData['rejection_log'] = $EhsStatusLog;
-                }
+                if ($inspection->inspection_status == INSPECTION_APPROVED && !empty($inspection->approved_by)) {
+                    $l2_signature = GetSafetySignature(
+                        $inspection->l2_manager_verified_by,
+                        $inspection->inspection_id,
+                        MONTHLY_FORKLIFT_INSPECTION,
+                    );
 
-                if (!empty($training_schedule->approver_name) && !empty($training_schedule->date) && !empty($training_schedule->remark)) {
-                    $ehsData['approver_name'] = $training_schedule->approver_name;
-                    $ehsData['date'] = Displaydateformat($training_schedule->date);
-                    $ehsData['remarks'] = $training_schedule->remark;
+                    $inspection_details += [
+                        'l2_verified_by' => getUsername($inspection->l2_manager_verified_by),
+                        'l2_remarks' => $inspection->level_two_manager_remarks ?? '',
+                        'l2_updated_time' => Displaydateformat($inspection->inspection_updated_at),
+                        'l2_signature' => admin_url($l2_signature) ?? '',
+                    ];
+
+                    $approver_signature = GetSafetySignature(
+                        $inspection->approved_by,
+                        $inspection->inspection_id,
+                        MONTHLY_FORKLIFT_INSPECTION,
+                    );
+
+                    $inspection_details += [
+                        'approved_by' => getUsername($inspection->approved_by),
+                        'approved_remarks' => $inspection->remarks ?? '',
+                        'approved_updated_time' => Displaydateformat($inspection->inspection_updated_at),
+                        'approved_signature' => admin_url($approver_signature) ?? '',
+                    ];
                 }
 
                 $success = [
-
-                    'id' => $training_schedule->id,
-                    'from_date' => Displaydateformat($training_schedule->from_date),
-                    'to_date' => Displaydateformat($training_schedule->to_date),
-                    'start_time' => $training_schedule->start_time,
-                    'end_time' => $training_schedule->end_time,
-                    'topic_id' => $training_schedule->topic_name,
-                    'trainer_id' => ($training_schedule->emp_name),
-                    'unit_id' => ($training_schedule->unit_name),
-                    'department_id' => ($training_schedule->department_name),
-                    'target_trainees' => ($training_schedule->target_trainees),
-                    'venue_id' => ($training_schedule->name_of_the_conference_hall),
-                    'training_man_hours' => ($training_schedule->training_man_hours),
-                    'training_status' => ($training_schedule->training_status == 1 ||
-                        $training_schedule->training_status == 2 ||
-                        $training_schedule->training_status == 4 ||
-                        $training_schedule->training_status == 5) ? 'Training Pending' : ($training_schedule->training_status == 8 ? 'Training Completed' : ($training_schedule->training_status == 6 ||
-                        $training_schedule->training_status == 7 ? 'Training in Progress' : ($training_schedule->training_status == 3 ? 'Training Rejected' : 'Unknown Status'))),
-                    'status' =>  $training_schedule->status == 1 ? 'Active' : 'In-Active',
-                    'created_by' => getusername($training_schedule->created_by),
-                    'created_at' => Displaydateformat($training_schedule->created_at),
-                    'ehs_head_approval_pending' => $ehsData,
-                    'nomination_process' => $nominationList,
-                    'training_attendance' => $AttendanceList,
-                    'training_assessment' => $AssessmentList,
-                    'training_feedback' => $feedBack,
-
+                    'id' => $inspection->inspection_id,
+                    'inspection_details' => $inspection_details,
+                    '$statuslog' => $statuslog,
                 ];
-
-                return $this->sendResponse($success, 'Training Details');
+                return $this->sendResponse($success, 'Inspection Details');
             } else {
                 return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
             }
@@ -291,64 +325,133 @@ class MonthlyForkLiftInspection extends Controller
     }
 
 
-    public function storeAttendance(Request $request)
+    public function store(Request $request)
     {
         try {
+            $rules = [
+                'doc_no' => 'required',
+                'inspection_date' => 'required',
+                'location_id' => 'required',
+                'shift_id' => 'required',
+                'next_due' => 'required',
+                'unit_id' => 'required',
+                'frequency_id' => 'required',
+                'identification_no' => 'required',
+                'forklift_type' => 'required',
+                'capacity' => 'required',
+            ];
 
+            $messages = [
+                'doc_no.required' => 'Document number is required.',
+                'inspection_date.required' => 'Inspection  Date is Required',
+                'location_id.required' => 'Location is Required',
+                'shift_id.required' => 'Shift is Required',
+                'next_due.required' => 'Next due date is Required',
+                'unit_id.required' => 'Unit is Required',
+                'frequency_id.required' => 'Frequency is Required',
+                'forklift_type.required' => 'Forklift Type is Required',
+                'capacity.required' => 'Capacity is Required',
+                'identification_no.required' => 'Identification Number is Required',
+            ];
 
+            $validator = Validator::make($request->all(), $rules, $messages);
 
-            // Save or update attendance
-            $success = $this->training_attendance->storeOrUpdate_api($request);
+            if ($validator->fails()) {
+                return $this->sendError('Validation Error', $validator->errors(), 422);
+            }
 
-            $attendanceDate = DBdateformat($request->attendance_date);
-            $trainingScheduleId = ($request->id);
+            $forklift_inspection = $this->forklift_inspection->store_api();
+            $id = $forklift_inspection->id;
+            $signature_update = $this->signature->signatureUpload_api(MONTHLY_FORKLIFT_INSPECTION, $forklift_inspection->id);
 
-            $trainingHrsPerDay = $this->training_schedule
-                ->where('id', $trainingScheduleId)
-                ->value('training_hrs_perday');
+            $ehsOfficer = GetEHSOfficer();
+            $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
+            $mailsubject = 'Monthly Forklift Inspection';
+            $notificationData = array(
+                'notification_type' => SAFETY_INSPECTION,
+                'module_type' => 2,
+                'notification_message' => $mailsubject,
+                'mobile_notification' => json_encode(array(
+                    'title' => $mailsubject,
+                    'message' => "Fire Associate create the Monthly ForkLift Inspection",
+                    'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
+                    'id' => $forklift_inspection->id,
+                    'module' => 1,
+                )),
+                'web_link' =>  admin_url('safety/forklift-inspection/monthly/verification/' . encryptId($forklift_inspection->id) . '/ehs'),
+                'assigned_user' => array_to_string($ehsOfficers),
+                'created_by' => Auth::id(),
+            );
+            notificationSave($notificationData);
 
+            $title = 'Fire Associate create the Monthly ForkLift Inspection';
+            foreach ($ehsOfficers as $user) {
+                $email_id = getUseremail($user);
+                $url = admin_url('safety/forklift-inspection/monthly/verification/' . encryptId($id) . '/ehs');
+                $details = array(
+                    'safety_type' => 'Monthly Forklift Inspection',
+                    'email' => $email_id,
+                    'mail_subject' => $mailsubject,
+                    'title' => $title,
+                    'url' => $url,
+                    'data' => $forklift_inspection
+                );
+                Mail::to($email_id)->queue(new SafetyInspection($details));
+            }
 
-            $presentCount = $this->training_attendance
-                ->where('training_schedule_id', $trainingScheduleId)
-                ->where('attendance_date', $attendanceDate)
-                ->where('attendance_status', 1)
-                ->count();
+            $insert_array = [
+                'type' => MONTHLY_FORKLIFT_INSPECTION,
+                'inspection_id' => $forklift_inspection->id,
+                'from_status' => 0,
+                'to_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,
+                'created_by' => Auth::id(),
+            ];
+            $this->statusLog->create($insert_array);
 
-            $totalManHoursForDay = $presentCount * $trainingHrsPerDay;
-
-            $existingTrainingSchedule = $this->training_schedule
-                ->select('training_man_hours')
-                ->where('id', $trainingScheduleId)
-                ->first();
-
-            $newTotalManHours = $existingTrainingSchedule && $existingTrainingSchedule->training_man_hours
-                ? $existingTrainingSchedule->training_man_hours + $totalManHoursForDay
-                : $totalManHoursForDay;
-
-            $this->training_schedule->updateTrainingManHours($trainingScheduleId, $newTotalManHours);
-
-            return $this->sendResponse($success, 'Attendance Stored Successfully');
+            $success = [
+                "success" => $forklift_inspection,
+            ];
+            return $this->sendResponse($success, 'Inspection Created');
         } catch (Exception $ex) {
             report($ex);
             return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
         }
     }
 
-    public function endTrainingStore(Request $request)
+    public function forklift_type()
     {
         try {
-            $trainingScheduleId = ($request->training_schedule_id);
-            $training_status = TRAINING_FEEDBACK_ADMIN_APPROVE;
-
-            $AssessmentStore = $this->training_assessment_feedback->store_api();
-            $updateStatus = $this->training_schedule->updateStatus($trainingScheduleId, $training_status);
-            $statuslog =  $this->training_statuslog->storestatus($trainingScheduleId, $training_status);
-            $success = [
-                'training_schedule' =>  $trainingScheduleId,
-            ];
-            return $this->sendResponse($success, 'Assessment update Successfully!');
+            $forklift_type = $this->forklift_type->getForkLift();
+            $success = array(
+                'forklift_types' => $forklift_type,
+            );
+            return $this->sendResponse($success, 'Forklift Type');
         } catch (Exception $ex) {
-            report($ex);
+
+            return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
+        }
+    }
+    public function frequencyName()
+    {
+        try {
+            $frquencies = $this->frequency->getFrequency();
+            $success = array(
+                'frquencies' => $frquencies,
+            );
+            return $this->sendResponse($success, 'Frequency');
+        } catch (Exception $ex) {
+            return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
+        }
+    }
+    public function shift()
+    {
+        try {
+            $shifts = $this->shift->getShiftname();
+            $success = array(
+                'shifts' => $shifts,
+            );
+            return $this->sendResponse($success, 'Shift');
+        } catch (Exception $ex) {
             return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
         }
     }

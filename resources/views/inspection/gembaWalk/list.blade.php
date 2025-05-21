@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Gemba Walk ')
+@section('title', 'Gemba Walk List')
 @section('pageurl', admin_url('gemba-walk/list'))
 
 @section('content')

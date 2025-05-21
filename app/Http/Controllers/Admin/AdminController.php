@@ -112,11 +112,124 @@ class AdminController extends Controller
                         ],
 
                     ];
+
+                    $moduleLink = [
+                        [
+                            'link' => 'ppe_request/list',
+                            'name' => 'PPE Request',
+                            'count' => gettotalCount('ppe_request'),
+                            'icon' => 'bx bx-message-square-detail',
+                            'icon_color' => 'text-primary',
+                        ],
+                        [
+                            'link' => 'ppe_request/list',
+                            'name' => 'PPE Exemption',
+                            'count' => gettotalCount('ppe_exception'),
+                            'icon' => 'bx bx-message-square-detail',
+                            'icon_color' => 'text-primary',
+                        ],
+                        [
+                            'link' => 'safetypermit/list',
+                            'name' => 'Safety Permit',
+                            'count' => gettotalCount('safetypermit'),
+                            'icon' => 'bx bx-message-square-detail',
+                            'icon_color' => 'text-primary',
+                        ],
+
+                        [
+                            'link' => 'training_schedule/list',
+                            'name' => 'Training',
+                            'count' => gettotalCount('training'),
+                            'icon' => 'bx bx-message-square-detail',
+                            'icon_color' => 'text-primary',
+                        ],
+
+                        [
+                            'link' => 'audit/assessment/list',
+                            'name' => '6S Audit Assessment',
+                            'count' => gettotalCount('audit_assessment'),
+                            'icon' => 'bx bx-message-square-detail',
+                            'icon_color' => 'text-primary',
+                        ],
+
+                        [
+                            'link' => 'audit/6s-analysis/list',
+                            'name' => 'Audit Analysis',
+                            'count' => gettotalCount('audit_analysis'),
+                            'icon' => 'bx bx-message-square-detail',
+                            'icon_color' => 'text-primary',
+                        ],
+
+                        [
+                            'link' => 'audit/monthly-audit/audit-plan/list',
+                            'name' => 'Monthly Audit Plan',
+                            'count' => gettotalCount('monthly_audit'),
+                            'icon' => 'bx bx-message-square-detail',
+                            'icon_color' => 'text-primary',
+                        ],
+
+                        [
+                            'link' => 'audit/inter-unit-audit/checklist/list',
+                            'name' => 'Inter Unit Audit',
+                            'count' => gettotalCount('inter_unit_audit'),
+                            'icon' => 'bx bx-message-square-detail',
+                            'icon_color' => 'text-primary',
+                        ],
+
+                        [
+                            // 'link' => 'audit/inter-unit-audit/checklist/list',
+                            'name' => 'Fire Inspection',
+                            'count' => GetInspectionCount('Fire'),
+                            'icon' => 'bx bx-message-square-detail',
+                            'icon_color' => 'text-primary',
+                        ],
+
+                        [
+                            // 'link' => 'audit/inter-unit-audit/checklist/list',
+                            'name' => 'Gemba Walk Inspection',
+                            'count' => GetInspectionCount('GembaWalk'),
+                            'icon' => 'bx bx-message-square-detail',
+                            'icon_color' => 'text-primary',
+                        ],
+
+                        [
+                            // 'link' => 'audit/inter-unit-audit/checklist/list',
+                            'name' => 'OHC Inspection',
+                            'count' => GetInspectionCount('Ohc'),
+                            'icon' => 'bx bx-message-square-detail',
+                            'icon_color' => 'text-primary',
+                        ],
+
+                        [
+                            // 'link' => 'audit/inter-unit-audit/checklist/list',
+                            'name' => 'RRAA Inspection',
+                            'count' => GetInspectionCount('RRAA'),
+                            'icon' => 'bx bx-message-square-detail',
+                            'icon_color' => 'text-primary',
+                        ],
+
+                        [
+                            // 'link' => 'audit/inter-unit-audit/checklist/list',
+                            'name' => 'Safety Inspection',
+                            'count' => GetInspectionCount('Safety'),
+                            'icon' => 'bx bx-message-square-detail',
+                            'icon_color' => 'text-primary',
+                        ],
+
+                          [
+                            // 'link' => 'audit/inter-unit-audit/checklist/list',
+                            'name' => 'MSDS',
+                            'count' => GetInspectionCount('MSDS'),
+                            'icon' => 'bx bx-message-square-detail',
+                            'icon_color' => 'text-primary',
+                        ],
+                    ];
                     $companyList  = $this->company->where('status', '1')->get();
 
                     $data = [
                         'masterLink' => $masterLink,
                         'companyList' => $companyList,
+                        'moduleLink' => $moduleLink,
                     ];
                 }
                 if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_ADMIN) || CheckUserRole(ROLE_EHS_HEAD)) {

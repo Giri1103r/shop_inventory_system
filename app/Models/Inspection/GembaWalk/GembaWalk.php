@@ -25,6 +25,7 @@ class GembaWalk extends Model
         'gemba_walk_status',
         'observation_needed',
         'capa_needed',
+        'responsible_person_id',
         'status',
         'trash',
         'created_by',
@@ -50,6 +51,11 @@ class GembaWalk extends Model
 
         $org_total =  $query;
         $org_total_counts = $org_total->count();
+
+        if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_OFFICER)) {
+        } else if (CheckUserRole(ROLE_FLOOR_MANAGER)) {
+            $query->where('inspection_gemba_walk.responsible_person_id', Auth::id());
+        }
 
         if ($request->search['value'] != null || $request->search['value'] != '') {
             $search = $request->search['value'];
@@ -114,6 +120,53 @@ class GembaWalk extends Model
         return $datas;
     }
 
+    public function listApi()
+    {
+        $request = request();
+
+        $search = '';
+        $query = $this->select('inspection_gemba_walk.*', 'inspection_gemba_walk_status.status_name', 'inspection_gemba_walk_status.bg_color', 'inspection_shift_option.shift', 'inspection_gemba_walk.id as gemba_walk_id')
+            ->leftJoin('inspection_shift_option', 'inspection_shift_option.id', '=', 'inspection_gemba_walk.shift_id')
+            ->leftJoin('inspection_gemba_walk_status', 'inspection_gemba_walk_status.id', '=', 'inspection_gemba_walk.gemba_walk_status');
+
+        $org_total =  $query;
+        $org_total_counts = $org_total->count();
+
+        if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_OFFICER)) {
+        } else if (CheckUserRole(ROLE_FLOOR_MANAGER)) {
+            $query->where('inspection_gemba_walk.responsible_person_id', Auth::id());
+        }
+
+        if ($request->search != null || $request->search != '') {
+            $search = $request->search;
+
+            $query->where(function ($query) use ($search) {
+                $query
+                    ->orWhere('inspection_gemba_walk.gemba_walk_auto_id', 'LIKE', '%' . $search . '%')
+                    ->orWhere('inspection_shift_option.shift', 'LIKE', '%' . $search . '%')
+                    ->orWhere('inspection_gemba_walk.date', 'LIKE', '%' . DBdateformat($search) . '%');
+            });
+        }
+
+
+        $data = $query->orderby('inspection_gemba_walk.id')->get();
+        $inspection_data = $data->toArray();
+        $data_array = [];
+        $refined_data = [];
+        foreach($inspection_data as $index => $listdata){
+            $data_array['id'] = $listdata['id'];
+            $data_array['gemba_walk_auto_id'] = $listdata['gemba_walk_auto_id'];
+            $data_array['date'] = $listdata['date'];
+            $data_array['shift_name'] = getShift($listdata['shift_id']);
+            $data_array['status'] = $listdata['status_name'];
+            $data_array['created_at'] = Displaydateformat($listdata['created_at']);
+            $data_array['created_by'] = getUsername($listdata['created_by']);
+            $refined_data[$index] = $data_array;
+
+        }
+        return $refined_data;
+    }
+
     public function store()
     {
         $request = request();
@@ -128,6 +181,7 @@ class GembaWalk extends Model
                 'company_id' => Auth::user()->company_id,
                 'observation_needed' => decryptId($request->observation_needed),
                 'capa_needed' => decryptId($request->is_passed),
+                'responsible_person_id' => decryptId($request->responsible_person_id),
                 'gemba_walk_status' => GEMBA_WALK_INSPECTION_WAITING_FOR_FLOOR_MANAGER_VERIFICATION,
                 'created_by' => Auth::id(),
             );
@@ -139,6 +193,7 @@ class GembaWalk extends Model
                 'company_id' => Auth::user()->company_id,
                 'observation_needed' => decryptId($request->observation_needed),
                 'capa_needed' => decryptId($request->is_passed),
+                'responsible_person_id' => decryptId($request->responsible_person_id),
                 'gemba_walk_status' => GEMBA_WALK_INSPECTION_CLOSED,
                 'created_by' => Auth::id(),
                 'verified_by' => Auth::id()
@@ -307,6 +362,16 @@ class GembaWalk extends Model
         $query = $results->groupBy('gemba_walk_id');
 
         return  $query;
+    }
+
+    public function getResponsiblePerson($id)
+    {
+        $data = $this->where('inspection_gemba_walk.id', $id)->where('status', 1)->first();
+        if ($data != null) {
+            return $data->responsible_person_id;
+        }
+
+        return false;
     }
 
 
