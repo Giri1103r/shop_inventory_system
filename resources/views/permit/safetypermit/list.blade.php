@@ -43,7 +43,7 @@
                                                 style="width: 100%">
                                                 <option value="">Select Company</option>
                                                 @if (CheckUserRole(ROLE_EHS_OFFICER) || checkUserRole(ROLE_EHS_HEAD))
-                                                    @foreach ($company as $list)
+                                                    @foreach ($companyList as $list)
                                                         @php
                                                             $isEhs = in_array(auth()->user()->role, [
                                                                 ROLE_EHS_HEAD,
@@ -66,7 +66,7 @@
                                                         </option>
                                                     @endforeach
                                                 @else
-                                                    @foreach ($company as $list)
+                                                    @foreach ($companyList as $list)
                                                         <option value="{{ encryptId($list->id) }}">
                                                             {{ $list->company_name }}
                                                         </option>
