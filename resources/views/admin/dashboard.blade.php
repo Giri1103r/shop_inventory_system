@@ -893,7 +893,7 @@
                     </div>
                 </div> --}}
 
-            <div class="row">
+            <div class="row" style="display: none">
 
                 <div class="col-xl-6 col-xxl-6">
                     <div class="card dashboard_card responsive">
@@ -1147,8 +1147,8 @@
                     form.submit();
                 }
 
-                
-                function redirectToPPE(sub,month) {
+
+                function redirectToPPE(sub, month) {
 
                     Fromdate = $("#fromDate").val();
                     Todate = $("#toDate").val();
@@ -1219,7 +1219,7 @@
                     form.submit();
                 }
 
-                 function redirectToTraining(openclose) {
+                function redirectToTraining(openclose) {
 
                     Fromdate = $("#fromDate").val();
                     Todate = $("#toDate").val();
@@ -1289,6 +1289,7 @@
                     document.body.appendChild(form);
                     form.submit();
                 }
+
                 function redirectopermanage(link) {
                     var url = "{{ admin_url('') }}" + link;
                     window.location.href = url;
@@ -1938,598 +1939,596 @@
                     // Initial load
                     filterDashboard();
                 });
-            }
 
-
-            function loadfmonthwisetraining(CompanyId = '', Fromdate = '', Todate = '') {
-                var url = "{{ admin_url('dashboard/monthwisetraining') }}"
-                var data = {
-                    CompanyId: CompanyId,
-                    Fromdate: Fromdate,
-                    Todate: Todate,
-                };
-                $('#LoadmonthwisetrainingDiv').html('');
-                $.ajax({
-                    type: 'get',
-                    url: url,
-                    data: data,
-                    cache: false,
-                    success: function(dataAjx) {
-
-                        $('#LoadmonthwisetrainingDiv').html(dataAjx);
-                    }
-                });
-            }
-
-            function loadtraining_count_status(CompanyId = '', Fromdate = '', Todate = '') {
-                var url = "{{ admin_url('dashboard/trainingStatusCount') }}"
-                var data = {
-                    CompanyId: CompanyId,
-                    Fromdate: Fromdate,
-                    Todate: Todate,
-                };
-                $('#trainingStatusPieChartDiv').html('');
-                $.ajax({
-                    type: 'get',
-                    url: url,
-                    data: data,
-                    cache: false,
-                    success: function(dataAjx) {
-
-                        $('#trainingStatusPieChartDiv').html(dataAjx);
-                    }
-                });
-            }
-
-            function LoadiirTypewiseRCPACount(CompanyId = '', Fromdate = '', Todate = '') {
-                var url = "{{ admin_url('dashboard/IIRTypeWiseRCPA') }}"
-                var data = {
-                    CompanyId: CompanyId,
-                    Fromdate: Fromdate,
-                    Todate: Todate,
-                };
-                $('#iirTypewiseRCPACountDiv').html('');
-                $.ajax({
-                    type: 'get',
-                    url: url,
-                    data: data,
-                    cache: false,
-                    success: function(dataAjx) {
-
-                        $('#iirTypewiseRCPACountDiv').html(dataAjx);
-                    }
-                });
-            }
-
-            function loadmonthewisecount(CompanyId = '', Fromdate = '', Todate = '') {
-                var url = "{{ admin_url('dashboard/monthwiseptw') }}"
-                var data = {
-                    CompanyId: CompanyId,
-                    Fromdate: Fromdate,
-                    Todate: Todate,
-                };
-                $('#monthwiseptwDiv').html('');
-                $.ajax({
-                    type: 'get',
-                    url: url,
-                    data: data,
-                    cache: false,
-                    success: function(dataAjx) {
-
-                        $('#monthwiseptwDiv').html(dataAjx);
-                    }
-                });
-            }
-
-
-            function LoadauditFindingsCount(CompanyId = '', Fromdate = '', Todate = '') {
-                var url = "{{ admin_url('dashboard/auditFindings') }}"
-                var data = {
-                    CompanyId: CompanyId,
-                    Fromdate: Fromdate,
-                    Todate: Todate,
-                };
-                $('#LoadauditFindingsCountDiv').html('');
-                $.ajax({
-                    type: 'get',
-                    url: url,
-                    data: data,
-                    cache: false,
-                    success: function(dataAjx) {
-
-                        $('#LoadauditFindingsCountDiv').html(dataAjx);
-                    }
-                });
-            }
-
-            function IncidentsCount(CompanyId = '', Fromdate = '', Todate = '') {
-                var url = "{{ admin_url('dashboard/total-incident') }}"
-                var data = {
-                    CompanyId: CompanyId,
-                    Fromdate: Fromdate,
-                    Todate: Todate,
-                };
-                $('#TotalIncidentsCountDiv').html('');
-                $.ajax({
-                    type: 'get',
-                    url: url,
-                    data: data,
-                    cache: false,
-                    success: function(dataAjx) {
-                        $('#TotalIncidentsCountDiv').html(dataAjx);
-                    }
-                });
-            }
-
-            function GembaWalkObservationReport(CompanyId = '', Fromdate = '', Todate = '') {
-                var url = "{{ admin_url('dashboard/gemba-walk-observation') }}"
-                var data = {
-                    CompanyId: CompanyId,
-                    Fromdate: Fromdate,
-                    Todate: Todate,
-                };
-                $('#gembaWalkDiv').html('');
-                $.ajax({
-                    type: 'get',
-                    url: url,
-                    data: data,
-                    cache: false,
-                    success: function(dataAjx) {
-
-                        $('#gembaWalkDiv').html(dataAjx);
-                    }
-                });
-            }
-
-            function dailyObservation(CompanyId = '', Fromdate = '', Todate = '') {
-                var url = "{{ admin_url('dashboard/dailyObservation') }}"
-                var data = {
-                    CompanyId: CompanyId,
-                    Fromdate: Fromdate,
-                    Todate: Todate,
-                };
-                $('#dailyObservation').html('');
-                $.ajax({
-                    type: 'get',
-                    url: url,
-                    data: data,
-                    cache: false,
-                    success: function(dataAjx) {
-
-                        $('#dailyObservation').html(dataAjx);
-                    }
-                });
-            }
-
-            function heatmapofIms(CompanyId = '', Fromdate = '', Todate = '') {
-                var url = "{{ admin_url('dashboard/heatmap-of-imsData') }}"
-                var data = {
-                    CompanyId: CompanyId,
-                    Fromdate: Fromdate,
-                    Todate: Todate,
-                };
-                $('#heatmapofImsDataDiv').html('');
-                $.ajax({
-                    type: 'get',
-                    url: url,
-                    data: data,
-                    cache: false,
-                    success: function(dataAjx) {
-
-                        $('#heatmapofImsDataDiv').html(dataAjx);
-                    }
-                });
-            }
-
-            function IncidentType(CompanyId = '', Fromdate = '', Todate = '') {
-                var url = "{{ admin_url('dashboard/incident-type-chart') }}"
-                var data = {
-                    CompanyId: CompanyId,
-                    Fromdate: Fromdate,
-                    Todate: Todate,
-                };
-                $('#IncidentTypeChartDiv').html('');
-                $.ajax({
-                    type: 'get',
-                    url: url,
-                    data: data,
-                    cache: false,
-                    success: function(dataAjx) {
-
-                        $('#IncidentTypeChartDiv').html(dataAjx);
-                    }
-                });
-            }
-
-            function loadinjurychart(CompanyId = '', Fromdate = '', Todate = '') {
-                var url = "{{ admin_url('dashboard/injurypart') }}"
-                var data = {
-                    CompanyId: CompanyId,
-                    Fromdate: Fromdate,
-                    Todate: Todate,
-                };
-                $('#loadinjurychartDiv').html('');
-                $.ajax({
-                    type: 'get',
-                    url: url,
-                    data: data,
-                    cache: false,
-                    success: function(dataAjx) {
-
-                        $('#loadinjurychartDiv').html(dataAjx);
-                    }
-                });
-            }
-
-
-            function LoadPTWAvgTimeChartCount(CompanyId = '', Fromdate = '', Todate = '') {
-                var url = "{{ admin_url('dashboard/PTWAvgTimeChart') }}"
-                var data = {
-                    CompanyId: CompanyId,
-                    Fromdate: Fromdate,
-                    Todate: Todate,
-                };
-                $('#LoadPTWAvgTimeChartCount').html('');
-                $.ajax({
-                    type: 'get',
-                    url: url,
-                    data: data,
-                    cache: false,
-                    success: function(dataAjx) {
-
-                        $('#LoadPTWAvgTimeChartCount').html(dataAjx);
-                    }
-                });
-            }
-
-            function LoadPPEAvailabilityChartCount(CompanyId = '', Fromdate = '', Todate = '') {
-                var url = "{{ admin_url('dashboard/PPEAvailabilityChart') }}"
-                var data = {
-                    CompanyId: CompanyId,
-                    Fromdate: Fromdate,
-                    Todate: Todate,
-                };
-                $('#LoadPPEAvailabilityChartCountDiv').html('');
-                $.ajax({
-                    type: 'get',
-                    url: url,
-                    data: data,
-                    cache: false,
-                    success: function(dataAjx) {
-
-                        $('#LoadPPEAvailabilityChartCountDiv').html(dataAjx);
-                    }
-                });
-            }
-
-            function ptw_type_wise_count(CompanyId = '', Fromdate = '', Todate = '') {
-                var url = "{{ admin_url('dashboard/ptw-type-wise-count') }}"
-                var data = {
-                    CompanyId: CompanyId,
-                    Fromdate: Fromdate,
-                    Todate: Todate,
-                };
-                $('#ptw_type_wise_countDiv').html('');
-                $.ajax({
-                    type: 'get',
-                    url: url,
-                    data: data,
-                    cache: false,
-                    success: function(dataAjx) {
-
-                        $('#ptw_type_wise_countDiv').html(dataAjx);
-                    }
-                });
-            }
-
-            function ptw_open_close_count(CompanyId = '', Fromdate = '', Todate = '') {
-                var url = "{{ admin_url('dashboard/ptw-open-close') }}"
-                var data = {
-                    CompanyId: CompanyId,
-                    Fromdate: Fromdate,
-                    Todate: Todate,
-                };
-                $('#ptw_open_close_countDiv').html('');
-                $.ajax({
-                    type: 'get',
-                    url: url,
-                    data: data,
-                    cache: false,
-                    success: function(dataAjx) {
-
-                        $('#ptw_open_close_countDiv').html(dataAjx);
-                    }
-                });
-            }
-
-            function inspectionWiseCount(CompanyId = '', Fromdate = '', Todate = '') {
-                var url = "{{ admin_url('dashboard/inspection-count') }}"
-                var data = {
-                    CompanyId: CompanyId,
-                    Fromdate: Fromdate,
-                    Todate: Todate,
-                };
-                $('#inspection_wise_countDiv').html('');
-                $.ajax({
-                    type: 'get',
-                    url: url,
-                    data: data,
-                    cache: false,
-                    success: function(dataAjx) {
-
-                        $('#inspection_wise_countDiv').html(dataAjx);
-                    }
-                });
-            }
-
-            function LoadnearMissCount(CompanyId = '', Fromdate = '', Todate = '') {
-                var url = "{{ admin_url('dashboard/nearMissFrequency') }}"
-                var data = {
-                    CompanyId: CompanyId,
-                    Fromdate: Fromdate,
-                    Todate: Todate,
-                };
-                $('#nearMissCountDiv').html('');
-                $.ajax({
-                    type: 'get',
-                    url: url,
-                    data: data,
-                    cache: false,
-                    success: function(dataAjx) {
-
-                        $('#nearMissCountDiv').html(dataAjx);
-                    }
-                });
-            }
-
-            function LoadiirTypewiseUAUCCount(CompanyId = '', Fromdate = '', Todate = '') {
-                var url = "{{ admin_url('dashboard/IIRTypeWiseUAUC') }}"
-                var data = {
-                    CompanyId: CompanyId,
-                    Fromdate: Fromdate,
-                    Todate: Todate,
-                };
-                $('#iirTypewiseUAUCCountDiv').html('');
-                $.ajax({
-                    type: 'get',
-                    url: url,
-                    data: data,
-                    cache: false,
-                    success: function(dataAjx) {
-
-                        $('#iirTypewiseUAUCCountDiv').html(dataAjx);
-                    }
-                });
-            }
-
-            function AccidentReportUnitWiseCount(CompanyId = '', Fromdate = '', Todate = '') {
-                var url = "{{ admin_url('dashboard/AccidentReportUnitWiseCount') }}"
-                var data = {
-                    CompanyId: CompanyId,
-                    Fromdate: Fromdate,
-                    Todate: Todate,
-                };
-                $('#AccidentReportUnitWiseCountDiv').html('');
-                $.ajax({
-                    type: 'get',
-                    url: url,
-                    data: data,
-                    cache: false,
-                    success: function(dataAjx) {
-
-                        $('#AccidentReportUnitWiseCountDiv').html(dataAjx);
-                    }
-                });
-            }
-
-            function TypeofIIRCount(CompanyId = '', Fromdate = '', Todate = '') {
-                var url = "{{ admin_url('dashboard/TypeofIIRCount') }}"
-                var data = {
-                    CompanyId: CompanyId,
-                    Fromdate: Fromdate,
-                    Todate: Todate,
-                };
-                $('#TypeofIIRCountDiv').html('');
-                $.ajax({
-                    type: 'get',
-                    url: url,
-                    data: data,
-                    cache: false,
-                    success: function(dataAjx) {
-
-                        $('#TypeofIIRCountDiv').html(dataAjx);
-                    }
-                });
-            }
-
-            function TrainingCompletionCount(CompanyId = '', Fromdate = '', Todate = '') {
-                var url = "{{ admin_url('dashboard/TrainingCompletionCount') }}"
-                var data = {
-                    CompanyId: CompanyId,
-                    Fromdate: Fromdate,
-                    Todate: Todate,
-                };
-                $('#TrainingCompletionCountDiv').html('');
-                $.ajax({
-                    type: 'get',
-                    url: url,
-                    data: data,
-                    cache: false,
-                    success: function(dataAjx) {
-
-                        $('#TrainingCompletionCountDiv').html(dataAjx);
-                    }
-                });
-            }
-
-            function TrainingHourSafetyDepartmentWise(CompanyId = '', Fromdate = '', Todate = '') {
-                var url = "{{ admin_url('dashboard/training-hour-safety-department') }}"
-                var data = {
-                    CompanyId: CompanyId,
-                    Fromdate: Fromdate,
-                    Todate: Todate,
-                };
-                $('#LoadTrainingHourSafetyDepartmentWise_CountDiv').html('');
-                $.ajax({
-                    type: 'get',
-                    url: url,
-                    data: data,
-                    cache: false,
-                    success: function(dataAjx) {
-
-                        $('#LoadTrainingHourSafetyDepartmentWise_CountDiv').html(dataAjx);
-                    }
-                });
-            }
-
-            function PTWViolationHoldCompliance(CompanyId = '', Fromdate = '', Todate = '') {
-                var url = "{{ admin_url('dashboard/ptw-hold-violation') }}"
-                var data = {
-                    CompanyId: CompanyId,
-                    Fromdate: Fromdate,
-                    Todate: Todate,
-                };
-                $('#LoadPtwHoldViolation_CountDiv').html('');
-                $.ajax({
-                    type: 'get',
-                    url: url,
-                    data: data,
-                    cache: false,
-                    success: function(dataAjx) {
-
-                        $('#LoadPtwHoldViolation_CountDiv').html(dataAjx);
-                    }
-                });
-            }
-
-            function uaucStaticReportData(CompanyId = '', Fromdate = '', Todate = '') {
-                var url = "{{ admin_url('dashboard/uauc-static-report') }}"
-                var data = {
-                    CompanyId: CompanyId,
-                    Fromdate: Fromdate,
-                    Todate: Todate,
-                };
-                $('#uaucStaticReportDiv').html('');
-                $.ajax({
-                    type: 'get',
-                    url: url,
-                    data: data,
-                    cache: false,
-                    success: function(dataAjx) {
-
-                        $('#uaucStaticReportDiv').html(dataAjx);
-                    }
-                });
-            }
-
-            function LoadmonthewisePTWData(CompanyId = '', Fromdate = '', Todate = '') {
-                var url = "{{ admin_url('dashboard/monthwiseptw') }}"
-                var data = {
-                    CompanyId: CompanyId,
-                    Fromdate: Fromdate,
-                    Todate: Todate,
-                };
-                $('#monthwiseptwDiv').html('');
-                $.ajax({
-                    type: 'get',
-                    url: url,
-                    data: data,
-                    cache: false,
-                    success: function(dataAjx) {
-
-                        $('#monthwiseptwDiv').html(dataAjx);
-                    }
-                });
-            }
-
-
-            function loadunitwisecount(CompanyId = '', Fromdate = '', Todate = '') {
-                var url = "{{ admin_url('dashboard/unitwiseptw') }}"
-                var data = {
-                    CompanyId: CompanyId,
-                    Fromdate: Fromdate,
-                    Todate: Todate,
-                };
-                $('#unitwiseptwDiv').html('');
-                $.ajax({
-                    type: 'get',
-                    url: url,
-                    data: data,
-                    cache: false,
-                    success: function(dataAjx) {
-
-                        $('#unitwiseptwDiv').html(dataAjx);
-                    }
-                });
-            }
-
-
-
-
-            function LoadPPEIssuanceGroupWiseCount(CompanyId = '', Fromdate = '', Todate = '') {
-                var url = "{{ admin_url('dashboard/PPEIssuanceGroupWise') }}"
-                var data = {
-                    CompanyId: CompanyId,
-                    Fromdate: Fromdate,
-                    Todate: Todate,
-                };
-                $('#LoadPPEIssuanceGroupWiseCountDiv').html('');
-                $.ajax({
-                    type: 'get',
-                    url: url,
-                    data: data,
-                    cache: false,
-                    success: function(dataAjx) {
-
-                        $('#LoadPPEIssuanceGroupWiseCountDiv').html(dataAjx);
-                    }
-                });
-            }
-
-            function LoadPTWAvgTimeChartCount(CompanyId = '', Fromdate = '', Todate = '') {
-                var url = "{{ admin_url('dashboard/PTWAvgTimeChart') }}"
-                var data = {
-                    CompanyId: CompanyId,
-                    Fromdate: Fromdate,
-                    Todate: Todate,
-                };
-                $('#LoadPTWAvgTimeChartCount').html('');
-                $.ajax({
-                    type: 'get',
-                    url: url,
-                    data: data,
-                    cache: false,
-                    success: function(dataAjx) {
-
-                        $('#LoadPTWAvgTimeChartCount').html(dataAjx);
-                    }
-                });
-            }
-
-
-
-            $(document).ready(function() {
-                const toDatePicker = flatpickr("#toDate", {
-                    dateFormat: "d-m-Y",
-                    minDate: "today",
-                });
-
-                flatpickr("#fromDate", {
-                    dateFormat: "d-m-Y",
-                    onChange: function(selectedDates, dateStr) {
-                        if (selectedDates.length > 0 && toDatePicker) {
-                            toDatePicker.set("minDate", dateStr);
+                function loadfmonthwisetraining(CompanyId = '', Fromdate = '', Todate = '') {
+                    var url = "{{ admin_url('dashboard/monthwisetraining') }}"
+                    var data = {
+                        CompanyId: CompanyId,
+                        Fromdate: Fromdate,
+                        Todate: Todate,
+                    };
+                    $('#LoadmonthwisetrainingDiv').html('');
+                    $.ajax({
+                        type: 'get',
+                        url: url,
+                        data: data,
+                        cache: false,
+                        success: function(dataAjx) {
+
+                            $('#LoadmonthwisetrainingDiv').html(dataAjx);
                         }
-                    }
-                });
+                    });
+                }
 
-                $('#resetform').on('click', function(e) {
-                    e.preventDefault();
-                    location.reload();
-                });
+                function loadtraining_count_status(CompanyId = '', Fromdate = '', Todate = '') {
+                    var url = "{{ admin_url('dashboard/trainingStatusCount') }}"
+                    var data = {
+                        CompanyId: CompanyId,
+                        Fromdate: Fromdate,
+                        Todate: Todate,
+                    };
+                    $('#trainingStatusPieChartDiv').html('');
+                    $.ajax({
+                        type: 'get',
+                        url: url,
+                        data: data,
+                        cache: false,
+                        success: function(dataAjx) {
 
-                // Initial load
-                filterDashboard();
-            });
-        </script>
-    @endpush
+                            $('#trainingStatusPieChartDiv').html(dataAjx);
+                        }
+                    });
+                }
+
+                function LoadiirTypewiseRCPACount(CompanyId = '', Fromdate = '', Todate = '') {
+                    var url = "{{ admin_url('dashboard/IIRTypeWiseRCPA') }}"
+                    var data = {
+                        CompanyId: CompanyId,
+                        Fromdate: Fromdate,
+                        Todate: Todate,
+                    };
+                    $('#iirTypewiseRCPACountDiv').html('');
+                    $.ajax({
+                        type: 'get',
+                        url: url,
+                        data: data,
+                        cache: false,
+                        success: function(dataAjx) {
+
+                            $('#iirTypewiseRCPACountDiv').html(dataAjx);
+                        }
+                    });
+                }
+
+                function loadmonthewisecount(CompanyId = '', Fromdate = '', Todate = '') {
+                    var url = "{{ admin_url('dashboard/monthwiseptw') }}"
+                    var data = {
+                        CompanyId: CompanyId,
+                        Fromdate: Fromdate,
+                        Todate: Todate,
+                    };
+                    $('#monthwiseptwDiv').html('');
+                    $.ajax({
+                        type: 'get',
+                        url: url,
+                        data: data,
+                        cache: false,
+                        success: function(dataAjx) {
+
+                            $('#monthwiseptwDiv').html(dataAjx);
+                        }
+                    });
+                }
+
+
+                function LoadauditFindingsCount(CompanyId = '', Fromdate = '', Todate = '') {
+                    var url = "{{ admin_url('dashboard/auditFindings') }}"
+                    var data = {
+                        CompanyId: CompanyId,
+                        Fromdate: Fromdate,
+                        Todate: Todate,
+                    };
+                    $('#LoadauditFindingsCountDiv').html('');
+                    $.ajax({
+                        type: 'get',
+                        url: url,
+                        data: data,
+                        cache: false,
+                        success: function(dataAjx) {
+
+                            $('#LoadauditFindingsCountDiv').html(dataAjx);
+                        }
+                    });
+                }
+
+                function IncidentsCount(CompanyId = '', Fromdate = '', Todate = '') {
+                    var url = "{{ admin_url('dashboard/total-incident') }}"
+                    var data = {
+                        CompanyId: CompanyId,
+                        Fromdate: Fromdate,
+                        Todate: Todate,
+                    };
+                    $('#TotalIncidentsCountDiv').html('');
+                    $.ajax({
+                        type: 'get',
+                        url: url,
+                        data: data,
+                        cache: false,
+                        success: function(dataAjx) {
+                            $('#TotalIncidentsCountDiv').html(dataAjx);
+                        }
+                    });
+                }
+
+                function GembaWalkObservationReport(CompanyId = '', Fromdate = '', Todate = '') {
+                    var url = "{{ admin_url('dashboard/gemba-walk-observation') }}"
+                    var data = {
+                        CompanyId: CompanyId,
+                        Fromdate: Fromdate,
+                        Todate: Todate,
+                    };
+                    $('#gembaWalkDiv').html('');
+                    $.ajax({
+                        type: 'get',
+                        url: url,
+                        data: data,
+                        cache: false,
+                        success: function(dataAjx) {
+
+                            $('#gembaWalkDiv').html(dataAjx);
+                        }
+                    });
+                }
+
+                function dailyObservation(CompanyId = '', Fromdate = '', Todate = '') {
+                    var url = "{{ admin_url('dashboard/dailyObservation') }}"
+                    var data = {
+                        CompanyId: CompanyId,
+                        Fromdate: Fromdate,
+                        Todate: Todate,
+                    };
+                    $('#dailyObservation').html('');
+                    $.ajax({
+                        type: 'get',
+                        url: url,
+                        data: data,
+                        cache: false,
+                        success: function(dataAjx) {
+
+                            $('#dailyObservation').html(dataAjx);
+                        }
+                    });
+                }
+
+                function heatmapofIms(CompanyId = '', Fromdate = '', Todate = '') {
+                    var url = "{{ admin_url('dashboard/heatmap-of-imsData') }}"
+                    var data = {
+                        CompanyId: CompanyId,
+                        Fromdate: Fromdate,
+                        Todate: Todate,
+                    };
+                    $('#heatmapofImsDataDiv').html('');
+                    $.ajax({
+                        type: 'get',
+                        url: url,
+                        data: data,
+                        cache: false,
+                        success: function(dataAjx) {
+
+                            $('#heatmapofImsDataDiv').html(dataAjx);
+                        }
+                    });
+                }
+
+                function IncidentType(CompanyId = '', Fromdate = '', Todate = '') {
+                    var url = "{{ admin_url('dashboard/incident-type-chart') }}"
+                    var data = {
+                        CompanyId: CompanyId,
+                        Fromdate: Fromdate,
+                        Todate: Todate,
+                    };
+                    $('#IncidentTypeChartDiv').html('');
+                    $.ajax({
+                        type: 'get',
+                        url: url,
+                        data: data,
+                        cache: false,
+                        success: function(dataAjx) {
+
+                            $('#IncidentTypeChartDiv').html(dataAjx);
+                        }
+                    });
+                }
+
+                function loadinjurychart(CompanyId = '', Fromdate = '', Todate = '') {
+                    var url = "{{ admin_url('dashboard/injurypart') }}"
+                    var data = {
+                        CompanyId: CompanyId,
+                        Fromdate: Fromdate,
+                        Todate: Todate,
+                    };
+                    $('#loadinjurychartDiv').html('');
+                    $.ajax({
+                        type: 'get',
+                        url: url,
+                        data: data,
+                        cache: false,
+                        success: function(dataAjx) {
+
+                            $('#loadinjurychartDiv').html(dataAjx);
+                        }
+                    });
+                }
+
+
+                function LoadPTWAvgTimeChartCount(CompanyId = '', Fromdate = '', Todate = '') {
+                    var url = "{{ admin_url('dashboard/PTWAvgTimeChart') }}"
+                    var data = {
+                        CompanyId: CompanyId,
+                        Fromdate: Fromdate,
+                        Todate: Todate,
+                    };
+                    $('#LoadPTWAvgTimeChartCount').html('');
+                    $.ajax({
+                        type: 'get',
+                        url: url,
+                        data: data,
+                        cache: false,
+                        success: function(dataAjx) {
+
+                            $('#LoadPTWAvgTimeChartCount').html(dataAjx);
+                        }
+                    });
+                }
+
+                function LoadPPEAvailabilityChartCount(CompanyId = '', Fromdate = '', Todate = '') {
+                    var url = "{{ admin_url('dashboard/PPEAvailabilityChart') }}"
+                    var data = {
+                        CompanyId: CompanyId,
+                        Fromdate: Fromdate,
+                        Todate: Todate,
+                    };
+                    $('#LoadPPEAvailabilityChartCountDiv').html('');
+                    $.ajax({
+                        type: 'get',
+                        url: url,
+                        data: data,
+                        cache: false,
+                        success: function(dataAjx) {
+
+                            $('#LoadPPEAvailabilityChartCountDiv').html(dataAjx);
+                        }
+                    });
+                }
+
+                function ptw_type_wise_count(CompanyId = '', Fromdate = '', Todate = '') {
+                    var url = "{{ admin_url('dashboard/ptw-type-wise-count') }}"
+                    var data = {
+                        CompanyId: CompanyId,
+                        Fromdate: Fromdate,
+                        Todate: Todate,
+                    };
+                    $('#ptw_type_wise_countDiv').html('');
+                    $.ajax({
+                        type: 'get',
+                        url: url,
+                        data: data,
+                        cache: false,
+                        success: function(dataAjx) {
+
+                            $('#ptw_type_wise_countDiv').html(dataAjx);
+                        }
+                    });
+                }
+
+                function ptw_open_close_count(CompanyId = '', Fromdate = '', Todate = '') {
+                    var url = "{{ admin_url('dashboard/ptw-open-close') }}"
+                    var data = {
+                        CompanyId: CompanyId,
+                        Fromdate: Fromdate,
+                        Todate: Todate,
+                    };
+                    $('#ptw_open_close_countDiv').html('');
+                    $.ajax({
+                        type: 'get',
+                        url: url,
+                        data: data,
+                        cache: false,
+                        success: function(dataAjx) {
+
+                            $('#ptw_open_close_countDiv').html(dataAjx);
+                        }
+                    });
+                }
+
+                function inspectionWiseCount(CompanyId = '', Fromdate = '', Todate = '') {
+                    var url = "{{ admin_url('dashboard/inspection-count') }}"
+                    var data = {
+                        CompanyId: CompanyId,
+                        Fromdate: Fromdate,
+                        Todate: Todate,
+                    };
+                    $('#inspection_wise_countDiv').html('');
+                    $.ajax({
+                        type: 'get',
+                        url: url,
+                        data: data,
+                        cache: false,
+                        success: function(dataAjx) {
+
+                            $('#inspection_wise_countDiv').html(dataAjx);
+                        }
+                    });
+                }
+
+                function LoadnearMissCount(CompanyId = '', Fromdate = '', Todate = '') {
+                    var url = "{{ admin_url('dashboard/nearMissFrequency') }}"
+                    var data = {
+                        CompanyId: CompanyId,
+                        Fromdate: Fromdate,
+                        Todate: Todate,
+                    };
+                    $('#nearMissCountDiv').html('');
+                    $.ajax({
+                        type: 'get',
+                        url: url,
+                        data: data,
+                        cache: false,
+                        success: function(dataAjx) {
+
+                            $('#nearMissCountDiv').html(dataAjx);
+                        }
+                    });
+                }
+
+                function LoadiirTypewiseUAUCCount(CompanyId = '', Fromdate = '', Todate = '') {
+                    var url = "{{ admin_url('dashboard/IIRTypeWiseUAUC') }}"
+                    var data = {
+                        CompanyId: CompanyId,
+                        Fromdate: Fromdate,
+                        Todate: Todate,
+                    };
+                    $('#iirTypewiseUAUCCountDiv').html('');
+                    $.ajax({
+                        type: 'get',
+                        url: url,
+                        data: data,
+                        cache: false,
+                        success: function(dataAjx) {
+
+                            $('#iirTypewiseUAUCCountDiv').html(dataAjx);
+                        }
+                    });
+                }
+
+                function AccidentReportUnitWiseCount(CompanyId = '', Fromdate = '', Todate = '') {
+                    var url = "{{ admin_url('dashboard/AccidentReportUnitWiseCount') }}"
+                    var data = {
+                        CompanyId: CompanyId,
+                        Fromdate: Fromdate,
+                        Todate: Todate,
+                    };
+                    $('#AccidentReportUnitWiseCountDiv').html('');
+                    $.ajax({
+                        type: 'get',
+                        url: url,
+                        data: data,
+                        cache: false,
+                        success: function(dataAjx) {
+
+                            $('#AccidentReportUnitWiseCountDiv').html(dataAjx);
+                        }
+                    });
+                }
+
+                function TypeofIIRCount(CompanyId = '', Fromdate = '', Todate = '') {
+                    var url = "{{ admin_url('dashboard/TypeofIIRCount') }}"
+                    var data = {
+                        CompanyId: CompanyId,
+                        Fromdate: Fromdate,
+                        Todate: Todate,
+                    };
+                    $('#TypeofIIRCountDiv').html('');
+                    $.ajax({
+                        type: 'get',
+                        url: url,
+                        data: data,
+                        cache: false,
+                        success: function(dataAjx) {
+
+                            $('#TypeofIIRCountDiv').html(dataAjx);
+                        }
+                    });
+                }
+
+                function TrainingCompletionCount(CompanyId = '', Fromdate = '', Todate = '') {
+                    var url = "{{ admin_url('dashboard/TrainingCompletionCount') }}"
+                    var data = {
+                        CompanyId: CompanyId,
+                        Fromdate: Fromdate,
+                        Todate: Todate,
+                    };
+                    $('#TrainingCompletionCountDiv').html('');
+                    $.ajax({
+                        type: 'get',
+                        url: url,
+                        data: data,
+                        cache: false,
+                        success: function(dataAjx) {
+
+                            $('#TrainingCompletionCountDiv').html(dataAjx);
+                        }
+                    });
+                }
+
+                function TrainingHourSafetyDepartmentWise(CompanyId = '', Fromdate = '', Todate = '') {
+                    var url = "{{ admin_url('dashboard/training-hour-safety-department') }}"
+                    var data = {
+                        CompanyId: CompanyId,
+                        Fromdate: Fromdate,
+                        Todate: Todate,
+                    };
+                    $('#LoadTrainingHourSafetyDepartmentWise_CountDiv').html('');
+                    $.ajax({
+                        type: 'get',
+                        url: url,
+                        data: data,
+                        cache: false,
+                        success: function(dataAjx) {
+
+                            $('#LoadTrainingHourSafetyDepartmentWise_CountDiv').html(dataAjx);
+                        }
+                    });
+                }
+
+                function PTWViolationHoldCompliance(CompanyId = '', Fromdate = '', Todate = '') {
+                    var url = "{{ admin_url('dashboard/ptw-hold-violation') }}"
+                    var data = {
+                        CompanyId: CompanyId,
+                        Fromdate: Fromdate,
+                        Todate: Todate,
+                    };
+                    $('#LoadPtwHoldViolation_CountDiv').html('');
+                    $.ajax({
+                        type: 'get',
+                        url: url,
+                        data: data,
+                        cache: false,
+                        success: function(dataAjx) {
+
+                            $('#LoadPtwHoldViolation_CountDiv').html(dataAjx);
+                        }
+                    });
+                }
+
+                function uaucStaticReportData(CompanyId = '', Fromdate = '', Todate = '') {
+                    var url = "{{ admin_url('dashboard/uauc-static-report') }}"
+                    var data = {
+                        CompanyId: CompanyId,
+                        Fromdate: Fromdate,
+                        Todate: Todate,
+                    };
+                    $('#uaucStaticReportDiv').html('');
+                    $.ajax({
+                        type: 'get',
+                        url: url,
+                        data: data,
+                        cache: false,
+                        success: function(dataAjx) {
+
+                            $('#uaucStaticReportDiv').html(dataAjx);
+                        }
+                    });
+                }
+
+                function LoadmonthewisePTWData(CompanyId = '', Fromdate = '', Todate = '') {
+                    var url = "{{ admin_url('dashboard/monthwiseptw') }}"
+                    var data = {
+                        CompanyId: CompanyId,
+                        Fromdate: Fromdate,
+                        Todate: Todate,
+                    };
+                    $('#monthwiseptwDiv').html('');
+                    $.ajax({
+                        type: 'get',
+                        url: url,
+                        data: data,
+                        cache: false,
+                        success: function(dataAjx) {
+
+                            $('#monthwiseptwDiv').html(dataAjx);
+                        }
+                    });
+                }
+
+
+                function loadunitwisecount(CompanyId = '', Fromdate = '', Todate = '') {
+                    var url = "{{ admin_url('dashboard/unitwiseptw') }}"
+                    var data = {
+                        CompanyId: CompanyId,
+                        Fromdate: Fromdate,
+                        Todate: Todate,
+                    };
+                    $('#unitwiseptwDiv').html('');
+                    $.ajax({
+                        type: 'get',
+                        url: url,
+                        data: data,
+                        cache: false,
+                        success: function(dataAjx) {
+
+                            $('#unitwiseptwDiv').html(dataAjx);
+                        }
+                    });
+                }
+
+
+
+
+                function LoadPPEIssuanceGroupWiseCount(CompanyId = '', Fromdate = '', Todate = '') {
+                    var url = "{{ admin_url('dashboard/PPEIssuanceGroupWise') }}"
+                    var data = {
+                        CompanyId: CompanyId,
+                        Fromdate: Fromdate,
+                        Todate: Todate,
+                    };
+                    $('#LoadPPEIssuanceGroupWiseCountDiv').html('');
+                    $.ajax({
+                        type: 'get',
+                        url: url,
+                        data: data,
+                        cache: false,
+                        success: function(dataAjx) {
+
+                            $('#LoadPPEIssuanceGroupWiseCountDiv').html(dataAjx);
+                        }
+                    });
+                }
+
+                function LoadPTWAvgTimeChartCount(CompanyId = '', Fromdate = '', Todate = '') {
+                    var url = "{{ admin_url('dashboard/PTWAvgTimeChart') }}"
+                    var data = {
+                        CompanyId: CompanyId,
+                        Fromdate: Fromdate,
+                        Todate: Todate,
+                    };
+                    $('#LoadPTWAvgTimeChartCount').html('');
+                    $.ajax({
+                        type: 'get',
+                        url: url,
+                        data: data,
+                        cache: false,
+                        success: function(dataAjx) {
+
+                            $('#LoadPTWAvgTimeChartCount').html(dataAjx);
+                        }
+                    });
+                }
+
+
+
+                $(document).ready(function() {
+                    const toDatePicker = flatpickr("#toDate", {
+                        dateFormat: "d-m-Y",
+                        minDate: "today",
+                    });
+
+                    flatpickr("#fromDate", {
+                        dateFormat: "d-m-Y",
+                        onChange: function(selectedDates, dateStr) {
+                            if (selectedDates.length > 0 && toDatePicker) {
+                                toDatePicker.set("minDate", dateStr);
+                            }
+                        }
+                    });
+
+                    $('#resetform').on('click', function(e) {
+                        e.preventDefault();
+                        location.reload();
+                    });
+
+                    // Initial load
+                    filterDashboard();
+                });
+            </script>
+        @endpush
