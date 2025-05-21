@@ -157,7 +157,7 @@ class GembaWalk extends Model
             $data_array['id'] = $listdata['id'];
             $data_array['gemba_walk_auto_id'] = $listdata['gemba_walk_auto_id'];
             $data_array['date'] = $listdata['date'];
-            $data_array['shift'] = getShift($listdata['shift']);
+            $data_array['shift_name'] = getShift($listdata['shift_id']);
             $data_array['status'] = $listdata['status_name'];
             $data_array['created_at'] = Displaydateformat($listdata['created_at']);
             $data_array['created_by'] = getUsername($listdata['created_by']);

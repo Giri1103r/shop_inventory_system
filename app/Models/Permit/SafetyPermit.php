@@ -163,9 +163,14 @@ class SafetyPermit extends Model
         }
 
         if ($request->has('status') && $request->status) {
-
             $status = decryptId($request->status);
             $query = $query->where('ptw_safety.permit_status',  $status);
+        }
+
+
+        if ($request->has('dashboard_permitStatus') && $request->dashboard_permitStatus) {
+            $dashboard_permitStatus = decryptId($request->dashboard_permitStatus);
+            $query = $query->where('ptw_safety.permit_status',  $dashboard_permitStatus);
         }
 
         if ($request->has('dashboard_openCloseStatus') && $request->dashboard_openCloseStatus) {
@@ -177,14 +182,17 @@ class SafetyPermit extends Model
                     ->where('ptw_safety.status', 1)
                     ->where('ptw_safety.trash', 'NO');
             } else {
-
                 $query = $query->where('permit_status', STATUS_CLOSED)->orWhere('permit_status', STATUS_PERMIT_EXPIRED);
             }
+        }
+        if ($request->has('dashboard_permitType') && $request->dashboard_permitType) {
+            $query = $query->whereRaw('FIND_IN_SET(?, ptw_safety.sub_permit)', [$request->dashboard_permitType]);
         }
 
         if ($request->has('dashboard_month') && $request->dashboard_month) {
             $query = $query->whereMonth('ptw_safety.created_at', $request->dashboard_month);
         }
+
         $data_count = $query;
         $total_records = $data_count->count();
         $query->orderBy('id', 'DESC');
@@ -1317,16 +1325,19 @@ class SafetyPermit extends Model
 
         foreach ($type_of_work as $type) {
             $idToWorkNameMap[$type['id']] = $type['work_name'];
-            $workCounts[$type['work_name']] = 0;
+            $workCounts[$type['id']] = [
+                'id' => $type['id'],
+                'name' => $type['work_name'],
+                'count' => 0
+            ];
         }
 
 
         foreach ($data as $details) {
             $subpermits = string_to_array($details->sub_permit);
             foreach ($subpermits as $subpermit) {
-                if ($subpermit && isset($idToWorkNameMap[$subpermit])) {
-                    $workName = $idToWorkNameMap[$subpermit];
-                    $workCounts[$workName]++;
+                if ($subpermit && isset($workCounts[$subpermit])) {
+                    $workCounts[$subpermit]['count']++;
                 }
             }
         }
@@ -1339,10 +1350,11 @@ class SafetyPermit extends Model
             ->join('masters_unit', 'ptw_safety.unit_id', '=', 'masters_unit.id')
             ->select(
                 'masters_unit.unit_name',
+                'ptw_safety.unit_id',
                 DB::raw('COUNT(*) as hold_count')
             )
             ->where('ptw_safety.permit_status', STATUS_EHS_HOLD)
-            ->groupBy('masters_unit.unit_name');
+            ->groupBy('masters_unit.unit_name', 'masters_unit.id');
 
         $company_id = $request->input('CompanyId');
         if ($company_id) {
@@ -1364,6 +1376,12 @@ class SafetyPermit extends Model
         $results = $query->get();
 
 
-        return $results->pluck('hold_count', 'unit_name')->toArray();
+        return $results->map(function ($item) {
+            return [
+                'unit_id' => $item->unit_id,
+                'unit_name' => $item->unit_name,
+                'hold_count' => $item->hold_count,
+            ];
+        })->toArray();
     }
 }

@@ -1,16 +1,17 @@
 <div id="IncidentTypeChart"></div>
+
 @php
     $labels = array_keys($formattedData);
     $data = array_values($formattedData);
 @endphp
 
-<div id="IncidentTypeChart"></div>
-
 <script>
+    
     var incidentTypeIdMap = {!! json_encode($typeIdMap) !!};
+    var data = {!! json_encode($data) !!};
 
     var options = {
-        series: {!! json_encode($data) !!},
+        series: data,
         chart: {
             type: 'donut',
             width: 380,
@@ -21,9 +22,9 @@
                 dataPointSelection: function(event, chartContext, config) {
                     var dataPointIndex = config.dataPointIndex;
                     var incidentTypeName = chartContext.w.config.labels[dataPointIndex];
-                    var incidentTypeId = incidentTypeIdMap[incidentTypeName];
-                    if (incidentTypeId) {
-                        redirectToIms(incidentTypeId);
+                    var iirType = incidentTypeIdMap[incidentTypeName];
+                    if (iirType) {
+                        redirectToIms(iirType, '', '', '', '', '', '');
                     }
                 }
             }
@@ -47,11 +48,11 @@
         }]
     };
 
-
+    // Create and render the chart
     var IncidentTypeChart = new ApexCharts(document.querySelector("#IncidentTypeChart"), options);
     IncidentTypeChart.render();
 
-    // Download button functionality
+    // Download button functionality (optional)
     $("#IncidentType_download").off("click").on("click", function() {
         IncidentTypeChart.dataURI().then(({
             imgURI
@@ -74,7 +75,7 @@
                 ctx.font = '20px Arial';
                 ctx.fillText('Incident Type', 10, 30);
 
-                // Optional filter text
+                // Optional filter text (date filters)
                 let yPos = 60;
 
                 @if (isset($getdashdata))

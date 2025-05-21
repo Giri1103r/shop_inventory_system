@@ -9,7 +9,17 @@
         chart: {
             type: 'pie',
             height: 320,
-            id: 'TrainingCompletionChart'
+            id: 'TrainingCompletionChart',
+            events: {
+                dataPointSelection: function(event, chartContext, config) {
+                    var dataPointIndex = config.dataPointIndex;
+                    if (dataPointIndex === 1) {
+                        redirectToTraining('{{ $openStatusEncrypted }}');
+                    } else if (dataPointIndex === 0) {
+                        redirectToTraining('{{ $closeStatusEncrypted }}');
+                    }
+                }
+            }
         },
         labels: ['Closed Trainings (%)', 'Open Trainings (%)'],
         colors: ['#28a745', '#dc3545'],
