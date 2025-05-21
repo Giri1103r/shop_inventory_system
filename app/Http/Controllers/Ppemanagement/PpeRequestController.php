@@ -185,7 +185,7 @@ class PpeRequestController extends Controller
                             return $btn;
                         })
 
-                        ->rawColumns(['action', 'created_at', 'created_by', 'approve_status','ppe_name'])
+                        ->rawColumns(['action', 'created_at', 'created_by', 'approve_status', 'ppe_name'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -203,6 +203,8 @@ class PpeRequestController extends Controller
         $unit = $this->unit->getUnit();
         $company = $this->company->getcompany();
         $approvestatus = $this->approvestatus->status();
+        $loggedInCompanyId = encryptId(Auth::user()->company_id);
+
 
         $ppename = $this->ppetypemaster->getppetypemaster();
         $data = [
@@ -210,6 +212,7 @@ class PpeRequestController extends Controller
             'unit' => $unit,
             'company' => $company,
             'ppename' => $ppename,
+            'loggedInCompanyId' => $loggedInCompanyId,
             'approvestatus' => $approvestatus,
         ];
 
