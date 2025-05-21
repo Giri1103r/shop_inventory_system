@@ -2617,7 +2617,6 @@ Route::middleware(['securityheader'])->group(function () {
                 });
 
                 Route::group(['prefix' => 'medical-requisition-slip/fdo-security-gate'], function () {
-                    
                     Route::GET('/list', [MedicalRequisitionSlipSecurityGateController::class, 'Index']);
                     Route::POST('/list', [MedicalRequisitionSlipSecurityGateController::class, 'Index']);
                     Route::GET('/add', [MedicalRequisitionSlipSecurityGateController::class, 'Add']);
