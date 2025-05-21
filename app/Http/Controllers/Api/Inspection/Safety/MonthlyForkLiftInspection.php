@@ -215,7 +215,7 @@ class MonthlyForkLiftInspection extends BaseController
                     $inspection_details += [
                         'inspection_verified_by' => getUsername($inspection->verified_by),
                         'inspection_verified_at' => Displaydateformat($updated_time->created_at),
-                        'verifier_signature' => $verifier_signature,
+                        'verifier_signature' => admin_url($verifier_signature),
                         'capa_recomendation' => !empty($inspection->capa_recomendation) ? $inspection->capa_recomendation : $inspection->remarks,
                     ];
                 }

@@ -215,15 +215,6 @@ class ForkliftInspection extends BaseController
                 'observation_status.*' => 'required',
                 'remarks.*' => 'required',
                 'emp_id.*' => 'required',
-                'signature_upload' => [
-                    function ($attribute, $value, $fail) {
-                        $user = Auth::user();
-                        if (($user->signature_upload == null)) {
-                            $fail('Signature is required.');
-                        }
-                    }
-                ],
-
             ];
 
             $messages = [
