@@ -42,10 +42,36 @@
                                             <select name="company_id" id="company_id" class=" form-control single-select"
                                                 style="width: 100%">
                                                 <option value="">Select Company</option>
-                                                @foreach ($companyList as $list)
-                                                    <option value="{{ encryptId($list->id) }}">
-                                                        {{ $list->company_name }}</option>
-                                                @endforeach
+                                                @if (CheckUserRole(ROLE_EHS_OFFICER) || checkUserRole(ROLE_EHS_HEAD))
+                                                    @foreach ($companyList as $list)
+                                                        @php
+                                                            $isEhs = in_array(auth()->user()->role, [
+                                                                ROLE_EHS_HEAD,
+                                                                ROLE_EHS_OFFICER,
+                                                            ]);
+                                                            $value = encryptId($list->id);
+                                                            $requestCompanyId = $loggedInCompanyId;
+                                                            $selected = '';
+
+                                                            if ($requestCompanyId) {
+                                                                $selected =
+                                                                    $requestCompanyId == $value ? 'selected' : '';
+                                                            } elseif (isset($loggedInCompanyId)) {
+                                                                $selected =
+                                                                    $loggedInCompanyId == $value ? 'selected' : '';
+                                                            }
+                                                        @endphp
+                                                        <option value="{{ $value }}" {{ $selected }}>
+                                                            {{ $list->company_name }}
+                                                        </option>
+                                                    @endforeach
+                                                @else
+                                                    @foreach ($companyList as $list)
+                                                        <option value="{{ encryptId($list->id) }}">
+                                                            {{ $list->company_name }}
+                                                        </option>
+                                                    @endforeach
+                                                @endif
 
                                             </select>
                                         </div>
