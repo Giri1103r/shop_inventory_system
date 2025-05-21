@@ -33,7 +33,6 @@ class MonthlyForkLiftInspection extends BaseController
 
     public function __construct()
     {
-
         $this->unit = new Unit();
         $this->uploadlog = new UploadLog();
         $this->forklift_inspection = new SafetyMonthlyForkLiftInspection();
@@ -77,7 +76,7 @@ class MonthlyForkLiftInspection extends BaseController
             }
 
             if (!empty($search)) {
-                $searchDate = DBdateformat($search);
+                $searchDate = ($search);
                 $query->where(function ($query) use ($searchDate) {
                     $query->orWhere('masters_unit.unit_name', $searchDate)
                         ->orWhere('masters_location.location_name', $searchDate)
@@ -196,7 +195,7 @@ class MonthlyForkLiftInspection extends BaseController
                     'capacity' => $inspection->capacity,
                     'remarks' => $inspection->remarks ?? '',
                     'responses' => $responses,
-                    'inspection_creator_signature' => $signature,
+                    'inspection_creator_signature' => admin_url($signature),
                 ];
 
                 if (!empty($inspection->verified_by)) {
@@ -220,9 +219,9 @@ class MonthlyForkLiftInspection extends BaseController
                         'capa_recomendation' => !empty($inspection->capa_recomendation) ? $inspection->capa_recomendation : $inspection->remarks,
                     ];
                 }
-
-                if (!empty($inspection->capa_remarks) || !empty($inspection->capa_ehs_remarks)) {
-                    $capa_updated_time = GetSafetyUpdatedTime(
+                // CAPA Remarks by Inspection Creator
+                if (!empty($inspection->capa_remarks)) {
+                    $capa_creator_time = GetSafetyUpdatedTime(
                         $inspection->inspection_created_by,
                         $inspection->inspection_id,
                         MONTHLY_FORKLIFT_INSPECTION,
@@ -230,13 +229,35 @@ class MonthlyForkLiftInspection extends BaseController
                     );
 
                     $inspection_details += [
+                        'capa_remarks' => $inspection->capa_remarks,
                         'capa_created_by' => getUsername($inspection->inspection_created_by),
-                        'capa_created_at' => Displaydateformat($capa_updated_time->created_at),
-                        'capa_remarks' => $inspection->capa_remarks ?? '',
-                        'capa_ehs_remarks' => $inspection->capa_ehs_remarks ?? '',
-                        'capa_creator_signature' => $signature,
+                        'capa_created_at' => Displaydateformat($capa_creator_time->created_at),
+                        'capa_creator_signature' => admin_url($signature),
                     ];
                 }
+
+                if (!empty($inspection->capa_ehs_remarks) && !empty($inspection->verified_by)) {
+                    $ehs_updated_time = GetSafetyUpdatedTime(
+                        $inspection->verified_by,
+                        $inspection->inspection_id,
+                        MONTHLY_FORKLIFT_INSPECTION,
+                        WAITING_FOR_CAPA_VERIFICATION,
+                    );
+
+                    $ehs_signature = GetSafetySignature(
+                        $inspection->verified_by,
+                        $inspection->inspection_id,
+                        MONTHLY_FORKLIFT_INSPECTION,
+                    );
+
+                    $inspection_details += [
+                        'capa_ehs_remarks' => $inspection->capa_ehs_remarks,
+                        'capa_ehs_by' => getUsername($inspection->verified_by),
+                        'capa_ehs_at' => Displaydateformat($ehs_updated_time->created_at),
+                        'capa_ehs_signature' => admin_url($ehs_signature),
+                    ];
+                }
+
 
                 if (!empty($inspection->l1_manager_verified_by)) {
                     $l1_signature = GetSafetySignature(
@@ -256,7 +277,7 @@ class MonthlyForkLiftInspection extends BaseController
                         'l1_verified_by' => getUsername($inspection->l1_manager_verified_by),
                         'l1_remarks' => $inspection->level_one_manager_remarks ?? '',
                         'l1_updated_time' => Displaydateformat($l1_updated_time->created_at),
-                        'l1_signature' => $l1_signature,
+                        'l1_signature' => admin_url($l1_signature),
                     ];
                 }
 
@@ -271,7 +292,7 @@ class MonthlyForkLiftInspection extends BaseController
                         'l2_verified_by' => getUsername($inspection->l2_manager_verified_by),
                         'l2_remarks' => $inspection->level_two_manager_remarks ?? '',
                         'l2_updated_time' => Displaydateformat($inspection->inspection_updated_at),
-                        'l2_signature' => $l2_signature ?? '',
+                        'l2_signature' => admin_url($l2_signature) ?? '',
                     ];
 
                     $approver_signature = GetSafetySignature(
@@ -284,7 +305,7 @@ class MonthlyForkLiftInspection extends BaseController
                         'approved_by' => getUsername($inspection->approved_by),
                         'approved_remarks' => $inspection->remarks ?? '',
                         'approved_updated_time' => Displaydateformat($inspection->inspection_updated_at),
-                        'approved_signature' => $approver_signature ?? '',
+                        'approved_signature' => admin_url($approver_signature) ?? '',
                     ];
                 }
 
