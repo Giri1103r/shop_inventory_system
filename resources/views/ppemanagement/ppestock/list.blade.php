@@ -125,6 +125,8 @@
                 minDate: "today"
             });
 
+            var dashboard_sub =
+                '{{ isset($dashboard_search['sub']) && $dashboard_search['sub'] != '' ? $dashboard_search['sub'] : '' }}';
 
             var table = $('.datatable-list').DataTable({
                 serverSide: true,
@@ -160,6 +162,7 @@
                         d.inventory_item_id = $('#inventory_item_id').val();
                         d.from_date = $('#from_date').val();
                         d.to_date = $('#to_date').val();
+                        d.dashboard_sub = dashboard_sub;
 
                     },
                     error: function(xhr, error, code) {
@@ -243,6 +246,7 @@
                                     var inventory_item_id = $('#inventory_item_id').val();
                                     var from_date = $('#from_date').val();
                                     var to_date = $('#to_date').val();
+                                    var dashboard_sub = dashboard_sub;
 
 
                                     $(".dt-button").removeClass('processing');
@@ -253,7 +257,8 @@
                                         '&item_code=' + item_code +
                                         '&inventory_item_id=' + inventory_item_id +
                                         '&from_date=' + from_date +
-                                        '&to_date=' + to_date;
+                                        '&to_date=' + to_date +
+                                        '&dashboard_sub=' + dashboard_sub;
 
                                 }
                             },
@@ -266,6 +271,7 @@
                                     var inventory_item_id = $('#inventory_item_id').val();
                                     var from_date = $('#from_date').val();
                                     var to_date = $('#to_date').val();
+                                    var dashboard_sub = dashboard_sub;
 
 
                                     $(".dt-button").removeClass('processing');
@@ -276,7 +282,8 @@
                                         '&item_code=' + item_code +
                                         '&inventory_item_id=' + inventory_item_id +
                                         '&from_date=' + from_date +
-                                        '&to_date=' + to_date;
+                                        '&to_date=' + to_date + '&dashboard_sub=' +
+                                        dashboard_sub;
 
                                 }
                             }

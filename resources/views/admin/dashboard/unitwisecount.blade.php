@@ -32,7 +32,7 @@
                     var dataPointIndex = config.dataPointIndex;
                     var selectedUnit = unitData[dataPointIndex];
                     var unitId = selectedUnit.unit_id;
-                    redirectToPTW('', unitId, '');
+                    redirectToPTW('', unitId, '','','','');
                 }
             }
         },

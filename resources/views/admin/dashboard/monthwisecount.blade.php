@@ -17,7 +17,7 @@
             data: permitCounts
         }],
         chart: {
-            type: 'bar',
+            type: 'line',
             height: 350,
             toolbar: {
                 show: false
@@ -27,29 +27,18 @@
                     var dataPointIndex = config.dataPointIndex;
                     var monthName = chartContext.w.config.xaxis.categories[dataPointIndex];
                     var month = new Date(Date.parse(monthName + " 1, 2000")).getMonth() + 1;
-                    redirectToPTW('', '', month,'');
+                    redirectToPTW('', '', month, '', '', '');
                 }
             }
         },
-        plotOptions: {
-            bar: {
-                horizontal: false,
-                columnWidth: '55%',
-                distributed: true
-            },
-        },
-        colors: [
-            '#008FFB', '#00E396', '#FEB019', '#FF4560',
-            '#775DD0', '#546E7A', '#26a69a', '#D10CE8',
-            '#9C27B0', '#F86624', '#2E294E', '#1B998B'
-        ],
+        colors: ['#008FFB'],
         dataLabels: {
             enabled: true
         },
         stroke: {
             show: true,
             width: 2,
-            colors: ['transparent']
+            curve: 'smooth'
         },
         xaxis: {
             categories: categories,
@@ -61,9 +50,6 @@
             title: {
                 text: 'Permit Count'
             }
-        },
-        fill: {
-            opacity: 1
         },
         tooltip: {
             y: {

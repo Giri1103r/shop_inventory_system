@@ -135,7 +135,7 @@ class TrainingSchedule extends Model
         if ($request->has('unit_id') && $request->unit_id) {
             $query = $query->where('training_schedule.unit_id', decryptId($request->unit_id));
         }
-         if ($request->has('company_id') && $request->company_id) {
+        if ($request->has('company_id') && $request->company_id) {
             $query = $query->where('training_schedule.company_id', decryptId($request->company_id));
         }
         if ($request->has('department_id') && $request->department_id) {
@@ -148,6 +148,17 @@ class TrainingSchedule extends Model
         if ($request->has('status') && $request->status) {
             $query = $query->where('training_schedule.status', 'LIKE', '%' . decryptId($request->status) . '%');
         }
+
+        if ($request->has('dashboard_openCloseStatus') && $request->dashboard_openCloseStatus) {
+            $openCloseStatus = decryptId($request->dashboard_openCloseStatus);
+            if ($openCloseStatus == "1") {
+                $query = $query->where('training_schedule.training_status', '!=', 8);
+                
+            } else {
+               $query = $query->where('training_schedule.training_status', 8);
+            }
+        }
+
         $data_count = $query;
         $total_records = $data_count->count();
 
@@ -640,7 +651,7 @@ class TrainingSchedule extends Model
         if ($request->has('unit_id') && $request->unit_id) {
             $query = $query->where('training_schedule.unit_id', decryptId($request->unit_id));
         }
-         if ($request->has('company_id') && $request->company_id) {
+        if ($request->has('company_id') && $request->company_id) {
             $query = $query->where('training_schedule.company_id', decryptId($request->company_id));
         }
         if ($request->has('department_id') && $request->department_id) {

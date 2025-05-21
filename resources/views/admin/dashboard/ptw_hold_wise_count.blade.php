@@ -2,14 +2,14 @@
 
 <script>
     var hold_count = @json($hold_count);
-
+    var permitStatus = "{{ $permitStatus }}";
     var dynamicColors = [
         '#3B5998', '#26A69A', '#FFC300', '#6C3483', '#E74C3C', '#3498DB',
         '#1ABC9C', '#9B59B6', '#F39C12', '#2ECC71', '#E67E22', '#34495E'
     ];
 
-    var units = Object.keys(hold_count);
-    var values = Object.values(hold_count);
+    var units = hold_count.map(item => item.unit_name);
+    var values = hold_count.map(item => item.hold_count);
     var colors = dynamicColors.slice(0, units.length);
 
     var options = {
@@ -22,6 +22,13 @@
             type: 'bar',
             toolbar: {
                 show: false
+            },
+            events: {
+                dataPointSelection: function(event, chartContext, config) {
+                    var selectedItem = hold_count[config.dataPointIndex];
+                    var unitId = selectedItem.unit_id;
+                    redirectToPTW('', unitId, '', '', '', permitStatus)
+                }
             }
         },
         plotOptions: {
@@ -45,7 +52,7 @@
         },
         xaxis: {
             categories: units,
-            position: 'bottom', // ✅ Ensures labels are below the bars
+            position: 'bottom',
             labels: {
                 rotate: -45,
                 style: {
@@ -68,7 +75,12 @@
             }
         },
         tooltip: {
-            custom: function({ series, seriesIndex, dataPointIndex, w }) {
+            custom: function({
+                series,
+                seriesIndex,
+                dataPointIndex,
+                w
+            }) {
                 const unit = w.globals.labels[dataPointIndex];
                 const val = series[seriesIndex][dataPointIndex];
                 return `

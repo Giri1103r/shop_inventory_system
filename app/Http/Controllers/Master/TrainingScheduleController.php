@@ -231,13 +231,14 @@ class TrainingScheduleController extends Controller
         $unitList  = $this->unit->select('id', 'unit_name')->where('status', '1')->get();
         $topicList  = $this->topic->select('id', 'topic_name')->where('status', '1')->get();
         $employeeList  = $this->employee->select('id', 'emp_name')->whereRaw('FIND_IN_SET(' . ROLE_TRAINER . ', user_role)')->where('status', '1')->get();
-$companyList = $this->company->getCompany();
+        $companyList = $this->company->getCompany();
         $data = array(
             'departmentList' => $departmentList,
             'unitList' => $unitList,
             'topicList' => $topicList,
             'employeeList' => $employeeList,
             'companyList' => $companyList,
+            'dashboard_search' => $request,
         );
 
         return view('master.training_schedule.list', $data);

@@ -123,7 +123,7 @@ class InitialIncident extends Model
         }
 
         if ($request->has('dash_iirtype_id') && $request->dash_iirtype_id) {
-            $query = $query->where('ims_initial_incident.nature_of_injury', ($request->dash_iirtype_id));
+            $query = $query->where('ims_initial_incident.iir_type', ($request->dash_iirtype_id));
         }
 
 
@@ -139,6 +139,7 @@ class InitialIncident extends Model
 
             $query = $query->where('ims_initial_incident.unit_id', decryptId($request->unit_id));
         }
+
 
         $data_count = $query;
         $total_records = $data_count->count();

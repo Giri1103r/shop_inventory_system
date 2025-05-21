@@ -14,7 +14,14 @@
             series: chartSeries9,
             chart: {
                 type: 'donut',
-                height: 350
+                height: 350,
+                events: {
+                    dataPointSelection: function(event, chartContext, config) {
+                        var sub = config.w.config.labels[config.dataPointIndex];
+                        redirectToPPE(sub);
+                    }
+                }
+
             },
             labels: chartLabels9,
             plotOptions: {

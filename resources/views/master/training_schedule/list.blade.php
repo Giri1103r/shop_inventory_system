@@ -62,49 +62,48 @@
                                             </select>
                                         </div>
 
-                                       <div class="col-md-3 mb-3 ">
-                                                <div class="form-group form-input">
-                                                    <label for="company_id require" class="form-label require ">Company</label>
-                                                    <select name="company_id" id="company_id"
-                                                        class=" form-control single-select" style="width: 100%">
-                                                        <option value="">Select Company</option>
-                                                        @foreach ($companyList as $list)
-                                                            <option value="{{ encryptId($list->id) }}">
-                                                                {{ $list->company_name }}</option>
-                                                        @endforeach
+                                        <div class="col-md-3 mb-3 ">
+                                            <div class="form-group form-input">
+                                                <label for="company_id require" class="form-label require ">Company</label>
+                                                <select name="company_id" id="company_id"
+                                                    class=" form-control single-select" style="width: 100%">
+                                                    <option value="">Select Company</option>
+                                                    @foreach ($companyList as $list)
+                                                        <option value="{{ encryptId($list->id) }}">
+                                                            {{ $list->company_name }}</option>
+                                                    @endforeach
 
-                                                    </select>
-                                                     <div class="text-danger"></div>
-                                                </div>
-
-
+                                                </select>
+                                                <div class="text-danger"></div>
                                             </div>
-                                           
 
-                                            <div class="col-md-3 mb-3 ">
-                                                <div class="form-group form-input">
-                                                    <label for="unit_id" class="form-label require">Unit</label>
-                                                    <select name="unit_id" id="unit_id"
-                                                        class="form-control single-select form-control-sm"
-                                                        style="width: 100%">
-                                                        <option value="">Select the Unit</option>
 
-                                                    </select>
-                                                     <div class="text-danger"></div>
-                                                </div>
+                                        </div>
 
+
+                                        <div class="col-md-3 mb-3 ">
+                                            <div class="form-group form-input">
+                                                <label for="unit_id" class="form-label require">Unit</label>
+                                                <select name="unit_id" id="unit_id"
+                                                    class="form-control single-select form-control-sm" style="width: 100%">
+                                                    <option value="">Select the Unit</option>
+
+                                                </select>
+                                                <div class="text-danger"></div>
                                             </div>
-                                            <div class="col-md-3 mb-3">
-                                                <div class="form-group form-input">
-                                                    <label for="department_id" class="form-label require">Department
-                                                    </label>
-                                                    <select name="department_id" id="department_id"
-                                                        class=" form-control single-select" style="width: 100%">
-                                                        <option value="">Select Department </option>
 
-                                                    </select>
-                                                </div>
+                                        </div>
+                                        <div class="col-md-3 mb-3">
+                                            <div class="form-group form-input">
+                                                <label for="department_id" class="form-label require">Department
+                                                </label>
+                                                <select name="department_id" id="department_id"
+                                                    class=" form-control single-select" style="width: 100%">
+                                                    <option value="">Select Department </option>
+
+                                                </select>
                                             </div>
+                                        </div>
 
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="status" class="form-label ">{{ __('common.status') }}</label>
@@ -139,8 +138,8 @@
                                         <th>Training Topic</th>
                                         <th>Trainer</th>
                                         <th>{{ __('common.company') }}</th>
-                                     <th>{{ __('common.unit') }}</th>
-                                     <th>{{ __('common.department') }}</th>
+                                        <th>{{ __('common.unit') }}</th>
+                                        <th>{{ __('common.department') }}</th>
                                         <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.created_by') }}</th>
                                         <th>{{ __('common.created_date') }}</th>
@@ -161,32 +160,31 @@
 
     @push('script')
         <script type="text/javascript">
-
-          $(document).on('change', '#company_id', function() {
-            var companyId = $(this).val();
-            if (companyId) {
-                $.ajax({
-                    url: "{{ admin_url('unit/get-unit-data') }}/" + companyId + "/0",
-                    type: 'GET',
-                    dataType: 'json',
-                    success: function(data) {
-                        $('#unit_id').empty().append(
-                            '<option value="">Select unit</option>');
-                        $.each(data, function(key, value) {
-                            $('#unit_id').append('<option value="' + value
-                                .id + '">' + value.name + '</option>');
-                        });
-                        $('#unit_id').trigger('change.');
-                    },
-                    error: function(xhr) {
-                        alert('Error fetching unit. Please try again.');
-                    }
-                });
-            } else {
-                $('#unit_id').empty().append('<option value="">Select unit</option>');
-                $('#unit_id').trigger('change.');
-            }
-        });
+            $(document).on('change', '#company_id', function() {
+                var companyId = $(this).val();
+                if (companyId) {
+                    $.ajax({
+                        url: "{{ admin_url('unit/get-unit-data') }}/" + companyId + "/0",
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(data) {
+                            $('#unit_id').empty().append(
+                                '<option value="">Select unit</option>');
+                            $.each(data, function(key, value) {
+                                $('#unit_id').append('<option value="' + value
+                                    .id + '">' + value.name + '</option>');
+                            });
+                            $('#unit_id').trigger('change.');
+                        },
+                        error: function(xhr) {
+                            alert('Error fetching unit. Please try again.');
+                        }
+                    });
+                } else {
+                    $('#unit_id').empty().append('<option value="">Select unit</option>');
+                    $('#unit_id').trigger('change.');
+                }
+            });
             $(document).on('change', '#unit_id', function() {
                 var unitId = $(this).val();
                 if (unitId) {
@@ -230,9 +228,12 @@
             flatpickr("#to_date_datepicker", {
                 dateFormat: "d-m-Y",
                 minDate: "today",
-              
+
             });
             $(function() {
+
+                var dashboard_openCloseStatus =
+                    '{{ isset($dashboard_search['openclose']) && $dashboard_search['openclose'] != '' ? $dashboard_search['openclose'] : '' }}';
                 /* Datatable */
                 var table = $('.datatable-list').DataTable({
                     autoWidth: false,
@@ -273,6 +274,7 @@
                             d.department_id = $('#department_id').val();
                             d.company_id = $('#company_id').val();
                             d.status = $('#status').val();
+                            d.dashboard_openCloseStatus = dashboard_openCloseStatus;
 
                         },
                         error: function(xhr, error, code) {
@@ -303,7 +305,7 @@
                             data: 'emp_name',
                             name: 'emp_name'
                         },
-                         {
+                        {
                             data: 'company_id',
                             name: 'company_id'
                         },
@@ -311,7 +313,7 @@
                             data: 'unit_name',
                             name: 'unit_name'
                         },
-                          {
+                        {
                             data: 'department_id',
                             name: 'department_id'
                         },
@@ -364,6 +366,7 @@
                                         department_id = $('#department_id').val();
                                         company_id = $('#company_id').val();
                                         status = $('#status').val();
+                                        dashboard_openCloseStatus = dashboard_openCloseStatus;
 
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
@@ -377,6 +380,8 @@
                                             '&company_id=' + company_id +
                                             '&department_id=' + department_id +
                                             '&unit_id=' + unit_id +
+                                            '&dashboard_openCloseStatus=' +
+                                            dashboard_openCloseStatus +
                                             '&status=' + status
                                     }
                                 },
@@ -393,6 +398,8 @@
                                         department_id = $('#department_id').val();
                                         company_id = $('#company_id').val();
                                         status = $('#status').val();
+                                        dashboard_openCloseStatus = dashboard_openCloseStatus;
+
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
@@ -402,9 +409,11 @@
                                             '&to_date=' + to_date +
                                             '&topic_id=' + topic_id +
                                             '&trainer_id=' + trainer_id +
-                                         '&company_id=' + company_id +
+                                            '&company_id=' + company_id +
                                             '&department_id=' + department_id +
                                             '&unit_id=' + unit_id +
+                                            '&dashboard_openCloseStatus=' +
+                                            dashboard_openCloseStatus +
                                             '&status=' + status
                                     }
                                 },
