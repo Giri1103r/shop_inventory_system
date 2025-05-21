@@ -117,7 +117,6 @@
                                         class="btn btn-primary mt-4">Search</button>
                                     <button type="reset" id="resetform" class="btn btn-danger mt-4">Reset</button>
                                 </div>
-
                             </div>
                         </div>
                     </div>
@@ -161,57 +160,23 @@
                 </div>
             </div> --}}
 
-            <div class="row" id="leading_container">
-                @forelse ($leadings as  $leading)
-                    <div class="col-xl-3 col-lg-3 col-sm-3 p-2">
-                        <div class="widget-stat card card-dashbaord"
-                            onclick="redirectopermanage('{{ isset($moduleLink[0]['link']) ? $moduleLink[0]['link'] : '' }}')"
-                            style="cursor: pointer;background-image: linear-gradient(to right, #a3f0dc 0%, #83aeee 100%);">
-                            <div class="card-body "
-                                style = "box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06);">
-                                <div class="media ai-icon" style="display: flex; align-items: center;">
-                                    <div class="media-body" style="display: block;">
-                                        <p class="mb-1" style="color:black;">
-                                            {{ $leading['name'] }}
-                                        </p>
-                                        <h4 class="mb-0 medicine-requisition">
-                                            {{ $leading['value'] }}
-                                        </h4>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+            <div class="card container dashboard_card mt-3 p-2">
+                <div class="card-header">
+                    <h4 class="text-white">{{ __('common.leading') }}</h4>
+                </div>
+                <div class="row" id="leading_container">
+                    <div class="card-body">
+
                     </div>
-                @empty
-                @endforelse
+                </div>
+
+                <div class="card-header">
+                    <h4 class="text-white">{{ __('common.lagging') }}</h4>
+                </div>
+                <div class="row" id="lagging_container">
+
+                </div>
             </div>
-
-
-            <div class="row" id="lagging_container">
-                @forelse ($laggings as $lagging)
-                    <div class="col-xl-3 col-lg-3 col-sm-3 p-2">
-                        <div class="widget-stat card card-dashbaord"
-                            onclick="redirectopermanage('{{ isset($moduleLink[0]['link']) ? $moduleLink[0]['link'] : '' }}')"
-                            style="cursor: pointer;background-image: linear-gradient(to right, #d44f4a 0%, #ee8383 100%);">
-                            <div class="card-body "
-                                style = "box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06);">
-                                <div class="media ai-icon" style="display: flex; align-items: center;">
-                                    <div class="media-body" style="display: block;">
-                                        <p class="mb-1" style="color:black;">
-                                            {{ $lagging['name'] }}
-                                        </p>
-                                        <h4 class="mb-0 medicine-requisition">
-                                            {{ $lagging['value'] }}
-                                        </h4>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                @empty
-                @endforelse
-            </div>
-
         </div>
     </div>
 
@@ -337,7 +302,7 @@
                                     <div class="media ai-icon" style="display: flex; align-items: center;">
                                         <div class="media-body" style="display: block;">
                                             <p class="mb-1" style="color:black;">${item.name}</p>
-                                            <h4 class="mb-0 medicine-requisition">${item.value}</h4>
+                                            <h4 class="mb-0 ">${item.value}</h4>
                                         </div>
                                     </div>
                                 </div>
@@ -355,8 +320,8 @@
                                     style="box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06);">
                                     <div class="media ai-icon" style="display: flex; align-items: center;">
                                         <div class="media-body" style="display: block;">
-                                            <p class="mb-1" style="color:black;">${item.name}</p>
-                                            <h4 class="mb-0 medicine-requisition">${item.value}</h4>
+                                            <p class="mb-1 text-white fw-bold" >${item.name}</p>
+                                            <h4 class="mb-0 text-white fw-bold">${item.value}</h4>
                                         </div>
                                     </div>
                                 </div>
