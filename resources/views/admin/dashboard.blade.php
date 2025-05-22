@@ -86,7 +86,7 @@
 
                         <div class="col-md-2 gx-0">
                             <div class="card  h- w-100">
-                                <div class="card-header py-2">
+                                <div class="card-header py-2 mb-2">
                                     <h5 class="m-0 text-center text-white">Operating Management</h5>
                                 </div>
                                 <div class="px-2 mt-1">
@@ -123,12 +123,16 @@
                                         <div class="px-2 boder-rounded "
                                             style = "box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06);">
                                             <div class="media ai-icon" style="display: flex; align-items: center;">
+                                                <span class="me-3 bgl-primary text-primary" style="flex-shrink: 0;">
 
+
+
+                                                </span>
                                                 <div class="media-body" style="display: block;">
-                                                    <p class="mb-1" style="color:black;">
+                                                    <p class="mb-1 mt-1" style="color:black;">
                                                         {{ isset($moduleLink[0]['name']) ? $moduleLink[0]['name'] : '' }}
                                                     </p>
-                                                    <h4 class="mb-0 medicine-requisition">
+                                                    <h4 class="mb-1 medicine-requisition">
                                                         {{ isset($moduleLink[0]['count']) ? $moduleLink[0]['count'] : 0 }}
                                                     </h4>
                                                 </div>
@@ -144,12 +148,16 @@
                                         <div class="px-2 boder-rounded"
                                             style = "box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06);">
                                             <div class="media ai-icon" style="display: flex; align-items: center;">
+                                                <span class="me-3 bgl-primary text-primary" style="flex-shrink: 0;">
 
+
+
+                                                </span>
                                                 <div class="media-body" style="display: block;">
-                                                    <p class="mb-1" style="color:black;">
+                                                    <p class="mb-1 mt-1" style="color:black;">
                                                         {{ isset($moduleLink[1]['name']) ? $moduleLink[1]['name'] : '' }}
                                                     </p>
-                                                    <h4 class="mb-0 medicine-requisition">
+                                                    <h4 class="mb-1 medicine-requisition">
                                                         {{ isset($moduleLink[1]['count']) ? $moduleLink[1]['count'] : 0 }}
                                                     </h4>
                                                 </div>
@@ -166,12 +174,16 @@
                                         <div class="px-2 boder-rounded "
                                             style = "box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06);">
                                             <div class="media ai-icon" style="display: flex; align-items: center;">
+                                                <span class="me-3 bgl-primary text-primary" style="flex-shrink: 0;">
 
+
+
+                                                </span>
                                                 <div class="media-body" style="display: block;">
-                                                    <p class="mb-1" style="color:black;">
+                                                    <p class="mb-1 mt-1" style="color:black;">
                                                         {{ isset($moduleLink[2]['name']) ? $moduleLink[2]['name'] : '' }}
                                                     </p>
-                                                    <h4 class="mb-0 medicine-requisition">
+                                                    <h4 class="mb-1 medicine-requisition">
                                                         {{ isset($moduleLink[2]['count']) ? $moduleLink[2]['count'] : 0 }}
                                                     </h4>
                                                 </div>
@@ -189,10 +201,10 @@
                                             <div class="media ai-icon" style="display: flex; align-items: center;">
 
                                                 <div class="media-body" style="display: block;">
-                                                    <p class="mb-1" style="color:black;">
+                                                    <p class="mb-1 mt-1" style="color:black;">
                                                         {{ isset($moduleLink[3]['name']) ? $moduleLink[3]['name'] : '' }}
                                                     </p>
-                                                    <h4 class="mb-0 medicine-requisition">
+                                                    <h4 class="mb-1 medicine-requisition">
                                                         {{ isset($moduleLink[3]['count']) ? $moduleLink[3]['count'] : 0 }}
                                                     </h4>
                                                 </div>
@@ -209,12 +221,16 @@
                                         <div class="px-2 boder-rounded "
                                             style = "box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06);">
                                             <div class="media ai-icon" style="display: flex; align-items: center;">
+                                                <span class="me-3 bgl-primary text-primary" style="flex-shrink: 0;">
 
+
+
+                                                </span>
                                                 <div class="media-body" style="display: block;">
-                                                    <p class="mb-1" style="color:black;">
+                                                    <p class="mb-1 mt-1" style="color:black;">
                                                         {{ isset($moduleLink[4]['name']) ? $moduleLink[4]['name'] : '' }}
                                                     </p>
-                                                    <h4 class="mb-0 medicine-requisition">
+                                                    <h4 class="mb-1 medicine-requisition">
                                                         {{ isset($moduleLink[4]['count']) ? $moduleLink[4]['count'] : 0 }}
                                                     </h4>
                                                 </div>
@@ -230,12 +246,16 @@
                                         <div class="px-2 boder-rounded "
                                             style = "box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06);">
                                             <div class="media ai-icon" style="display: flex; align-items: center;">
+                                                <span class="me-3 bgl-primary text-primary" style="flex-shrink: 0;">
 
+
+
+                                                </span>
                                                 <div class="media-body" style="display: block;">
-                                                    <p class="mb-1" style="color:black;">
+                                                    <p class="mb-1 mt-1" style="color:black;">
                                                         {{ isset($moduleLink[5]['name']) ? $moduleLink[5]['name'] : '' }}
                                                     </p>
-                                                    <h4 class="mb-0 medicine-requisition">
+                                                    <h4 class="mb-1 medicine-requisition">
                                                         {{ isset($moduleLink[5]['count']) ? $moduleLink[5]['count'] : 0 }}
                                                     </h4>
                                                 </div>
@@ -256,10 +276,10 @@
 
                                                 </span>
                                                 <div class="media-body" style="display: block;">
-                                                    <p class="mb-1" style="color:black;">
+                                                    <p class="mb-1 mt-1" style="color:black;">
                                                         {{ isset($moduleLink[6]['name']) ? $moduleLink[6]['name'] : '' }}
                                                     </p>
-                                                    <h4 class="mb-0 medicine-requisition">
+                                                    <h4 class="mb-1 medicine-requisition">
                                                         {{ isset($moduleLink[6]['count']) ? $moduleLink[6]['count'] : 0 }}
                                                     </h4>
                                                 </div>
@@ -281,13 +301,13 @@
 
                                                 </span>
                                                 <div class="media-body" style="display: block;">
-                                                    <p class="mb-1" style="color:black;">
+                                                    <p class="mb-1 mt-1" style="color:black;">
                                                         @if (is_array($moduleLink[7]) && isset($moduleLink[7]['name']))
                                                             {{ $moduleLink[7]['name'] }}
                                                         @endif
 
                                                     </p>
-                                                    <h4 class="mb-0 medicine-requisition">
+                                                    <h4 class="mb-1 medicine-requisition">
                                                         @if (is_array($moduleLink[7]) && isset($moduleLink[7]['count']))
                                                             {{ $moduleLink[7]['count'] }}
                                                         @endif
@@ -307,12 +327,16 @@
                                         <div class="px-2 boder-rounded "
                                             style = "box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06);">
                                             <div class="media ai-icon" style="display: flex; align-items: center;">
+                                                <span class="me-3 bgl-primary text-primary" style="flex-shrink: 0;">
 
+
+
+                                                </span>
                                                 <div class="media-body" style="display: block;">
-                                                    <p class="mb-1" style="color:black;">
+                                                    <p class="mb-1 mt-1" style="color:black;">
                                                         {{ isset($moduleLink[8]['name']) ? $moduleLink[8]['name'] : '' }}
                                                     </p>
-                                                    <h4 class="mb-0 medicine-requisition">
+                                                    <h4 class="mb-1 medicine-requisition">
                                                         {{ isset($moduleLink[8]['count']) ? $moduleLink[8]['count'] : 0 }}
                                                     </h4>
                                                 </div>
@@ -328,12 +352,16 @@
                                         <div class="px-2 boder-rounded "
                                             style = "box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06);">
                                             <div class="media ai-icon" style="display: flex; align-items: center;">
+                                                <span class="me-3 bgl-primary text-primary" style="flex-shrink: 0;">
 
+
+
+                                                </span>
                                                 <div class="media-body" style="display: block;">
-                                                    <p class="mb-1" style="color:black;">
+                                                    <p class="mb-1 mt-1" style="color:black;">
                                                         {{ isset($moduleLink[9]['name']) ? $moduleLink[9]['name'] : '' }}
                                                     </p>
-                                                    <h4 class="mb-0 medicine-requisition">
+                                                    <h4 class="mb-1 medicine-requisition">
                                                         {{ isset($moduleLink[9]['count']) ? $moduleLink[9]['count'] : 0 }}
                                                     </h4>
                                                 </div>
@@ -354,10 +382,10 @@
 
                                                 </span>
                                                 <div class="media-body" style="display: block;">
-                                                    <p class="mb-1" style="color:black;">
+                                                    <p class="mb-1 mt-1" style="color:black;">
                                                         {{ isset($moduleLink[10]['name']) ? $moduleLink[10]['name'] : '' }}
                                                     </p>
-                                                    <h4 class="mb-0 medicine-requisition">
+                                                    <h4 class="mb-1 medicine-requisition">
                                                         {{ isset($moduleLink[10]['count']) ? $moduleLink[10]['count'] : 0 }}
                                                     </h4>
                                                 </div>
@@ -380,13 +408,13 @@
 
                                                 </span>
                                                 <div class="media-body" style="display: block;">
-                                                    <p class="mb-1" style="color:black;">
+                                                    <p class="mb-1 mt-1" style="color:black;">
                                                         @if (is_array($moduleLink[11]) && isset($moduleLink[11]['name']))
                                                             {{ $moduleLink[11]['name'] }}
                                                         @endif
 
                                                     </p>
-                                                    <h4 class="mb-0 medicine-requisition">
+                                                    <h4 class="mb-1 medicine-requisition">
                                                         @if (is_array($moduleLink[11]) && isset($moduleLink[11]['count']))
                                                             {{ $moduleLink[11]['count'] }}
                                                         @endif
@@ -411,13 +439,13 @@
 
                                                 </span>
                                                 <div class="media-body" style="display: block;">
-                                                    <p class="mb-1" style="color:black;">
+                                                    <p class="mb-1 mt-1" style="color:black;">
                                                         @if (is_array($moduleLink[12]) && isset($moduleLink[12]['name']))
                                                             {{ $moduleLink[12]['name'] }}
                                                         @endif
 
                                                     </p>
-                                                    <h4 class="mb-0 medicine-requisition">
+                                                    <h4 class="mb-1 medicine-requisition">
                                                         @if (is_array($moduleLink[12]) && isset($moduleLink[12]['count']))
                                                             {{ $moduleLink[12]['count'] }}
                                                         @endif
@@ -440,13 +468,13 @@
 
                                                 </span>
                                                 <div class="media-body" style="display: block;">
-                                                    <p class="mb-1" style="color:black;">
+                                                    <p class="mb-1 mt-1" style="color:black;">
                                                         @if (is_array($moduleLink[13]) && isset($moduleLink[13]['name']))
                                                             {{ $moduleLink[13]['name'] }}
                                                         @endif
 
                                                     </p>
-                                                    <h4 class="mb-0 medicine-requisition">
+                                                    <h4 class="mb-1 medicine-requisition">
                                                         @if (is_array($moduleLink[13]) && isset($moduleLink[13]['count']))
                                                             {{ $moduleLink[13]['count'] }}
                                                         @endif
@@ -469,13 +497,13 @@
 
                                                 </span>
                                                 <div class="media-body" style="display: block;">
-                                                    <p class="mb-1" style="color:black;">
+                                                    <p class="mb-1 mt-1" style="color:black;">
                                                         @if (is_array($moduleLink[14]) && isset($moduleLink[14]['name']))
                                                             {{ $moduleLink[14]['name'] }}
                                                         @endif
 
                                                     </p>
-                                                    <h4 class="mb-0 medicine-requisition">
+                                                    <h4 class="mb-1 medicine-requisition">
                                                         @if (is_array($moduleLink[14]) && isset($moduleLink[14]['count']))
                                                             {{ $moduleLink[14]['count'] }}
                                                         @endif
@@ -498,13 +526,13 @@
 
                                                 </span>
                                                 <div class="media-body" style="display: block;">
-                                                    <p class="mb-1" style="color:black;">
+                                                    <p class="mb-1 mt-1" style="color:black;">
                                                         @if (is_array($moduleLink[15]) && isset($moduleLink[15]['name']))
                                                             {{ $moduleLink[15]['name'] }}
                                                         @endif
 
                                                     </p>
-                                                    <h4 class="mb-0 medicine-requisition">
+                                                    <h4 class="mb-1 medicine-requisition">
                                                         @if (is_array($moduleLink[15]) && isset($moduleLink[15]['count']))
                                                             {{ $moduleLink[15]['count'] }}
                                                         @endif
@@ -519,7 +547,7 @@
                                 <div class=" col-xl-3 col-lg-3 col-sm-3 p-1 boder-rounded">
                                     <div class="widget-stat "
                                         onclick="redirectopermanage('{{ isset($moduleLink[16]['link']) ? $moduleLink[16]['link'] : '' }}')"
-                                         style="cursor: pointer;background-image: linear-gradient(135deg, #5ba4f1, #cfeeee);">
+                                        style="cursor: pointer;background-image: linear-gradient(135deg, #5ba4f1, #cfeeee);">
                                         <div class="px-2 boder-rounded "
                                             style = "box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06);">
                                             <div class="media ai-icon" style="display: flex; align-items: center;">
@@ -529,13 +557,13 @@
 
                                                 </span>
                                                 <div class="media-body" style="display: block;">
-                                                    <p class="mb-1" style="color:black;">
+                                                    <p class="mb-1 mt-1" style="color:black;">
                                                         @if (is_array($moduleLink[16]) && isset($moduleLink[16]['name']))
                                                             {{ $moduleLink[16]['name'] }}
                                                         @endif
 
                                                     </p>
-                                                    <h4 class="mb-0 medicine-requisition">
+                                                    <h4 class="mb-1 medicine-requisition">
                                                         @if (is_array($moduleLink[16]) && isset($moduleLink[16]['count']))
                                                             {{ $moduleLink[16]['count'] }}
                                                         @endif
@@ -559,13 +587,13 @@
 
                                                 </span>
                                                 <div class="media-body" style="display: block;">
-                                                    <p class="mb-1" style="color:black;">
+                                                    <p class="mb-1 mt-1" style="color:black;">
                                                         @if (is_array($moduleLink[17]) && isset($moduleLink[17]['name']))
                                                             {{ $moduleLink[17]['name'] }}
                                                         @endif
 
                                                     </p>
-                                                    <h4 class="mb-0 medicine-requisition">
+                                                    <h4 class="mb-1 medicine-requisition">
                                                         @if (is_array($moduleLink[17]) && isset($moduleLink[17]['count']))
                                                             {{ $moduleLink[17]['count'] }}
                                                         @endif
@@ -575,7 +603,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                 <div class=" col-xl-3 col-lg-3 col-sm-3 p-1 boder-rounded">
+                                <div class=" col-xl-3 col-lg-3 col-sm-3 p-1 boder-rounded">
                                     <div class="widget-stat "
                                         onclick="redirectopermanage('{{ isset($moduleLink[18]['link']) ? $moduleLink[18]['link'] : '' }}')"
                                         style="cursor: pointer;background-image: linear-gradient(135deg, #f6d365, #fda085);">
@@ -588,13 +616,13 @@
 
                                                 </span>
                                                 <div class="media-body" style="display: block;">
-                                                    <p class="mb-1" style="color:black;">
+                                                    <p class="mb-1 mt-1" style="color:black;">
                                                         @if (is_array($moduleLink[18]) && isset($moduleLink[18]['name']))
                                                             {{ $moduleLink[18]['name'] }}
                                                         @endif
 
                                                     </p>
-                                                    <h4 class="mb-0 medicine-requisition">
+                                                    <h4 class="mb-1 medicine-requisition">
                                                         @if (is_array($moduleLink[18]) && isset($moduleLink[18]['count']))
                                                             {{ $moduleLink[18]['count'] }}
                                                         @endif
@@ -604,47 +632,48 @@
                                         </div>
                                     </div>
                                 </div>
-                                 <div class=" col-xl-3 col-lg-3 col-sm-3 p-1 boder-rounded">
+                                <div class=" col-xl-3 col-lg-3 col-sm-3 p-1 boder-rounded">
                                     <div class="widget-stat "
                                         onclick="redirectopermanage('{{ isset($moduleLink[19]['link']) ? $moduleLink[19]['link'] : '' }}')"
-                                         style="cursor: pointer;background-image: linear-gradient(135deg, #a18cd1, #fbc2eb);
-                                        <div class="px-2 boder-rounded "
-                                            style = "box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06);">
-                                            <div class="media ai-icon" style="display: flex; align-items: center;">
-                                                <span class="me-3 bgl-primary text-primary" style="flex-shrink: 0;">
+                                        style="cursor: pointer;background-image: linear-gradient(135deg, #a18cd1, #fbc2eb);
+                                        <div class="px-2
+                                        boder-rounded "
+                                                style = "box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06);">
+                                                <div class="media ai-icon" style="display: flex; align-items: center;">
+                                                    <span class="me-3 bgl-primary text-primary" style="flex-shrink: 0;">
 
 
 
-                                                </span>
-                                                <div class="media-body" style="display: block;">
-                                                    <p class="mb-1" style="color:black;">
-                                                        @if (is_array($moduleLink[19]) && isset($moduleLink[19]['name']))
-                                                            {{ $moduleLink[19]['name'] }}
-                                                        @endif
+                                                    </span>
+                                                    <div class="media-body" style="display: block;">
+                                                        <p class="mb-1 mt-1" style="color:black;">
+                                                             @if (is_array($moduleLink[19]) && isset($moduleLink[19]['name']))
+                                        {{ $moduleLink[19]['name'] }}
+                                        @endif
 
-                                                    </p>
-                                                    <h4 class="mb-0 medicine-requisition">
-                                                        @if (is_array($moduleLink[19]) && isset($moduleLink[19]['count']))
-                                                            {{ $moduleLink[19]['count'] }}
-                                                        @endif
-                                                    </h4>
-                                                </div>
-                                            </div>
-                                        </div>
+                                        </p>
+                                        <h4 class="mb-1 medicine-requisition">
+                                            @if (is_array($moduleLink[19]) && isset($moduleLink[19]['count']))
+                                                {{ $moduleLink[19]['count'] }}
+                                            @endif
+                                        </h4>
                                     </div>
                                 </div>
                             </div>
                         </div>
-
                     </div>
-
                 </div>
-
-
-
-
             </div>
+
         </div>
+
+    </div>
+
+
+
+
+    </div>
+    </div>
     </div>
 
     <div class = "row">

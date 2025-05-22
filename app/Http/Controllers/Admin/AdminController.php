@@ -252,7 +252,7 @@ class AdminController extends Controller
                         ],
                         [
                             // 'link' => 'audit/inter-unit-audit/checklist/list',
-                            'name' => 'No of HSE Inspection',
+                            'name' => 'No of Fire Inspection',
                             'count' => GetInspectionCount('Fire')['Fire'] ,
                             'icon' => 'bx bx-message-square-detail',
                             'icon_color' => 'text-primary',
