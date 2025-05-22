@@ -76,12 +76,12 @@ class MonthlyForkLiftInspection extends BaseController
             }
 
             if (!empty($search)) {
-                $searchDate = ($search);
-                $query->where(function ($query) use ($searchDate) {
-                    $query->orWhere('masters_unit.unit_name', $searchDate)
-                        ->orWhere('masters_location.location_name', $searchDate)
-                        ->orWhere('inspection_shift_option.shift', $searchDate)
-                        ->orWhere('inspection_frequency_option.frequency_name', $searchDate);
+                $search = ($search);
+                $query->where(function ($query) use ($search) {
+                    $query->orWhere('masters_unit.unit_name', $search)
+                        ->orWhere('masters_location.location_name', $search)
+                        ->orWhere('inspection_shift_option.shift', $search)
+                        ->orWhere('inspection_frequency_option.frequency_name', $search);
                 });
             }
 
@@ -170,7 +170,7 @@ class MonthlyForkLiftInspection extends BaseController
                     foreach ($statuslog as $key => $status) {
                         $statuslog[$key]->from_status = getInspectionStatus($status->from_status);
                         $statuslog[$key]->to_status = getInspectionStatus($status->to_status);
-                        $statuslog[$key]->remarks = getInspectionStatus($status->remarks);
+                        $statuslog[$key]->remarks = $status->remarks;
                         $statuslog[$key]->approved_by = getUsername($status->approved_by);
                         $statuslog[$key]->created_by = getUsername($status->created_by);
                         $statuslog[$key]->created_at = Displaydateformat($status->created_at);
@@ -424,34 +424,64 @@ class MonthlyForkLiftInspection extends BaseController
     public function forklift_type()
     {
         try {
-            $forklift_type = $this->forklift_type->getForkLift();
+            $forklift_type = $this->forklift_type->getForkLift()->toArray();
+
+            $forklifts = array_map(function ($item) {
+                return [
+                    'id' => $item['id'],
+                    'name' => $item['forklift'],
+                    'created_by' => getUsername($item['created_by']),
+                    'status' => ($item['status'] == 1 ? 'Active' : 'InActive'),
+                ];
+            }, $forklift_type);
+
             $success = array(
-                'forklift_types' => $forklift_type,
+                'forklift_types' => $forklifts,
             );
             return $this->sendResponse($success, 'Forklift Type');
         } catch (Exception $ex) {
-
+            report($ex);
             return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
         }
     }
     public function frequencyName()
     {
         try {
-            $frquencies = $this->frequency->getFrequency();
+            $frquencies = $this->frequency->getFrequency()->toArray();
+
+            $frequency = array_map(function ($item) {
+                return  [
+                    'id' => $item['id'],
+                    'name' => $item['frequency_name'],
+                    'created_by' => getUsername($item['created_by']),
+                    'status' => ($item['status'] == 1 ? 'Active' : 'InActive'),
+                ];
+            }, $frquencies);
+
             $success = array(
-                'frquencies' => $frquencies,
+                'frquencies' => $frequency,
             );
             return $this->sendResponse($success, 'Frequency');
         } catch (Exception $ex) {
+            report($ex);
             return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
         }
     }
     public function shift()
     {
         try {
-            $shifts = $this->shift->getShiftname();
+            $shifts = $this->shift->getShiftname()->toArray();
+            $shift = array_map(function ($item) {
+                return  [
+                    'id' => $item['id'],
+                    'name' => $item['shift'],
+                    'created_by' => getUsername($item['created_by']),
+                    'status' => ($item['status'] == 1 ? 'Active' : 'InActive'),
+                ];
+            }, $shifts);
+
             $success = array(
-                'shifts' => $shifts,
+                'shifts' => $shift,
             );
             return $this->sendResponse($success, 'Shift');
         } catch (Exception $ex) {

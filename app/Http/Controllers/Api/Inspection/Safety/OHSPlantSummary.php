@@ -41,11 +41,11 @@ class OHSPlantSummary extends BaseController
             );
             $org_total_counts = $query->count();
 
-
             if (!empty($search)) {
-                $searchDate = ($search);
-                $query->where(function ($query) use ($searchDate) {
-                    $query->orWhereRaw("DATE_FORMAT(inspection_safety_ohs_report.inspection_date, '%d-%m-%Y') LIKE ?", ["%{$searchDate}%"]);
+                $search = ($search);
+                $query->where(function ($query) use ($search) {
+                    $query->orWhereRaw("DATE_FORMAT(inspection_safety_ohs_report.inspection_date, '%d-%m-%Y') LIKE ?", ["%{$search}%"])
+                        ->orWhere('inspection_shift_option.updated_frequency', $search);
                 });
             }
 

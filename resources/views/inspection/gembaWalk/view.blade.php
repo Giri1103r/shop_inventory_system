@@ -187,7 +187,7 @@
 
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
-                                                <label class="form-label">Recommended CAPA</label>
+                                                <label class="form-label">  </label>
                                                 <div class="view_data">
                                                     {{ isset($gembaWalk->capa) ? $gembaWalk->capa : '' }}
                                                 </div>

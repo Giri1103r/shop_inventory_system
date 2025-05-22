@@ -77,7 +77,7 @@ class SignatureUpload extends Model
         }
     }
 
-    public function signatureUpload_api($ppeexemption)
+    public function signatureUpload_api($type, $id)
     {
         $request = request();
         if ($request->has('signature_image')) {
@@ -122,17 +122,15 @@ class SignatureUpload extends Model
             file_put_contents($fileFullPath, $fileData);
 
             $this->create([
-                'reference_id'   => $ppeexemption->id,
-                'file_type'      => 1,
+                'emp_id' => Auth::id(),
+                'inspection_id' => $id,
+                'type' => $type,
                 'file_name'      => $fileName,
                 'file_orgname'   => $fileName,
                 'file_path'      => 'public/uploads/inspection/safety/signatureupload/' . $fileName,
                 'file_extension' => $extension,
                 'created_by'     => Auth::id(),
-                'trash'          => 'NO',
             ]);
-        }else{
-            dd(2);
         }
     }
 }

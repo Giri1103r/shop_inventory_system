@@ -88,7 +88,7 @@
                                                 <label
                                                     class="form-label ">{{ __('inspection.safety_walk_taken_by') }}</label>
                                                 <div class="view_data">
-                                                    {{ $inspection_details->safety_walk_taken_by }}
+                                                    {{  getUsername($inspection_details->safety_walk_taken_by) }}
                                                 </div>
                                             </div>
                                         </div>

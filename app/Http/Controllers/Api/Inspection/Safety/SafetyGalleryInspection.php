@@ -70,10 +70,10 @@ class SafetyGalleryInspection extends BaseController
             }
 
             if (!empty($search)) {
-                $searchDate = ($search);
-                $query->where(function ($query) use ($searchDate) {
-                    $query->orWhere('masters_unit.unit_name', $searchDate)
-                        ->orWhere('masters_location.location_name', $searchDate);
+                $search = ($search);
+                $query->where(function ($query) use ($search) {
+                    $query->orWhere('masters_unit.unit_name', $search)
+                        ->orWhere('masters_location.location_name', $search);
                 });
             }
 

@@ -118,6 +118,56 @@ class Medicine extends Model
         return $datas;
     }
 
+    public function listApi() {
+        $request = request();
+        $search = '';
+        $query = $this->select('ohc_master_medicine.*')->where('status',1);
+
+        // dd($query);
+        $org_total =  $query;
+        $org_total_counts = $org_total->count();
+
+        if ($request->search != null || $request->search != '') {
+            $search = $request->search;
+            $formattedDate = null;
+            if (\DateTime::createFromFormat('d-m-Y', $search) !== false) {
+                $formattedDate = \Carbon\Carbon::createFromFormat('d-m-Y', $search)->format('Y-m-d');
+            }
+            $query->where(function ($query) use ($search, $formattedDate) {
+                $query
+                    ->orWhere('medicine', 'LIKE', '%' . $search . '%')
+
+                    ->orWhere('hsn', 'LIKE', '%' . $search . '%')
+                    ->orWhere('threshold_limit', 'LIKE', '%' . $search . '%')
+                    ->orWhere('remarks', 'LIKE', '%' . $search . '%')
+
+                    ->orWhere('pack', 'LIKE', '%' . $search . '%');
+
+                    if ($formattedDate) {
+                        $query  ->orWhere('expiry_date', 'LIKE', '%' . $formattedDate . '%');
+                    }
+            });
+        }
+
+        $data = $query->orderBy('ohc_master_medicine.id')->get();
+
+        $medicine_data = $data->toArray();
+
+        $medicine_data_array = [];
+        $refined_data = [];
+
+        foreach($medicine_data as $index =>$data){
+            $medicine_data_array['id'] = $data['id'];
+            $medicine_data_array['medicine_name'] = $data['medicine'];
+
+            $refined_data[$index] = $medicine_data_array;
+
+        }
+
+        return $refined_data;
+
+    }
+
     public function uniqueCheck($medicine_name)
     {
 

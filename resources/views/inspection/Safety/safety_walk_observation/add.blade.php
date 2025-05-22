@@ -136,20 +136,21 @@
                                                 <div class="form-group form-input">
                                                     <label
                                                         class="form-label require">{{ __('inspection.safety_walk_taken_by') }}</label>
-                                                    <input type="text" name="safety_walk_taken_by"
-                                                        id = "safety_walk_taken_by" class="form-control"
-                                                        value="{{ old('safety_walk_taken_by') }}">
-                                                    @error('safety_walk_taken_by')
-                                                        <div class="error">{{ $message }}</div>
-                                                    @enderror
+                                                    <input type="text" value="{{ getUserName(Auth::id()) }}"
+                                                        name="safety_walk_taken_by" class="form-control" readonly>
+                                                    <input type="text" hidden name="safety_walk_taken_by"
+                                                        value="{{ encryptId(Auth::id()) }}">
                                                 </div>
+                                                @error('safety_walk_taken_by')
+                                                    <div class="error">{{ $message }}</div>
+                                                @enderror
                                             </div>
                                             <div class="col-md-4 form-group form-input mb-2">
                                                 @if (isset(Auth::user()->signature_upload))
                                                     <label class="form-label"
                                                         style="display: block; ">{{ __('inspection.signature') }}</label>
                                                     <img src="{{ admin_url(Auth::user()->signature_upload) }}"
-                                                        alt="Signature Upload" style="width: 150px; margin-top:-10px">
+                                                        alt="Signature Upload" style="width: 100px; margin-top:-10px">
                                                 @else
                                                     <div class="form-input col-md-12 mb-2">
                                                         <label class="form-label require">Signature</label>
@@ -415,8 +416,6 @@
                             },
                             "safety_walk_taken_by": {
                                 required: true,
-                                minlength: 3,
-                                maxlength: 30,
                             },
                             "checklist_file[1]": {
                                 required: true,
@@ -494,13 +493,7 @@
                             },
                             "safety_walk_taken_by": {
                                 required: "Safety Walk Taken By is required",
-                                minlength: "Minimum 3 characters required",
-                                maxlength: "Maximum character should not exceed the 30",
                             },
-
-
-
-
                             "location[1]": {
                                 required: "Location is required",
 
@@ -599,6 +592,7 @@
                     dropdownCssClass: 'form-control',
                     selectionCssClass: 'form-control'
                 });
+
             });
             let form_set_count = 2;
             let formIndex = 1;

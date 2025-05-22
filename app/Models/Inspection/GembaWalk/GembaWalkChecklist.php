@@ -4,6 +4,7 @@ namespace App\Models\Inspection\GembaWalk;
 
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Database\Eloquent\Model;
@@ -209,5 +210,207 @@ class GembaWalkChecklist extends Model
         $results = $query->groupBy('masters_unit.unit_name')->get();
 
         return $results;
+    }
+
+    public function getChecklistDetails($id)
+    {
+        $data = $this->select(
+            'inspection_gemba_walk_checklist.*',
+            'inspection_gemba_walk_checklist_files.file_path'
+        )
+            ->leftJoin('inspection_gemba_walk_checklist_files', function ($join) {
+                $join->on('inspection_gemba_walk_checklist_files.gemba_walk_checklist_id', '=', 'inspection_gemba_walk_checklist.id')
+                    ->where('inspection_gemba_walk_checklist_files.file_type', '=', 3);
+            })
+            ->where('inspection_gemba_walk_checklist.gemba_walk_id', $id)
+            ->get();
+
+        return $data;
+    }
+
+    // public function storeApi($gembaWalk_id)
+    // {
+    //     $request = request();
+    //     $gembaWalkData = $request->input('gemba_walk');
+
+    //     if (!empty($gembaWalkData) && is_array($gembaWalkData)) {
+    //         foreach ($gembaWalkData as $index => $walk) {
+    //             $data = [
+    //                 'gemba_walk_id' => $gembaWalk_id,
+    //                 'location_id' => $walk['location_id'],
+    //                 'unit_id' => $walk['unit_id'],
+    //                 'date_of_observation' => DBdateformat($walk['date_of_observation']),
+    //                 'observation_type_id' => $walk['observation_type'],
+    //                 'description' => $walk['checklist_description'],
+    //                 'hazard' => $walk['hazard'],
+    //                 'capa' => $walk['checklist_capa'],
+    //                 'gemba_walk_checklist_status' => $walk['current_status'],
+    //                 'remark' => $walk['checklist_remark'],
+    //                 'created_by' => Auth::id()
+    //             ];
+
+    //             $gembaWalkChecklist = $this->create($data);
+
+    //             if ($request->hasFile("gemba_walk.$index.evidence")) {
+    //                 $intendent = $request->file("gemba_walk.$index.evidence");
+
+    //                 $base64File = $request->input('signature_image');
+    //                 $extension = null;
+    //                 if (preg_match('/^data:image\/(\w+);base64,/', $base64File, $matches)) {
+    //                     $extension = $matches[1];
+    //                 } elseif (preg_match('/^data:application\/pdf;base64,/', $base64File)) {
+    //                     $extension = 'pdf';
+    //                 } elseif (preg_match('/^data:application\/msword;base64,/', $base64File)) {
+    //                     $extension = 'doc';
+    //                 } elseif (preg_match('/^data:application\/vnd\.openxmlformats-officedocument\.wordprocessingml\.document;base64,/', $base64File)) {
+    //                     $extension = 'docx';
+    //                 } elseif (preg_match('/^data:application\/vnd\.ms-excel;base64,/', $base64File)) {
+    //                     $extension = 'xls';
+    //                 } elseif (preg_match('/^data:application\/vnd\.openxmlformats-officedocument\.spreadsheetml\.sheet;base64,/', $base64File)) {
+    //                     $extension = 'xlsx';
+    //                 } elseif (preg_match('/^data:application\/octet-stream;base64,/', $base64File)) {
+    //                     $extension = 'bin';
+    //                 } else {
+    //                     Log::error("Unsupported Base64 file format.");
+    //                     return;
+    //                 }
+
+    //                 $base64File = preg_replace('#^data:(.*);base64,#i', '', $base64File);
+    //                 $fileData = base64_decode($base64File);
+
+    //                 if ($fileData === false) {
+    //                     Log::error("Base64 decoding failed.");
+    //                     return;
+    //                 }
+
+    //                 $uploadpath = 'uploads/gembaWalk/' . $gembaWalkChecklist->id;
+    //                 $folderPath = public_path($uploadpath);
+
+    //                 if (!File::exists($folderPath)) {
+    //                     File::makeDirectory($folderPath, 0755, true);
+    //                 }
+
+    //                 $filenewname = time() . Str::random(10) . '.' . $intendent->getClientOriginalExtension();
+    //                 $fileName = $intendent->getClientOriginalName();
+    //                 $fileSize = $intendent->getSize();
+    //                 $fileExt = $intendent->getClientOriginalExtension();
+
+    //                 $intendent->move($folderPath, $filenewname);
+    //                 $path = $uploadpath . "/" . $filenewname;
+    //                 $user_id = Auth::id();
+
+    //                 GembaWalkChecklistFile::create([
+    //                     'gemba_walk_id' => $gembaWalk_id,
+    //                     'gemba_walk_checklist_id' => $gembaWalkChecklist->id,
+    //                     'file_type' => 3,
+    //                     'file_name' => $filenewname,
+    //                     'file_orgname' => $fileName,
+    //                     'file_path' => $path,
+    //                     'file_size' => $fileSize,
+    //                     'file_extension' => $fileExt,
+    //                     'created_by' => $user_id,
+    //                 ]);
+    //             }
+    //         }
+
+    //         return response()->json(['message' => 'Data stored successfully'], 201);
+    //     }
+
+    //     return response()->json(['error' => 'Invalid data'], 400);
+    // }
+
+    public function storeApi($gembaWalk_id)
+    {
+        $request = request();
+        $gembaWalkData = $request->input('gemba_walk');
+
+        if (!empty($gembaWalkData) && is_array($gembaWalkData)) {
+            $insertedChecklists = [];
+
+            foreach ($gembaWalkData as $index => $walk) {
+                $data = [
+                    'gemba_walk_id' => $gembaWalk_id,
+                    'location_id' => $walk['location_id'],
+                    'unit_id' => $walk['unit_id'],
+                    'date_of_observation' => DBdateformat($walk['date_of_observation']),
+                    'observation_type_id' => $walk['observation_type'],
+                    'description' => $walk['checklist_description'],
+                    'hazard' => $walk['hazard'],
+                    'capa' => $walk['checklist_capa'],
+                    'gemba_walk_checklist_status' => $walk['current_status'],
+                    'remark' => $walk['checklist_remark'],
+                    'created_by' => Auth::id()
+                ];
+
+                $gembaWalkChecklist = $this->create($data);
+
+                // Handle Base64 file upload (evidence)
+                if (!empty($walk['evidence']) && is_string($walk['evidence'])) {
+                    $base64File = $walk['evidence'];
+                    $extension = null;
+
+                    // Detect file extension
+                    if (preg_match('/^data:image\/(\w+);base64,/', $base64File, $matches)) {
+                        $extension = $matches[1];
+                    } elseif (preg_match('/^data:application\/pdf;base64,/', $base64File)) {
+                        $extension = 'pdf';
+                    } elseif (preg_match('/^data:application\/msword;base64,/', $base64File)) {
+                        $extension = 'doc';
+                    } elseif (preg_match('/^data:application\/vnd\.openxmlformats-officedocument\.wordprocessingml\.document;base64,/', $base64File)) {
+                        $extension = 'docx';
+                    } elseif (preg_match('/^data:application\/vnd\.ms-excel;base64,/', $base64File)) {
+                        $extension = 'xls';
+                    } elseif (preg_match('/^data:application\/vnd\.openxmlformats-officedocument\.spreadsheetml\.sheet;base64,/', $base64File)) {
+                        $extension = 'xlsx';
+                    } else {
+                        Log::error("Unsupported Base64 file format.");
+                        continue;
+                    }
+
+                    // Decode file
+                    $base64Data = preg_replace('#^data:.*;base64,#', '', $base64File);
+                    $fileData = base64_decode($base64Data);
+
+                    if ($fileData === false) {
+                        Log::error("Base64 decoding failed.");
+                        continue;
+                    }
+
+                    // Create directory
+                    $uploadpath = 'uploads/gembaWalk/' . $gembaWalkChecklist->id;
+                    $folderPath = public_path($uploadpath);
+                    if (!File::exists($folderPath)) {
+                        File::makeDirectory($folderPath, 0755, true);
+                    }
+
+                    // Save file
+                    $filenewname = time() . Str::random(10) . '.' . $extension;
+                    $fullFilePath = $folderPath . '/' . $filenewname;
+                    file_put_contents($fullFilePath, $fileData);
+
+                    // Store file info in DB
+                    GembaWalkChecklistFile::create([
+                        'gemba_walk_id' => $gembaWalk_id,
+                        'gemba_walk_checklist_id' => $gembaWalkChecklist->id,
+                        'file_type' => 3,
+                        'file_name' => $filenewname,
+                        'file_orgname' => $filenewname,
+                        'file_path' => $uploadpath . '/' . $filenewname,
+                        'file_size' => strlen($fileData),
+                        'file_extension' => $extension,
+                        'created_by' => Auth::id(),
+                    ]);
+                }
+
+                $insertedChecklists[] = $gembaWalkChecklist;
+            }
+
+            return response()->json([
+                'message' => 'Data stored successfully',
+                'checklists' => $insertedChecklists
+            ], 201);
+        }
+
+        return response()->json(['error' => 'Invalid data'], 400);
     }
 }

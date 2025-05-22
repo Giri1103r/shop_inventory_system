@@ -212,6 +212,11 @@ class Equipment extends Model
         }
         return $decryptedArray;
     }
+
+    public function GetEquipmentName()
+    {
+        return $this->where('status', 1)->get();
+    }
     protected static function booted()
     {
         static::addGlobalScope(new TrashScope('inspection_safety_master_equipment'));

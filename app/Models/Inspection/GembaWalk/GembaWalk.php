@@ -8,6 +8,8 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use PhpParser\Builder\Function_;
+use PhpParser\Node\Expr\FuncCall;
 
 class GembaWalk extends Model
 {
@@ -153,7 +155,7 @@ class GembaWalk extends Model
         $inspection_data = $data->toArray();
         $data_array = [];
         $refined_data = [];
-        foreach($inspection_data as $index => $listdata){
+        foreach ($inspection_data as $index => $listdata) {
             $data_array['id'] = $listdata['id'];
             $data_array['gemba_walk_auto_id'] = $listdata['gemba_walk_auto_id'];
             $data_array['date'] = $listdata['date'];
@@ -162,7 +164,6 @@ class GembaWalk extends Model
             $data_array['created_at'] = Displaydateformat($listdata['created_at']);
             $data_array['created_by'] = getUsername($listdata['created_by']);
             $refined_data[$index] = $data_array;
-
         }
         return $refined_data;
     }
@@ -204,6 +205,43 @@ class GembaWalk extends Model
         return $this->create($insert_array);
     }
 
+
+    public function storeApi(){
+        $request = request();
+
+        if ($request->is_passed == 2) {
+
+            $insert_array = array(
+                'document_reference_id' => $request->document_reference_id,
+                'date' => DBdateformat($request->document_upload_date),
+                'shift_id' => $request->shift,
+                'company_id' => Auth::user()->company_id,
+                'observation_needed' => $request->observation_needed,
+                'capa_needed' => $request->is_passed,
+                'responsible_person_id' => $request->responsible_person_id,
+                'gemba_walk_status' => GEMBA_WALK_INSPECTION_WAITING_FOR_FLOOR_MANAGER_VERIFICATION,
+                'created_by' => Auth::id(),
+            );
+        } else {
+            $insert_array = array(
+                'document_reference_id' => $request->document_reference_id,
+                'date' => DBdateformat($request->document_upload_date),
+                'shift_id' => $request->shift,
+                'company_id' => Auth::user()->company_id,
+                'observation_needed' => $request->observation_needed,
+                'capa_needed' => $request->is_passed,
+                'responsible_person_id' => $request->responsible_person_id,
+                'gemba_walk_status' => GEMBA_WALK_INSPECTION_CLOSED,
+                'created_by' => Auth::id(),
+                'verified_by' => Auth::id()
+            );
+        }
+
+
+                return $this->create($insert_array);
+
+    }
+
     public function selectOne($id)
     {
         $data =  $this->select(
@@ -212,7 +250,7 @@ class GembaWalk extends Model
             'inspection_gemba_walk_checklist.id as checklist_id',
             'inspection_gemba_walk_checklist.*',
             'inspection_gemba_walk_checklist_files.file_path',
-            'inspection_gemba_walk.created_by as user_id',
+            'inspection_gemba_walk.created_by as gemba_walk_created_by',
 
         )
             ->leftJoin('inspection_gemba_walk_checklist', 'inspection_gemba_walk_checklist.gemba_walk_id', '=', 'inspection_gemba_walk.id')
@@ -372,6 +410,15 @@ class GembaWalk extends Model
         }
 
         return false;
+    }
+
+    public function getInspectionDetails($id)
+    {
+        $data = $this->select('inspection_gemba_walk.*','inspection_static_docno.doc_no','inspection_static_docno.issue_date','inspection_static_docno.rev_dt')
+                     ->leftjoin('inspection_static_docno','inspection_static_docno.id','=','inspection_gemba_walk.document_reference_id')
+                     ->where('inspection_gemba_walk.id',$id)
+                     ->first();
+        return $data;
     }
 
 
