@@ -1,4 +1,5 @@
 <?php
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\MasterController;
@@ -18,6 +19,8 @@ use App\Http\Controllers\Api\Inspection\Audit\AuditAssessmentController;
 use App\Http\Controllers\Api\Inspection\Fire\HooterInspectionController;
 use App\Http\Controllers\Api\Inspection\Safety\MonthlyForkLiftInspection;
 use App\Http\Controllers\Api\{LoginController, NotificationController, AdminController};
+use App\Http\Controllers\Api\Inspection\Safety\FireSafetyEquipment;
+use App\Http\Controllers\Api\Inspection\Safety\SafetyWalkObservation;
 
 // Route::get('/user', function (Request $request) {
 //     return $request->user();
@@ -151,9 +154,11 @@ Route::middleware('api')->prefix('v1')->group(function () {
             });
         });
 
+        //Master -  Safety
         Route::post('shift/list', [MonthlyForkLiftInspection::class, 'shift']);
         Route::post('frequency/list', [MonthlyForkLiftInspection::class, 'frequencyName']);
         Route::post('forklift_type/list', [MonthlyForkLiftInspection::class, 'forklift_type']);
+        Route::post('equipment/list', [FireSafetyEquipment::class, 'equipment']);
 
         Route::group(['prefix' => 'safety/safety-gallery-inspection/'], function () {
             Route::post('list', [MonthlyForkLiftInspection::class, 'list']);
@@ -177,6 +182,18 @@ Route::middleware('api')->prefix('v1')->group(function () {
             Route::post('list', [OHSPlantSummary::class, 'list']);
             Route::post('add', [OHSPlantSummary::class, 'store']);
             Route::post('view', [OHSPlantSummary::class, 'view']);
+        });
+
+        Route::group(['prefix' => 'safety/fire-safety-equipment/'], function () {
+            Route::post('list', [FireSafetyEquipment::class, 'list']);
+            Route::post('add', [FireSafetyEquipment::class, 'store']);
+            Route::post('view', [FireSafetyEquipment::class, 'view']);
+        });
+
+        Route::group(['prefix' => 'safety/safety-walk-observation/'], function () {
+            Route::post('list', [SafetyWalkObservation::class, 'list']);
+            Route::post('add', [SafetyWalkObservation::class, 'store']);
+            Route::post('view', [SafetyWalkObservation::class, 'view']);
         });
     });
 });

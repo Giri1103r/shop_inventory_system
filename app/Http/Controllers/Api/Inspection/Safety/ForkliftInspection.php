@@ -65,9 +65,9 @@ class ForkliftInspection extends BaseController
             }
 
             if (!empty($search)) {
-                $searchDate = ($search);
-                $query->where(function ($query) use ($searchDate) {
-                    $query->orWhereRaw("DATE_FORMAT(inspection_safety_forklift_inspection.inspection_date, '%d-%m-%Y') LIKE ?", ["%{$searchDate}%"]);
+                $search = ($search);
+                $query->where(function ($query) use ($search) {
+                    $query->orWhereRaw("DATE_FORMAT(inspection_safety_forklift_inspection.inspection_date, '%d-%m-%Y') LIKE ?", ["%{$search}%"]);
                 });
             }
 
@@ -146,7 +146,7 @@ class ForkliftInspection extends BaseController
                     'document_no' => $inspections->doc_no,
                     'issue_date' => Displaydateformat($inspections->issue_date),
                     'date_of_inspection' => Displaydateformat($inspections->inspection_date),
-                    'rev_dt' => Displaydateformat($inspections->rev_dt),
+                    'rev_dt' => ($inspections->rev_dt),
                     'signature' => admin_url($signature),
                 ];
                 $inspection_details_array = [];

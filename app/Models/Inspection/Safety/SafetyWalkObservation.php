@@ -42,7 +42,7 @@ class SafetyWalkObservation extends Model
         $user = Auth::user();
         $userRole = string_to_array($user->role);
         $search = '';
-        $query = $this->select('inspection_safety_walk_observation.*', 'inspection_shift_option.*', 'masters_unit.*', 'inspection_safety_walk_observation.id as inspection_id','inspection_safety_walk_observation.created_at as inspection_created_at')
+        $query = $this->select('inspection_safety_walk_observation.*', 'inspection_shift_option.*', 'masters_unit.*', 'inspection_safety_walk_observation.id as inspection_id', 'inspection_safety_walk_observation.created_at as inspection_created_at')
             ->leftJoin('inspection_shift_option', 'inspection_safety_walk_observation.shift_id', '=', 'inspection_shift_option.id')
             ->leftJoin('masters_unit', 'inspection_safety_walk_observation.unit', '=', 'masters_unit.id')
             ->leftJoin('inspection_static_docno', 'inspection_safety_walk_observation.document_reference_id', '=', 'inspection_static_docno.id');
@@ -145,10 +145,27 @@ class SafetyWalkObservation extends Model
             'document_reference_id' => decryptId($request->document_reference_id),
             'date' => DBdateformat($request->inspection_date),
             'month' => $request->month,
-            'safety_walk_taken_by' => $request->safety_walk_taken_by,
+            'safety_walk_taken_by' => decryptId($request->safety_walk_taken_by),
             'unit' => decryptId($request->unit),
             'created_by' => Auth::id(),
             'shift_id' => decryptId($request->shift_id),
+            'observation_status' => OBSERVATION_PENDING,
+        );
+
+        return $this->create($data);
+    }
+
+    public function store_api()
+    {
+        $request = request();
+        $data = array(
+            'document_reference_id' => ($request->document_reference_id),
+            'date' => DBdateformat($request->inspection_date),
+            'month' => $request->month,
+            'safety_walk_taken_by' => $request->safety_walk_taken_by,
+            'unit' => ($request->unit),
+            'created_by' => Auth::id(),
+            'shift_id' => ($request->shift_id),
             'observation_status' => OBSERVATION_PENDING,
         );
 
