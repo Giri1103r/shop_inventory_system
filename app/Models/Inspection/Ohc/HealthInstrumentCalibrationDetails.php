@@ -12,7 +12,7 @@ class HealthInstrumentCalibrationDetails extends Model
     use  HasFactory;
 
     protected $table = 'inspection_ohc_health_instrument_calibration_track_sheet_details';
-    
+
     protected $primaryKey = 'id';
 
     protected $fillable = [
@@ -39,17 +39,17 @@ class HealthInstrumentCalibrationDetails extends Model
         'trash' => 'NO'
     ];
 
- 
+
 
     public function store($id){
         $request = request();
         $health_instrument_details = $request->input('health_instrument');
-        
+
         if (!empty($health_instrument_details) && is_array($health_instrument_details)) {
-            $insertedData = []; 
+            $insertedData = [];
             foreach ($health_instrument_details as $health) {
                 $data = [
-                    'health_instrument_id' => $id, 
+                    'health_instrument_id' => $id,
                     'instrument_name' => $health['instrument_name'],
                     'resource_code' => $health['resource_code'],
                     'exact_location' => $health['exact_location'],
@@ -64,16 +64,48 @@ class HealthInstrumentCalibrationDetails extends Model
                     'created_by' => Auth::id(),
                 ];
 
-                
-    
-                $insertedData[] = $this->create($data); 
+                $insertedData[] = $this->create($data);
             }
-            return $insertedData; 
+            return $insertedData;
         }
     }
-    
+
+    public function getInspectionDetails($id) {
+           $data = $this->where('health_instrument_id',$id)->get();
+           return $data;
+    }
+
+     public function storeApi($id){
+        $request = request();
+        $health_instrument_details = $request->input('health_instrument');
+
+        if (!empty($health_instrument_details) && is_array($health_instrument_details)) {
+            $insertedData = [];
+            foreach ($health_instrument_details as $health) {
+                $data = [
+                    'health_instrument_id' => $id,
+                    'instrument_name' => $health['instrument_name'],
+                    'resource_code' => $health['resource_code'],
+                    'exact_location' => $health['exact_location'],
+                    'instrument_serial_no' => $health['instrument_serial_no'],
+                    'make' => $health['make'],
+                    'model' => $health['model'],
+                    'instrument_range' => $health['instrument_range'],
+                    'calibration_frequency' => $health['frequency_id'],
+                    'date_of_calibration' => DBdateformat($health['date_of_calibration']),
+                    'due_date_of_calibration' => DBdateformat($health['due_date_of_calibration']),
+                    'remarks' => $health['instrument_remarks'],
+                    'created_by' => Auth::id(),
+                ];
+
+                $insertedData[] = $this->create($data);
+            }
+            return $insertedData;
+        }
+    }
+
 }
 
-    
+
 
 

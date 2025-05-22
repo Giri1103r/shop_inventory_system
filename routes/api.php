@@ -1,4 +1,5 @@
 <?php
+
 use App\Http\Controllers\Api\Inspection\GembaWalk\GembaWalkController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -15,6 +16,11 @@ use App\Http\Controllers\Api\Inspection\Audit\AuditAssessmentController;
 use App\Http\Controllers\Api\Inspection\Fire\HooterInspectionController;
 use App\Http\Controllers\Api\Inspection\Safety\MonthlyForkLiftInspection;
 use App\Http\Controllers\Api\{LoginController, NotificationController, AdminController};
+use App\Http\Controllers\Api\Inspection\Ohc\EmergencyBuyerFirstAidBagChecklistController;
+use App\Http\Controllers\Api\Inspection\Ohc\HealthInstrumentCalibrationController;
+use App\Http\Controllers\Api\Inspection\Ohc\Master\FirstAidContoller;
+use App\Http\Controllers\Api\Inspection\Ohc\Master\FirstAidMedicineController;
+use App\Http\Controllers\Api\Inspection\Ohc\WeeklyFirstAidBoxController;
 use App\Http\Controllers\Api\Inspection\Safety\ForkliftInspection;
 
 // Route::get('/user', function (Request $request) {
@@ -146,6 +152,37 @@ Route::middleware('api')->prefix('v1')->group(function () {
                     Route::post('add', [HooterInspectionController::class, 'Add']);
                     Route::post('view', [HooterInspectionController::class, 'View']);
                 });
+            });
+
+            // OHC
+            Route::group(['prefix' => 'ohc/'], function () {
+
+                // Master
+                Route::post('first-aid-stock/list', [FirstAidContoller::class, 'medicine_stock_list']);
+                Route::post('first-aid-medicine/list', [FirstAidMedicineController::class, 'medicine_list']);
+
+                // Emergency Buyer
+                Route::group(['prefix' => 'emergency-buyer-first-bag-checklist/'], function () {
+                    Route::post('list', [EmergencyBuyerFirstAidBagChecklistController::class, 'List']);
+                    Route::post('view', [EmergencyBuyerFirstAidBagChecklistController::class, 'View']);
+                    Route::post('add', [EmergencyBuyerFirstAidBagChecklistController::class, 'Store']);
+                });
+
+                // HealthInstrument
+                Route::group(['prefix'=>'health-instrument-calibration/'],function(){
+                    Route::post('list',[HealthInstrumentCalibrationController::class,'list']);
+                    Route::post('view',[HealthInstrumentCalibrationController::class,'view']);
+                    Route::post('add',[HealthInstrumentCalibrationController::class,'store']);
+                });
+
+                // weeklyFirstAidBox
+                Route::group(['prefix'=>'weekly-first-aid-box/'],function(){
+                    Route::post('list',[WeeklyFirstAidBoxController::class,'list']);
+                    Route::post('view',[WeeklyFirstAidBoxController::class,'view']);
+                    Route::post('add',[WeeklyFirstAidBoxController::class,'store']);
+                });
+
+
             });
         });
 

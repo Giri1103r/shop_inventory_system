@@ -170,7 +170,7 @@ class MonthlyForkLiftInspection extends BaseController
                     foreach ($statuslog as $key => $status) {
                         $statuslog[$key]->from_status = getInspectionStatus($status->from_status);
                         $statuslog[$key]->to_status = getInspectionStatus($status->to_status);
-                        $statuslog[$key]->remarks = getInspectionStatus($status->remarks);
+                        $statuslog[$key]->remarks = $status->remarks;
                         $statuslog[$key]->approved_by = getUsername($status->approved_by);
                         $statuslog[$key]->created_by = getUsername($status->created_by);
                         $statuslog[$key]->created_at = Displaydateformat($status->created_at);

@@ -96,6 +96,45 @@ class HealthInstrumentCalibration extends Model
         );
         return $datas;
     }
+    public function listApi()
+    {
+
+        $request = request();
+        $search = '';
+
+        $query = $this->select('inspection_ohc_health_instrument_calibration_track_sheet.*', 'inspection_ohc_health_instrument_calibration_track_sheet.created_at as inspection_created_at', 'inspection_ohc_health_instrument_calibration_track_sheet.created_at as inspection_created_by', 'masters_unit.unit_name')
+            ->leftjoin('masters_unit', 'masters_unit.id', '=', 'inspection_ohc_health_instrument_calibration_track_sheet.unit_id');
+
+        $org_total =  $query;
+        $org_total_counts = $org_total->count();
+        if ($request->search != null || $request->search != '') {
+            $search = $request->search;
+
+            $query->where(function ($query) use ($search) {
+                $query
+                    ->orWhere('inspection_ohc_health_instrument_calibration_track_sheet.health_auto_id', 'LIKE', '%' . $search . '%')
+                    ->orWhere('masters_unit.unit_name', 'LIKE', '%' . $search . '%');
+            });
+        }
+
+        $data = $query->orderBy('inspection_ohc_health_instrument_calibration_track_sheet.id')->get();
+        $inspection_data = $data->toArray();
+
+        $inspection_data_array = [];
+        $refined_array = [];
+
+        foreach ($inspection_data as $index => $data) {
+            $inspection_data_array['id'] = $data['id'];
+            $inspection_data_array['health_auto_id'] = $data['health_auto_id'];
+            $inspection_data_array['unit_name'] = $data['unit_name'];
+            $inspection_data_array['created_by'] = getUsername($data['created_by']);
+            $inspection_data_array['created_at'] = Displaydateformat($data['created_at']);
+            $inspection_data_array['status'] = $data['status'];
+
+            $refined_array[$index] = $inspection_data_array;
+        }
+        return $refined_array;
+    }
 
     public function store()
     {
@@ -104,6 +143,19 @@ class HealthInstrumentCalibration extends Model
         $insert_array = array(
             'document_reference_id' => decryptId($request->document_reference_id),
             'unit_id' => decryptId($request->unit_id),
+            'created_by' => Auth::id()
+        );
+        $data =  $this->create($insert_array);
+        return $data;
+    }
+
+     public function storeApi()
+    {
+
+        $request = request();
+        $insert_array = array(
+            'document_reference_id' => $request->document_reference_id,
+            'unit_id' => $request->unit_id,
             'created_by' => Auth::id()
         );
         $data =  $this->create($insert_array);
@@ -148,7 +200,7 @@ class HealthInstrumentCalibration extends Model
                     ->orWhere('masters_unit.unit_name', 'LIKE', '%' . $search . '%');
             });
         }
-          if ($request->has('from_date') && !empty($request->from_date)) {
+        if ($request->has('from_date') && !empty($request->from_date)) {
 
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
             $query->where('inspection_ohc_health_instrument_calibration_track_sheet.created_at', '>=', $startDate);
@@ -198,6 +250,16 @@ class HealthInstrumentCalibration extends Model
             );
         }
         return $this->where('id', $id)->update($update_data);
+    }
+
+    public function getInspectionData($id)
+    {
+        $data = $this->select('inspection_ohc_health_instrument_calibration_track_sheet.*', 'inspection_static_docno.doc_no','inspection_static_docno.issue_date','inspection_static_docno.rev_dt')
+            ->leftjoin('inspection_static_docno', 'inspection_static_docno.id', '=', 'inspection_ohc_health_instrument_calibration_track_sheet.document_reference_id')
+            ->where('inspection_ohc_health_instrument_calibration_track_sheet.id',$id)
+            ->first();
+
+        return $data;
     }
 
     protected static function booted()
