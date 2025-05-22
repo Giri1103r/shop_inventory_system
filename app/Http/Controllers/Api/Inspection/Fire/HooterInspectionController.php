@@ -5,7 +5,12 @@ namespace App\Http\Controllers\Api\Inspection\Fire;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Api\BaseController;
+use App\Mail\Inspection\Fire\FireInspection;
+use App\Models\Inspection\Fire\FireFileUpload;
+use App\Models\Inspection\Fire\FireSignatureUpload;
 use Spatie\IcalendarGenerator\Enums\Display;
 use App\Models\Inspection\Fire\FireStatusLog;
 use App\Models\Inspection\Fire\HooterInspection;
@@ -13,23 +18,27 @@ use App\Models\Inspection\Fire\HooterInspectionDetails;
 
 class HooterInspectionController extends BaseController
 {
-    private $hooter;
-    private $hooter_details;
+    private $inspection;
+    private $inspection_details;
     private $statusLog;
+    private $signature;
+    private $files;
 
 
     public function __construct()
     {
-        $this->hooter = new HooterInspection();
-        $this->hooter_details = new HooterInspectionDetails();
+        $this->inspection = new HooterInspection();
+        $this->inspection_details = new HooterInspectionDetails();
         $this->statusLog = new FireStatusLog();
+        $this->signature = new FireSignatureUpload();
+        $this->files = new FireFileUpload();
     }
 
     public function List(Request $request)
     {
         if (Auth::check()) {
             try {
-                $data = $this->hooter->listApi();
+                $data = $this->inspection->listApi();
                 if (count($data) > 0) {
                     return response()->json([
                         'success' => true,
@@ -56,17 +65,110 @@ class HooterInspectionController extends BaseController
         }
     }
 
-
     public function Add(Request $request)
     {
         try {
+
+            $rules = [
+                'issue_date' => 'required',
+                'rev_date' => 'required',
+                'inspection_date' => 'required',
+                'location_id' => 'required',
+                'shift_id' => 'required',
+                'next_due' => 'required',
+                'unit_id' => 'required',
+                'frequency_id' => 'required',
+                'sr_no.*' => 'required',
+                'department.*' => 'required',
+                'resource_code.*' => 'required',
+                'check_items.*' => 'required',
+                'quantity.*' => 'required',
+                'remarks.*' => 'required',
+            ];
+
+            $messages = [
+                'issue_date.required' => 'Issue Date is required',
+                'rev_date.required' => 'Revision Data is required',
+                'inspection_date.required' => 'Inspection Date is required',
+                'location_id.required' => 'Location is required',
+                'shift_id.required' => 'Shift is required',
+                'next_due.required' => 'Next due date is required',
+                'unit_id.required' => 'Unit is required',
+                'department.*.required' => 'Department is required',
+                'resource_code.*.required' => 'Resource code is required',
+                'check_items.*.required' => 'Condition of the hooter is required',
+                'quantity.*.required' => 'Quantity is required',
+                'remarks.*.required' => 'Remarks is required',
+            ];
+
+            $validator = Validator::make($request->all(), $rules, $messages);
+
+            if ($validator->fails()) {
+                return $this->sendError('Validation Error', $validator->errors(), 422);
+            }
+
+            $inspection = $this->inspection->storeApi();
+            $inspection_type = HOOTER_INSPECTION;
+            $id = $inspection->id;
+
+            $inspection_details = $this->inspection_details->storeApi($id);
+            $inspection_file = $this->files->file_upload_api($inspection_type, $id);
+
+            // $checklist_store = $this->checklist_follow->store($inspection_type, $id);
+
+            $signature_update = $this->signature->CheckedBySignatureApi($id, $inspection_type);
+
+            $ehsOfficer = GetEHSOfficer();
+            $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
+            $mailsubject = 'Fire Hooter Inspection';
+            $notificationData = array(
+                'notification_type' => FIRE_INSPECTION,
+                'module_type' => 3,
+                'notification_message' => $mailsubject,
+                'mobile_notification' => json_encode(array(
+                    'title' => $mailsubject,
+                    'message' => "Fire Associate create the Hooter Inspection",
+                    'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
+                    'id' => $id,
+                    'module' => 1,
+                )),
+                'web_link' =>  admin_url('fire/hooter-inspection/view/' . encryptId($id)),
+                'assigned_user' => array_to_string($ehsOfficers),
+                'created_by' => Auth::id(),
+            );
+            notificationSave($notificationData);
+
+            $title = 'Fire Associate create the Hooter Inspection';
+            foreach ($ehsOfficers as $user) {
+                $email_id = getUseremail($user);
+                $url = admin_url('fire/hooter-inspection/verification/' . encryptId($id) . '/ehs');
+                $details = array(
+                    'fire_type' => 'Hooter Inspection',
+                    'email' => $email_id,
+                    'mail_subject' => $mailsubject,
+                    'title' => $title,
+                    'url' => $url,
+                    'data' => $inspection
+                );
+                Mail::to($email_id)->queue(new FireInspection($details));
+            }
+
+            $insert_array = [
+                'type' => $inspection_type,
+                'inspection_id' => $id,
+                'from_status' => 0,
+                'to_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,
+                'created_by' => Auth::id(),
+            ];
+            $this->statusLog->create($insert_array);
+
+            $data = [
+                'inspection' => $inspection_details,
+            ];
+            return $this->sendResponse($data, 'Inspection Created');
         } catch (Exception $ex) {
             report($ex);
-            return $this->sendError(
-                'Unauthorised.',
-                ['error' => 'Please try again after sometimes'],
-                406
-            );
+            return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
         }
     }
 
@@ -75,8 +177,8 @@ class HooterInspectionController extends BaseController
         try {
             if (Auth::check()) {
                 $id = $request->id;
-                $inspection = $this->hooter->selectOne($id);
-                $details = $this->hooter_details->GetDetails($inspection->id);
+                $inspection = $this->inspection->selectOne($id);
+                $details = $this->inspection_details->GetDetails($inspection->id);
                 $inspection_type = HOOTER_INSPECTION;
 
                 // Hooter Main Section
@@ -130,19 +232,9 @@ class HooterInspectionController extends BaseController
                     ];
                 }
 
-                // Status Wise Logs
-                $ehs_officer_verification = [];
-                $ehs_officer_approval = [];
-                $capa_recommendation = [];
-                $fire_associate_action = [];
-                $capa_ehs_remarks = [];
-                $level_one_remarks = [];
-                $level_two_remarks = [];
-
-
                 if (isset($inspection->verified_by)) {
                     $ehs_officer_signature = GetFireSignature($inspection->verified_by, $id, $inspection_type);
-                    $ehs_officer_verification[] = [
+                    $inspection_details += [
                         'verified_by' => getUsername($inspection->verified_by),
                         'date' => Displaydateformat($inspection->created_at),
                         'verified_by_signature' => admin_url($ehs_officer_signature),
@@ -151,57 +243,57 @@ class HooterInspectionController extends BaseController
 
                 if (isset($inspection->approved_by)) {
                     $ehs_approved_signature = GetFireSignature($inspection->approved_by, $id, $inspection_type);
-                    $ehs_officer_approval[] = [
-                        'approved_by' => getUsername($inspection->approved_by),
-                        'date' => Displaydateformat($inspection->created_at),
-                        'approved_by_signature' => admin_url($ehs_approved_signature),
+                    $inspection_details += [
+                        'ehs_approved_by' => getUsername($inspection->approved_by),
+                        'ehs_approved_date' => Displaydateformat($inspection->created_at),
+                        'ehs_approved_by_signature' => admin_url($ehs_approved_signature),
                     ];
                 }
 
                 if (isset($inspection->capa_recomendation)) {
                     $capa_recommendation[] = [
                         'capa_recommendation' => $inspection->capa_recommendation,
-                        'remarks' => $inspection->remarks,
+                        'capa_recomendation_remarks' => $inspection->remarks,
                     ];
                 }
 
                 if (isset($inspection->capa_remarks)) {
                     $fire_associate_signature = GetFireSignature($inspection->created_by, $id, $inspection_type);
-                    $fire_associate_action[] = [
-                        'name' => getUsername($inspection->created_by),
-                        'date' => Displaydateformat($inspection->created_at),
-                        'signature' => admin_url($fire_associate_signature),
+                    $inspection_details += [
+                        'capa_name' => getUsername($inspection->created_by),
+                        'capa_date' => Displaydateformat($inspection->created_at),
+                        'capa_signature' => admin_url($fire_associate_signature),
                         'capa_remarks' => $inspection->capa_remarks,
                     ];
                 }
 
                 if (isset($inspection->capa_ehs_remarks)) {
                     $ehs_capa_signature = GetFireSignature($inspection->verified_by, $id, $inspection_type);
-                    $capa_ehs_remarks[] = [
-                        'name' => getUsername($inspection->created_by),
-                        'date' => Displaydateformat($inspection->created_at),
-                        'ehs_capa_signature' => admin_url($ehs_capa_signature),
+                    $inspection_details += [
+                        'capa_ehs_name' => getUsername($inspection->created_by),
+                        'capa_ehs_date' => Displaydateformat($inspection->created_at),
+                        'capa_ehs__signature' => admin_url($ehs_capa_signature),
                         'capa_ehs_remarks' => $inspection->capa_ehs_remarks,
                     ];
                 }
 
                 if (isset($inspection->level_one_manager_remarks)) {
                     $level_one_signature = GetFireSignature($inspection->l1_manager_verified_by, $id, $inspection_type);
-                    $level_one_remarks[] = [
-                        'name' => getUsername($inspection->l1_manager_verified_by),
-                        'date' => Displaydateformat($inspection->created_at),
+                    $inspection_details += [
+                        'level_one_name' => getUsername($inspection->l1_manager_verified_by),
+                        'level_one_date' => Displaydateformat($inspection->created_at),
                         'level_one_signature' => admin_url($level_one_signature),
-                        'remarks' => $inspection->level_one_manager_remarks,
+                        'level_one_remarks' => $inspection->level_one_manager_remarks,
                     ];
                 }
 
                 if (isset($inspection->level_two_manager_remarks)) {
                     $level_two_signature = GetFireSignature($inspection->l2_manager_verified_by, $id, $inspection_type);
-                    $level_two_remarks[] = [
-                        'name' => getUsername($inspection->l2_manager_verified_by),
-                        'date' => Displaydateformat($inspection->created_at),
+                    $inspection_details += [
+                        'level_two_name' => getUsername($inspection->l2_manager_verified_by),
+                        'level_two_date' => Displaydateformat($inspection->created_at),
                         'level_two_signature' => admin_url($level_two_signature),
-                        'remarks' => $inspection->level_two_manager_remarks,
+                        'level_two_remarks' => $inspection->level_two_manager_remarks,
                     ];
                 }
 
@@ -225,21 +317,10 @@ class HooterInspectionController extends BaseController
                     ];
                 }
 
-
-
-
-
                 $data = array(
                     'inspection_main' => $inspection_main,
                     'inspection_details' => $inspection_details,
                     'logs' => $logs,
-                    'ehs_officer_verification' => $ehs_officer_verification,
-                    'ehs_officer_approval' => $ehs_officer_approval,
-                    'capa_recommendation' => $capa_recommendation,
-                    'fire_associate_action' => $fire_associate_action,
-                    'capa_ehs_remarks' => $capa_ehs_remarks,
-                    'level_one_remarks' => $level_one_remarks,
-                    'level_two_remarks' => $level_two_remarks,
                 );
 
                 return $this->sendResponse($data, 'Hooter Inspection Details');

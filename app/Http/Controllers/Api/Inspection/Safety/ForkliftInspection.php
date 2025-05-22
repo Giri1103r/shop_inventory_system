@@ -30,6 +30,7 @@ class ForkliftInspection extends BaseController
     private $forklift_type;
     private $frequency;
     private $shift;
+    private $observation_details;
 
     public function __construct()
     {
@@ -41,6 +42,7 @@ class ForkliftInspection extends BaseController
         $this->document_reference = new InspectionStaticDocno();
         $this->statusLog = new SafetyStatusLog();
         $this->signature = new SignatureUpload();
+        $this->observation_details = new ForkliftInspectionDetails();
     }
 
     public function list()
@@ -63,9 +65,9 @@ class ForkliftInspection extends BaseController
             }
 
             if (!empty($search)) {
-                $searchDate = ($search);
-                $query->where(function ($query) use ($searchDate) {
-                    $query->orWhereRaw("DATE_FORMAT(inspection_safety_forklift_inspection.inspection_date, '%d-%m-%Y') LIKE ?", ["%{$searchDate}%"]);
+                $search = ($search);
+                $query->where(function ($query) use ($search) {
+                    $query->orWhereRaw("DATE_FORMAT(inspection_safety_forklift_inspection.inspection_date, '%d-%m-%Y') LIKE ?", ["%{$search}%"]);
                 });
             }
 
@@ -144,8 +146,8 @@ class ForkliftInspection extends BaseController
                     'document_no' => $inspections->doc_no,
                     'issue_date' => Displaydateformat($inspections->issue_date),
                     'date_of_inspection' => Displaydateformat($inspections->inspection_date),
-                    'rev_dt' => Displaydateformat($inspections->rev_dt),
-                    'signature' => $signature,
+                    'rev_dt' => ($inspections->rev_dt),
+                    'signature' => admin_url($signature),
                 ];
                 $inspection_details_array = [];
                 foreach ($inspection_details as $inspection) {
@@ -174,7 +176,7 @@ class ForkliftInspection extends BaseController
                     $approval_array = [
                         'approval_updated_by' => getUsername($inspections->inspection_updated_by),
                         'approval_updated_at' => Displaydateformat($inspections->inspection_updated_at),
-                        'approver_signature' => $signature,
+                        'approver_signature' => admin_url($signature),
                         'approval_remarks' => $inspections->approval_remarks,
                     ];
                 }
@@ -198,86 +200,86 @@ class ForkliftInspection extends BaseController
 
     public function store(Request $request)
     {
+
         try {
             $rules = [
                 'doc_no' => 'required',
+                'issue_date' => 'required',
                 'inspection_date' => 'required',
-                'location_id' => 'required',
-                'shift_id' => 'required',
-                'next_due' => 'required',
-                'unit_id' => 'required',
-                'frequency_id' => 'required',
-                'identification_no' => 'required',
-                'forklift_type' => 'required',
-                'capacity' => 'required',
+                'department.*' => 'required',
+                'unit.*' => 'required',
+                'identification_no.*' => 'required',
+                'observation.*' => 'required',
+                'corrective_action.*' => 'required',
+                'date_of_compliance.*' => 'required',
+                'observation_status.*' => 'required',
+                'remarks.*' => 'required',
+                'emp_id.*' => 'required',
             ];
 
             $messages = [
                 'doc_no.required' => 'Document number is required.',
+                'issue_date.required' => 'Issue Date is Required',
                 'inspection_date.required' => 'Inspection  Date is Required',
-                'location_id.required' => 'Location is Required',
-                'shift_id.required' => 'Shift is Required',
-                'next_due.required' => 'Next due date is Required',
-                'unit_id.required' => 'Unit is Required',
-                'frequency_id.required' => 'Frequency is Required',
-                'forklift_type.required' => 'Forklift Type is Required',
-                'capacity.required' => 'Capacity is Required',
                 'identification_no.required' => 'Identification Number is Required',
+                'department.*' => 'Department is Required',
+                'unit.*' => 'Unit is Required',
+                'identification_no.*' => 'Identfication Number is Required',
+                'observation.*' => 'Observation is Required',
+                'corrective_action.*' => 'Coreective and Preventive Action is Required',
+                'date_of_compliance.*' => 'Date of Compliance is Required',
+                'observation_status.*' => 'Observation Status is Required',
+                'emp_id.*' => 'Employee is Required',
+                'remarks.*' => 'Remarks is Required',
             ];
+
 
             $validator = Validator::make($request->all(), $rules, $messages);
 
             if ($validator->fails()) {
                 return $this->sendError('Validation Error', $validator->errors(), 422);
             }
-
             $forklift_inspection = $this->forklift_inspection->store_api();
             $id = $forklift_inspection->id;
+            $forklift_observation_details = $this->observation_details->store_api($forklift_inspection->id);
             $signature_update = $this->signature->signatureUpload_api(FORKLIFT_INSPECTION, $forklift_inspection->id);
 
-            $ehsOfficer = GetEHSOfficer();
-            $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
-            $mailsubject = 'Monthly Forklift Inspection';
-            $notificationData = array(
-                'notification_type' => SAFETY_INSPECTION,
-                'module_type' => 2,
-                'notification_message' => $mailsubject,
-                'mobile_notification' => json_encode(array(
-                    'title' => $mailsubject,
-                    'message' => "Fire Associate create the Monthly ForkLift Inspection",
-                    'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
-                    'id' => $forklift_inspection->id,
-                    'module' => 1,
-                )),
-                'web_link' =>  admin_url('safety/forklift-inspection/monthly/verification/' . encryptId($forklift_inspection->id) . '/ehs'),
-                'assigned_user' => array_to_string($ehsOfficers),
-                'created_by' => Auth::id(),
-            );
-            notificationSave($notificationData);
-
-            $title = 'Fire Associate create the Monthly ForkLift Inspection';
-            foreach ($ehsOfficers as $user) {
-                $email_id = getUseremail($user);
-                $url = admin_url('safety/forklift-inspection/monthly/verification/' . encryptId($id) . '/ehs');
-                $details = array(
-                    'safety_type' => 'Monthly Forklift Inspection',
-                    'email' => $email_id,
-                    'mail_subject' => $mailsubject,
-                    'title' => $title,
-                    'url' => $url,
-                    'data' => $forklift_inspection
+            $ehsOfficer = GetEHSHead();
+            if (!empty($ehsOfficer)) {
+                $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
+                $mailsubject = 'FORKLIFT INSPECTION';
+                $notificationData = array(
+                    'notification_type' => SAFETY_INSPECTION,
+                    'module_type' => 3,
+                    'notification_message' => $mailsubject,
+                    'mobile_notification' => json_encode(array(
+                        'title' => $mailsubject,
+                        'message' => "FORKLIFT INSPECTION - Observation Has been Created",
+                        'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
+                        'id' => $forklift_inspection->id,
+                        'module' => 1,
+                    )),
+                    'web_link' =>  admin_url('safety/forklift-inspection/view/' . encryptId($forklift_inspection->id)),
+                    'assigned_user' => array_to_string($ehsOfficers),
+                    'created_by' => Auth::id(),
                 );
-                Mail::to($email_id)->queue(new SafetyInspection($details));
-            }
+                notificationSave($notificationData);
 
-            $insert_array = [
-                'type' => FORKLIFT_INSPECTION,
-                'inspection_id' => $forklift_inspection->id,
-                'from_status' => 0,
-                'to_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,
-                'created_by' => Auth::id(),
-            ];
-            $this->statusLog->create($insert_array);
+                $title = 'FORKLIFT INSPECTION - Observation has been Created';
+                foreach ($ehsOfficers as $user) {
+                    $email_id = getUseremail($user);
+                    $url = admin_url('safety/forklift-inspection/approval/' . encryptId($forklift_inspection->id) . '/ehs');
+                    $details = array(
+                        'safety_type' => 'Forklift Inspection',
+                        'email' => $email_id,
+                        'mail_subject' => $mailsubject,
+                        'title' => $title,
+                        'url' => $url,
+                        'data' => $forklift_inspection
+                    );
+                    Mail::to($email_id)->queue(new SafetyInspection($details));
+                }
+            }
 
             $success = [
                 "success" => $forklift_inspection,

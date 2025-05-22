@@ -596,16 +596,19 @@ class AdminController extends Controller
             ];
 
             $work_wise_count = $this->ptw->GetTypeWiseCount();
-
+            // dd($work_wise_count);
             if (count($work_wise_count) < 0) {
                 return response()->json([
                     'html' => '<div class="border-0 pb-3" style="margin-top: 150px;"><h4 style="text-align: center;">No data Found.</h4></div>',
                     'status' => 'empty'
                 ]);
             }
+
+            $totalCount = array_sum(array_column($work_wise_count, 'count'));
             $data = [
                 'work_wise_count' => $work_wise_count,
                 'dates' => $dates,
+                'totalCount' => $totalCount,
             ];
 
             return view('admin.dashboard.ptw_type_wise_count', $data);
@@ -663,9 +666,12 @@ class AdminController extends Controller
             ];
 
             $hold_count = $this->ptw->getHoldStatus($request);
+
+            $permitStatus = encryptId(3);
             $data = [
                 'hold_count' => $hold_count,
                 'dates' => $dates,
+                'permitStatus' => $permitStatus,
             ];
             if (empty($hold_count)) {
                 return response()->json('<div class="border-0 pb-3" style="margin-top: 166px;"><h4 style="text-align: center;">No data Found.</h4></div>');
@@ -719,7 +725,6 @@ class AdminController extends Controller
             $to_date = $request->input('Todate');
             $company_id = $request->input('CompanyId');
             $chartData = getPPEAvailabilityChartData($form_date, $to_date, $company_id);
-
             $return_flag = true;
             foreach ($chartData as $index => $values) {
                 if ($values == 0) {
@@ -758,10 +763,15 @@ class AdminController extends Controller
                 'closed_percentage' => $chartData->closed_percentage,
                 'open_percentage' => $chartData->open_percentage,
             ];
-
+            $openEncrypted = encryptId(1);
+            $closeEncrypted = encryptId(2);
+            $totalEncrypted = encryptId(3);
             return view('admin.dashboard.training_completion', [
                 'formattedData' => $formattedData,
                 'getdashdata' => $request,
+                'openStatusEncrypted' => $openEncrypted,
+                'closeStatusEncrypted' => $closeEncrypted,
+                'totalStatusEncrypted' => $totalEncrypted,
             ]);
         } catch (\Exception $ex) {
             report($ex);

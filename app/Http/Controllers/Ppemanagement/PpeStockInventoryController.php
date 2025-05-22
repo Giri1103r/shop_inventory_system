@@ -96,7 +96,9 @@ class PpeStockInventoryController extends Controller
         }
 
 
-        $data = array();
+        $data = array(
+            'dashboard_search' => $request,
+        );
 
         return view('ppemanagement.ppestock.list', $data);
     }

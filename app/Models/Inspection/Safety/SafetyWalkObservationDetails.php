@@ -68,6 +68,40 @@ class SafetyWalkObservationDetails extends Model
             $safetyFiles->store($data->id, $index, $request->checklist_file);
         }
     }
+    public function store_api($id)
+    {
+        $request = request();
+
+
+        $location = $request->location;
+        $observation = $request->observation;
+        $recomended_action = $request->recomended_action;
+        $responsibility = $request->emp_id;
+        $date_of_compliance = $request->date_of_compliance;
+        $observation_status = $request->observation_status;
+        $remarks = $request->remarks;
+        $date_of_observation = $request->date_of_observation;
+
+
+        foreach ($location as $index => $sr_no_value) {
+            $data = array(
+                'safety_walk_observation_id' => $id,
+                'sr_no' => $sr_no_value,
+                'location' => ($location[$index]),
+                'observation' => $observation[$index],
+                'recomended_action' => $recomended_action[$index],
+                'responsibility' => $responsibility[$index],
+                'date_of_compliance' => DBdateformat($date_of_compliance[$index]),
+                'observation_status' => ($observation_status[$index]),
+                'observation_date' => DBdateformat($date_of_observation[$index]),
+                'remarks' => $remarks[$index],
+                'created_by' => Auth::id(),
+            );
+            $data =  $this->create($data);
+            $safetyFiles = new SafetyWalkObservationFile();
+            $safetyFiles->store_api($data->id, $request->checklist_file[$index]);
+        }
+    }
 
     public function GetDetails($id)
     {

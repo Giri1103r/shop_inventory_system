@@ -48,16 +48,45 @@
                                             </div>
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="company_id" class="form-label ">Company</label>
+                                            <label for="company_id" class="form-label">Company</label>
                                             <select name="company_id" id="company_id"
                                                 class="form-control single-select form-control-sm" style="width: 100%">
                                                 <option value="">Select the company</option>
-                                                @foreach ($company as $list)
-                                                    <option value="{{ encryptId($list->id) }}">
-                                                        {{ $list->company_name }}</option>
-                                                @endforeach
+                                                @if (CheckUserRole(ROLE_EHS_OFFICER) || checkUserRole(ROLE_EHS_HEAD))
+                                                    @foreach ($company as $list)
+                                                        @php
+                                                            $isEhs = in_array(auth()->user()->role, [
+                                                                ROLE_EHS_HEAD,
+                                                                ROLE_EHS_OFFICER,
+                                                            ]);
+                                                            $value = encryptId($list->id);
+                                                            $requestCompanyId = $loggedInCompanyId;
+                                                            $selected = '';
+
+                                                            if ($requestCompanyId) {
+                                                                $selected =
+                                                                    $requestCompanyId == $value ? 'selected' : '';
+                                                            } elseif (isset($loggedInCompanyId)) {
+                                                                $selected =
+                                                                    $loggedInCompanyId == $value ? 'selected' : '';
+                                                            }
+                                                        @endphp
+                                                        <option value="{{ $value }}" {{ $selected }}>
+                                                            {{ $list->company_name }}
+                                                        </option>
+                                                    @endforeach
+                                                @else
+                                                    @foreach ($company as $list)
+                                                        <option value="{{ encryptId($list->id) }}">
+                                                            {{ $list->company_name }}
+                                                        </option>
+                                                    @endforeach
+                                                @endif
                                             </select>
                                         </div>
+
+
+
 
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="location_id" class="form-label ">Location</label>

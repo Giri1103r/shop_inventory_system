@@ -1,17 +1,20 @@
 <?php
 
-use App\Http\Controllers\Api\Inspection\GembaWalk\GembaWalkController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\MasterController;
 use App\Http\Controllers\Api\Permit\SafetyPermitController;
+use App\Http\Controllers\Api\Inspection\Safety\OHSPlantSummary;
 use App\Http\Controllers\Api\Ppemanagement\PperequestController;
 use App\Http\Controllers\Api\Trainig\TrainingSheducleController;
+use App\Http\Controllers\Api\Inspection\Safety\ForkliftInspection;
 use App\Http\Controllers\Api\Ppemanagement\PpeExemptionController;
 use App\Http\Controllers\Api\Ppemanagement\PpemanagementController;
 use App\Http\Controllers\Api\Inspection\Audit\MonthlyAuditController;
 use App\Http\Controllers\Api\Inspection\Audit\AuditAnalysisController;
+use App\Http\Controllers\Api\Inspection\GembaWalk\GembaWalkController;
 use App\Http\Controllers\Api\Inspection\Audit\InterUnitAuditController;
+use App\Http\Controllers\Api\Inspection\Safety\SafetyGalleryInspection;
 use App\Http\Controllers\Api\Inspection\Audit\AuditAssessmentController;
 use App\Http\Controllers\Api\Inspection\Fire\HooterInspectionController;
 use App\Http\Controllers\Api\Inspection\Safety\MonthlyForkLiftInspection;
@@ -21,7 +24,8 @@ use App\Http\Controllers\Api\Inspection\Ohc\HealthInstrumentCalibrationControlle
 use App\Http\Controllers\Api\Inspection\Ohc\Master\FirstAidContoller;
 use App\Http\Controllers\Api\Inspection\Ohc\Master\FirstAidMedicineController;
 use App\Http\Controllers\Api\Inspection\Ohc\WeeklyFirstAidBoxController;
-use App\Http\Controllers\Api\Inspection\Safety\ForkliftInspection;
+use App\Http\Controllers\Api\Inspection\Safety\FireSafetyEquipment;
+use App\Http\Controllers\Api\Inspection\Safety\SafetyWalkObservation;
 
 // Route::get('/user', function (Request $request) {
 //     return $request->user();
@@ -186,20 +190,48 @@ Route::middleware('api')->prefix('v1')->group(function () {
             });
         });
 
+        //Master -  Safety
         Route::post('shift/list', [MonthlyForkLiftInspection::class, 'shift']);
-        Route::post('frequency/list', [MonthlyForkLiftInspection::class, 'frequency']);
+        Route::post('frequency/list', [MonthlyForkLiftInspection::class, 'frequencyName']);
         Route::post('forklift_type/list', [MonthlyForkLiftInspection::class, 'forklift_type']);
+        Route::post('equipment/list', [FireSafetyEquipment::class, 'equipment']);
 
-        Route::group(['prefix' => 'safety/safety-gallery-inspection/'], function () {
-            Route::post('list', [MonthlyForkLiftInspection::class, 'list']);
-            Route::post('add', [MonthlyForkLiftInspection::class, 'store']);
-            Route::post('view', [MonthlyForkLiftInspection::class, 'view']);
-        });
+        Route::prefix('safety')->group(function () {
+            Route::prefix('safety-gallery-inspection')->group(function () {
+                Route::post('list', [SafetyGalleryInspection::class, 'list']);
+                Route::post('add', [SafetyGalleryInspection::class, 'store']);
+                Route::post('view', [SafetyGalleryInspection::class, 'view']);
+            });
 
-        Route::group(['prefix' => 'safety/forklift-inspection/'], function () {
-            Route::post('list', [ForkliftInspection::class, 'list']);
-            Route::post('add', [ForkliftInspection::class, 'store']);
-            Route::post('view', [ForkliftInspection::class, 'view']);
+            Route::prefix('forklift-inspection')->group(function () {
+                Route::post('list', [ForkliftInspection::class, 'list']);
+                Route::post('add', [ForkliftInspection::class, 'store']);
+                Route::post('view', [ForkliftInspection::class, 'view']);
+            });
+
+            Route::prefix('monthly-forklift-inspection')->group(function () {
+                Route::post('list', [MonthlyForkLiftInspection::class, 'list']);
+                Route::post('add', [MonthlyForkLiftInspection::class, 'store']);
+                Route::post('view', [MonthlyForkLiftInspection::class, 'view']);
+            });
+
+            Route::prefix('ohs-plant-summary')->group(function () {
+                Route::post('list', [OHSPlantSummary::class, 'list']);
+                Route::post('add', [OHSPlantSummary::class, 'store']);
+                Route::post('view', [OHSPlantSummary::class, 'view']);
+            });
+
+            Route::prefix('fire-safety-equipment')->group(function () {
+                Route::post('list', [FireSafetyEquipment::class, 'list']);
+                Route::post('add', [FireSafetyEquipment::class, 'store']);
+                Route::post('view', [FireSafetyEquipment::class, 'view']);
+            });
+
+            Route::prefix('safety-walk-observation')->group(function () {
+                Route::post('list', [SafetyWalkObservation::class, 'list']);
+                Route::post('add', [SafetyWalkObservation::class, 'store']);
+                Route::post('view', [SafetyWalkObservation::class, 'view']);
+            });
         });
     });
 });

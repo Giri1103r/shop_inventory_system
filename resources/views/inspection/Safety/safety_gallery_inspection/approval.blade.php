@@ -347,6 +347,7 @@
                                                         WAITING_FOR_CAPA_ACTION,
                                                     );
                                                 @endphp
+
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label class="form-label ">{{ __('inspection.date') }}</label>
@@ -899,7 +900,7 @@
                         },
                         signature_image: {
                             required: "Signature is Required",
-                             filesize: "File size must be less than 15MB."
+                            filesize: "File size must be less than 15MB."
                         }
                     },
                     errorElement: 'div',
@@ -933,7 +934,7 @@
                         },
                         signature_image: {
                             required: true,
-                           filesize: 15728640,
+                            filesize: 15728640,
                         }
                     },
                     messages: {

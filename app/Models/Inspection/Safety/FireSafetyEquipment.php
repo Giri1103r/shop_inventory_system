@@ -161,9 +161,6 @@ class FireSafetyEquipment extends Model
         $economic_order_quantity = $request->economic_order_quantity;
         $observation_status = ($request->observation_status);
         $remarks = $request->remarks;
-
-
-
         foreach ($item_code as $index => $item_code_value) {
             $data = array(
                 'document_reference_id' => decryptId($request->document_reference_id),
@@ -181,6 +178,39 @@ class FireSafetyEquipment extends Model
             $result =  $this->EquipmentUniqueCheck($data['equipment_id']);
             if ($result) {
                 $this->create($data);
+            }
+        }
+    }
+
+    public function store_api()
+    {
+        $request = request();
+        $equipment_name = $request->equipment_name;
+        $item_code = $request->item_code;
+        $standard_norms = $request->standard_norms;
+        $equipment_category = $request->equipment_category;
+        $unit_of_measurement = $request->unit_of_measurement;
+        $minimum_order_value = $request->minimum_order_value;
+        $economic_order_quantity = $request->economic_order_quantity;
+        $observation_status = ($request->observation_status);
+        $remarks = $request->remarks;
+        foreach ($item_code as $index => $item_code_value) {
+            $data = array(
+                'document_reference_id' => ($request->document_reference_id),
+                'equipment_id' => ($equipment_name[$index]),
+                'item_code' => $item_code_value,
+                'standard_norms' => ($standard_norms[$index]),
+                'equipment_category' => ($equipment_category[$index]),
+                'measurement_unit' => $unit_of_measurement[$index],
+                'economic_order_quantity' => $economic_order_quantity[$index],
+                'minimum_order_level' => $minimum_order_value[$index],
+                'observation_status' => ($observation_status[$index]),
+                'remark' => $remarks[$index],
+                'created_by' => Auth::id(),
+            );
+            $result =  $this->EquipmentUniqueCheck($data['equipment_id']);
+            if ($result) {
+              return  $this->create($data);
             }
         }
     }

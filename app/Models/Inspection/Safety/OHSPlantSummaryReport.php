@@ -40,7 +40,7 @@ class OHSPlantSummaryReport extends Model
             'inspection_safety_ohs_report.*',
             'inspection_static_docno.*',
             'inspection_safety_ohs_report.id as inspection_id',
-             'inspection_safety_ohs_report.created_at as inspection_created_at'
+            'inspection_safety_ohs_report.created_at as inspection_created_at'
         )
             ->leftJoin(
                 'inspection_static_docno',
@@ -123,6 +123,7 @@ class OHSPlantSummaryReport extends Model
         $quantity_details = [];
         $descriptions = $request->description ?? [];
 
+
         foreach ($descriptions as $key => $desc) {
             $item = ['description' => $desc];
 
@@ -166,6 +167,56 @@ class OHSPlantSummaryReport extends Model
         return $this->create($insert_array);
     }
 
+    public function store_api()
+    {
+        $request = request();
+
+        $quantity_details = [];
+        $descriptions = $request->description ?? [];
+
+        foreach ($descriptions as $key => $desc) {
+            $item = ['description' => $desc];
+
+            foreach ($request->all() as $field => $values) {
+                if (preg_match('/^unit_\d+$/', $field) && isset($values[$key])) {
+                    $item[$field] = $values[$key];
+                }
+            }
+
+            if (isset($request->total_quantity[$key])) {
+                $item['total_quantity'] = $request->total_quantity[$key];
+            }
+
+            $quantity_details[$key] = $item;
+        }
+
+        $fire_water_pump_details = [];
+        $fire_pump_details = $request->fire_pump_details ?? [];
+
+        foreach ($fire_pump_details as $key => $desc) {
+            $item = ['fire_pump_details' => $desc];
+
+            foreach ($request->all() as $field => $values) {
+                if (preg_match('/^fire_pump_details_unit_\d+$/', $field) && isset($values[$key])) {
+                    $item[$field] = $values[$key];
+                }
+            }
+
+            $fire_water_pump_details[$key] = $item;
+        }
+
+        $insert_array = [
+            'document_reference_id' => ($request->document_reference_id),
+            'inspection_date' => DBdateformat($request->inspection_date),
+            'updated_frequency' => $request->updated_frequency,
+            'quantity_details' => json_encode($quantity_details),
+            'fire_water_pump_details' => json_encode($fire_water_pump_details),
+            'created_by' => Auth::id(),
+        ];
+
+        return $this->create($insert_array);
+    }
+
 
     public function selectOne($id)
     {
@@ -193,7 +244,7 @@ class OHSPlantSummaryReport extends Model
             $search = $request->search['value'];
             $query = $query->where(function ($query) use ($search) {});
         }
-  if ($request->has('from_date') && !empty($request->from_date)) {
+        if ($request->has('from_date') && !empty($request->from_date)) {
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
             $query->where('inspection_safety_ohs_report.created_at', '>=', $startDate);
         }

@@ -54,9 +54,8 @@ class PpeExemption extends Model
         } elseif (in_array(ROLE_HOD, $userRole)) {
             $departmentId = $user->department_id;
             $query->where('ppe_ppeexemption.department', $departmentId);
-        } elseif (in_array(ROLE_EHS_OFFICER, $userRole) || in_array(ROLE_EHS_HEAD, $userRole)) {
-            $company = $user->company_id;
-            $query->where('ppe_ppeexemption.company', $company)
+        } elseif (in_array(ROLE_EHS_OFFICER, $userRole) ) {
+             $query
                 ->orderBy('ppe_ppeexemption.id', 'DESC');
         } elseif (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole)) {
         } elseif (in_array(ROLE_STORE_MANAGER, $userRole)) {

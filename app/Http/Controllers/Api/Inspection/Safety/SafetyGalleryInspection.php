@@ -3,47 +3,44 @@
 namespace App\Http\Controllers\Api\Inspection\Safety;
 
 use Exception;
-use App\Models\UploadLog;
 use App\Models\Master\Unit;
 use Illuminate\Http\Request;
+use App\Models\Master\Location;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use App\Models\Inspection\Master\Shift;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Api\BaseController;
 use App\Mail\Inspection\Safety\SafetyInspection;
 use App\Models\Inspection\InspectionStaticDocno;
-use App\Models\Inspection\Master\Frequency;
-use App\Models\Inspection\Master\Shift;
 use App\Models\Inspection\Safety\SafetyStatusLog;
-use App\Models\Inspection\Safety\MonthlyForkLiftInspection as SafetyMonthlyForkLiftInspection;
 use App\Models\Inspection\Safety\SignatureUpload;
-use App\Models\Master\ForkLiftType;
+use App\Models\Inspection\Safety\SafetyGalleryInspection as SafetySafetyGalleryInspection;
 
-class MonthlyForkLiftInspection extends BaseController
+class SafetyGalleryInspection extends BaseController
 {
+    private $safetygallery;
+    private $shift;
+    private $location;
     private $unit;
-    private $uploadlog;
-    private $forklift_inspection;
-    private $document_reference;
+    private $frequency;
     private $statusLog;
     private $signature;
-    private $forklift_type;
-    private $frequency;
-    private $shift;
+    private $document_reference;
 
     public function __construct()
     {
+        $this->safetygallery = new SafetySafetyGalleryInspection();
+        $this->location = new Location();
+        $this->shift = new Shift();
         $this->unit = new Unit();
-        $this->uploadlog = new UploadLog();
-        $this->forklift_inspection = new SafetyMonthlyForkLiftInspection();
-        $this->document_reference = new InspectionStaticDocno();
+        $this->location = new Location();
+        $this->unit = new Unit();
         $this->statusLog = new SafetyStatusLog();
         $this->signature = new SignatureUpload();
-        $this->forklift_type = new ForkLiftType();
-        $this->frequency = new Frequency();
-        $this->shift = new Shift();
+        $this->document_reference = new InspectionStaticDocno();
     }
-
     public function list()
     {
         if (Auth::user()) {
@@ -53,56 +50,52 @@ class MonthlyForkLiftInspection extends BaseController
                     $search = $request->search;
                 }
             }
-            $query = SafetyMonthlyForkLiftInspection::select(
-                'inspection_forklift_inpsection_monthly.*',
-                'inspection_shift_option.*',
+            $query = SafetySafetyGalleryInspection::select(
+                'inspection_safety_gallery.*',
                 'masters_unit.*',
                 'masters_location.*',
-                'inspection_frequency_option.*',
-                'inspection_forklift_inpsection_monthly.id as inspection_id',
-                'inspection_forklift_inpsection_monthly.created_at as inspection_created_at'
+                'inspection_safety_gallery.id as inspection_id',
+                'inspection_safety_gallery.created_at as inspection_created_at'
             )
-                ->leftJoin('masters_location', 'inspection_forklift_inpsection_monthly.location', '=', 'masters_location.id')
-                ->leftJoin('inspection_shift_option', 'inspection_forklift_inpsection_monthly.shift', '=', 'inspection_shift_option.id')
-                ->leftJoin('masters_unit', 'inspection_forklift_inpsection_monthly.unit', '=', 'masters_unit.id')
-                ->leftJoin('inspection_frequency_option', 'inspection_forklift_inpsection_monthly.frequency', '=', 'inspection_frequency_option.id')
-                ->leftJoin('inspection_static_docno', 'inspection_forklift_inpsection_monthly.document_reference_id', '=', 'inspection_static_docno.id');
+                ->leftJoin('masters_location', 'inspection_safety_gallery.location', '=', 'masters_location.id')
+                ->leftJoin('masters_unit', 'inspection_safety_gallery.unit', '=', 'masters_unit.id')
+                ->leftJoin('inspection_static_docno', 'inspection_safety_gallery.document_reference_id', '=', 'inspection_static_docno.id');
 
             $org_total_counts = $query->count();
 
+
             if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_OFFICER) || CheckUserRole(ROLE_L1_MANAGER) || CheckUserRole(ROLE_L2_MANAGER)) {
             } else if (CheckUserRole(ROLE_FIRE_ASSOCIATES)) {
-                $query->where('inspection_forklift_inpsection_monthly.created_by', Auth::id());
+                $query->where('inspection_safety_gallery.created_by', Auth::id());
             }
 
             if (!empty($search)) {
                 $search = ($search);
                 $query->where(function ($query) use ($search) {
                     $query->orWhere('masters_unit.unit_name', $search)
-                        ->orWhere('masters_location.location_name', $search)
-                        ->orWhere('inspection_shift_option.shift', $search)
-                        ->orWhere('inspection_frequency_option.frequency_name', $search);
+                        ->orWhere('masters_location.location_name', $search);
                 });
             }
 
-            $query_array = $query->orderBy('inspection_forklift_inpsection_monthly.id', 'DESC')->paginate($request->input('per_page', 10));
+            $query_array = $query->orderBy('inspection_safety_gallery.id', 'DESC')->paginate($request->input('per_page', 10));
 
             $inspection_list = $query_array->toArray();
+
+
 
             if (empty($inspection_list['data'])) {
                 return $this->sendError('No records found.', [], 404);
             }
+
 
             $data_array = [];
             foreach ($inspection_list['data'] as $datas) {
                 $data = [];
                 $data['id'] = $datas['id'] ?? '';
                 $data['date_of_inspection'] = Displaydateformat($datas['date_of_inspection']);
-                $data['next_due'] = Displaydateformat($datas['next_due']);
                 $data['location_name'] = ($datas['location_name'] ?? '');
-                $data['shift_name'] = ($datas['shift'] ?? '');
+                $data['resource_code'] = ($datas['resource_code'] ?? '');
                 $data['unit_name'] = ($datas['unit_name'] ?? '');
-                $data['frequency_name'] = ($datas['frequency_name'] ?? '');
                 $data['inspection_status'] = getInspectionStatus($datas['inspection_status'] ?? '');
                 $data['created_by'] = getUsername($datas['created_by'] ?? '');
                 $data['created_at'] = Displaydateformat($datas['created_at'] ?? '');
@@ -122,7 +115,6 @@ class MonthlyForkLiftInspection extends BaseController
             $success = [
                 'inspection_details' => $inspection_details
             ];
-
             return $this->sendResponse($success, 'Inspection Details');
         } else {
             return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
@@ -135,15 +127,15 @@ class MonthlyForkLiftInspection extends BaseController
         try {
             if (Auth::user()) {
                 $id = $request->id;
-                $inspection = $this->forklift_inspection
-                    ->leftJoin('inspection_static_docno', 'inspection_forklift_inpsection_monthly.document_reference_id', '=', 'inspection_static_docno.id')
-                    ->where('inspection_forklift_inpsection_monthly.id', $id)
+                $inspection = $this->safetygallery
+                    ->leftJoin('inspection_static_docno', 'inspection_safety_gallery.document_reference_id', '=', 'inspection_static_docno.id')
+                    ->where('inspection_safety_gallery.id', $id)
                     ->select(
-                        'inspection_forklift_inpsection_monthly.*',
+                        'inspection_safety_gallery.*',
                         'inspection_static_docno.*',
-                        'inspection_forklift_inpsection_monthly.id as inspection_id',
-                        'inspection_forklift_inpsection_monthly.created_by as inspection_created_by',
-                        'inspection_forklift_inpsection_monthly.updated_at as inspection_updated_at',
+                        'inspection_safety_gallery.id as inspection_id',
+                        'inspection_safety_gallery.created_by as inspection_created_by',
+                        'inspection_safety_gallery.updated_at as inspection_updated_at',
                     )
                     ->first();
 
@@ -161,16 +153,16 @@ class MonthlyForkLiftInspection extends BaseController
                 $signature = GetSafetySignature(
                     $inspection->inspection_created_by,
                     $inspection->inspection_id,
-                    MONTHLY_FORKLIFT_INSPECTION,
+                    SAFETY_GALLERY_INSPECTION,
                 );
 
-                $statuslog = $this->statusLog->selectOne($id, MONTHLY_FORKLIFT_INSPECTION);
+                $statuslog = $this->statusLog->selectOne($id, SAFETY_GALLERY_INSPECTION);
 
                 if (count($statuslog) > 0) {
                     foreach ($statuslog as $key => $status) {
                         $statuslog[$key]->from_status = getInspectionStatus($status->from_status);
                         $statuslog[$key]->to_status = getInspectionStatus($status->to_status);
-                        $statuslog[$key]->remarks = $status->remarks;
+                        $statuslog[$key]->remarks = ($status->remarks);
                         $statuslog[$key]->approved_by = getUsername($status->approved_by);
                         $statuslog[$key]->created_by = getUsername($status->created_by);
                         $statuslog[$key]->created_at = Displaydateformat($status->created_at);
@@ -185,15 +177,9 @@ class MonthlyForkLiftInspection extends BaseController
                     'doc_no' => $inspection->doc_no,
                     'rev_dt' => $inspection->rev_dt,
                     'date_of_inspection' => Displaydateformat($inspection->date_of_inspection),
-                    'next_due' => Displaydateformat($inspection->next_due),
                     'location' => getLocationname($inspection->location),
-                    'shift' => getShiftname($inspection->shift),
                     'unit' => getUnitname($inspection->unit),
-                    'frequency' => getFrequencyname($inspection->frequency),
-                    'identification_no' => $inspection->identification_no,
-                    'forklift_type' => GetForkLiftType($inspection->forklift_type),
-                    'capacity' => $inspection->capacity,
-                    'remarks' => $inspection->remarks ?? '',
+                    'resource_code' => $inspection->resource_code,
                     'responses' => $responses,
                     'inspection_creator_signature' => admin_url($signature),
                 ];
@@ -202,14 +188,14 @@ class MonthlyForkLiftInspection extends BaseController
                     $updated_time = GetSafetyUpdatedTime(
                         $inspection->verified_by,
                         $inspection->inspection_id,
-                        MONTHLY_FORKLIFT_INSPECTION,
+                        SAFETY_GALLERY_INSPECTION,
                         WAITING_FOR_EHS_OFFICER_VERIFICATION,
                     );
 
                     $verifier_signature = GetSafetySignature(
                         $inspection->verified_by,
                         $inspection->inspection_id,
-                        MONTHLY_FORKLIFT_INSPECTION,
+                        SAFETY_GALLERY_INSPECTION,
                     );
 
                     $inspection_details += [
@@ -224,7 +210,7 @@ class MonthlyForkLiftInspection extends BaseController
                     $capa_creator_time = GetSafetyUpdatedTime(
                         $inspection->inspection_created_by,
                         $inspection->inspection_id,
-                        MONTHLY_FORKLIFT_INSPECTION,
+                        SAFETY_GALLERY_INSPECTION,
                         WAITING_FOR_CAPA_ACTION,
                     );
 
@@ -240,14 +226,14 @@ class MonthlyForkLiftInspection extends BaseController
                     $ehs_updated_time = GetSafetyUpdatedTime(
                         $inspection->verified_by,
                         $inspection->inspection_id,
-                        MONTHLY_FORKLIFT_INSPECTION,
+                        SAFETY_GALLERY_INSPECTION,
                         WAITING_FOR_CAPA_VERIFICATION,
                     );
 
                     $ehs_signature = GetSafetySignature(
                         $inspection->verified_by,
                         $inspection->inspection_id,
-                        MONTHLY_FORKLIFT_INSPECTION,
+                        SAFETY_GALLERY_INSPECTION,
                     );
 
                     $inspection_details += [
@@ -263,13 +249,13 @@ class MonthlyForkLiftInspection extends BaseController
                     $l1_signature = GetSafetySignature(
                         $inspection->l1_manager_verified_by,
                         $inspection->inspection_id,
-                        MONTHLY_FORKLIFT_INSPECTION,
+                        SAFETY_GALLERY_INSPECTION,
                     );
 
                     $l1_updated_time = GetSafetyUpdatedTime(
                         $inspection->l1_manager_verified_by,
                         $inspection->inspection_id,
-                        MONTHLY_FORKLIFT_INSPECTION,
+                        SAFETY_GALLERY_INSPECTION,
                         WAITING_FOR_L1_VERIFICATION,
                     );
 
@@ -312,6 +298,7 @@ class MonthlyForkLiftInspection extends BaseController
                     }
                 }
 
+
                 $success = [
                     'id' => $inspection->inspection_id,
                     'inspection_details' => $inspection_details,
@@ -322,6 +309,7 @@ class MonthlyForkLiftInspection extends BaseController
                 return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
             }
         } catch (Exception $ex) {
+            dd($ex);
             report($ex);
             return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
         }
@@ -333,28 +321,20 @@ class MonthlyForkLiftInspection extends BaseController
         try {
             $rules = [
                 'doc_no' => 'required',
-                'inspection_date' => 'required',
+                'issue_date' => 'required',
+                'resource_code' => 'required',
                 'location_id' => 'required',
-                'shift_id' => 'required',
-                'next_due' => 'required',
                 'unit_id' => 'required',
-                'frequency_id' => 'required',
-                'identification_no' => 'required',
-                'forklift_type' => 'required',
-                'capacity' => 'required',
+                'inspection_date' => 'required',
             ];
 
             $messages = [
                 'doc_no.required' => 'Document number is required.',
-                'inspection_date.required' => 'Inspection  Date is Required',
+                'issue_date.required' => 'Issue Date is Required',
+                'resource_code.required' => 'Resource code is Required',
                 'location_id.required' => 'Location is Required',
-                'shift_id.required' => 'Shift is Required',
-                'next_due.required' => 'Next due date is Required',
+                'inspection_date.required' => 'Inspection Date is Required',
                 'unit_id.required' => 'Unit is Required',
-                'frequency_id.required' => 'Frequency is Required',
-                'forklift_type.required' => 'Forklift Type is Required',
-                'capacity.required' => 'Capacity is Required',
-                'identification_no.required' => 'Identification Number is Required',
             ];
 
             $validator = Validator::make($request->all(), $rules, $messages);
@@ -363,48 +343,48 @@ class MonthlyForkLiftInspection extends BaseController
                 return $this->sendError('Validation Error', $validator->errors(), 422);
             }
 
-            $forklift_inspection = $this->forklift_inspection->store_api();
-            $id = $forklift_inspection->id;
-            $signature_update = $this->signature->signatureUpload_api(MONTHLY_FORKLIFT_INSPECTION, $forklift_inspection->id);
+            $safety_gallery_inspection = $this->safetygallery->store_api();
+            $id = $safety_gallery_inspection->id;
+            $signature_update = $this->signature->signatureUpload_api(SAFETY_GALLERY_INSPECTION, $safety_gallery_inspection->id);
 
             $ehsOfficer = GetEHSOfficer();
             $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
-            $mailsubject = 'Monthly Forklift Inspection';
+            $mailsubject = 'Safety Gallery inspection';
             $notificationData = array(
                 'notification_type' => SAFETY_INSPECTION,
-                'module_type' => 2,
+                'module_type' => 3,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
-                    'message' => "Fire Associate create the Monthly ForkLift Inspection",
+                    'message' => "Fire Associate create the Safety Gallery Inspection",
                     'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
-                    'id' => $forklift_inspection->id,
+                    'id' => $safety_gallery_inspection->id,
                     'module' => 1,
                 )),
-                'web_link' =>  admin_url('safety/forklift-inspection/monthly/verification/' . encryptId($forklift_inspection->id) . '/ehs'),
+                'web_link' =>  admin_url('safety/safety-gallery-inspection/view/' . encryptId($safety_gallery_inspection->id)),
                 'assigned_user' => array_to_string($ehsOfficers),
                 'created_by' => Auth::id(),
             );
             notificationSave($notificationData);
 
-            $title = 'Fire Associate create the Monthly ForkLift Inspection';
+            $title = 'Fire Associate create the Safety Gallery Inspection';
             foreach ($ehsOfficers as $user) {
                 $email_id = getUseremail($user);
-                $url = admin_url('safety/forklift-inspection/monthly/verification/' . encryptId($id) . '/ehs');
+                $url = admin_url('safety/safety-gallery-inspection/verification/' . encryptId($id) . '/ehs');
                 $details = array(
-                    'safety_type' => 'Monthly Forklift Inspection',
+                    'safety_type' => 'Safety Gallery Inspection',
                     'email' => $email_id,
                     'mail_subject' => $mailsubject,
                     'title' => $title,
                     'url' => $url,
-                    'data' => $forklift_inspection
+                    'data' => $safety_gallery_inspection
                 );
                 Mail::to($email_id)->queue(new SafetyInspection($details));
             }
 
             $insert_array = [
-                'type' => MONTHLY_FORKLIFT_INSPECTION,
-                'inspection_id' => $forklift_inspection->id,
+                'type' => SAFETY_GALLERY_INSPECTION,
+                'inspection_id' => $safety_gallery_inspection->id,
                 'from_status' => 0,
                 'to_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,
                 'created_by' => Auth::id(),
@@ -412,79 +392,11 @@ class MonthlyForkLiftInspection extends BaseController
             $this->statusLog->create($insert_array);
 
             $success = [
-                "success" => $forklift_inspection,
+                "success" => $safety_gallery_inspection,
             ];
             return $this->sendResponse($success, 'Inspection Created');
         } catch (Exception $ex) {
             report($ex);
-            return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
-        }
-    }
-
-    public function forklift_type()
-    {
-        try {
-            $forklift_type = $this->forklift_type->getForkLift()->toArray();
-
-            $forklifts = array_map(function ($item) {
-                return [
-                    'id' => $item['id'],
-                    'name' => $item['forklift'],
-                    'created_by' => getUsername($item['created_by']),
-                    'status' => ($item['status'] == 1 ? 'Active' : 'InActive'),
-                ];
-            }, $forklift_type);
-
-            $success = array(
-                'forklift_types' => $forklifts,
-            );
-            return $this->sendResponse($success, 'Forklift Type');
-        } catch (Exception $ex) {
-            report($ex);
-            return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
-        }
-    }
-    public function frequencyName()
-    {
-        try {
-            $frquencies = $this->frequency->getFrequency()->toArray();
-
-            $frequency = array_map(function ($item) {
-                return  [
-                    'id' => $item['id'],
-                    'name' => $item['frequency_name'],
-                    'created_by' => getUsername($item['created_by']),
-                    'status' => ($item['status'] == 1 ? 'Active' : 'InActive'),
-                ];
-            }, $frquencies);
-
-            $success = array(
-                'frquencies' => $frequency,
-            );
-            return $this->sendResponse($success, 'Frequency');
-        } catch (Exception $ex) {
-            report($ex);
-            return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
-        }
-    }
-    public function shift()
-    {
-        try {
-            $shifts = $this->shift->getShiftname()->toArray();
-            $shift = array_map(function ($item) {
-                return  [
-                    'id' => $item['id'],
-                    'name' => $item['shift'],
-                    'created_by' => getUsername($item['created_by']),
-                    'status' => ($item['status'] == 1 ? 'Active' : 'InActive'),
-                ];
-            }, $shifts);
-
-            $success = array(
-                'shifts' => $shift,
-            );
-            return $this->sendResponse($success, 'Shift');
-        } catch (Exception $ex) {
             return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
         }
     }

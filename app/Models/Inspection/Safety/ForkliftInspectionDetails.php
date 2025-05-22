@@ -68,8 +68,38 @@ class ForkliftInspectionDetails extends Model
                 'created_by' => Auth::id(),
             );
             $data =  $this->create($data);
-            $safetyFiles = new SafetyWalkObservationFile();
-            $safetyFiles->store($data->id, $index, $request->checklist_file);
+        }
+    }
+
+    public function store_api($id)
+    {
+        $request = request();
+        $department = $request->department;
+        $unit = $request->unit;
+        $identification_no = $request->identification_no;
+        $observation = $request->observation;
+        $corrective_action = $request->corrective_action;
+        $emp_id = $request->emp_id;
+        $date_of_compliance = $request->date_of_compliance;
+        $observation_status = $request->observation_status;
+        $remarks = $request->remarks;
+
+
+        foreach ($department as $index => $sr_no_value) {
+            $data = array(
+                'inspection_id' => $id,
+                'department_id' => ($department[$index]),
+                'unit_id' =>  ($unit[$index]),
+                'identification_no' => $identification_no[$index],
+                'observation' => $observation[$index],
+                'correction_preventive_action' => ($corrective_action[$index]),
+                'responsibility' => ($emp_id[$index]),
+                'date_of_compliance' => DBdateformat($date_of_compliance[$index]),
+                'observation_status' => ($observation_status[$index]),
+                'remarks' => $remarks[$index],
+                'created_by' => Auth::id(),
+            );
+            $data =  $this->create($data);
         }
     }
 
