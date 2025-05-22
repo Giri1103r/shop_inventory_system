@@ -7,32 +7,32 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
+use App\Models\Inspection\Fire\HoseBoxType;
 use App\Http\Controllers\Api\BaseController;
 use App\Mail\Inspection\Fire\FireInspection;
 use App\Models\Inspection\Fire\FireStatusLog;
 use App\Models\Inspection\Fire\FireFileUpload;
-use App\Models\Inspection\Fire\FireExtinguisher;
+use App\Models\Inspection\Fire\HoseBoxInspection;
 use App\Models\Inspection\Fire\FireSignatureUpload;
-use App\Models\Inspection\Fire\FireExtinguisherType;
-use App\Models\Inspection\Fire\FireExtinguisherDetails;
+use App\Models\Inspection\Fire\HoseBoxInspectionDetails;
 
-class FireExtinguisherController extends BaseController
+class HoseController extends BaseController
 {
     private $inspection;
     private $inspection_details;
-    private $fire_extinguisher_type;
     private $statusLog;
     private $files;
     private $signature;
+    private $hose_box_type;
 
     public function __construct()
     {
-        $this->inspection = new FireExtinguisher();
-        $this->inspection_details = new FireExtinguisherDetails();
-        $this->fire_extinguisher_type = new FireExtinguisherType();
+        $this->inspection = new HoseBoxInspection();
+        $this->inspection_details = new HoseBoxInspectionDetails();
         $this->statusLog = new FireStatusLog();
         $this->files = new FireFileUpload();
         $this->signature = new FireSignatureUpload();
+        $this->hose_box_type = new HoseBoxType();
     }
 
     public function List(Request $request)
@@ -71,50 +71,47 @@ class FireExtinguisherController extends BaseController
         try {
 
             $rules = [
-                'issue_date' => 'required',
-                'rev_date' => 'required',
                 'inspection_date' => 'required',
                 'location_id' => 'required',
                 'shift_id' => 'required',
                 'next_due' => 'required',
                 'unit_id' => 'required',
                 'frequency_id' => 'required',
+
                 'sr_no.*' => 'required',
-                'department.*' => 'required',
                 'location.*' => 'required',
-                'description.*' => 'required',
-                'type.*' => 'required',
-                'capacity.*' => 'required',
+                'hose_box_no.*' => 'required',
+                'hose_types.*' => 'required',
                 'quantity.*' => 'required',
-                'cylinder_pressure.*' => 'required',
-                'discharge_tube.*' => 'required',
+                'branch_quantity.*' => 'required',
+                'hose_box_key.*' => 'required',
+                'condition.*' => 'required',
                 'approach.*' => 'required',
-                'safety_pin.*' => 'required',
                 'observation.*' => 'required',
                 'remarks.*' => 'required',
             ];
 
             $messages = [
-                'issue_date.required' => 'Issue Date is required',
-                'rev_date.required' => 'Revision Data is required',
                 'inspection_date.required' => 'Inspection Date is required',
                 'location_id.required' => 'Location is required',
                 'shift_id.required' => 'Shift is required',
                 'next_due.required' => 'Next due date is required',
                 'unit_id.required' => 'Unit is required',
-                'department.*.required' => 'Department is required',
-                'location.*.required' => 'Location is required',
-                'description.*.required' => 'Description is required',
-                'type.*.required' => 'Fire Extinguisher Type is required',
-                'capacity.*.required' => 'Capacity is required',
+                'frequency_id.required' => 'Frequency is required',
+
+                'sr_no.*.required' => 'Serial number is required',
+                'location.*.required' => 'Hose box location is required',
+                'hose_box_no.*.required' => 'Hose Box No is required',
+                'hose_types.*.required' => 'Hose Type is required',
                 'quantity.*.required' => 'Quantity is required',
-                'cylinder_pressure.*.required' => 'Cylinder Pressure is required',
-                'discharge_tube.*.required' => 'Discharge Tube is required',
-                'approach.*.required' => 'Approach is required',
-                'observation.required' => 'Observation is required',
-                'quantity.*.required' => 'Quantity is required',
-                'remarks.*.required' => 'Remarks is required',
+                'branch_quantity.*.required' => 'Branch Quantity is required',
+                'hose_box_key.*.required' => 'Status of Hose Box Key is required',
+                'condition.*.required' => 'Condition of Hose Box is required',
+                'approach.*.required' => 'Approach field is required',
+                'observation.*.required' => 'Observation is required',
+                'remarks.*.required' => 'Remarks are required',
             ];
+
 
             $validator = Validator::make($request->all(), $rules, $messages);
 
@@ -123,7 +120,7 @@ class FireExtinguisherController extends BaseController
             }
 
             $inspection = $this->inspection->storeApi();
-            $inspection_type = FIRE_EXTINGUISHER_INSPECTION;
+            $inspection_type = HOSE_BOX_INSPECTION;
             $id = $inspection->id;
 
             $inspection_details = $this->inspection_details->storeApi($id);
@@ -135,30 +132,30 @@ class FireExtinguisherController extends BaseController
 
             $ehsOfficer = GetEHSOfficer();
             $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
-            $mailsubject = 'Fire Extinguisher Inspection';
+            $mailsubject = 'Fire Hose Box Inspection';
             $notificationData = array(
                 'notification_type' => FIRE_INSPECTION,
                 'module_type' => 3,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
-                    'message' => "Fire Associate create the Fire Extinguisher Inspection",
+                    'message' => "Fire Associate create the Hose Box Inspection",
                     'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
                     'id' => $id,
                     'module' => 1,
                 )),
-                'web_link' =>  admin_url('fire/fire_extinguisher-inspection/verification/' . encryptId($id)),
+                'web_link' =>  admin_url('fire/hose-box-inspection/view/' . encryptId($id)),
                 'assigned_user' => array_to_string($ehsOfficers),
                 'created_by' => Auth::id(),
             );
             notificationSave($notificationData);
 
-            $title = 'Fire Associate create the Fire Extinguisher Inspection';
+            $title = 'Fire Associate create the Hose Box Inspection';
             foreach ($ehsOfficers as $user) {
                 $email_id = getUseremail($user);
-                $url = admin_url('fire/fire_extinguisher-inspection/verification/' . encryptId($id) . '/ehs');
+                $url = admin_url('fire/hose-box-inspection/verification/' . encryptId($id) . '/ehs');
                 $details = array(
-                    'fire_type' => 'Fire Extinguisher Inspection',
+                    'fire_type' => 'Hose Box Inspection',
                     'email' => $email_id,
                     'mail_subject' => $mailsubject,
                     'title' => $title,
@@ -169,14 +166,13 @@ class FireExtinguisherController extends BaseController
             }
 
             $insert_array = [
-                'type' => FIRE_EXTINGUISHER_INSPECTION,
+                'type' => HOSE_BOX_INSPECTION,
                 'inspection_id' => $id,
                 'from_status' => 0,
                 'to_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,
                 'created_by' => Auth::id(),
             ];
             $this->statusLog->create($insert_array);
-
             $data = [
                 'inspection' => $inspection_details,
             ];
@@ -187,6 +183,37 @@ class FireExtinguisherController extends BaseController
         }
     }
 
+    public function TypeOfHoseBox(Request $request)
+    {
+        try {
+            if (Auth::check()) {
+                $data = $this->hose_box_type->GetApi();
+                if ($data) {
+                    $types = [
+                        'data' => $data
+                    ];
+
+                    return $this->sendResponse($types, 'Data Retrived Successfully');
+                } else {
+                    return $this->sendError(
+                        'No Data Found.',
+                        ['error' => 'No Data Found'],
+                        406
+                    );
+                }
+            } else {
+                return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
+            }
+        } catch (Exception $ex) {
+            report($ex);
+            return $this->sendError(
+                'Unauthorised.',
+                ['error' => 'Please try again after sometimes'],
+                406
+            );
+        }
+    }
+
     public function View(Request $request)
     {
         try {
@@ -194,7 +221,7 @@ class FireExtinguisherController extends BaseController
                 $id = $request->id;
                 $inspection = $this->inspection->selectOne($id);
                 $details = $this->inspection_details->GetDetails($inspection->id);
-                $inspection_type = FIRE_EXTINGUISHER_INSPECTION;
+                $inspection_type = HOSE_BOX_INSPECTION;
                 $inspection_image = $this->files->GetFileApi($inspection_type,$id);
 
                 // Hooter Main Section
@@ -235,21 +262,33 @@ class FireExtinguisherController extends BaseController
                 $inspection_details = [];
 
                 foreach($details as $index => $values)
-                {
+                {   
+                    if($values->condition == GOOD)
+                    {
+                        $condition = 'Good';
+                    }
+                    else if($values->condition == FAIR)
+                    {
+                        $condition = 'Fair';
+                    }
+                    else
+                    {
+                        $condition = 'Poor';
+                    }
+
                     $inspection_details[$index + 1] = [
                         'id' => $values->id,
                         'sr_no' => $values->sr_no,
                         'inspection_id' => $values->inspection_id,
                         'resource_code' => $values->resource_code,
                         'location_name' => getLocationname($values->location),
-                        'department_name' => GetDeptName($values->department),
-                        'capacity' => $values->capacity,
+                        'branch_quantity' => $values->branch_quantity,
                         'quantity' => $values->quantity,
-                        'description' => $values->description,
+                        'hose_box_no' => $values->hose_box_no,
                         'cylinder_pressure' => $values->cylinder_pressure,
-                        'type' => getExtinguisherTypeName($values->type),
-                        'discharge_tube' => $values->glass == FUNCTIONAL ? 'Functional' : 'Non-Functional',
-                        'safety_pin' => $values->safety_pin == PRESENT ? 'Present' : 'Missing',
+                        'type' => getHoseTypeName($values->type),
+                        'condition' => $condition,
+                        'hose_box_key' => $values->hose_box_key == PRESENT ? 'Present' : 'Missing',
                         'approach' => $values->approach,
                         'remarks' => $values->remarks,
                         'created_by_name' => getUsername($values->created_by),
@@ -350,37 +389,6 @@ class FireExtinguisherController extends BaseController
                 );
 
                 return $this->sendResponse($data, 'Inspection Details');
-            } else {
-                return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
-            }
-        } catch (Exception $ex) {
-            report($ex);
-            return $this->sendError(
-                'Unauthorised.',
-                ['error' => 'Please try again after sometimes'],
-                406
-            );
-        }
-    }
-
-    public function TypeOfExtinguishers(Request $request)
-    {
-        try {
-            if (Auth::check()) {
-                $data = $this->fire_extinguisher_type->GetApi();
-                if ($data) {
-                    $types = [
-                        'data' => $data
-                    ];
-
-                    return $this->sendResponse($types, 'Data Retrived Successfully');
-                } else {
-                    return $this->sendError(
-                        'No Data Found.',
-                        ['error' => 'No Data Found'],
-                        406
-                    );
-                }
             } else {
                 return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
             }

@@ -3,20 +3,28 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\MasterController;
 use App\Http\Controllers\Api\Permit\SafetyPermitController;
+use App\Http\Controllers\Api\Inspection\Fire\HoseController;
 use App\Http\Controllers\Api\Inspection\Safety\OHSPlantSummary;
+use App\Http\Controllers\Api\Inspection\Fire\HoseReelController;
 use App\Http\Controllers\Api\Ppemanagement\PperequestController;
 use App\Http\Controllers\Api\Trainig\TrainingSheducleController;
+use App\Http\Controllers\Api\Inspection\Fire\FireAlarmController;
 use App\Http\Controllers\Api\Inspection\Safety\ForkliftInspection;
 use App\Http\Controllers\Api\Ppemanagement\PpeExemptionController;
 use App\Http\Controllers\Api\Ppemanagement\PpemanagementController;
 use App\Http\Controllers\Api\Inspection\Audit\MonthlyAuditController;
 use App\Http\Controllers\Api\Inspection\Audit\AuditAnalysisController;
+use App\Http\Controllers\Api\Inspection\Fire\IsolationValveController;
 use App\Http\Controllers\Api\Inspection\GembaWalk\GembaWalkController;
 use App\Http\Controllers\Api\Inspection\Audit\InterUnitAuditController;
+use App\Http\Controllers\Api\Inspection\Fire\SprinklerSystemController;
 use App\Http\Controllers\Api\Inspection\Safety\SafetyGalleryInspection;
 use App\Http\Controllers\Api\Inspection\Audit\AuditAssessmentController;
+use App\Http\Controllers\Api\Inspection\Fire\FireExtinguisherController;
 use App\Http\Controllers\Api\Inspection\Fire\HooterInspectionController;
+use App\Http\Controllers\Api\Inspection\Safety\MonthlyEyeWashController;
 use App\Http\Controllers\Api\Inspection\Safety\MonthlyForkLiftInspection;
+use App\Http\Controllers\Api\Inspection\Fire\MonthlyFirePumpHouseController;
 use App\Http\Controllers\Api\{LoginController, NotificationController, AdminController};
 
 // Route::get('/user', function (Request $request) {
@@ -147,6 +155,57 @@ Route::middleware('api')->prefix('v1')->group(function () {
                     Route::post('list', [HooterInspectionController::class, 'List']);
                     Route::post('add', [HooterInspectionController::class, 'Add']);
                     Route::post('view', [HooterInspectionController::class, 'View']);
+                });
+
+                Route::group(['prefix' => 'fire-alarm-inspection/'],function(){
+                    Route::post('list',[FireAlarmController::class,'List']);
+                    Route::post('add',[FireAlarmController::class,'Add']);
+                    Route::post('view',[FireAlarmController::class,'View']);
+                });
+
+                Route::group(['prefix' => 'fire-extinguisher/inspection/'],function(){
+                    Route::post('list',[FireExtinguisherController::class,'List']);
+                    Route::post('add',[FireExtinguisherController::class,'Add']);
+                    Route::post('view',[FireExtinguisherController::class,'Add']);
+                });
+
+                Route::group(['prefix' => 'hose-box-inspection/'],function(){
+                    Route::post('list',[HoseController::class,'List']);
+                    Route::post('add',[HoseController::class,'Add']);
+                    Route::post('view',[HoseController::class,'View']);
+                });
+
+                Route::group(['prefix' => 'hose-reel-inspection/'],function(){
+                    Route::post('list',[HoseReelController::class,'List']); 
+                    Route::post('add',[HoseReelController::class,'Add']); 
+                    Route::post('view',[HoseReelController::class,'View']); 
+                });
+
+                Route::group(['prefix' => 'isolating-valve-inspection/'],function(){
+                    Route::post('list',[IsolationValveController::class,'List']);
+                    Route::post('add',[IsolationValveController::class,'Add']);
+                    Route::post('view',[IsolationValveController::class,'View']);
+                });
+
+                Route::group(['prefix' => 'monthly-fire-pump-house-inspection/'],function(){
+                    Route::post('list',[MonthlyFirePumpHouseController::class,'List']);
+                    Route::post('add',[MonthlyFirePumpHouseController::class,'Add']);
+                    Route::post('view',[MonthlyFirePumpHouseController::class,'View']);
+                });
+
+                Route::group(['prefix' => 'sprinkler-system-inspection/'],function(){
+                    Route::post('list',[SprinklerSystemController::class,'List']);
+                    Route::post('add',[SprinklerSystemController::class,'Add']);
+                    Route::post('view',[SprinklerSystemController::class,'View']);
+                });
+
+            });
+
+            Route::group(['prefix' => 'safety'],function(){
+                Route::group(['prefix' => 'monthly-eye-wash-inspection'],function(){
+                    Route::post('list',[MonthlyEyeWashController::class,'List']); 
+                    Route::post('add',[MonthlyEyeWashController::class,'Add']); 
+                    Route::post('view',[MonthlyEyeWashController::class,'View']); 
                 });
             });
         });

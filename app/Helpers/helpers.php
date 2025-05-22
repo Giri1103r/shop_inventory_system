@@ -3403,3 +3403,46 @@ if (!function_exists('GetStatusValue')) {
         return $text;
     }
 }
+
+// Get Condition
+if (!function_exists('GetConditionName')) {
+    function GetConditionName($value)
+    {
+        switch ($value) {
+            case GOOD:
+                return 'Good';
+            case FAIR:
+                return 'Fair';
+            default:
+                return 'Poor';
+        }
+    }
+}
+
+// Get Pass or Fail
+if (!function_exists('GetPassOrFail')) {
+    function GetPassOrFail($value)
+    {
+        switch ($value) {
+            case PASS:
+                return 'Pass';
+            case FAIL:
+                return 'Fail';
+            default:
+                return 'N/a';
+        }
+    }
+}
+
+// Get Operational or Non Operational
+if (!function_exists('GetOPOrNonOP')) {
+    function GetOPOrNonOP($value)
+    {
+        switch ($value) {
+            case OPERATIONAL:
+                return 'Operational';
+            default:
+                return 'Non-Operational';
+        }
+    }
+}
