@@ -159,7 +159,8 @@
             content: '*';
             color: red;
         }
-        .error{
+
+        .error {
             color: red;
             padding-top: 3px;
         }
@@ -345,6 +346,8 @@
 
 
     @stack('scripts')
+
+   
 
     @if (app()->environment('production') && getConstant('template_constant') == PRODUCTION)
         <script>
