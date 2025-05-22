@@ -199,7 +199,11 @@
                                         <div class="px-2 boder-rounded "
                                             style = "box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06);">
                                             <div class="media ai-icon" style="display: flex; align-items: center;">
+                                                <span class="me-3 bgl-primary text-primary" style="flex-shrink: 0;">
 
+
+
+                                                </span>
                                                 <div class="media-body" style="display: block;">
                                                     <p class="mb-1 mt-1" style="color:black;">
                                                         {{ isset($moduleLink[3]['name']) ? $moduleLink[3]['name'] : '' }}
@@ -638,16 +642,16 @@
                                         style="cursor: pointer;background-image: linear-gradient(135deg, #a18cd1, #fbc2eb);
                                         <div class="px-2
                                         boder-rounded "
-                                                style = "box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06);">
-                                                <div class="media ai-icon" style="display: flex; align-items: center;">
-                                                    <span class="me-3 bgl-primary text-primary" style="flex-shrink: 0;">
+                                                    style = "box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06);">
+                                                    <div class="media ai-icon" style="display: flex; align-items: center;">
+                                                        <span class="me-3 bgl-primary text-primary" style="flex-shrink: 0;">
 
 
 
-                                                    </span>
-                                                    <div class="media-body" style="display: block;">
-                                                        <p class="mb-1 mt-1" style="color:black;">
-                                                             @if (is_array($moduleLink[19]) && isset($moduleLink[19]['name']))
+                                                        </span>
+                                                        <div class="media-body" style="display: block;">
+                                                            <p class="mb-1 mt-1" style="color:black;">
+                                                                  @if (is_array($moduleLink[19]) && isset($moduleLink[19]['name']))
                                         {{ $moduleLink[19]['name'] }}
                                         @endif
 
