@@ -160,40 +160,42 @@ Route::middleware('api')->prefix('v1')->group(function () {
         Route::post('forklift_type/list', [MonthlyForkLiftInspection::class, 'forklift_type']);
         Route::post('equipment/list', [FireSafetyEquipment::class, 'equipment']);
 
-        Route::group(['prefix' => 'safety/safety-gallery-inspection/'], function () {
-            Route::post('list', [MonthlyForkLiftInspection::class, 'list']);
-            Route::post('add', [MonthlyForkLiftInspection::class, 'store']);
-            Route::post('view', [MonthlyForkLiftInspection::class, 'view']);
-        });
+        Route::prefix('safety')->group(function () {
+            Route::prefix('safety-gallery-inspection')->group(function () {
+                Route::post('list', [SafetyGalleryInspection::class, 'list']);
+                Route::post('add', [SafetyGalleryInspection::class, 'store']);
+                Route::post('view', [SafetyGalleryInspection::class, 'view']);
+            });
 
-        Route::group(['prefix' => 'safety/forklift-inspection/'], function () {
-            Route::post('list', [ForkliftInspection::class, 'list']);
-            Route::post('add', [ForkliftInspection::class, 'store']);
-            Route::post('view', [ForkliftInspection::class, 'view']);
-        });
+            Route::prefix('forklift-inspection')->group(function () {
+                Route::post('list', [ForkliftInspection::class, 'list']);
+                Route::post('add', [ForkliftInspection::class, 'store']);
+                Route::post('view', [ForkliftInspection::class, 'view']);
+            });
 
-        Route::group(['prefix' => 'safety/safety-gallery-inspection/'], function () {
-            Route::post('list', [SafetyGalleryInspection::class, 'list']);
-            Route::post('add', [SafetyGalleryInspection::class, 'store']);
-            Route::post('view', [SafetyGalleryInspection::class, 'view']);
-        });
+            Route::prefix('monthly-forklift-inspection')->group(function () {
+                Route::post('list', [MonthlyForkLiftInspection::class, 'list']);
+                Route::post('add', [MonthlyForkLiftInspection::class, 'store']);
+                Route::post('view', [MonthlyForkLiftInspection::class, 'view']);
+            });
 
-        Route::group(['prefix' => 'safety/ohs-plant-summary/'], function () {
-            Route::post('list', [OHSPlantSummary::class, 'list']);
-            Route::post('add', [OHSPlantSummary::class, 'store']);
-            Route::post('view', [OHSPlantSummary::class, 'view']);
-        });
+            Route::prefix('ohs-plant-summary')->group(function () {
+                Route::post('list', [OHSPlantSummary::class, 'list']);
+                Route::post('add', [OHSPlantSummary::class, 'store']);
+                Route::post('view', [OHSPlantSummary::class, 'view']);
+            });
 
-        Route::group(['prefix' => 'safety/fire-safety-equipment/'], function () {
-            Route::post('list', [FireSafetyEquipment::class, 'list']);
-            Route::post('add', [FireSafetyEquipment::class, 'store']);
-            Route::post('view', [FireSafetyEquipment::class, 'view']);
-        });
+            Route::prefix('fire-safety-equipment')->group(function () {
+                Route::post('list', [FireSafetyEquipment::class, 'list']);
+                Route::post('add', [FireSafetyEquipment::class, 'store']);
+                Route::post('view', [FireSafetyEquipment::class, 'view']);
+            });
 
-        Route::group(['prefix' => 'safety/safety-walk-observation/'], function () {
-            Route::post('list', [SafetyWalkObservation::class, 'list']);
-            Route::post('add', [SafetyWalkObservation::class, 'store']);
-            Route::post('view', [SafetyWalkObservation::class, 'view']);
+            Route::prefix('safety-walk-observation')->group(function () {
+                Route::post('list', [SafetyWalkObservation::class, 'list']);
+                Route::post('add', [SafetyWalkObservation::class, 'store']);
+                Route::post('view', [SafetyWalkObservation::class, 'view']);
+            });
         });
     });
 });
