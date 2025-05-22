@@ -84,6 +84,46 @@ class FireExtinguisherDetails extends Model
         }
     }
 
+    public function storeApi($id)
+    {
+        $request = request();
+
+        $sr_no = $request->sr_no;
+        $department = $request->department;
+        $description = $request->description;
+        $location = $request->location;
+        $quantity = $request->quantity;
+        $type = $request->type;
+        $capacity = $request->capacity;
+        $cylinder_pressure = $request->cylinder_pressure ?? [];
+        $discharge_tube = $request->discharge_tube ?? [];
+        $approach = $request->approach ?? [];
+        $safety_pin = $request->safety_pin ?? [];
+        $remarks = $request->remarks;
+
+        foreach ($sr_no as $index => $sr_no_value) {
+            $data = array(
+                'inspection_id' => $id,
+                'sr_no' => $sr_no_value,
+                'description' => $description[$index],
+                'department' => $department[$index],
+                'location' => $location[$index],
+                'remarks' => $remarks[$index],
+                'type' => $type[$index],
+                'quantity' => $quantity[$index],
+                'capacity' => $capacity[$index],
+                'cylinder_pressure' => $cylinder_pressure[$index],
+                'discharge_tube' => $discharge_tube[$index],
+                'safety_pin' => $safety_pin[$index],
+                'approach' => $approach[$index],
+                'created_by' => Auth::id(),
+            );
+
+            $this->create($data);
+        }
+    }
+
+
     public function GetDetails($id)
     {
         return $this->where('inspection_id', $id)->where('status', 1)->where('trash', 'NO')->get();
