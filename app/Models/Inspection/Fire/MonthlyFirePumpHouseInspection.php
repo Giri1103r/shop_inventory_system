@@ -52,8 +52,9 @@ class MonthlyFirePumpHouseInspection extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_fire_monthly_fire_pumphouse.*', 'inspection_shift_option.*', 'masters_unit.*', 'inspection_fire_monthly_fire_pumphouse.id as inspection_id')
+        $query = $this->select('inspection_fire_monthly_fire_pumphouse.*', 'inspection_shift_option.*', 'masters_unit.*','inspection_static_docno.*', 'inspection_fire_monthly_fire_pumphouse.id as inspection_id')
             ->leftJoin('inspection_shift_option', 'inspection_fire_monthly_fire_pumphouse.shift', '=', 'inspection_shift_option.id')
+            ->leftJoin('inspection_static_docno', 'inspection_fire_monthly_fire_pumphouse.document_reference_id', '=', 'inspection_static_docno.id')
             ->leftJoin('masters_unit', 'inspection_fire_monthly_fire_pumphouse.unit', '=', 'masters_unit.id');
 
         if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_OFFICER) || CheckUserRole(ROLE_L1_MANAGER) || CheckUserRole(ROLE_L2_MANAGER)) {
@@ -142,6 +143,57 @@ class MonthlyFirePumpHouseInspection extends Model
         return $datas;
     }
 
+    public function listApi()
+    {
+        $request = request();
+        $perPage = $request->input('per_page', 10);
+        $search = $request->input('search', '');
+
+        $query = $this->select('inspection_fire_monthly_fire_pumphouse.*', 'inspection_shift_option.*', 'masters_unit.*','inspection_fire_monthly_fire_pumphouse.id as inspection_id', 'inspection_static_docno.*')
+            ->leftJoin('inspection_shift_option', 'inspection_fire_monthly_fire_pumphouse.shift', '=', 'inspection_shift_option.id')
+            ->leftJoin('masters_unit', 'inspection_fire_monthly_fire_pumphouse.unit', '=', 'masters_unit.id')
+            ->leftJoin('inspection_static_docno', 'inspection_fire_monthly_fire_pumphouse.document_reference_id', '=', 'inspection_static_docno.id');
+
+
+        if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_OFFICER) || CheckUserRole(ROLE_L1_MANAGER) || CheckUserRole(ROLE_L2_MANAGER)) {
+        } else if (CheckUserRole(ROLE_FIRE_ASSOCIATES)) {
+            $query->where('inspection_fire_monthly_fire_pumphouse.created_by', Auth::id());
+        }
+
+        if (!empty($search)) {
+            $query->where(function ($q) use ($search) {
+                $q->orWhereRaw('masters_unit.unit_name LIKE "%' . $search . '%"')
+                    ->orWhereRaw('inspection_shift_option.shift LIKE "%' . $search . '%"');
+            });
+        }
+
+        $paginatedData = $query->orderBy('inspection_fire_monthly_fire_pumphouse.id', 'DESC')->paginate($perPage);
+
+        $refined_data = [];
+        foreach ($paginatedData as $data) {
+            $data->date_of_inspection = Displaydateformat($data->date_of_inspection);
+            $data->issue_date = Displaydateformat($data->issue_date);
+            $data->next_due = Displaydateformat($data->next_due);
+            $data->inspection_status = GetStatusValue($data->inspection_status);
+            $data->status = ($data->status == 1) ? 'Active' : 'In-Active';
+            $data->created_by = getUsername($data->created_by);
+            $data->created_at = Displaydateformat($data->created_at);
+            $refined_data[] = $data;
+        }
+
+        $response = [
+            'per_page' => $paginatedData->perPage(),
+            'current_page' => $paginatedData->currentPage(),
+            'from' => $paginatedData->firstItem(),
+            'to' => $paginatedData->lastItem(),
+            'total' => $paginatedData->total(),
+            'total_page' => $paginatedData->lastPage(),
+            'list' => $refined_data,
+        ];
+
+        return $response;
+    }
+
     public function store()
     {
         $request = request();
@@ -167,6 +219,39 @@ class MonthlyFirePumpHouseInspection extends Model
             'date_of_inspection' => DBdateformat($request->inspection_date),
             'shift' => decryptId($request->shift),
             'unit' => decryptId($request->unit_id),
+            'resource_code' => $request->resource_code,
+            'created_by' => Auth::id(),
+            'responses' => $responsesJson,
+            'inspection_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,
+        ];
+        return $this->create($insert_array);
+    }
+
+    public function storeApi()
+    {
+        $request = request();
+
+        $mergedResponses = [];
+
+        foreach ($request->checklist as $sub_type_id => $checklist_items) {
+            foreach ($checklist_items as $checklist_id => $value) {
+                $mergedResponses[$sub_type_id][$checklist_id] = [
+                    'response' => $value,
+                    'remark' => $request->remarks[$sub_type_id][$checklist_id] ?? null,
+                ];
+            }
+        }
+
+        $responsesJson = json_encode($mergedResponses);
+
+        $responses = $request->checklist;
+        $remarks = $request->remarks;
+        $respones = json_encode($responses);
+        $insert_array = [
+            'document_reference_id' => $request->document_reference_id,
+            'date_of_inspection' => DBdateformat($request->inspection_date),
+            'shift' => $request->shift,
+            'unit' => $request->unit_id,
             'resource_code' => $request->resource_code,
             'created_by' => Auth::id(),
             'responses' => $responsesJson,

@@ -75,6 +75,39 @@ class FireAlarmInspectionDetails extends Model
         }
     }
 
+    public function storeApi($id)
+    {
+        $request = request();
+
+        $sr_no = $request->sr_no;
+        $department = $request->department;
+        $resource_code = $request->resource_code;
+        $quantity = $request->quantity;
+        $hammer = $request->hammer;
+        $mannual_call_point = $request->mannual_call_point;
+        $approach = $request->approach;
+        $glass = $request->glass;
+        $remarks = $request->remarks;
+        
+        foreach ($sr_no as $index => $sr_no_value) {
+            $data = array(
+                'inspection_id' => $id,
+                'sr_no' => $sr_no_value,
+                'department' => $department[$index],
+                'resource_code' => $resource_code[$index],
+                'quantity' => $quantity[$index],
+                'glass' => $glass[$index],
+                'hammer' => $hammer[$index],
+                'mannual_call_point' => decryptId($mannual_call_point[$index]),
+                'approach' => $approach[$index],
+                'remarks' => $remarks[$index],
+                'created_by' => Auth::id(),
+            );
+
+            $this->create($data);
+        }
+    }
+
     public function GetDetails($id)
     {
         return $this->where('inspection_id', $id)->where('status', 1)->where('trash', 'NO')->get();

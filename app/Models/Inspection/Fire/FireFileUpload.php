@@ -190,4 +190,15 @@ class FireFileUpload extends Model
 
         return false;
     }
+
+    public function GetFileApi($type, $id)
+    {
+        $data = $this->where('type', $type)->where('inspection_id', $id)->where('status', 1)->where('trash', 'NO')->first();
+
+        if ($data) {
+            return admin_url($data->file_path);
+        }
+
+        return false;
+    }
 }
