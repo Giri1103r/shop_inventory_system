@@ -83,8 +83,31 @@ class InitialIncident extends Model
 
             $query->where('ims_initial_incident.created_by', Auth::user()->id);
         }
+        $condition =  decryptId($request->condition);
+        // if ($request->has('type') && $request->type) {
+        if ($condition  == 1) {
+            $type = ($request->type);
+            if ($type != ALL) {
+                $query = $query->where('ims_injury_details.nature_of_injury', decryptId($type));
+            }
+        } else if ($condition  == 2) {
+            $type = ($request->type);
+            if ($type != ALL) {
+                $query = $query->whereRaw("FIND_IN_SET(?, ims_initial_incident.ua_or_uc)", [decryptId($type)]);
+            }
+        } else if ($condition  == 3) {
+            $type = ($request->type);
+            if ($type != ALL) {
+                $query = $query->where('ims_initial_incident.iir_type', decryptId($type));
+            }
+        } else if ($condition  == 4) {
+            $type = ($request->type);
+            if ($type != ALL) {
+                $query = $query->where('ims_initial_incident.iir_type', decryptId($type));
+            }
+        }
 
-
+        // }
         /**
          * Role Based list view condition end
          */
@@ -134,7 +157,7 @@ class InitialIncident extends Model
         if ($request->has('dash_month') && $request->dash_month) {
             $query = $query->whereMonth('ims_initial_incident.created_at', $request->dash_month);
         }
-        
+
         if ($request->has('unit_id') && $request->unit_id) {
 
             $query = $query->where('ims_initial_incident.unit_id', decryptId($request->unit_id));
@@ -315,7 +338,7 @@ class InitialIncident extends Model
             ->leftJoin('ims_master_incident_type', 'ims_master_incident_type.id', '=', 'ims_initial_incident.iir_type')
             ->whereNotNull('ims_initial_incident.id');
 
-            // Apply company Filter
+        // Apply company Filter
         if ($request->CompanyId != null) {
             $company_id = decryptId($request->CompanyId);
             $query->where('ims_initial_incident.company_id', $company_id);
@@ -874,7 +897,7 @@ class InitialIncident extends Model
                 DB::raw('COUNT(DISTINCT iii.id) as total_incident'),
                 DB::raw('COUNT(rcpa.id) as total_rcpa')
             )
-            ->groupBy('imit.incident_type_name','iii.iir_type')
+            ->groupBy('imit.incident_type_name', 'iii.iir_type')
             ->orderBy('imit.incident_type_name');
 
 
@@ -934,6 +957,31 @@ class InitialIncident extends Model
 
         return $query->get(); // returns multiple rows
     }
+    public function getNearmiss()
+    {
+        $nearMissId = DB::table('ims_master_incident_type')
+            ->where('incident_type_name', 'LIKE', '%Near Miss%')
+            ->where(function ($query) {
+                $query->whereRaw("LOWER(REPLACE(incident_type_name, '-', '')) LIKE ?", ['%near miss%']);
+            })
+            ->where('status', 1)
+            ->value('id'); // returns a single id, not an array
+
+        return $nearMissId;
+    }
+
+    public function getFireIncidence()
+    {
+        $fireIncidence = DB::table('ims_master_incident_type')
+            ->where('incident_type_name', 'LIKE', '%Fire Incidence%')
+            ->where(function ($query) {
+                $query->whereRaw("LOWER(REPLACE(incident_type_name, '-', '')) LIKE ?", ['%near miss%']);
+            })
+            ->where('status', 1)
+            ->value('id'); // returns a single id, not an array
+
+        return $fireIncidence;
+    }
 
     public function getNearMissCountData($request)
     {
@@ -945,7 +993,7 @@ class InitialIncident extends Model
             ->where('status', 1)
             ->pluck('id')
             ->toArray();
-           
+
         $query = DB::table('ims_initial_incident as iii')
             ->join('ims_master_incident_type as imit', 'iii.iir_type', '=', 'imit.id')
             ->whereIn('iii.iir_type', $nearMissIds)
@@ -956,7 +1004,7 @@ class InitialIncident extends Model
                 DB::raw('YEAR(iii.created_at) as year'),
                 DB::raw('COUNT(DISTINCT iii.id) as incident_count')
             )
-            ->groupBy('imit.incident_type_name','iii.iir_type', 'month', 'year')
+            ->groupBy('imit.incident_type_name', 'iii.iir_type', 'month', 'year')
             ->orderBy('year')
             ->orderBy('month')
             ->orderBy('imit.incident_type_name');

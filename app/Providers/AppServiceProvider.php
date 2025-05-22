@@ -147,6 +147,15 @@ class AppServiceProvider extends ServiceProvider
         defined('COMPANY_PNS') or define('COMPANY_PNS', 2);
         defined('COMPANY_KPSL') or define('COMPANY_KPSL', 3);
 
+        // incident accident
+        defined('MAJOR_ACCIDENT') or define('MAJOR_ACCIDENT', 1);
+        defined('MINOR_ACCIDENT') or define('MINOR_ACCIDENT', 2);
+        defined('UNSAFE_ACT') or define('UNSAFE_ACT', 1);
+        defined('UNSAFE_CONDITION') or define('UNSAFE_CONDITION', 2);
+        defined('ALL') or define('ALL', 'ALL');
+
+
+
         // OHC Management
 
         // Medicine Approval

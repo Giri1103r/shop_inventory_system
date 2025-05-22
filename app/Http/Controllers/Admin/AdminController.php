@@ -25,7 +25,7 @@ use App\Models\Inspection\GembaWalk\GembaWalk;
 use Illuminate\Support\Facades\DB as FacadesDB;
 use App\Models\Inspection\GembaWalk\GembaWalkChecklist;
 use App\Models\Master\Company;
-
+use PHPUnit\TextUI\Configuration\IniSetting;
 
 class AdminController extends Controller
 {
@@ -39,6 +39,7 @@ class AdminController extends Controller
     private $unit;
     private $department;
     private $company;
+    private $initial_incident;
 
     private $incident_ims;
 
@@ -54,6 +55,7 @@ class AdminController extends Controller
         $this->unit = new Unit();
         $this->department = new Department();
         $this->company = new Company();
+        $this->initial_incident = new InitialIncident();
     }
 
     public function index(Request $request)
@@ -112,6 +114,24 @@ class AdminController extends Controller
                         ],
 
                     ];
+                    $nearMiss = $this->initial_incident->getNearmiss();
+                    $fireIncidence = $this->initial_incident->getFireIncidence();
+
+                    $minor = encryptId(MINOR_ACCIDENT);
+                    $major = encryptId(MAJOR_ACCIDENT);
+                    $un_safe_act = encryptId(UNSAFE_ACT);
+                    $un_safe_condition = encryptId(UNSAFE_CONDITION);
+                    $near_miss = encryptId($nearMiss);
+                    $fire_Incidence = encryptId($fireIncidence);
+
+
+
+                    $type1 = encryptId(1);
+                    $type2 = encryptId(2);
+                    $type3 = encryptId(3);
+                    $type4 = encryptId(4);
+
+                    GetInspectionCount('Fire');
 
                     $moduleLink = [
                         [
@@ -177,59 +197,102 @@ class AdminController extends Controller
                         ],
 
                         [
-                            // 'link' => 'audit/inter-unit-audit/checklist/list',
-                            'name' => 'Fire Inspection',
-                            'count' => GetInspectionCount('Fire'),
+                            'link' => 'ohc/prescribe-to-patient/list',
+                            'name' => 'No of OPD',
+                            'count' => gettotalCount('prescribe_to_patient'),
                             'icon' => 'bx bx-message-square-detail',
                             'icon_color' => 'text-primary',
                         ],
 
                         [
-                            // 'link' => 'audit/inter-unit-audit/checklist/list',
-                            'name' => 'Gemba Walk Inspection',
-                            'count' => GetInspectionCount('GembaWalk'),
+                            'link' => 'ohc/first-aid/list',
+                            'name' => 'No of First Aid',
+                            'count' => gettotalCount('ohc_first_aid'),
                             'icon' => 'bx bx-message-square-detail',
                             'icon_color' => 'text-primary',
                         ],
 
                         [
-                            // 'link' => 'audit/inter-unit-audit/checklist/list',
-                            'name' => 'OHC Inspection',
-                            'count' => GetInspectionCount('Ohc'),
+                            'link' => 'incident/initial-incident/list/' . $minor . '/' . $type1,
+                            'name' => 'No of Minor Accident',
+                            'count' => gettotalCount('minor_accident'),
                             'icon' => 'bx bx-message-square-detail',
                             'icon_color' => 'text-primary',
                         ],
 
                         [
-                            // 'link' => 'audit/inter-unit-audit/checklist/list',
-                            'name' => 'RRAA Inspection',
-                            'count' => GetInspectionCount('RRAA'),
+                            'link' => 'incident/initial-incident/list/' . $major . '/' . $type1,
+                            'name' => 'No of Major Accident',
+                            'count' => gettotalCount('major_accident'),
                             'icon' => 'bx bx-message-square-detail',
                             'icon_color' => 'text-primary',
                         ],
 
                         [
-                            // 'link' => 'audit/inter-unit-audit/checklist/list',
-                            'name' => 'Safety Inspection',
-                            'count' => GetInspectionCount('Safety'),
+                            'link' => 'incident/initial-incident/list/' . $near_miss . '/' . $type3,
+                            'name' => 'No of Near Miss',
+                            'count' => gettotalCount('near_miss'),
                             'icon' => 'bx bx-message-square-detail',
                             'icon_color' => 'text-primary',
                         ],
 
-                          [
+                        [
+                            'link' => 'incident/initial-incident/list/' . $un_safe_act . '/' . $type2,
+                            'name' => 'No of Unsafe Act',
+                            'count' => gettotalCount('un_safe_act'),
+                            'icon' => 'bx bx-message-square-detail',
+                            'icon_color' => 'text-primary',
+                        ],
+                        [
+                            'link' => 'incident/initial-incident/list/' . $un_safe_condition . '/' . $type2,
+                            'name' => 'No of Unsafe Condition',
+                            'count' => gettotalCount('un_safe_condition'),
+                            'icon' => 'bx bx-message-square-detail',
+                            'icon_color' => 'text-primary',
+                        ],
+                        [
                             // 'link' => 'audit/inter-unit-audit/checklist/list',
-                            'name' => 'MSDS',
-                            'count' => GetInspectionCount('MSDS'),
+                            'name' => 'No of HSE Inspection',
+                            'count' => GetInspectionCount('Fire')['Fire'] ,
+                            'icon' => 'bx bx-message-square-detail',
+                            'icon_color' => 'text-primary',
+                        ],
+                        [
+                            'link' => 'inspection/gemba-walk/list',
+                            'name' => 'No of 6s Observation',
+                            'count' =>GetInspectionCount('GembaWalk')['GembaWalk'] ,
+                            'icon' => 'bx bx-message-square-detail',
+                            'icon_color' => 'text-primary',
+                        ],
+                        [
+                           'link' => 'incident/initial-incident/list/' . $fire_Incidence . '/' . $type4,
+                            'name' => 'No of Fire Call',
+                            'count' => gettotalCount('fire_incidence'),
+                            'icon' => 'bx bx-message-square-detail',
+                            'icon_color' => 'text-primary',
+                        ],
+                        [
+                            // 'link' => 'audit/inter-unit-audit/checklist/list',
+                            'name' => 'No of Safety Inspection',
+                            'count' =>GetInspectionCount('Safety')['Safety'] ,
+                            'icon' => 'bx bx-message-square-detail',
+                            'icon_color' => 'text-primary',
+                        ],
+                         [
+
+                            'name' => 'No of OHC Inspection',
+                            'count' => GetInspectionCount('Ohc')['Ohc'] ,
                             'icon' => 'bx bx-message-square-detail',
                             'icon_color' => 'text-primary',
                         ],
                     ];
                     $companyList  = $this->company->where('status', '1')->get();
-
+                    $type1 = MINOR_ACCIDENT;
                     $data = [
                         'masterLink' => $masterLink,
                         'companyList' => $companyList,
                         'moduleLink' => $moduleLink,
+                        'type1' => $type1,
                     ];
                 }
                 if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_ADMIN) || CheckUserRole(ROLE_EHS_HEAD)) {

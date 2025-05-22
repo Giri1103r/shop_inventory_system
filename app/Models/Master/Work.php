@@ -61,7 +61,7 @@ class Work extends Model
         $query = $query->leftJoin('masters_location', 'masters_work.location', '=', 'masters_location.id');
         $query = $query->leftJoin('masters_unit', 'masters_work.unit', '=', 'masters_unit.id');
         $query = $query->leftJoin('masters_department', 'masters_work.department', '=', 'masters_department.id');
-        $query = $query->where('masters_work.status',1);
+        $query = $query->where('masters_work.status', 1);
 
         $org_total =  $query;
         $org_total_counts = $org_total->count();
@@ -226,7 +226,7 @@ class Work extends Model
                 $companyExists = DB::table('company_management')->where('short_name', $item['company'])->first();
                 $unitExists = DB::table('masters_unit')->where('unit_name', $item['unit'])->first();
                 $departmentExists = DB::table('masters_department')->where('department_name', $item['department'])->first();
-               // dd($companyExists,$unitExists,$departmentExists,$item);
+                // dd($companyExists,$unitExists,$departmentExists,$item);
                 // Validate existence
                 // if (!$companyExists) {
                 //     $this->updateErrorStatus($item['emp_id'], "Company does not exist.");
@@ -271,10 +271,7 @@ class Work extends Model
 
                 // Add to insertedRecords for tracking
                 $insertedRecords[] = array_merge(['emp_id' => $item['emp_id']], $valuesToInsertOrUpdate);
-
             }
-
-
         }
 
 
@@ -320,8 +317,9 @@ class Work extends Model
 
         return Worktemp::where('emp_id', $emp_id)->update($update_data);
     }
-    public function getEmployeeID(){
-        return $this->where('status',1)->where('trash','NO')->get();
+    public function getEmployeeID()
+    {
+        return $this->where('status', 1)->where('trash', 'NO')->get();
     }
 
     public function statuschange($id)
@@ -367,6 +365,7 @@ class Work extends Model
         $query = $query->leftJoin('masters_unit', 'masters_work.unit', '=', 'masters_unit.id');
         $query = $query->leftJoin('masters_location', 'masters_work.location', '=', 'masters_location.id');
         $query = $query->leftJoin('masters_department', 'masters_work.department', '=', 'masters_department.id');
+        $query = $query->where('masters_work.status', 1);
 
 
         if (!empty($request->search)) {

@@ -184,9 +184,9 @@ class Employee extends Model
                 'email' => $item->email ?? null,
                 'joining_date' => $item->joining_date ? DBdatetimeformat($item->joining_date) : null,
                 'user_role' => 9,
-                'nationality'=> $item->nationality ?? null,
-                'id_type'=> $item->id_type ?? null,
-                'id_number'=> $item->id_number ?? null,
+                'nationality' => $item->nationality ?? null,
+                'id_type' => $item->id_type ?? null,
+                'id_number' => $item->id_number ?? null,
                 'designation' => $item->designation ?? null,
                 'employee_status' => $item->employee_status ?? null,
                 'reporting_manager' => $item->reporting_manager ?? null,
@@ -335,6 +335,7 @@ class Employee extends Model
         $query = $query->leftJoin('company_management', 'masters_employee.company', '=', 'company_management.id');
         $query = $query->leftJoin('masters_department', 'masters_employee.department', '=', 'masters_department.id');
         $query = $query->leftJoin('masters_unit', 'masters_employee.unit', '=', 'masters_unit.id');
+        $query = $query->where('masters_employee.status', 1);
 
         if (!empty($request->search)) {
             $search = $request->search;
@@ -433,7 +434,7 @@ class Employee extends Model
 
     public function getEmployeeList()
     {
-        return  $this->select('id','emp_name')->where('status',1)->get();
+        return  $this->select('id', 'emp_name')->where('status', 1)->get();
     }
     protected static function booted()
     {
