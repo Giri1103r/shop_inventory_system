@@ -106,6 +106,7 @@ class InitialIncident extends Model
                 $query = $query->where('ims_initial_incident.iir_type', decryptId($type));
             }
         }
+        
 
         // }
         /**

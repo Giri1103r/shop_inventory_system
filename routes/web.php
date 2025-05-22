@@ -328,8 +328,8 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::group(['prefix' =>  'leading-lagging/'], function () {
                     Route::get('', [LeadingLaggingDashboardController::class, 'index']);
                     Route::get('leading/chart1', [LeadingLaggingDashboardController::class, 'getChart1']);
-                    Route::GET('lagging-line',[LeadingLaggingDashboardController::class,'LaggingIndicatorLine']);
-                    Route::GET('lagging-indicator',[LeadingLaggingDashboardController::class,'LaggingDoughNut']);
+                    Route::GET('lagging-line', [LeadingLaggingDashboardController::class, 'LaggingIndicatorLine']);
+                    Route::GET('lagging-indicator', [LeadingLaggingDashboardController::class, 'LaggingDoughNut']);
                 });
             });
 
@@ -1001,7 +1001,6 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('export/pdf', [GembaWalkController::class, 'exportPdf']);
                 Route::get('export/excel', [GembaWalkController::class, 'exportExcel']);
                 Route::get('employeeName', [GembaWalkController::class, 'getEmployeeName']);
-
             });
 
             Route::group(['prefix' => 'environment/'], function () {
@@ -2298,7 +2297,7 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('/view/{id}', [PrescribetoPatientController::class, 'view']);
                 Route::get('/generalpdf/{id}', [PrescribetoPatientController::class, 'medicineslip']);
                 Route::get('/fetchemployeename', [PrescribetoPatientController::class, 'fetchemployeename']);
-               
+
                 Route::get('/emp-details/{emp_id}', [PrescribetoPatientController::class, 'employeedetails']);
                 Route::get('/first-aider-number', [PrescribetoPatientController::class, 'firstaidernumber']);
                 Route::get('/firstaider', [PrescribetoPatientController::class, 'firstaider']);
@@ -2483,6 +2482,9 @@ Route::middleware(['securityheader'])->group(function () {
             Route::group(['prefix' => 'incident/initial-incident'], function () {
                 Route::get('/list/{type}/{condition}', [InitialIncidentController::class, 'index']);
                 Route::post('/list/{type}/{condition}', [InitialIncidentController::class, 'index']);
+
+                Route::get('/list/all/type', [InitialIncidentController::class, 'redirectindex']);
+                Route::post('/list/all/type', [InitialIncidentController::class, 'redirectindex']);
 
                 Route::get('/investigationList', [InitialIncidentController::class, 'investigationList']);
                 Route::post('/investigationList', [InitialIncidentController::class, 'investigationList']);

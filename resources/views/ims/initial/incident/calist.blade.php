@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
 @section('title', 'Incident Corrective Action')
-@section('pageurl', admin_url('initial-incident/list/all/type'))
+@section('pageurl', admin_url('incident/initial-incident/list/all/type'))
 
 
 @section('content')
