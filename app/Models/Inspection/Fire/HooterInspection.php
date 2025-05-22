@@ -251,6 +251,27 @@ class HooterInspection extends Model
         return $this->create($data);
     }
 
+    public function storeApi()
+    {
+        $request = request();
+
+        $data = array(
+            'document_reference_id' => $request->document_reference_id,
+            'date_of_inspection' => DBdateformat($request->inspection_date),
+            'location' => $request->location_id,
+            'shift' => $request->shift_id,
+            'next_due' => DBdateformat($request->next_due),
+            'observation' => $request->observation,
+            'unit' => $request->unit_id,
+            'frequency' => $request->frequency_id,
+            'inspection_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,
+            'created_by' => Auth::id(),
+            'checked_by' => Auth::id(),
+        );
+
+        return $this->create($data);
+    }
+
     public function exportdata()
     {
         $request = request();

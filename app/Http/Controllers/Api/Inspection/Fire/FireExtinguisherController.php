@@ -11,15 +11,15 @@ use App\Models\Inspection\Fire\FireExtinguisherDetails;
 
 class FireExtinguisherController extends Controller
 {
-    private $fire_extinguisher;
-    private $fire_extinguisher_details;
+    private $inspection;
+    private $inspection_details;
     private $fire_extinguisher_type;
     private $statusLog;
 
     public function __construct()
     {
-        $this->fire_extinguisher = new FireExtinguisher();
-        $this->fire_extinguisher_details = new FireExtinguisherDetails();
+        $this->inspection = new FireExtinguisher();
+        $this->inspection_details = new FireExtinguisherDetails();
         $this->fire_extinguisher_type = new FireExtinguisherType();
         $this->statusLog = new FireStatusLog();
     }
