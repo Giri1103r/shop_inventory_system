@@ -469,7 +469,7 @@ class InitialIncidentController extends Controller
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('initial-incident/list/all/type'));
+            return redirect(admin_url('incident/initial-incident/list/all/type'));
         }
     }
 
@@ -825,11 +825,11 @@ class InitialIncidentController extends Controller
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
-            return redirect(admin_url('initial-incident/list/all/type'));
+            return redirect(admin_url('incident/initial-incident/list/all/type'));
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('initial-incident/list/all/type'));
+            return redirect(admin_url('incident/initial-incident/list/all/type'));
         }
     }
 
@@ -977,7 +977,7 @@ class InitialIncidentController extends Controller
         } catch (Exception $error) {
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('initial-incident/list/all/type'));
+            return redirect(admin_url('incident/initial-incident/list/all/type'));
         }
     }
 
@@ -1029,11 +1029,11 @@ class InitialIncidentController extends Controller
             $initialincident = $this->initialincident->find($id);
             $this->injury_details->store($id, $initialincident->random_id);
             Session::flash('success', 'Your data has been updated successfully!');
-            return redirect(admin_url('initial-incident/list/all/type'));
+            return redirect(admin_url('incident/initial-incident/list/all/type'));
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('initial-incident/list/all/type'));
+            return redirect(admin_url('incident/initial-incident/list/all/type'));
         }
     }
 
@@ -1104,7 +1104,7 @@ class InitialIncidentController extends Controller
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('initial-incident/list/all/type'));
+            return redirect(admin_url('incident/initial-incident/list/all/type'));
         }
     }
 
@@ -1160,7 +1160,7 @@ class InitialIncidentController extends Controller
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('initial-incident/list/all/type'));
+            return redirect(admin_url('incident/initial-incident/list/all/type'));
         }
     }
 
@@ -1216,7 +1216,7 @@ class InitialIncidentController extends Controller
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('initial-incident/list/all/type'));
+            return redirect(admin_url('incident/initial-incident/list/all/type'));
         }
     }
 
@@ -1343,11 +1343,11 @@ class InitialIncidentController extends Controller
 
 
             Session::flash('success', 'Your data has been updated successfully!');
-            return redirect(admin_url('initial-incident/list/all/type'));
+            return redirect(admin_url('incident/initial-incident/list/all/type'));
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('initial-incident/list/all/type'));
+            return redirect(admin_url('incident/initial-incident/list/all/type'));
         }
     }
 
@@ -1397,7 +1397,7 @@ class InitialIncidentController extends Controller
         } catch (Exception $error) {
             report($error);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('initial-incident/list/all/type'));
+            return redirect(admin_url('incident/initial-incident/list/all/type'));
         }
     }
 
@@ -1590,7 +1590,7 @@ class InitialIncidentController extends Controller
         } catch (Exception $error) {
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('initial-incident/list/all/type'));
+            return redirect(admin_url('incident/initial-incident/list/all/type'));
         }
     }
 
@@ -1990,7 +1990,7 @@ class InitialIncidentController extends Controller
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('initial-incident/list/all/type'));
+            return redirect(admin_url('incident/initial-incident/list/all/type'));
         }
     }
 
@@ -2066,7 +2066,7 @@ class InitialIncidentController extends Controller
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('initial-incident/list/all/type'));
+            return redirect(admin_url('incident/initial-incident/list/all/type'));
         }
     }
 
@@ -2125,7 +2125,7 @@ class InitialIncidentController extends Controller
 
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('initial-incident/list/all/type'));
+            return redirect(admin_url('incident/initial-incident/list/all/type'));
         }
     }
 
@@ -2185,7 +2185,7 @@ class InitialIncidentController extends Controller
 
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('initial-incident/list/all/type'));
+            return redirect(admin_url('incident/initial-incident/list/all/type'));
         }
     }
 

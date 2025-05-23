@@ -85,8 +85,8 @@
                     <div class="row gx-0">
 
                         <div class="col-md-2 gx-0">
-                            <div class="card  h- w-100">
-                                <div class="card-header py-2 mb-2">
+                            <div class="card mt-2  h- w-100">
+                                <div class="card-header py-2  mb-2">
                                     <h5 class="m-0 text-center text-white">Operating Management</h5>
                                 </div>
                                 <div class="px-2 mt-1">
