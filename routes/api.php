@@ -28,6 +28,7 @@ use App\Http\Controllers\Api\Inspection\Safety\MonthlyForkLiftInspection;
 use App\Http\Controllers\Api\Inspection\Fire\MonthlyFirePumpHouseController;
 use App\Http\Controllers\Api\{LoginController, NotificationController, AdminController};
 use App\Http\Controllers\Api\Inspection\Ohc\EmergencyBuyerFirstAidBagChecklistController;
+use App\Http\Controllers\Api\Inspection\Ohc\EmergencyFloorFirstAidBag;
 use App\Http\Controllers\Api\Inspection\Ohc\HealthInstrumentCalibrationController;
 use App\Http\Controllers\Api\Inspection\Ohc\Master\FirstAidContoller;
 use App\Http\Controllers\Api\Inspection\Ohc\Master\FirstAidMedicineController;
@@ -185,9 +186,9 @@ Route::middleware('api')->prefix('v1')->group(function () {
                 });
 
                 Route::group(['prefix' => 'hose-reel-inspection/'],function(){
-                    Route::post('list',[HoseReelController::class,'List']); 
-                    Route::post('add',[HoseReelController::class,'Add']); 
-                    Route::post('view',[HoseReelController::class,'View']); 
+                    Route::post('list',[HoseReelController::class,'List']);
+                    Route::post('add',[HoseReelController::class,'Add']);
+                    Route::post('view',[HoseReelController::class,'View']);
                 });
 
                 Route::group(['prefix' => 'isolating-valve-inspection/'],function(){
@@ -212,9 +213,9 @@ Route::middleware('api')->prefix('v1')->group(function () {
 
             Route::group(['prefix' => 'safety'],function(){
                 Route::group(['prefix' => 'monthly-eye-wash-inspection'],function(){
-                    Route::post('list',[MonthlyEyeWashController::class,'List']); 
-                    Route::post('add',[MonthlyEyeWashController::class,'Add']); 
-                    Route::post('view',[MonthlyEyeWashController::class,'View']); 
+                    Route::post('list',[MonthlyEyeWashController::class,'List']);
+                    Route::post('add',[MonthlyEyeWashController::class,'Add']);
+                    Route::post('view',[MonthlyEyeWashController::class,'View']);
                 });
             });
 
@@ -247,10 +248,17 @@ Route::middleware('api')->prefix('v1')->group(function () {
                     Route::post('add', [WeeklyFirstAidBoxController::class, 'store']);
                 });
 
-                Route::group(['prefix' => 'ohc-hygiene-cleaning-checklist/'], function () {
-                    Route::post('list', [OHCHygieneCleaningChecklist::class, 'list']);
-                    Route::post('view', [OHCHygieneCleaningChecklist::class, 'view']);
-                    Route::post('add', [OHCHygieneCleaningChecklist::class, 'store']);
+                //Api Pending Because of client change request
+                // Route::group(['prefix' => 'ohc-hygiene-cleaning-checklist/'], function () {
+                //     Route::post('list', [OHCHygieneCleaningChecklist::class, 'list']);
+                //     Route::post('view', [OHCHygieneCleaningChecklist::class, 'view']);
+                //     Route::post('add', [OHCHygieneCleaningChecklist::class, 'store']);
+                // });
+
+                Route::group(['prefix' => 'emergency-floor-first-aid-bag/'], function () {
+                    Route::post('list', [EmergencyFloorFirstAidBag::class, 'list']);
+                    Route::post('view', [EmergencyFloorFirstAidBag::class, 'view']);
+                    Route::post('add', [EmergencyFloorFirstAidBag::class, 'store']);
                 });
             });
         });

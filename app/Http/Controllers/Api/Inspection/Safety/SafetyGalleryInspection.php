@@ -81,12 +81,9 @@ class SafetyGalleryInspection extends BaseController
 
             $inspection_list = $query_array->toArray();
 
-
-
             if (empty($inspection_list['data'])) {
                 return $this->sendError('No records found.', [], 404);
             }
-
 
             $data_array = [];
             foreach ($inspection_list['data'] as $datas) {
