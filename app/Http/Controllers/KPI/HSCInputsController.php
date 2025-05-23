@@ -74,8 +74,8 @@ class HSCInputsController extends Controller
                         })
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            $btn = '<a href="' . admin_url('kpi/hsc-inputs/view/' . encryptId($row->id)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
-                            $btn .= '<a href="' . admin_url('kpi/hsc-inputs/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
+                            $btn = '<a href="' . admin_url('kpi/hse-inputs/view/' . encryptId($row->id)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
+                            $btn .= '<a href="' . admin_url('kpi/hse-inputs/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
                             return $btn;
                         })
                         ->rawColumns(['action', 'created_date', 'created_by', 'status', 'type'])
@@ -116,7 +116,7 @@ class HSCInputsController extends Controller
 
         if ($leading->isEmpty() || $lagging->isEmpty()) {
             Session::flash('error', 'Leading or Lagging Indicator is missing');
-            return redirect(admin_url('kpi/hsc-inputs/list'));
+            return redirect(admin_url('kpi/hse-inputs/list'));
         }
         $data = [
             'companies' => $companies,
@@ -172,11 +172,11 @@ class HSCInputsController extends Controller
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
-            return redirect(admin_url('kpi/hsc-inputs/list'));
+            return redirect(admin_url('kpi/hse-inputs/list'));
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('kpi/hsc-inputs/list'));
+            return redirect(admin_url('kpi/hse-inputs/list'));
         }
     }
 
@@ -257,11 +257,11 @@ class HSCInputsController extends Controller
             $lagging =  $this->lagging->updates($id);
 
             Session::flash('success', 'Your data has been updated successfully!');
-            return redirect(admin_url('kpi/hsc-inputs/list'));
+            return redirect(admin_url('kpi/hse-inputs/list'));
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('kpi/hsc-inputs/list'));
+            return redirect(admin_url('kpi/hse-inputs/list'));
         }
     }
 
