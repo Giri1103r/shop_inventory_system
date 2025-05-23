@@ -814,7 +814,6 @@ class GembaWalkController extends Controller
 
 
                 ];
-                // dd($data);
             }
 
             $property = [
