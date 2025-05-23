@@ -183,6 +183,7 @@ class MonthlyEyeWashController extends Controller
                 $details = $this->inspection_details->GetDetails($inspection->id);
                 $inspection_type = EYE_WASH_INSPECTION;
                 $document_no = $this->document_reference->selectOne($inspection->document_reference_id);
+                $signature = GetSafetySignature($inspection->created_by,$id,$inspection_type);
 
                 // Hooter Main Section
                 $inspection_main = [
@@ -218,6 +219,7 @@ class MonthlyEyeWashController extends Controller
                     'approved_by_id' => $inspection->approved_by,
                     'created_by_id' => $inspection->created_by,
                     'created_by' => getUsername($inspection->created_by),
+                    'signature' => $signature ? admin_url($signature) : [],
                 ];
 
                 // Inspection Sub Data

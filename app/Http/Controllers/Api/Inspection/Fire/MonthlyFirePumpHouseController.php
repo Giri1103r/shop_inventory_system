@@ -135,6 +135,7 @@ class MonthlyFirePumpHouseController extends BaseController
                 $inspection = $this->inspection->selectOne($id);
                 $inspection_type = MONTHLY_FIRE_PUMP;
                 $document_no = $this->document_reference->selectOne($inspection->document_reference_id);
+                $signature = GetFireSignature($inspection->created_by,$id,$inspection_type);
 
                 // Hooter Main Section
                 $inspection_main = [
@@ -170,6 +171,7 @@ class MonthlyFirePumpHouseController extends BaseController
                     'approved_by_id' => $inspection->approved_by,
                     'created_by_id' => $inspection->created_by,
                     'created_by' => getUsername($inspection->created_by),
+                    'signature' => $signature ? admin_url($signature) : [],
                 ];
 
                 // Inspection Sub Data
