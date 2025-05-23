@@ -486,13 +486,13 @@ class EmployeecumPatientController extends Controller
             $company = Company::where('id', $employee->company)
                 ->where('status', 1)
                 ->first();
-                $department = Department::where('id', $employee->company)
+            $department = Department::where('id', $employee->department)
                 ->where('status', 1)
                 ->first();
-                $unit = Unit::where('id', $employee->company)
+            $unit = Unit::where('id', $employee->unit)
                 ->where('status', 1)
                 ->first();
-                $blood_group = Bloodgroup::where('id', $employee->blood_group)
+            $blood_group = Bloodgroup::where('id', $employee->blood_group)
                 ->where('status', 1)
                 ->first();
 

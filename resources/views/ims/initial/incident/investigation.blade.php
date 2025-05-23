@@ -1132,7 +1132,7 @@
                                             <div class="row">
                                                 <div class="col-md-12 mt-3 ua_uc_yes_no">
                                                     <div class="form-group form-input">
-                                                        <label for="ua_uc" class="form-label require">UAUC</label><br>
+                                                        <label for="ua_uc" class="form-label require">Unsafe Act /Unsafe Condition</label><br>
                                                         <input type="radio" id="ua_uc_yes" name="ua_uc_yes_no"
                                                             value="1">
                                                         <label for="ua_uc_yes">Yes</label>

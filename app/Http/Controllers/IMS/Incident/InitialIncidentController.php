@@ -1588,7 +1588,7 @@ class InitialIncidentController extends Controller
 
             return view('ims.initial.incident.riskanalysis', $data);
         } catch (Exception $error) {
-            report($ex);
+            report($error);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('incident/initial-incident/list/all/type'));
         }
