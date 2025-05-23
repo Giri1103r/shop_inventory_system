@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'HSE Inputs')
-@section('pageurl', admin_url('kpi/hse-inputs/list'))
+@section('title', 'EHS Inputs')
+@section('pageurl', admin_url('kpi/ehs-inputs/list'))
 
 
 @section('content')
@@ -24,7 +24,7 @@
                             <div class="card-header">
                                 <h4 class="card-title"></h4>
                                 <div class="align-back-btc">
-                                    <x-button-back href="{{ admin_url('kpi/hse-inputs/list') }}"></x-button-back>
+                                    <x-button-back href="{{ admin_url('kpi/ehs-inputs/list') }}"></x-button-back>
                                 </div>
                             </div>
 
@@ -32,7 +32,7 @@
 
                                 <div class="basic-form">
                                     <form method="POST" id="hscinputsadd"
-                                        action="{{ admin_url('kpi/hse-inputs/add/submit') }}" autocomplete="off">
+                                        action="{{ admin_url('kpi/ehs-inputs/add/submit') }}" autocomplete="off">
                                         @csrf
 
                                         <div class="row">
@@ -137,7 +137,7 @@
                                             <x-button-submit class="submit"></x-button-submit>
                                             <x-button-reset class=""></x-button-reset>
                                             <x-button-cancel
-                                                href="{{ admin_url('kpi/hse-inputs/list') }}"></x-button-cancel>
+                                                href="{{ admin_url('kpi/ehs-inputs/list') }}"></x-button-cancel>
                                         </div>
 
                                     </form>
@@ -319,7 +319,7 @@
                     month: {
                         required: true,
                         remote: {
-                            url: "{{ admin_url('kpi/hse-inputs/unique') }}",
+                            url: "{{ admin_url('kpi/ehs-inputs/unique') }}",
                             type: 'post',
                             data: {
                                 company_id: function() {
