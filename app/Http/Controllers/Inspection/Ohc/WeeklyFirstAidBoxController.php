@@ -202,6 +202,8 @@ class WeeklyFirstAidBoxController extends Controller
 
             );
 
+            // dd($data);
+
             return view('inspection.inspection_ohc.weekly_first_aid.view', $data);
         } catch (Exception $ex) {
             report($ex);
@@ -451,7 +453,7 @@ class WeeklyFirstAidBoxController extends Controller
 
             return response()->download($filePath)->deleteFileAfterSend(true);
         } catch (\Exception $e) {
-            dd($e);
+            report($e);
             return back()->with('error', $e->getMessage());
         }
     }

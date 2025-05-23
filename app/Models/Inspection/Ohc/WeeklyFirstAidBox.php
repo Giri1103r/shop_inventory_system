@@ -196,6 +196,40 @@ class WeeklyFirstAidBox extends Model
         return  $this->create($data);
     }
 
+    public function storeApi()
+    {
+        $request = request();
+        $id = $request->medicine_id;
+        foreach ($id as $index => $value) {
+            $id = $value;
+            $updated_medicine_checklist[$id] = [
+                'medicine_id' => $id,
+                'freeze_quantity' => $request->freeze_quantity[$index],
+                'available_quantity' => $request->available_quantity[$index],
+                'expired_date' => dbdateformat($request->expired_date[$index]),
+                'remarks' => $request->remarks[$index],
+
+            ];
+        }
+        $updated_medicine_checklist = json_encode($updated_medicine_checklist);
+        $data = [
+
+            'document_reference_id' => $request->document_reference_id,
+            'date_of_inspection' =>  DBdateformat($request->date_of_inspection),
+            'location' => $request->location_id,
+            'first_aid_box_no' => $request->first_aid_box_no,
+            'shift' => $request->shift,
+            'unit' => $request->unit_id,
+            'first_aider' => $request->first_aider,
+            'remark_by' => $request->remark_by,
+            'inspection_data' => $updated_medicine_checklist,
+            'created_by' => Auth::id(),
+        ];
+        $inspection_data =   $this->create($data);
+
+        return $inspection_data;
+    }
+
 
     public function selectOne($id)
     {

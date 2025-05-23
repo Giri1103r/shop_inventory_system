@@ -197,7 +197,6 @@ class FirstAidBagChecklistController extends Controller
             return redirect(admin_url('ohc/emergency-floor-first-aid-bag/checklist/list'));
         } catch (Exception $ex) {
             report($ex);
-            report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('ohc/emergency-floor-first-aid-bag/checklist/list'));
         }
@@ -561,7 +560,7 @@ class FirstAidBagChecklistController extends Controller
 
             return response()->download($filePath)->deleteFileAfterSend(true);
         } catch (\Exception $e) {
-            dd($e);
+            report($e);
             return back()->with('error', $e->getMessage());
         }
     }

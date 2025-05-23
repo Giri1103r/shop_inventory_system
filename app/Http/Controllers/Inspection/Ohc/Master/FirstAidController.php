@@ -200,7 +200,6 @@ class FirstAidController extends Controller
             ];
             $validator = Validator::make($request->all(), $rules, $messages);
             if ($validator->fails()) {
-                dd($validator);
                 return redirect()->back()->withErrors($validator)->withInput();
             }
 

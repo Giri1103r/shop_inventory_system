@@ -164,6 +164,7 @@ Route::middleware('api')->prefix('v1')->group(function () {
                 // Master
                 Route::post('first-aid-stock/list', [FirstAidContoller::class, 'medicine_stock_list']);
                 Route::post('first-aid-medicine/list', [FirstAidMedicineController::class, 'medicine_list']);
+                Route::post('first-aider',[WeeklyFirstAidBoxController::class,'getFirstAiderName']);
 
                 // Emergency Buyer
                 Route::group(['prefix' => 'emergency-buyer-first-bag-checklist/'], function () {
