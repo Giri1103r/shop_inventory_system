@@ -2693,7 +2693,7 @@ Route::middleware(['securityheader'])->group(function () {
                     Route::POST('/lists', [LeadingLaggingController::class, 'Checklists']);
                 });
 
-                Route::group(['prefix' => 'hsc-inputs'], function () {
+                Route::group(['prefix' => 'ehs-inputs'], function () {
                     Route::GET('/list', [HSCInputsController::class, 'Index']);
                     Route::POST('/list', [HSCInputsController::class, 'Index']);
                     Route::GET('/add', [HSCInputsController::class, 'Add']);

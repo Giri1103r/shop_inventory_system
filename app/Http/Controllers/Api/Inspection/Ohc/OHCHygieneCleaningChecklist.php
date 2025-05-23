@@ -1,41 +1,32 @@
 <?php
 
-namespace App\Http\Controllers\Api\Inspection\Safety;
+namespace App\Http\Controllers\Api\Inspection\Ohc;
 
 use App\Http\Controllers\Api\BaseController;
-use Exception;
-use App\Models\Master\Unit;
 use Illuminate\Http\Request;
-use App\Models\Master\Location;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use App\Models\Inspection\Master\Shift;
 use Illuminate\Support\Facades\Validator;
+use App\Models\Inspection\Ohc\OhcSignature;
 use App\Mail\Inspection\Safety\SafetyInspection;
 use App\Models\Inspection\InspectionStaticDocno;
-use App\Models\Inspection\Safety\SignatureUpload;
-use App\Models\Inspection\Safety\SafetyWalkObservationDetails;
-use App\Models\Inspection\Safety\SafetyWalkObservation as SafetySafetyWalkObservation;
+use App\Models\Inspection\Ohc\OHCHygieneCleaningChecklist as OhcOHCHygieneCleaningChecklist;
 
-class SafetyWalkObservation extends BaseController
+class OHCHygieneCleaningChecklist extends BaseController
 {
-    private $safety_walk;
-    private $observation_details;
+    private $ohc_hygiene;
     private $shift;
-    private $unit;
-    private $location;
     private $signature;
     private $document_reference;
 
+
     public function __construct()
     {
-        $this->safety_walk = new SafetySafetyWalkObservation();
-        $this->observation_details = new SafetyWalkObservationDetails();
+        $this->ohc_hygiene = new OhcOHCHygieneCleaningChecklist();
         $this->shift = new Shift();
-        $this->unit = new Unit();
-        $this->location = new Location();
-        $this->signature = new SignatureUpload();
+        $this->signature = new OhcSignature();
         $this->document_reference = new InspectionStaticDocno();
     }
 
@@ -48,54 +39,38 @@ class SafetyWalkObservation extends BaseController
                     $search = $request->search;
                 }
             }
-            $query = $this->safety_walk
-                ->select(
-                    'inspection_safety_walk_observation.*',
-                    'inspection_shift_option.*',
-                    'masters_unit.*',
-                    'inspection_safety_walk_observation.id as inspection_id',
-                    'inspection_safety_walk_observation.created_at as inspection_created_at'
-                )
-                ->leftJoin('inspection_shift_option', 'inspection_safety_walk_observation.shift_id', '=', 'inspection_shift_option.id')
-                ->leftJoin('masters_unit', 'inspection_safety_walk_observation.unit', '=', 'masters_unit.id')
-                ->leftJoin('inspection_static_docno', 'inspection_safety_walk_observation.document_reference_id', '=', 'inspection_static_docno.id');
+            $query = $this->ohc_hygiene->select('inspection_ohc_hygiene_checklist.*', 'inspection_shift_option.*', 'inspection_ohc_hygiene_checklist.id as inspection_id', 'inspection_ohc_hygiene_checklist.created_by as checked_by', 'inspection_ohc_hygiene_checklist.updated_by as verified_by', 'inspection_ohc_hygiene_checklist.created_at as inspection_created_at',)
+                ->leftjoin('inspection_shift_option', 'inspection_shift_option.id', '=', 'inspection_ohc_hygiene_checklist.shift_id');
 
             $org_total_counts = $query->count();
 
-            $user = Auth::user();
-            $userRole = string_to_array($user->role);
-            if (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole)) {
-            } elseif (in_array(ROLE_INSPECTION_CREATOR, $userRole)) {
-                $query->where('inspection_safety_walk_observation.created_by', Auth::user()->id);
+            if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_NURSING_OFFICER)) {
+            } else if (CheckUserRole(ROLE_CLEANER)) {
+                $query->where('inspection_ohc_hygiene_checklist.created_by', Auth::id());
             }
 
             if (!empty($search)) {
                 $query->where(function ($query) use ($search) {
-                    $query->orWhereRaw("DATE_FORMAT(inspection_safety_walk_observation.date, '%d-%m-%Y') LIKE ?", ["%{$search}%"]);
-                    $query->orWhereRaw('shift LIKE ?', ["%{$search}%"]);
-                    $query->orWhereRaw('unit_name LIKE ?', ["%{$search}%"]);
-                    $query->orWhereRaw('month LIKE ?', ["%{$search}%"]);
+                    $query->orWhereRaw("DATE_FORMAT(inspection_ohc_hygiene_checklist.issue_date, '%d-%m-%Y') LIKE ?", ["%{$search}%"]);
+                    $query->orWhere('shift', 'LIKE', '%' . $search . '%');
                 });
             }
 
 
-            $query_array = $query->orderBy('inspection_safety_walk_observation.id', 'DESC')->paginate($request->input('per_page', 10));
-
-            $inspection_list = $query_array->toArray();
-
-            if (empty($inspection_list['data'])) {
+            $query_array = $query->orderBy('inspection_ohc_hygiene_checklist.id', 'DESC')->paginate($request->input('per_page', 10));
+            $ohc_inspection = $query_array->toArray();
+            if (empty($ohc_inspection['data'])) {
                 return $this->sendError('No records found.', [], 404);
             }
 
+
             $data_array = [];
-            foreach ($inspection_list['data'] as $datas) {
+            foreach ($ohc_inspection['data'] as $datas) {
                 $data = [];
                 $data['id'] = $datas['id'] ?? '';
                 $data['shift_name'] = $datas['shift'] ?? '';
-                $data['unit_name'] = $datas['unit_name'] ?? '';
-                $data['month'] = $datas['month'] ?? '';
-                $data['date_of_inspection'] = Displaydateformat($datas['date']);
-                $data['observation_status'] = getObservationStatus($datas['observation_status'] ?? '');
+                $data['date'] = Displaydateformat($datas['issue_date']);
+                $data['checklist_status'] = getOHCStatus($datas['checklist_status'] ?? '');
                 $data['created_by'] = getUsername($datas['created_by'] ?? '');
                 $data['created_at'] = Displaydateformat($datas['created_at'] ?? '');
                 $data_array[] = $data;
@@ -115,7 +90,7 @@ class SafetyWalkObservation extends BaseController
                 'inspection_details' => $inspection_details
             ];
 
-            return $this->sendResponse($success, 'Safety Walk Observation Details');
+            return $this->sendResponse($success, 'Daily OHC Hygiene Cleaning Checklist Details');
         } else {
             return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
         }
@@ -127,30 +102,22 @@ class SafetyWalkObservation extends BaseController
         try {
             if (Auth::user()) {
                 $id = $request->id;
-                $inspections = $this->safety_walk
-                    ->where('inspection_safety_walk_observation.id', $id)
-                    ->leftJoin(
-                        'inspection_static_docno',
-                        'inspection_safety_walk_observation.document_reference_id',
-                        '=',
-                        'inspection_static_docno.id'
-                    )
+                $inspections = $this->ohc_hygiene
+                    ->where('inspection_ohc_hygiene_checklist.id', $id)
                     ->select(
-                        'inspection_safety_walk_observation.*',
-                        'inspection_static_docno.*',
-                        'inspection_safety_walk_observation.id as inspection_id',
-                        'inspection_safety_walk_observation.created_by as inspection_created_by',
-                        'inspection_safety_walk_observation.updated_at as inspection_updated_at',
-                        'inspection_safety_walk_observation.updated_by as inspection_updated_by',
+                        'inspection_ohc_hygiene_checklist.*',
+                        'inspection_ohc_hygiene_checklist.id as inspection_id',
+                        'inspection_ohc_hygiene_checklist.created_by as inspection_created_by',
+                        'inspection_ohc_hygiene_checklist.updated_at as inspection_updated_at',
+                        'inspection_ohc_hygiene_checklist.updated_by as inspection_updated_by',
                     )
                     ->first();
-                $inspection_details = $this->observation_details->GetDetails($id);
 
 
-                $signature = GetSafetySignature(
+                $signature = GetOHCSignature(
                     $inspections->inspection_created_by,
                     $inspections->inspection_id,
-                    SAFETY_WALK_OBSERVATION,
+                    DAILY_OHC_HYGIENE_CLEANING_CHECKLIST,
                 );
 
 
@@ -185,11 +152,11 @@ class SafetyWalkObservation extends BaseController
                 }
 
                 $approval_array = null;
-                if ($inspections->observation_status != OBSERVATION_PENDING) {
-                    $signature = GetSafetySignature(
+                if ($inspections->observation_status != CLEANER_SUBMITTED_THE_CHECKLIST) {
+                    $signature = GetOHCSignature(
                         $inspections->inspection_updated_by,
                         $inspections->inspection_id,
-                        SAFETY_WALK_OBSERVATION,
+                        DAILY_OHC_HYGIENE_CLEANING_CHECKLIST,
                     );
                     $approval_array = [
                         'approval_updated_by' => getUsername($inspections->inspection_updated_by),
@@ -220,47 +187,19 @@ class SafetyWalkObservation extends BaseController
     {
 
         try {
+
             $rules = [
-                'doc_no' => 'required',
                 'issue_date' => 'required',
-                'inspection_date' => 'required',
                 'shift_id' => 'required',
-                'month' => 'required',
-                'unit' => 'required',
-                'safety_walk_taken_by' => 'required',
-                'unit' => 'required',
-                'location.*' => 'required',
-                'date_of_observation.*' => 'required',
-                'observation.*' => 'required',
-                'checklist_file.*' => 'required',
-                'recomended_action.*' => 'required',
-                'date_of_compliance.*' => 'required',
-                'observation_status.*' => 'required',
-                'remarks.*' => 'required',
-                'emp_id.*' => 'required',
-
-
+                'inspection' => 'required',
+                'remarks' => 'required',
             ];
 
             $messages = [
-                'doc_no.required' => 'Document number is required.',
-                'issue_date.required' => 'Issue date is required.',
-                'inspection_date.required' => 'Inspection date is required.',
+                'issue_date.required' => 'Issue Date is required.',
                 'shift_id.required' => 'Shift ID is required.',
-                'month.required' => 'Month is required.',
-                'unit.required' => 'Unit is required.',
-                'safety_walk_taken_by.required' => 'Safety walk taken by is required.',
-                'unit.*.required' => 'Unit is required.',
-                'location.*.required' => 'Location is required.',
-                'date_of_observation.*.required' => 'Date of observation is required.',
-                'observation.*.required' => 'Observation is required.',
-                'checklist_file.*.required' => 'Image is required.',
-                'recomended_action.*.required' => 'Recommended action is required.',
-                'date_of_compliance.*.required' => 'Date of compliance is required.',
-                'observation_status.*.required' => 'Observation status is required.',
-                'remarks.*.required' => 'Remarks are required.',
-                'emp_id.*.required' => 'Employee ID is required.',
-
+                'inspection.required' => 'Inspection is required.',
+                'remarks.required' => 'Remarks is required.',
             ];
 
 
@@ -272,7 +211,7 @@ class SafetyWalkObservation extends BaseController
             $safety_walk = $this->safety_walk->store_api();
             $id = $safety_walk->id;
             $forklift_observation_details = $this->observation_details->store_api($safety_walk->id);
-            $signature_update = $this->signature->signatureUpload_api(SAFETY_WALK_OBSERVATION, $safety_walk->id);
+            $signature_update = $this->signature->signatureUpload_api(DAILY_OHC_HYGIENE_CLEANING_CHECKLIST, $safety_walk->id);
 
             $ehsOfficer = GetEHSOfficer();
             $ehsOfficers = $ehsOfficer->pluck('id')->toArray();

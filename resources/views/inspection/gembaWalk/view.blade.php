@@ -692,7 +692,7 @@
                                                         <td class="text-center" colspan="5">No data is available</td>
                                                     </tr>
                                                 @else
-                                                    @foreach ($status_log as $status)
+                                                    @foreach ($status_log as $  )
                                                         <tr>
                                                             <td>{{ getGembaWalkLogStatus($status['from_status'] ?? null) }}</td>
                                                             <td>{{ getGembaWalkLogStatus($status['to_status'] ?? null) }}</td>

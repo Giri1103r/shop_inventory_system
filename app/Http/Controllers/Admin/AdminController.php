@@ -142,7 +142,7 @@ class AdminController extends Controller
                             'icon_color' => 'text-primary',
                         ],
                         [
-                            'link' => 'ppe_request/list',
+                            'link' => 'ppe_exemption/list',
                             'name' => 'PPE Exemption',
                             'count' => gettotalCount('ppe_exception'),
                             'icon' => 'bx bx-message-square-detail',

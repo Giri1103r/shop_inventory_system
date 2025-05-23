@@ -257,6 +257,11 @@ class CertifiedFirstAider extends Model
         return $this->where('status', 1)->get();
     }
 
+    public function getFirstAider()
+    {
+        return $this->where('status', 1)->get();
+    }
+
     protected static function booted()
     {
         static::addGlobalScope(new TrashScope('ohc_master_certified_first_aider'));
