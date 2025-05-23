@@ -312,13 +312,13 @@ class WeeklyAmbulanceController extends Controller
 
                 Session::flash('success', __('Your data Created Successfully.!'));
             } catch (Exception $ex) {
-                 report($ex);
+                 dd($ex);
                 Session::flash('error', __('common.message_error'));
             }
 
             return redirect(admin_url('ohc/weekly-ambulance/inspection/checklist/list'));
         } catch (Exception $ex) {
-             report($ex);
+             dd($ex);
             Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('ohc/weekly-ambulance/inspection/checklist/list'));
         }

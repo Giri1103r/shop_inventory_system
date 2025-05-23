@@ -111,7 +111,7 @@
                                                     alt="Signature Upload" style="width: 150px; margin-top: -10px;" />
                                             </div>
                                         </div>
-                                        @elseif (!empty($signatureview) && !empty($signatureview->signature_upload))
+                                    @elseif (!empty($signatureview) && !empty($signatureview->signature_upload))
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
                                                 <label class="form-label" style="display: block;">
@@ -160,9 +160,7 @@
                                             <thead class="bg-secondary text-white">
                                                 <tr>
                                                     <th colspan="3">Check Points</th>
-                                                    @foreach ($getoption as $option)
-                                                        <th>{{ $option }}</th>
-                                                    @endforeach
+                                                    <th colspan="3">Status</th>
                                                     <th colspan="3">Remarks</th>
                                                 </tr>
                                             </thead>
@@ -175,46 +173,26 @@
                                                 @endphp
 
                                                 @foreach ($checkItems as $groupId => $checkPoints)
-                                                    @php $rowCount = count($checkPoints); @endphp
-
                                                     @foreach ($checkPoints as $index => $checkPoint)
                                                         <tr>
-                                                            @if ($index == 0)
-                                                                <td rowspan="{{ $rowCount }}">
-                                                                    {{ getSubcategoryname($groupId) }}
-                                                                </td>
-                                                            @endif
-
-                                                            <td colspan="2">{{ getSubcategoryDataname($checkPoint) }}
+                                                            <td colspan="3">{{ getSubcategoryDataname($checkPoint) }}
                                                             </td>
 
-                                                            @foreach ($getoption as $option)
-                                                                <td style="text-align: center;">
-                                                                    @if ($option == 'Ok')
-                                                                        @if (isset($statuses[$checkPoint]) && $statuses[$checkPoint] == 'Ok')
-                                                                            <i class="fa-solid fa-check"
-                                                                                style="color: #267709; width: 15px;"></i>
-                                                                            <!-- Green check for Ok -->
-                                                                        @else
-                                                                            <i class="fa-solid fa-times"
-                                                                                style="color: #d40a0a; width: 15px;"></i>
-                                                                            <!-- Red cross if Ok is not selected -->
-                                                                        @endif
-                                                                    @elseif ($option == 'Not-Ok')
-                                                                        @if (isset($statuses[$checkPoint]) && $statuses[$checkPoint] == 'Not-Ok')
-                                                                            <i class="fa-solid fa-check"
-                                                                                style="color: #267709; width: 15px;"></i>
-                                                                            <!-- Red check for Not-Ok -->
-                                                                        @else
-                                                                            <i class="fa-solid fa-times"
-                                                                                style="color: #d40a0a; width: 15px;"></i>
-                                                                            <!-- Red cross if Ok is not selected -->
-                                                                        @endif
-                                                                    @endif
-                                                                </td>
-                                                            @endforeach
+                                                            @php
+                                                                $status = strtolower(
+                                                                    trim($statuses[$checkPoint] ?? ''),
+                                                                );
+                                                            @endphp
 
-
+                                                            <td colspan="3">
+                                                                @if ($status === 'ok')
+                                                                    <span>Ok</span>
+                                                                @elseif ($status === 'not ok')
+                                                                    <span>Not Ok</span>
+                                                                @else
+                                                                    <span>N/A</span>
+                                                                @endif
+                                                            </td>
 
                                                             <td colspan="3">
                                                                 {{ $remarks[$checkPoint] ?? 'No Remarks' }}
@@ -834,7 +812,7 @@
                     },
                     signature_image: {
                         required: true,
-                       filesize: 15728640,
+                        filesize: 15728640,
                     }
                 },
                 messages: {
@@ -883,7 +861,7 @@
                     },
                     signature_image: {
                         required: true,
-                       filesize: 15728640,
+                        filesize: 15728640,
                     }
                 },
                 messages: {
@@ -939,7 +917,7 @@
                     },
                     signature_image: {
                         required: "Signature is Required",
-                         filesize: "File must be less than 15MB."
+                        filesize: "File must be less than 15MB."
                     }
                 },
                 errorElement: 'div',
@@ -973,7 +951,7 @@
                     },
                     signature_image: {
                         required: true,
-                       filesize: 15728640,
+                        filesize: 15728640,
                     }
                 },
                 messages: {

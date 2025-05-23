@@ -95,7 +95,14 @@
                                                 </div>
                                             </div>
                                         </div>
-
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label">Executive Person</label>
+                                                <div class="view_data">
+                                                    {{ getUsername(isset($gembaWalk->executive_person_id) ? $gembaWalk->executive_person_id : '') }}
+                                                </div>
+                                            </div>
+                                        </div>
                                         <div class="mb-2 col-md-4 ">
                                             <div class="form-group form-input mb-2">
                                                 <label class="form-label"
@@ -410,7 +417,8 @@
 
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label">Whether the Inspection has been passed Without the CAPA?</label>
+                                                    <label class="form-label">Whether the Inspection has been passed
+                                                        Without the CAPA?</label>
                                                     <div class="view_data">
                                                         @if (isset($gembaWalk_ehs_capa_details->capa))
                                                             {{ $gembaWalk_ehs_capa_details->capa == 1 ? 'YES' : 'NO' }}
@@ -550,7 +558,8 @@
 
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label class="form-label">Whether the Inspection has been passed Without the CAPA?</label>
+                                                        <label class="form-label">Whether the Inspection has been passed
+                                                            Without the CAPA?</label>
                                                         <div class="view_data">
                                                             @if (isset($gembaWalk_ehs_capa_details->capa))
                                                                 {{ $gembaWalk_ehs_capa_details->capa == 1 ? 'YES' : 'NO' }}
@@ -923,7 +932,7 @@
                     },
                     gemba_walk_verified_by: {
                         required: true,
-                         filesize: 15728640,
+                        filesize: 15728640,
                     }
                 },
                 messages: {

@@ -267,7 +267,7 @@ class PrescribetoPatientController extends Controller
                         $hospitaldetails = $isreffered ? $isreffered->toArray() : [];
                         $emailDetails = $opdpatient ? $opdpatient->toArray() : [];
 
-                        if (!empty($emailDetails) && !empty($medicineDetails) && !empty($hospitaldetails)) {
+                        if (!empty($emailDetails) || !empty($medicineDetails) || !empty($hospitaldetails)) {
                             $emailDetails['name'] = $user->name;
                             $emailDetails['email_id'] = $email_id;
                             $emailDetails['mail_subject'] = $mailsubject;
