@@ -25,6 +25,8 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 use App\Models\Inspection\InspectionStaticDocno;
 use App\Models\Inspection\Ohc\FirstAidBagChecklist;
 use App\Models\Inspection\Ohc\Master\FirstAidEquipment;
+use App\Models\Master\Employee;
+use App\Models\Master\Work;
 
 class FirstAidBagChecklistController extends Controller
 {
@@ -36,6 +38,8 @@ class FirstAidBagChecklistController extends Controller
     private $unit;
     private $frequency;
     private $shift;
+    private $employee;
+    private $work;
 
 
     public function __construct()
@@ -48,6 +52,8 @@ class FirstAidBagChecklistController extends Controller
         $this->unit = new Unit();
         $this->frequency = new Frequency();
         $this->shift = new Shift();
+        $this->employee = new Employee();
+        $this->work = new Work();
     }
 
     public function Index(Request $request)
@@ -123,6 +129,36 @@ class FirstAidBagChecklistController extends Controller
         );
 
         return view('inspection.inspection_ohc.first_aid_bag_inspection.list', $data);
+    }
+
+      public function fetchemployeename(Request $request)
+    {
+        $name = $request->input('search');
+
+        $employee_code = $this->employee->where('emp_id', 'like', '%' . $name . '%')
+            ->orwhere('emp_name', 'like', '%' . $name . '%')
+            ->where('status', 1)
+            ->limit(10)
+            ->get();
+
+        $work = $this->work->where('emp_id', 'like', '%' . $name . '%')
+            ->orwhere('emp_name', 'like', '%' . $name . '%')
+            ->where('status', 1)
+            ->limit(10)
+            ->get();
+
+
+        $mergedResults = $employee_code->merge($work);
+
+        return response()->json(
+            $mergedResults->map(function ($employee) {
+                return [
+                    'id' => $employee->emp_name,
+                  'text' => $employee->emp_id . ' - ' . $employee->emp_name,
+
+                ];
+            })
+        );
     }
 
     public function Add(Request $request)
@@ -359,7 +395,7 @@ class FirstAidBagChecklistController extends Controller
                 $sheet->mergeCells("F$row:H$row")->setCellValue("F$row", $detail['freeze_quantity'] ?? '');
                 $sheet->mergeCells("I$row:J$row")->setCellValue("I$row", $detail['available_quantity'] ?? '');
                 $sheet->mergeCells("K$row:L$row")->setCellValue("K$row", Displaydateformat($detail['expired_date']));
-                $sheet->mergeCells("M$row:O$row")->setCellValue("M$row", getUsername($detail['emp_id']) ?? '');
+                $sheet->mergeCells("M$row:O$row")->setCellValue("M$row", ($detail['emp_id']) ?? '');
                 $sheet->mergeCells("P$row:S$row")->setCellValue("P$row", $detail['remarks'] ?? '');
 
                 $sheet->getStyle("A$row:S$row")->applyFromArray([
@@ -516,7 +552,7 @@ class FirstAidBagChecklistController extends Controller
                     $sheet->mergeCells("F$inspectionRow:G$inspectionRow")->setCellValue("F$inspectionRow", $detail['freeze_quantity'] ?? '');
                     $sheet->mergeCells("H$inspectionRow:J$inspectionRow")->setCellValue("H$inspectionRow", $detail['available_quantity'] ?? '');
                     $sheet->mergeCells("K$inspectionRow:L$inspectionRow")->setCellValue("K$inspectionRow", Displaydateformat($detail['expired_date']));
-                    $sheet->mergeCells("M$inspectionRow:O$inspectionRow")->setCellValue("M$inspectionRow", getUsername($detail['emp_id']));
+                    $sheet->mergeCells("M$inspectionRow:O$inspectionRow")->setCellValue("M$inspectionRow", ($detail['emp_id']));
                     $sheet->mergeCells("P$inspectionRow:S$inspectionRow")->setCellValue("P$inspectionRow", $detail['remarks'] ?? '');
 
                     $sheet->getStyle("A$inspectionRow:S$inspectionRow")->applyFromArray([

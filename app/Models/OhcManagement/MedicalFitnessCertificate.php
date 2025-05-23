@@ -19,6 +19,8 @@ class MedicalFitnessCertificate extends Model
         'emp_name',
         'date',
         'company_id',
+        'unit_id',
+        'department_id',
         'file',
         'remarks',
         'cheif_complaint',
@@ -120,25 +122,30 @@ class MedicalFitnessCertificate extends Model
             $ohc_file_path = $destinationPath . '/' . $ohc_file_name;
         }
         $employee = Employee::where('emp_id', $request->emp_id)
-            ->select('company')
+            ->select('*')
             ->first();
 
 
         if (!$employee) {
             $employee = Work::where('emp_id', $request->emp_id)
-                ->select('company')
+                ->select('*')
                 ->first();
         }
 
 
         if ($employee) {
             $company = $employee->company;
+            $unit = $employee->unit;
+            $department = $employee->department;
         }
+
         $insert_array = [
             'emp_id' => $request->emp_id,
             'emp_name' => $request->emp_name,
             'emp_name' => $request->emp_name,
             'company_id' => $company,
+            'unit_id' => $unit,
+            'department_id' => $department,
             'remarks' => $request->remarks,
             'cheif_complaint' => $request->cheif_complaint,
             'date' => DBdateformat($request->date),
@@ -175,26 +182,31 @@ class MedicalFitnessCertificate extends Model
         }
 
         $employee = Employee::where('emp_id', $request->emp_id)
-            ->select('company')
+            ->select('*')
             ->first();
 
 
         if (!$employee) {
             $employee = Work::where('emp_id', $request->emp_id)
-                ->select('company')
+                ->select('*')
                 ->first();
         }
 
 
         if ($employee) {
             $company = $employee->company;
+            $unit = $employee->unit;
+            $department = $employee->department;
         }
+     
         $update_array = array(
             'emp_id' => $request->emp_id,
             'emp_name' => $request->emp_name,
             'remarks' => $request->remarks,
             'cheif_complaint' => $request->cheif_complaint,
             'company_id' => $company,
+            'unit_id' => $unit,
+            'department_id' => $department,
             'date' => DBdateformat($request->date),
             'file' =>  $ohc_file_path,
             'created_by' => Auth::id(),

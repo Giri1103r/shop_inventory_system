@@ -38,18 +38,26 @@
         stroke: {
             show: true,
             width: 2,
+            offsetX: 10,
+            offsetY: 10,
             curve: 'smooth'
         },
         xaxis: {
             categories: categories,
             title: {
-                text: 'Month'
-            }
+                text: 'Month',
+                offsetX: 10,
+                offsetY: 10
+            },
+
         },
         yaxis: {
             title: {
-                text: 'Permit Count'
-            }
+                text: 'Permit Count',
+                offsetX: 10,
+                offsetY: 30
+            },
+
         },
         tooltip: {
             y: {

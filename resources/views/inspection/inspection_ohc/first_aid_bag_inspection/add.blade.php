@@ -319,7 +319,7 @@
 
                 $('.emp_id').select2({
                     ajax: {
-                        url: '{{ admin_url('ohc/safety-petty-logbook/employeeid') }}',
+                        url: '{{ admin_url('ohc/prescribe-to-patient/employeename') }}',
                         dataType: 'json',
                         delay: 250,
                         data: function(params) {

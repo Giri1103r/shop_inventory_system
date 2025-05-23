@@ -372,6 +372,8 @@ class HoseBoxController extends Controller
                 'status_log' => $status_log,
                 'document_no' => $document_no,
             );
+        
+            
             return view('inspection.fire.hose_box.view', $data);
         } catch (Exception $ex) {
             report($ex);

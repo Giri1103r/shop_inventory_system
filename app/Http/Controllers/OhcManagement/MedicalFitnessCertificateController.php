@@ -89,6 +89,9 @@ class MedicalFitnessCertificateController extends Controller
                         ->editColumn('unit_id', function ($row) {
                             return getUnitname($row->unit_id);
                         })
+                         ->editColumn('company_id', function ($row) {
+                            return getCompanyname($row->company_id);
+                        })
                         ->editColumn('department_id', function ($row) {
                             return getDepartment($row->department_id);
                         })
@@ -117,7 +120,7 @@ class MedicalFitnessCertificateController extends Controller
 
                     return response()->json($datatables->getData());
                 } catch (Exception $ex) {
-                    report($ex);
+                    dd($ex);
                     return response()->json(['status' => 'error', 'msg' => __('ohc.please_try_after_some_time')], 406);
                 }
             }
@@ -150,7 +153,7 @@ class MedicalFitnessCertificateController extends Controller
                 'emp_name' => 'required',
                 'date' => 'required',
                 'remarks' => 'required',
-                'company_id.required' => 'Date is required',
+                'company_id.required' => 'company is required',
 
             ];
 
@@ -225,7 +228,7 @@ class MedicalFitnessCertificateController extends Controller
 
                 Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
-                report($ex);
+               report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
@@ -622,8 +625,10 @@ class MedicalFitnessCertificateController extends Controller
                 'Employee Code',
                 'Employee Name',
                 'Company Name',
+                'Unit Name',
+                'Department Name',
                 ' Date',
-                 'Cheif Complaint',
+                'Cheif Complaint',
                 'Remarks',
                 'From Status',
                 'To Status',
@@ -639,6 +644,8 @@ class MedicalFitnessCertificateController extends Controller
                 $export[] =  ($data->emp_id);
                 $export[] =  ($data->emp_name);
                 $export[] =  getCompanyname($data->company_id);
+                $export[] =  getUnitname($data->unit_id);
+                $export[] =  getDepartment($data->department_id);
                 $export[] = displaydateformat($data->date);
                 $export[] =  $data->cheif_complaint;
                 $export[] =  $data->remarks;
@@ -747,6 +754,8 @@ class MedicalFitnessCertificateController extends Controller
                 'Employee Code',
                 'Employee Name',
                 'Company Name',
+                'Unit Name',
+                'Department Name',
                 ' Date',
                 'Cheif Complaint',
                 'Remarks',

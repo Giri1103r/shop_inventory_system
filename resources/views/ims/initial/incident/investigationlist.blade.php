@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
 @section('title', 'Incident Investigation')
-@section('pageurl', admin_url('incident/initial-incident/list'))
+@section('pageurl', admin_url('incident/initial-incident/list/all/type'))
 
 
 @section('content')

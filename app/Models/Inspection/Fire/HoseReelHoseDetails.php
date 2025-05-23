@@ -78,6 +78,41 @@ class HoseReelHoseDetails extends Model
         }
     }
 
+    public function storeApi($id)
+    {
+        $request = request();
+
+        $sr_no = $request->sr_no;
+        $location = $request->location;
+        $department = $request->department;
+        $length = $request->length;
+        $nozzle = $request->nozzle;
+        $hose = $request->hose;
+        $status_of_hose = $request->status_of_hose;
+        $flow = $request->flow;
+        $approach = $request->approach;
+        $remarks = $request->remarks;
+        
+        foreach ($sr_no as $index => $sr_no_value) {
+            $data = array(
+                'inspection_id' => $id,
+                'sr_no' => $sr_no_value,
+                'location' => $location[$index],
+                'department' => $department[$index],
+                'length' => $length[$index],
+                'status_of_hose' => $status_of_hose[$index],
+                'nozzle' => $nozzle[$index],
+                'hose' => $hose[$index],
+                'flow' => $flow[$index],    
+                'remarks' => $remarks[$index],
+                'approach' => $approach[$index],
+                'created_by' => Auth::id(),
+            );
+
+            $this->create($data);
+        }
+    }
+
     public function GetDetails($id)
     {
         return $this->where('inspection_id', $id)->where('status', 1)->where('trash', 'NO')->get();

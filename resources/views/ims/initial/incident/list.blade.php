@@ -4,8 +4,7 @@
 @php
 
     $dash_unit_id =
-        isset($dashboard_search['unit_id']) && $dashboard_search['unit_id'] != ''
-            ? $dashboard_search['unit_id'] : '';
+        isset($dashboard_search['unit_id']) && $dashboard_search['unit_id'] != '' ? $dashboard_search['unit_id'] : '';
     // $Fromdate = isset($dashboard_search['Fromdate']) ? $dashboard_search['Fromdate'] : '';
     // $Todate = isset($dashboard_search['Todate']) ? $dashboard_search['Todate'] : '';
 @endphp
@@ -49,7 +48,8 @@
                                                 style="width: 100%">
                                                 <option value="">Select Unit</option>
                                                 @foreach ($unitList as $unit)
-                                                    <option   @if ($dash_unit_id == $unit->id) selected @endif value="{{ encryptId($unit->id) }}">
+                                                    <option @if ($dash_unit_id == $unit->id) selected @endif
+                                                        value="{{ encryptId($unit->id) }}">
                                                         {{ $unit->unit_name }}</option>
                                                 @endforeach
 
@@ -60,7 +60,7 @@
                                             <label for="emp_name" class="form-label ">From Date</label>
                                             <div class="input-group date form-input custom-height">
                                                 <input type="text" class="form-control " name="from_date" id="from_date"
-                                                    autocomplete="off" >
+                                                    autocomplete="off">
                                                 <div class="input-group-addon input-group-text">
                                                     <span class="fa fa-calendar"></span>
                                                 </div>
@@ -71,7 +71,7 @@
                                             <label for="emp_name" class="form-label ">To Date</label>
                                             <div class="input-group date form-input  custom-height">
                                                 <input type="text" class="form-control " name="to_date" id="to_date"
-                                                    autocomplete="off" >
+                                                    autocomplete="off">
                                                 <div class="input-group-addon input-group-text">
                                                     <span class="fa fa-calendar"></span>
                                                 </div>
@@ -79,8 +79,8 @@
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="inspectiontype" class="form-label ">Approve Status</label>
-                                            <select name="incident_status" id="incident_status" class=" form-control single-select"
-                                                style="width: 100%">
+                                            <select name="incident_status" id="incident_status"
+                                                class=" form-control single-select" style="width: 100%">
                                                 <option value="">Select Status</option>
                                                 @foreach ($status as $status)
                                                     <option value="{{ encryptId($status->id) }}">
@@ -169,16 +169,23 @@
 
         $(function() {
             /* Datatable */
-
-            var dash_iirtype_id =  '{{ isset($dashboard_search['iir_type']) && $dashboard_search['iir_type'] != ''
-            ? $dashboard_search['iir_type'] : ''}}';
-
-            var dash_injuryType =  '{{ isset($dashboard_search['injury_type']) && $dashboard_search['injury_type'] != ''
-            ? $dashboard_search['injury_type'] : ''}}';
+            var type = "{{ $type }}"; // Wrap in quotes
+            var condition = "{{ $condition }}"; // Wrap in quotes
 
 
-            var dash_month =  '{{ isset($dashboard_search['month']) && $dashboard_search['month'] != ''
-            ? $dashboard_search['month'] : ''}}';  
+            var dash_iirtype_id =
+                '{{ isset($dashboard_search['iir_type']) && $dashboard_search['iir_type'] != ''
+                    ? $dashboard_search['iir_type']
+                    : '' }}';
+
+            var dash_injuryType =
+                '{{ isset($dashboard_search['injury_type']) && $dashboard_search['injury_type'] != ''
+                    ? $dashboard_search['injury_type']
+                    : '' }}';
+
+
+            var dash_month =
+                '{{ isset($dashboard_search['month']) && $dashboard_search['month'] != '' ? $dashboard_search['month'] : '' }}';
 
             var table = $('.datatable-list').DataTable({
                 autoWidth: false,
@@ -204,7 +211,8 @@
                 },
 
                 ajax: {
-                    url: "{{ admin_url('incident/initial-incident/list') }}",
+                    url: "{{ admin_url('incident/initial-incident/list') }}/" + type + "/" + condition,
+
                     type: 'POST',
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]')

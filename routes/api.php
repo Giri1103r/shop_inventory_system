@@ -4,25 +4,34 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\MasterController;
 use App\Http\Controllers\Api\Permit\SafetyPermitController;
+use App\Http\Controllers\Api\Inspection\Fire\HoseController;
 use App\Http\Controllers\Api\Inspection\Safety\OHSPlantSummary;
+use App\Http\Controllers\Api\Inspection\Fire\HoseReelController;
 use App\Http\Controllers\Api\Ppemanagement\PperequestController;
 use App\Http\Controllers\Api\Trainig\TrainingSheducleController;
+use App\Http\Controllers\Api\Inspection\Fire\FireAlarmController;
 use App\Http\Controllers\Api\Inspection\Safety\ForkliftInspection;
 use App\Http\Controllers\Api\Ppemanagement\PpeExemptionController;
 use App\Http\Controllers\Api\Ppemanagement\PpemanagementController;
 use App\Http\Controllers\Api\Inspection\Audit\MonthlyAuditController;
 use App\Http\Controllers\Api\Inspection\Audit\AuditAnalysisController;
+use App\Http\Controllers\Api\Inspection\Fire\IsolationValveController;
 use App\Http\Controllers\Api\Inspection\GembaWalk\GembaWalkController;
 use App\Http\Controllers\Api\Inspection\Audit\InterUnitAuditController;
+use App\Http\Controllers\Api\Inspection\Fire\SprinklerSystemController;
 use App\Http\Controllers\Api\Inspection\Safety\SafetyGalleryInspection;
 use App\Http\Controllers\Api\Inspection\Audit\AuditAssessmentController;
+use App\Http\Controllers\Api\Inspection\Fire\FireExtinguisherController;
 use App\Http\Controllers\Api\Inspection\Fire\HooterInspectionController;
+use App\Http\Controllers\Api\Inspection\Safety\MonthlyEyeWashController;
 use App\Http\Controllers\Api\Inspection\Safety\MonthlyForkLiftInspection;
+use App\Http\Controllers\Api\Inspection\Fire\MonthlyFirePumpHouseController;
 use App\Http\Controllers\Api\{LoginController, NotificationController, AdminController};
 use App\Http\Controllers\Api\Inspection\Ohc\EmergencyBuyerFirstAidBagChecklistController;
 use App\Http\Controllers\Api\Inspection\Ohc\HealthInstrumentCalibrationController;
 use App\Http\Controllers\Api\Inspection\Ohc\Master\FirstAidContoller;
 use App\Http\Controllers\Api\Inspection\Ohc\Master\FirstAidMedicineController;
+use App\Http\Controllers\Api\Inspection\Ohc\OHCHygieneCleaningChecklist;
 use App\Http\Controllers\Api\Inspection\Ohc\WeeklyFirstAidBoxController;
 use App\Http\Controllers\Api\Inspection\Safety\FireSafetyEquipment;
 use App\Http\Controllers\Api\Inspection\Safety\SafetyWalkObservation;
@@ -156,6 +165,57 @@ Route::middleware('api')->prefix('v1')->group(function () {
                     Route::post('add', [HooterInspectionController::class, 'Add']);
                     Route::post('view', [HooterInspectionController::class, 'View']);
                 });
+
+                Route::group(['prefix' => 'fire-alarm-inspection/'],function(){
+                    Route::post('list',[FireAlarmController::class,'List']);
+                    Route::post('add',[FireAlarmController::class,'Add']);
+                    Route::post('view',[FireAlarmController::class,'View']);
+                });
+
+                Route::group(['prefix' => 'fire-extinguisher/inspection/'],function(){
+                    Route::post('list',[FireExtinguisherController::class,'List']);
+                    Route::post('add',[FireExtinguisherController::class,'Add']);
+                    Route::post('view',[FireExtinguisherController::class,'Add']);
+                });
+
+                Route::group(['prefix' => 'hose-box-inspection/'],function(){
+                    Route::post('list',[HoseController::class,'List']);
+                    Route::post('add',[HoseController::class,'Add']);
+                    Route::post('view',[HoseController::class,'View']);
+                });
+
+                Route::group(['prefix' => 'hose-reel-inspection/'],function(){
+                    Route::post('list',[HoseReelController::class,'List']); 
+                    Route::post('add',[HoseReelController::class,'Add']); 
+                    Route::post('view',[HoseReelController::class,'View']); 
+                });
+
+                Route::group(['prefix' => 'isolating-valve-inspection/'],function(){
+                    Route::post('list',[IsolationValveController::class,'List']);
+                    Route::post('add',[IsolationValveController::class,'Add']);
+                    Route::post('view',[IsolationValveController::class,'View']);
+                });
+
+                Route::group(['prefix' => 'monthly-fire-pump-house-inspection/'],function(){
+                    Route::post('list',[MonthlyFirePumpHouseController::class,'List']);
+                    Route::post('add',[MonthlyFirePumpHouseController::class,'Add']);
+                    Route::post('view',[MonthlyFirePumpHouseController::class,'View']);
+                });
+
+                Route::group(['prefix' => 'sprinkler-system-inspection/'],function(){
+                    Route::post('list',[SprinklerSystemController::class,'List']);
+                    Route::post('add',[SprinklerSystemController::class,'Add']);
+                    Route::post('view',[SprinklerSystemController::class,'View']);
+                });
+
+            });
+
+            Route::group(['prefix' => 'safety'],function(){
+                Route::group(['prefix' => 'monthly-eye-wash-inspection'],function(){
+                    Route::post('list',[MonthlyEyeWashController::class,'List']); 
+                    Route::post('add',[MonthlyEyeWashController::class,'Add']); 
+                    Route::post('view',[MonthlyEyeWashController::class,'View']); 
+                });
             });
 
             // OHC
@@ -174,20 +234,24 @@ Route::middleware('api')->prefix('v1')->group(function () {
                 });
 
                 // HealthInstrument
-                Route::group(['prefix'=>'health-instrument-calibration/'],function(){
-                    Route::post('list',[HealthInstrumentCalibrationController::class,'list']);
-                    Route::post('view',[HealthInstrumentCalibrationController::class,'view']);
-                    Route::post('add',[HealthInstrumentCalibrationController::class,'store']);
+                Route::group(['prefix' => 'health-instrument-calibration/'], function () {
+                    Route::post('list', [HealthInstrumentCalibrationController::class, 'list']);
+                    Route::post('view', [HealthInstrumentCalibrationController::class, 'view']);
+                    Route::post('add', [HealthInstrumentCalibrationController::class, 'store']);
                 });
 
                 // weeklyFirstAidBox
-                Route::group(['prefix'=>'weekly-first-aid-box/'],function(){
-                    Route::post('list',[WeeklyFirstAidBoxController::class,'list']);
-                    Route::post('view',[WeeklyFirstAidBoxController::class,'view']);
-                    Route::post('add',[WeeklyFirstAidBoxController::class,'store']);
+                Route::group(['prefix' => 'weekly-first-aid-box/'], function () {
+                    Route::post('list', [WeeklyFirstAidBoxController::class, 'list']);
+                    Route::post('view', [WeeklyFirstAidBoxController::class, 'view']);
+                    Route::post('add', [WeeklyFirstAidBoxController::class, 'store']);
                 });
 
-
+                Route::group(['prefix' => 'ohc-hygiene-cleaning-checklist/'], function () {
+                    Route::post('list', [OHCHygieneCleaningChecklist::class, 'list']);
+                    Route::post('view', [OHCHygieneCleaningChecklist::class, 'view']);
+                    Route::post('add', [OHCHygieneCleaningChecklist::class, 'store']);
+                });
             });
         });
 
@@ -197,6 +261,7 @@ Route::middleware('api')->prefix('v1')->group(function () {
         Route::post('forklift_type/list', [MonthlyForkLiftInspection::class, 'forklift_type']);
         Route::post('equipment/list', [FireSafetyEquipment::class, 'equipment']);
 
+        //Safety
         Route::prefix('safety')->group(function () {
             Route::prefix('safety-gallery-inspection')->group(function () {
                 Route::post('list', [SafetyGalleryInspection::class, 'list']);

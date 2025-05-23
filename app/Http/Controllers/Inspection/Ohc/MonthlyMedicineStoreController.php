@@ -518,7 +518,7 @@ class MonthlyMedicineStoreController extends Controller
                 $sheet->mergeCells("D$row:F$row")->setCellValue("D$row", getMedicinename($detail['medicine_id']));
                 $sheet->mergeCells("G$row:H$row")->setCellValue("G$row", $detail['available_quantity'] ?? '');
                 $sheet->mergeCells("I$row:K$row")->setCellValue("I$row", Displaydateformat($detail['expired_date']));
-                $sheet->mergeCells("L$row:O$row")->setCellValue("L$row", getUsername($detail['emp_id']));
+                $sheet->mergeCells("L$row:O$row")->setCellValue("L$row", ($detail['emp_id']));
                 $sheet->mergeCells("P$row:S$row")->setCellValue("P$row", $detail['remarks'] ?? '');
 
                 $sheet->getStyle("A$row:S$row")->applyFromArray([
@@ -713,7 +713,7 @@ class MonthlyMedicineStoreController extends Controller
                     $sheet->mergeCells("D$inspectionRow:F$inspectionRow")->setCellValue("D$inspectionRow", getMedicinename($detail['medicine_id']));
                     $sheet->mergeCells("G$inspectionRow:H$inspectionRow")->setCellValue("G$inspectionRow", $detail['available_quantity'] ?? '');
                     $sheet->mergeCells("I$inspectionRow:K$inspectionRow")->setCellValue("I$inspectionRow", Displaydateformat($detail['expired_date']));
-                    $sheet->mergeCells("L$inspectionRow:O$inspectionRow")->setCellValue("L$inspectionRow", getUsername($detail['emp_id']));
+                    $sheet->mergeCells("L$inspectionRow:O$inspectionRow")->setCellValue("L$inspectionRow", ($detail['emp_id']));
                     $sheet->mergeCells("P$inspectionRow:S$inspectionRow")->setCellValue("P$inspectionRow", $detail['remarks'] ?? '');
 
                     $sheet->getStyle("A$inspectionRow:S$inspectionRow")->applyFromArray([

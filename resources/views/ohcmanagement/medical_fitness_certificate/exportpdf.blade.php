@@ -148,6 +148,20 @@
                     {{ getCompanyname(isset($medicinefitness->company_id) ? $medicinefitness->company_id : '') }}
                 </td>
             </tr>
+              <tr>
+                <td width="50%" style="padding:5px;"><b>Unit Name</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;">
+                    {{ getUnitname(isset($medicinefitness->unit_id) ? $medicinefitness->unit_id : '') }}
+                </td>
+            </tr>
+              <tr>
+                <td width="50%" style="padding:5px;"><b>Department Name</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;">
+                    {{ getdepartment(isset($medicinefitness->department_id) ? $medicinefitness->department_id : '') }}
+                </td>
+            </tr>
             <tr>
                 <td width="50%" style="padding:5px;"><b>Date</b></td>
                 <td width="2%" style="padding:5px;">:</td>

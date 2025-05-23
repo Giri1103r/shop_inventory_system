@@ -43,8 +43,8 @@
                                         <div class="col-md-3 mb-2">
                                             <div class="form-group form-input">
                                                 <label class="form-label require">Employee Name</label>
-                                                <input type="text" name="emp_name" id="emp_name"
-                                                    class="form-control" placeholder="Employee Name" readonly>
+                                                <input type="text" name="emp_name" id="emp_name" class="form-control"
+                                                    placeholder="Employee Name" readonly>
                                             </div>
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
@@ -285,6 +285,7 @@
                     data: 'date',
                     name: 'date'
                 },
+               
                 {
                     data: 'cheif_complaint',
                     name: 'cheif_complaint'

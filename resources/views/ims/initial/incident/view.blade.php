@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
 @section('title', 'Initial Incident/Accident Report')
-@section('pageurl', admin_url('incident/initial-incident/list'))
+@section('pageurl', admin_url('incident/initial-incident/list/all/type'))
 
 
 @section('content')
@@ -156,7 +156,7 @@
                         <div class="card">
                             <div class="card-header">
                                 <div class="align-back-btc">
-                                    <x-button-back href="{{ admin_url('incident/initial-incident/list') }}"></x-button-back>
+                                    <x-button-back href="{{ admin_url('incident/initial-incident/list/all/type') }}"></x-button-back>
 
                                 </div>
                             </div>
@@ -390,7 +390,7 @@
                                                                 @else
                                                                     <p>No data available</p>
                                                                 @endif
-    
+
                                                             </td>
                                                         </tr>
                                                     @endforeach
