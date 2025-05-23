@@ -37,7 +37,7 @@ class FirstAidBagChecklist extends Model
         $request = request();
         $search = '';
 
-        $query = $this->select('inspection_ohc_first_aid_bag_inspection.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*', 'inspection_ohc_first_aid_bag_inspection.id as inspection_id' , 'inspection_ohc_first_aid_bag_inspection.created_at as inspection_created_at', 'inspection_ohc_first_aid_bag_inspection.created_by as checked_by', 'inspection_shift_option.*')
+        $query = $this->select('inspection_ohc_first_aid_bag_inspection.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*', 'inspection_ohc_first_aid_bag_inspection.id as inspection_id', 'inspection_ohc_first_aid_bag_inspection.created_at as inspection_created_at', 'inspection_ohc_first_aid_bag_inspection.created_by as checked_by', 'inspection_shift_option.*')
             ->leftJoin('masters_location', 'inspection_ohc_first_aid_bag_inspection.location', '=', 'masters_location.id')
             ->leftJoin('masters_unit', 'inspection_ohc_first_aid_bag_inspection.unit', '=', 'masters_unit.id')
             ->leftJoin('inspection_shift_option', 'inspection_ohc_first_aid_bag_inspection.shift_id', '=', 'inspection_shift_option.id')
@@ -123,6 +123,53 @@ class FirstAidBagChecklist extends Model
         return $datas;
     }
 
+    public function listApi()
+    {
+        $request = request();
+        $search = '';
+
+        $query = $this->select('inspection_ohc_first_aid_bag_inspection.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*', 'inspection_ohc_first_aid_bag_inspection.id as inspection_id', 'inspection_ohc_first_aid_bag_inspection.created_at as inspection_created_at', 'inspection_ohc_first_aid_bag_inspection.created_by as checked_by', 'inspection_shift_option.*')
+            ->leftJoin('masters_location', 'inspection_ohc_first_aid_bag_inspection.location', '=', 'masters_location.id')
+            ->leftJoin('masters_unit', 'inspection_ohc_first_aid_bag_inspection.unit', '=', 'masters_unit.id')
+            ->leftJoin('inspection_shift_option', 'inspection_ohc_first_aid_bag_inspection.shift_id', '=', 'inspection_shift_option.id')
+            ->leftJoin('inspection_frequency_option', 'inspection_ohc_first_aid_bag_inspection.frequency', '=', 'inspection_frequency_option.id');
+
+        $org_total =  $query;
+        $org_total_counts = $org_total->count();
+
+        if ($request->search != null || $request->search != '') {
+            $search = $request->search;
+            $query->where(function ($query) use ($search) {
+                $query
+                    ->orWhere('inspection_ohc_first_aid_bag_inspection.inspection_date', 'LIKE', '%' . $search . '%')
+                    ->orWhere('inspection_ohc_first_aid_bag_inspection.next_due', 'LIKE', '%' . $search . '%');
+                $query->orWhereRaw('masters_location.location_name LIKE "%' . $search . '%"');
+                $query->orWhereRaw('masters_unit.unit_name LIKE "%' . $search . '%"');
+                $query->orWhereRaw('inspection_frequency_option.frequency_name LIKE "%' . $search . '%"');
+                $query->orWhereRaw('inspection_shift_option.shift_name LIKE "%' . $search . '%"');
+            });
+        }
+
+        $data = $query->orderby('inspection_ohc_first_aid_bag_inspection.id')->get();
+        $inspection_data = $data->toArray();
+        $data_array = [];
+        $refined_data = [];
+
+
+        foreach ($inspection_data as $index => $data) {
+            $data_array['id'] = $data['id'];
+            $data_array['date_of_inspection'] = Displaydateformat($data['inspection_date']);
+            $data_array['next_due'] = Displaydateformat($data['next_due']);
+            $data_array['location_name'] = $data['location_name'];
+            $data_array['shift_name'] = $data['shift'];
+            $data_array['frequency_name'] = $data['frequency_name'];
+            $data_array['created_at'] = Displaydateformat($data['inspection_created_at']);
+            $data_array['created_by'] = getUsername($data['checked_by']);
+            $refined_data[$index] = $data_array;
+        }
+        return $refined_data;
+    }
+
     public function store()
     {
         $request = request();
@@ -148,6 +195,35 @@ class FirstAidBagChecklist extends Model
             'unit' => decryptId($request->unit_id),
             'frequency' => decryptId($request->frequency_id),
             'shift_id' => decryptId($request->shift_id),
+        ];
+        return  $this->create($data);
+    }
+
+    public function store_api()
+    {
+        $request = request();
+        $id = $request->id;
+        foreach ($id as $index => $value) {
+            $id = ($value);
+            $updated_medicine_checklist[$id] = [
+                'medicine_id' => $id,
+                'available_quantity' => $request->available_quantity[$index],
+                'expired_date' => dbdateformat($request->expired_date[$index]),
+                'emp_id' => $request->emp_id[$index],
+                'remarks' => $request->remarks[$index],
+                'freeze_quantity' => $request->freeze_quantity[$index],
+            ];
+        }
+        $updated_medicine_checklist = json_encode($updated_medicine_checklist);
+        $data = [
+            'inspection_date' => DBdateformat($request->inspection_date),
+            'next_due' => DBdateformat($request->next_due),
+            'inspection_data' =>  $updated_medicine_checklist,
+            'created_by' =>  Auth::id(),
+            'location' => ($request->location_id),
+            'unit' => ($request->unit_id),
+            'frequency' => ($request->frequency_id),
+            'shift_id' => ($request->shift_id),
         ];
         return  $this->create($data);
     }

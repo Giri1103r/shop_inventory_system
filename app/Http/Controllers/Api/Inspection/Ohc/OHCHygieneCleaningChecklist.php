@@ -113,6 +113,7 @@ class OHCHygieneCleaningChecklist extends BaseController
                     )
                     ->first();
 
+                dd($inspections);
 
                 $signature = GetOHCSignature(
                     $inspections->inspection_created_by,
