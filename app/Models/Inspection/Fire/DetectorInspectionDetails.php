@@ -45,8 +45,6 @@ class DetectorInspectionDetails extends Model
     public function store($id)
     {
         $request = request();
-
-
         $department = $request->department;
         $detector_type = $request->detector_type;
         $physical_condition = $request->physical_condition;
@@ -69,8 +67,34 @@ class DetectorInspectionDetails extends Model
                 'response_indicator' => decryptId($response_indicator[$index]),
                 'created_by' => Auth::id(),
             );
+            $this->create($data);
+        }
+    }
+    public function store_api($id)
+    {
+        $request = request();
+        $department = $request->department;
+        $detector_type = $request->detector_type;
+        $physical_condition = $request->physical_condition;
+        $cable_condition = $request->cable_condition;
+        $working_status = $request->working_status;
+        $remarks = $request->remarks;
+        $resource_code = $request->resource_code;
+        $response_indicator = $request->response_indicator;
 
-
+        foreach ($department as $index => $department) {
+            $data = array(
+                'inspection_id' => $id,
+                'resource_code' => $resource_code[$index],
+                'department' => ($department),
+                'detector_type' => ($detector_type[$index]),
+                'physical_condition' => ($physical_condition[$index]),
+                'cable_condition' => ($cable_condition[$index]),
+                'working_status' => ($working_status[$index]),
+                'remarks' => $remarks[$index],
+                'response_indicator' => ($response_indicator[$index]),
+                'created_by' => Auth::id(),
+            );
             $this->create($data);
         }
     }

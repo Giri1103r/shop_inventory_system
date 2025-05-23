@@ -75,6 +75,39 @@ class SandBucketInspectionDetails extends Model
         }
     }
 
+    public function store_api($id)
+    {
+        $request = request();
+
+        $location = $request->location;
+        $fire_sand_bucket_stand_no = $request->fire_sand_bucket_stand_no;
+        $fire_sand_bucket_no = $request->fire_sand_bucket_no;
+        $condition = $request->condition;
+        $fire_bucket_condition = $request->fire_bucket_condition;
+        $paint_condition = $request->paint_condition;
+        $sand_quality = $request->qualtiy_quantity_sand;
+        $approach = $request->approach;
+        $remarks = $request->remarks;
+
+
+        foreach ($location as $index => $location) {
+            $data = array(
+                'inspection_id' => $id,
+                'location' => ($location),
+                'fire_bucket_stand_no' => ($fire_sand_bucket_stand_no[$index]),
+                'fire_bucket_no' => ($fire_sand_bucket_no[$index]),
+                'condition' => ($condition[$index]),
+                'fire_bucket_condition' => ($fire_bucket_condition[$index]),
+                'paint_condition' => ($paint_condition[$index]),
+                'sand_quantity' => ($sand_quality[$index]),
+                'approach' => $approach[$index],
+                'remarks' => $remarks[$index],
+                'created_by' => Auth::id(),
+            );
+            $this->create($data);
+        }
+    }
+
     public function GetDetails($id)
     {
         return $this->where('inspection_id', $id)->where('status', 1)->where('trash', 'NO')->get();

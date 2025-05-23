@@ -164,10 +164,30 @@ class DetectorInspection extends Model
             'location' => decryptId($request->location_id),
             'shift' => decryptId($request->shift_id),
             'next_due' => DBdateformat($request->next_due),
-            // 'observation' => $request->observation,
             'observation_needed' => decryptId($request->observation_needed),
             'unit' => decryptId($request->unit_id),
             'frequency' => decryptId($request->frequency_id),
+            'inspection_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,
+            'created_by' => Auth::id(),
+            'checked_by' => Auth::id(),
+        );
+
+        return $this->create($data);
+    }
+    public function store_api()
+    {
+        $request = request();
+
+        $data = array(
+            'doc_no' => $request->doc_no,
+            'document_reference_id' => ($request->document_reference_id),
+            'date_of_inspection' => DBdateformat($request->inspection_date),
+            'location' => ($request->location_id),
+            'shift' => ($request->shift_id),
+            'next_due' => DBdateformat($request->next_due),
+            'observation_needed' => ($request->observation_needed),
+            'unit' => ($request->unit_id),
+            'frequency' => ($request->frequency_id),
             'inspection_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,
             'created_by' => Auth::id(),
             'checked_by' => Auth::id(),

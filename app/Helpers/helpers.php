@@ -2591,6 +2591,36 @@ if (!function_exists('getMonth')) {
             return 'Unknown';
         }
     }
+    if (!function_exists('getPhysicalConditon')) {
+        function getPhysicalConditon($id)
+        {
+            if ($id == GOOD) {
+                $physical_condition = 'Good';
+            } elseif ($id == FAIR) {
+                $physical_condition = 'Fair';
+            } elseif ($id == POOR) {
+                $physical_condition = 'Poor';
+            } else {
+                $physical_condition = 'Unknown';
+            }
+            return $physical_condition;
+        }
+    }
+    if (!function_exists('getCableCondition')) {
+        function getCableCondition($id)
+        {
+            if ($id == GOOD) {
+                $cable_condition = 'Good';
+            } elseif ($id == FAIR) {
+                $cable_condition = 'Fair';
+            } elseif ($id == POOR) {
+                $cable_condition = 'Poor';
+            } else {
+                $cable_condition = 'Unknown';
+            }
+            return $cable_condition;
+        }
+    }
 
     if (!function_exists('getLightCondition')) {
         function getLightCondition($id)
