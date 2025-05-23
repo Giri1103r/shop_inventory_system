@@ -78,6 +78,41 @@ class HoseBoxInspectionDetails extends Model
         }
     }
 
+    public function storeApi($id)
+    {
+        $request = request();
+
+        $sr_no = $request->sr_no;
+        $location = $request->location;
+        $hose_box_no = $request->hose_box_no;
+        $quantity = $request->quantity;
+        $branch_quantity = $request->branch_quantity;
+        $hose_types = $request->hose_types;
+        $condition = $request->condition;
+        $hose_box_key = $request->hose_box_key;
+        $approach = $request->approach;
+        $remarks = $request->remarks;
+        
+        foreach ($sr_no as $index => $sr_no_value) {
+            $data = array(
+                'inspection_id' => $id,
+                'sr_no' => $sr_no_value,
+                'location' => $location[$index],
+                'hose_box_no' => $hose_box_no[$index],
+                'quantity' => $quantity[$index],
+                'branch_quantity' => $branch_quantity[$index],
+                'hose_types' => $hose_types[$index],
+                'hose_box_key' => $hose_box_key[$index],
+                'condition' => $condition[$index],    
+                'remarks' => $remarks[$index],
+                'approach' => $approach[$index],
+                'created_by' => Auth::id(),
+            );
+
+            $this->create($data);
+        }
+    }
+
     public function GetDetails($id)
     {
         return $this->where('inspection_id', $id)->where('status', 1)->where('trash', 'NO')->get();

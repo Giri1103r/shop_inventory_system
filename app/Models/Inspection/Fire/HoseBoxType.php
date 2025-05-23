@@ -21,6 +21,30 @@ class HoseBoxType extends Model
         return $this->where('status',1)->where('trash','NO')->get();
     }
 
+    public function GetApi()
+    {
+        $data = $this->where('status',1)->where('trash','NO')->get();
+
+        $refined_data = [];
+
+        if(count($data) > 0)
+        {
+            foreach($data as $index=> $values)
+            {
+                $refined_data[$index] = [
+                    'id' => $values->id,
+                    'hose_box_name' => $values->name,
+                ];
+            }
+
+            return $refined_data;
+        }
+
+        return false;
+        
+    }
+
+
     protected static function booted()
     {
         static::addGlobalScope(new TrashScope('inspection_fire_hose_box_type'));

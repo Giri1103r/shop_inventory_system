@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Ohc Floor Strecther Checklist')
+@section('title', 'Ohc Floor Stretcher Checklist')
 @section('pageurl', admin_url('ohc/floor_stretcher/checklist/list'))
 @section('content')
     <div class="container-fluid">
@@ -25,7 +25,7 @@
                                             <label for="issue_date"
                                                 class="form-label ">{{ __('inspection.inspection_date') }}</label>
                                             <input type="text" name="issue_date" id="issue_date" class="form-control">
-                                            
+
                                         </div>
                                         <div class="col-md-4 form-input">
                                             <label for="inspection_status"

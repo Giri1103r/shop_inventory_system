@@ -80,6 +80,44 @@ class SprinklarSystemInspectionDetails extends Model
         }
     }
 
+    public function storeApi($id)
+    {
+        $request = request();
+
+        $sr_no = $request->sr_no;
+        $department = $request->department;
+        $resource_code = $request->resource_code;
+        $quantity = $request->quantity;
+        $water_leakage = $request->water_leakage;
+        $painting = $request->painting;
+        $qbd = $request->qbd;
+        $condition_of_flow_meter = $request->condition_of_flow_meter;
+        $main_isolation = $request->main_isolation;
+        $drain_condition = $request->drain_condition;
+        $remarks = $request->remarks;
+        
+        foreach ($sr_no as $index => $sr_no_value) {
+            $data = array(
+                'inspection_id' => $id,
+                'sr_no' => $sr_no_value,
+                'department' => $department[$index],
+                'resource_code' => $resource_code[$index],
+                'quantity' => $quantity[$index],
+                'water_leakage' => $water_leakage[$index],
+                'painting' => $painting[$index],
+                'qbd' => $qbd[$index],
+                'condition_of_flow_meter' => $condition_of_flow_meter[$index],
+                'main_isolation' => $main_isolation[$index],
+                'drain_condition' => $drain_condition[$index],
+                'remarks' => $remarks[$index],
+                'created_by' => Auth::id(),
+            );
+
+            $this->create($data);
+        }
+    }
+
+
     public function GetDetails($id)
     {
         return $this->where('inspection_id', $id)->where('status', 1)->where('trash', 'NO')->get();

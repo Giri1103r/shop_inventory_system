@@ -261,7 +261,7 @@
                     <td style="border: 1px solid black; padding: 8px; text-align: center;">
                         {{ Displaydateformat($medicines['expired_date']) }}</td>
                     <td style="border: 1px solid black; padding: 8px; text-align: center;">
-                        {{ getUsername($medicines['emp_id']) }}</td>
+                        {{ ($medicines['emp_id']) }}</td>
                     <td style="border: 1px solid black; padding: 8px; text-align: center;">
                         {{ $medicines['remarks'] }}</td>
                 </tr>

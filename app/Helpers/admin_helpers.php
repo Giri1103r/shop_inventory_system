@@ -32,6 +32,7 @@ use App\Models\Inspection\GembaWalk\GembaWalk;
 use App\Models\Inspection\GembaWalkChecklist;
 use App\Models\OhcManagement\UserMedicineIssuance;
 use App\Models\OhcManagement\Opd\PrescribetoPatient;
+use App\Models\OhcManagement\Opd\FirstAid;
 use App\Models\OhcManagement\UserMedicineRequisition;
 use App\Models\Inspection\Master\ChecklistSubType;
 use App\Models\Inspection\audit\AuditAssessment;
@@ -46,6 +47,7 @@ use App\Models\Inspection\Fire\FirePreNocInspection;
 use App\Models\Inspection\Fire\FireCheckListFollowUp;
 use App\Models\Inspection\Ohc\HealthInstrumentCalibration;
 use App\Models\IMS\Incident\IncidentBodyParts;
+use App\Models\IMS\Incident\InjuryDetails;
 use App\Models\Inspection\audit\MonthlyAuditPlan;
 use App\Models\Master\PpeRequest;
 use App\Models\Master\PpeExemption;
@@ -425,6 +427,46 @@ if (!function_exists('gettotalCount')) {
                 break;
             case 'inter_unit_audit':
                 $count = InterUnitAudit::count();
+                break;
+            case 'prescribe_to_patient':
+                $count = PrescribetoPatient::count();
+                break;
+            case 'ohc_first_aid':
+                $count = FirstAid::count();
+                break;
+            case 'major_accident':
+                $count = InjuryDetails::where('nature_of_injury', MAJOR_ACCIDENT)->count();
+                break;
+            case 'minor_accident':
+                $count = InjuryDetails::where('nature_of_injury', MINOR_ACCIDENT)->count();
+                break;
+            case 'un_safe_act':
+                $count = InitialIncident::whereRaw("FIND_IN_SET(?, ua_or_uc)", [UNSAFE_ACT])->count();
+                break;
+            case 'un_safe_condition':
+                $count = InitialIncident::whereRaw("FIND_IN_SET(?, ua_or_uc)", [UNSAFE_CONDITION])->count();
+                break;
+            case 'near_miss':
+                $nearmiss = DB::table('ims_master_incident_type')
+                    ->where('incident_type_name', 'LIKE', '%Near Miss%')
+                    ->where(function ($query) {
+                        $query->whereRaw("LOWER(REPLACE(incident_type_name, '-', '')) LIKE ?", ['%near miss%']);
+                    })
+                    ->where('status', 1)
+                    ->pluck('id')
+                    ->toArray();
+                $count = InitialIncident::whereIn('iir_type', $nearmiss)->count();
+                break;
+            case 'fire_incidence':
+                $fireIncidence = DB::table('ims_master_incident_type')
+                    ->where('incident_type_name', 'LIKE', '%Fire Incidence%')
+                    ->where(function ($query) {
+                        $query->whereRaw("LOWER(REPLACE(incident_type_name, '-', '')) LIKE ?", ['%near miss%']);
+                    })
+                    ->where('status', 1)
+                    ->pluck('id')
+                    ->toArray();
+                $count = InitialIncident::whereIn('iir_type', $fireIncidence)->count();
                 break;
             default:
                 $count = 0;

@@ -55,6 +55,18 @@
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('Unit Name') }}</label>
+                                        <div class="view_data">
+                                            {{ getUnitname(isset($medicalfitness->unit_id) ? $medicalfitness->unit_id : '') }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('Department Name') }}</label>
+                                        <div class="view_data">
+                                            {{ getDepartment(isset($medicalfitness->department_id) ? $medicalfitness->department_id : '') }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('Date') }}</label>
                                         <div class="view_data">
                                             {{ displayDateformat(isset($medicalfitness->date) ? $medicalfitness->date : '') }}

@@ -46,14 +46,14 @@
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('common.location') }}</label>
                                         <div class="view_data">
-                                            {{ getUnitname($hsc_inputs->location_id) }}
+                                            {{ getLocationname($hsc_inputs->location_id) }}
                                         </div>
                                     </div>
 
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('common.unit') }}</label>
                                         <div class="view_data">
-                                            {{ getusername($hsc_inputs->unit_id) }}
+                                            {{ getUnitname($hsc_inputs->unit_id) }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">

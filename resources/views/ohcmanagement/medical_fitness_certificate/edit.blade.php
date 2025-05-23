@@ -77,6 +77,29 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
+                                                    <label class="form-label require">Unit Name</label>
+                                                    <input type="text" name="unit_id" id="unit_id" class="form-control"
+                                                        value="{{ getUnitname($medicalfitness->unit_id) }}"
+                                                        placeholder="Enter the Unit Name" readonly>
+                                                    @error('company_id')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">Department Name</label>
+                                                    <input type="text" name="department_id" id="department_id"
+                                                        class="form-control"
+                                                        value="{{ getDepartment($medicalfitness->department_id) }}"
+                                                        placeholder="Enter the Department Name" readonly>
+                                                    @error('company_id')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
                                                     <label for="rate" class="form-label require ">Date
                                                     </label>
                                                     <div class="input-group date form-input custom-height">
@@ -216,16 +239,26 @@
                             if (response.company) {
                                 $('#company_id').val(response.company.company_name).prop('readonly',
                                     true);
+                                $('#unit_id').val(response.unit.unit_name).prop('readonly', true);
+                                $('#department_id').val(response.department.department_name).prop(
+                                    'readonly', true);
                             } else {
                                 $('#company_id').val('').prop('readonly', true);
+                                $('#emp_name').val('').prop('readonly', true);
+                                $('#unit_id').val('').prop('readonly', true);
+                                $('#department_id').val('').prop('readonly', true);
                             }
                         } else {
                             $('#emp_name').val('').prop('readonly', true);
                             $('#company_id').val('').prop('readonly', true);
+                            $('#unit_id').val('').prop('readonly', true);
+                            $('#department_id').val('').prop('readonly', true);
                         }
                     },
                     error: function(xhr) {
-                        alert('Error fetching employee name and company name. Please try again.');
+                        alert(
+                            'Error fetching employee name and company name ,Unit and Department name. Please try again.'
+                            );
                     }
                 });
             } else {
@@ -261,7 +294,13 @@
                         extension: "pdf|doc|docx"
                     },
                     company_id: {
-                        required: true
+                        required: true,
+                    },
+                    unit_id: {
+                        required: true,
+                    },
+                    department_id: {
+                        required: true,
                     },
                     remarks: {
                         required: true,
@@ -282,7 +321,13 @@
                         required: "Please select the Employee Name."
                     },
                     company_id: {
-                        required: "Please Enter the Company name."
+                        required: "Please Enter the Company name.",
+                    },
+                    unit_id: {
+                        required: "Please Enter the Unit name.",
+                    },
+                    department_id: {
+                        required: "Please Enter the department name.",
                     },
                     date: {
                         required: "Please select the date."

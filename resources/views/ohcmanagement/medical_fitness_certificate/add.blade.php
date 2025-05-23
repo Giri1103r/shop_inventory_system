@@ -68,6 +68,26 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
+                                                    <label class="form-label require">Unit</label>
+                                                    <input type="text" name="unit_id" id="unit_id" class="form-control"
+                                                        placeholder="Enter the Unit name" readonly>
+                                                    @error('company_id')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">Department</label>
+                                                    <input type="text" name="department_id" id="department_id"
+                                                        class="form-control" placeholder="Enter the Department" readonly>
+                                                    @error('company_id')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
                                                     <label for="rate" class="form-label require ">Date
                                                     </label>
                                                     <div class="input-group date form-input custom-height">
@@ -182,8 +202,14 @@
                         if (response.employee) {
                             $('#emp_name').val(response.employee.emp_name).prop('readonly', true);
                             $('#company_id').val(response.company.company_name).prop('readonly', true);
+                            $('#unit_id').val(response.unit.unit_name).prop('readonly', true);
+                            $('#department_id').val(response.department.department_name).prop(
+                                'readonly', true);
                         } else {
                             $('#emp_name').val('').prop('readonly', true);
+                            $('#company_id').val('').prop('readonly', true);
+                            $('#unit_id').val('').prop('readonly', true);
+                            $('#department_id').val('').prop('readonly', true);
                         }
                     },
                     error: function(xhr) {
@@ -213,6 +239,12 @@
                         required: true,
                     },
                     company_id: {
+                        required: true,
+                    },
+                    unit_id: {
+                        required: true,
+                    },
+                    department_id: {
                         required: true,
                     },
                     date: {
@@ -245,6 +277,12 @@
                     },
                     company_id: {
                         required: "Please Enter the Company name.",
+                    },
+                     unit_id: {
+                        required: "Please Enter the Unit name.",
+                    },
+                     department_id: {
+                        required: "Please Enter the department name.",
                     },
                     file: {
                         required: "File is required.",

@@ -81,6 +81,43 @@ class IsolationValveDetails extends Model
         }
     }
 
+    public function storeApi($id)
+    {
+        $request = request();
+
+        $sr_no = $request->sr_no;
+        $location_isv = $request->location_isv;
+        $resource_code = $request->resource_code;
+        $size_isv = $request->size_isv;
+        $wheel_operation = $request->wheel_operation;
+        $leakage = $request->leakage;
+        $type = $request->type;
+        $open = $request->open;
+        $close = $request->close;
+        $status_isv = $request->isv_status;
+        $remarks = $request->remarks;
+        
+        foreach ($sr_no as $index => $sr_no_value) {
+            $data = array(
+                'inspection_id' => $id,
+                'sr_no' => $sr_no_value,
+                'location_isv' => $location_isv[$index],
+                'resource_code' => $resource_code[$index],
+                'size_isv' => $size_isv[$index],
+                'isv_status' => $status_isv[$index],
+                'wheel_operation' => $wheel_operation[$index],
+                'leakage' => $leakage[$index],
+                'type' => $type[$index],
+                'open' => $open[$index],
+                'close' => $close[$index],
+                'remarks' => $remarks[$index],
+                'created_by' => Auth::id(),
+            );
+
+            $this->create($data);
+        }
+    }
+
     public function GetDetails($id)
     {
         return $this->where('inspection_id', $id)->where('status', 1)->where('trash', 'NO')->get();
