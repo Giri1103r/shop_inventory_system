@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'HSC Inputs')
-@section('pageurl', admin_url('kpi/hsc-inputs/list'))
+@section('title', 'HSE Inputs')
+@section('pageurl', admin_url('kpi/hse-inputs/list'))
 
 
 @section('content')
@@ -14,10 +14,10 @@
 
                         <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
                         @if (CheckUserPermission('import'))
-                            <x-button-import href="{{ admin_url('kpi/hsc-inputs/import') }}"></x-button-import>
+                            <x-button-import href="{{ admin_url('kpi/hse-inputs/import') }}"></x-button-import>
                         @endif
                         <x-button-add dataId="" class="add btn btn-primary ms-1"
-                            href="{{ admin_url('kpi/hsc-inputs/add') }}">Add</x-button-add>
+                            href="{{ admin_url('kpi/hse-inputs/add') }}">Add</x-button-add>
                     </div>
                     <div id="search" class="collapse">
                         <form action="" id="formsearch" autocomplete="off">
@@ -259,7 +259,7 @@
                     },
 
                     ajax: {
-                        url: "{{ admin_url('kpi/hsc-inputs/list') }}",
+                        url: "{{ admin_url('kpi/hse-inputs/list') }}",
                         type: 'POST',
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
@@ -365,7 +365,7 @@
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('kpi/hsc-inputs/export/pdf') }}" +
+                                            "{{ admin_url('kpi/hse-inputs/export/pdf') }}" +
                                             '?search=' + searchValue +
                                             '&company_id=' + company_id +
                                             '&location_id=' + location_id +
@@ -393,7 +393,7 @@
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
-                                            "{{ admin_url('kpi/hsc-inputs/export/excel') }}" +
+                                            "{{ admin_url('kpi/hse-inputs/export/excel') }}" +
                                             '?search=' + searchValue +
                                             '&company_id=' + company_id +
                                             '&location_id=' + location_id +
@@ -438,12 +438,12 @@
                     var id = $(this).data('id');
                     var types = $(this).data('type');
                     if (types == 1) {
-                        var title = '{{ __('Do You want to In-Activate HSC Inputs Details') }}';
+                        var title = '{{ __('Do You want to In-Activate HSE Inputs Details') }}';
                         var text = '{{ __('common.inactive') }}';
                         var btncolor = '#dc3545'
 
                     } else {
-                        var title = '{{ __('Do You want to Activate HSC Inputs Details') }}';
+                        var title = '{{ __('Do You want to Activate HSE Inputs Details') }}';
                         var text = '{{ __('common.active') }}';
                         var btncolor = '#7ddc35'
                     }
@@ -463,7 +463,7 @@
 
                         if (result.value) {
                             $.ajax({
-                                url: "{{ admin_url('kpi/hsc-inputs/status') }}",
+                                url: "{{ admin_url('kpi/hse-inputs/status') }}",
                                 type: 'post',
 
                                 data: {
@@ -511,7 +511,7 @@
                     var id = $(this).data('id');
                     var login_id = $(this).data('login_id');
 
-                    var title = '{{ __('Do You want to Delete HSC Inputs Management') }}';
+                    var title = '{{ __('Do You want to Delete HSE Inputs Management') }}';
                     var text = '{{ __('common.delete') }}';
                     var btncolor = '#dc3545'
 
@@ -531,7 +531,7 @@
 
                         if (result.value) {
                             $.ajax({
-                                url: "{{ admin_url('kpi/hsc-inputs/delete') }}",
+                                url: "{{ admin_url('kpi/hse-inputs/delete') }}",
                                 type: 'post',
                                 headers: {
                                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
@@ -570,7 +570,7 @@
                                         Swal.fire({
                                             icon: 'error',
                                             title: 'Error',
-                                            text: 'HSC Inputs Deletion Failed: Module Dependencies Exist.',
+                                            text: 'HSE Inputs Deletion Failed: Module Dependencies Exist.',
                                         });
                                     } else {
                                         $.notify(data.responseJSON.msg, "error");

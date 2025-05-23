@@ -23,6 +23,7 @@ use App\Http\Controllers\Api\Inspection\Ohc\EmergencyBuyerFirstAidBagChecklistCo
 use App\Http\Controllers\Api\Inspection\Ohc\HealthInstrumentCalibrationController;
 use App\Http\Controllers\Api\Inspection\Ohc\Master\FirstAidContoller;
 use App\Http\Controllers\Api\Inspection\Ohc\Master\FirstAidMedicineController;
+use App\Http\Controllers\Api\Inspection\Ohc\OHCHygieneCleaningChecklist;
 use App\Http\Controllers\Api\Inspection\Ohc\WeeklyFirstAidBoxController;
 use App\Http\Controllers\Api\Inspection\Safety\FireSafetyEquipment;
 use App\Http\Controllers\Api\Inspection\Safety\SafetyWalkObservation;
@@ -173,20 +174,24 @@ Route::middleware('api')->prefix('v1')->group(function () {
                 });
 
                 // HealthInstrument
-                Route::group(['prefix'=>'health-instrument-calibration/'],function(){
-                    Route::post('list',[HealthInstrumentCalibrationController::class,'list']);
-                    Route::post('view',[HealthInstrumentCalibrationController::class,'view']);
-                    Route::post('add',[HealthInstrumentCalibrationController::class,'store']);
+                Route::group(['prefix' => 'health-instrument-calibration/'], function () {
+                    Route::post('list', [HealthInstrumentCalibrationController::class, 'list']);
+                    Route::post('view', [HealthInstrumentCalibrationController::class, 'view']);
+                    Route::post('add', [HealthInstrumentCalibrationController::class, 'store']);
                 });
 
                 // weeklyFirstAidBox
-                Route::group(['prefix'=>'weekly-first-aid-box/'],function(){
-                    Route::post('list',[WeeklyFirstAidBoxController::class,'list']);
-                    Route::post('view',[WeeklyFirstAidBoxController::class,'view']);
-                    Route::post('add',[WeeklyFirstAidBoxController::class,'store']);
+                Route::group(['prefix' => 'weekly-first-aid-box/'], function () {
+                    Route::post('list', [WeeklyFirstAidBoxController::class, 'list']);
+                    Route::post('view', [WeeklyFirstAidBoxController::class, 'view']);
+                    Route::post('add', [WeeklyFirstAidBoxController::class, 'store']);
                 });
 
-
+                Route::group(['prefix' => 'ohc-hygiene-cleaning-checklist/'], function () {
+                    Route::post('list', [OHCHygieneCleaningChecklist::class, 'list']);
+                    Route::post('view', [OHCHygieneCleaningChecklist::class, 'view']);
+                    Route::post('add', [OHCHygieneCleaningChecklist::class, 'store']);
+                });
             });
         });
 
@@ -196,6 +201,7 @@ Route::middleware('api')->prefix('v1')->group(function () {
         Route::post('forklift_type/list', [MonthlyForkLiftInspection::class, 'forklift_type']);
         Route::post('equipment/list', [FireSafetyEquipment::class, 'equipment']);
 
+        //Safety
         Route::prefix('safety')->group(function () {
             Route::prefix('safety-gallery-inspection')->group(function () {
                 Route::post('list', [SafetyGalleryInspection::class, 'list']);

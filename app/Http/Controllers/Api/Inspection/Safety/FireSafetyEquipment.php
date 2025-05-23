@@ -59,8 +59,7 @@ class FireSafetyEquipment extends BaseController
             if (!empty($search)) {
                 $search = ($search);
                 $query->where(function ($query) use ($search) {
-                    $query->orWhereRaw("DATE_FORMAT(inspection_safety_equipment.inspection_date, '%d-%m-%Y') LIKE ?", ["%{$search}%"])
-                        ->orWhere('inspection_safety_master_equipment.item_code', $search)
+                    $query->orWhere('inspection_safety_master_equipment.item_code', $search)
                         ->orWhere('equipment_name', $search);
                 });
             }

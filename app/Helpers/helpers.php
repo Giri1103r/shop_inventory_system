@@ -2578,6 +2578,19 @@ if (!function_exists('getMonth')) {
             return 'Unknown';
         }
     }
+    if (!function_exists('getOHCStatus')) {
+        function getOHCStatus($id)
+        {
+            if ($id == CLEANER_SUBMITTED_THE_CHECKLIST) {
+                return 'Waiting For Nursing Officer Action';
+            } else if ($id == NURSING_OFFICER_REJECTED) {
+                return 'Nursing Officer Rejected';
+            } else if ($id == NURSING_OFFICER_SUBMITTED_THE_CHECKLIST) {
+                return 'Nursing Officer Submitted';
+            }
+            return 'Unknown';
+        }
+    }
 
     if (!function_exists('getLightCondition')) {
         function getLightCondition($id)
