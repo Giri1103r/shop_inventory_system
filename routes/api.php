@@ -120,7 +120,7 @@ Route::middleware('api')->prefix('v1')->group(function () {
             Route::post('post-assessment', [TrainingSheducleController::class, 'endTrainingStore']);
         });
 
-        Route::group(['prefix' => 'inspection/'], function () {
+        Route::group(['prefix' => '/inspection/'], function () {
             Route::group(['prefix' => 'audit/'], function () {
                 Route::group(['prefix' => 'audit-assessment/'], function () {
                     Route::post('list', [AuditAssessmentController::class, 'list']);
@@ -161,6 +161,13 @@ Route::middleware('api')->prefix('v1')->group(function () {
             });
 
             Route::group(['prefix' => 'fire/'], function () {
+
+                Route::group(['prefix' => 'master/'],function(){
+                    Route::post('hose-box-type',[HoseController::class,'TypeOfHoseBox']);
+                    Route::post('fire-extinguisher-type',[FireExtinguisherController::class,'TypeOfExtinguishers']);
+                    Route::post('valve-type',[IsolationValveController::class,'TypeOfValves']);
+                });
+
                 Route::group(['prefix' => 'hooter-inspection/'], function () {
                     Route::post('list', [HooterInspectionController::class, 'List']);
                     Route::post('add', [HooterInspectionController::class, 'Add']);
@@ -173,7 +180,7 @@ Route::middleware('api')->prefix('v1')->group(function () {
                     Route::post('view',[FireAlarmController::class,'View']);
                 });
 
-                Route::group(['prefix' => 'fire-extinguisher/inspection/'],function(){
+                Route::group(['prefix' => 'fire-extinguisher-inspection/'],function(){
                     Route::post('list',[FireExtinguisherController::class,'List']);
                     Route::post('add',[FireExtinguisherController::class,'Add']);
                     Route::post('view',[FireExtinguisherController::class,'Add']);

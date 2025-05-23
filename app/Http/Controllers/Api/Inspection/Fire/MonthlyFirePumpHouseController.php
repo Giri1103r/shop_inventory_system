@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\BaseController;
 use App\Mail\Inspection\Fire\FireInspection;
 use App\Models\Inspection\Fire\FireStatusLog;
 use App\Models\Inspection\Fire\FireFileUpload;
+use App\Models\Inspection\InspectionStaticDocno;
 use App\Models\Inspection\Fire\FireSignatureUpload;
 use App\Models\Inspection\Fire\MonthlyFirePumpHouseInspection;
 
@@ -21,6 +22,7 @@ class MonthlyFirePumpHouseController extends BaseController
     private $files;
     private $signature;
     private $valve_type;
+    private $document_reference;
 
     public function __construct()
     {
@@ -28,6 +30,7 @@ class MonthlyFirePumpHouseController extends BaseController
         $this->statusLog = new FireStatusLog();
         $this->files = new FireFileUpload();
         $this->signature = new FireSignatureUpload();
+        $this->document_reference = new InspectionStaticDocno();
     }
 
     public function List(Request $request)
