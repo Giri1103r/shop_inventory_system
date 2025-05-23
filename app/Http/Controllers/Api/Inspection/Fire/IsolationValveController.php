@@ -226,6 +226,7 @@ class IsolationValveController extends Controller
                 $inspection_type = ISOLATION_VALVE_INSPECTION;
                 $inspection_image = $this->files->GetFileApi($inspection_type, $id);
                 $document_no = $this->document_reference->selectOne($inspection->document_reference_id);
+                $signature = GetFireSignature($inspection->created_by,$id,$inspection_type);
 
                 // Hooter Main Section
                 $inspection_main = [
@@ -262,6 +263,7 @@ class IsolationValveController extends Controller
                     'created_by_id' => $inspection->created_by,
                     'created_by' => getUsername($inspection->created_by),
                     'inspection_image' => $inspection_image ?? [],
+                    'signature' => $signature ? admin_url($signature) : [],
                 ];
 
                 // Inspection Sub Data
