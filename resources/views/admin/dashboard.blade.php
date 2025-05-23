@@ -639,10 +639,9 @@
                                 <div class=" col-xl-3 col-lg-3 col-sm-3 p-1 boder-rounded">
                                     <div class="widget-stat "
                                         onclick="redirectopermanage('{{ isset($moduleLink[19]['link']) ? $moduleLink[19]['link'] : '' }}')"
-                                        style="cursor: pointer;background-image: linear-gradient(135deg, #a18cd1, #fbc2eb);
-                                        <div class="px-2
-                                        boder-rounded "
-                                                    style = "box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06);">
+                                        style="cursor: pointer;background-image: linear-gradient(135deg, #a18cd1, #fbc2eb);">
+                                        <div class="px-2 boder-rounded"
+                                                    style    = "box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06);">
                                                     <div class="media ai-icon" style="display: flex; align-items: center;">
                                                         <span class="me-3 bgl-primary text-primary" style="flex-shrink: 0;">
 
