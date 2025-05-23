@@ -12,30 +12,32 @@ use App\Http\Controllers\Api\Trainig\TrainingSheducleController;
 use App\Http\Controllers\Api\Inspection\Fire\FireAlarmController;
 use App\Http\Controllers\Api\Inspection\Safety\ForkliftInspection;
 use App\Http\Controllers\Api\Ppemanagement\PpeExemptionController;
+use App\Http\Controllers\Api\Inspection\Safety\FireSafetyEquipment;
 use App\Http\Controllers\Api\Ppemanagement\PpemanagementController;
 use App\Http\Controllers\Api\Inspection\Audit\MonthlyAuditController;
+use App\Http\Controllers\Api\Inspection\Ohc\Master\FirstAidContoller;
+use App\Http\Controllers\Api\Inspection\Safety\SafetyWalkObservation;
 use App\Http\Controllers\Api\Inspection\Audit\AuditAnalysisController;
 use App\Http\Controllers\Api\Inspection\Fire\IsolationValveController;
 use App\Http\Controllers\Api\Inspection\GembaWalk\GembaWalkController;
+use App\Http\Controllers\Api\Inspection\Ohc\EmergencyFloorFirstAidBag;
 use App\Http\Controllers\Api\Inspection\Audit\InterUnitAuditController;
 use App\Http\Controllers\Api\Inspection\Fire\SprinklerSystemController;
 use App\Http\Controllers\Api\Inspection\Safety\SafetyGalleryInspection;
 use App\Http\Controllers\Api\Inspection\Audit\AuditAssessmentController;
 use App\Http\Controllers\Api\Inspection\Fire\FireExtinguisherController;
 use App\Http\Controllers\Api\Inspection\Fire\HooterInspectionController;
-use App\Http\Controllers\Api\Inspection\Safety\MonthlyEyeWashController;
-use App\Http\Controllers\Api\Inspection\Safety\MonthlyForkLiftInspection;
-use App\Http\Controllers\Api\Inspection\Fire\MonthlyFirePumpHouseController;
-use App\Http\Controllers\Api\{LoginController, NotificationController, AdminController};
-use App\Http\Controllers\Api\Inspection\Ohc\EmergencyBuyerFirstAidBagChecklistController;
-use App\Http\Controllers\Api\Inspection\Ohc\EmergencyFloorFirstAidBag;
-use App\Http\Controllers\Api\Inspection\Ohc\HealthInstrumentCalibrationController;
-use App\Http\Controllers\Api\Inspection\Ohc\Master\FirstAidContoller;
-use App\Http\Controllers\Api\Inspection\Ohc\Master\FirstAidMedicineController;
 use App\Http\Controllers\Api\Inspection\Ohc\OHCHygieneCleaningChecklist;
 use App\Http\Controllers\Api\Inspection\Ohc\WeeklyFirstAidBoxController;
-use App\Http\Controllers\Api\Inspection\Safety\FireSafetyEquipment;
-use App\Http\Controllers\Api\Inspection\Safety\SafetyWalkObservation;
+use App\Http\Controllers\Api\Inspection\Safety\MonthlyEyeWashController;
+use App\Http\Controllers\Api\Inspection\Safety\MonthlyForkLiftInspection;
+use App\Http\Controllers\Api\Inspection\Ohc\MonthlyMedicineStoreInspection;
+use App\Http\Controllers\Api\Inspection\Ohc\OPDMedicineInspectionChecklist;
+use App\Http\Controllers\Api\Inspection\Fire\MonthlyFirePumpHouseController;
+use App\Http\Controllers\Api\Inspection\Ohc\Master\FirstAidMedicineController;
+use App\Http\Controllers\Api\Inspection\Ohc\HealthInstrumentCalibrationController;
+use App\Http\Controllers\Api\{LoginController, NotificationController, AdminController};
+use App\Http\Controllers\Api\Inspection\Ohc\EmergencyBuyerFirstAidBagChecklistController;
 
 // Route::get('/user', function (Request $request) {
 //     return $request->user();
@@ -266,6 +268,18 @@ Route::middleware('api')->prefix('v1')->group(function () {
                     Route::post('list', [EmergencyFloorFirstAidBag::class, 'list']);
                     Route::post('view', [EmergencyFloorFirstAidBag::class, 'view']);
                     Route::post('add', [EmergencyFloorFirstAidBag::class, 'store']);
+                });
+
+                Route::group(['prefix' => 'monthly-medicine-store/'], function () {
+                    Route::post('list', [MonthlyMedicineStoreInspection::class, 'list']);
+                    Route::post('view', [MonthlyMedicineStoreInspection::class, 'view']);
+                    Route::post('add', [MonthlyMedicineStoreInspection::class, 'store']);
+                });
+
+                Route::group(['prefix' => 'opd-medicine-inspection/'], function () {
+                    Route::post('list', [OPDMedicineInspectionChecklist::class, 'list']);
+                    Route::post('view', [OPDMedicineInspectionChecklist::class, 'view']);
+                    Route::post('add', [OPDMedicineInspectionChecklist::class, 'store']);
                 });
             });
         });

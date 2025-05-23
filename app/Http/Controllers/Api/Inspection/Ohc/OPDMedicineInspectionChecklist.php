@@ -4,54 +4,35 @@ namespace App\Http\Controllers\Api\Inspection\Ohc;
 
 use App\Http\Controllers\Api\BaseController;
 use Exception;
-use App\Models\Master\Unit;
-use App\Models\Master\Work;
 use Illuminate\Http\Request;
-use App\Models\Master\Employee;
-use App\Models\Master\Location;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Inspection\Master\Shift;
 use Illuminate\Support\Facades\Validator;
-use App\Models\Inspection\Master\Frequency;
 use App\Models\Inspection\Ohc\OhcSignature;
 use App\Models\Inspection\InspectionStaticDocno;
-use App\Models\Inspection\Ohc\FirstAidBagChecklist;
 use App\Models\Inspection\Ohc\Master\FirstAidEquipment;
+use App\Models\Inspection\Ohc\FirstAidMedicineInspection;
 
-class EmergencyFloorFirstAidBag extends BaseController
+class OPDMedicineInspectionChecklist extends BaseController
 {
-    private $first_aid_bag;
+    private $medicine_checklist;
     private $medicine;
     private $signature;
     private $document_reference;
-    private $location;
-    private $unit;
-    private $frequency;
-    private $shift;
-    private $employee;
-    private $work;
 
 
     public function __construct()
     {
-        $this->first_aid_bag = new FirstAidBagChecklist();
+        $this->medicine_checklist = new FirstAidMedicineInspection();
         $this->medicine = new FirstAidEquipment();
         $this->signature = new OhcSignature();
         $this->document_reference = new InspectionStaticDocno();
-        $this->location  = new Location();
-        $this->unit = new Unit();
-        $this->frequency = new Frequency();
-        $this->shift = new Shift();
-        $this->employee = new Employee();
-        $this->work = new Work();
     }
-
     public function List(Request $request)
     {
         if (Auth::check()) {
             try {
-                $data = $this->first_aid_bag->listApi();
+                $data = $this->medicine_checklist->listApi();
                 if (count($data) > 0) {
                     return response()->json([
                         'status' => true,
@@ -83,7 +64,7 @@ class EmergencyFloorFirstAidBag extends BaseController
         try {
             if (Auth::check()) {
                 $id = $request->id;
-                $inspection = $this->first_aid_bag->selectOne($id);
+                $inspection = $this->medicine_checklist->selectOne($id);
                 $inspection_data = json_decode($inspection->inspection_data, true);
 
                 $medicine_data = [];
@@ -93,7 +74,6 @@ class EmergencyFloorFirstAidBag extends BaseController
                         'available_quantity' => $details['available_quantity'],
                         'expired_date' => Displaydateformat($details['expired_date']),
                         'remarks' => $details['remarks'],
-                        'freeze_quantity' => $details['freeze_quantity'],
                         'emp_name' => getUsername($details['emp_id']),
                     ];
                     $medicine_data[] = $data;
@@ -103,17 +83,25 @@ class EmergencyFloorFirstAidBag extends BaseController
                     'id' => $inspection->id,
                     'date_of_inspection' => Displaydateformat($inspection->inspection_date),
                     'next_due' => Displaydateformat($inspection->next_due),
-                    'location_name' => getLocationname($inspection->location),
-                    'shift_name' => getShift($inspection->shift_id),
-                    'frequency_name' => getFrequencyname($inspection->frequency),
-                    'unit_name' => getUnitname($inspection->unit),
-                    'frequency' => getFrequencyname($inspection->frequency),
                 ];
+
+                $approval_array[] = null;
+                if ($inspection->inspection_status != OBSERVATION_PENDING) {
+                    $inspection_type = OHC_TYPE_MONTHLY_MEDICINE_STORE;
+                    $verified_by = GetOHCSignature($inspection->updated_by, $inspection->id, $inspection_type);
+                    $approval_array = [
+                        'approval_remarks' => $inspection->approval_remarks,
+                        'approved_by' => getUsername($inspection->updated_by),
+                        'approved_at' => Displaydateformat($inspection->updated_at),
+                        'approval_signature' => admin_url($verified_by),
+                    ];
+                }
 
                 $success = [
                     'id' => $inspection->id,
                     'inspection_details' => $inspection_details,
                     'medicine_details' => $medicine_data,
+                    'approval_array' => $approval_array,
                 ];
 
                 return $this->sendResponse($success, 'Date Received Successfully');
@@ -136,27 +124,20 @@ class EmergencyFloorFirstAidBag extends BaseController
 
             $rules = [
                 'inspection_date' => 'required',
-                'frequency_id' => 'required',
-                'location_id' => 'required',
-                'unit_id' => 'required',
                 'next_due' => 'required',
                 'available_quantity.*' => 'required',
                 'expired_date.*' => 'required',
                 'emp_id.*' => 'required',
-                'remarks.*' => 'required'
+                'remarks.*' => 'required',
             ];
 
             $messages = [
                 'inspection_date.required' => 'Inspection Date is required.',
-                'frequency_id.required' => 'Frequency is required.',
-                'location_id.required' => 'Location is required.',
-                'unit_id.required' => 'Unit is required.',
                 'next_due.required' => 'Next Due Date is required.',
                 'available_quantity.*.required' => 'Available Quantity is required',
                 'expired_date.*.required' => 'Expired Date is required',
                 'remarks.*' => 'Remarks is required',
                 'emp_id.*' => 'Employee is required',
-                'signature_upload' => 'Signature is required.',
             ];
 
             $validator = Validator::make($request->all(), $rules, $messages);
@@ -165,9 +146,8 @@ class EmergencyFloorFirstAidBag extends BaseController
                 return $this->sendError('Validation Error', $validator->errors(), 422);
             }
 
-            $inspection_data = $this->first_aid_bag->store_api();
-            $inspection_details = $this->first_aid_bag->selectOne($inspection_data->id);
-
+            $inspection_data = $this->medicine_checklist->store_api();
+            $inspection_details = $this->medicine_checklist->selectOne($inspection_data->id);
 
             return response()->json([
                 'success' => true,
@@ -175,7 +155,6 @@ class EmergencyFloorFirstAidBag extends BaseController
                 'data' => $inspection_data
             ], 201);
         } catch (\Exception $ex) {
-            dd($ex);
             report($ex);
             return $this->sendError(
                 'Unauthorised.',

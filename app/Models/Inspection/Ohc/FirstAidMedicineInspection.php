@@ -105,12 +105,85 @@ class FirstAidMedicineInspection extends Model
         return $datas;
     }
 
+    public function listApi()
+    {
+        $request = request();
+        $search = '';
+
+        $query = $this->select('inspection_ohc_first_aid_inspection.*');
+        $org_total =  $query;
+
+        $user = Auth::user();
+        $userRole = string_to_array($user->role);
+        $empId = $user->employee_id;
+        if (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole)  || in_array(ROLE_EHS_OFFICER, $userRole)  || in_array(ROLE_INSPECTION_CREATOR, $userRole) || in_array(ROLE_SAFETY_OFFICER, $userRole) || in_array(ROLE_MEDICAL_ASSISTANT, $userRole)) {
+            $query->orderBy('inspection_ohc_first_aid_inspection.id', 'DESC');
+        } else {
+            $query->where('inspection_ohc_first_aid_inspection.created_by', Auth::id());
+        }
+
+
+        $org_total_counts = $org_total->count();
+
+        if ($request->search != null || $request->search != '') {
+            $search = $request->search;
+            $query->where(function ($query) use ($search) {
+                $query
+                    ->orWhere('inspection_ohc_first_aid_inspection.inspection_date', 'LIKE', '%' . $search . '%')
+                    ->orWhere('inspection_ohc_first_aid_inspection.next_due', 'LIKE', '%' . $search . '%');
+            });
+        }
+
+
+        $data = $query->orderby('inspection_ohc_first_aid_inspection.id')->get();
+        $inspection_data = $data->toArray();
+        $data_array = [];
+        $refined_data = [];
+
+
+        foreach ($inspection_data as $index => $data) {
+            $data_array['id'] = $data['id'];
+            $data_array['date_of_inspection'] = Displaydateformat($data['inspection_date']);
+            $data_array['next_due'] = Displaydateformat($data['next_due']);
+            $data_array['inspection_status'] = getObservationStatus($data['inspection_status']);
+            $data_array['created_at'] = Displaydateformat($data['created_at']);
+            $data_array['created_by'] = getUsername($data['created_by']);
+            $refined_data[$index] = $data_array;
+        }
+        return $refined_data;
+    }
+
     public function store()
     {
         $request = request();
         $id = $request->id;
         foreach ($id as $index => $value) {
             $id = decryptId($value);
+            $updated_medicine_checklist[$id] = [
+                'medicine_id' => $id,
+                'available_quantity' => $request->available_quantity[$index],
+                'expired_date' => dbdateformat($request->expired_date[$index]),
+                'emp_id' => $request->emp_id[$index],
+                'remarks' => $request->remarks[$index],
+            ];
+        }
+        $updated_medicine_checklist = json_encode($updated_medicine_checklist);
+        $data = [
+            'inspection_date' => DBdateformat($request->inspection_date),
+            'next_due' => DBdateformat($request->next_due),
+            'inspection_data' =>  $updated_medicine_checklist,
+            'created_by' =>  Auth::id(),
+            'inspection_status' => OBSERVATION_PENDING,
+        ];
+        return  $this->create($data);
+    }
+
+    public function store_api()
+    {
+        $request = request();
+        $id = $request->id;
+        foreach ($id as $index => $value) {
+            $id = ($value);
             $updated_medicine_checklist[$id] = [
                 'medicine_id' => $id,
                 'available_quantity' => $request->available_quantity[$index],
