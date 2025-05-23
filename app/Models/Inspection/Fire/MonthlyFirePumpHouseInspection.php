@@ -203,6 +203,7 @@ class MonthlyFirePumpHouseInspection extends Model
         foreach ($request->checklist as $sub_type_id => $checklist_items) {
             foreach ($checklist_items as $checklist_id => $value) {
                 $mergedResponses[$sub_type_id][$checklist_id] = [
+                    'question_id' => $checklist_id,
                     'response' => $value,
                     'remark' => $request->remarks[$sub_type_id][$checklist_id] ?? null,
                 ];
@@ -236,6 +237,7 @@ class MonthlyFirePumpHouseInspection extends Model
         foreach ($request->checklist as $sub_type_id => $checklist_items) {
             foreach ($checklist_items as $checklist_id => $value) {
                 $mergedResponses[$sub_type_id][$checklist_id] = [
+                    'question_id' => $checklist_id,
                     'response' => $value,
                     'remark' => $request->remarks[$sub_type_id][$checklist_id] ?? null,
                 ];

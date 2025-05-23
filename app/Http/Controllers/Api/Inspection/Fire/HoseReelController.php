@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\BaseController;
 use App\Mail\Inspection\Fire\FireInspection;
 use App\Models\Inspection\Fire\FireStatusLog;
 use App\Models\Inspection\Fire\FireFileUpload;
+use App\Models\Inspection\InspectionStaticDocno;
 use App\Models\Inspection\Fire\FireSignatureUpload;
 use App\Models\Inspection\Fire\HoseReelHoseDetails;
 use App\Models\Inspection\Fire\HoseReelHoseInspection;
@@ -22,6 +23,7 @@ class HoseReelController extends BaseController
     private $statusLog;
     private $files;
     private $signature;
+    private $document_reference;
 
     public function __construct()
     {
@@ -30,6 +32,7 @@ class HoseReelController extends BaseController
         $this->statusLog = new FireStatusLog();
         $this->files = new FireFileUpload();
         $this->signature = new FireSignatureUpload();
+        $this->document_reference = new InspectionStaticDocno();
     }
 
     public function List()
@@ -187,10 +190,14 @@ class HoseReelController extends BaseController
                 $details = $this->inspection_details->GetDetails($inspection->id);
                 $inspection_type = HOSE_REEL_INSPECTION;
                 $inspection_image = $this->files->GetFileApi($inspection_type,$id);
+                $document_no = $this->document_reference->selectOne($inspection->document_reference_id);
 
                 // Hooter Main Section
                 $inspection_main = [
                     'id' => $inspection->id,
+                    'document_no' => $document_no->doc_no,
+                    'issue_date' => Displaydateformat($document_no->issue_date),
+                    'issue_date' => $document_no->rev_dt,
                     'document_reference_id' => $inspection->document_reference_id,
                     'date_of_inspection' => Displaydateformat($inspection->date_of_inspection),
                     'location_name' => getLocationname($inspection->location),
