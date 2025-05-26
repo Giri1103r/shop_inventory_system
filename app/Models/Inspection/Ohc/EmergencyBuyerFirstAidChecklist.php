@@ -114,6 +114,7 @@ class EmergencyBuyerFirstAidChecklist extends Model
     public function listApi()
     {
         $request = request();
+        $perpage = $request->input('per_page', 10);
         $search = '';
 
         $query = $this->select('inspection_ohc_emergency_buyer_first_aid_bag_checklist_details.*', 'inspection_shift_option.shift', 'masters_unit.unit_name', 'inspection_ohc_emergency_buyer_first_aid_bag_checklist_details.created_at as inspection_created_at', 'inspection_ohc_emergency_buyer_first_aid_bag_checklist_details.created_by as inspection_created_by',)
@@ -136,12 +137,18 @@ class EmergencyBuyerFirstAidChecklist extends Model
             });
         }
 
-        $data = $query->orderby('inspection_ohc_emergency_buyer_first_aid_bag_checklist_details.id')->get();
-        $inspection_data = $data->toArray();
+        $paginatedData = $query->orderby('inspection_ohc_emergency_buyer_first_aid_bag_checklist_details.id')->paginate($perpage);
+        $inspection_data = $paginatedData->toArray();
+
+
+        if (empty($inspection_data['data'])) {
+            return $this->sendError('No records found.', [], 404);
+        }
+
         $data_array = [];
         $refined_data = [];
 
-        foreach ($inspection_data as $index => $data) {
+        foreach ($inspection_data['data'] as $index => $data) {
             $data_array['id'] = $data['id'];
             $data_array['date_of_inspection'] = Displaydateformat($data['date_of_inspection']);
             $data_array['location_first_aid_bag'] = $data['location_first_aid_bag'];
@@ -152,9 +159,17 @@ class EmergencyBuyerFirstAidChecklist extends Model
 
             $refined_data[$index] = $data_array;
         }
+        $response = [
+            'per_page' => $paginatedData->perPage(),
+            'current_page' => $paginatedData->currentPage(),
+            'from' => $paginatedData->firstItem(),
+            'to' => $paginatedData->lastItem(),
+            'total' => $paginatedData->total(),
+            'total_page' => $paginatedData->lastPage(),
+            'list' => $refined_data,
+        ];
 
-
-        return $refined_data;
+        return $response;
     }
 
     public function store()

@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Models\Inspection\Fire;
+
 use App\Scopes\TrashScope;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
@@ -90,7 +91,7 @@ class HydrantRiserInspection extends Model
             $query = $query->where('inspection_fire_hydrant_riser.shift_id', 'LIKE', '%' . decryptId($request->shift) . '%');
         }
         if (isset($request->inspection_date) && $request->inspection_date) {
-            $query = $query->where('inspection_fire_hydrant_riser.date_of_inspection',DBdateformat($request->inspection_date));
+            $query = $query->where('inspection_fire_hydrant_riser.date_of_inspection', DBdateformat($request->inspection_date));
         }
         if (isset($request->next_due) && $request->next_due) {
             $query = $query->where('inspection_fire_hydrant_riser.next_due', 'LIKE', '%' . DBdateformat($request->next_due) . '%');
@@ -150,6 +151,75 @@ class HydrantRiserInspection extends Model
         return $datas;
     }
 
+    public function listApi()
+    {
+        $request = request();
+        $perPage = $request->input('per_page', 10);
+        $search = '';
+
+        $query = $this->select('inspection_fire_hydrant_riser.*', 'inspection_shift_option.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*', 'inspection_fire_hydrant_riser.id as fire_hydrant_riser_id')
+            ->leftJoin('masters_location', 'inspection_fire_hydrant_riser.location', '=', 'masters_location.id')
+            ->leftJoin('inspection_shift_option', 'inspection_fire_hydrant_riser.shift_id', '=', 'inspection_shift_option.id')
+            ->leftJoin('masters_unit', 'inspection_fire_hydrant_riser.unit', '=', 'masters_unit.id')
+            ->leftJoin('inspection_frequency_option', 'inspection_fire_hydrant_riser.frequency', '=', 'inspection_frequency_option.id')
+            ->leftJoin('inspection_static_docno', 'inspection_fire_hydrant_riser.document_reference_id', '=', 'inspection_static_docno.id');
+
+        if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_OFFICER) || CheckUserRole(ROLE_L1_MANAGER) || CheckUserRole(ROLE_L2_MANAGER)) {
+        } else if (CheckUserRole(ROLE_FIRE_ASSOCIATES)) {
+            $query->where('inspection_fire_hydrant_riser.created_by', Auth::id());
+        }
+
+        $org_total =  $query;
+        $org_total_counts = $org_total->count();
+
+
+        if (isset($request->search) && isset($request->search) && $request->search != '') {
+            $search = $request->search;
+
+            $query = $query->where(function ($query) use ($search) {
+                $query->orWhereRaw('masters_location.location_name LIKE "%' . $search . '%"');
+                $query->orWhereRaw('masters_unit.unit_name LIKE "%' . $search . '%"');
+                $query->orWhereRaw('inspection_shift_option.shift LIKE "%' . $search . '%"');
+                $query->orWhereRaw('inspection_frequency_option.frequency_name LIKE "%' . $search . '%"');
+            });
+        }
+        $paginatedData = $query->orderBy('inspection_fire_hydrant_riser.id', 'DESC')->paginate($perPage);
+
+        $inspection_data = $paginatedData->toArray();
+
+
+        if (empty($inspection_data['data'])) {
+            return $this->sendError('No records found.', [], 404);
+        }
+
+        $refined_data = [];
+        foreach ($inspection_data['data'] as $index => $datas) {
+
+            $data_array = [];
+            $data_array['id'] = $datas['fire_hydrant_riser_id'];
+            $data_array['date_of_inspection'] = Displaydateformat($datas['date_of_inspection']);
+            $data_array['next_due'] = Displaydateformat($datas['next_due']);
+            $data_array['location_name'] = $datas['location_name'];
+            $data_array['shift'] = $datas['shift'];
+            $data_array['unit_name'] = $datas['unit_name'];
+            $data_array['inspection_status'] = GetStatusValue($datas['inspection_status']);
+
+            $refined_data[$index] = $data_array;
+        }
+
+        $response = [
+            'per_page' => $paginatedData->perPage(),
+            'current_page' => $paginatedData->currentPage(),
+            'from' => $paginatedData->firstItem(),
+            'to' => $paginatedData->lastItem(),
+            'total' => $paginatedData->total(),
+            'total_page' => $paginatedData->lastPage(),
+            'list' => $refined_data,
+        ];
+
+        return $response;
+    }
+
     public function store()
     {
         $request = request();
@@ -162,7 +232,7 @@ class HydrantRiserInspection extends Model
             'shift_id' => decryptId($request->shift_id),
             'next_due' => DBdateformat($request->next_due),
             // 'observation' => $request->observation,
-            'observation_needed'=>decryptId($request->observation_needed),
+            'observation_needed' => decryptId($request->observation_needed),
             'unit' => decryptId($request->unit_id),
             'frequency' => decryptId($request->frequency_id),
             'inspection_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,
@@ -177,7 +247,7 @@ class HydrantRiserInspection extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_fire_hydrant_riser.*', 'inspection_shift_option.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*','inspection_fire_hydrant_riser_details.*','inspection_static_docno.*','inspection_fire_hydrant_riser.id as hydrant_parent_id','inspection_fire_hydrant_riser.updated_by as hydrant_updated_by')
+        $query = $this->select('inspection_fire_hydrant_riser.*', 'inspection_shift_option.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*', 'inspection_fire_hydrant_riser_details.*', 'inspection_static_docno.*', 'inspection_fire_hydrant_riser.id as hydrant_parent_id', 'inspection_fire_hydrant_riser.updated_by as hydrant_updated_by')
             ->leftJoin('inspection_fire_hydrant_riser_details', 'inspection_fire_hydrant_riser_details.inspection_id', '=', 'inspection_fire_hydrant_riser.id')
             ->leftJoin('masters_location', 'inspection_fire_hydrant_riser.location', '=', 'masters_location.id')
             ->leftJoin('inspection_shift_option', 'inspection_fire_hydrant_riser.shift_id', '=', 'inspection_shift_option.id')
@@ -234,7 +304,7 @@ class HydrantRiserInspection extends Model
             $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
             $query->whereBetween('inspection_fire_hydrant_riser.created_at', [$startDate, $endDate]);
         }
-        
+
         $query->orderBy('inspection_fire_hydrant_riser.id', 'DESC');
         $results = $query->get();
         $query = $results->groupBy('inspection_id');
@@ -348,6 +418,38 @@ class HydrantRiserInspection extends Model
     public function selectOne($id)
     {
         return $this->where('id', $id)->where('status', 1)->where('trash', 'NO')->first();
+    }
+
+    public function getInspectionDetails($id)
+    {
+        $data = $this->select('inspection_fire_hydrant_riser.*', 'inspection_static_docno.doc_no', 'inspection_static_docno.issue_date', 'inspection_static_docno.rev_dt')
+            ->leftJoin('inspection_static_docno', 'inspection_static_docno.id', '=', 'inspection_fire_hydrant_riser.document_reference_id')
+            ->where('inspection_fire_hydrant_riser.id', $id)
+            ->first();
+
+        return $data;
+    }
+
+    public function storeApi()
+    {
+        $request = request();
+        $data = array(
+            'doc_no' => $request->doc_no,
+            'document_reference_id' => $request->document_reference_id,
+            'date_of_inspection' => DBdateformat($request->inspection_date),
+            'location' => $request->location_id,
+            'shift_id' => $request->shift_id,
+            'next_due' => DBdateformat($request->next_due),
+            // 'observation' => $request->observation,
+            'observation_needed' => $request->observation_needed,
+            'unit' => $request->unit_id,
+            'frequency' => $request->frequency_id,
+            'inspection_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,
+            'created_by' => Auth::id(),
+            'checked_by' => Auth::id(),
+        );
+
+        return $this->create($data);
     }
 
     protected static function booted()

@@ -100,6 +100,7 @@ class HealthInstrumentCalibration extends Model
     {
 
         $request = request();
+        $perPage = $request->input('per_page', 10);
         $search = '';
 
         $query = $this->select('inspection_ohc_health_instrument_calibration_track_sheet.*', 'inspection_ohc_health_instrument_calibration_track_sheet.created_at as inspection_created_at', 'inspection_ohc_health_instrument_calibration_track_sheet.created_at as inspection_created_by', 'masters_unit.unit_name')
@@ -117,23 +118,38 @@ class HealthInstrumentCalibration extends Model
             });
         }
 
-        $data = $query->orderBy('inspection_ohc_health_instrument_calibration_track_sheet.id')->get();
-        $inspection_data = $data->toArray();
+        $paginatedData = $query->orderBy('inspection_ohc_health_instrument_calibration_track_sheet.id')->paginate($perPage);
+        $inspection_data = $paginatedData->toArray();
+
+
+        if (empty($inspection_data['data'])) {
+            return $this->sendError('No records found.', [], 404);
+        }
 
         $inspection_data_array = [];
         $refined_array = [];
 
-        foreach ($inspection_data as $index => $data) {
+        foreach ($inspection_data['data'] as $index => $data) {
             $inspection_data_array['id'] = $data['id'];
             $inspection_data_array['health_auto_id'] = $data['health_auto_id'];
             $inspection_data_array['unit_name'] = $data['unit_name'];
             $inspection_data_array['created_by'] = getUsername($data['created_by']);
             $inspection_data_array['created_at'] = Displaydateformat($data['created_at']);
-            $inspection_data_array['status'] = $data['status'];
+            $inspection_data_array['status'] = $data['status'] == 1 ? 'Active' : 'Inactive';
 
             $refined_array[$index] = $inspection_data_array;
         }
-        return $refined_array;
+        $response = [
+            'per_page' => $paginatedData->perPage(),
+            'current_page' => $paginatedData->currentPage(),
+            'from' => $paginatedData->firstItem(),
+            'to' => $paginatedData->lastItem(),
+            'total' => $paginatedData->total(),
+            'total_page' => $paginatedData->lastPage(),
+            'list' => $refined_array,
+        ];
+
+        return $response;
     }
 
     public function store()
@@ -149,7 +165,7 @@ class HealthInstrumentCalibration extends Model
         return $data;
     }
 
-     public function storeApi()
+    public function storeApi()
     {
 
         $request = request();
@@ -254,9 +270,9 @@ class HealthInstrumentCalibration extends Model
 
     public function getInspectionData($id)
     {
-        $data = $this->select('inspection_ohc_health_instrument_calibration_track_sheet.*', 'inspection_static_docno.doc_no','inspection_static_docno.issue_date','inspection_static_docno.rev_dt')
+        $data = $this->select('inspection_ohc_health_instrument_calibration_track_sheet.*', 'inspection_static_docno.doc_no', 'inspection_static_docno.issue_date', 'inspection_static_docno.rev_dt')
             ->leftjoin('inspection_static_docno', 'inspection_static_docno.id', '=', 'inspection_ohc_health_instrument_calibration_track_sheet.document_reference_id')
-            ->where('inspection_ohc_health_instrument_calibration_track_sheet.id',$id)
+            ->where('inspection_ohc_health_instrument_calibration_track_sheet.id', $id)
             ->first();
 
         return $data;

@@ -27,6 +27,8 @@ use App\Http\Controllers\Api\Inspection\Safety\MonthlyEyeWashController;
 use App\Http\Controllers\Api\Inspection\Safety\MonthlyForkLiftInspection;
 use App\Http\Controllers\Api\Inspection\Fire\MonthlyFirePumpHouseController;
 use App\Http\Controllers\Api\{LoginController, NotificationController, AdminController};
+use App\Http\Controllers\Api\Inspection\Audit\Master\TaskMasterController;
+use App\Http\Controllers\Api\Inspection\Fire\HydrantRiserController;
 use App\Http\Controllers\Api\Inspection\Ohc\EmergencyBuyerFirstAidBagChecklistController;
 use App\Http\Controllers\Api\Inspection\Ohc\HealthInstrumentCalibrationController;
 use App\Http\Controllers\Api\Inspection\Ohc\Master\FirstAidContoller;
@@ -136,13 +138,7 @@ Route::middleware('api')->prefix('v1')->group(function () {
                 Route::group(['prefix' => 'monthly-audit/'], function () {
                     Route::post('list', [MonthlyAuditController::class, 'list']);
                     Route::post('view', [MonthlyAuditController::class, 'view']);
-                    Route::post('add', [MonthlyAuditController::class, 'add']);
-                });
-
-                Route::group(['prefix' => 'monthly-audit/'], function () {
-                    Route::post('list', [MonthlyAuditController::class, 'list']);
-                    Route::post('view', [MonthlyAuditController::class, 'view']);
-                    Route::post('add', [MonthlyAuditController::class, 'add']);
+                    Route::post('add', [MonthlyAuditController::class, 'store']);
                 });
 
                 Route::group(['prefix' => 'inter-unit-audit/'], function () {
@@ -150,6 +146,8 @@ Route::middleware('api')->prefix('v1')->group(function () {
                     Route::post('view', [InterUnitAuditController::class, 'view']);
                     Route::post('add', [InterUnitAuditController::class, 'add']);
                 });
+
+                Route::post('task-master/list', [TaskMasterController::class, 'list']);
             });
 
             // gembaWalk
@@ -166,55 +164,60 @@ Route::middleware('api')->prefix('v1')->group(function () {
                     Route::post('view', [HooterInspectionController::class, 'View']);
                 });
 
-                Route::group(['prefix' => 'fire-alarm-inspection/'],function(){
-                    Route::post('list',[FireAlarmController::class,'List']);
-                    Route::post('add',[FireAlarmController::class,'Add']);
-                    Route::post('view',[FireAlarmController::class,'View']);
+                Route::group(['prefix' => 'fire-alarm-inspection/'], function () {
+                    Route::post('list', [FireAlarmController::class, 'List']);
+                    Route::post('add', [FireAlarmController::class, 'Add']);
+                    Route::post('view', [FireAlarmController::class, 'View']);
                 });
 
-                Route::group(['prefix' => 'fire-extinguisher/inspection/'],function(){
-                    Route::post('list',[FireExtinguisherController::class,'List']);
-                    Route::post('add',[FireExtinguisherController::class,'Add']);
-                    Route::post('view',[FireExtinguisherController::class,'Add']);
+                Route::group(['prefix' => 'fire-extinguisher/inspection/'], function () {
+                    Route::post('list', [FireExtinguisherController::class, 'List']);
+                    Route::post('add', [FireExtinguisherController::class, 'Add']);
+                    Route::post('view', [FireExtinguisherController::class, 'Add']);
                 });
 
-                Route::group(['prefix' => 'hose-box-inspection/'],function(){
-                    Route::post('list',[HoseController::class,'List']);
-                    Route::post('add',[HoseController::class,'Add']);
-                    Route::post('view',[HoseController::class,'View']);
+                Route::group(['prefix' => 'hose-box-inspection/'], function () {
+                    Route::post('list', [HoseController::class, 'List']);
+                    Route::post('add', [HoseController::class, 'Add']);
+                    Route::post('view', [HoseController::class, 'View']);
                 });
 
-                Route::group(['prefix' => 'hose-reel-inspection/'],function(){
-                    Route::post('list',[HoseReelController::class,'List']); 
-                    Route::post('add',[HoseReelController::class,'Add']); 
-                    Route::post('view',[HoseReelController::class,'View']); 
+                Route::group(['prefix' => 'hose-reel-inspection/'], function () {
+                    Route::post('list', [HoseReelController::class, 'List']);
+                    Route::post('add', [HoseReelController::class, 'Add']);
+                    Route::post('view', [HoseReelController::class, 'View']);
                 });
 
-                Route::group(['prefix' => 'isolating-valve-inspection/'],function(){
-                    Route::post('list',[IsolationValveController::class,'List']);
-                    Route::post('add',[IsolationValveController::class,'Add']);
-                    Route::post('view',[IsolationValveController::class,'View']);
+                Route::group(['prefix' => 'isolating-valve-inspection/'], function () {
+                    Route::post('list', [IsolationValveController::class, 'List']);
+                    Route::post('add', [IsolationValveController::class, 'Add']);
+                    Route::post('view', [IsolationValveController::class, 'View']);
                 });
 
-                Route::group(['prefix' => 'monthly-fire-pump-house-inspection/'],function(){
-                    Route::post('list',[MonthlyFirePumpHouseController::class,'List']);
-                    Route::post('add',[MonthlyFirePumpHouseController::class,'Add']);
-                    Route::post('view',[MonthlyFirePumpHouseController::class,'View']);
+                Route::group(['prefix' => 'monthly-fire-pump-house-inspection/'], function () {
+                    Route::post('list', [MonthlyFirePumpHouseController::class, 'List']);
+                    Route::post('add', [MonthlyFirePumpHouseController::class, 'Add']);
+                    Route::post('view', [MonthlyFirePumpHouseController::class, 'View']);
                 });
 
-                Route::group(['prefix' => 'sprinkler-system-inspection/'],function(){
-                    Route::post('list',[SprinklerSystemController::class,'List']);
-                    Route::post('add',[SprinklerSystemController::class,'Add']);
-                    Route::post('view',[SprinklerSystemController::class,'View']);
+                Route::group(['prefix' => 'sprinkler-system-inspection/'], function () {
+                    Route::post('list', [SprinklerSystemController::class, 'List']);
+                    Route::post('add', [SprinklerSystemController::class, 'Add']);
+                    Route::post('view', [SprinklerSystemController::class, 'View']);
                 });
 
+                Route::group(['prefix' => 'hydrant-and-riser/'], function () {
+                    Route::post('list', [HydrantRiserController::class, 'list']);
+                    Route::post('view', [HydrantRiserController::class, 'view']);
+                    Route::post('add', [HydrantRiserController::class, 'store']);
+                });
             });
 
-            Route::group(['prefix' => 'safety'],function(){
-                Route::group(['prefix' => 'monthly-eye-wash-inspection'],function(){
-                    Route::post('list',[MonthlyEyeWashController::class,'List']); 
-                    Route::post('add',[MonthlyEyeWashController::class,'Add']); 
-                    Route::post('view',[MonthlyEyeWashController::class,'View']); 
+            Route::group(['prefix' => 'safety'], function () {
+                Route::group(['prefix' => 'monthly-eye-wash-inspection'], function () {
+                    Route::post('list', [MonthlyEyeWashController::class, 'List']);
+                    Route::post('add', [MonthlyEyeWashController::class, 'Add']);
+                    Route::post('view', [MonthlyEyeWashController::class, 'View']);
                 });
             });
 
@@ -224,7 +227,7 @@ Route::middleware('api')->prefix('v1')->group(function () {
                 // Master
                 Route::post('first-aid-stock/list', [FirstAidContoller::class, 'medicine_stock_list']);
                 Route::post('first-aid-medicine/list', [FirstAidMedicineController::class, 'medicine_list']);
-                Route::post('first-aider',[WeeklyFirstAidBoxController::class,'getFirstAiderName']);
+                Route::post('first-aider', [WeeklyFirstAidBoxController::class, 'getFirstAiderName']);
 
                 // Emergency Buyer
                 Route::group(['prefix' => 'emergency-buyer-first-bag-checklist/'], function () {
