@@ -14,6 +14,7 @@ use App\Models\Inspection\Master\ChecklistSubTypeData;
 use App\Models\Inspection\Master\ChecklistOptionType;
 use App\Models\Inspection\Master\Shift;
 use App\Models\Inspection\InspectionStaticDocno;
+use Exception;
 use Illuminate\Support\Facades\Auth;
 
 class AuditAssessmentController extends BaseController
@@ -112,6 +113,51 @@ class AuditAssessmentController extends BaseController
 
             return $this->sendResponse($success, 'Audit Assessment Details ');
         } else {
+            return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
+        }
+    }
+
+
+    public function view(Request $request)
+    {
+        try {
+            if (Auth::user()) {
+                $id = $request->id;
+
+                $details = $this->audit_assessment->selectOne($id);
+
+
+                $checklist =  json_decode($details->checklist, true);
+
+                $formattedChecklist = [];
+
+                foreach ($checklist as $subcategory => $questions) {
+                    foreach ($questions as $questionId => $answer) {
+                        $formattedChecklist[] = [
+                            'subtype_data' => GetSubChecklistTypeName($subcategory),
+                            'question' => GetChecklistTypeDate($questionId),
+                            'answer' => $answer
+                        ];
+                    }
+                }
+
+
+                $success = [
+                    'id' => $details->id,
+                    'audit_id' => $details->audit_id,
+                    'floor_name' => $details->floor_name,
+                    'audit_date' => Displaydateformat($details->audit_date),
+                    'shift_id' => getShift($details->shift_id),
+                    'floor_executive' => $details->floor_executive,
+                    'checklist' => $formattedChecklist,
+
+
+                ];
+
+                return $this->sendResponse($success, 'Audit Assessment Details');
+            }
+        } catch (Exception $ex) {
+            dd($ex);
             return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
         }
     }
