@@ -928,6 +928,8 @@ Route::middleware(['securityheader'])->group(function () {
                     Route::post('import/Submit', [TaskMasterController::class, 'importSubmit']);
                     Route::post('delete', [TaskMasterController::class, 'Delete']);
                     Route::post('status', [TaskMasterController::class, 'StatusChange']);
+                    Route::post('unique', [TaskMasterController::class, 'Uniquecheck']);
+
                 });
 
                 Route::group(['prefix' => 'master/compliance_category'], function () {

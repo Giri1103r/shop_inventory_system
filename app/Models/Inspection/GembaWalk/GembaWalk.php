@@ -126,7 +126,7 @@ class GembaWalk extends Model
     public function listApi()
     {
         $request = request();
-
+        $perPage = $request->input('per_page', 10);
         $search = '';
         $query = $this->select('inspection_gemba_walk.*', 'inspection_gemba_walk_status.status_name', 'inspection_gemba_walk_status.bg_color', 'inspection_shift_option.shift', 'inspection_gemba_walk.id as gemba_walk_id')
             ->leftJoin('inspection_shift_option', 'inspection_shift_option.id', '=', 'inspection_gemba_walk.shift_id')
@@ -152,21 +152,39 @@ class GembaWalk extends Model
         }
 
 
-        $data = $query->orderby('inspection_gemba_walk.id')->get();
-        $inspection_data = $data->toArray();
+        $paginatedData = $query->orderby('inspection_gemba_walk.id')->paginate($perPage);
+        $inspection_data = $paginatedData->toArray();
+
+
+        if (empty($inspection_data['data'])) {
+            return $this->sendError('No records found.', [], 404);
+        }
+
         $data_array = [];
         $refined_data = [];
-        foreach ($inspection_data as $index => $listdata) {
+
+        foreach ($inspection_data['data'] as $index => $listdata) {
             $data_array['id'] = $listdata['id'];
             $data_array['gemba_walk_auto_id'] = $listdata['gemba_walk_auto_id'];
             $data_array['date'] = $listdata['date'];
             $data_array['shift_name'] = getShift($listdata['shift_id']);
-            $data_array['status'] = $listdata['status_name'];
+            $data_array['inspection_status'] = $listdata['status_name'];
             $data_array['created_at'] = Displaydateformat($listdata['created_at']);
             $data_array['created_by'] = getUsername($listdata['created_by']);
             $refined_data[$index] = $data_array;
         }
-        return $refined_data;
+
+        $response = [
+            'per_page' => $paginatedData->perPage(),
+            'current_page' => $paginatedData->currentPage(),
+            'from' => $paginatedData->firstItem(),
+            'to' => $paginatedData->lastItem(),
+            'total' => $paginatedData->total(),
+            'total_page' => $paginatedData->lastPage(),
+            'list' => $refined_data,
+        ];
+
+        return $response;
     }
 
     public function store()
@@ -209,7 +227,8 @@ class GembaWalk extends Model
     }
 
 
-    public function storeApi(){
+    public function storeApi()
+    {
         $request = request();
 
         if ($request->is_passed == 2) {
@@ -241,8 +260,7 @@ class GembaWalk extends Model
         }
 
 
-                return $this->create($insert_array);
-
+        return $this->create($insert_array);
     }
 
     public function selectOne($id)
@@ -417,10 +435,10 @@ class GembaWalk extends Model
 
     public function getInspectionDetails($id)
     {
-        $data = $this->select('inspection_gemba_walk.*','inspection_static_docno.doc_no','inspection_static_docno.issue_date','inspection_static_docno.rev_dt')
-                     ->leftjoin('inspection_static_docno','inspection_static_docno.id','=','inspection_gemba_walk.document_reference_id')
-                     ->where('inspection_gemba_walk.id',$id)
-                     ->first();
+        $data = $this->select('inspection_gemba_walk.*', 'inspection_static_docno.doc_no', 'inspection_static_docno.issue_date', 'inspection_static_docno.rev_dt')
+            ->leftjoin('inspection_static_docno', 'inspection_static_docno.id', '=', 'inspection_gemba_walk.document_reference_id')
+            ->where('inspection_gemba_walk.id', $id)
+            ->first();
         return $data;
     }
 

@@ -41,7 +41,7 @@ class HealthInstrumentCalibrationController extends BaseController
                     ]);
                 }
             } catch (Exception $ex) {
-                report($ex);
+                dd($ex);
                 return $this->sendError('Unauthotized', ['error', 'Unauthorized'], 404);
             }
         } else {

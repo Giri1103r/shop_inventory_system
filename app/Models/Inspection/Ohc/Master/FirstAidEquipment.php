@@ -97,6 +97,7 @@ class FirstAidEquipment extends Model
     public function ListApi()
     {
         $request = request();
+        $perPage = $request->input('per_page', 10);
         $search = '';
         $query = $this->select('inspection_ohc_master_first_aid_equipment.*', 'ohc_master_medicine.medicine')
             ->leftJoin('ohc_master_medicine', 'ohc_master_medicine.id', '=', 'inspection_ohc_master_first_aid_equipment.medicine_id')
@@ -114,13 +115,13 @@ class FirstAidEquipment extends Model
                     ->orWhere('inspection_ohc_master_first_aid_equipment.freeze_quantity', 'LIKE', '%' . $search . '%');
             });
         }
-        $data = $query->orderBy('inspection_ohc_master_first_aid_equipment.id')->get();
+        $paginatedData = $query->orderBy('inspection_ohc_master_first_aid_equipment.id')->paginate($perPage);
 
-        $first_aid = $data->toArray();
+        $first_aid = $paginatedData->toArray();
         $first_aid_stock = [];
         $refined_data = [];
 
-        foreach ($first_aid as $index => $data) {
+        foreach ($first_aid['data'] as $index => $data) {
             $first_aid_stock['id'] = $data['id'];
             $first_aid_stock['medicine_name'] = $data['medicine'];
             $first_aid_stock['freeze_quantity'] = $data['freeze_quantity'];
@@ -131,7 +132,17 @@ class FirstAidEquipment extends Model
             $refined_data[$index] = $first_aid_stock;
         }
 
-        return $refined_data;
+        $response = [
+            'per_page' => $paginatedData->perPage(),
+            'current_page' => $paginatedData->currentPage(),
+            'from' => $paginatedData->firstItem(),
+            'to' => $paginatedData->lastItem(),
+            'total' => $paginatedData->total(),
+            'total_page' => $paginatedData->lastPage(),
+            'list' => $refined_data,
+        ];
+
+        return $response;
     }
 
     public function store()
