@@ -132,14 +132,16 @@ class AuditAssessmentController extends BaseController
                 $formattedChecklist = [];
 
                 foreach ($checklist as $subcategory => $questions) {
+                    $subtypeName = GetSubChecklistTypeName($subcategory);
+
                     foreach ($questions as $questionId => $answer) {
-                        $formattedChecklist[] = [
-                            'subtype_data' => GetSubChecklistTypeName($subcategory),
+                        $formattedChecklist[$subtypeName][] = [
                             'question' => GetChecklistTypeDate($questionId),
-                            'answer' => $answer
+                            'checked' => $answer
                         ];
                     }
                 }
+
 
 
                 $success = [
@@ -148,7 +150,7 @@ class AuditAssessmentController extends BaseController
                     'floor_name' => $details->floor_name,
                     'audit_date' => Displaydateformat($details->audit_date),
                     'shift_id' => getShift($details->shift_id),
-                    'floor_executive' => $details->floor_executive,
+                    'floor_executive' => getUsername($details->floor_executive),
                     'checklist' => $formattedChecklist,
 
 

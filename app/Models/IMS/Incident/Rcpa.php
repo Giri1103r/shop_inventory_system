@@ -49,12 +49,12 @@ class Rcpa extends Model
     ];
 
 
-    
+
     public function list()
     {
         $request = request();
         $search = '';
-        $query = $this->select('ims_rcpa_responsible.*','ims_incident_status.status_name', 'ims_incident_status.bg_color','ims_initial_incident.sr_no','ims_initial_incident.unit_id','ims_initial_incident.shift');
+        $query = $this->select('ims_rcpa_responsible.*', 'ims_incident_status.status_name', 'ims_incident_status.bg_color', 'ims_initial_incident.sr_no', 'ims_initial_incident.unit_id', 'ims_initial_incident.shift');
         $query = $query->leftJoin('ims_incident_status', 'ims_incident_status.id', '=', 'ims_rcpa_responsible.incident_status');
         $query = $query->leftJoin('ims_initial_incident', 'ims_initial_incident.id', '=', 'ims_rcpa_responsible.incident_id');
         $query = $query->leftJoin('ims_initial_incident_investigation', 'ims_initial_incident_investigation.id', '=', 'ims_rcpa_responsible.investigation_id');
@@ -64,7 +64,7 @@ class Rcpa extends Model
          * Role Based list view condition start
          */
         if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_ADMIN) || CheckUserRole(ROLE_EHS_HEAD)) {
-            
+            $query->where('ims_initial_incident.status', '1');
         } elseif (CheckUserRole(ROLE_EHS_OFFICER)) {
             $query->where('ims_initial_incident.created_by', Auth::user()->id)->where('ims_initial_incident.status', '1');
         } else {
@@ -79,7 +79,7 @@ class Rcpa extends Model
             //         ->orWhereRaw("FIND_IN_SET(?, choose_assignee)", [$employeeId]);
             // })->where('ims_initial_incident.status', '1');
 
-            $query->where('ims_rcpa_responsible.responsibility', Auth::user()->id);
+            $query->where('ims_rcpa_responsible.responsibility', Auth::user()->id)->where('ims_initial_incident.status', '1');
         }
 
 
@@ -148,16 +148,16 @@ class Rcpa extends Model
     public function storeRCPA($incident_id, $investigation_id)
     {
         $request = request();
-    
+
         $serial_numbers = $request->input('serial_number', []);
         $rcpaItems = $request->input('rcpa', []);
         $responsibilities = $request->input('responsibility', []);
         $timelines = $request->input('timeline', []);
         $statuses = $request->input('capa_status', []);
         $remarks = $request->input('capa_remark', []);
-    
-        $result = []; 
-    
+
+        $result = [];
+
         foreach ($rcpaItems as $index => $rcpaText) {
             if (trim($rcpaText)) {
                 $responsibility_id = isset($responsibilities[$index]) ? decryptId($responsibilities[$index]) : null;
@@ -181,7 +181,7 @@ class Rcpa extends Model
                 ];
             }
         }
-    
+
         return $result;
     }
     public function actiontakensubmit($id)
@@ -210,7 +210,7 @@ class Rcpa extends Model
         );
         return $this->where('id', $rcpa_id)->update($update_array);
     }
-    public function selectOne($id,$incident_id)
+    public function selectOne($id, $incident_id)
     {
 
         $data = $this->select(
@@ -220,6 +220,26 @@ class Rcpa extends Model
             ->first();
         return $data;
     }
+
+    public function statuschange($id)
+    {
+        $request = request();
+
+        $type = $request->types;
+        if ($type == 1) {
+            $update_data = array(
+                'status' => 0,
+            );
+        } else {
+            $update_data = array(
+                'status' => 1,
+            );
+        }
+
+        return $this->where('incident_id', $id)->update($update_data);
+    }
+
+  
 
     public function getRCPA($id)
     {
@@ -232,5 +252,4 @@ class Rcpa extends Model
             ->get();
         return $data;
     }
-    
 }
