@@ -99,10 +99,10 @@ return [
 
     // Emergency Light Inspection
 
-    'emergency_light_number' => 'Emergency Of Light',
-    'condition_of_light' => 'Condition Of Light',
+    'emergency_light_number' => 'Emergency of Light',
+    'condition_of_light' => 'Condition of Light',
     'power_supply' => 'Power Supply',
-    'type_of_light' => 'Type Of light',
+    'type_of_light' => 'Type of light',
     'light_condition' => 'Light Condition',
     'switch_condition' => 'Switch Condition',
     'status' => 'Status',

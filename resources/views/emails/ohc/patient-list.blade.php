@@ -26,7 +26,7 @@
                                 <b>Patient Code</b>
                             </td>
                             <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
-                                valign="top"> {{ $emailDetails['emp_name'] }}</td>
+                                valign="top"> {{ $emailDetails['emp_id'] }}</td>
                         </tr>
                         <tr>
                             <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">

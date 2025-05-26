@@ -65,7 +65,7 @@ class AuditAssessmentController extends BaseController
                 });
             }
 
-            $audit_assessment_array = $audit_assessment_array->orderBy('training_schedule.id', 'DESC')->paginate($request->input('per_page', 10));
+            $audit_assessment_array = $audit_assessment_array->orderBy('inspection_audit_assessment.id', 'DESC')->paginate($request->input('per_page', 10));
 
             $audit_assessment_list = $audit_assessment_array->toArray();
 
@@ -82,13 +82,10 @@ class AuditAssessmentController extends BaseController
             foreach ($audit_assessment_list['data'] as $listdata) {
                 $data = [];
                 $data['id'] = $listdata['id'] ?? '';
-                $data['from_date'] = Displaydateformat($listdata['from_date'] ?? '');
-                $data['to_date'] = Displaydateformat($listdata['to_date'] ?? '');
-                $data['topic_name'] = $listdata['topic_name'] ?? '';
-                $data['trainer_id'] = getEmployeename($listdata['trainer_id'] ?? '');
-                $status = $listdata['training_status'] ?? null;
-                $data['training_status'] =
-                    in_array($status, [1, 2, 4, 5]) ? 'Training Pending' : ($status == 8 ? 'Training Completed' : (in_array($status, [6, 7]) ? 'Training in Progress' : ($status == 3 ? 'Training Rejected' : 'Unknown Status')));
+                $data['audit_id'] = ($listdata['audit_id'] ?? '');
+                $data['audit_date'] = Displaydateformat($listdata['audit_date'] ?? '');
+                $data['floor_name'] = ($listdata['floor_name'] ?? '');
+                $data['floor_executive'] = getUsername($listdata['floor_executive'] ?? '');
                 $data['status'] = $listdata['status'] == 1 ? 'Active' : 'In-Active';
                 $data['created_by'] = getUsername($listdata['created_by'] ?? '');
                 $data['created_at'] = Displaydateformat($listdata['created_at'] ?? '');
@@ -109,11 +106,11 @@ class AuditAssessmentController extends BaseController
                 'list' => $data_array,
             ];
 
-            // $success = [
-            //     'audit_assessment_details' => $audit_assessment_details
-            // ];
+            $success = [
+                'audit_assessment_details' => $audit_assessment_details
+            ];
 
-            // return $this->sendResponse($success, 'Audit Assessment Details ');
+            return $this->sendResponse($success, 'Audit Assessment Details ');
         } else {
             return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
         }
