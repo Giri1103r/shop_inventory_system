@@ -1917,6 +1917,8 @@ class InitialIncidentController extends Controller
             $id = decryptId($request->id);
 
             $this->initialincident->statuschange($id);
+            $this->rcpa->statuschange($id);
+            
             return response()->json(['status' => 'success', 'msg' => 'Your status has changed successfully'], 200);
         } catch (Exception $ex) {
             report($ex);

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Inspection\InspectionStaticDocno;
 use App\Models\Master\Company;
 use App\Models\Master\Department;
 use App\Models\Master\Employee;
@@ -278,6 +279,38 @@ class MasterController extends BaseController
                 ];
 
                 return $this->sendResponse($success, 'Department Details');
+            }
+        } catch (Exception $ex) {
+            report($ex);
+            return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
+        }
+    }
+
+
+    public function documentNumber(Request $request)
+    {
+        try {
+
+            if (Auth::user()) {
+
+
+                $documentList = InspectionStaticDocno::select(
+                    'id',
+                    'type',
+                    'doc_no',
+                    'issue_date',
+                    'rev_dt',
+
+                )
+
+                    ->where('status', 1)
+                    ->get();
+
+                $success = [
+                    'responsible_person' => $documentList,
+                ];
+
+                return $this->sendResponse($success, 'Document Details Details');
             }
         } catch (Exception $ex) {
             report($ex);

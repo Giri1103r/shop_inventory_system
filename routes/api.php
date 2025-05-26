@@ -76,6 +76,7 @@ Route::middleware('api')->prefix('v1')->group(function () {
         Route::post('/master/location/dropdown', [MasterController::class, 'location']);
         Route::post('/master/unit/dropdown', [MasterController::class, 'unit']);
         Route::post('/master/department/dropdown', [MasterController::class, 'department']);
+        Route::post('/inspection/master/document/dropdown', [MasterController::class, 'documentNumber']);
 
 
         Route::group(['prefix' => 'ppe/master'], function () {

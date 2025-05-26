@@ -239,7 +239,7 @@
                                             </h4>
                                         </div>
 
-                                        <div id="chart1" class="chart-container"></div>
+                                        {{-- <div id="chart1" class="chart-container"></div> --}}
 
                                     </div>
                                 </div>
@@ -260,7 +260,7 @@
                                                 {{ isset($masterLink[5]['count']) ? $masterLink[5]['count'] : 0 }}</h4>
                                         </div>
 
-                                        <div id="chart2" class="chart-container"></div>
+                                        {{-- <div id="chart2" class="chart-container"></div> --}}
 
                                     </div>
                                 </div>
@@ -283,7 +283,7 @@
                                                 {{ isset($masterLink[6]['count']) ? $masterLink[6]['count'] : 0 }}</h4>
                                         </div>
 
-                                        <div id="chart3" class="chart-container"></div>
+                                        {{-- <div id="chart3" class="chart-container"></div> --}}
 
                                     </div>
                                 </div>
@@ -304,7 +304,7 @@
                                                 {{ isset($masterLink[7]['count']) ? $masterLink[7]['count'] : 0 }}</h4>
                                         </div>
 
-                                        <div id="chart4" class="chart-container"></div>
+                                        {{-- <div id="chart4" class="chart-container"></div> --}}
 
                                     </div>
                                 </div>
@@ -453,7 +453,40 @@
 
             </div>
 
-           
+            <div class="card shadow-lg border-0">
+                <div class="card-body">
+                    <h4 class="card-title text-dark mb-3">Medicine Status</h4>
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered" id="medicine-table">
+
+
+                            <thead class="bg-secondary" style="color: #ffff">
+                                <tr>
+                                    <th>Medicine</th>
+                                    <th>Quantity</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($medicines as $medicine)
+                                    <tr>
+                                        <td class="">{{ $medicine->medicine }}</td>
+                                        <td>
+                                            <span
+                                                class="badge
+                                                @if ($medicine->balance > 50) bg-success
+                                                @elseif ($medicine->balance > 10) bg-warning text-dark
+                                                @else bg-danger @endif
+                                                px-3 py-2">
+                                                {{ $medicine->balance }}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
 
 
         </div>
