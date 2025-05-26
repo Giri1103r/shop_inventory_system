@@ -1,45 +1,62 @@
 <?php
 
-namespace App\Http\Controllers\Api\Inspection\Safety;
+namespace App\Http\Controllers\Api\Inspection\Fire;
 
 use Exception;
 use App\Models\Master\Unit;
 use Illuminate\Http\Request;
 use App\Models\Master\Location;
+use App\Models\Master\Department;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use App\Models\Inspection\Master\Shift;
 use Illuminate\Support\Facades\Validator;
+use App\Models\Inspection\Master\Frequency;
 use App\Http\Controllers\Api\BaseController;
+use App\Mail\Inspection\Fire\FireInspection;
+use App\Models\Inspection\Fire\DetectorType;
+use App\Models\Inspection\Fire\FireStatusLog;
+use App\Models\Inspection\Fire\FireFileUpload;
 use App\Mail\Inspection\Safety\SafetyInspection;
 use App\Models\Inspection\InspectionStaticDocno;
-use App\Models\Inspection\Safety\SafetyStatusLog;
-use App\Models\Inspection\Safety\SignatureUpload;
-use App\Models\Inspection\Safety\SafetyGalleryInspection as SafetySafetyGalleryInspection;
+use App\Models\Inspection\Fire\DetectorInspection;
+use App\Models\Inspection\Fire\FireSignatureUpload;
+use App\Models\Inspection\Fire\FireCheckListFollowUp;
+use App\Models\Inspection\Fire\DetectorInspectionDetails;
 
-class SafetyGalleryInspection extends BaseController
+class DetectorInspectionController extends BaseController
 {
-    private $safetygallery;
+
+    private $detector;
+    private $detector_details;
     private $shift;
     private $location;
     private $unit;
     private $frequency;
-    private $statusLog;
+    private $department;
+    private $files;
     private $signature;
+    private $statusLog;
+    private $checklist_follow;
     private $document_reference;
+    private $detector_type;
 
     public function __construct()
     {
-        $this->safetygallery = new SafetySafetyGalleryInspection();
-        $this->location = new Location();
+        $this->detector = new DetectorInspection();
+        $this->detector_details = new DetectorInspectionDetails();
+        $this->department = new Department();
         $this->shift = new Shift();
-        $this->unit = new Unit();
         $this->location = new Location();
         $this->unit = new Unit();
-        $this->statusLog = new SafetyStatusLog();
-        $this->signature = new SignatureUpload();
+        $this->frequency = new Frequency();
+        $this->files = new FireFileUpload();
+        $this->signature = new FireSignatureUpload();
+        $this->statusLog = new FireStatusLog();
+        $this->checklist_follow = new FireCheckListFollowUp();
         $this->document_reference = new InspectionStaticDocno();
+        $this->detector_type = new DetectorType();
     }
     public function list()
     {
@@ -50,34 +67,32 @@ class SafetyGalleryInspection extends BaseController
                     $search = $request->search;
                 }
             }
-            $query = SafetySafetyGalleryInspection::select(
-                'inspection_safety_gallery.*',
-                'masters_unit.*',
-                'masters_location.*',
-                'inspection_safety_gallery.id as inspection_id',
-                'inspection_safety_gallery.created_at as inspection_created_at'
-            )
-                ->leftJoin('masters_location', 'inspection_safety_gallery.location', '=', 'masters_location.id')
-                ->leftJoin('masters_unit', 'inspection_safety_gallery.unit', '=', 'masters_unit.id')
-                ->leftJoin('inspection_static_docno', 'inspection_safety_gallery.document_reference_id', '=', 'inspection_static_docno.id');
+            $query = $this->detector->select('inspection_fire_detector.*', 'inspection_shift_option.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*', 'inspection_fire_detector.id as fire_detector_id', 'inspection_fire_detector.created_by as checked_by')
+                ->leftJoin('masters_location', 'inspection_fire_detector.location', '=', 'masters_location.id')
+                ->leftJoin('inspection_shift_option', 'inspection_fire_detector.shift', '=', 'inspection_shift_option.id')
+                ->leftJoin('masters_unit', 'inspection_fire_detector.unit', '=', 'masters_unit.id')
+                ->leftJoin('inspection_frequency_option', 'inspection_fire_detector.frequency', '=', 'inspection_frequency_option.id')
+                ->leftJoin('inspection_static_docno', 'inspection_fire_detector.document_reference_id', '=', 'inspection_static_docno.id');
+
 
             $org_total_counts = $query->count();
 
-
             if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_OFFICER) || CheckUserRole(ROLE_L1_MANAGER) || CheckUserRole(ROLE_L2_MANAGER)) {
             } else if (CheckUserRole(ROLE_FIRE_ASSOCIATES)) {
-                $query->where('inspection_safety_gallery.created_by', Auth::id());
+                $query->where('inspection_fire_detector.created_by', Auth::id());
             }
 
             if (!empty($search)) {
                 $search = ($search);
-                $query->where(function ($query) use ($search) {
-                    $query->orWhere('masters_unit.unit_name', $search)
-                        ->orWhere('masters_location.location_name', $search);
+                $query = $query->where(function ($query) use ($search) {
+                    $query->orWhereRaw('masters_location.location_name LIKE "%' . $search . '%"');
+                    $query->orWhereRaw('masters_unit.unit_name LIKE "%' . $search . '%"');
+                    $query->orWhereRaw('inspection_shift_option.shift LIKE "%' . $search . '%"');
+                    $query->orWhereRaw('inspection_frequency_option.frequency_name LIKE "%' . $search . '%"');
                 });
             }
 
-            $query_array = $query->orderBy('inspection_safety_gallery.id', 'DESC')->paginate($request->input('per_page', 10));
+            $query_array = $query->orderBy('inspection_fire_detector.id', 'DESC')->paginate($request->input('per_page', 10));
 
             $inspection_list = $query_array->toArray();
 
@@ -91,8 +106,9 @@ class SafetyGalleryInspection extends BaseController
                 $data['id'] = $datas['id'] ?? '';
                 $data['date_of_inspection'] = Displaydateformat($datas['date_of_inspection']);
                 $data['location_name'] = ($datas['location_name'] ?? '');
-                $data['resource_code'] = ($datas['resource_code'] ?? '');
+                $data['frequency_name'] = ($datas['frequency_name'] ?? '');
                 $data['unit_name'] = ($datas['unit_name'] ?? '');
+                $data['shift_name'] = ($datas['shift'] ?? '');
                 $data['inspection_status'] = getInspectionStatus($datas['inspection_status'] ?? '');
                 $data['created_by'] = getUsername($datas['created_by'] ?? '');
                 $data['created_at'] = Displaydateformat($datas['created_at'] ?? '');
@@ -124,36 +140,43 @@ class SafetyGalleryInspection extends BaseController
         try {
             if (Auth::user()) {
                 $id = $request->id;
-                $inspection = $this->safetygallery
-                    ->leftJoin('inspection_static_docno', 'inspection_safety_gallery.document_reference_id', '=', 'inspection_static_docno.id')
-                    ->where('inspection_safety_gallery.id', $id)
+                $inspection = $this->detector
+                    ->leftJoin('inspection_static_docno', 'inspection_fire_detector.document_reference_id', '=', 'inspection_static_docno.id')
+                    ->where('inspection_fire_detector.id', $id)
                     ->select(
-                        'inspection_safety_gallery.*',
+                        'inspection_fire_detector.*',
                         'inspection_static_docno.*',
-                        'inspection_safety_gallery.id as inspection_id',
-                        'inspection_safety_gallery.created_by as inspection_created_by',
-                        'inspection_safety_gallery.updated_at as inspection_updated_at',
+                        'inspection_fire_detector.id as inspection_id',
+                        'inspection_fire_detector.created_by as inspection_created_by',
+                        'inspection_fire_detector.updated_at as inspection_updated_at',
                     )
                     ->first();
 
-                $inspection_responses = json_decode($inspection->responses, true);
+                $inspection_details = $this->detector_details->GetDetails($inspection->inspection_id);
 
-                $responses = [];
-                foreach ($inspection_responses as $inspection_response) {
+                $inspection_details_array = [];
+                foreach ($inspection_details as $inspection_detail) {
                     $data = [
-                        'question_name' => GetChecklistTypeDate($inspection_response['question_id']),
-                        'answer' => $inspection_response['answer'],
-                        'remarks' => $inspection_response['remarks'],
+                        'department' => getDepartment($inspection_detail->department),
+                        'resource_code' => ($inspection_detail->resource_code),
+                        'remarks' => ($inspection_detail->remarks),
+                        'detector_type' => getDetectorName($inspection_detail->detector_type),
+                        'physical_condition' => getPhysicalConditon($inspection_detail->physical_condition),
+                        'cable_condition' => getCableCondition($inspection_detail->cable_condition),
+                        'response_indicator' => ($inspection_detail->response_indicator == 1 ? 'WORKING' : 'NOT WORKING'),
+                        'working_status' => ($inspection_detail->working_status == 1 ? 'OPERATIONAL' : 'NON OPERATIONAL'),
                     ];
-                    $responses[] = $data;
+                    $inspection_details_array[] = $data;
                 }
-                $signature = GetSafetySignature(
+
+                $signature = GetFireSignature(
                     $inspection->inspection_created_by,
                     $inspection->inspection_id,
-                    SAFETY_GALLERY_INSPECTION,
+                    DETECTOR_INSPECTION,
                 );
+                $inspection_image = $this->files->GetFile(DETECTOR_INSPECTION, $inspection->inspection_id);
 
-                $statuslog = $this->statusLog->selectOne($id, SAFETY_GALLERY_INSPECTION);
+                $statuslog = $this->statusLog->selectOne($id, DETECTOR_INSPECTION);
 
                 if (count($statuslog) > 0) {
                     foreach ($statuslog as $key => $status) {
@@ -168,31 +191,35 @@ class SafetyGalleryInspection extends BaseController
                     $statuslog = null;
                 }
 
-                $inspection_details = [
+                $inspections = [
                     'id' => $inspection->inspection_id,
                     'issue_date' => Displaydateformat($inspection->issue_date),
                     'doc_no' => $inspection->doc_no,
                     'rev_dt' => $inspection->rev_dt,
                     'date_of_inspection' => Displaydateformat($inspection->date_of_inspection),
-                    'location' => getLocationname($inspection->location),
-                    'unit' => getUnitname($inspection->unit),
-                    'resource_code' => $inspection->resource_code,
-                    'responses' => $responses,
+                    'location_name' => getLocationname($inspection->location),
+                    'unit_name' => getUnitname($inspection->unit),
+                    'shift_name' => getShiftname($inspection->shift),
+                    'frequency_name' => getFrequencyname($inspection->frequency),
+                    'device_image' => admin_url($inspection_image),
                     'inspection_creator_signature' => admin_url($signature),
                 ];
 
+                $inspection_details  = [];
+
+
                 if (!empty($inspection->verified_by)) {
-                    $updated_time = GetSafetyUpdatedTime(
+                    $updated_time = GetFireUpdatedTime(
                         $inspection->verified_by,
                         $inspection->inspection_id,
-                        SAFETY_GALLERY_INSPECTION,
+                        DETECTOR_INSPECTION,
                         WAITING_FOR_EHS_OFFICER_VERIFICATION,
                     );
 
-                    $verifier_signature = GetSafetySignature(
+                    $verifier_signature = GetFireSignature(
                         $inspection->verified_by,
                         $inspection->inspection_id,
-                        SAFETY_GALLERY_INSPECTION,
+                        DETECTOR_INSPECTION,
                     );
 
                     $inspection_details += [
@@ -202,12 +229,13 @@ class SafetyGalleryInspection extends BaseController
                         'capa_recomendation' => !empty($inspection->capa_recomendation) ? $inspection->capa_recomendation : $inspection->remarks,
                     ];
                 }
+
                 // CAPA Remarks by Inspection Creator
                 if (!empty($inspection->capa_remarks)) {
-                    $capa_creator_time = GetSafetyUpdatedTime(
+                    $capa_creator_time = GetFireUpdatedTime(
                         $inspection->inspection_created_by,
                         $inspection->inspection_id,
-                        SAFETY_GALLERY_INSPECTION,
+                        DETECTOR_INSPECTION,
                         WAITING_FOR_CAPA_ACTION,
                     );
 
@@ -220,17 +248,17 @@ class SafetyGalleryInspection extends BaseController
                 }
 
                 if (!empty($inspection->capa_ehs_remarks) && !empty($inspection->verified_by)) {
-                    $ehs_updated_time = GetSafetyUpdatedTime(
+                    $ehs_updated_time = GetFireUpdatedTime(
                         $inspection->verified_by,
                         $inspection->inspection_id,
-                        SAFETY_GALLERY_INSPECTION,
+                        DETECTOR_INSPECTION,
                         WAITING_FOR_CAPA_VERIFICATION,
                     );
 
-                    $ehs_signature = GetSafetySignature(
+                    $ehs_signature = GetFireSignature(
                         $inspection->verified_by,
                         $inspection->inspection_id,
-                        SAFETY_GALLERY_INSPECTION,
+                        DETECTOR_INSPECTION,
                     );
 
                     $inspection_details += [
@@ -243,16 +271,16 @@ class SafetyGalleryInspection extends BaseController
 
 
                 if (!empty($inspection->l1_manager_verified_by)) {
-                    $l1_signature = GetSafetySignature(
+                    $l1_signature = GetFireSignature(
                         $inspection->l1_manager_verified_by,
                         $inspection->inspection_id,
-                        SAFETY_GALLERY_INSPECTION,
+                        DETECTOR_INSPECTION,
                     );
 
-                    $l1_updated_time = GetSafetyUpdatedTime(
+                    $l1_updated_time = GetFireUpdatedTime(
                         $inspection->l1_manager_verified_by,
                         $inspection->inspection_id,
-                        SAFETY_GALLERY_INSPECTION,
+                        DETECTOR_INSPECTION,
                         WAITING_FOR_L1_VERIFICATION,
                     );
 
@@ -267,10 +295,10 @@ class SafetyGalleryInspection extends BaseController
                 if ($inspection->inspection_status == INSPECTION_APPROVED && !empty($inspection->approved_by)) {
 
                     if (!empty($inspection->l2_manager_verified_by)) {
-                        $l2_signature = GetSafetySignature(
+                        $l2_signature = GetFireSignature(
                             $inspection->l2_manager_verified_by,
                             $inspection->inspection_id,
-                            SAFETY_GALLERY_INSPECTION,
+                            DETECTOR_INSPECTION,
                         );
 
                         $inspection_details += [
@@ -280,10 +308,10 @@ class SafetyGalleryInspection extends BaseController
                             'l2_signature'     => !empty($l2_signature) ? admin_url($l2_signature) : '',
                         ];
                     } else {
-                        $approver_signature = GetSafetySignature(
+                        $approver_signature = GetFireSignature(
                             $inspection->approved_by,
                             $inspection->inspection_id,
-                            SAFETY_GALLERY_INSPECTION,
+                            DETECTOR_INSPECTION,
                         );
 
                         $inspection_details += [
@@ -298,6 +326,8 @@ class SafetyGalleryInspection extends BaseController
 
                 $success = [
                     'id' => $inspection->inspection_id,
+                    'inspections' => $inspections,
+                    'inspection_details_array' => $inspection_details_array,
                     'inspection_details' => $inspection_details,
                     '$statuslog' => $statuslog,
                 ];
@@ -313,25 +343,45 @@ class SafetyGalleryInspection extends BaseController
     }
 
 
-    public function store(Request $request)
+    public function Add(Request $request)
     {
         try {
             $rules = [
-                'doc_no' => 'required',
                 'issue_date' => 'required',
-                'resource_code' => 'required',
-                'location_id' => 'required',
-                'unit_id' => 'required',
+                'rev_date' => 'required',
                 'inspection_date' => 'required',
+                'location_id' => 'required',
+                'shift_id' => 'required',
+                'next_due' => 'required',
+                'unit_id' => 'required',
+                'frequency_id' => 'required',
+                'department.*' => 'required',
+                'resource_code.*' => 'required',
+                'detector_type.*' => 'required',
+                'physical_condition.*' => 'required',
+                'cable_condition.*' => 'required',
+                'response_indicator.*' => 'required',
+                'working_status.*' => 'required',
+                'remarks.*' => 'required',
             ];
 
             $messages = [
-                'doc_no.required' => 'Document number is required.',
-                'issue_date.required' => 'Issue Date is Required',
-                'resource_code.required' => 'Resource code is Required',
-                'location_id.required' => 'Location is Required',
-                'inspection_date.required' => 'Inspection Date is Required',
-                'unit_id.required' => 'Unit is Required',
+                'issue_date.required' => 'Issue Date is required.',
+                'rev_date.required' => 'Revision Date is required.',
+                'inspection_date.required' => 'Inspection Date is required.',
+                'location_id.required' => 'Location is required.',
+                'shift_id.required' => 'Shift is required.',
+                'frequency_id.required' => 'Frequency is required.',
+                'next_due.required' => 'Next Due Date is required.',
+                'unit_id.required' => 'Unit is required.',
+                'department.*.required' => 'Department is required.',
+                'resource_code.*.required' => 'Resource Code is required.',
+                'detector_type.*.required' => 'Detector Type is required.',
+                'physical_condition.*.required' => 'Physical Condition is required.',
+                'cable_condition.*.required' => 'Cable Condition is required.',
+                'response_indicator.*.required' => 'Response Indicator is required.',
+                'working_status.*.required' => 'Working Status is required.',
+                'remarks.*.required' => 'Remarks are required.',
             ];
 
             $validator = Validator::make($request->all(), $rules, $messages);
@@ -340,9 +390,11 @@ class SafetyGalleryInspection extends BaseController
                 return $this->sendError('Validation Error', $validator->errors(), 422);
             }
 
-            $safety_gallery_inspection = $this->safetygallery->store_api();
-            $id = $safety_gallery_inspection->id;
-            $signature_update = $this->signature->signatureUpload_api(SAFETY_GALLERY_INSPECTION, $safety_gallery_inspection->id);
+            $detector_inspection = $this->detector->store_api();
+            $id = $detector_inspection->id;
+            $detector_inspection_details = $this->detector_details->store_api($id);
+            $inspection_file = $this->files->file_upload_api(DETECTOR_INSPECTION, $id);
+            $signature_update = $this->signature->CheckedBySignatureApi($detector_inspection->id, DETECTOR_INSPECTION);
 
             $ehsOfficer = GetEHSOfficer();
             $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
@@ -355,10 +407,10 @@ class SafetyGalleryInspection extends BaseController
                     'title' => $mailsubject,
                     'message' => "Fire Associate create the Safety Gallery Inspection",
                     'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
-                    'id' => $safety_gallery_inspection->id,
+                    'id' => $detector_inspection->id,
                     'module' => 1,
                 )),
-                'web_link' =>  admin_url('safety/safety-gallery-inspection/view/' . encryptId($safety_gallery_inspection->id)),
+                'web_link' =>  admin_url('safety/safety-gallery-inspection/view/' . encryptId($detector_inspection->id)),
                 'assigned_user' => array_to_string($ehsOfficers),
                 'created_by' => Auth::id(),
             );
@@ -374,14 +426,14 @@ class SafetyGalleryInspection extends BaseController
                     'mail_subject' => $mailsubject,
                     'title' => $title,
                     'url' => $url,
-                    'data' => $safety_gallery_inspection
+                    'data' => $detector_inspection
                 );
-                Mail::to($email_id)->queue(new SafetyInspection($details));
+                Mail::to($email_id)->queue(new FireInspection($details));
             }
 
             $insert_array = [
-                'type' => SAFETY_GALLERY_INSPECTION,
-                'inspection_id' => $safety_gallery_inspection->id,
+                'type' => DETECTOR_INSPECTION,
+                'inspection_id' => $detector_inspection->id,
                 'from_status' => 0,
                 'to_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,
                 'created_by' => Auth::id(),
@@ -389,7 +441,7 @@ class SafetyGalleryInspection extends BaseController
             $this->statusLog->create($insert_array);
 
             $success = [
-                "success" => $safety_gallery_inspection,
+                "success" => $detector_inspection,
             ];
             return $this->sendResponse($success, 'Inspection Created');
         } catch (Exception $ex) {

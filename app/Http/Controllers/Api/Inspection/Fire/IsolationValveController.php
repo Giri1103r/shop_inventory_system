@@ -12,6 +12,7 @@ use App\Mail\Inspection\Fire\FireInspection;
 use App\Models\Inspection\Fire\FireStatusLog;
 use App\Models\Inspection\Fire\FireFileUpload;
 use App\Models\Inspection\Fire\IsolationValve;
+use App\Models\Inspection\InspectionStaticDocno;
 use App\Models\Inspection\Fire\IsolatingValveType;
 use App\Models\Inspection\Fire\FireSignatureUpload;
 use App\Models\Inspection\Fire\IsolationValveDetails;
@@ -24,6 +25,7 @@ class IsolationValveController extends Controller
     private $files;
     private $signature;
     private $valve_type;
+    private $document_reference;
 
     public function __construct()
     {
@@ -33,6 +35,7 @@ class IsolationValveController extends Controller
         $this->files = new FireFileUpload();
         $this->signature = new FireSignatureUpload();
         $this->valve_type = new IsolatingValveType();
+        $this->document_reference = new InspectionStaticDocno();
     }
 
     public function List(Request $request)
@@ -179,6 +182,216 @@ class IsolationValveController extends Controller
         } catch (Exception $ex) {
             report($ex);
             return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
+        }
+    }
+
+    public function TypeOfValves(Request $request)
+    {
+        try {
+            if (Auth::check()) {
+                $data = $this->valve_type->GetApi();
+                if ($data) {
+                    $types = [
+                        'data' => $data
+                    ];
+
+                    return $this->sendResponse($types, 'Data Retrived Successfully');
+                } else {
+                    return $this->sendError(
+                        'No Data Found.',
+                        ['error' => 'No Data Found'],
+                        406
+                    );
+                }
+            } else {
+                return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
+            }
+        } catch (Exception $ex) {
+            report($ex);
+            return $this->sendError(
+                'Unauthorised.',
+                ['error' => 'Please try again after sometimes'],
+                406
+            );
+        }
+    }
+
+    public function View(Request $request)
+    {
+        try {
+            if (Auth::check()) {
+                $id = $request->id;
+                $inspection = $this->inspection->selectOne($id);
+                $details = $this->inspection_details->GetDetails($inspection->id);
+                $inspection_type = ISOLATION_VALVE_INSPECTION;
+                $inspection_image = $this->files->GetFileApi($inspection_type, $id);
+                $document_no = $this->document_reference->selectOne($inspection->document_reference_id);
+                $signature = GetFireSignature($inspection->created_by,$id,$inspection_type);
+
+                // Hooter Main Section
+                $inspection_main = [
+                    'id' => $inspection->id,
+                    'document_no' => $document_no->doc_no,
+                    'issue_date' => Displaydateformat($document_no->issue_date),
+                    'issue_date' => $document_no->rev_dt,
+                    'document_reference_id' => $inspection->document_reference_id,
+                    'date_of_inspection' => Displaydateformat($inspection->date_of_inspection),
+                    'location_name' => getLocationname($inspection->location),
+                    'shift_name' => getShiftname($inspection->shift),
+                    'next_due' => Displaydateformat($inspection->next_due),
+                    'unit_name' => getUnitname($inspection->unit),
+                    'frequency_name' => getFrequencyname($inspection->frequency),
+                    'inspection_status' => GetStatusValue($inspection->inspection_status),
+                    'remarks' => $inspection->remarks,
+                    'created_at' => Displaydateformat($inspection->created_at),
+                    'updated_at' => Displaydateformat($inspection->updated_at),
+                    'observation' => $inspection->observation == 1 ? 'Yes' : 'No',
+                    'inspection_status' => GetStatusValue($inspection->inspection_status),
+                    'capa_recomendation' => $inspection->capa_recomendation,
+                    'capa_remarks' => $inspection->capa_remarks,
+                    'capa_ehs_remarks' => $inspection->capa_ehs_remarks,
+                    'level_one_manager_remarks' => $inspection->level_one_manager_remarks,
+                    'level_two_manager_remarks' => $inspection->level_two_manager_remarks,
+                    'level_two_manager_remarks' => $inspection->level_two_manager_remarks,
+                    'remarks' => $inspection->remarks,
+                    'checked_by' => getUsername($inspection->checked_by),
+                    'verified_by' => getUsername($inspection->verified_by),
+                    'approved_by' => getUsername($inspection->verified_by),
+                    'checked_by_id' => $inspection->checked_by,
+                    'verified_by_id' => $inspection->verified_by,
+                    'approved_by_id' => $inspection->approved_by,
+                    'created_by_id' => $inspection->created_by,
+                    'created_by' => getUsername($inspection->created_by),
+                    'inspection_image' => $inspection_image ?? [],
+                    'signature' => $signature ? admin_url($signature) : [],
+                ];
+
+                // Inspection Sub Data
+                $inspection_details = [];
+
+                foreach ($details as $index => $values) {
+
+                    $inspection_details[$index + 1] = [
+                        'id' => $values->id,
+                        'sr_no' => $values->sr_no,
+                        'inspection_id' => $values->inspection_id,
+                        'resource_code' => $values->resource_code,
+                        'isv_status' => $values->isv_status == FUNCTIONAL ? 'Functional' : 'Non-Functional',
+                        'size_isv' => $values->size_isv,
+                        'wheel_operation' => $values->wheel_operation == FUNCTIONAL ? 'Functional' : 'Non-Functional',
+                        'leakage' => $values->leakage == YES ? 'Yes' : 'No',
+                        'type' => getValveTypeName($values->type),
+                        'open' => $values->open == OPEN ? 'Open' : 'No',
+                        'close' => $values->close == OPEN ? 'Open' : 'No',
+                        'remarks' => $values->remarks,
+                        'created_by_name' => getUsername($values->created_by),
+                        'created_at' => Displaydateformat($values->created_at),
+                    ];
+                }
+
+
+                if (isset($inspection->verified_by)) {
+                    $ehs_officer_signature = GetFireSignature($inspection->verified_by, $id, $inspection_type);
+                    $inspection_details += [
+                        'verified_by' => getUsername($inspection->verified_by),
+                        'date' => Displaydateformat($inspection->created_at),
+                        'verified_by_signature' => admin_url($ehs_officer_signature),
+                    ];
+                }
+
+                if (isset($inspection->approved_by)) {
+                    $ehs_approved_signature = GetFireSignature($inspection->approved_by, $id, $inspection_type);
+                    $inspection_details += [
+                        'ehs_approved_by' => getUsername($inspection->approved_by),
+                        'ehs_approved_date' => Displaydateformat($inspection->created_at),
+                        'ehs_approved_by_signature' => admin_url($ehs_approved_signature),
+                    ];
+                }
+
+                if (isset($inspection->capa_recomendation)) {
+                    $capa_recommendation[] = [
+                        'capa_recommendation' => $inspection->capa_recommendation,
+                        'capa_recomendation_remarks' => $inspection->remarks,
+                    ];
+                }
+
+                if (isset($inspection->capa_remarks)) {
+                    $fire_associate_signature = GetFireSignature($inspection->created_by, $id, $inspection_type);
+                    $inspection_details += [
+                        'capa_name' => getUsername($inspection->created_by),
+                        'capa_date' => Displaydateformat($inspection->created_at),
+                        'capa_signature' => admin_url($fire_associate_signature),
+                        'capa_remarks' => $inspection->capa_remarks,
+                    ];
+                }
+
+                if (isset($inspection->capa_ehs_remarks)) {
+                    $ehs_capa_signature = GetFireSignature($inspection->verified_by, $id, $inspection_type);
+                    $inspection_details += [
+                        'capa_ehs_name' => getUsername($inspection->created_by),
+                        'capa_ehs_date' => Displaydateformat($inspection->created_at),
+                        'capa_ehs__signature' => admin_url($ehs_capa_signature),
+                        'capa_ehs_remarks' => $inspection->capa_ehs_remarks,
+                    ];
+                }
+
+                if (isset($inspection->level_one_manager_remarks)) {
+                    $level_one_signature = GetFireSignature($inspection->l1_manager_verified_by, $id, $inspection_type);
+                    $inspection_details += [
+                        'level_one_name' => getUsername($inspection->l1_manager_verified_by),
+                        'level_one_date' => Displaydateformat($inspection->created_at),
+                        'level_one_signature' => admin_url($level_one_signature),
+                        'level_one_remarks' => $inspection->level_one_manager_remarks,
+                    ];
+                }
+
+                if (isset($inspection->level_two_manager_remarks)) {
+                    $level_two_signature = GetFireSignature($inspection->l2_manager_verified_by, $id, $inspection_type);
+                    $inspection_details += [
+                        'level_two_name' => getUsername($inspection->l2_manager_verified_by),
+                        'level_two_date' => Displaydateformat($inspection->created_at),
+                        'level_two_signature' => admin_url($level_two_signature),
+                        'level_two_remarks' => $inspection->level_two_manager_remarks,
+                    ];
+                }
+
+
+
+                // Approval Logs
+                $status_logs = $this->statusLog->selectOne($id, $inspection_type);
+                $logs = [];
+
+                foreach ($status_logs as $log_index => $status) {
+                    $logs[$log_index] = [
+                        'id' => $status->id,
+                        'type' => $status->type,
+                        'inspection_id' => $status->inspection_id,
+                        'from_status' => getInspectionStatus($status->from_status),
+                        'to_status' => getInspectionStatus($status->to_status),
+                        'remarks' => $status->remarks ?? 'N/A',
+                        'approved_by' => $status->approved_by ? getUsername($status->approved_by) : '-',
+                        'created_by' => $status->created_by ? getUsername($status->created_by) : '-',
+                        'created_at' => Displaydateformat($status->created_at),
+                    ];
+                }
+
+                $data = array(
+                    'inspection_main' => $inspection_main,
+                    'inspection_details' => $inspection_details,
+                    'logs' => $logs,
+                );
+
+                return $this->sendResponse($data, 'Inspection Details');
+            } else {
+                return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
+            }
+        } catch (Exception $ex) {
+            report($ex);
+            return $this->sendError(
+                'Unauthorised.',
+                ['error' => 'Please try again after sometimes'],
+                406
+            );
         }
     }
 }

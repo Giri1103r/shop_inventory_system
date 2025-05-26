@@ -71,6 +71,18 @@ class MedicalFitnessCertificate extends Model
 
             $query = $query->where('ohc_management_medical_fitness_certificate.emp_name', ($request->emp_name));
         }
+        if ($request->has('company_id') && $request->company_id) {
+
+            $query = $query->where('ohc_management_medical_fitness_certificate.company_id', decryptId($request->company_id));
+        }
+        if ($request->has('unit_id') && $request->unit_id) {
+
+            $query = $query->where('ohc_management_medical_fitness_certificate.unit_id', decryptId($request->unit_id));
+        }
+        if ($request->has('department_id') && $request->department_id) {
+
+            $query = $query->where('ohc_management_medical_fitness_certificate.department_id', decryptId($request->department_id));
+        }
         if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
             $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
@@ -198,7 +210,7 @@ class MedicalFitnessCertificate extends Model
             $unit = $employee->unit;
             $department = $employee->department;
         }
-     
+
         $update_array = array(
             'emp_id' => $request->emp_id,
             'emp_name' => $request->emp_name,
@@ -271,7 +283,18 @@ class MedicalFitnessCertificate extends Model
         if ($request->filled('emp_name')) {
             $query->where('ohc_management_medical_fitness_certificate.emp_name',  $request->emp_name . '%');
         }
+        if ($request->has('company_id') && $request->company_id) {
 
+            $query = $query->where('ohc_management_medical_fitness_certificate.company_id', decryptId($request->company_id));
+        }
+        if ($request->has('unit_id') && $request->unit_id) {
+
+            $query = $query->where('ohc_management_medical_fitness_certificate.unit_id', decryptId($request->unit_id));
+        }
+        if ($request->has('department_id') && $request->department_id) {
+
+            $query = $query->where('ohc_management_medical_fitness_certificate.department_id', decryptId($request->department_id));
+        }
         // Date range filter
         if ($request->filled('from_date') && $request->filled('to_date')) {
             $startDate = Carbon::parse($request->from_date)->startOfDay();

@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Jobs\Ohc\ImportRequisitionjob;
 use App\Mail\Ohc\FitnessEmail;
 use App\Mail\Ohc\MedicineRequisitionEmail;
+use App\Models\Master\Company;
 use App\Models\Master\Department;
 use App\Models\Master\Employee;
 use App\Models\Master\Unit;
@@ -41,12 +42,14 @@ class MedicalFitnessCertificateController extends Controller
 
     private $medical_fitness_certificate;
     private $ohc_status;
+    private $company;
 
     public function __construct()
     {
 
         $this->medical_fitness_certificate = new MedicalFitnessCertificate();
         $this->ohc_status = new OhcStatuslog();
+        $this->company = new Company();
     }
 
     public function index(Request $request)
@@ -120,14 +123,25 @@ class MedicalFitnessCertificateController extends Controller
 
                     return response()->json($datatables->getData());
                 } catch (Exception $ex) {
-                    dd($ex);
+                    report($ex);
                     return response()->json(['status' => 'error', 'msg' => __('ohc.please_try_after_some_time')], 406);
                 }
             }
         }
 
 
-        $data = array();
+
+        $companyList  = $this->company->select('id', 'company_name')->where('status', '1')->get();
+
+        // $location = $this->location->select('id', 'location_type_name')->where('status', 1)->where('trash', 'NO')->get();
+        $data = array(
+
+
+            'companyList' => $companyList,
+
+            'dashboard_search' => $request,
+            // 'location' => $location,
+        );
 
         return view('ohcmanagement.medical_fitness_certificate.list', $data);
     }
@@ -594,14 +608,14 @@ class MedicalFitnessCertificateController extends Controller
 
                 Session::flash('success', 'Your data has been updated successfully!');
             } catch (Exception $ex) {
-                report($ex);
+                dd($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
             return redirect(admin_url('ohc/medical-fitness/list'));
         } catch (Exception $ex) {
 
-            report($ex);
+            dd($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/medical-fitness/list'));
         }

@@ -26,11 +26,8 @@ class EmergencyBuyerFirstAidBagChecklistController extends BaseController
     public function List(Request $request)
     {
         if (Auth::check()) {
-
             try {
-
                 $data = $this->emergency_buyer_first_aid_bag->listApi();
-
                 if (count($data) > 0) {
                     return response()->json([
                         'status' => true,

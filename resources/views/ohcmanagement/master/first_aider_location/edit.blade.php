@@ -265,8 +265,8 @@
                     station_number: {
                         required: true,
                         minlength: 3,
-                        maxlength: 20,
-                        pattern: /^(?=.*[a-zA-Z0-9])[a-zA-Z0-9\s\-_'"()]*$/,
+                        maxlength: 50,
+
                         remote: {
                             url: '{{ admin_url('ohc/first-aid-location/station-number-unique') }}',
                             type: 'post',
@@ -285,8 +285,8 @@
                     first_aid_box_no: {
                         required: true,
                         minlength: 3,
-                        maxlength: 30,
-                        pattern: /^(?=.*[a-zA-Z0-9])[a-zA-Z0-9\s\-_'"()]*$/,
+                        maxlength: 50,
+
                         remote: {
                             url: '{{ admin_url('ohc/first-aid-location/first-aid-box') }}',
                             type: 'POST',
@@ -313,15 +313,15 @@
                     location_id: {
                         required: "Location Name is required.",
                         minlength: "Location Name must be at least 3 characters long.",
-                        maxlength: "Location Name must not exceed 30 characters.",
+                        maxlength: "Location Name must not exceed 50 characters.",
                         pattern: "Location Name contains invalid characters.",
                         remote: "Location Name Should Be unique.",
                     },
                     first_aid_box_no: {
                         required: "First Aid Box Number is required.",
                         minlength: "First Aid Box Number must be at least 3 characters long.",
-                        maxlength: "First Aid Box Number must not exceed 30 characters.",
-                        remote: "First Aid Box Number Must Be Unique according to unit and department",
+                        maxlength: "First Aid Box Number must not exceed 50 characters.",
+
                     },
                     department_id: {
                         required: "Department is required.",

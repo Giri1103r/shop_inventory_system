@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'HSE Inputs')
-@section('pageurl', admin_url('kpi/hse-inputs/list'))
+@section('title', 'EHS Inputs')
+@section('pageurl', admin_url('kpi/ehs-inputs/list'))
 
 
 @section('content')
@@ -23,7 +23,7 @@
                             <div class="card-header">
                                 {{-- <h4 class="card-title">{{ __('master.company_add') }}</h4> --}}
                                 <div class="align-back-btc">
-                                    <x-button-back href="{{ admin_url('kpi/hse-inputs/list') }}"></x-button-back>
+                                    <x-button-back href="{{ admin_url('kpi/ehs-inputs/list') }}"></x-button-back>
 
                                 </div>
                             </div>

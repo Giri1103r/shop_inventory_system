@@ -9,11 +9,12 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Api\BaseController;
 use App\Mail\Inspection\Fire\FireInspection;
-use App\Models\Inspection\Fire\FireFileUpload;
-use App\Models\Inspection\Fire\FireSignatureUpload;
 use Spatie\IcalendarGenerator\Enums\Display;
 use App\Models\Inspection\Fire\FireStatusLog;
+use App\Models\Inspection\Fire\FireFileUpload;
 use App\Models\Inspection\Fire\HooterInspection;
+use App\Models\Inspection\InspectionStaticDocno;
+use App\Models\Inspection\Fire\FireSignatureUpload;
 use App\Models\Inspection\Fire\HooterInspectionDetails;
 
 class HooterInspectionController extends BaseController
@@ -23,6 +24,7 @@ class HooterInspectionController extends BaseController
     private $statusLog;
     private $signature;
     private $files;
+    private $document_reference;
 
 
     public function __construct()
@@ -32,6 +34,7 @@ class HooterInspectionController extends BaseController
         $this->statusLog = new FireStatusLog();
         $this->signature = new FireSignatureUpload();
         $this->files = new FireFileUpload();
+        $this->document_reference = new InspectionStaticDocno();
     }
 
     public function List(Request $request)
@@ -181,10 +184,15 @@ class HooterInspectionController extends BaseController
                 $details = $this->inspection_details->GetDetails($inspection->id);
                 $inspection_type = HOOTER_INSPECTION;
                 $inspection_image = $this->files->GetFileApi($inspection_type,$id);
+                $document_no = $this->document_reference->selectOne($inspection->document_reference_id);
+                $signature = GetFireSignature($inspection->created_by,$id,$inspection_type);
 
                 // Hooter Main Section
                 $inspection_main = [
                     'id' => $inspection->id,
+                    'document_no' => $document_no->doc_no,
+                    'issue_date' => Displaydateformat($document_no->issue_date),
+                    'issue_date' => $document_no->rev_dt,
                     'document_reference_id' => $inspection->document_reference_id,
                     'date_of_inspection' => Displaydateformat($inspection->date_of_inspection),
                     'location_name' => getLocationname($inspection->location),
@@ -214,6 +222,7 @@ class HooterInspectionController extends BaseController
                     'created_by_id' => $inspection->created_by,
                     'created_by' => getUsername($inspection->created_by),
                     'inspection_image' => $inspection_image ?? [],
+                    'signature' => $signature ? admin_url($signature) : [],
                 ];
 
                 // Inspection Sub Data

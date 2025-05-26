@@ -56,7 +56,7 @@
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">Document Number</label>
                                         <div class="view_data">
-                                            {{ isset( $document_no->doc_no) ? $document_no->doc_no : '' }}
+                                            {{ isset($document_no->doc_no) ? $document_no->doc_no : '' }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
@@ -102,26 +102,26 @@
                                         </div>
                                     </div>
                                     @if (!empty($requestorsignature) && !empty($requestorsignature->requestor_file_path))
-                                    <div class="col-md-4 mb-2">
-                                        <div class="form-group form-input">
-                                            <label class="form-label" style="display: block;">
-                                                {{ __('inspection.signature') }}
-                                            </label>
-                                            <img src="{{ admin_url($requestorsignature->requestor_file_path) }}"
-                                                alt="Signature Upload" style="width: 150px; margin-top: -10px;" />
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label" style="display: block;">
+                                                    {{ __('inspection.signature') }}
+                                                </label>
+                                                <img src="{{ admin_url($requestorsignature->requestor_file_path) }}"
+                                                    alt="Signature Upload" style="width: 150px; margin-top: -10px;" />
+                                            </div>
                                         </div>
-                                    </div>
-                                @elseif (!empty($signatureview) && !empty($signatureview->signature_upload))
-                                <div class="col-md-4 mb-2">
-                                    <div class="form-group form-input">
-                                        <label class="form-label" style="display: block;">
-                                            {{ __('inspection.signature') }}
-                                        </label>
-                                        <img src="{{ admin_url($signatureview->signature_upload) }}"
-                                            alt="Signature Upload" style="width: 150px; margin-top: -10px;" />
-                                    </div>
-                                </div>
-                                @endif
+                                    @elseif (!empty($signatureview) && !empty($signatureview->signature_upload))
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label" style="display: block;">
+                                                    {{ __('inspection.signature') }}
+                                                </label>
+                                                <img src="{{ admin_url($signatureview->signature_upload) }}"
+                                                    alt="Signature Upload" style="width: 150px; margin-top: -10px;" />
+                                            </div>
+                                        </div>
+                                    @endif
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('common.created_by') }}</label>
                                         <div class="view_data">
@@ -160,9 +160,7 @@
                                             <thead class="bg-secondary text-white">
                                                 <tr>
                                                     <th colspan="3">Check Points</th>
-                                                    @foreach ($getoption as $option)
-                                                        <th>{{ $option }}</th>
-                                                    @endforeach
+                                                    <th colspan="3">Status</th>
                                                     <th colspan="3">Remarks</th>
                                                 </tr>
                                             </thead>
@@ -175,46 +173,26 @@
                                                 @endphp
 
                                                 @foreach ($checkItems as $groupId => $checkPoints)
-                                                    @php $rowCount = count($checkPoints); @endphp
-
                                                     @foreach ($checkPoints as $index => $checkPoint)
                                                         <tr>
-                                                            @if ($index == 0)
-                                                                <td rowspan="{{ $rowCount }}">
-                                                                    {{ getSubcategoryname($groupId) }}
-                                                                </td>
-                                                            @endif
-
-                                                            <td colspan="2">{{ getSubcategoryDataname($checkPoint) }}
+                                                            <td colspan="3">{{ getSubcategoryDataname($checkPoint) }}
                                                             </td>
 
-                                                            @foreach ($getoption as $option)
-                                                                <td style="text-align: center;">
-                                                                    @if ($option == 'Ok')
-                                                                        @if (isset($statuses[$checkPoint]) && $statuses[$checkPoint] == 'Ok')
-                                                                            <i class="fa-solid fa-check"
-                                                                                style="color: #267709; width: 15px;"></i>
-                                                                            <!-- Green check for Ok -->
-                                                                        @else
-                                                                            <i class="fa-solid fa-times"
-                                                                                style="color: #d40a0a; width: 15px;"></i>
-                                                                            <!-- Red cross if Ok is not selected -->
-                                                                        @endif
-                                                                    @elseif ($option == 'Not-Ok')
-                                                                        @if (isset($statuses[$checkPoint]) && $statuses[$checkPoint] == 'Not-Ok')
-                                                                            <i class="fa-solid fa-check"
-                                                                                style="color: #267709; width: 15px;"></i>
-                                                                            <!-- Red check for Not-Ok -->
-                                                                        @else
-                                                                            <i class="fa-solid fa-times"
-                                                                                style="color: #d40a0a; width: 15px;"></i>
-                                                                            <!-- Red cross if Ok is not selected -->
-                                                                        @endif
-                                                                    @endif
-                                                                </td>
-                                                            @endforeach
+                                                            @php
+                                                                $status = strtolower(
+                                                                    trim($statuses[$checkPoint] ?? ''),
+                                                                );
+                                                            @endphp
 
-
+                                                            <td colspan="3">
+                                                                @if ($status === 'ok')
+                                                                    <span >Ok</span>
+                                                                @elseif ($status === 'not ok')
+                                                                    <span >Not Ok</span>
+                                                                @else
+                                                                    <span >N/A</span>
+                                                                @endif
+                                                            </td>
 
                                                             <td colspan="3">
                                                                 {{ $remarks[$checkPoint] ?? 'No Remarks' }}
@@ -223,6 +201,7 @@
                                                     @endforeach
                                                 @endforeach
                                             </tbody>
+
 
 
 
@@ -543,9 +522,10 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    @if(empty($statuslog) || $statuslog->isEmpty())
+                                                    @if (empty($statuslog) || $statuslog->isEmpty())
                                                         <tr>
-                                                            <td colspan="7" class="text-center">No data is available</td>
+                                                            <td colspan="7" class="text-center">No data is available
+                                                            </td>
                                                         </tr>
                                                     @else
                                                         @foreach ($statuslog as $log)

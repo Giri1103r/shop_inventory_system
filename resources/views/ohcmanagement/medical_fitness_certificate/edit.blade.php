@@ -225,6 +225,13 @@
         });
         $(document).on('change', '#emp_id', function() {
             var empId = $(this).val();
+
+            // Clear all fields initially to avoid retaining old data
+            $('#emp_name').val('').prop('readonly', true);
+            $('#company_id').val('').prop('readonly', true);
+            $('#unit_id').val('').prop('readonly', true);
+            $('#department_id').val('').prop('readonly', true);
+
             if (empId) {
                 $.ajax({
                     url: "{{ admin_url('ohc/employee-cum-patient/employeename') }}",
@@ -236,35 +243,29 @@
                     success: function(response) {
                         if (response.employee) {
                             $('#emp_name').val(response.employee.emp_name).prop('readonly', true);
+
                             if (response.company) {
                                 $('#company_id').val(response.company.company_name).prop('readonly',
                                     true);
+                            }
+
+                            if (response.unit) {
                                 $('#unit_id').val(response.unit.unit_name).prop('readonly', true);
+                            }
+
+                            if (response.department) {
                                 $('#department_id').val(response.department.department_name).prop(
                                     'readonly', true);
-                            } else {
-                                $('#company_id').val('').prop('readonly', true);
-                                $('#emp_name').val('').prop('readonly', true);
-                                $('#unit_id').val('').prop('readonly', true);
-                                $('#department_id').val('').prop('readonly', true);
                             }
-                        } else {
-                            $('#emp_name').val('').prop('readonly', true);
-                            $('#company_id').val('').prop('readonly', true);
-                            $('#unit_id').val('').prop('readonly', true);
-                            $('#department_id').val('').prop('readonly', true);
                         }
                     },
-                    error: function(xhr) {
-                        alert(
-                            'Error fetching employee name and company name ,Unit and Department name. Please try again.'
-                            );
+                    error: function() {
+                        alert('Error fetching employee details. Please try again.');
                     }
                 });
-            } else {
-                $('#emp_name').val('').prop('readonly', true);
             }
         });
+
         $(function() {
 
             $.validator.addMethod(

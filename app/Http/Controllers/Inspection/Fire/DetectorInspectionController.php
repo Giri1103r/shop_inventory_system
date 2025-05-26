@@ -351,7 +351,6 @@ class DetectorInspectionController extends Controller
             }
         } catch (Exception $ex) {
             report($ex);
-            report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('fire/detector-inspection/list'));
         }

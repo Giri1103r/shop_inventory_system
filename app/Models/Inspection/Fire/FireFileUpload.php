@@ -77,8 +77,8 @@ class FireFileUpload extends Model
         $request = request();
         $upload_path = 'public/uploads/inspection/fire/' . GetTypeName($type);
 
-        if ($request->has('device_image') && is_array($request->device_image)) {
-            $base64File = $request->file('device_image');
+        if ($request->has('device_image')) {
+            $base64File = $request->device_image;
             if (!empty($base64File)) {
                 $extension = null;
                 $fileType = null;
@@ -106,9 +106,9 @@ class FireFileUpload extends Model
                     $fileType = 'binary';
                     $extension = 'bin'; // default, will try to detect below
                 } else {
-                    Log::error("Unsupported Base64 file format.");
                     return;
                 }
+
 
                 // Remove base64 header and decode
                 $base64File = preg_replace('#^data:(.*);base64,#i', '', $base64File);

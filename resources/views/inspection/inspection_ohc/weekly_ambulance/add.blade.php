@@ -193,13 +193,13 @@
                                                                         name="sub_type_id[{{ $checklist->checklist_sub_type_id }}][]"
                                                                         value="{{ $checklist->checklist_id }}">
 
-                                                                    @if ($index == 0)
+                                                                    {{-- @if ($index == 0)
                                                                         <td rowspan="{{ $rowCount }}"
                                                                             style="border: 1px solid black; padding: 8px; background-color: #f5f5f5; font-weight: bold;">
                                                                             {{ $checklist->subcategory_name }}
                                                                         </td>
-                                                                    @endif
-                                                                    <td colspan="2"
+                                                                    @endif --}}
+                                                                    <td colspan="3"
                                                                         style="border: 1px solid black; padding: 8px;">
                                                                         {{ $checklist->checklist_name }}
 

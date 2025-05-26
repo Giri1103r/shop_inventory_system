@@ -28,6 +28,7 @@ class GembaWalk extends Model
         'observation_needed',
         'capa_needed',
         'responsible_person_id',
+        'executive_person_id',
         'status',
         'trash',
         'created_by',
@@ -201,6 +202,7 @@ class GembaWalk extends Model
                 'observation_needed' => decryptId($request->observation_needed),
                 'capa_needed' => decryptId($request->is_passed),
                 'responsible_person_id' => decryptId($request->responsible_person_id),
+                'executive_person_id' => ($request->executive_person_id),
                 'gemba_walk_status' => GEMBA_WALK_INSPECTION_WAITING_FOR_FLOOR_MANAGER_VERIFICATION,
                 'created_by' => Auth::id(),
             );
@@ -213,6 +215,7 @@ class GembaWalk extends Model
                 'observation_needed' => decryptId($request->observation_needed),
                 'capa_needed' => decryptId($request->is_passed),
                 'responsible_person_id' => decryptId($request->responsible_person_id),
+                'executive_person_id' => ($request->executive_person_id),
                 'gemba_walk_status' => GEMBA_WALK_INSPECTION_CLOSED,
                 'created_by' => Auth::id(),
                 'verified_by' => Auth::id()

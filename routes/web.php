@@ -2485,7 +2485,7 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('/list/{type}/{condition}', [InitialIncidentController::class, 'index']);
                 Route::post('/list/{type}/{condition}', [InitialIncidentController::class, 'index']);
 
-                Route::get('/list/all/type', [InitialIncidentController::class, 'redirectindex']);
+                Route::get('unit', [InitialIncidentController::class, 'redirectindex']);
                 Route::post('/list/all/type', [InitialIncidentController::class, 'redirectindex']);
 
                 Route::get('/investigationList', [InitialIncidentController::class, 'investigationList']);
@@ -2695,7 +2695,7 @@ Route::middleware(['securityheader'])->group(function () {
                     Route::POST('/lists', [LeadingLaggingController::class, 'Checklists']);
                 });
 
-                Route::group(['prefix' => 'hse-inputs'], function () {
+                Route::group(['prefix' => 'ehs-inputs'], function () {
                     Route::GET('/list', [HSCInputsController::class, 'Index']);
                     Route::POST('/list', [HSCInputsController::class, 'Index']);
                     Route::GET('/add', [HSCInputsController::class, 'Add']);

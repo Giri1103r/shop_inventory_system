@@ -187,6 +187,20 @@
                     {{ $document_no->rev_dt ?? '' }}
                 </td>
             </tr>
+             <tr>
+                <td width="50%" style="padding:5px;"><b>Responsible Person</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;">
+                    {{ getUsername($gembaWalk->responsible_person_id ?? '') }}
+                </td>
+            </tr>
+             <tr>
+                <td width="50%" style="padding:5px;"><b>Executive Person</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;">
+                    {{ getUsername($gembaWalk->executive_person_id ?? '')}}
+                </td>
+            </tr>
             <tr>
                 <td width="50%" style="padding:5px;"><b>Created By</b></td>
                 <td width="2%" style="padding:5px;">:</td>

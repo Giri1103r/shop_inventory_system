@@ -88,7 +88,14 @@
                                         </div>
 
 
-
+                                         <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label">Executive Person</label>
+                                                <div class="view_data">
+                                                    {{ getUsername(isset($gembaWalk->executive_person_id) ? $gembaWalk->executive_person_id : '') }}
+                                                </div>
+                                            </div>
+                                        </div>
                                          <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
                                                 <label class="form-label">Responsibile Person</label>
@@ -692,7 +699,7 @@
                                                         <td class="text-center" colspan="5">No data is available</td>
                                                     </tr>
                                                 @else
-                                                    @foreach ($status_log as $  )
+                                                    @foreach ($status_log as $status)
                                                         <tr>
                                                             <td>{{ getGembaWalkLogStatus($status['from_status'] ?? null) }}</td>
                                                             <td>{{ getGembaWalkLogStatus($status['to_status'] ?? null) }}</td>
