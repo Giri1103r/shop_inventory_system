@@ -142,7 +142,7 @@ return [
     'fs_fourth' => 'Is the patient stretcher placed on the floor Condition is OK ?',
     'fs_fifth' => "Is the patient's stretcher placed on the floor or properly hung on a hook in its designated area?",
     'fs_sixth' => 'Is the Patient Handling Stretcher Guide Line Displayed ?',
-    'checkpoints' =>'Checkpoints (Yes / No )',
+    'checkpoints' => 'Checkpoints (Yes / No )',
 
     //ForkLift Inspection Report
     'forklift_inspection_report' => 'ForkLift Inspection Report',
@@ -191,7 +191,7 @@ return [
     'valve_type' => 'Valve Type',
     'open' => 'Open State Status',
     'close' => 'Close State Status',
-    'isv_status'=> 'Current Status Of ISV',
+    'isv_status' => 'Current Status Of ISV',
     'yes' => 'Yes',
     'no' => 'No',
     'GATE' => 'Gate Valve',
@@ -272,6 +272,22 @@ return [
     'chemical' => 'Chemical',
     'chemical_inactive_msg' => 'Do you want to Inactive the Chemical',
     'chemical_inactive_msg' => 'Do you want to Active the Chemical',
+
+    // gembaWalk
+    'observer_person' => 'Observer Person',
+    'observer_name' => 'Observer Name',
+    'capa_action_date' => 'Recommended CAPA Action Date',
+    'observer_action' => 'Recommended CAPA - Observer Action',
+    'observation_type' => 'Obsertvation Type',
+
+    'checklist_details' => 'Gemba Walk (Safety Walk Observation)',
+    'gemba_walk_inspection_name' => 'DAILY GEMBA WALK INSPECTION',
+    'exact_location' => 'Exact Location',
+    'hazard' => 'Hazard',
+    'evidence' => 'Evidence',
+    'capa' => 'Recommended CAPA',
+    'capa_is_passed' =>'Whether the Inspection  has been passed Without the CAPA?'
+
 
 
 ];

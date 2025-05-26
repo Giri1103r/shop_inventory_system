@@ -25,10 +25,10 @@ class GembaWalk extends Model
         'date',
         'shift_id',
         'gemba_walk_status',
-        'observation_needed',
+        // 'observation_needed',
         'capa_needed',
-        'responsible_person_id',
-        'executive_person_id',
+        // 'responsible_person_id',
+        // 'executive_person_id',
         'status',
         'trash',
         'created_by',
@@ -48,16 +48,17 @@ class GembaWalk extends Model
         $request = request();
 
         $search = '';
-        $query = $this->select('inspection_gemba_walk.*', 'inspection_gemba_walk_status.status_name', 'inspection_gemba_walk_status.bg_color', 'inspection_shift_option.shift', 'inspection_gemba_walk.id as gemba_walk_id')
+        $query = $this->select('inspection_gemba_walk.*', 'inspection_gemba_walk_status.status_name', 'inspection_gemba_walk_status.bg_color', 'inspection_shift_option.shift', 'inspection_gemba_walk.id as gemba_walk_id', 'inspection_gemba_walk_checklist.responsibility_id')
             ->leftJoin('inspection_shift_option', 'inspection_shift_option.id', '=', 'inspection_gemba_walk.shift_id')
-            ->leftJoin('inspection_gemba_walk_status', 'inspection_gemba_walk_status.id', '=', 'inspection_gemba_walk.gemba_walk_status');
+            ->leftJoin('inspection_gemba_walk_status', 'inspection_gemba_walk_status.id', '=', 'inspection_gemba_walk.gemba_walk_status')
+            ->leftJoin('inspection_gemba_walk_checklist', 'inspection_gemba_walk_checklist.gemba_walk_id', '=', 'inspection_gemba_walk.id');
 
         $org_total =  $query;
         $org_total_counts = $org_total->count();
 
         if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_OFFICER)) {
-        } else if (CheckUserRole(ROLE_FLOOR_MANAGER)) {
-            $query->where('inspection_gemba_walk.responsible_person_id', Auth::id());
+        } else {
+            $query->where('inspection_gemba_walk_checklist.responsibility_id', Auth::id());
         }
 
         if ($request->search['value'] != null || $request->search['value'] != '') {
@@ -199,10 +200,10 @@ class GembaWalk extends Model
                 'date' => DBdateformat($request->document_upload_date),
                 'shift_id' => decryptId($request->shift),
                 'company_id' => Auth::user()->company_id,
-                'observation_needed' => decryptId($request->observation_needed),
+                // 'observation_needed' => decryptId($request->observation_needed),
                 'capa_needed' => decryptId($request->is_passed),
-                'responsible_person_id' => decryptId($request->responsible_person_id),
-                'executive_person_id' => ($request->executive_person_id),
+                // 'responsible_person_id' => decryptId($request->responsible_person_id),
+                // 'executive_person_id' => ($request->executive_person_id),
                 'gemba_walk_status' => GEMBA_WALK_INSPECTION_WAITING_FOR_FLOOR_MANAGER_VERIFICATION,
                 'created_by' => Auth::id(),
             );
@@ -212,10 +213,10 @@ class GembaWalk extends Model
                 'date' => DBdateformat($request->document_upload_date),
                 'shift_id' => decryptId($request->shift),
                 'company_id' => Auth::user()->company_id,
-                'observation_needed' => decryptId($request->observation_needed),
+                // 'observation_needed' => decryptId($request->observation_needed),
                 'capa_needed' => decryptId($request->is_passed),
-                'responsible_person_id' => decryptId($request->responsible_person_id),
-                'executive_person_id' => ($request->executive_person_id),
+                // 'responsible_person_id' => decryptId($request->responsible_person_id),
+                // 'executive_person_id' => ($request->executive_person_id),
                 'gemba_walk_status' => GEMBA_WALK_INSPECTION_CLOSED,
                 'created_by' => Auth::id(),
                 'verified_by' => Auth::id()
@@ -363,7 +364,8 @@ class GembaWalk extends Model
             'inspection_shift_option.shift',
             'inspection_gemba_walk_checklist.*',
             'inspection_static_docno.*',
-            'inspection_gemba_walk_checklist_files.file_path'
+            'inspection_gemba_walk_checklist_files.file_path',
+
         )
             ->leftJoin('inspection_gemba_walk_checklist', 'inspection_gemba_walk_checklist.gemba_walk_id', '=', 'inspection_gemba_walk.id')
             ->leftJoin('inspection_gemba_walk_checklist_files', function ($join) {
@@ -383,6 +385,11 @@ class GembaWalk extends Model
                     ->orWhere('inspection_shift_option.shift', 'LIKE', '%' . $search . '%')
                     ->orWhere('inspection_gemba_walk.date', 'LIKE', '%' . DBdateformat($search) . '%');
             });
+        }
+
+        if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_OFFICER)) {
+        } else {
+            $query->where('inspection_gemba_walk_checklist.responsibility_id', Auth::id());
         }
         if ($request->has('gemba_walk_auto_id') && $request->gemba_walk_auto_id) {
             $query = $query->where('inspection_gemba_walk.gemba_walk_auto_id', 'LIKE', '%' . $request->gemba_walk_auto_id . '%');

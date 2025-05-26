@@ -72,6 +72,7 @@ use App\Models\Inspection\Safety\MonthlyPhysicalEquipmentList;
 use App\Models\Inspection\Safety\SafetyWalkObservationDetails;
 use App\Models\Inspection\Fire\EmergencyLightInspectionDetails;
 use App\Models\Inspection\Fire\MonthlyPhysicalInspectionFileUpload;
+use App\Models\Inspection\GembaWalk\GembaWalkHazard;
 use App\Models\Inspection\MSDS\Master\Chemical;
 use App\Models\Inspection\MSDS\Master\NFARating;
 use App\Models\KPI\HSCInputs;
@@ -2698,6 +2699,23 @@ if (!function_exists('getMonth')) {
                 return '';
             } else {
                 return $user->status_name;
+            }
+        }
+    }
+
+      if (!function_exists('getGembaWalkHazardName')) {
+
+        function getGembaWalkHazardName($id)
+        {
+
+            $user = GembaWalkHazard::select('*')
+                ->where('id', $id)
+                ->first();
+
+            if ($user == null) {
+                return '';
+            } else {
+                return $user->hazard_name;
             }
         }
     }
