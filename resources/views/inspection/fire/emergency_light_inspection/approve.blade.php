@@ -144,140 +144,60 @@
                                     </div>
                                     <hr>
 
-                                    @foreach ($inspection_details as $details)
-                                        <div class="form-wrapper">
-                                            <div class="row mt-4 form-set">
-                                                <div class="card-header-inner p-2">
-                                                    <h4 class="text-white">Emergency Light Inspection</h4>
-                                                </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.sr_no') }}</label>
-                                                        <div class="view_data">
-                                                            {{ $details->sr_no }}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.department') }}</label>
-                                                        <div class="view_data">
-                                                            {{ GetDeptName($details->department) }}
-                                                        </div>
-
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.location') }}</label>
-                                                        <div class="view_data">
-                                                            {{ $details->location }}
-                                                        </div>
-
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.condition_of_light') }}</label>
-                                                        <div class="view_data">
-                                                            {{ GetConditionofLight($details->condition_of_light) }}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.emergency_light_number') }}</label>
-                                                        <div class="view_data">
-                                                            {{ $details->emergency_of_light }}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.type_of_light') }}</label>
-                                                        <div class="view_data">
-                                                            {{ GetTypeofLight($details->type_of_light) }}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.capacity') }}</label>
-                                                        <div class="view_data">
-                                                            {{ $details->capacity }}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.quantity') }}</label>
-                                                        <div class="view_data">
-                                                            {{ $details->quantity }}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.power_supply') }}</label>
-                                                        <div class="view_data">
-                                                            {{ GetPowerSuply($details->power_supply) }}
-                                                        </div>
-
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.light_condition') }}</label>
-                                                        <div class="view_data">
-                                                            {{ getLightCondition($details->light_condition) }}
-                                                        </div>
-
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.switch_condition') }}</label>
-                                                        <div class="view_data">
-                                                            {{ getLightCondition($details->switch_condition) }}
-                                                        </div>
-
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.status') }}</label>
-                                                        <div class="view_data">
-                                                            {{ getFireLightInspectionStatus($details->fire_status) }}
-                                                        </div>
-
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.remarks') }}</label>
-                                                        <div class="view_data">
-                                                            {{ $details->remarks }}
-                                                        </div>
-
-                                                    </div>
-                                                </div>
-                                            </div>
+                                    <div class="col-md-12 table-responsive">
+                                        <div class="card-header-inner p-2">
+                                            <h4 class="text-white">Emergency Light Inspection</h4>
                                         </div>
-                                    @endforeach
+                                        <table class="table table-bordered ">
+
+                                            <thead class="bg-secondary" style="color: #ffff">
+                                                <tr>
+                                                    <th>{{ __('inspection.sr_no') }}</th>
+                                                    <th>{{ __('inspection.department') }}</th>
+                                                    <th>{{ __('inspection.location') }}</th>
+                                                    <th>{{ __('inspection.emergency_light_number') }}</th>
+                                                    <th>{{ __('inspection.condition_of_light') }}</th>
+                                                    <th>{{ __('inspection.type_of_light') }}</th>
+                                                    <th>{{ __('inspection.capacity') }}</th>
+                                                    <th>{{ __('inspection.quantity') }}</th>
+                                                    <th>{{ __('inspection.power_supply') }}</th>
+                                                    <th>{{ __('inspection.light_condition') }}</th>
+                                                    <th>{{ __('inspection.switch_condition') }}</th>
+                                                    <th>{{ __('inspection.status') }}</th>
+                                                    <th>{{ __('inspection.remarks') }}</th>
+
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @if ($inspection_details->isEmpty())
+                                                    <tr>
+                                                        <td colspan="4" class="text-center">No data is available</td>
+                                                    </tr>
+                                                @else
+                                                    @foreach ($inspection_details as $details)
+                                                        <tr>
+                                                            <td>{{ $details->sr_no }}</td>
+                                                            <td>{{ GetDeptName($details->department) }}</td>
+                                                            <td>{{ $details->location }}</td>
+                                                            <td>{{ $details->emergency_of_light }}</td>
+                                                            <td>{{ GetConditionofLight($details->condition_of_light) }}
+                                                            </td>
+
+                                                            <td>{{ GetTypeofLight($details->type_of_light) }}</td>
+                                                            <td> {{ $details->capacity }}</td>
+                                                            <td>{{ $details->quantity }}</td>
+                                                            <td>{{ GetPowerSuply($details->power_supply) }}</td>
+                                                            <td>{{ getLightCondition($details->light_condition) }}</td>
+                                                            <td>{{ getLightCondition($details->switch_condition) }}</td>
+                                                            <td>{{ getFireLightInspectionStatus($details->fire_status) }}
+                                                            </td>
+                                                            <td>{{ $details->remarks }}</td>
+                                                        </tr>
+                                                    @endforeach
+                                                @endif
+                                            </tbody>
+                                        </table>
+                                    </div>
                                     <hr>
                                 </div>
 

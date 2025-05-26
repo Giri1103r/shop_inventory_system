@@ -151,7 +151,7 @@
                                 <div class="table-responsive">
                                     <div class="col-md-12">
                                         <div class="card-header-inner p-2">
-                                            <h4 class="text-white">Emergency Light Inspection Observation</h4>
+                                            <h4 class="text-white">Emergency Light Inspection</h4>
                                         </div>
                                         <table class="table table-bordered ">
 
