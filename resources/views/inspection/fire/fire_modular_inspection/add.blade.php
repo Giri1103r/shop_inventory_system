@@ -177,23 +177,7 @@
                                                         accept="image/*">
                                                 </div>
                                             </div>
-                                            <div class="col-md-4 form-group form-input mb-2">
-                                                @if (isset(Auth::user()->signature_upload))
-                                                    <label class="form-label"
-                                                        style="display: block; ">{{ __('inspection.signature') }}</label>
-                                                    <img src="{{ admin_url(Auth::user()->signature_upload) }}"
-                                                        alt="Signature Upload" style="width: 150px; margin-top:-10px">
-                                                @else
-                                                    <div class="form-input col-md-12 mb-2">
-                                                        <label class="form-label require">Signature</label>
-                                                        <input type="file" name="signature_image"
-                                                            id="signature_upload" class="form-control form-control-sm"
-                                                            accept="image/*" placeholder="Enter the image">
-                                                        <small>Allowed file types: jpg, jpeg, png</small>
-                                                        <div id="signature_upload" class="text-danger"></div>
-                                                    </div>
-                                                @endif
-                                            </div>
+
                                             <input type="hidden" name="document_reference_id"
                                                 value="{{ encryptId($document_no->id) }}">
                                         </div>
@@ -548,10 +532,10 @@
                         observation: {
                             required: true,
                         },
-                        signature_image: {
-                            required: true,
-                            filesize: 15728640,
-                        },
+                        // signature_image: {
+                        //     required: true,
+                        //     filesize: 15728640,
+                        // },
 
                     },
                     messages: {
@@ -560,10 +544,10 @@
                             minlength: "Minimum Characters should be 3",
                             maxlength: "Maximum Characters should not exceed 100",
                         },
-                        signature_image: {
-                            required: 'Please upload your signature',
-                            filesize: 'File size should not exceed 15MB',
-                        },
+                        // signature_image: {
+                        //     required: 'Please upload your signature',
+                        //     filesize: 'File size should not exceed 15MB',
+                        // },
                         issue_date: {
                             required: "Date Of Audit is required",
                         },

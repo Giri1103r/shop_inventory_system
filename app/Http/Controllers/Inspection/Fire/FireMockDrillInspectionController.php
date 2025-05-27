@@ -232,7 +232,7 @@ class FireMockDrillInspectionController extends Controller
             $id = $inspection->id;
             $inspection_details = $this->fire_mock_drill_inspection_details->store($id);
             $inspection_file = $this->files->file_upload($inspection_type, $id);
-            $signature_update = $this->signature->CheckedBySignature($id, $inspection_type);
+            // $signature_update = $this->signature->CheckedBySignature($id, $inspection_type);
 
             $ehsOfficer = GetEHSOfficer();
             $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
@@ -352,7 +352,7 @@ class FireMockDrillInspectionController extends Controller
         try {
             $id = decryptId($request->id);
             $inspection_updates = $this->fire_mock_drill_inspection->EHSOfficerUpdate($id);
-            $signature_update = $this->signature->signatureUpload(FIRE_MOCK_DRILL_INSPECION);
+            // $signature_update = $this->signature->signatureUpload(FIRE_MOCK_DRILL_INSPECION);
             $inspection_details = $this->fire_mock_drill_inspection->selectOne($id);
             if ($request->is_passed == 1) {
                 $message = 'Fire Mock Drill Inspection Approved Successfully';
@@ -423,7 +423,7 @@ class FireMockDrillInspectionController extends Controller
             $id = decryptId($request->id);
             $FIRE_MOCK_DRILL_INSPECION = $this->fire_mock_drill_inspection->capaSubmit($id);
             $inspection_details = $this->fire_mock_drill_inspection->selectOne($id);
-            $signature_update = $this->signature->signatureUpload(FIRE_MOCK_DRILL_INSPECION);
+            // $signature_update = $this->signature->signatureUpload(FIRE_MOCK_DRILL_INSPECION);
             $ehsOfficers = $inspection_details->verified_by;
             $userIds = [
                 'users' => $ehsOfficers,
@@ -484,7 +484,7 @@ class FireMockDrillInspectionController extends Controller
             $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->remarks;
             $FIRE_MOCK_DRILL_INSPECION = $this->fire_mock_drill_inspection->capaVerifySubmit($id, $status, $remarks);
-            $signature_update = $this->signature->signatureUpload(FIRE_MOCK_DRILL_INSPECION);
+            // $signature_update = $this->signature->signatureUpload(FIRE_MOCK_DRILL_INSPECION);
             $inspection_details = $this->fire_mock_drill_inspection->selectOne($id);
             if ($status == 1) {
                 $message = 'CAPA Action Verified Successfully';
@@ -558,7 +558,7 @@ class FireMockDrillInspectionController extends Controller
             $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->level_one_manager;
             $FIRE_MOCK_DRILL_INSPECION = $this->fire_mock_drill_inspection->levelOneManagerSubmit($id, $status, $remarks);
-            $signature_update = $this->signature->signatureUpload(FIRE_MOCK_DRILL_INSPECION);
+            // $signature_update = $this->signature->signatureUpload(FIRE_MOCK_DRILL_INSPECION);
             $inspection_details = $this->fire_mock_drill_inspection->selectOne($id);
             if ($status == 1) {
                 $message = 'Level One Manager Verified Successfully';
@@ -632,7 +632,7 @@ class FireMockDrillInspectionController extends Controller
             $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->level_two_manager;
             $FIRE_MOCK_DRILL_INSPECION = $this->fire_mock_drill_inspection->levelTwoManagerSubmit($id, $status, $remarks);
-            $signature_update = $this->signature->signatureUpload(FIRE_MOCK_DRILL_INSPECION);
+            // $signature_update = $this->signature->signatureUpload(FIRE_MOCK_DRILL_INSPECION);
             $inspection_details = $this->fire_mock_drill_inspection->selectOne($id);
             if ($status == 1) {
                 $message = 'Fire Mock Drill Inspection Approved Successfully!';
