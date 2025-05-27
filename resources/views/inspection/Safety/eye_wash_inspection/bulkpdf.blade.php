@@ -270,7 +270,7 @@
                     $verified_by = GetSafetySignature($details->verified_by, $details->id, EYE_WASH_INSPECTION);
                     $checked_by = GetSafetySignature($details->checked_by, $details->id, EYE_WASH_INSPECTION);
                 @endphp
-                <tr>
+                {{-- <tr>
                     <td colspan="4" style="border: 2px solid black; padding: 6px; text-align: center;">
                         <div class="view_data">
                             @if (!empty($details->created_by))
@@ -306,7 +306,7 @@
                             @endif
                         </div>
                     </td>
-                </tr>
+                </tr> --}}
 
             </table>
 

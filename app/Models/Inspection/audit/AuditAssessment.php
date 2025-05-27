@@ -103,6 +103,20 @@ class AuditAssessment extends Model
         return self::create($insert_array);
     }
 
+      public function store_api()
+    {
+        $request = request();
+        $insert_array = [
+            'floor_name' => $request->floor_name,
+            'audit_date' => DBdateformat($request->audit_date),
+            'shift_id' => ($request->shift_id),
+            'floor_executive' => ($request->floor_executive),
+            'checklist' => json_encode($request->checklist, true),
+            'created_by' => Auth::id(),
+        ];
+        return self::create($insert_array);
+    }
+
     public function selectOne($id)
     {
         return  $this->where('id', $id)->first();

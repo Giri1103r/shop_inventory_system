@@ -16,6 +16,7 @@ use App\Models\Inspection\Master\Shift;
 use App\Models\Inspection\InspectionStaticDocno;
 use Exception;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class AuditAssessmentController extends BaseController
 {
@@ -159,7 +160,53 @@ class AuditAssessmentController extends BaseController
                 return $this->sendResponse($success, 'Audit Assessment Details');
             }
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
+            return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
+        }
+    }
+
+
+    public function store(Request $request)
+    {
+
+
+        try {
+
+            if (Auth::user()) {
+
+                $rules = [
+                    'shift_id' => 'required',
+                    'floor_name' => 'required',
+                    'audit_date' => 'required',
+                    'floor_executive' => 'required',
+
+
+
+                ];
+                $messages = [
+                    'shift_id' => 'Shift is required',
+                    'floor_name' => 'Floor name is required',
+                    'audit_date' => 'Audit Date is required',
+                    'floor_executive' => 'Floor Executive is required',
+
+
+                ];
+
+                $validator = Validator::make($request->all(), $rules, $messages);
+
+                if ($validator->fails()) {
+                    return $this->sendError('Validation Error', $validator->errors(), 422);
+                }
+
+
+                $audit_assessment =  $this->audit_assessment->store_api();
+                $success = [
+                    'audit_assessment' => $audit_assessment,
+                ];
+                return $this->sendResponse($success, 'Audit Assessment Details Created Successfully');
+            }
+        } catch (Exception $ex) {
+            report($ex);
             return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
         }
     }

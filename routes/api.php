@@ -127,7 +127,7 @@ Route::middleware('api')->prefix('v1')->group(function () {
                 Route::group(['prefix' => 'audit-assessment/'], function () {
                     Route::post('list', [AuditAssessmentController::class, 'list']);
                     Route::post('view', [AuditAssessmentController::class, 'view']);
-                    Route::post('add', [AuditAssessmentController::class, 'add']);
+                    Route::post('add', [AuditAssessmentController::class, 'store']);
                 });
 
                 Route::group(['prefix' => 'audit-analysis/'], function () {

@@ -103,4 +103,72 @@ class AuditAnalysisController extends BaseController
             return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
         }
     }
+
+    public function view(Request $request)
+    {
+        try {
+            if (Auth::user()) {
+                $id = $request->id;
+
+                $details = $this->auditAnalysis->selectOne($id);
+                $checklist_details = $this->auditAnalysisCheckList->selectOne($id);
+
+                $documentNo = $this->static_docno->selectOne($details->docNo_id);
+
+                $audit_analysis = [
+                    'audit_analysis_id' => $details->audit_analysis_id,
+                    'audit_analysis' => $details->audit_analysis,
+                    'doc_no' => $documentNo->doc_no,
+                    'issue_date' => Displaydateformat($details->issue_date),
+                    'rev_dt' => $details->rev_dt,
+                    'status' => $details->status == 1 ? 'Active' : 'In-Active',
+                    'created_by' => getUsername($details->created_by),
+                ];
+
+
+                $audit_analysis_checklist = [];
+                foreach ($checklist_details as $checklist) {
+                     $marks = json_decode(
+                    $checklist->marks ?? '{}',
+                    true,
+                );
+
+                $monthWithMark = collect($marks)
+                    ->filter(function ($value) {
+                        return $value != 0;
+                    })
+                    ->first();
+
+                $monthName = collect($marks)
+                    ->filter(function ($value) {
+                        return $value != 0;
+                    })
+                    ->keys()
+                    ->first();
+                    $audit_analysis_checklist[] = [
+                        'sr_no' => $checklist->serial_number,
+                        'unit' => getUnitname($checklist->unit_id),
+                        'department' => getDepartment($checklist->department_id),
+                        'marks_obtained_monthly' => $monthName ? ucfirst($monthName) . ' - ' . $monthWithMark : '-',
+                        'mark_obtained' => $checklist->marks_obtained,
+                        'total_no_of_audit' => $checklist->no_of_audit,
+                        'total_marks' => $checklist->total_marks,
+                        'total_marks_obtained' => $checklist->marks_obtained,
+                        'percentage' => $checklist->percentage,
+                    ];
+                }
+
+
+                $success = [
+                    'audit_analysis' => $audit_analysis,
+                    'audit_analysis_checklist' => $audit_analysis_checklist,
+                ];
+
+                return $this->sendResponse($success, 'Audit Analysis Details');
+            }
+        } catch (Exception $ex) {
+            report($ex);
+            return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
+        }
+    }
 }

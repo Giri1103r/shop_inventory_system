@@ -272,7 +272,7 @@
                 <td style="border: 2px solid black; padding: 6px;">{{ $details->remarks }}</td>
             </tr>
         @endforeach
-        <tr>
+        {{-- <tr>
             <td colspan="4" style="border: 2px solid black; padding: 6px; text-align: center;">
                 <div class="view_data">
                     @if (!empty($inspection_details->created_by))
@@ -308,7 +308,7 @@
                     @endif
                 </div>
             </td>
-        </tr>
+        </tr> --}}
     </table>
 
 
@@ -444,7 +444,7 @@
 
 
     @if (isset($inspection_details->level_one_manager_remarks))
-        <div style="width:100%;">
+        <div style="width:100%; margin-top:10%" >
             <table style="width:100%;">
                 <tr>
                     <td
@@ -459,7 +459,7 @@
                 <td width="50%" style="padding:5px;"><b>{{ __('inspection.level_one_manager') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
-                    {{ getUserName($inspection_details->l1_manager_verified_by) }}</td>
+                    {{ getUserName($inspection_details->l1_manager_verification) }}</td>
             </tr>
             <tr>
                 <td width="50%" style="padding:5px;"><b>{{ __('inspection.date') }}</b></td>
@@ -494,7 +494,7 @@
                 <td width="50%" style="padding:5px;"><b>{{ __('inspection.level_one_manager') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
-                    {{ getUserName($inspection_details->l2_manager_verified_by) }}</td>
+                    {{ getUserName($inspection_details->l2_manager_verification) }}</td>
             </tr>
             <tr>
                 <td width="50%" style="padding:5px;"><b>{{ __('inspection.date') }}</b></td>

@@ -211,7 +211,7 @@
                 {{ getUsername(isset($medicine_receiving->created_by) ? $medicine_receiving->created_by : '') }}</td>
         </tr>
         <tr>
-            <td width="50%" style="padding:5px;"><b>Created Date</b></td>
+            <td width="50%" style="padding:5px;"><b>Stock Entry Date</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;"> {{ displayDateformat($medicine_receiving->created_at) }}</td>
         </tr>

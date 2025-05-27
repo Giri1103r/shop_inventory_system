@@ -176,7 +176,7 @@ class AuditAssessmentController extends Controller
 
         try {
             try {
-
+                
                 $this->audit_assessment->store();
 
                 Session::flash('success', __('Your data has been created successfully'));
