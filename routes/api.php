@@ -12,35 +12,34 @@ use App\Http\Controllers\Api\Trainig\TrainingSheducleController;
 use App\Http\Controllers\Api\Inspection\Fire\FireAlarmController;
 use App\Http\Controllers\Api\Inspection\Safety\ForkliftInspection;
 use App\Http\Controllers\Api\Ppemanagement\PpeExemptionController;
-use App\Http\Controllers\Api\Inspection\Safety\FireSafetyEquipment;
 use App\Http\Controllers\Api\Ppemanagement\PpemanagementController;
 use App\Http\Controllers\Api\Inspection\Audit\MonthlyAuditController;
-use App\Http\Controllers\Api\Inspection\Ohc\Master\FirstAidContoller;
-use App\Http\Controllers\Api\Inspection\Safety\SafetyWalkObservation;
 use App\Http\Controllers\Api\Inspection\Audit\AuditAnalysisController;
 use App\Http\Controllers\Api\Inspection\Fire\IsolationValveController;
 use App\Http\Controllers\Api\Inspection\GembaWalk\GembaWalkController;
-use App\Http\Controllers\Api\Inspection\Ohc\EmergencyFloorFirstAidBag;
 use App\Http\Controllers\Api\Inspection\Audit\InterUnitAuditController;
 use App\Http\Controllers\Api\Inspection\Fire\SprinklerSystemController;
 use App\Http\Controllers\Api\Inspection\Safety\SafetyGalleryInspection;
 use App\Http\Controllers\Api\Inspection\Audit\AuditAssessmentController;
 use App\Http\Controllers\Api\Inspection\Fire\FireExtinguisherController;
 use App\Http\Controllers\Api\Inspection\Fire\HooterInspectionController;
-use App\Http\Controllers\Api\Inspection\Ohc\OHCHygieneCleaningChecklist;
-use App\Http\Controllers\Api\Inspection\Ohc\WeeklyFirstAidBoxController;
 use App\Http\Controllers\Api\Inspection\Safety\MonthlyEyeWashController;
 use App\Http\Controllers\Api\Inspection\Safety\MonthlyForkLiftInspection;
-use App\Http\Controllers\Api\Inspection\Ohc\MonthlyMedicineStoreInspection;
-use App\Http\Controllers\Api\Inspection\Ohc\OPDMedicineInspectionChecklist;
 use App\Http\Controllers\Api\Inspection\Fire\MonthlyFirePumpHouseController;
-use App\Http\Controllers\Api\Inspection\Ohc\Master\FirstAidMedicineController;
-use App\Http\Controllers\Api\Inspection\Ohc\HealthInstrumentCalibrationController;
 use App\Http\Controllers\Api\{LoginController, NotificationController, AdminController};
 use App\Http\Controllers\Api\Inspection\Fire\DetectorInspectionController;
 use App\Http\Controllers\Api\Inspection\Fire\FireModularInspectionController;
 use App\Http\Controllers\Api\Inspection\Fire\FireSandBucketInspectionController;
+use App\Http\Controllers\Api\Inspection\Audit\Master\TaskMasterController;
+use App\Http\Controllers\Api\Inspection\Fire\HydrantRiserController;
 use App\Http\Controllers\Api\Inspection\Ohc\EmergencyBuyerFirstAidBagChecklistController;
+use App\Http\Controllers\Api\Inspection\Ohc\HealthInstrumentCalibrationController;
+use App\Http\Controllers\Api\Inspection\Ohc\Master\FirstAidContoller;
+use App\Http\Controllers\Api\Inspection\Ohc\Master\FirstAidMedicineController;
+use App\Http\Controllers\Api\Inspection\Ohc\OHCHygieneCleaningChecklist;
+use App\Http\Controllers\Api\Inspection\Ohc\WeeklyFirstAidBoxController;
+use App\Http\Controllers\Api\Inspection\Safety\FireSafetyEquipment;
+use App\Http\Controllers\Api\Inspection\Safety\SafetyWalkObservation;
 
 // Route::get('/user', function (Request $request) {
 //     return $request->user();
@@ -80,6 +79,7 @@ Route::middleware('api')->prefix('v1')->group(function () {
         Route::post('/master/location/dropdown', [MasterController::class, 'location']);
         Route::post('/master/unit/dropdown', [MasterController::class, 'unit']);
         Route::post('/master/department/dropdown', [MasterController::class, 'department']);
+        Route::post('/inspection/master/document/dropdown', [MasterController::class, 'documentNumber']);
 
 
         Route::group(['prefix' => 'ppe/master'], function () {
@@ -125,12 +125,12 @@ Route::middleware('api')->prefix('v1')->group(function () {
             Route::post('post-assessment', [TrainingSheducleController::class, 'endTrainingStore']);
         });
 
-        Route::group(['prefix' => '/inspection/'], function () {
+        Route::group(['prefix' => 'inspection/'], function () {
             Route::group(['prefix' => 'audit/'], function () {
                 Route::group(['prefix' => 'audit-assessment/'], function () {
                     Route::post('list', [AuditAssessmentController::class, 'list']);
                     Route::post('view', [AuditAssessmentController::class, 'view']);
-                    Route::post('add', [AuditAssessmentController::class, 'add']);
+                    Route::post('add', [AuditAssessmentController::class, 'store']);
                 });
 
                 Route::group(['prefix' => 'audit-analysis/'], function () {
@@ -142,13 +142,7 @@ Route::middleware('api')->prefix('v1')->group(function () {
                 Route::group(['prefix' => 'monthly-audit/'], function () {
                     Route::post('list', [MonthlyAuditController::class, 'list']);
                     Route::post('view', [MonthlyAuditController::class, 'view']);
-                    Route::post('add', [MonthlyAuditController::class, 'add']);
-                });
-
-                Route::group(['prefix' => 'monthly-audit/'], function () {
-                    Route::post('list', [MonthlyAuditController::class, 'list']);
-                    Route::post('view', [MonthlyAuditController::class, 'view']);
-                    Route::post('add', [MonthlyAuditController::class, 'add']);
+                    Route::post('add', [MonthlyAuditController::class, 'store']);
                 });
 
                 Route::group(['prefix' => 'inter-unit-audit/'], function () {
@@ -156,6 +150,8 @@ Route::middleware('api')->prefix('v1')->group(function () {
                     Route::post('view', [InterUnitAuditController::class, 'view']);
                     Route::post('add', [InterUnitAuditController::class, 'add']);
                 });
+
+                Route::post('task-master/list', [TaskMasterController::class, 'list']);
             });
 
             // gembaWalk
@@ -166,13 +162,6 @@ Route::middleware('api')->prefix('v1')->group(function () {
             });
 
             Route::group(['prefix' => 'fire/'], function () {
-
-                Route::group(['prefix' => 'master/'], function () {
-                    Route::post('hose-box-type', [HoseController::class, 'TypeOfHoseBox']);
-                    Route::post('fire-extinguisher-type', [FireExtinguisherController::class, 'TypeOfExtinguishers']);
-                    Route::post('valve-type', [IsolationValveController::class, 'TypeOfValves']);
-                });
-
                 Route::group(['prefix' => 'hooter-inspection/'], function () {
                     Route::post('list', [HooterInspectionController::class, 'List']);
                     Route::post('add', [HooterInspectionController::class, 'Add']);
@@ -185,7 +174,7 @@ Route::middleware('api')->prefix('v1')->group(function () {
                     Route::post('view', [FireAlarmController::class, 'View']);
                 });
 
-                Route::group(['prefix' => 'fire-extinguisher-inspection/'], function () {
+                Route::group(['prefix' => 'fire-extinguisher/inspection/'], function () {
                     Route::post('list', [FireExtinguisherController::class, 'List']);
                     Route::post('add', [FireExtinguisherController::class, 'Add']);
                     Route::post('view', [FireExtinguisherController::class, 'Add']);
@@ -231,6 +220,11 @@ Route::middleware('api')->prefix('v1')->group(function () {
                     Route::post('list', [FireSandBucketInspectionController::class, 'List']);
                     Route::post('add', [FireSandBucketInspectionController::class, 'Add']);
                     Route::post('view', [FireSandBucketInspectionController::class, 'View']);
+});
+                Route::group(['prefix' => 'hydrant-and-riser/'], function () {
+                    Route::post('list', [HydrantRiserController::class, 'list']);
+                    Route::post('view', [HydrantRiserController::class, 'view']);
+                    Route::post('add', [HydrantRiserController::class, 'store']);
                 });
 
                 Route::group(['prefix' => 'fire-modular-inspection/'], function () {
@@ -277,29 +271,10 @@ Route::middleware('api')->prefix('v1')->group(function () {
                     Route::post('add', [WeeklyFirstAidBoxController::class, 'store']);
                 });
 
-                //Api Pending Because of client change request
-                // Route::group(['prefix' => 'ohc-hygiene-cleaning-checklist/'], function () {
-                //     Route::post('list', [OHCHygieneCleaningChecklist::class, 'list']);
-                //     Route::post('view', [OHCHygieneCleaningChecklist::class, 'view']);
-                //     Route::post('add', [OHCHygieneCleaningChecklist::class, 'store']);
-                // });
-
-                Route::group(['prefix' => 'emergency-floor-first-aid-bag/'], function () {
-                    Route::post('list', [EmergencyFloorFirstAidBag::class, 'list']);
-                    Route::post('view', [EmergencyFloorFirstAidBag::class, 'view']);
-                    Route::post('add', [EmergencyFloorFirstAidBag::class, 'store']);
-                });
-
-                Route::group(['prefix' => 'monthly-medicine-store/'], function () {
-                    Route::post('list', [MonthlyMedicineStoreInspection::class, 'list']);
-                    Route::post('view', [MonthlyMedicineStoreInspection::class, 'view']);
-                    Route::post('add', [MonthlyMedicineStoreInspection::class, 'store']);
-                });
-
-                Route::group(['prefix' => 'opd-medicine-inspection/'], function () {
-                    Route::post('list', [OPDMedicineInspectionChecklist::class, 'list']);
-                    Route::post('view', [OPDMedicineInspectionChecklist::class, 'view']);
-                    Route::post('add', [OPDMedicineInspectionChecklist::class, 'store']);
+                Route::group(['prefix' => 'ohc-hygiene-cleaning-checklist/'], function () {
+                    Route::post('list', [OHCHygieneCleaningChecklist::class, 'list']);
+                    Route::post('view', [OHCHygieneCleaningChecklist::class, 'view']);
+                    Route::post('add', [OHCHygieneCleaningChecklist::class, 'store']);
                 });
             });
         });

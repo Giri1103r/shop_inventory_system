@@ -3,8 +3,9 @@
 namespace App\Models\Inspection\audit\Master;
 
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
+use App\Scopes\TrashScope;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Database\Eloquent\Model;
 
 class Task extends Model
 {
@@ -93,7 +94,7 @@ class Task extends Model
     {
         $request = request();
         $insert_array = array(
-            'task_auto_id' => getsequence('audit_task'),
+            // 'task_auto_id' => getsequence('audit_task'),
             'task_name' => $request->task_name,
             'created_by' => Auth::id()
         );
@@ -104,7 +105,6 @@ class Task extends Model
     {
         $request = request();
         $update_array = array(
-            'task_auto_id' => $request->task_id,
             'task_name' => $request->task_name,
             'updated_by' => Auth::id()
         );
@@ -192,9 +192,33 @@ class Task extends Model
         return $this->where('id', $id)->update($update_data);
     }
 
+    public function UniqueCheck($data)
+    {
+
+        return $this->where('task_name',  $data)->get();
+    }
+
+    public function ExistuniqueCheck($data, $id)
+    {
+        return $this->where('task_name',  $data)
+            ->where('id', '!=', $id)
+            ->get();
+    }
+
 
     public function getAuditTask()
     {
         return $this->where('trash', 'NO')->where('status', '!=', 0)->get();
+    }
+
+    protected static function booted()
+    {
+        static::addGlobalScope(new TrashScope('inspection_audit_master_task'));
+
+        static::created(function ($model) {
+
+            $uniqueId = 'AUDIT-TASK-' . str_pad($model->id, 5, '0', STR_PAD_LEFT);
+            $model->update(['task_auto_id' => $uniqueId]);
+        });
     }
 }

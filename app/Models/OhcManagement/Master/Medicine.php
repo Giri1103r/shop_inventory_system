@@ -67,9 +67,9 @@ class Medicine extends Model
 
                     ->orWhere('pack', 'LIKE', '%' . $search . '%');
 
-                    if ($formattedDate) {
-                        $query  ->orWhere('expiry_date', 'LIKE', '%' . $formattedDate . '%');
-                    }
+                if ($formattedDate) {
+                    $query->orWhere('expiry_date', 'LIKE', '%' . $formattedDate . '%');
+                }
             });
         }
 
@@ -118,10 +118,13 @@ class Medicine extends Model
         return $datas;
     }
 
-    public function listApi() {
+    public function listApi()
+    {
         $request = request();
+                $perPage = $request->input('per_page', 10);
+
         $search = '';
-        $query = $this->select('ohc_master_medicine.*')->where('status',1);
+        $query = $this->select('ohc_master_medicine.*')->where('status', 1);
 
         // dd($query);
         $org_total =  $query;
@@ -143,29 +146,37 @@ class Medicine extends Model
 
                     ->orWhere('pack', 'LIKE', '%' . $search . '%');
 
-                    if ($formattedDate) {
-                        $query  ->orWhere('expiry_date', 'LIKE', '%' . $formattedDate . '%');
-                    }
+                if ($formattedDate) {
+                    $query->orWhere('expiry_date', 'LIKE', '%' . $formattedDate . '%');
+                }
             });
         }
 
-        $data = $query->orderBy('ohc_master_medicine.id')->get();
+        $paginatedData = $query->orderBy('ohc_master_medicine.id')->paginate($perPage);
 
-        $medicine_data = $data->toArray();
+        $medicine_data = $paginatedData->toArray();
 
         $medicine_data_array = [];
         $refined_data = [];
 
-        foreach($medicine_data as $index =>$data){
+        foreach ($medicine_data['data'] as $index => $data) {
             $medicine_data_array['id'] = $data['id'];
             $medicine_data_array['medicine_name'] = $data['medicine'];
 
             $refined_data[$index] = $medicine_data_array;
-
         }
 
-        return $refined_data;
+         $response = [
+            'per_page' => $paginatedData->perPage(),
+            'current_page' => $paginatedData->currentPage(),
+            'from' => $paginatedData->firstItem(),
+            'to' => $paginatedData->lastItem(),
+            'total' => $paginatedData->total(),
+            'total_page' => $paginatedData->lastPage(),
+            'list' => $refined_data,
+        ];
 
+        return $response;
     }
 
     public function uniqueCheck($medicine_name)
@@ -174,7 +185,7 @@ class Medicine extends Model
         return $this->where('medicine', $medicine_name)->get();
     }
 
-    public function existUniqueCheck($medicine_name,$id)
+    public function existUniqueCheck($medicine_name, $id)
     {
         return $this->where('medicine', $medicine_name)
             ->where('id', '!=', $id)
@@ -198,14 +209,14 @@ class Medicine extends Model
         $request = request();
 
 
-        $user = User::where('status', 1)->where('id',Auth::id())->first();
+        $user = User::where('status', 1)->where('id', Auth::id())->first();
 
 
         $approveStatus = ($user && (checkUserRole(ROLE_SUPERADMIN) ||  checkUserRole(ROLE_EHS_HEAD)))
             ? STATUS_OHC_EHS_HEAD_APPROVED
             : STATUS_OHC_EHS_HEAD_APPROVAL_PENDING;
-            $Status = ($user && (checkUserRole(ROLE_SUPERADMIN) ||  checkUserRole(ROLE_EHS_HEAD)))
-            ?1
+        $Status = ($user && (checkUserRole(ROLE_SUPERADMIN) ||  checkUserRole(ROLE_EHS_HEAD)))
+            ? 1
             : 0;
 
         $insert_array = [
@@ -228,11 +239,11 @@ class Medicine extends Model
         $request = request();
         $user = User::where('status', 1)->first();
         $approveStatus = ($user && (checkUserRole(ROLE_SUPERADMIN) ||  checkUserRole(ROLE_EHS_HEAD)))
-        ? STATUS_OHC_EHS_HEAD_APPROVED
-        : STATUS_OHC_EHS_HEAD_APPROVAL_PENDING;
+            ? STATUS_OHC_EHS_HEAD_APPROVED
+            : STATUS_OHC_EHS_HEAD_APPROVAL_PENDING;
         $Status = ($user && (checkUserRole(ROLE_SUPERADMIN) ||  checkUserRole(ROLE_EHS_HEAD)))
-        ?1
-        : 0;
+            ? 1
+            : 0;
         $update_array = array(
             'medicine' => $request->medicine,
             'pack' => $request->pack,

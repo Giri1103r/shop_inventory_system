@@ -78,10 +78,10 @@ class InitialIncident extends Model
         if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_ADMIN) || CheckUserRole(ROLE_EHS_HEAD)) {
             $query->where('ims_initial_incident.status', '1');
         } elseif (CheckUserRole(ROLE_EHS_OFFICER)) {
-            $query->where('ims_initial_incident.created_by', Auth::user()->id);
+            $query->where('ims_initial_incident.created_by', Auth::user()->id)->where('ims_initial_incident.status', '1');
         } else {
 
-            $query->where('ims_initial_incident.created_by', Auth::user()->id);
+            $query->where('ims_initial_incident.created_by', Auth::user()->id)->where('ims_initial_incident.status', '1');
         }
         $condition =  decryptId($request->condition);
         // if ($request->has('type') && $request->type) {
@@ -106,7 +106,7 @@ class InitialIncident extends Model
                 $query = $query->where('ims_initial_incident.iir_type', decryptId($type));
             }
         }
-        
+
 
         // }
         /**
@@ -198,7 +198,7 @@ class InitialIncident extends Model
          * Role Based list view condition start
          */
         if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_ADMIN) || CheckUserRole(ROLE_EHS_HEAD)) {
-            // $query->where('ims_initial_incident.status', '1');
+            $query->where('ims_initial_incident.status', '1');
         } else {
             // $userId = Auth::id();
             // $userLoginId = Auth::user()->employee_id;
@@ -211,7 +211,7 @@ class InitialIncident extends Model
             //         ->orWhereRaw("FIND_IN_SET(?, choose_assignee)", [$employeeId]);
             // });
 
-            $query->where('ims_initial_incident.investigation_reported_by', Auth::user()->id);
+            $query->where('ims_initial_incident.investigation_reported_by', Auth::user()->id)->where('ims_initial_incident.status', '1');
         }
 
 
@@ -574,15 +574,14 @@ class InitialIncident extends Model
         /**
          * Role Based list view condition start
          */
-        if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_ADMIN) || CheckUserRole(ROLE_EHS_HEAD)) {
+       if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_ADMIN) || CheckUserRole(ROLE_EHS_HEAD)) {
             $query->where('ims_initial_incident.status', '1');
         } elseif (CheckUserRole(ROLE_EHS_OFFICER)) {
-            $query->where('ims_initial_incident.created_by', Auth::user()->id);
+            $query->where('ims_initial_incident.created_by', Auth::user()->id)->where('ims_initial_incident.status', '1');
         } else {
 
-            $query->where('ims_initial_incident.created_by', Auth::user()->id);
+            $query->where('ims_initial_incident.created_by', Auth::user()->id)->where('ims_initial_incident.status', '1');
         }
-
 
         /**
          * Role Based list view condition end

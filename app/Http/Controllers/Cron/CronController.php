@@ -284,6 +284,35 @@ class CronController extends Controller
             return response()->json(['message' => 'An error occurred.', 'error' => $ex->getMessage()]);
         }
     }
+    public function workMasterTempCustom(Request $request)
+    {
+        try {
+
+            $fromDate = $request->fromdate;
+            $toDate = $request->todate;
+            $office_id = $this->company->getcompany();
+            foreach ($office_id as $company) {
+                $apiUrl = "https://vmsapi.karam.in/emp.asmx/GetWorkerDetails?TokenId=123&OfficeId={$company->company_name}&fromDate={$fromDate}&toDate={$toDate}";
+
+
+                $response = Http::get($apiUrl);
+
+                if ($response->successful()) {
+                    $data = $response->json();
+
+                    if (!empty($data)) {
+                        $work = $this->worktemp->store($data);
+                        return response()->json(['message' => 'Data saved successfully.']);
+                    } else {
+                        return response()->json(['message' => 'No data found in API response.']);
+                    }
+                }
+            }
+        } catch (Exception $ex) {
+            report($ex);
+            return response()->json(['message' => 'An error occurred.', 'error' => $ex->getMessage()]);
+        }
+    }
     public function workSave()
     {
 
@@ -572,7 +601,7 @@ class CronController extends Controller
                 if ($response->successful()) {
                     $data = $response->json();
 
-                    if (!empty($data) ) {
+                    if (!empty($data)) {
                         foreach ($data as $item) {
                             try {
                                 $this->ppestock->store($item);

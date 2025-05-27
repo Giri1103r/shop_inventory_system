@@ -278,7 +278,7 @@ if (!function_exists('getsequence')) {
             case 'audit_task':
                 $count = Task::withoutGlobalScopes()->count();
                 $count = $count + 1;
-                $sequence = 'AUDIT-TASk-' . getautogen($count);
+                $sequence = 'AUDIT-TASK-' . getautogen($count);
                 break;
             case 'ambientNoiseNo':
                 $count = Environment::where('type', 1)->withoutGlobalScopes()->count();

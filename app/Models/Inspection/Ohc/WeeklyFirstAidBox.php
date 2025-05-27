@@ -117,6 +117,7 @@ class WeeklyFirstAidBox extends Model
     public function listApi()
     {
         $request = request();
+        $perPage = $request->input('per_page', 10);
         $search = '';
 
         $query = $this->select('inspection_ohc_weekly_first_aid_box_inspection_checklist_details.*', 'masters_location.location_name', 'masters_unit.unit_name', 'inspection_shift_option.shift', 'ohc_master_certified_first_aider.certifier_name', 'inspection_ohc_weekly_first_aid_box_inspection_checklist_details.shift as shift_id')
@@ -142,12 +143,18 @@ class WeeklyFirstAidBox extends Model
             });
         }
 
-        $data = $query->orderby('inspection_ohc_weekly_first_aid_box_inspection_checklist_details.id')->get();
-        $inspection_data = $data->toArray();
+        $paginatedData = $query->orderby('inspection_ohc_weekly_first_aid_box_inspection_checklist_details.id')->paginate($perPage);
+        $inspection_data = $paginatedData->toArray();
+
+
+        if (empty($inspection_data['data'])) {
+            return $this->sendError('No records found.', [], 404);
+        }
+
         $data_array = [];
         $refined_data = [];
 
-        foreach ($inspection_data as $index => $data) {
+        foreach ($inspection_data['data'] as $index => $data) {
             $data_array['id'] = $data['id'];
             $data_array['first_aid_box_no'] = $data['first_aid_box_no'];
             $data_array['location_name'] = $data['location_name'];
@@ -160,8 +167,17 @@ class WeeklyFirstAidBox extends Model
             $refined_data[$index] = $data_array;
         }
 
+        $response = [
+            'per_page' => $paginatedData->perPage(),
+            'current_page' => $paginatedData->currentPage(),
+            'from' => $paginatedData->firstItem(),
+            'to' => $paginatedData->lastItem(),
+            'total' => $paginatedData->total(),
+            'total_page' => $paginatedData->lastPage(),
+            'list' => $refined_data,
+        ];
 
-        return $refined_data;
+        return $response;
     }
 
     public function store()
@@ -336,6 +352,6 @@ class WeeklyFirstAidBox extends Model
             ->where('inspection_ohc_weekly_first_aid_box_inspection_checklist_details.id', $id)
             ->first();
 
-            return $data;
+        return $data;
     }
 }

@@ -18,10 +18,11 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 
-class ImportAuditTaskJob implements ShouldQueue
-// class ImportAuditTaskJob
+// class ImportAuditTaskJob implements ShouldQueue
+class ImportAuditTaskJob
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
 
     private $details;
     /**
@@ -90,6 +91,25 @@ class ImportAuditTaskJob implements ShouldQueue
                 $cond_error_datas[] = $cond_error_data;
                 $i++;
                 continue;
+            }
+
+            $task_exist = Task::where('task_name', $task_name)->get();
+
+            try {
+                if (count($task_exist) > 0) {
+                    $cond_error_data = array(
+                        'upload_id' => $this->details['log_id'],
+                        'line_no' => $i,
+                        'error' => 'Task Name already exists',
+                    );
+                    Session::flash('error', 'Import unsuccessfull!, Please check the upload logs');
+                    $cond_error_datas[] = $cond_error_data;
+                    $i++;
+                    continue;
+                }
+                $taskId =  $task_exist['0']->id;
+            } catch (\Exception $ex) {
+                report($ex);
             }
 
             $data = [

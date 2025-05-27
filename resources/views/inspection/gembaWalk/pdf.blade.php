@@ -192,13 +192,14 @@
 
             {{-- Date & Shift --}}
             <tr>
-                <th colspan="6" style="text-align: left; font-size: 12px; padding: 5px;">
+                <th colspan="6" style="text-align: center; vertical-align: middle; font-size: 12px; padding: 5px;">
                     <strong>Date:</strong> {{ displaydateformat($firstItem->date ?? 'N/A') }}
                 </th>
-                <th colspan="7" style="text-align: left; font-size: 12px; padding: 5px;">
+                <th colspan="7" style="text-align: center; vertical-align: middle; font-size: 12px; padding: 5px;">
                     <strong>Shift:</strong> {{ getShift($firstItem->shift_id ?? 'N/A') }}
                 </th>
             </tr>
+
         </table>
 
         <table class="table table-bordered table-hover tblborder" style="width:100%; border-collapse: collapse;" border="1">
@@ -207,15 +208,17 @@
                     <th>S No</th>
                     <th colspan="1">Location</th>
                     <th>Unit</th>
+                    <th>Department</th>
+                    <th>Exact Location</th>
                     <th>Date of Observation</th>
                     <th>Type (Unsafe Act / Unsafe Condition)</th>
                     <th>Description</th>
                     <th>Hazard</th>
                     <th>Image</th>
                     <th>Recommended Corrective & Preventive</th>
-                    {{-- <th>Responsible</th> --}}
                     <th>Status</th>
                     <th>Remark</th>
+                    <th>Observer Person</th>
                 </tr>
             </thead>
             <tbody>
@@ -224,27 +227,30 @@
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ getLocationname($gembaWalk->location_id ?? 'N/A') }}</td>
                         <td>{{ getUnitname($gembaWalk->unit_id ?? 'N/A') }}</td>
+                        <td>{{ getDepartment($gembaWalk->department_id ?? 'N/A') }}</td>
+                        <td>{{ $gembaWalk->exact_location ?? 'N/A' }}</td>
                         <td>{{ displaydateformat($gembaWalk->date_of_observation ?? 'N/A') }}</td>
                         <td>{{ getObservationType($gembaWalk->observation_type_id ?? 'N/A') }}</td>
                         <td>{{ $gembaWalk->description ?? 'N/A' }}</td>
-                        <td>{{ $gembaWalk->hazard ?? 'N/A' }}</td>
+                        <td>{{ getGembaWalkHazardName($gembaWalk->hazard ?? 'N/A') }}</td>
                         <td>
                             @if (!empty($gembaWalk->file_path))
-                                <img src="{{ public_path($gembaWalk->file_path) }}" style="width: 100px; height: auto;">
+                                <img src="{{ public_path($gembaWalk->file_path) }}"
+                                    style="width: 100px; height: auto;">
                             @else
                                 N/A
                             @endif
                         </td>
                         <td>{{ $gembaWalk->capa ?? 'N/A' }}</td>
-                        {{-- <td>{{ getEmployeename($gembaWalk->responsibility_id ?? 'N/A') }}</td> --}}
                         <td>{{ getGembaWalkStatus($gembaWalk->gemba_walk_checklist_status ?? 'N/A') }}</td>
                         <td>{{ $gembaWalk->remark ?? 'N/A' }}</td>
+                        <td>{{ getUsername($gembaWalk->responsibility_id ?? 'N/A') }}</td>
                     </tr>
                 @endforeach
             </tbody>
 
             {{-- Footer Row for Signatures --}}
-            <tr>
+            {{-- <tr>
                 @php
                     $firstItem = $groupedCollection->first();
                     $createdSignature = GetSignature($firstItem->inspection_created_by, $firstItem->inspection_id, GEMBA_WALK);
@@ -263,7 +269,7 @@
                         style="width: 150px; margin-top: -10px;" />
                     <div style="margin-top: 5px;">Verified By: {{getUsername($firstItem->responsible_person_id)}}</div>
                 </th>
-            </tr>
+            </tr> --}}
         </table>
 
 

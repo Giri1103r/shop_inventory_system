@@ -201,6 +201,7 @@ Route::get('expireexemptionstatus', [CronController::class, 'ExpireExemption']);
 Route::get('updateStockitem', [CronController::class, 'updateItem']);
 Route::get('cron/master/work/all-details-temp', [CronController::class, 'workMasterAllDetailsTemp']);
 Route::get('cron/master/workmastertemp', [CronController::class, 'workMasterTemp']);
+Route::get('cron/master/worker/temp-custom-details', [CronController::class, 'workMasterTempCustom']);
 Route::get('cron/master/worksave', [CronController::class, 'workSave']);
 Route::get('cron/master/employee/all-details-temp', [CronController::class, 'employeeMasterTempAllDetails']);
 Route::get('cron/master/employee/temp-details', [CronController::class, 'employeeMasterTemp']);
@@ -928,6 +929,8 @@ Route::middleware(['securityheader'])->group(function () {
                     Route::post('import/Submit', [TaskMasterController::class, 'importSubmit']);
                     Route::post('delete', [TaskMasterController::class, 'Delete']);
                     Route::post('status', [TaskMasterController::class, 'StatusChange']);
+                    Route::post('unique', [TaskMasterController::class, 'Uniquecheck']);
+
                 });
 
                 Route::group(['prefix' => 'master/compliance_category'], function () {

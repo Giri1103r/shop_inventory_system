@@ -938,7 +938,7 @@ class MedicineReceivingController extends Controller
                 'From Status',
                 'To Status',
                 'Created_by',
-                'Created_at'
+                'Stock Entry Date'
             ];
 
             $i = 1;
@@ -1069,7 +1069,7 @@ class MedicineReceivingController extends Controller
                 'From Status',
                 'To Status',
                 'Created_by',
-                'Created_at'
+                'Stock Entry Date'
             ];
 
             $data = array(

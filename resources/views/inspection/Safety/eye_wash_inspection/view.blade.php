@@ -100,7 +100,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        @php
+                                        {{-- @php
                                             $signature = GetSafetySignature(
                                                 $inspection_details->created_by,
                                                 $inspection_details->id,
@@ -116,7 +116,7 @@
                                                         style="width: 100px; margin-top: -10px;" />
                                                 </div>
                                             </div>
-                                        @endif
+                                        @endif --}}
                                     </div>
                                     <hr>
                                     @foreach ($inspection as $details)
@@ -338,7 +338,7 @@
                                                 @endif
                                             @endif
                                             @if (isset($inspection_details->capa_recomendation))
-                                                <div class="col-md-12 mb-2">
+                                                <div class="col-md-8 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label">{{ __('inspection.capa_recomendation') }}</label>
@@ -348,7 +348,7 @@
                                                     </div>
                                                 </div>
                                             @else
-                                                <div class="col-md-12 mb-2">
+                                                <div class="col-md-8 mb-2">
                                                     <div class="form-group form-input">
                                                         <label class="form-label">{{ __('inspection.remarks') }}</label>
                                                         <div class="view_data">
@@ -382,7 +382,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            @php
+                                            {{-- @php
                                                 $signature = GetSafetySignature(
                                                     $inspection_details->created_by,
                                                     $inspection_details->id,
@@ -398,8 +398,8 @@
                                                             style="width: 150px; margin-top: -10px;" />
                                                     </div>
                                                 </div>
-                                            @endif
-                                            <div class="col-md-12 mb-2">
+                                            @endif --}}
+                                            <div class="col-md-8 mb-2">
                                                 <div class="form-group form-input">
                                                     <label
                                                         class="form-label ">{{ __('inspection.capa_action_remarks') }}</label>
@@ -413,8 +413,10 @@
                                 </div>
 
                                 @if ($inspection_details->capa_ehs_remarks)
-                                    <div class="card-header-inner">
-                                        <h4 class="text-white">{{ __('inspection.ehs_officer_reverification') }}
+
+
+                                    <div class="card-header-inner ">
+                                        <h4 class="text-white px-2 pb-2">{{ __('inspection.ehs_officer_reverification') }}
                                         </h4>
                                     </div>
 
@@ -435,7 +437,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        @php
+                                        {{-- @php
                                             $signature = GetSafetySignature(
                                                 $inspection_details->verified_by,
                                                 $inspection_details->id,
@@ -451,8 +453,8 @@
                                                         style="width: 150px; margin-top: -10px;" />
                                                 </div>
                                             </div>
-                                        @endif
-                                        <div class="col-md-12 mb-2">
+                                        @endif --}}
+                                        <div class="col-md-8 mb-2">
                                             <div class="form-group form-input">
                                                 <label
                                                     class="form-label ">{{ __('inspection.capa_reverifcation_remarks') }}</label>
@@ -487,7 +489,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        @php
+                                        {{-- @php
                                             $signature = GetSafetySignature(
                                                 $inspection_details->l1_manager_verification,
                                                 $inspection_details->id,
@@ -503,8 +505,8 @@
                                                         style="width: 150px; margin-top: -10px;" />
                                                 </div>
                                             </div>
-                                        @endif
-                                        <div class="col-md-12 mb-2">
+                                        @endif --}}
+                                        <div class="col-md-8 mb-2">
                                             <div class="form-group form-input">
                                                 <label
                                                     class="form-label ">{{ __('inspection.level_one_manager_remarks') }}</label>
@@ -538,7 +540,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        @php
+                                        {{-- @php
                                             $signature = GetSafetySignature(
                                                 $inspection_details->l2_manager_verification,
                                                 $inspection_details->id,
@@ -554,8 +556,8 @@
                                                         style="width: 150px; margin-top: -10px;" />
                                                 </div>
                                             </div>
-                                        @endif
-                                        {{-- @if ($inspection_details->approved_by)
+                                        @endif --}}
+                                        @if ($inspection_details->approved_by)
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label ">{{ __('inspection.approved_by') }}</label>
@@ -564,7 +566,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        @endif --}}
+                                        @endif
                                         @php
                                             $signature = GetSafetySignature(
                                                 $inspection_details->approved_by,
@@ -582,7 +584,7 @@
                                                 </div>
                                             </div>
                                         @endif --}}
-                                        <div class="col-md-12 mb-2">
+                                        <div class="col-md-8 mb-2">
                                             <div class="form-group form-input">
                                                 <label
                                                     class="form-label ">{{ __('inspection.level_two_manager_remarks') }}</label>
@@ -645,8 +647,4 @@
 
             </div>
         </div>
-
-
     @stop
-    @push('script')
-    @endpush

@@ -138,7 +138,7 @@ class WeeklyFirstAidBoxController extends BaseController
                 'data' => $first_aider_list
             ], 201);
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
         }
     }
 }
