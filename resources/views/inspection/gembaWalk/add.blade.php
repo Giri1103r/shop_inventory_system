@@ -102,7 +102,7 @@
 
 
 
-                                                <div class="col-md-4 form-group form-input mb-2">
+                                                {{-- <div class="col-md-4 form-group form-input mb-2">
                                                     @if (isset(Auth::user()->signature_upload))
                                                         <label class="form-label"
                                                             style="display: block; ">{{ __('inspection.signature') }}</label>
@@ -118,20 +118,11 @@
                                                             <div class="text-danger"></div>
                                                         </div>
                                                     @endif
-                                                </div>
+                                                </div> --}}
 
-                                                <div class="col-md-4 mt-2">
-                                                    <div class="form-group form-input">
-                                                        <label for="responsible_person_id"
-                                                            class="form-label require">Responsible Person</label>
-                                                        <select name="responsible_person_id" id="responsible_person_id"
-                                                            class="form-control single-select" style="width: 100%">
-                                                            <option value="">Select Responsible Person</option>
-                                                        </select>
-                                                    </div>
-                                                </div>
 
-                                                <div class="col-md-4 mt-2">
+
+                                                {{-- <div class="col-md-4 mt-2">
                                                     <div class="form-group form-input">
                                                         <label for="responsible_person_id"
                                                             class="form-label require">Executive Person</label>
@@ -140,7 +131,7 @@
                                                             <option value="">Select Executive Person</option>
                                                         </select>
                                                     </div>
-                                                </div>
+                                                </div> --}}
 
 
                                                 <input type="hidden" name="document_reference_id"
@@ -150,10 +141,10 @@
                                             <div class="mt-4 row">
                                                 <div
                                                     class="card-header-inner d-flex justify-content-between align-items-center">
-                                                    <h4 class="text-white">Checklist Details</h4>
-                                                    <button type="button"
+                                                    <h4 class="text-white">{{__('inspection.checklist_details')}}</h4>
+                                                    {{-- <button type="button"
                                                         class="btn mb-2 btn-primary addChecklistDetails">Add
-                                                        More</button>
+                                                        More</button> --}}
                                                 </div>
                                                 <div id="gemba_walk_checklist">
 
@@ -164,10 +155,9 @@
                                                             <div class="col-md-4">
                                                                 <div class="form-group  form-input">
                                                                     <label for="location_id" class="require form-label">
-                                                                        Location</label>
+                                                                        {{__('inspection.location')}}</label>
                                                                     <select name="gemba_walk[0][location_id]"
-                                                                        id="location_id_0"
-                                                                        class=" form-control single-select"
+                                                                        id="location_id" class=" form-control single-select"
                                                                         style="width: 100%">
                                                                         <option value="">Select Location</option>
                                                                         @foreach ($locationList as $loc)
@@ -178,26 +168,43 @@
                                                                 </div>
                                                             </div>
 
-                                                            <div class="col-md-4">
-                                                                <div class="form-group form-input ">
-                                                                    <label for="unit_id" class=" require form-label">
-                                                                        Unit</label>
-                                                                    <select name="gemba_walk[0][unit_id]" id="unit_id_0"
+                                                            <div class="col-md-4 mb-3">
+                                                                <div class="form-group form-input">
+                                                                    <label
+                                                                        class="form-label require">{{ __('common.unit') }}</label>
+                                                                    <select name="gemba_walk[0][unit_id]" id="unit_id"
                                                                         class=" form-control single-select"
                                                                         style="width: 100%">
                                                                         <option value="">Select Unit</option>
-                                                                        @foreach ($unitList as $unit)
-                                                                            <option value="{{ encryptId($unit->id) }}">
-                                                                                {{ $unit->unit_name }}</option>
-                                                                        @endforeach
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-4 mb-3">
+                                                                <div class="form-group form-input">
+                                                                    <label
+                                                                        class="form-label require">{{ __('common.department') }}</label>
+                                                                    <select name="gemba_walk[0][department_id]"
+                                                                        id="department_id"
+                                                                        class=" form-control single-select "
+                                                                        style="width: 100%">
+                                                                        <option value="">Select Department</option>
                                                                     </select>
                                                                 </div>
                                                             </div>
 
                                                             <div class="col-md-4 mt-2">
                                                                 <div class="form-group form-input ">
-                                                                    <label class="form-label require">Date of
-                                                                        Observation</label>
+                                                                    <label class="form-label require">{{__('inspection.exact_location')}}</label>
+                                                                    <input type="text"
+                                                                        name="gemba_walk[0][exact_location]"
+                                                                        id="exact_location_0" class="form-control"
+                                                                        placeholder=" Enter Exact Location  ">
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="col-md-4 mt-2">
+                                                                <div class="form-group form-input ">
+                                                                    <label class="form-label require">{{__('inspection.date_of_observation')}}</label>
                                                                     <input type="text"
                                                                         name="gemba_walk[0][date_of_observation]"
                                                                         id="date_of_observation_0" class="form-control">
@@ -208,7 +215,7 @@
                                                                 <div class="form-group form-input ">
                                                                     <label for="observation_type"
                                                                         class=" require form-label">
-                                                                        Observation Type </label>
+                                                                         {{__('inspection.observation_type')}}</label>
                                                                     <select name="gemba_walk[0][observation_type]"
                                                                         id="observation_type_0"
                                                                         class=" form-control single-select"
@@ -223,7 +230,7 @@
 
                                                             <div class="col-md-4 mt-2">
                                                                 <div class="form-group form-input ">
-                                                                    <label class="form-label require">Description</label>
+                                                                    <label class="form-label require">{{__('inspection.description')}}</label>
                                                                     <textarea class="form-control" name="gemba_walk[0][checklist_description]" id="checklist_description_0"></textarea>
 
                                                                 </div>
@@ -231,11 +238,18 @@
 
 
                                                             <div class="col-md-4 mt-2">
-                                                                <div class="form-group form-input ">
-                                                                    <label class="form-label require">Hazard</label>
-                                                                    <input type="text" name="gemba_walk[0][hazard]"
-                                                                        id="hazard_0" class="form-control"
-                                                                        placeholder=" Enter Hazard Observation">
+                                                                <div class="form-group  form-input">
+                                                                    <label for="hazard" class="require form-label">
+                                                                        {{__('inspection.hazard')}}</label>
+                                                                    <select name="gemba_walk[0][hazard]" id="hazard"
+                                                                        class=" form-control single-select"
+                                                                        style="width: 100%">
+                                                                        <option value="">Select Hazard</option>
+                                                                        @foreach ($hazard as $haza)
+                                                                            <option value="{{ encryptId($haza->id) }}">
+                                                                                {{ $haza->hazard_name }}</option>
+                                                                        @endforeach
+                                                                    </select>
                                                                 </div>
                                                             </div>
 
@@ -243,7 +257,7 @@
                                                             <div class="col-md-4 mt-2  form-input file-upload-block"
                                                                 id="file-upload-0">
                                                                 <label for="evidence_0"
-                                                                    class="form-label require ">Evidence</label>
+                                                                    class="form-label require ">{{__('inspection.evidence')}}</label>
                                                                 <input type="file" class="form-control"
                                                                     name="gemba_walk[0][evidence]" id="evidence_0">
                                                                 <div class="text-danger"></div>
@@ -252,8 +266,7 @@
 
                                                             <div class="col-md-4 mt-2">
                                                                 <div class="form-group form-input">
-                                                                    <label class="form-label require">Recommended
-                                                                        CAPA</label>
+                                                                    <label class="form-label require">{{__('inspection.capa')}}</label>
                                                                     <input type="text"
                                                                         name="gemba_walk[0][checklist_capa]"
                                                                         id="checklist_capa" class="form-control"
@@ -261,38 +274,12 @@
                                                                 </div>
                                                             </div>
 
-                                                            {{-- <div class="col-md-4 mt-2">
-                                                                <div class="form-group form-input">
-                                                                    <label class="form-label require">Date of Compliance
-                                                                    </label>
-                                                                    <input type="text"
-                                                                        name="gemba_walk[0][date_of_compliance]"
-                                                                        id="date_of_compliance_0" class="form-control">
-                                                                </div>
-                                                            </div>
 
-                                                            <div class="col-md-4 mt-2">
-                                                                <div class="form-group form-input">
-                                                                    <label for="unit_id" class=" require form-label">
-                                                                        Responsibility </label>
-                                                                    <select name="gemba_walk[0][responsibility_id]"
-                                                                        id="responsibility_id_0"
-                                                                        class=" form-control single-select"
-                                                                        style="width: 100%">
-                                                                        <option value="">Select Responsibility Person
-                                                                        </option>
-                                                                        @foreach ($employeeList as $employee)
-                                                                            <option value="{{ encryptId($unit->id) }}">
-                                                                                {{ $employee->emp_name }}</option>
-                                                                        @endforeach
-                                                                    </select>
-                                                                </div>
-                                                            </div> --}}
 
                                                             <div class="col-md-4 mt-2">
                                                                 <div class="form-group  form-input">
                                                                     <label for="" class=" require form-label">
-                                                                        Status </label>
+                                                                        {{__('inspection.status')}}</label>
                                                                     <select name="gemba_walk[0][current_status]"
                                                                         id="current_status_0"
                                                                         class=" form-control single-select"
@@ -301,6 +288,20 @@
                                                                         </option>
                                                                         <option value="1">Open</option>
                                                                         <option value="2">Closed</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="col-md-4 mt-2">
+                                                                <div class="form-group form-input">
+                                                                    <label for="responsible_person_id"
+                                                                        class="form-label require">{{__('inspection.observer_person')}}</label>
+                                                                    <select name="gemba_walk[0][responsible_person_id]"
+                                                                        id="responsible_person_id"
+                                                                        class="form-control single-select"
+                                                                        style="width: 100%">
+                                                                        <option value="">Select Observer Person
+                                                                        </option>
                                                                     </select>
                                                                 </div>
                                                             </div>
@@ -331,7 +332,7 @@
                                                     </div>
                                                 </div>
 
-                                                <div class="form-observation">
+                                                {{-- <div class="form-observation">
                                                     <div class="row mt-4 form-obs">
                                                         <div class="card-header-inner p-2">
                                                             <h4 class="text-white">GembaWalk Inspection Observation</h4>
@@ -361,7 +362,7 @@
                                                         </div>
 
                                                     </div>
-                                                </div>
+                                                </div> --}}
 
 
                                                 <div class="form-capa">
@@ -372,8 +373,7 @@
 
                                                         <div class="col-md-12 mb-2">
                                                             <div class="form-group form-input">
-                                                                <label class="form-label require">Whether the Inspection
-                                                                    has been passed Without the CAPA?</label>
+                                                                <label class="form-label require">{{__('inspection.capa_is_passed')}}</label>
 
                                                                 <div class="mb-2">
                                                                     <label class="me-3">
@@ -392,7 +392,7 @@
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 mb-2" id="verified_by" style="display: none;">
-                                                    @if (isset(Auth::user()->signature_upload))
+                                                    {{-- @if (isset(Auth::user()->signature_upload))
                                                         <label class="form-label"
                                                             style="display: block; ">{{ __('inspection.signature') }}</label>
                                                         <img src="{{ admin_url(Auth::user()->signature_upload) }}"
@@ -404,12 +404,19 @@
                                                             <input type="file" class="form-control"
                                                                 name="gemba_walk_verified_by" id="gemba_walk_verified_by">
                                                         </div>
-                                                    @endif
+                                                    @endif --}}
+
+                                                    <div>
+                                                            <label class="form-label">EHS Office Name</label>
+                                                            <input type="text" name="officer_name"
+                                                                class="form-control" value="{{ Auth::user()->name }}"
+                                                                readonly>
+                                                    </div>
                                                 </div>
 
                                                 <div class="col-md-4 mt-2" id="remark_section" style="display: none;">
                                                     <div class="form-group form-input">
-                                                        <label class="form-label">Remark</label>
+                                                        <label class="form-label require">Remark</label>
                                                         <textarea class="form-control" name="capa_remark" id="checklist_remark_0"></textarea>
                                                     </div>
                                                 </div>
@@ -474,34 +481,93 @@
 
         $(document).ready(function() {
 
-            $('#executive_person_id').select2({
-                ajax: {
-                    url: "{{ url('ohc/safety-petty-logbook/employeeid') }}",
-                    dataType: 'json',
-                    delay: 250,
-                    data: function(params) {
-                        return {
-                            search: params.term
-                        };
-                    },
-                    processResults: function(data) {
-                        return {
-                            results: $.map(data, function(item) {
-                                return {
-                                    id: item.id,
-                                    text: item.text
-                                };
-                            })
-                        };
-                    },
-                    error: function(xhr, textStatus, errorThrown) {
-                        console.log("Error in AJAX request:", textStatus, errorThrown);
-                    }
-                },
-                minimumInputLength: 1,
-                dropdownCssClass: 'form-control',
-                selectionCssClass: 'form-control'
+            $(document).on('change', '#location_id', function() {
+                var locationId = $(this).val();
+                if (locationId) {
+                    $.ajax({
+                        url: "{{ admin_url('unit/ajax-list') }}/" + locationId + "/0",
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(data) {
+                            $('#unit_id').empty().append(
+                                '<option value="">Select Unit</option>');
+                            $.each(data, function(key, value) {
+                                $('#unit_id').append('<option value="' +
+                                    value.id +
+                                    '">' + value
+                                    .name + '</option>');
+                            });
+                            $('#unit_id').trigger('change.');
+                        },
+                        error: function(xhr) {
+                            alert('Error fetching unit. Please try again.');
+                        }
+                    });
+                } else {
+                    $('#unit_id').empty().append('<option value="">Select Unit</option>');
+                    $('#unit_id').trigger('change.');
+                }
             });
+
+            $(document).on('change', '#unit_id', function() {
+                var unitId = $(this).val();
+                if (unitId) {
+                    $.ajax({
+                        url: "{{ admin_url('department/ajax-list') }}/" + unitId +
+                            "/0",
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(data) {
+                            $('#department_id').empty().append(
+                                '<option value="">Select Department</option>');
+                            $.each(data, function(key, value) {
+                                $('#department_id').append(
+                                    '<option value="' + value
+                                    .id + '">' + value.name +
+                                    '</option>');
+                            });
+                            $('#department_id').trigger('change.');
+                        },
+                        error: function(xhr) {
+                            alert('Error fetching unit. Please try again.');
+                        }
+                    });
+                } else {
+                    $('#department_id').empty().append(
+                        '<option value="">Select Department</option>');
+                    $('#department_id').trigger('change.');
+                }
+            });
+
+
+            // $('#executive_person_id').select2({
+            //     ajax: {
+            //         url: "{{ url('ohc/safety-petty-logbook/employeeid') }}",
+            //         dataType: 'json',
+            //         delay: 250,
+            //         data: function(params) {
+            //             return {
+            //                 search: params.term
+            //             };
+            //         },
+            //         processResults: function(data) {
+            //             return {
+            //                 results: $.map(data, function(item) {
+            //                     return {
+            //                         id: item.id,
+            //                         text: item.text
+            //                     };
+            //                 })
+            //             };
+            //         },
+            //         error: function(xhr, textStatus, errorThrown) {
+            //             console.log("Error in AJAX request:", textStatus, errorThrown);
+            //         }
+            //     },
+            //     minimumInputLength: 1,
+            //     dropdownCssClass: 'form-control',
+            //     selectionCssClass: 'form-control'
+            // });
 
             $('#responsible_person_id').select2({
                 ajax: {
@@ -531,6 +597,7 @@
                 dropdownCssClass: 'form-control',
                 selectionCssClass: 'form-control'
             });
+
             flatpickr("#document_upload_date", {
                 dateFormat: "d-m-Y"
             });
@@ -550,152 +617,152 @@
 
 
 
-            $(".addChecklistDetails").on("click", function() {
-                const newChecklistField = `
-                    <div class="row gemba_walk_checklist_add" data-index="${checklistIndex}" id="checklistDetails_${checklistIndex}" >
+            // $(".addChecklistDetails").on("click", function() {
+            //     const newChecklistField = `
+        //         <div class="row gemba_walk_checklist_add" data-index="${checklistIndex}" id="checklistDetails_${checklistIndex}" >
 
-                            <hr class="mt-3">
-                         <div class="row">
-
-
-
-                            <div class="col-md-4 form-input">
-                                <label class="form-label">Location</label>
-                                <select name="gemba_walk[${checklistIndex}][location_id]" id="location_id_${checklistIndex}"
-                                    class="form-control single-select" style="width: 100%">
-                                    <option value="">Select Location</option>
-                                    @foreach ($locationList as $loc)
-                                        <option value="{{ encryptId($loc->id) }}">{{ $loc->location_name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-
-                            <div class="col-md-4 form-input">
-                                <label class="form-label">Unit</label>
-                                <select name="gemba_walk[${checklistIndex}][unit_id]" id="unit_id_${checklistIndex}"
-                                    class="form-control single-select" style="width: 100%">
-                                    <option value="">Select Unit</option>
-                                    @foreach ($unitList as $unit)
-                                        <option value="{{ encryptId($unit->id) }}">{{ $unit->unit_name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-
-                            <div class="col-md-4 form-input mt-2">
-                                <label class="form-label">Date of Observation</label>
-                                <input type="text" name="gemba_walk[${checklistIndex}][date_of_observation]"
-                                    id="date_of_observation_${checklistIndex}" class="form-control date_of_observation">
-                            </div>
-
-                            <div class="col-md-4 form-input mt-2">
-                                <label class="form-label">Observation Type</label>
-                                <select name="gemba_walk[${checklistIndex}][observation_type]" id="observation_type_${checklistIndex}"
-                                    class="form-control single-select" style="width: 100%">
-                                    <option value="">Select Observation Type</option>
-                                    <option value="1">Unsafe Act</option>
-                                    <option value="2">Unsafe Condition</option>
-                                </select>
-                            </div>
-
-                            <div class="col-md-4 form-input mt-2">
-                                <label class="form-label">Description</label>
-                                <textarea class="form-control" name="gemba_walk[${checklistIndex}][checklist_description]" id="checklist_description_${checklistIndex}"></textarea>
-                            </div>
-
-                            <div class="col-md-4 form-input mt-2">
-                            <label class="form-label">Hazard</label>
-                            <input type="text" name="gemba_walk[${checklistIndex}][hazard]" id="hazard_${checklistIndex}"
-                                class="form-control" placeholder="Enter Hazard Observation">
-                            </div>
+        //                 <hr class="mt-3">
+        //              <div class="row">
 
 
 
-                             <div class="col-md-4 mt-2 form-input file-upload-block"
-                                                                id="file-upload-0">
-                                                                <label for="evidence_0"
-                                                                    class="form-label">Evidence</label>
-                                                                <input type="file" class="form-control"
-                                                                    name="gemba_walk[${checklistIndex}][evidence]" id="evidence_${checklistIndex}">
-                                                                <div class="text-danger"></div>
+        //                 <div class="col-md-4 form-input">
+        //                     <label class="form-label">Location</label>
+        //                     <select name="gemba_walk[${checklistIndex}][location_id]" id="location_id_${checklistIndex}"
+        //                         class="form-control single-select" style="width: 100%">
+        //                         <option value="">Select Location</option>
+        //                         @foreach ($locationList as $loc)
+        //                             <option value="{{ encryptId($loc->id) }}">{{ $loc->location_name }}</option>
+        //                         @endforeach
+        //                     </select>
+        //                 </div>
 
-                                                            </div>
+        //                 <div class="col-md-4 form-input">
+        //                     <label class="form-label">Unit</label>
+        //                     <select name="gemba_walk[${checklistIndex}][unit_id]" id="unit_id_${checklistIndex}"
+        //                         class="form-control single-select" style="width: 100%">
+        //                         <option value="">Select Unit</option>
+        //                         @foreach ($unitList as $unit)
+        //                             <option value="{{ encryptId($unit->id) }}">{{ $unit->unit_name }}</option>
+        //                         @endforeach
+        //                     </select>
+        //                 </div>
 
-                            <div class="col-md-4 form-input mt-2">
-                                <label class="form-label">CAPA</label>
-                                <input type="text" name="gemba_walk[${checklistIndex}][checklist_capa]" id="checklist_capa_${checklistIndex}"
-                                    class="form-control" placeholder="Enter Recommended actions">
-                            </div>
+        //                 <div class="col-md-4 form-input mt-2">
+        //                     <label class="form-label">Date of Observation</label>
+        //                     <input type="text" name="gemba_walk[${checklistIndex}][date_of_observation]"
+        //                         id="date_of_observation_${checklistIndex}" class="form-control date_of_observation">
+        //                 </div>
 
+        //                 <div class="col-md-4 form-input mt-2">
+        //                     <label class="form-label">Observation Type</label>
+        //                     <select name="gemba_walk[${checklistIndex}][observation_type]" id="observation_type_${checklistIndex}"
+        //                         class="form-control single-select" style="width: 100%">
+        //                         <option value="">Select Observation Type</option>
+        //                         <option value="1">Unsafe Act</option>
+        //                         <option value="2">Unsafe Condition</option>
+        //                     </select>
+        //                 </div>
 
+        //                 <div class="col-md-4 form-input mt-2">
+        //                     <label class="form-label">Description</label>
+        //                     <textarea class="form-control" name="gemba_walk[${checklistIndex}][checklist_description]" id="checklist_description_${checklistIndex}"></textarea>
+        //                 </div>
 
-
-                            <div class="col-md-4 form-input mt-2">
-                                <label class="form-label">Status</label>
-                                <select name="gemba_walk[${checklistIndex}][current_status]" id="current_status_${checklistIndex}"
-                                    class="form-control single-select" style="width: 100%">
-                                    <option value="">Select Current Status</option>
-                                    <option value="1">Open</option>
-                                    <option value="2">Closed</option>
-                                </select>
-                            </div>
-
-                            <div class="col-md-4 form-input mt-2">
-                                <label class="form-label">Remark</label>
-                                <textarea class="form-control" name="gemba_walk[${checklistIndex}][checklist_remark]" id="gemba_checklist_remark_${checklistIndex}"></textarea>
-                            </div>
-
-                          </div>
-
-
-                          {{--   observation
-                            <div class="row mt-2">
-                                <div class="observationContainer">
-                                    <div class="row observationRow">
-                                        <div class="col-md-4 form-input">
-                                            <label class="form-label">Observation</label>
-                                            <textarea class="form-control" name="gemba_walk[${checklistIndex}][checklist_observation][0]"></textarea>
-                                        </div>
-                                        <div class="col-md-4 d-flex align-items-end">
-                                            <button type="button" class="btn btn-primary addChecklistObservation"  data-index=
-                                            "${checklistIndex}" >Add More</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            --}}
-
-
-                            <div class="col-md-12 mb-3 mt-3 d-flex align-items-end justify-content-end">
-                                <button type="button" class="btn btn-danger btn-sm removeChecklistDetails">Remove</button>
-                            </div>
-                </div>`;
-
-
-                if ($(".gemba_walk_checklist_add").length >= 200) {
-                    Swal.fire({
-                        icon: "error",
-                        title: "Sorry!",
-                        text: "You cannot add more than 200 checklist items."
-                    });
-                    return;
-                }
-
-                $("#gemba_walk_checklist").append(newChecklistField);
-
-                addValidationRules(checklistIndex);
-                checklistCount++;
-                checklistIndex++;
-
-                $(".single-select").select2({
-                    width: "100%"
-                });
-                $(".date_of_compliance, .date_of_observation").flatpickr({
-                    dateFormat: "d-m-Y"
-                });
+        //                 <div class="col-md-4 form-input mt-2">
+        //                 <label class="form-label">Hazard</label>
+        //                 <input type="text" name="gemba_walk[${checklistIndex}][hazard]" id="hazard_${checklistIndex}"
+        //                     class="form-control" placeholder="Enter Hazard Observation">
+        //                 </div>
 
 
 
-            });
+        //                  <div class="col-md-4 mt-2 form-input file-upload-block"
+        //                                                     id="file-upload-0">
+        //                                                     <label for="evidence_0"
+        //                                                         class="form-label">Evidence</label>
+        //                                                     <input type="file" class="form-control"
+        //                                                         name="gemba_walk[${checklistIndex}][evidence]" id="evidence_${checklistIndex}">
+        //                                                     <div class="text-danger"></div>
+
+        //                                                 </div>
+
+        //                 <div class="col-md-4 form-input mt-2">
+        //                     <label class="form-label">CAPA</label>
+        //                     <input type="text" name="gemba_walk[${checklistIndex}][checklist_capa]" id="checklist_capa_${checklistIndex}"
+        //                         class="form-control" placeholder="Enter Recommended actions">
+        //                 </div>
+
+
+
+
+        //                 <div class="col-md-4 form-input mt-2">
+        //                     <label class="form-label">Status</label>
+        //                     <select name="gemba_walk[${checklistIndex}][current_status]" id="current_status_${checklistIndex}"
+        //                         class="form-control single-select" style="width: 100%">
+        //                         <option value="">Select Current Status</option>
+        //                         <option value="1">Open</option>
+        //                         <option value="2">Closed</option>
+        //                     </select>
+        //                 </div>
+
+        //                 <div class="col-md-4 form-input mt-2">
+        //                     <label class="form-label">Remark</label>
+        //                     <textarea class="form-control" name="gemba_walk[${checklistIndex}][checklist_remark]" id="gemba_checklist_remark_${checklistIndex}"></textarea>
+        //                 </div>
+
+        //               </div>
+
+
+        //               {{--   observation
+            //                 <div class="row mt-2">
+            //                     <div class="observationContainer">
+            //                         <div class="row observationRow">
+            //                             <div class="col-md-4 form-input">
+            //                                 <label class="form-label">Observation</label>
+            //                                 <textarea class="form-control" name="gemba_walk[${checklistIndex}][checklist_observation][0]"></textarea>
+            //                             </div>
+            //                             <div class="col-md-4 d-flex align-items-end">
+            //                                 <button type="button" class="btn btn-primary addChecklistObservation"  data-index=
+            //                                 "${checklistIndex}" >Add More</button>
+            //                             </div>
+            //                         </div>
+            //                     </div>
+            //                 </div>
+            //                 --}}
+
+
+        //                 <div class="col-md-12 mb-3 mt-3 d-flex align-items-end justify-content-end">
+        //                     <button type="button" class="btn btn-danger btn-sm removeChecklistDetails">Remove</button>
+        //                 </div>
+        //     </div>`;
+
+
+            //     if ($(".gemba_walk_checklist_add").length >= 200) {
+            //         Swal.fire({
+            //             icon: "error",
+            //             title: "Sorry!",
+            //             text: "You cannot add more than 200 checklist items."
+            //         });
+            //         return;
+            //     }
+
+            //     $("#gemba_walk_checklist").append(newChecklistField);
+
+            //     addValidationRules(checklistIndex);
+            //     checklistCount++;
+            //     checklistIndex++;
+
+            //     $(".single-select").select2({
+            //         width: "100%"
+            //     });
+            //     $(".date_of_compliance, .date_of_observation").flatpickr({
+            //         dateFormat: "d-m-Y"
+            //     });
+
+
+
+            // });
 
             // $(document).on("click", ".addChecklistObservation", function() {
             //     const checklistRow = $(this).closest(".gemba_walk_checklist_add");
@@ -747,10 +814,10 @@
             //     $(this).closest(".observationRow").remove();
             // });
 
-            $(document).on("click", ".removeChecklistDetails", function() {
-                $(this).closest(".gemba_walk_checklist_add").remove();
-                checklistIndex--;
-            });
+            // $(document).on("click", ".removeChecklistDetails", function() {
+            //     $(this).closest(".gemba_walk_checklist_add").remove();
+            //     checklistIndex--;
+            // });
 
             $(document).ready(function() {
 
@@ -786,17 +853,16 @@
                         capa_remark: {
                             required: true,
                         },
-                        responsible_person_id: {
-                            required: true,
-                        },
-                        executive_person_id: {
-                            required: true,
-                        },
-
                         "gemba_walk[0][location_id]": {
                             required: true
                         },
                         "gemba_walk[0][unit_id]": {
+                            required: true
+                        },
+                        "gemba_walk[0][department_id]": {
+                            required: true
+                        },
+                        "gemba_walk[0][exact_location]": {
                             required: true
                         },
                         "gemba_walk[0][date_of_observation]": {
@@ -814,8 +880,8 @@
                         },
                         "gemba_walk[0][hazard]": {
                             required: true,
-                            minlength: 3,
-                            maxlength: 200,
+                            // minlength: 3,
+                            // maxlength: 200,
 
                         },
                         "gemba_walk[0][evidence]": {
@@ -831,7 +897,7 @@
                         "gemba_walk[0][date_of_compliance]": {
                             required: true,
                         },
-                        "gemba_walk[0][responsibility_id]": {
+                        "gemba_walk[0][responsible_person_id]": {
                             required: true
                         },
                         "gemba_walk[0][current_status]": {
@@ -862,9 +928,9 @@
                             // extension: "Only JPG, JPEG, and PNG files are allowed.",
                             filesize: "File size must be less than 15MB."
                         },
-                        executive_person_id: {
-                            required: "Please select a Executive person."
-                        },
+                        // executive_person_id: {
+                        //     required: "Please select a Executive person."
+                        // },
                         gemba_walk_verified_by: {
                             required: "Please upload a signature.",
                             filesize: "File size must be less than 15MB."
@@ -877,6 +943,8 @@
                         },
                         "gemba_walk[0][location_id]": "Please select a location.",
                         "gemba_walk[0][unit_id]": "Please select a unit.",
+                        "gemba_walk[0][department_id]": "Please select a department.",
+                        "gemba_walk[0][exact_location]": "Please enter an exact location.",
                         "gemba_walk[0][date_of_observation]": "Please enter the date of observation.",
                         "gemba_walk[0][observation_type]": "Please select an observation type.",
 
@@ -887,10 +955,10 @@
 
                         },
                         "gemba_walk[0][hazard]": {
-                            required: "Please enter a hazard observation.",
-                            minlength: "Hazard must be at least 3 characters.",
-                            maxlength: "Hazard cannot exceed 200 characters.",
-                            customPattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed."
+                            required: "Please select a hazard observation.",
+                            // minlength: "Hazard must be at least 3 characters.",
+                            // maxlength: "Hazard cannot exceed 200 characters.",
+                            // customPattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed."
                         },
                         "gemba_walk[0][evidence]": {
                             required: "Please upload an evidence file.",
@@ -904,7 +972,7 @@
                             customPattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed."
                         },
                         "gemba_walk[0][date_of_compliance]": "Please enter the compliance date.",
-                        "gemba_walk[0][responsibility_id]": "Please select a responsible person.",
+                        "gemba_walk[0][responsible_person_id]": "Please select a observer person.",
                         "gemba_walk[0][current_status]": "Please select a status.",
                         "gemba_walk[0][checklist_remark]": {
 
@@ -1027,7 +1095,7 @@
                     required: true,
                     minlength: 3,
                     maxlength: 200,
-                  
+
                     messages: {
                         required: "Please Enter a Hazard",
                         minlength: "Hazard must be at least 3 characters.",
