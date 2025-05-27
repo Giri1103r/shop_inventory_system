@@ -288,8 +288,8 @@
         <td colspan="4" style="border: 1px solid black; padding: 6px; text-align: center;">
             <div class="view_data">
                 @if (!empty($first->checked_by))
-                    <img src="{{ admin_url($checked_by) }}" alt=""
-                        style="max-height: 60px; display: block; margin: 0 auto 5px;">
+                    {{-- <img src="{{ admin_url($checked_by) }}" alt=""
+                        style="max-height: 60px; display: block; margin: 0 auto 5px;"> --}}
                     <p style="margin: 0;">Checked By:- {{ getUsername($first->created_by) }}</p>
                 @else
                     <p style="margin: 0;">Checked By:- Not yet checked</p>
@@ -299,8 +299,8 @@
         <td colspan="3" style="border: 1px solid black; padding: 6px; text-align: center;">
             <div class="view_data">
                 @if (!empty($first->verified_by))
-                    <img src="{{ admin_url($verified_by) }}" alt=""
-                        style="max-height: 60px; display: block; margin: 0 auto 5px;">
+                    {{-- <img src="{{ admin_url($verified_by) }}" alt=""
+                        style="max-height: 60px; display: block; margin: 0 auto 5px;"> --}}
                     <p style="margin: 0;">Verified By:- {{ getUsername($first->verified_by) }}</p>
                 @else
                     <p style="margin: 0;">Verified By:- Not yet verified</p>
@@ -310,8 +310,8 @@
         <td colspan="4" style="border: 1px solid black; padding: 6px; text-align: center;">
             <div class="view_data">
                 @if (!empty($first->approved_by))
-                    <img src="{{ admin_url($approved_by) }}" alt=""
-                        style="max-height: 60px; display: block; margin: 0 auto 5px;">
+                    {{-- <img src="{{ admin_url($approved_by) }}" alt=""
+                        style="max-height: 60px; display: block; margin: 0 auto 5px;"> --}}
                     <p style="margin: 0;">Approved By:- {{ getUsername($first->approved_by) }}</p>
                 @else
                     <p style="margin: 0;">Approved By:- Not yet approved</p>

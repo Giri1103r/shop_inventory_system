@@ -119,7 +119,7 @@
                                                 SPRINKLAR_SYSTEM_INSPECTION,
                                             );
                                         @endphp
-                                        @if (isset($signature))
+                                        {{-- @if (isset($signature))
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label"
@@ -128,7 +128,7 @@
                                                         style="width: 100px; margin-top: -10px;" />
                                                 </div>
                                             </div>
-                                        @endif
+                                        @endif --}}
                                     </div>
                                     <hr>
                                     {{-- <div class="form-observation">
@@ -211,65 +211,65 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.painting') }}</label>
-                                                            <div class="view_data">
-                                                                @if ($details->painting == OK)
-                                                                    {{ __('inspection.ok') }}
-                                                                @else
-                                                                    {{ __('inspection.not_ok') }}
-                                                                @endif
-                                                            </div>
+                                                        <div class="view_data">
+                                                            @if ($details->painting == OK)
+                                                                {{ __('inspection.ok') }}
+                                                            @else
+                                                                {{ __('inspection.not_ok') }}
+                                                            @endif
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.QBD') }}</label>
-                                                            <div class="view_data">
-                                                                @if ($details->qbd == OK)
-                                                                    {{ __('inspection.ok') }}
-                                                                @else
-                                                                    {{ __('inspection.not_ok') }}
-                                                                @endif
-                                                            </div>
+                                                        <div class="view_data">
+                                                            @if ($details->qbd == OK)
+                                                                {{ __('inspection.ok') }}
+                                                            @else
+                                                                {{ __('inspection.not_ok') }}
+                                                            @endif
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.condition_of_flow_meter') }}</label>
-                                                            <div class="view_data">
-                                                                @if ($details->condition_of_flow_meter == OK)
-                                                                    {{ __('inspection.ok') }}
-                                                                @else
-                                                                    {{ __('inspection.not_ok') }}
-                                                                @endif
-                                                            </div>
+                                                        <div class="view_data">
+                                                            @if ($details->condition_of_flow_meter == OK)
+                                                                {{ __('inspection.ok') }}
+                                                            @else
+                                                                {{ __('inspection.not_ok') }}
+                                                            @endif
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.main_isolation') }}</label>
-                                                            <div class="view_data">
-                                                                @if ($details->main_isolation == OK)
-                                                                    {{ __('inspection.ok') }}
-                                                                @else
-                                                                    {{ __('inspection.not_ok') }}
-                                                                @endif
-                                                            </div>
+                                                        <div class="view_data">
+                                                            @if ($details->main_isolation == OK)
+                                                                {{ __('inspection.ok') }}
+                                                            @else
+                                                                {{ __('inspection.not_ok') }}
+                                                            @endif
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.drain_condition') }}</label>
-                                                            <div class="view_data">
-                                                                @if ($details->drain_condition == OK)
-                                                                    {{ __('inspection.ok') }}
-                                                                @else
-                                                                    {{ __('inspection.not_ok') }}
-                                                                @endif
-                                                            </div>
+                                                        <div class="view_data">
+                                                            @if ($details->drain_condition == OK)
+                                                                {{ __('inspection.ok') }}
+                                                            @else
+                                                                {{ __('inspection.not_ok') }}
+                                                            @endif
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-6 mb-2">
@@ -322,7 +322,7 @@
                                                     </div>
                                                 </div>
                                             @endif
-                                            @if (isset($signature))
+                                            {{-- @if (isset($signature))
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label class="form-label"
@@ -331,7 +331,7 @@
                                                             style="width: 150px; margin-top: -10px;" />
                                                     </div>
                                                 </div>
-                                            @endif
+                                            @endif --}}
                                             @if (isset($inspection->approved_by))
                                                 @if ($inspection->verified_by == $inspection->approved_by)
                                                     <div class="col-md-4 mb-2">
@@ -350,16 +350,17 @@
                                                             SPRINKLAR_SYSTEM_INSPECTION,
                                                         );
                                                     @endphp
-                                                    @if (isset($signature))
-                                                    <div class="col-md-4 mb-2">
-                                                        <div class="form-group form-input">
-                                                            <label class="form-label"
-                                                                style="display: block;">{{ __('inspection.signature') }}</label>
-                                                            <img src="{{ admin_url($signature) }}" alt="Signature Upload"
-                                                                style="width: 150px; margin-top: -10px;" />
+                                                    {{-- @if (isset($signature))
+                                                        <div class="col-md-4 mb-2">
+                                                            <div class="form-group form-input">
+                                                                <label class="form-label"
+                                                                    style="display: block;">{{ __('inspection.signature') }}</label>
+                                                                <img src="{{ admin_url($signature) }}"
+                                                                    alt="Signature Upload"
+                                                                    style="width: 150px; margin-top: -10px;" />
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                @endif
+                                                    @endif --}}
                                                 @endif
                                             @endif
 
@@ -414,7 +415,7 @@
                                                     SPRINKLAR_SYSTEM_INSPECTION,
                                                 );
                                             @endphp
-                                            @if (isset($signature))
+                                            {{-- @if (isset($signature))
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label class="form-label"
@@ -423,7 +424,7 @@
                                                             style="width: 150px; margin-top: -10px;" />
                                                     </div>
                                                 </div>
-                                            @endif
+                                            @endif --}}
                                             <div class="col-md-12 mb-2">
                                                 <div class="form-group form-input">
                                                     <label
@@ -467,7 +468,7 @@
                                                 SPRINKLAR_SYSTEM_INSPECTION,
                                             );
                                         @endphp
-                                        @if (isset($signature))
+                                        {{-- @if (isset($signature))
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label"
@@ -476,7 +477,7 @@
                                                         style="width: 150px; margin-top: -10px;" />
                                                 </div>
                                             </div>
-                                        @endif
+                                        @endif --}}
                                         <div class="col-md-12 mb-2">
                                             <div class="form-group form-input">
                                                 <label
@@ -519,7 +520,7 @@
                                                 SPRINKLAR_SYSTEM_INSPECTION,
                                             );
                                         @endphp
-                                        @if (isset($signature))
+                                        {{-- @if (isset($signature))
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label"
@@ -528,7 +529,7 @@
                                                         style="width: 150px; margin-top: -10px;" />
                                                 </div>
                                             </div>
-                                        @endif
+                                        @endif --}}
                                         <div class="col-md-12 mb-2">
                                             <div class="form-group form-input">
                                                 <label
@@ -570,7 +571,7 @@
                                                 SPRINKLAR_SYSTEM_INSPECTION,
                                             );
                                         @endphp
-                                        @if (isset($signature))
+                                        {{-- @if (isset($signature))
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label"
@@ -579,7 +580,7 @@
                                                         style="width: 150px; margin-top: -10px;" />
                                                 </div>
                                             </div>
-                                        @endif
+                                        @endif --}}
                                         {{-- @if ($inspection->approved_by)
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
