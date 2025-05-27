@@ -99,7 +99,7 @@
                                                 <input type="text" name="date" id="date" class="form-control" value="{{ todayDate() }}" readonly>
                                             </div>
 
-                                            <div class="col-md-4 form-group form-input mb-2">
+                                            {{-- <div class="col-md-4 form-group form-input mb-2">
                                                 @if (isset(Auth::user()->signature_upload))
                                                     <label class="form-label" style="display: block;">{{ __('inspection.signature') }}</label>
                                                     <img src="{{ admin_url(Auth::user()->signature_upload) }}" alt="Signature Upload" style="width: 100px; margin-top: -10px;">
@@ -109,7 +109,7 @@
                                                     <small>Allowed file types: jpg, jpeg, png</small>
                                                     <div id="signature_upload_error" class="text-danger"></div>
                                                 @endif
-                                            </div>
+                                            </div> --}}
 
                                             <div class="col-md-12 mb-2 form-input">
                                                 <label for="capa_remarks" class="form-label">Remarks</label>
@@ -144,10 +144,10 @@
                         maxlength: 100,
 
                     },
-                    signature_image: {
-                        required: true,
-                        filesize: 15728640,
-                    }
+                    // signature_image: {
+                    //     required: true,
+                    //     filesize: 15728640,
+                    // }
                 },
                 messages: {
                     capa_remarks: {
@@ -155,10 +155,10 @@
                         minlength: "Minimum Characters should be 3",
                         maxlength: "Maximum Characters should not exceed 100",
                     },
-                    signature_image: {
-                        required: "Signature is Required",
-                        filesize:"Signature size must be under 15MB",
-                    }
+                    // signature_image: {
+                    //     required: "Signature is Required",
+                    //     filesize:"Signature size must be under 15MB",
+                    // }
                 },
                 errorElement: 'div',
                 errorPlacement: function(error, element) {

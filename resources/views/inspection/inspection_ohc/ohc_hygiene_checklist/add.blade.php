@@ -168,7 +168,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div class="col-md-4 form-group form-input mb-2">
+                                                    {{-- <div class="col-md-4 form-group form-input mb-2">
                                                         @if (isset(Auth::user()->signature_upload))
                                                             <label class="form-label"
                                                                 style="display: block; ">{{ __('inspection.signature') }}</label>
@@ -186,10 +186,10 @@
                                                                 <div id="signature_upload" class="text-danger"></div>
                                                             </div>
                                                         @endif
-                                                    </div>
-                                                    @error('signature_upload')
+                                                    </div> --}}
+                                                    {{-- @error('signature_upload')
                                                         <div class="error">{{ $message }}</div>
-                                                    @enderror
+                                                    @enderror --}}
 
 
                                                 </div>
@@ -246,10 +246,10 @@
                             shift_id: {
                                 required: true,
                             },
-                            signature_image: {
-                                required: true,
-                                filesize: 15728640,
-                            },
+                            // signature_image: {
+                            //     required: true,
+                            //     filesize: 15728640,
+                            // },
                             remarks: {
                                 required: true,
                                 noSpaces: true,
@@ -266,10 +266,10 @@
                             shift_id: {
                                 required: "Shift is required",
                             },
-                            signature_image: {
-                                required: "Signature is required",
-                                filesize: "File size must be less than 15MB."
-                            },
+                            // signature_image: {
+                            //     required: "Signature is required",
+                            //     filesize: "File size must be less than 15MB."
+                            // },
                             remarks: {
                                 required: "Remarks is required",
                                 minlength: "Minimum 3 characters required",

@@ -97,10 +97,10 @@
                                             </th>
                                             <th rowspan="2"
                                                 style="border: 1px solid black; padding: 12px; background-color: #ccc; text-align: center;">
-                                                Cleaner Signature</th>
+                                                Cleaner</th>
                                             <th rowspan="2"
                                                 style="border: 1px solid black; padding: 12px; background-color: #ccc; text-align: center;">
-                                                Nursing Signature</th>
+                                                Nursing</th>
                                             <th rowspan="2"
                                                 style="border: 1px solid black; padding: 12px; background-color: #ccc; text-align: center;">
                                                 Remarks</th>
@@ -144,16 +144,14 @@
 
                                             <td style="border: 1px solid black; text-align: center; padding: 12px;"
                                                 class="form-input">
-                                                <img src="{{ admin_url($cleaner_signature) }}" alt="Cleaner Signature"
-                                                    style="width:100px; height:100px;">
+                                                <p>{{ getUsername($inspection_details->created_by) }}</p>
                                             </td>
                                             <td style="border: 1px solid black; text-align: center; padding: 12px;"
                                                 class="form-input">
                                                 @if ($nursing_signature)
-                                                    <img src="{{ admin_url($cleaner_signature) }}" alt="Cleaner Signature"
-                                                        style="width:100px; height:100px;">
+                                                    <p>{{ getUsername($inspection_details->updated_by) }}</p>
                                                 @else
-                                                <p>Inspection has not been Verified Yet</p>
+                                                    <p>Inspection has not been Verified Yet</p>
                                                 @endif
                                             </td>
                                             <td style="border: 1px solid black; text-align: center; padding: 12px;"

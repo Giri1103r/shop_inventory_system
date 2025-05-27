@@ -243,7 +243,7 @@
                             {{ $medicines['remarks'] }}</td>
                     </tr>
                 @endforeach
-                @php
+                {{-- @php
                     $inspection_created_by = GetOHCSignature(
                         $details->checked_by,
                         $details->inspection_id,
@@ -254,12 +254,12 @@
                         $details->inspection_id,
                         FIRST_AID_BAG_INSPECTION_CHECKLIST,
                     );
-                @endphp
+                @endphp --}}
                 <tr>
                     <td colspan="7"
                         style="border: 1px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
-                        <img src="{{ admin_url($inspection_created_by) }}" alt="Checked By Signature"
-                            style="height: 50px; margin-top:2px;">
+                        {{-- <img src="{{ admin_url($inspection_created_by) }}" alt="Checked By Signature"
+                            style="height: 50px; margin-top:2px;"> --}}
                         <div>Checked & Prepared By: {{ getUsername($details->checked_by) }}</div>
                     </td>
                 </tr>

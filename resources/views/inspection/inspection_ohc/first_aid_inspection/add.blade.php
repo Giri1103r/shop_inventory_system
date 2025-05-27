@@ -149,7 +149,7 @@
 
 
                                             </div>
-                                            <div class="row m-2">
+                                            {{-- <div class="row m-2">
                                                 <div class="col-md-4 form-group form-input mb-2">
                                                     @if (isset(Auth::user()->signature_upload))
                                                         <label class="form-label"
@@ -167,7 +167,7 @@
                                                         </div>
                                                     @endif
                                                 </div>
-                                            </div>
+                                            </div> --}}
 
 
 
@@ -254,10 +254,10 @@
                         next_due: {
                             required: true,
                         },
-                        signature_image: {
-                            required: true,
-                            filesize: 15728640,
-                        }
+                        // signature_image: {
+                        //     required: true,
+                        //     filesize: 15728640,
+                        // }
                     },
                     messages: {
                         inspection_date: {
@@ -266,10 +266,10 @@
                         next_due: {
                             required: "Next Due Date is required",
                         },
-                        signature_image: {
-                            required: "Signature is required",
-                            filesize: "File size must be less than 10MB."
-                        }
+                        // signature_image: {
+                        //     required: "Signature is required",
+                        //     filesize: "File size must be less than 10MB."
+                        // }
                     },
                     errorElement: 'span',
                     errorPlacement: function(error, element) {
