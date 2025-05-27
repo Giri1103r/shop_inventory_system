@@ -79,7 +79,7 @@ class ForkLiftInspectionController extends Controller
                 <i class="fas fa-file-excel" style="color: #1D6F42;" aria-hidden="true"></i>
              </a>';
 
-                            if ($row->observation_status == OBSERVATION_PENDING && (isAdmin() || CheckUserRole(ROLE_EHS_HEAD)) ) {
+                            if ($row->observation_status == OBSERVATION_PENDING && (isAdmin() || CheckUserRole(ROLE_EHS_HEAD))) {
                                 $btn .= '<a href="' . admin_url('safety/forklift-inspection/approval/' . encryptId($row->inspection_id)) . '" class="me-1" title="' . __('inspection.approval') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             return $btn;
@@ -151,14 +151,7 @@ class ForkLiftInspectionController extends Controller
                 'observation_status.*' => 'required',
                 'remarks.*' => 'required',
                 'emp_id.*' => 'required',
-                'signature_upload' => [
-                    function ($attribute, $value, $fail) {
-                        $user = Auth::user();
-                        if (($user->signature_upload == null)) {
-                            $fail('Signature is required.');
-                        }
-                    }
-                ],
+
 
             ];
 
@@ -186,7 +179,7 @@ class ForkLiftInspectionController extends Controller
 
             $forklift_observation =  $this->forklift->Store();
             $forklift_observation_details = $this->observation_details->store($forklift_observation->id);
-            $signature_update = $this->signature->signatureUpload(FORKLIFT_INSPECTION, $forklift_observation->id);
+            // $signature_update = $this->signature->signatureUpload(FORKLIFT_INSPECTION, $forklift_observation->id);
 
             $ehsOfficer = GetEHSHead();
             if (!empty($ehsOfficer)) {
@@ -402,10 +395,16 @@ class ForkLiftInspectionController extends Controller
                 }
 
                 $signatureRowStart = $row;
-                $sheet->getRowDimension($signatureRowStart)->setRowHeight(60);
+                $sheet->getRowDimension($signatureRowStart)->setRowHeight(20);
 
-                $prepared_by_signature = GetSafetySignature($detail->checked_by, $detail->safety_id, FORKLIFT_INSPECTION);
-                $verified_by_signature = GetSafetySignature($detail->verified_by, $detail->safety_id, FORKLIFT_INSPECTION);
+                // $prepared_by_signature = GetSafetySignature($detail->checked_by, $detail->safety_id, FORKLIFT_INSPECTION);
+                // $verified_by_signature = GetSafetySignature($detail->verified_by, $detail->safety_id, FORKLIFT_INSPECTION);
+
+                $preparedBy = getUsername($firstData->created_by);
+                $preparedByText = !empty($preparedBy) ? $preparedBy : "Inspection has not been prepared yet";
+
+                $verifiedBy = getUsername($firstData->verified_by);
+                $verifiedByText = !empty($verifiedBy) ? $verifiedBy : "Inspection has not been verified yet";
 
                 $sheet->mergeCells("A{$signatureRowStart}:E{$signatureRowStart}");
                 $sheet->getStyle("A{$signatureRowStart}:E{$signatureRowStart}")->applyFromArray([
@@ -413,19 +412,7 @@ class ForkLiftInspectionController extends Controller
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
                     'wrapText' => true,
                 ]);
-                if (file_exists($prepared_by_signature)) {
-                    $drawing = new Drawing();
-                    $drawing->setName('Prepared By Signature');
-                    $drawing->setPath($prepared_by_signature);
-                    $drawing->setCoordinates("D{$signatureRowStart}");
-                    $drawing->setOffsetX(5);
-                    $drawing->setOffsetY(5);
-                    $drawing->setHeight(40);
-                    $drawing->setWorksheet($sheet);
-                    $sheet->setCellValue("A{$signatureRowStart}", "\n\n\nPrepared By:\n" . getUsername($firstData->created_by));
-                } else {
-                    $sheet->setCellValue("A{$signatureRowStart}", "Prepared By:\nSignature not available");
-                }
+                $sheet->setCellValue("A{$signatureRowStart}", "Prepared By: " . $preparedByText);
 
                 $sheet->mergeCells("F{$signatureRowStart}:J{$signatureRowStart}");
                 $sheet->getStyle("F{$signatureRowStart}:J{$signatureRowStart}")->applyFromArray([
@@ -433,19 +420,35 @@ class ForkLiftInspectionController extends Controller
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
                     'wrapText' => true,
                 ]);
-                if (file_exists($verified_by_signature)) {
-                    $drawing = new Drawing();
-                    $drawing->setName('Verified By Signature');
-                    $drawing->setPath($verified_by_signature);
-                    $drawing->setCoordinates("G{$signatureRowStart}");
-                    $drawing->setOffsetX(5);
-                    $drawing->setOffsetY(5);
-                    $drawing->setHeight(40);
-                    $drawing->setWorksheet($sheet);
-                    $sheet->setCellValue("F{$signatureRowStart}", "\n\n\nVerified By:\n" . getUsername($firstData->updated_by));
-                } else {
-                    $sheet->setCellValue("F{$signatureRowStart}", "Verified By:\nSignature not available");
-                }
+                $sheet->setCellValue("F{$signatureRowStart}", "Verified By: " . $verifiedByText);
+
+
+                // if (file_exists($prepared_by_signature)) {
+                //     $drawing = new Drawing();
+                //     $drawing->setName('Prepared By Signature');
+                //     $drawing->setPath($prepared_by_signature);
+                //     $drawing->setCoordinates("D{$signatureRowStart}");
+                //     $drawing->setOffsetX(5);
+                //     $drawing->setOffsetY(5);
+                //     $drawing->setHeight(40);
+                //     $drawing->setWorksheet($sheet);
+                // } else {
+                //     $sheet->setCellValue("A{$signatureRowStart}", "Prepared By:\nSignature not available");
+                // }
+
+
+                // if (file_exists($verified_by_signature)) {
+                //     $drawing = new Drawing();
+                //     $drawing->setName('Verified By Signature');
+                //     $drawing->setPath($verified_by_signature);
+                //     $drawing->setCoordinates("G{$signatureRowStart}");
+                //     $drawing->setOffsetX(5);
+                //     $drawing->setOffsetY(5);
+                //     $drawing->setHeight(40);
+                //     $drawing->setWorksheet($sheet);
+                // } else {
+                //     $sheet->setCellValue("F{$signatureRowStart}", "Verified By:Signature not available");
+                // }
 
                 $sheet->getStyle("A{$startRow}:P{$row}")->applyFromArray([
                     'borders' => [
@@ -563,7 +566,7 @@ class ForkLiftInspectionController extends Controller
             $remarks = $request->capa_remarks;
             $eye_wash_inspection = $this->forklift->approvalSubmit($id, $status, $remarks);
             $inspection_details = $this->forklift->selectOne($id);
-            $signature_update = $this->signature->signatureUpload(FORKLIFT_INSPECTION, $id);
+            // $signature_update = $this->signature->signatureUpload(FORKLIFT_INSPECTION, $id);
             $created_by = [$inspection_details->created_by];
             if ($status == 1) {
                 $message = 'FORKLIFT INSPECTION - OBSERVATION APPROVED';
@@ -630,8 +633,8 @@ class ForkLiftInspectionController extends Controller
             $current_month_inspection = $this->observation_details->GetDetails($inspection_details->id);
             $document_no = $this->document_reference->selectOne($inspection_details->document_reference_id);
 
-            $prepared_by_signature = GetSafetySignature($inspection_details->created_by, $inspection_details->id, FORKLIFT_INSPECTION);
-            $verified_by_signature = GetSafetySignature($inspection_details->updated_by, $inspection_details->id, FORKLIFT_INSPECTION);
+            // $prepared_by_signature = GetSafetySignature($inspection_details->created_by, $inspection_details->id, FORKLIFT_INSPECTION);
+            // $verified_by_signature = GetSafetySignature($inspection_details->updated_by, $inspection_details->id, FORKLIFT_INSPECTION);
 
             $sheet->mergeCells("A1:C3");
             $sheet->getStyle("A1:C3")->applyFromArray([
@@ -752,7 +755,7 @@ class ForkLiftInspectionController extends Controller
             }
 
             $signatureRowStart = $row;
-            $sheet->getRowDimension($signatureRowStart)->setRowHeight(80);
+            $sheet->getRowDimension($signatureRowStart)->setRowHeight(20);
 
             $sheet->mergeCells("A{$signatureRowStart}:E{$signatureRowStart}");
             $sheet->getStyle("A{$signatureRowStart}:E{$signatureRowStart}")->applyFromArray([
@@ -764,20 +767,14 @@ class ForkLiftInspectionController extends Controller
                 ],
             ]);
 
-            if (file_exists($prepared_by_signature)) {
-                $drawing = new Drawing();
-                $drawing->setName('Signature');
-                $drawing->setDescription('Prepared By');
-                $drawing->setPath($prepared_by_signature);
-                $drawing->setCoordinates("D{$signatureRowStart}");
-                $drawing->setOffsetX(5);
-                $drawing->setOffsetY(5);
-                $drawing->setHeight(40);
-                $drawing->setWorksheet($sheet);
-                $sheet->setCellValue("A{$signatureRowStart}", "\n\n\nPrepared By:\n" . getUsername($inspection_details->created_by));
-            } else {
-                $sheet->setCellValue("A{$signatureRowStart}", "Prepared By:\nSignature not available");
-            }
+            $preparedBy = getUsername($inspection_details->created_by);
+            $preparedByText = !empty($preparedBy) ? $preparedBy : "Inspection has not been prepared yet";
+            $sheet->setCellValue("A{$signatureRowStart}", "Prepared By:" . $preparedByText);
+
+            $verifiedBy = getUsername($inspection_details->updated_by);
+            $verifiedByText = !empty($verifiedBy) ? $verifiedBy : "Inspection has not been verified yet";
+            $sheet->setCellValue("F{$signatureRowStart}", "Verified By:" . $verifiedByText);
+
 
             $sheet->mergeCells("F{$signatureRowStart}:J{$signatureRowStart}");
             $sheet->getStyle("F{$signatureRowStart}:J{$signatureRowStart}")->applyFromArray([
@@ -788,21 +785,33 @@ class ForkLiftInspectionController extends Controller
                     'wrapText' => true,
                 ],
             ]);
+            // if (file_exists($prepared_by_signature)) {
+            //     $drawing = new Drawing();
+            //     $drawing->setName('Signature');
+            //     $drawing->setDescription('Prepared By');
+            //     $drawing->setPath($prepared_by_signature);
+            //     $drawing->setCoordinates("D{$signatureRowStart}");
+            //     $drawing->setOffsetX(5);
+            //     $drawing->setOffsetY(5);
+            //     $drawing->setHeight(40);
+            //     $drawing->setWorksheet($sheet);
+            // } else {
+            //     $sheet->setCellValue("A{$signatureRowStart}", "Prepared By:\nSignature not available");
+            // }
 
-            if (file_exists($verified_by_signature)) {
-                $drawing = new Drawing();
-                $drawing->setName('Signature');
-                $drawing->setDescription('Verified By');
-                $drawing->setPath($verified_by_signature);
-                $drawing->setCoordinates("G{$signatureRowStart}");
-                $drawing->setOffsetX(5);
-                $drawing->setOffsetY(5);
-                $drawing->setHeight(40);
-                $drawing->setWorksheet($sheet);
-                $sheet->setCellValue("F{$signatureRowStart}", "\n\n\nVerified By:\n" . getUsername($inspection_details->updated_by));
-            } else {
-                $sheet->setCellValue("F{$signatureRowStart}", "Verified By:\nSignature not available");
-            }
+            // if (file_exists($verified_by_signature)) {
+            //     $drawing = new Drawing();
+            //     $drawing->setName('Signature');
+            //     $drawing->setDescription('Verified By');
+            //     $drawing->setPath($verified_by_signature);
+            //     $drawing->setCoordinates("G{$signatureRowStart}");
+            //     $drawing->setOffsetX(5);
+            //     $drawing->setOffsetY(5);
+            //     $drawing->setHeight(40);
+            //     $drawing->setWorksheet($sheet);
+            // } else {
+            //     $sheet->setCellValue("F{$signatureRowStart}", "Verified By:\nSignature not available");
+            // }
 
             $row++;
 

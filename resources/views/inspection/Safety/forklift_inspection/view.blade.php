@@ -59,14 +59,14 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        @php
+                                        {{-- @php
                                             $signature = GetSafetySignature(
                                                 $inspection_details->created_by,
                                                 $inspection_details->id,
                                                 FORKLIFT_INSPECTION,
                                             );
-                                        @endphp
-                                        @if (isset($signature))
+                                        @endphp --}}
+                                        {{-- @if (isset($signature))
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label"
@@ -75,7 +75,7 @@
                                                         style="width: 100px; margin-top: -10px;" />
                                                 </div>
                                             </div>
-                                        @endif
+                                        @endif --}}
 
                                         <hr>
                                         @foreach ($inspection as $details)
@@ -206,7 +206,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                @php
+                                                {{-- @php
                                                     $signature = GetSafetySignature(
                                                         $inspection_details->updated_by,
                                                         $inspection_details->id,
@@ -222,7 +222,7 @@
                                                                 style="width: 150px; margin-top: -10px;" />
                                                         </div>
                                                     </div>
-                                                @endif
+                                                @endif --}}
                                                 <div class="form-group form-input">
                                                     <label class="form-label ">{{ __('inspection.remarks') }}</label>
                                                     <div class="view_data">
@@ -241,5 +241,3 @@
             </div>
 
         @stop
-        @push('script')
-        @endpush

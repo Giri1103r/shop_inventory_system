@@ -244,7 +244,7 @@
                     <td style="border: 2px solid black; padding: 8px;">{{ $detail->observation }}</td>
 
                     <td style="border: 2px solid black; padding: 8px;">{{ $detail->correction_preventive_action }}</td>
-                    <td style="border: 2px solid black; padding: 8px;">{{ $detail->responsibility }}
+                    <td style="border: 2px solid black; padding: 8px;">{{ getUsername($detail->responsibility )}}
                     </td>
                     <td style="border: 2px solid black; padding: 8px;">
                         {{ Displaydateformat($detail->date_of_compliance) }}</td>
@@ -261,7 +261,7 @@
                     <td style="border: 2px solid black; padding: 8px;">{{ $detail->remarks }}</td>
                 </tr>
             @endforeach
-            @php
+            {{-- @php
                 $prepared_by_signature = GetSafetySignature(
                     $inspection_details->created_by,
                     $inspection_details->id,
@@ -290,7 +290,7 @@
                         <p>Inspection has not been Verified Yet</p>
                     @endif
                 </td>
-            </tr>
+            </tr> --}}
 
         </tbody>
     </table>

@@ -209,7 +209,7 @@
             <td width="50%" style="padding:5px;"><b>Safety Walk Taken By</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
-                {{ isset($inspection_details->safety_walk_taken_by) ?  getUsername($inspection_details->safety_walk_taken_by) : '' }}
+                {{ getUsername(isset($inspection_details->safety_walk_taken_by) ? $inspection_details->safety_walk_taken_by : '') }}
             </td>
         </tr>
         <tr>
@@ -349,7 +349,7 @@
                     <td style="border: 2px solid black; padding: 8px;">{{ $detail->remarks }}</td>
                 </tr>
             @endforeach
-            @php
+            {{-- @php
                 $prepared_by_signature = GetSafetySignature(
                     $inspection_details->created_by,
                     $inspection_details->id,
@@ -360,8 +360,8 @@
                     $inspection_details->id,
                     SAFETY_WALK_OBSERVATION,
                 );
-            @endphp
-            <tr>
+            @endphp --}}
+            {{-- <tr>
                 <td colspan="5"
                     style="border: 2px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
                     <img src="{{ admin_url($prepared_by_signature) }}" alt="Checked By Signature"
@@ -378,7 +378,7 @@
                         <p>Inspection has not been Verified Yet</p>
                     @endif
                 </td>
-            </tr>
+            </tr> --}}
 
         </tbody>
     </table>

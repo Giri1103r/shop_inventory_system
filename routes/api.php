@@ -38,6 +38,7 @@ use App\Http\Controllers\Api\Inspection\Ohc\Master\FirstAidMedicineController;
 use App\Http\Controllers\Api\Inspection\Ohc\HealthInstrumentCalibrationController;
 use App\Http\Controllers\Api\{LoginController, NotificationController, AdminController};
 use App\Http\Controllers\Api\Inspection\Fire\DetectorInspectionController;
+use App\Http\Controllers\Api\Inspection\Fire\FireModularInspectionController;
 use App\Http\Controllers\Api\Inspection\Fire\FireSandBucketInspectionController;
 use App\Http\Controllers\Api\Inspection\Ohc\EmergencyBuyerFirstAidBagChecklistController;
 
@@ -225,10 +226,17 @@ Route::middleware('api')->prefix('v1')->group(function () {
                     Route::post('add', [DetectorInspectionController::class, 'Add']);
                     Route::post('view', [DetectorInspectionController::class, 'View']);
                 });
+
                 Route::group(['prefix' => 'fire-sand-bucket-inspection/'], function () {
                     Route::post('list', [FireSandBucketInspectionController::class, 'List']);
                     Route::post('add', [FireSandBucketInspectionController::class, 'Add']);
                     Route::post('view', [FireSandBucketInspectionController::class, 'View']);
+                });
+
+                Route::group(['prefix' => 'fire-modular-inspection/'], function () {
+                    Route::post('list', [FireModularInspectionController::class, 'List']);
+                    Route::post('add', [FireModularInspectionController::class, 'Add']);
+                    Route::post('view', [FireModularInspectionController::class, 'View']);
                 });
             });
 

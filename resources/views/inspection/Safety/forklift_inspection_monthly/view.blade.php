@@ -132,7 +132,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    @php
+                                    {{-- @php
                                         $signature = GetSafetySignature(
                                             $inspection_details->created_by,
                                             $inspection_details->id,
@@ -148,7 +148,7 @@
                                                     style="width: 100px; margin-top: -10px;" />
                                             </div>
                                         </div>
-                                    @endif
+                                    @endif --}}
                                     @php
                                         $user_response = json_decode($inspection_details->responses, true);
                                     @endphp
@@ -217,11 +217,7 @@
                                                         </div>
                                                     </div>
                                                     @php
-                                                        $signature = GetSafetySignature(
-                                                            $inspection_details->verified_by,
-                                                            $inspection_details->id,
-                                                            MONTHLY_FORKLIFT_INSPECTION,
-                                                        );
+
                                                         $updated_time = GetSafetyUpdatedTime(
                                                             $inspection_details->verified_by,
                                                             $inspection_details->id,
@@ -241,7 +237,7 @@
                                                     </div>
                                                 @endif
 
-                                                @if (isset($signature))
+                                                {{-- @if (isset($signature))
                                                     <div class="col-md-4 mb-2">
                                                         <div class="form-group form-input">
                                                             <label class="form-label"
@@ -250,7 +246,7 @@
                                                                 style="width: 150px; margin-top: -10px;" />
                                                         </div>
                                                     </div>
-                                                @endif
+                                                @endif --}}
                                                 @if (isset($inspection_details->approved_by))
                                                     @if ($inspection_details->verified_by == $inspection_details->approved_by)
                                                         <div class="col-md-4 mb-2">
@@ -262,13 +258,13 @@
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        @php
+                                                        {{-- @php
                                                             $signature = GetSafetySignature(
                                                                 $inspection_details->approved_by,
                                                                 $inspection_details->id,
                                                                 MONTHLY_FORKLIFT_INSPECTION,
                                                             );
-                                                        @endphp
+                                                        @endphp --}}
                                                     @endif
                                                 @endif
                                                 @if (isset($inspection_details->capa_recomendation))
@@ -310,11 +306,11 @@
                                                     </div>
                                                 </div>
                                                 @php
-                                                    $signature = GetSafetySignature(
-                                                        $inspection_details->created_by,
-                                                        $inspection_details->id,
-                                                        MONTHLY_FORKLIFT_INSPECTION,
-                                                    );
+                                                    // $signature = GetSafetySignature(
+                                                    //     $inspection_details->created_by,
+                                                    //     $inspection_details->id,
+                                                    //     MONTHLY_FORKLIFT_INSPECTION,
+                                                    // );
 
                                                     $updated_time = GetSafetyUpdatedTime(
                                                         $inspection_details->created_by,
@@ -331,7 +327,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                @if (isset($signature))
+                                                {{-- @if (isset($signature))
                                                     <div class="col-md-4 mb-2">
                                                         <div class="form-group form-input">
                                                             <label class="form-label"
@@ -340,7 +336,7 @@
                                                                 style="width: 150px; margin-top: -10px;" />
                                                         </div>
                                                     </div>
-                                                @endif
+                                                @endif --}}
                                                 <div class="col-md-12 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
@@ -370,11 +366,11 @@
                                                 </div>
                                             </div>
                                             @php
-                                                $signature = GetSafetySignature(
-                                                    $inspection_details->verified_by,
-                                                    $inspection_details->id,
-                                                    MONTHLY_FORKLIFT_INSPECTION,
-                                                );
+                                                // $signature = GetSafetySignature(
+                                                //     $inspection_details->verified_by,
+                                                //     $inspection_details->id,
+                                                //     MONTHLY_FORKLIFT_INSPECTION,
+                                                // );
 
                                                 $updated_time = GetSafetyUpdatedTime(
                                                     $inspection_details->verified_by,
@@ -391,7 +387,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            @if (isset($signature))
+                                            {{-- @if (isset($signature))
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label class="form-label"
@@ -400,7 +396,7 @@
                                                             style="width: 150px; margin-top: -10px;" />
                                                     </div>
                                                 </div>
-                                            @endif
+                                            @endif --}}
                                             <div class="col-md-12 mb-2">
                                                 <div class="form-group form-input">
                                                     <label
@@ -429,11 +425,11 @@
                                                 </div>
                                             </div>
                                             @php
-                                                $signature = GetSafetySignature(
-                                                    $inspection_details->l1_manager_verified_by,
-                                                    $inspection_details->id,
-                                                    MONTHLY_FORKLIFT_INSPECTION,
-                                                );
+                                                // $signature = GetSafetySignature(
+                                                //     $inspection_details->l1_manager_verified_by,
+                                                //     $inspection_details->id,
+                                                //     MONTHLY_FORKLIFT_INSPECTION,
+                                                // );
 
                                                 $updated_time = GetSafetyUpdatedTime(
                                                     $inspection_details->l1_manager_verified_by,
@@ -450,7 +446,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            @if (isset($signature))
+                                            {{-- @if (isset($signature))
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label class="form-label"
@@ -459,7 +455,7 @@
                                                             style="width: 150px; margin-top: -10px;" />
                                                     </div>
                                                 </div>
-                                            @endif
+                                            @endif --}}
                                             <div class="col-md-12 mb-2">
                                                 <div class="form-group form-input">
                                                     <label
@@ -487,11 +483,11 @@
                                                 </div>
                                             </div>
                                             @php
-                                                $signature = GetSafetySignature(
-                                                    $inspection_details->l2_manager_verified_by,
-                                                    $inspection_details->id,
-                                                    MONTHLY_FORKLIFT_INSPECTION,
-                                                );
+                                                // $signature = GetSafetySignature(
+                                                //     $inspection_details->l2_manager_verified_by,
+                                                //     $inspection_details->id,
+                                                //     MONTHLY_FORKLIFT_INSPECTION,
+                                                // );
 
                                                 $updated_time = GetSafetyUpdatedTime(
                                                     $inspection_details->l2_manager_verified_by,
@@ -508,7 +504,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            @if (isset($signature))
+                                            {{-- @if (isset($signature))
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label class="form-label"
@@ -517,7 +513,7 @@
                                                             style="width: 150px; margin-top: -10px;" />
                                                     </div>
                                                 </div>
-                                            @endif
+                                            @endif --}}
                                             @if ($inspection_details->approved_by)
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
@@ -529,7 +525,7 @@
                                                     </div>
                                                 </div>
                                             @endif
-                                            @if (isset($signature))
+                                            {{-- @if (isset($signature))
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label class="form-label"
@@ -538,7 +534,7 @@
                                                             style="width: 150px; margin-top: -10px;" />
                                                     </div>
                                                 </div>
-                                            @endif
+                                            @endif --}}
                                             <div class="col-md-12 mb-2">
                                                 <div class="form-group form-input">
                                                     <label

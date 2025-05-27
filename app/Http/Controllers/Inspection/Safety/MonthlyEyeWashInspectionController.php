@@ -14,7 +14,6 @@ use App\Models\Inspection\Master\Shift;
 use Illuminate\Support\Facades\Session;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
-use Spatie\SimpleExcel\SimpleExcelWriter;
 use App\Models\Inspection\Master\Frequency;
 use App\Models\Inspection\Master\ChecklistFile;
 use App\Mail\Inspection\Safety\SafetyInspection;
@@ -29,9 +28,6 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
-use PhpOffice\PhpSpreadsheet\Style\Fill;
-use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
-use PhpOffice\PhpSpreadsheet\RichText\RichText;
 
 class MonthlyEyeWashInspectionController extends Controller
 {
@@ -266,7 +262,7 @@ class MonthlyEyeWashInspectionController extends Controller
             $inspection_id = $store_eyewash_inspection->id;
             $inspection_details = $this->eye_wash->selectOne($inspection_id);
             $store_inspection_details = $this->eye_wash_details->store($inspection_id);
-            $signature_update = $this->signature->signatureUpload(EYE_WASH_INSPECTION, $store_eyewash_inspection->id);
+            // $signature_update = $this->signature->signatureUpload(EYE_WASH_INSPECTION, $store_eyewash_inspection->id);
 
             $ehsOfficer = GetEHSOfficer();
             $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
@@ -393,7 +389,7 @@ class MonthlyEyeWashInspectionController extends Controller
             $request = Request();
             $id = decryptId($request->id);
             $inspection_updates = $this->eye_wash->EHSOfficerUpdate($id);
-            $signature_update = $this->signature->signatureUpload(EYE_WASH_INSPECTION, $id);
+            // $signature_update = $this->signature->signatureUpload(EYE_WASH_INSPECTION, $id);
             $inspection_details = $this->eye_wash->selectOne($id);
             if ($request->is_passed == 1) {
                 $message = 'eye_wash Inspeciton Approved Successfully';
@@ -463,7 +459,7 @@ class MonthlyEyeWashInspectionController extends Controller
             $id = decryptId($request->id);
             $eye_wash_inspection = $this->eye_wash->capaSubmit($id);
             $inspection_details = $this->eye_wash->selectOne($id);
-            $signature_update = $this->signature->signatureUpload(EYE_WASH_INSPECTION, $id);
+            // $signature_update = $this->signature->signatureUpload(EYE_WASH_INSPECTION, $id);
             $ehsOfficers = $inspection_details->verified_by;
             $userIds = [
                 'users' => $ehsOfficers,
@@ -525,7 +521,7 @@ class MonthlyEyeWashInspectionController extends Controller
             $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->remarks;
             $eye_wash_inspection = $this->eye_wash->capaVerifySubmit($id, $status, $remarks);
-            $signature_update = $this->signature->signatureUpload(EYE_WASH_INSPECTION, $id);
+            // $signature_update = $this->signature->signatureUpload(EYE_WASH_INSPECTION, $id);
             $inspection_details = $this->eye_wash->selectOne($id);
             if ($status == 1) {
                 $message = 'CAPA Action Verified Successfully';
@@ -599,7 +595,7 @@ class MonthlyEyeWashInspectionController extends Controller
             $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->level_one_manager;
             $eye_wash_inspection = $this->eye_wash->levelOneManagerSubmit($id, $status, $remarks);
-            $signature_update = $this->signature->signatureUpload(EYE_WASH_INSPECTION, $id);
+            // $signature_update = $this->signature->signatureUpload(EYE_WASH_INSPECTION, $id);
             $inspection_details = $this->eye_wash->selectOne($id);
             if ($status == 1) {
                 $message = 'Level One Manager Verified Successfully';
@@ -672,7 +668,7 @@ class MonthlyEyeWashInspectionController extends Controller
             $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->level_two_manager;
             $eye_wash_inspection = $this->eye_wash->levelTwoManagerSubmit($id, $status, $remarks);
-            $signature_update = $this->signature->signatureUpload(EYE_WASH_INSPECTION, $id);
+            // $signature_update = $this->signature->signatureUpload(EYE_WASH_INSPECTION, $id);
             $inspection_details = $this->eye_wash->selectOne($id);
             if ($status == 1) {
                 $message = 'eye_wash Inspeciton Approved Successfully!';
@@ -766,9 +762,9 @@ class MonthlyEyeWashInspectionController extends Controller
                 $inspection_data = $this->eye_wash_details->GetDetails($eye_wash->id);
                 $document_no = $this->document_reference->selectOne($eye_wash->document_reference_id);
 
-                $prepared_by_signature = GetSafetySignature($eye_wash->created_by, $eye_wash->id, EYE_WASH_INSPECTION);
-                $verified_by_signature = GetSafetySignature($eye_wash->verified_by, $eye_wash->id, EYE_WASH_INSPECTION);
-                $approved_by_signature = GetSafetySignature($eye_wash->approved_by, $eye_wash->id, EYE_WASH_INSPECTION);
+                // $prepared_by_signature = GetSafetySignature($eye_wash->created_by, $eye_wash->id, EYE_WASH_INSPECTION);
+                // $verified_by_signature = GetSafetySignature($eye_wash->verified_by, $eye_wash->id, EYE_WASH_INSPECTION);
+                // $approved_by_signature = GetSafetySignature($eye_wash->approved_by, $eye_wash->id, EYE_WASH_INSPECTION);
 
                 if (file_exists($logoPath)) {
                     $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
@@ -887,70 +883,70 @@ class MonthlyEyeWashInspectionController extends Controller
                     $sr++;
                 }
 
-                $signatureRowStart = $startRow ;
-                $sheet->getRowDimension($signatureRowStart)->setRowHeight(80);
+                // $signatureRowStart = $startRow ;
+                // $sheet->getRowDimension($signatureRowStart)->setRowHeight(80);
 
-                $sheet->mergeCells("A{$signatureRowStart}:E{$signatureRowStart}");
-                $sheet->getStyle("A{$signatureRowStart}:E{$signatureRowStart}")->applyFromArray([
-                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
-                ]);
+                // $sheet->mergeCells("A{$signatureRowStart}:E{$signatureRowStart}");
+                // $sheet->getStyle("A{$signatureRowStart}:E{$signatureRowStart}")->applyFromArray([
+                //     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                //     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+                // ]);
 
-                if (file_exists($prepared_by_signature)) {
-                    $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
-                    $drawing->setName('Prepared');
-                    $drawing->setPath($prepared_by_signature);
-                    $drawing->setCoordinates("C{$signatureRowStart}");
-                    $drawing->setOffsetX(5);
-                    $drawing->setOffsetY(5);
-                    $drawing->setHeight(40);
-                    $drawing->setWorksheet($sheet);
-                    $sheet->setCellValue("A{$signatureRowStart}", "\n\n\nPrepared By:\n" . getUsername($eye_wash->created_by));
-                } else {
-                    $sheet->setCellValue("A{$signatureRowStart}", "Prepared By:\nInspection not yet started");
-                }
+                // if (file_exists($prepared_by_signature)) {
+                //     $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
+                //     $drawing->setName('Prepared');
+                //     $drawing->setPath($prepared_by_signature);
+                //     $drawing->setCoordinates("C{$signatureRowStart}");
+                //     $drawing->setOffsetX(5);
+                //     $drawing->setOffsetY(5);
+                //     $drawing->setHeight(40);
+                //     $drawing->setWorksheet($sheet);
+                //     $sheet->setCellValue("A{$signatureRowStart}", "\n\n\nPrepared By:\n" . getUsername($eye_wash->created_by));
+                // } else {
+                //     $sheet->setCellValue("A{$signatureRowStart}", "Prepared By:\nInspection not yet started");
+                // }
 
-                $sheet->mergeCells("F{$signatureRowStart}:I{$signatureRowStart}");
-                $sheet->getStyle("F{$signatureRowStart}:I{$signatureRowStart}")->applyFromArray([
-                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
-                ]);
+                // $sheet->mergeCells("F{$signatureRowStart}:I{$signatureRowStart}");
+                // $sheet->getStyle("F{$signatureRowStart}:I{$signatureRowStart}")->applyFromArray([
+                //     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                //     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+                // ]);
 
-                if (file_exists($verified_by_signature)) {
-                    $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
-                    $drawing->setName('Verified');
-                    $drawing->setPath($verified_by_signature);
-                    $drawing->setCoordinates("G{$signatureRowStart}");
-                    $drawing->setOffsetX(5);
-                    $drawing->setOffsetY(5);
-                    $drawing->setHeight(40);
-                    $drawing->setWorksheet($sheet);
-                    $sheet->setCellValue("F{$signatureRowStart}", "\n\n\nVerified By:\n" . getUsername($eye_wash->verified_by));
-                } else {
-                    $sheet->setCellValue("F{$signatureRowStart}", "Verified By:\nInspection not yet completed");
-                }
+                // if (file_exists($verified_by_signature)) {
+                //     $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
+                //     $drawing->setName('Verified');
+                //     $drawing->setPath($verified_by_signature);
+                //     $drawing->setCoordinates("G{$signatureRowStart}");
+                //     $drawing->setOffsetX(5);
+                //     $drawing->setOffsetY(5);
+                //     $drawing->setHeight(40);
+                //     $drawing->setWorksheet($sheet);
+                //     $sheet->setCellValue("F{$signatureRowStart}", "\n\n\nVerified By:\n" . getUsername($eye_wash->verified_by));
+                // } else {
+                //     $sheet->setCellValue("F{$signatureRowStart}", "Verified By:\nInspection not yet completed");
+                // }
 
-                $sheet->mergeCells("J{$signatureRowStart}:M{$signatureRowStart}");
-                $sheet->getStyle("J{$signatureRowStart}:M{$signatureRowStart}")->applyFromArray([
-                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
-                ]);
+                // $sheet->mergeCells("J{$signatureRowStart}:M{$signatureRowStart}");
+                // $sheet->getStyle("J{$signatureRowStart}:M{$signatureRowStart}")->applyFromArray([
+                //     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                //     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+                // ]);
 
-                if (file_exists($approved_by_signature)) {
-                    $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
-                    $drawing->setName('Approved');
-                    $drawing->setPath($approved_by_signature);
-                    $drawing->setCoordinates("L{$signatureRowStart}");
-                    $drawing->setOffsetX(5);
-                    $drawing->setOffsetY(5);
-                    $drawing->setHeight(40);
-                    $drawing->setWorksheet($sheet);
-                    $sheet->setCellValue("J{$signatureRowStart}", "\n\n\nApproved By:\n" . getUsername($eye_wash->approved_by));
-                } else {
-                    $sheet->setCellValue("J{$signatureRowStart}", "Approved By:\nApproval pending");
-                }
+                // if (file_exists($approved_by_signature)) {
+                //     $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
+                //     $drawing->setName('Approved');
+                //     $drawing->setPath($approved_by_signature);
+                //     $drawing->setCoordinates("L{$signatureRowStart}");
+                //     $drawing->setOffsetX(5);
+                //     $drawing->setOffsetY(5);
+                //     $drawing->setHeight(40);
+                //     $drawing->setWorksheet($sheet);
+                //     $sheet->setCellValue("J{$signatureRowStart}", "\n\n\nApproved By:\n" . getUsername($eye_wash->approved_by));
+                // } else {
+                //     $sheet->setCellValue("J{$signatureRowStart}", "Approved By:\nApproval pending");
+                // }
 
-                $startRow = $signatureRowStart + 5;
+                // $startRow = $signatureRowStart + 5;
             }
 
             $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
@@ -1020,9 +1016,10 @@ class MonthlyEyeWashInspectionController extends Controller
                 $inspection_details = $this->eye_wash->selectOne($id);
                 $inspection = $this->eye_wash_details->GetDetails($inspection_details->id);
                 $document_no = $this->document_reference->selectOne($inspection_details->document_reference_id);
-                $approved_by = GetSafetySignature( $inspection_details->approved_by, $inspection_details->id, EYE_WASH_INSPECTION);
-                $verified_by = GetSafetySignature( $inspection_details->verified_by, $inspection_details->id,EYE_WASH_INSPECTION);
-                $checked_by = GetSafetySignature( $inspection_details->created_by,$inspection_details->id, EYE_WASH_INSPECTION);
+                // $approved_by = GetSafetySignature( $inspection_details->approved_by, $inspection_details->id, EYE_WASH_INSPECTION);
+                // $verified_by = GetSafetySignature( $inspection_details->verified_by, $inspection_details->id,EYE_WASH_INSPECTION);
+                // $checked_by = GetSafetySignature( $inspection_details->created_by,$inspection_details->id, EYE_WASH_INSPECTION);
+
                 $document_no = $this->document_reference->selectUsingName('MonthlyEyeWashInspection');
 
 
@@ -1032,9 +1029,9 @@ class MonthlyEyeWashInspectionController extends Controller
                     'inspection' => $inspection,
                     'pagetitle' => "Monthly EyeWash Inspection",
                     'document_no' => $document_no,
-                    'approved_by' => $approved_by,
-                    'verified_by' => $verified_by,
-                    'checked_by' => $checked_by,
+                    // 'approved_by' => $approved_by,
+                    // 'verified_by' => $verified_by,
+                    // 'checked_by' => $checked_by,
                     'document_no' => $document_no,
                 ];
             }
@@ -1076,9 +1073,9 @@ class MonthlyEyeWashInspectionController extends Controller
             $inspection_data = $this->eye_wash_details->GetDetails($eye_wash->id);
             $document_no = $this->document_reference->selectOne($eye_wash->document_reference_id);
 
-            $prepared_by_signature = GetSafetySignature($eye_wash->created_by, $eye_wash->id, EYE_WASH_INSPECTION);
-            $verified_by_signature = GetSafetySignature($eye_wash->verified_by, $eye_wash->id, EYE_WASH_INSPECTION);
-            $approved_by_signature = GetSafetySignature($eye_wash->approved_by, $eye_wash->id, EYE_WASH_INSPECTION);
+            // $prepared_by_signature = GetSafetySignature($eye_wash->created_by, $eye_wash->id, EYE_WASH_INSPECTION);
+            // $verified_by_signature = GetSafetySignature($eye_wash->verified_by, $eye_wash->id, EYE_WASH_INSPECTION);
+            // $approved_by_signature = GetSafetySignature($eye_wash->approved_by, $eye_wash->id, EYE_WASH_INSPECTION);
 
                 foreach (range('A', 'M') as $col) {
                 $sheet->getColumnDimension($col)->setAutoSize(true);
@@ -1214,70 +1211,70 @@ class MonthlyEyeWashInspectionController extends Controller
                 ],
             ]);
 
-            if (file_exists($prepared_by_signature)) {
-                $drawing = new Drawing();
-                $drawing->setName('Signature');
-                $drawing->setDescription('Prepared By');
-                $drawing->setPath($prepared_by_signature);
-                $drawing->setCoordinates("C{$signatureRowStart}");
-                $drawing->setOffsetX(5);
-                $drawing->setOffsetY(5);
-                $drawing->setHeight(40);
-                $drawing->setWorksheet($sheet);
-                $sheet->setCellValue("A{$signatureRowStart}", "\n\n\nPrepared By:\n" . getUsername($eye_wash->created_by));
-            } else {
-                $sheet->setCellValue("A{$signatureRowStart}", "Prepared By:\nInspection not yet started");
-            }
+            // if (file_exists($prepared_by_signature)) {
+            //     $drawing = new Drawing();
+            //     $drawing->setName('Signature');
+            //     $drawing->setDescription('Prepared By');
+            //     $drawing->setPath($prepared_by_signature);
+            //     $drawing->setCoordinates("C{$signatureRowStart}");
+            //     $drawing->setOffsetX(5);
+            //     $drawing->setOffsetY(5);
+            //     $drawing->setHeight(40);
+            //     $drawing->setWorksheet($sheet);
+            //     $sheet->setCellValue("A{$signatureRowStart}", "\n\n\nPrepared By:\n" . getUsername($eye_wash->created_by));
+            // } else {
+            //     $sheet->setCellValue("A{$signatureRowStart}", "Prepared By:\nInspection not yet started");
+            // }
 
-            $sheet->mergeCells("F{$signatureRowStart}:I{$signatureRowStart}");
-            $sheet->getStyle("F{$signatureRowStart}:I{$signatureRowStart}")->applyFromArray([
-                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                'alignment' => [
-                    'horizontal' => Alignment::HORIZONTAL_CENTER,
-                    'vertical' => Alignment::VERTICAL_CENTER,
-                    'wrapText' => true,
-                ],
-            ]);
+            // $sheet->mergeCells("F{$signatureRowStart}:I{$signatureRowStart}");
+            // $sheet->getStyle("F{$signatureRowStart}:I{$signatureRowStart}")->applyFromArray([
+            //     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+            //     'alignment' => [
+            //         'horizontal' => Alignment::HORIZONTAL_CENTER,
+            //         'vertical' => Alignment::VERTICAL_CENTER,
+            //         'wrapText' => true,
+            //     ],
+            // ]);
 
-            if (file_exists($verified_by_signature)) {
-                $drawing = new Drawing();
-                $drawing->setName('Signature');
-                $drawing->setDescription('Verified By');
-                $drawing->setPath($verified_by_signature);
-                $drawing->setCoordinates("G{$signatureRowStart}");
-                $drawing->setOffsetX(5);
-                $drawing->setOffsetY(5);
-                $drawing->setHeight(40);
-                $drawing->setWorksheet($sheet);
-                $sheet->setCellValue("F{$signatureRowStart}", "\n\n\nVerified By:\n" . getUsername($eye_wash->verified_by));
-            } else {
-                $sheet->setCellValue("F{$signatureRowStart}", "Verified By:\nInspection not yet completed");
-            }
+            // if (file_exists($verified_by_signature)) {
+            //     $drawing = new Drawing();
+            //     $drawing->setName('Signature');
+            //     $drawing->setDescription('Verified By');
+            //     $drawing->setPath($verified_by_signature);
+            //     $drawing->setCoordinates("G{$signatureRowStart}");
+            //     $drawing->setOffsetX(5);
+            //     $drawing->setOffsetY(5);
+            //     $drawing->setHeight(40);
+            //     $drawing->setWorksheet($sheet);
+            //     $sheet->setCellValue("F{$signatureRowStart}", "\n\n\nVerified By:\n" . getUsername($eye_wash->verified_by));
+            // } else {
+            //     $sheet->setCellValue("F{$signatureRowStart}", "Verified By:\nInspection not yet completed");
+            // }
 
-            $sheet->mergeCells("J{$signatureRowStart}:M{$signatureRowStart}");
-            $sheet->getStyle("J{$signatureRowStart}:M{$signatureRowStart}")->applyFromArray([
-                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                'alignment' => [
-                    'horizontal' => Alignment::HORIZONTAL_CENTER,
-                    'vertical' => Alignment::VERTICAL_CENTER,
-                    'wrapText' => true,
-                ],
-            ]);
+            // $sheet->mergeCells("J{$signatureRowStart}:M{$signatureRowStart}");
+            // $sheet->getStyle("J{$signatureRowStart}:M{$signatureRowStart}")->applyFromArray([
+            //     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+            //     'alignment' => [
+            //         'horizontal' => Alignment::HORIZONTAL_CENTER,
+            //         'vertical' => Alignment::VERTICAL_CENTER,
+            //         'wrapText' => true,
+            //     ],
+            // ]);
 
-            if (file_exists($approved_by_signature)) {
-                $drawing = new Drawing();
-                $drawing->setName('Signature');
-                $drawing->setDescription('Approved By');
-                $drawing->setPath($approved_by_signature);
-                $drawing->setCoordinates("L{$signatureRowStart}");
-                $drawing->setOffsetX(5);
-                $drawing->setOffsetY(5);
-                $drawing->setHeight(40);
-                $drawing->setWorksheet($sheet);
-                $sheet->setCellValue("J{$signatureRowStart}", "\n\n\nApproved By:\n" . getUsername($eye_wash->approved_by));
-            } else {
-                $sheet->setCellValue("J{$signatureRowStart}", "Approved By:\nApproval pending");
-            }
+            // if (file_exists($approved_by_signature)) {
+            //     $drawing = new Drawing();
+            //     $drawing->setName('Signature');
+            //     $drawing->setDescription('Approved By');
+            //     $drawing->setPath($approved_by_signature);
+            //     $drawing->setCoordinates("L{$signatureRowStart}");
+            //     $drawing->setOffsetX(5);
+            //     $drawing->setOffsetY(5);
+            //     $drawing->setHeight(40);
+            //     $drawing->setWorksheet($sheet);
+            //     $sheet->setCellValue("J{$signatureRowStart}", "\n\n\nApproved By:\n" . getUsername($eye_wash->approved_by));
+            // } else {
+            //     $sheet->setCellValue("J{$signatureRowStart}", "Approved By:\nApproval pending");
+            // }
 
 
 

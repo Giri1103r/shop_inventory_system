@@ -232,7 +232,7 @@
                         {{ $item['remarks'] }}</td>
                 </tr>
             @endforeach
-
+{{--
             @php
                 $creator_signature = GetSafetySignature(
                     $forklift_details->created_by,
@@ -249,10 +249,10 @@
                     $forklift_details->id,
                     MONTHLY_FORKLIFT_INSPECTION,
                 );
-            @endphp
+            @endphp --}}
 
             <!-- Signature Section in a Single Row -->
-            <tr>
+            {{-- <tr>
                 <td colspan="4"
                     style="border: 1px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
                     <img src="{{ admin_url($creator_signature) }}" alt="Checked By Signature" style="height: 50px;">
@@ -278,7 +278,7 @@
                         <p>Inspection has not been Approved Yet</p>
                     @endif
                 </td>
-            </tr>
+            </tr> --}}
         </tbody>
     </table>
     <br>
