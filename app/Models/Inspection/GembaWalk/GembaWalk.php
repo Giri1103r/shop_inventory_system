@@ -107,7 +107,7 @@ class GembaWalk extends Model
 
         $org_total =  $query;
         $org_total_counts = $org_total->count();
-        
+
         $data_count = $query;
         $total_records = $data_count->count();
 
@@ -339,6 +339,8 @@ class GembaWalk extends Model
             'gemba_walk_status' => $gembaWalk_status,
             'updated_by' => Auth::id(),
             'updated_at' => now(),
+            'verified_by' => Auth::id(),
+
         );
         return $this->where('id', $gembaWalk_id)->update($update_array);
     }
