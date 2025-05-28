@@ -626,7 +626,7 @@
                                                     <input type="text" name="date" id = "date"
                                                         class="form-control" value="{{ todayDate() }}" readonly>
                                                 </div>
-                                                <div class="col-md-4 form-group form-input mb-2">
+                                                {{-- <div class="col-md-4 form-group form-input mb-2">
                                                     @if (isset(Auth::user()->signature_upload))
                                                         <label class="form-label"
                                                             style="display: block; ">{{ __('inspection.signature') }}</label>
@@ -642,7 +642,7 @@
                                                             <div id="signature_upload" class="text-danger"></div>
                                                         </div>
                                                     @endif
-                                                </div>
+                                                </div> --}}
                                                 <div class="col-md-12 mb-2 form-input" id="capa_recomendation">
                                                     <label for="remarks" class="form-label">Remarks</label>
                                                     <textarea id="" class="form-control" rows="3" placeholder="Please Provide Remarks" name="remarks"></textarea>
@@ -681,7 +681,7 @@
                                                     </div>
                                                 </div>
 
-                                                @php
+                                                {{-- @php
                                                     $signature = GetFireSignature(
                                                         $observation->ehs_capa_verified_by,
                                                         $observation->observationid,
@@ -698,7 +698,7 @@
                                                         </div>
                                                     </div>
                                                 @endif
-                                            </div>
+                                            </div> --}}
 
 
                                             <div class="row mt-2">
@@ -744,7 +744,7 @@
                                                     <input type="text" name="date" id = "date"
                                                         class="form-control" value="{{ todayDate() }}" readonly>
                                                 </div>
-                                                <div class="col-md-4 form-group form-input mb-2">
+                                                {{-- <div class="col-md-4 form-group form-input mb-2">
                                                     @if (isset(Auth::user()->signature_upload))
                                                         <label class="form-label"
                                                             style="display: block; ">{{ __('inspection.signature') }}</label>
@@ -760,7 +760,7 @@
                                                             <div id="signature_upload" class="text-danger"></div>
                                                         </div>
                                                     @endif
-                                                </div>
+                                                </div> --}}
                                             </div>
 
                                             <div class="col-md-12 mb-2 form-input" id="capa_recomendation">
@@ -801,7 +801,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                @php
+                                                {{-- @php
                                                     $signature = GetFireSignature(
                                                         $observation->l2_manager_verified_by,
                                                         $observation->observationid,
@@ -818,7 +818,7 @@
                                                                 style="width: 150px; margin-top: -10px;" />
                                                         </div>
                                                     </div>
-                                                @endif
+                                                @endif --}}
                                             </div>
 
 
@@ -865,7 +865,7 @@
                                                     <input type="text" name="date" id = "date"
                                                         class="form-control" value="{{ todayDate() }}" readonly>
                                                 </div>
-                                                <div class="col-md-4 form-group form-input mb-2">
+                                                {{-- <div class="col-md-4 form-group form-input mb-2">
                                                     @if (isset(Auth::user()->signature_upload))
                                                         <label class="form-label"
                                                             style="display: block; ">{{ __('inspection.signature') }}</label>
@@ -881,7 +881,7 @@
                                                             <div id="signature_upload" class="text-danger"></div>
                                                         </div>
                                                     @endif
-                                                </div>
+                                                </div> --}}
                                             </div>
                                             <div class="col-md-12 mb-2 form-input" id="capa_recomendation">
                                                 <label for="remarks" class="form-label">Remarks</label>
