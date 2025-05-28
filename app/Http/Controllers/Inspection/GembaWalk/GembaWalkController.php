@@ -113,10 +113,16 @@ class GembaWalkController extends Controller
                             ->addColumn('action', function ($row) {
                                 $btn = '<a href="' . admin_url('inspection/gemba-walk/view/' . encryptId($row->gemba_walk_id)) . ' "class=" me-1"  title="View "><i class="fa-solid fa-eye"></i></a> ';
 
+                                $responsibilityId = explode(',', $row->responsibility_id);
 
-                                if (($row->gemba_walk_status == GEMBA_WALK_INSPECTION_WAITING_FOR_FLOOR_MANAGER_VERIFICATION || $row->gemba_walk_status == GEMBA_WALK_INSPECTION_REJECTED) && ($row->responsibility_id == Auth::id()  || isAdmin())) {
-                                    $btn .= '<a href="' . admin_url('inspection/gemba-walk/floor-manager/' . encryptId($row->gemba_walk_id)) . '"class=" me-1" title="' . 'CAPA Action' . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                if (
+                                    ($row->gemba_walk_status == GEMBA_WALK_INSPECTION_WAITING_FOR_FLOOR_MANAGER_VERIFICATION ||
+                                        $row->gemba_walk_status == GEMBA_WALK_INSPECTION_REJECTED) &&
+                                    (in_array(Auth::id(), $responsibilityId) || isAdmin())
+                                ) {
+                                    $btn .= '<a href="' . admin_url('inspection/gemba-walk/floor-manager/' . encryptId($row->gemba_walk_id)) . '" class="me-1" title="CAPA Action"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                                 }
+
 
                                 if ($row->gemba_walk_status == GEMBA_WALK_INSPECTION_WAITING_FOR_EHS_OFFICER_VERIFICATION  && (CheckUserRole(ROLE_EHS_OFFICER) || isAdmin())) {
                                     $btn .= '<a href="' . admin_url('inspection/gemba-walk/ehs-officer/' . encryptId($row->gemba_walk_id)) . '" class=" me-1" title="' . 'EHS Officer Action' . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
@@ -180,6 +186,8 @@ class GembaWalkController extends Controller
             return view('inspection.gembaWalk.add', $data);
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('inspection/gemba-walk/list'));
         }
     }
 
@@ -191,17 +199,13 @@ class GembaWalkController extends Controller
                 'document_no' => 'required',
                 'document_upload_date' => 'required',
                 'document_revision_date' => 'required',
-                // 'observation_needed' => 'required',
                 'is_passed' => 'required',
                 'gemba_walk.*.location_id' => 'required',
                 'gemba_walk.*.unit_id' => 'required',
                 'gemba_walk.*.date_of_observation' => 'required',
                 'gemba_walk.*.observation_type' => 'required|integer',
                 'gemba_walk.*.checklist_description' => 'nullable|string',
-                'gemba_walk.*.hazard' => 'nullable|string',
                 'gemba_walk.*.checklist_capa' => 'nullable|string',
-                // 'gemba_walk.*.date_of_compliance' => 'nullable',
-                // 'gemba_walk.*.responsibility_id' => 'nullable',
                 'gemba_walk.*.current_status' => 'nullable|string',
                 'gemba_walk.*.checklist_remark' => 'nullable|string',
             ];
@@ -210,7 +214,6 @@ class GembaWalkController extends Controller
                 'document_no.required' => 'Document number is required.',
                 'document_upload_date.required' => 'Please provide the document upload date.',
                 'document_revision_date.required' => 'Please provide the document revision date.',
-                // 'observation_needed.required' => 'Please provide the observation.',
                 'capa_needed.required' => 'Please provide the CAPA.',
                 'gemba_walk.*.location_id.required' => 'Location ID is required.',
                 'gemba_walk.*.unit_id.required' => 'Unit ID is required.',
@@ -219,9 +222,7 @@ class GembaWalkController extends Controller
                 'gemba_walk.*.observation_type.required' => 'Observation type is required.',
                 'gemba_walk.*.observation_type.integer' => 'Observation type must be a number.',
                 'gemba_walk.*.checklist_description.string' => 'Checklist description must be a valid text.',
-                'gemba_walk.*.hazard.string' => 'Hazard must be a valid text.',
                 'gemba_walk.*.checklist_capa.string' => 'Checklist CAPA must be a valid text.',
-                // 'gemba_walk.*.date_of_compliance.date_format' => 'Date of compliance must be in the format dd-mm-yyyy.',
                 'gemba_walk.*.checklist_remark.string' => 'Checklist remark must be a valid text.',
             ];
 
@@ -239,164 +240,121 @@ class GembaWalkController extends Controller
             $gembaWalk_singnature = $this->gembaWalkChecklistFile->storeSignature($gembaWalk->id);
             $gembaWalkChecklist = $this->gembaWalkCheckList->store($gembaWalk->id);
 
-            if ($gembaWalk->capa_needed == "2") {
-                $resposible_person = decryptId($request->responsible_person_id);
-                $capa_type = GEMBA_WALK_INSPECTION_PASS_L1;
+            $gembaWalk_details = $this->gembaWalk->getUserId($gembaWalk_id);
+            $ResponsibleId = $this->gembaWalkCheckList->selectone($gembaWalk_id);
 
-                $gembaWalk_ehs = $this->gembaWalkInspectionEhsAprroval->capaSubmit($gembaWalk_id, $capa_type);
+            $capa_needed = decryptId($request->is_passed);
 
-                $gembaWalk_status = GEMBA_WALK_INSPECTION_WAITING_FOR_FLOOR_MANAGER_VERIFICATION;
-
-
-                $gembaWalk_status = $this->gembaWalk->updateStatus($gembaWalk_id, $gembaWalk_status);
-                $to_status = GEMBA_WALK_INSPECTION_WAITING_FOR_FLOOR_MANAGER_VERIFICATION;
-                //mail
-                $mailsubject = 'Gemba Walk CAPA Action  Report has been Submitted';
-                $user_roles = [ROLE_EHS_OFFICER, ROLE_UNIT_HEAD, ROLE_EHS_HEAD];
-                $userids = [$resposible_person];
-                $users = collect();
-
-                foreach ($user_roles as $user_role) {
-                    $roleUsers = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')
-                        ->get();
-
-                    $userids = array_merge($userids, $roleUsers->pluck('id')->toArray());
-                    $users = $users->merge($roleUsers);
-                }
-
-                $userids = array_unique($userids);
-
-                $gembaWalk_details = $this->gembaWalk->selectmail($gembaWalk_id);
-                $gembaWalk_status = $this->gembaWalkInspectionEhsAprroval->getStatus($gembaWalk_id);
-
-                if ($users->count() > 0) {
-                    foreach ($users as $user) {
-                        $email_id = $user->email;
-
-                        if (!empty($email_id)) {
-                            $gembaWalk_details = $this->gembaWalk->selectmail($gembaWalk_id);
-                            $gembaWalk = $gembaWalk_details->toArray();
-
-                            $gembaWalk['name'] = $user->name;
-                            $gembaWalk['email_id'] = $email_id;
-                            $gembaWalk['mail_subject'] = $mailsubject;
-
-                            // Send email
-                            Mail::to($gembaWalk['email_id'])->queue(new GembaWalkMail($gembaWalk));
-                        }
-                    }
-                }
-
-                $notificationData = array(
-                    'notification_type' => GEMBA_WALK_NOTIIFCATION,
-                    'module_type' => 3,
-                    'notification_message' => $mailsubject,
-                    'mobile_notification' => json_encode(array(
-                        'title' => $mailsubject,
-                        'message' => 'CAPA Action  ' . $gembaWalk_details->gemba_walk_auto_id . ' Submmited by ' . getUsername($gembaWalk_details->created_by),
-                        'icon' => admin_url('public/assets/icons/permit_to_work.png'),
-                        'id' => $gembaWalk_details->id,
-                        'module' => 1,
-                    )),
-                    'web_link' =>  admin_url('inspection/gemba-walk/list'),
-                    'assigned_user' => implode(',', $userids),
-                    'created_by' => Auth::id(),
-                );
-
-                notificationSave($notificationData);
-
-                $insert_array = array(
-                    'gemba_walk_id' => $gembaWalk_details->id,
-                    'from_status' => GEMBA_WALK_INSPECTION_START,
-                    'to_status' => $to_status,
-                    'is_reject' => $gembaWalk_status->capa,
-                    'remarks' => $gembaWalk_status->remarks,
-                    'approved_by' => Auth::id(),
-                );
-
-                $this->statusLog->create($insert_array);
-            } else {
-                $resposible_person = decryptId($request->responsible_person_id);
+            if ($capa_needed == 2) {
                 $gembaWalk_status = GEMBA_WALK_INSPECTION_CLOSED;
-                $capa_type = GEMBA_WALK_INSPECTION_PASS;
-                // $gembaWalk_id = decryptId($request->id);
-                $gembaWalk_ehs = $this->gembaWalkInspectionEhsAprroval->capaSubmit($gembaWalk_id, $capa_type);
-
-                $gembaWalk_singnature = $this->gembaWalkChecklistFile->storeVerifiedSignature($gembaWalk_id);
-                $gembaWalk_status = $this->gembaWalk->updateStatus($gembaWalk_id, $gembaWalk_status);
-
-                //mail
-                $mailsubject = 'Gemba Walk has been Approved';
-                $user_roles = [ROLE_EHS_OFFICER, ROLE_UNIT_HEAD, ROLE_EHS_HEAD];
-                $userids = [$resposible_person];
-                $users = collect();
-
-                foreach ($user_roles as $user_role) {
-                    $roleUsers = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')
-                        ->get();
-
-                    $userids = array_merge($userids, $roleUsers->pluck('id')->toArray());
-                    $users = $users->merge($roleUsers);
-                }
-
-                $userids = array_unique($userids);
-                $gembaWalk_details = $this->gembaWalk->selectmail($gembaWalk_id);
-                $gembaWalk_status = $this->gembaWalkInspectionEhsAprroval->getApproveStatus($gembaWalk_id);
+                $gembaWalk_status_details = $this->gembaWalk->updateStatus($gembaWalk_id, $gembaWalk_status);
                 $to_status = GEMBA_WALK_INSPECTION_CLOSED;
 
-                if ($users->count() > 0) {
-                    foreach ($users as $user) {
-                        $email_id = $user->email;
-                        if (!empty($email_id)) {
-                            $gembaWalk_details = $this->gembaWalk->selectmail($gembaWalk_id);
-                            $gembaWalk = $gembaWalk_details->toArray();
-                            $gembaWalk['name'] = $user->name;
-                            $gembaWalk['email_id'] = $email_id;
-                            $gembaWalk['mail_subject'] = $mailsubject;
-                            Mail::to($gembaWalk['email_id'])->queue(new GembaWalkMail($gembaWalk));
+                $gembaWalk_ehs_verificatioin_details = $this->gembaWalkInspectionEhsAprroval->usercapaSubmit($gembaWalk_id);
+                $mailsubject = 'Gemba Walk has been Closed';
+                $user_roles = [ROLE_EHS_OFFICER, ROLE_UNIT_HEAD, ROLE_EHS_HEAD];
+
+                $users = User::where(function ($query) use ($user_roles) {
+                    foreach ($user_roles as $role) {
+                        $query->orWhereRaw("FIND_IN_SET(?, role)", [$role]);
+                    }
+                })->where('status', 1)->get();
+
+                $userIds = $users->pluck('id')->toArray();
+            } else {
+                $gembaWalk_status = GEMBA_WALK_INSPECTION_WAITING_FOR_FLOOR_MANAGER_VERIFICATION;
+                $gembaWalk_status_details = $this->gembaWalk->updateStatus($gembaWalk_id, $gembaWalk_status);
+                $to_status = GEMBA_WALK_INSPECTION_WAITING_FOR_FLOOR_MANAGER_VERIFICATION;
+
+                $mailsubject = 'Gemba Walk has been Created';
+                $user_roles = [ROLE_EHS_OFFICER, ROLE_UNIT_HEAD, ROLE_EHS_HEAD];
+
+                $responsible_person_id = $ResponsibleId->responsibility_id;
+                $observer_person_ids = explode(',', $responsible_person_id);
+
+                $users = collect(); // Laravel Collection
+                $userIds = [];       // For notification assignment
+
+                foreach ($observer_person_ids as $employeeLoginId) {
+                    $employee = Employee::where('login_id', $employeeLoginId)->where('status', 1)->first();
+
+                    if ($employee) {
+                        // Observer user
+                        $observerUser = User::where('id', $employee->login_id)->first();
+                        if ($observerUser) {
+                            $users->push($observerUser);
+                            $userIds[] = $observerUser->id;
+                        }
+
+                        // Reporting manager user
+                        if (!empty($employee->reporting_manager)) {
+                            $managerUser = User::where('employee_id', $employee->reporting_manager)->first();
+                            // dd(   $managerUser);
+                            if ($managerUser) {
+                                $users->push($managerUser);
+                                $userIds[] = $managerUser->id;
+                            }
                         }
                     }
                 }
 
-                $notificationData = array(
-                    'notification_type' => GEMBA_WALK_NOTIIFCATION,
-                    'module_type' => 3,
-                    'notification_message' => $mailsubject,
-                    'mobile_notification' => json_encode(array(
-                        'title' => $mailsubject,
-                        'message' => 'Gemba Walk ' . $gembaWalk_details->gemba_walk_auto_id . ' has been Approved by ' . getUsername($gembaWalk_details->created_by),
-                        'icon' => admin_url('public/assets/icons/permit_to_work.png'),
-                        'id' => $gembaWalk_details->id,
-                        'module' => 1,
-                    )),
-                    'web_link' =>  admin_url('inspection/gemba-walk/list'),
-                    'assigned_user' => implode(',', $userids),
-                    'created_by' => Auth::id(),
-                );
-                notificationSave($notificationData);
-
-                $insert_array = array(
-                    'gemba_walk_id' => $gembaWalk_details->id,
-                    'from_status' => GEMBA_WALK_INSPECTION_START,
-                    'to_status' => $to_status,
-                    'is_reject' => $gembaWalk_status->capa,
-                    'remarks' =>  $gembaWalk_status->remarks,
-                    'approved_by' => Auth::id(),
-                );
-
-                $this->statusLog->create($insert_array);
+                $userIds = array_unique($userIds);
             }
+
+            if ($users->count() > 0) {
+                foreach ($users as $user) {
+                    $email_id = $user->email;
+                    if (!empty($email_id)) {
+                        $gembaWalk_details = $this->gembaWalk->selectmail($gembaWalk_id);
+                        $gembaWalk = $gembaWalk_details->toArray();
+                        $gembaWalk['name'] = $user->name;
+                        $gembaWalk['email_id'] = $email_id;
+                        $gembaWalk['mail_subject'] = $mailsubject;
+
+                        // Send email
+                        Mail::to($gembaWalk['email_id'])->queue(new GembaWalkMail($gembaWalk));
+                    }
+                }
+            }
+
+            // Ensure $gembaWalk_details is available
+            $gembaWalk_details = $gembaWalk_details ?? $this->gembaWalk->selectmail($gembaWalk_id);
+
+            // Send notification
+            $notificationData = [
+                'notification_type' => GEMBA_WALK_NOTIIFCATION,
+                'module_type' => 3,
+                'notification_message' => $mailsubject,
+                'mobile_notification' => json_encode([
+                    'title' => $mailsubject,
+                    'message' => 'CAPA Action ' . $gembaWalk_details->gemba_walk_auto_id . ' Submitted by ' . getUsername($gembaWalk_details->created_by),
+                    'icon' => admin_url('public/assets/icons/permit_to_work.png'),
+                    'id' => $gembaWalk_details->id,
+                    'module' => 1,
+                ]),
+                'web_link' => admin_url('inspection/gemba-walk/list'),
+                'assigned_user' => implode(',', $userIds),
+                'created_by' => Auth::id(),
+            ];
+
+            notificationSave($notificationData);
+
+
+
+            $insert_array = array(
+                'gemba_walk_id' => $gembaWalk_id,
+                'from_status' => GEMBA_WALK_INSPECTION_START,
+                'to_status' => $to_status,
+                'is_reject' => $ResponsibleId->capa,
+                'remarks' => ($ResponsibleId->remarks) ? $request->capa_remarks : '-',
+                'approved_by' => Auth::id(),
+            );
+
+            $this->statusLog->create($insert_array);
 
             Session::flash('success', 'Your data has been created successfully!');
 
             return redirect(admin_url('inspection/gemba-walk/list'));
-
-            // if ($gembaWalk['observation_needed'] == 1) {
-            //     return redirect(admin_url('fire/checklist-observation/add/' . encryptId($inspection_type) . '/' . encryptId($gembaWalk_id)));
-            // } else {
-            //     return redirect(admin_url('inspection/gemba-walk/list'));
-            // }
-
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
@@ -1026,6 +984,18 @@ class GembaWalkController extends Controller
                 $sheet->setCellValue("H{$row}", $data->description ?? '');
                 $sheet->setCellValue("I{$row}", getGembaWalkHazardName($data->hazard ?? ''));
 
+                $hazardIds = explode(',', $data->hazard ?? '');
+                $hazardNames = [];
+
+                foreach ($hazardIds as $id) {
+                    $hazardNames[] = getGembaWalkHazardName(trim($id));
+                }
+
+                $sheet->setCellValue("I{$row}", implode(', ', $hazardNames));
+                $sheet->getStyle("I{$row}")->getAlignment()->setWrapText(true);
+
+
+
                 // Insert Image if exists
                 if (!empty($data->file_path)) {
                     $imagePath = public_path($data->file_path);
@@ -1049,7 +1019,15 @@ class GembaWalkController extends Controller
                 $sheet->setCellValue("K{$row}", $data->capa ?? '');
                 $sheet->setCellValue("L{$row}", getGembaWalkStatus($data->status ?? ''));
                 $sheet->setCellValue("M{$row}", $data->remark ?? '');
-                $sheet->setCellValue("N{$row}", getUsername($data->responsibility_id ?? ''));
+                $responsibilityIds = explode(',', $data->responsibility_id ?? '');
+                $responsibilityNames = [];
+
+                foreach ($responsibilityIds as $id) {
+                    $responsibilityNames[] = getUsername(trim($id));
+                }
+
+                $sheet->setCellValue("N{$row}", implode(', ', $responsibilityNames));
+                $sheet->getStyle("N{$row}")->getAlignment()->setWrapText(true);
 
                 $sheet->getStyle("A{$row}:N{$row}")->applyFromArray([
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
@@ -1066,67 +1044,67 @@ class GembaWalkController extends Controller
                 }
             }
 
-            // $signatureRowStart = $row;
-            // $sheet->getRowDimension($signatureRowStart)->setRowHeight(80);
+            $signatureRowStart = $row;
+            $sheet->getRowDimension($signatureRowStart)->setRowHeight(80);
 
-            // // === Prepared By ===
-            // $sheet->mergeCells("A{$signatureRowStart}:F{$signatureRowStart}");
-            // $sheet->getStyle("A{$signatureRowStart}:F{$signatureRowStart}")->applyFromArray([
-            //     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-            //     'alignment' => [
-            //         'horizontal' => Alignment::HORIZONTAL_CENTER,
-            //         'vertical' => Alignment::VERTICAL_BOTTOM, // Align text to the bottom of the cell
-            //         'wrapText' => false,
-            //     ],
-            // ]);
+            // === Prepared By ===
+            $sheet->mergeCells("A{$signatureRowStart}:H{$signatureRowStart}");
+            $sheet->getStyle("A{$signatureRowStart}:H{$signatureRowStart}")->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_CENTER,
+                    'vertical' => Alignment::VERTICAL_BOTTOM, // Align text to the bottom of the cell
+                    'wrapText' => false,
+                ],
+            ]);
 
 
-            // if (file_exists($gembaWalk_approved_singnature)) {
-            //     $drawing = new Drawing();
-            //     $drawing->setName('Signature');
-            //     $drawing->setDescription('Prepared By');
-            //     $drawing->setPath($gembaWalk_approved_singnature);
-            //     $drawing->setCoordinates("D{$signatureRowStart}");
-            //     $drawing->setOffsetX(100);
-            //     $drawing->setOffsetY(5);
-            //     $drawing->setHeight(60);
-            //     $drawing->setWorksheet($sheet);
-            //     $sheet->setCellValue("A{$signatureRowStart}", "\n\n\nPrepared By:\n" . getUsername($gemba->created_by));
-            // } else {
+            if (file_exists($gembaWalk_approved_singnature)) {
+                // $drawing = new Drawing();
+                // $drawing->setName('Signature');
+                // $drawing->setDescription('Prepared By');
+                // $drawing->setPath($gembaWalk_approved_singnature);
+                // $drawing->setCoordinates("D{$signatureRowStart}");
+                // $drawing->setOffsetX(100);
+                // $drawing->setOffsetY(5);
+                // $drawing->setHeight(60);
+                // $drawing->setWorksheet($sheet);
+                $sheet->setCellValue("A{$signatureRowStart}", "\n\n\nPrepared By:\n" . getUsername($gemba->created_by));
+            } else {
 
-            //     $sheet->setCellValue("A{$signatureRowStart}", "Prepared By:\n" . getUsername($gemba->created_by));
-            // }
+                $sheet->setCellValue("A{$signatureRowStart}", "Prepared By:\n" . getUsername($gemba->created_by));
+            }
 
-            // // === Verified By ===
-            // $sheet->mergeCells("G{$signatureRowStart}:K{$signatureRowStart}");
-            // $sheet->getStyle("G{$signatureRowStart}:K{$signatureRowStart}")->applyFromArray([
-            //     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-            //     'alignment' => [
-            //         'horizontal' => Alignment::HORIZONTAL_CENTER,
-            //         'vertical' => Alignment::VERTICAL_BOTTOM,
-            //         'wrapText' => false,
-            //     ],
-            // ]);
-            // if (file_exists($gembaWalk_verified_singnature)) {
-            //     $drawing = new Drawing();
-            //     $drawing->setName('Signature');
-            //     $drawing->setDescription('Verified By');
-            //     $drawing->setPath($gembaWalk_verified_singnature);
-            //     $drawing->setCoordinates("I{$signatureRowStart}");
-            //     $drawing->setOffsetX(5);
-            //     $drawing->setOffsetY(5);
-            //     $drawing->setHeight(60);
-            //     $drawing->setWorksheet($sheet);
-            //     $sheet->setCellValue("G{$signatureRowStart}", "\n\n\nVerified By:\n" . getUsername($gemba->verified_by));
-            // } else {
-            //     $sheet->setCellValue("G{$signatureRowStart}", "Not Verified Yet");
-            // }
+            // === Verified By ===
+            $sheet->mergeCells("I{$signatureRowStart}:N{$signatureRowStart}");
+            $sheet->getStyle("I{$signatureRowStart}:N{$signatureRowStart}")->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_CENTER,
+                    'vertical' => Alignment::VERTICAL_BOTTOM,
+                    'wrapText' => false,
+                ],
+            ]);
+            if (file_exists($gembaWalk_verified_singnature)) {
+                // $drawing = new Drawing();
+                // $drawing->setName('Signature');
+                // $drawing->setDescription('Verified By');
+                // $drawing->setPath($gembaWalk_verified_singnature);
+                // $drawing->setCoordinates("I{$signatureRowStart}");
+                // $drawing->setOffsetX(5);
+                // $drawing->setOffsetY(5);
+                // $drawing->setHeight(60);
+                // $drawing->setWorksheet($sheet);
+                $sheet->setCellValue("I{$signatureRowStart}", "\n\n\nVerified By:\n" . getUsername($gemba->verified_by));
+            } else {
+                $sheet->setCellValue("I{$signatureRowStart}", "Not Verified Yet");
+            }
 
-            // $sheet->getStyle("A{$signatureRowStart}:K{$signatureRowStart}")->applyFromArray([
-            //     'borders' => [
-            //         'outline' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['argb' => '000000']],
-            //     ],
-            // ]);
+            $sheet->getStyle("A{$signatureRowStart}:N{$signatureRowStart}")->applyFromArray([
+                'borders' => [
+                    'outline' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['argb' => '000000']],
+                ],
+            ]);
 
 
 
@@ -1155,9 +1133,8 @@ class GembaWalkController extends Controller
             $allData = $this->gembaWalk->exportdata();
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
-            } elseif (count($allData) > 20) {
-                return redirect()->back()->with('error',   __('inspection.excess_error'));
             }
+            
 
 
 
@@ -1337,7 +1314,15 @@ class GembaWalkController extends Controller
                     $sheet->setCellValue("F{$detIL_row}", displayDateFormat($data->date_of_observation ?? ''));
                     $sheet->setCellValue("G{$detIL_row}", getObservationType($data->observation_type_id ?? ''));
                     $sheet->setCellValue("H{$detIL_row}", $data->description ?? '');
-                    $sheet->setCellValue("I{$detIL_row}", getGembaWalkHazardName($data->hazard ?? ''));
+                    $hazardIds = explode(',', $data->hazard ?? '');
+                    $hazardNames = [];
+
+                    foreach ($hazardIds as $id) {
+                        $hazardNames[] = getGembaWalkHazardName(trim($id));
+                    }
+
+                    $sheet->setCellValue("I{$detIL_row}", implode(', ', $hazardNames));
+                    $sheet->getStyle("I{$detIL_row}")->getAlignment()->setWrapText(true);
 
                     if (!empty($data->file_path) && file_exists(public_path($data->file_path))) {
                         $drawing = new Drawing();
@@ -1355,7 +1340,16 @@ class GembaWalkController extends Controller
                     $sheet->setCellValue("K{$detIL_row}", $data->capa ?? '');
                     $sheet->setCellValue("L{$detIL_row}", getGembaWalkStatus($data->status ?? ''));
                     $sheet->setCellValue("M{$detIL_row}", $data->remark ?? '');
-                    $sheet->setCellValue("N{$detIL_row}", getUsername($data->responsibility_id ?? ''));
+                    $responsibilityIds = explode(',', $data->responsibility_id ?? '');
+                    $responsibilityNames = [];
+
+                    foreach ($responsibilityIds as $id) {
+                        $responsibilityNames[] = getUsername(trim($id));
+                    }
+
+                    $sheet->setCellValue("N{$detIL_row}", implode(', ', $responsibilityNames));
+                    $sheet->getStyle("N{$detIL_row}")->getAlignment()->setWrapText(true);
+
 
 
                     $sheet->getStyle("A{$detIL_row}:N{$detIL_row}")->applyFromArray([
@@ -1368,67 +1362,67 @@ class GembaWalkController extends Controller
                 }
 
                 $signatureRowStart = $detIL_row;
-                // $sheet->getRowDimension($signatureRowStart)->setRowHeight(80);
+                $sheet->getRowDimension($signatureRowStart)->setRowHeight(80);
 
-                // // === Prepared By ===
-                // $sheet->mergeCells("A{$signatureRowStart}:F{$signatureRowStart}");
-                // $sheet->getStyle("A{$signatureRowStart}:F{$signatureRowStart}")->applyFromArray([
-                //     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                //     'alignment' => [
-                //         'horizontal' => Alignment::HORIZONTAL_CENTER,
-                //         'vertical' => Alignment::VERTICAL_BOTTOM, // Align text to the bottom of the cell
-                //         'wrapText' => false,
-                //     ],
-                // ]);
+                // === Prepared By ===
+                $sheet->mergeCells("A{$signatureRowStart}:H{$signatureRowStart}");
+                $sheet->getStyle("A{$signatureRowStart}:H{$signatureRowStart}")->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => [
+                        'horizontal' => Alignment::HORIZONTAL_CENTER,
+                        'vertical' => Alignment::VERTICAL_BOTTOM, // Align text to the bottom of the cell
+                        'wrapText' => false,
+                    ],
+                ]);
 
 
-                // if (file_exists($preparedBySignature)) {
-                //     $drawing = new Drawing();
-                //     $drawing->setName('Signature');
-                //     $drawing->setDescription('Prepared By');
-                //     $drawing->setPath($preparedBySignature);
-                //     $drawing->setCoordinates("D{$signatureRowStart}");
-                //     $drawing->setOffsetX(100);
-                //     $drawing->setOffsetY(5);
-                //     $drawing->setHeight(60);
-                //     $drawing->setWorksheet($sheet);
-                //     $sheet->setCellValue("A{$signatureRowStart}", "\n\n\nPrepared By:\n" . getUsername($gemba->created_by));
-                // } else {
+                if (file_exists($preparedBySignature)) {
+                    // $drawing = new Drawing();
+                    // $drawing->setName('Signature');
+                    // $drawing->setDescription('Prepared By');
+                    // $drawing->setPath($preparedBySignature);
+                    // $drawing->setCoordinates("D{$signatureRowStart}");
+                    // $drawing->setOffsetX(100);
+                    // $drawing->setOffsetY(5);
+                    // $drawing->setHeight(60);
+                    // $drawing->setWorksheet($sheet);
+                    $sheet->setCellValue("A{$signatureRowStart}", "\n\n\nPrepared By:\n" . getUsername($gemba->created_by));
+                } else {
 
-                //     $sheet->setCellValue("A{$signatureRowStart}", "Prepared By:\n" . getUsername($gemba->created_by));
-                // }
+                    $sheet->setCellValue("A{$signatureRowStart}", "Prepared By:\n" . getUsername($gemba->created_by));
+                }
 
-                // // === Verified By ===
-                // $sheet->mergeCells("G{$signatureRowStart}:K{$signatureRowStart}");
-                // $sheet->getStyle("G{$signatureRowStart}:K{$signatureRowStart}")->applyFromArray([
-                //     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                //     'alignment' => [
-                //         'horizontal' => Alignment::HORIZONTAL_CENTER,
-                //         'vertical' => Alignment::VERTICAL_BOTTOM,
-                //         'wrapText' => false,
-                //     ],
-                // ]);
+                // === Verified By ===
+                $sheet->mergeCells("I{$signatureRowStart}:N{$signatureRowStart}");
+                $sheet->getStyle("I{$signatureRowStart}:N{$signatureRowStart}")->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => [
+                        'horizontal' => Alignment::HORIZONTAL_CENTER,
+                        'vertical' => Alignment::VERTICAL_BOTTOM,
+                        'wrapText' => false,
+                    ],
+                ]);
 
-                // if (file_exists($verifiedSignature)) {
-                //     $drawing = new Drawing();
-                //     $drawing->setName('Signature');
-                //     $drawing->setDescription('Verified By');
-                //     $drawing->setPath($verifiedSignature);
-                //     $drawing->setCoordinates("I{$signatureRowStart}");
-                //     $drawing->setOffsetX(5);
-                //     $drawing->setOffsetY(5);
-                //     $drawing->setHeight(60);
-                //     $drawing->setWorksheet($sheet);
-                //     $sheet->setCellValue("G{$signatureRowStart}", "\n\n\nVerified By:\n" . getUsername($gemba->responsible_person_id));
-                // } else {
-                //     $sheet->setCellValue("G{$signatureRowStart}", "Not Verified Yet");
-                // }
+                if (file_exists($verifiedSignature)) {
+                    // $drawing = new Drawing();
+                    // $drawing->setName('Signature');
+                    // $drawing->setDescription('Verified By');
+                    // $drawing->setPath($verifiedSignature);
+                    // $drawing->setCoordinates("I{$signatureRowStart}");
+                    // $drawing->setOffsetX(5);
+                    // $drawing->setOffsetY(5);
+                    // $drawing->setHeight(60);
+                    // $drawing->setWorksheet($sheet);
+                    $sheet->setCellValue("I{$signatureRowStart}", "\n\n\nVerified By:\n" . getUsername($gemba->responsible_person_id));
+                } else {
+                    $sheet->setCellValue("I{$signatureRowStart}", "Not Verified Yet");
+                }
 
-                // $sheet->getStyle("A{$signatureRowStart}:K{$signatureRowStart}")->applyFromArray([
-                //     'borders' => [
-                //         'outline' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['argb' => '000000']],
-                //     ],
-                // ]);
+                $sheet->getStyle("A{$signatureRowStart}:N{$signatureRowStart}")->applyFromArray([
+                    'borders' => [
+                        'outline' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['argb' => '000000']],
+                    ],
+                ]);
 
                 $row = $signatureRowStart + 7;
 

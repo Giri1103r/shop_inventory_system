@@ -58,7 +58,8 @@ class GembaWalk extends Model
 
         if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_OFFICER)) {
         } else {
-            $query->where('inspection_gemba_walk_checklist.responsibility_id', Auth::id());
+         $query->whereRaw("FIND_IN_SET(?, inspection_gemba_walk_checklist.responsibility_id)", [Auth::id()]);
+
         }
 
         if ($request->search['value'] != null || $request->search['value'] != '') {
@@ -290,6 +291,8 @@ class GembaWalk extends Model
     {
         return $this->where('id', $id)->first();
     }
+
+
 
     public function selectSingnature($id)
     {

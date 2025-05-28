@@ -202,7 +202,8 @@
 
         </table>
 
-        <table class="table table-bordered table-hover tblborder" style="width:100%; border-collapse: collapse;" border="1">
+        <table class="table table-bordered table-hover tblborder" style="width:100%; border-collapse: collapse;"
+            border="1">
             <thead>
                 <tr>
                     <th>S No</th>
@@ -250,26 +251,32 @@
             </tbody>
 
             {{-- Footer Row for Signatures --}}
-            {{-- <tr>
+            <tr>
                 @php
                     $firstItem = $groupedCollection->first();
-                    $createdSignature = GetSignature($firstItem->inspection_created_by, $firstItem->inspection_id, GEMBA_WALK);
+                    $createdSignature = GetSignature(
+                        $firstItem->inspection_created_by,
+                        $firstItem->inspection_id,
+                        GEMBA_WALK,
+                    );
                     $verifiedSignature = GetSignature($firstItem->verified_by, $firstItem->inspection_id, GEMBA_WALK);
                 @endphp
 
                 <th colspan="7" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">
-                    <img src="{{ admin_url($createdSignature) }}" alt="Signature Upload"
-                        style="width: 150px; margin-top: -10px;" />
 
-                    <div style="margin-top: 5px;">Prepared By : {{getUsername($firstItem->created_by)}} </div>
+                    <div style="margin-top: 5px;">Prepared By : {{ getUsername($firstItem->created_by) }} </div>
 
                 </th>
                 <th colspan="7" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">
-                    <img src="{{ admin_url($verifiedSignature) }}" alt="Signature Upload"
-                        style="width: 150px; margin-top: -10px;" />
-                    <div style="margin-top: 5px;">Verified By: {{getUsername($firstItem->responsible_person_id)}}</div>
+
+                    @if (!empty($firstItem->verified_by))
+
+                        <p style="margin: 0;">Verified By:- {{ getUsername($firstItem->verified_by) }}</p>
+                    @else
+                        <p style="margin: 0;">Verified By:- Not yet Verified</p>
+                    @endif
                 </th>
-            </tr> --}}
+            </tr>
         </table>
 
 

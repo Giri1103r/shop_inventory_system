@@ -111,6 +111,10 @@
         .table-container {
             padding: 20px;
         }
+
+        .page-break {
+            page-break-before: always;
+        }
     </style>
 </head>
 
@@ -150,7 +154,7 @@
             <tr>
                 <td
                     style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                    GembaWalk Details
+                    Gemba Walk Inspection (Safety Walk Observation)
 
                 </td>
             </tr>
@@ -187,7 +191,7 @@
                     {{ $document_no->rev_dt ?? '' }}
                 </td>
             </tr>
-             <tr>
+            <tr>
                 <td width="50%" style="padding:5px;"><b>Shift Name</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
@@ -220,13 +224,13 @@
     @else
         <p style="text-align:center; color:red; font-weight:bold;">No Gemba Walk Details Available</p>
     @endif
-    
+
     <div style="width:100%;">
         <table style="width:100%;">
             <tr>
                 <td
                     style="width:100%; background-color: #ce0f1f; color:#ffffff; padding: 10px 10px 10px; font-weight:bold;">
-                    {{ __('inspection.checklist_details') }}
+                   Gemba Walk
                 </td>
             </tr>
         </table>
@@ -270,7 +274,16 @@
                                 <td>{{ displaydateformat($gembaWalk->date_of_observation ?? 'N/A') }}</td>
                                 <td>{{ getObservationType($gembaWalk->observation_type_id ?? 'N/A') }}</td>
                                 <td>{{ $gembaWalk->description ?? 'N/A' }}</td>
-                                <td>{{ getGembaWalkHazardName($gembaWalk->hazard ?? 'N/A') }}</td>
+                                <td>
+                                    @php
+                                        $hazards = explode(',', $gembaWalk->hazard);
+                                    @endphp
+                                    @foreach ($hazards as $hazardId)
+                                        {{ getGembaWalkHazardName($hazardId) }}@if (!$loop->last)
+                                            ,
+                                        @endif
+                                    @endforeach
+                                </td>
                                 <td>
                                     @if (!empty($gembaWalk->file_path))
                                         <img src="{{ public_path($gembaWalk->file_path) }}"
@@ -280,33 +293,29 @@
                                     @endif
                                 </td>
                                 <td>{{ $gembaWalk->capa ?? 'N/A' }}</td>
-                                {{-- <td>{{ displaydateformat($gembaWalk->date_of_compliance ?? 'N/A') }}</td> --}}
+
                                 <td>{{ getGembaWalkStatus($gembaWalk->gemba_walk_checklist_status ?? 'N/A') }}</td>
                                 <td>{{ $gembaWalk->remark ?? 'N/A' }}</td>
-                                <td>{{ getUsername($gembaWalk->responsibility_id ?? 'N/A') }}</td>
-                                {{-- <td>{{ $gembaWalk->observation_needed == '1' ? 'YES' : 'NO' }}</td> --}}
-
-                                {{-- <td>
-                                    @if (!empty($gembaWalk->observation))
-                                        @php $observations = json_decode($gembaWalk->observation, true); @endphp
-                                        @if (is_array($observations))
-                                            @foreach ($observations as $key => $obs)
-                                                {{ $key + 1 }}. {{ $obs }}<br>
-                                            @endforeach
-                                        @else
-                                            N/A
+                                <td>
+                                    @php
+                                        $responsibility_id = explode(',', $gembaWalk->responsibility_id);
+                                    @endphp
+                                    @foreach ($responsibility_id as $responsibilityId)
+                                        {{ getUsername($responsibilityId) }}@if (!$loop->last)
+                                            ,
                                         @endif
-                                    @else
-                                        N/A
-                                    @endif
-                                </td> --}}
+                                    @endforeach
+                                </td>
+
+
+
                             </tr>
                         @endforeach
                     </tbody>
                 </table>
             @else
                 <div class="card-body">
-                    <p class="text-dark">{{ __('No status logs available.') }}</p>
+                    <p class="text-dark">{{ __('No status data available.') }}</p>
                 </div>
             @endif
         </div>
@@ -315,147 +324,13 @@
 
 
 
-    @if ($gembaWalk->gemba_walk_status == GEMBA_WALK_INSPECTION_WAITING_FOR_FLOOR_MANAGER_VERIFICATION)
-        <div style="width:100%;">
-            <table style="width:100%;">
-                <tr>
-                    <td
-                        style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                        Recommended CAPA Action
-                    </td>
-                </tr>
-            </table>
-        </div>
-        <table width="100%" style="width:100%;">
-            @if (isset($gembaWalk_ehs_capa_details->created_by))
-                <tr>
-                    <td width="50%" style="padding:5px;"><b>Created By</b></td>
-                    <td width="2%" style="padding:5px;">:</td>
-                    <td width="48%" style="padding:5px;"> {{ getUserName($gembaWalk_ehs_capa_details->created_by) }}
-                    </td>
-                </tr>
-            @endif
-            @if (isset($gembaWalk_ehs_capa_details->created_at))
-                <tr>
-                    <td width="50%" style="padding:5px;"><b>{{ __('inspection.date') }}</b></td>
-                    <td width="2%" style="padding:5px;">:</td>
-                    <td width="48%" style="padding:5px;">
-                        {{ Displaydateformat($gembaWalk_ehs_capa_details->created_at) }}</td>
-                </tr>
-            @endif
-            @if (isset($gembaWalk_ehs_capa_details->capa))
-                <tr>
-                    <td width="50%" style="padding:5px;"><b>Whether the Inspection has been passed Without the
-                            CAPA?</b></td>
-                    <td width="2%" style="padding:5px;">:</td>
-                    <td width="48%" style="padding:5px;">
-                        @if ($gembaWalk_ehs_capa_details->capa == 1)
-                            Yes
-                        @elseif ($gembaWalk_ehs_capa_details->capa == 2)
-                            No
-                        @else
-                            {{ $gembaWalk_ehs_capa_details->capa }}
-                        @endif
-                    </td>
-                </tr>
-            @else
-                <tr>
-                    <td width="50%" style="padding:5px;"><b>Whether the Inspection has been passed Without the
-                            CAPA?</b></td>
-                    <td width="2%" style="padding:5px;">:</td>
-                    <td width="48%" style="padding:5px;">N/A</td>
-                </tr>
-            @endif
-            @if (isset($gembaWalk_ehs_capa_details->remarks))
-                <tr>
-                    <td width="50%" style="padding:5px;"><b>Remarks</b></td>
-                    <td width="2%" style="padding:5px;">:</td>
-                    <td width="48%" style="padding:5px;">{{ $gembaWalk_ehs_capa_details->remarks }}</td>
-                </tr>
-            @else
-                <tr>
-                    <td width="50%" style="padding:5px;"><b>Remarks</b></td>
-                    <td width="2%" style="padding:5px;">:</td>
-                    <td width="48%" style="padding:5px;">-</td> <!-- Displaying 'N/A' if Remarks is not set -->
-                </tr>
-            @endif
-        </table>
-        <br>
-    @endif
+
     <br>
 
     @if (
         $gembaWalk->gemba_walk_status == GEMBA_WALK_INSPECTION_WAITING_FOR_EHS_OFFICER_VERIFICATION ||
             $gembaWalk->gemba_walk_status == GEMBA_WALK_INSPECTION_REJECTED)
-        <div>
-            <div style="width:100%;">
-                <table style="width:100%;">
-                    <tr>
-                        <td
-                            style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                            Recommended CAPA Action
-                        </td>
-                    </tr>
-                </table>
-            </div>
-            <table width="100%" style="width:100%;">
-                @if (isset($gembaWalk_ehs_capa_details->created_by))
-                    <tr>
-                        <td width="50%" style="padding:5px;"><b>Created By</b></td>
-                        <td width="2%" style="padding:5px;">:</td>
-                        <td width="48%" style="padding:5px;">
-                            {{ getUserName($gembaWalk_ehs_capa_details->created_by) }}
-                        </td>
-                    </tr>
-                @endif
-                @if (isset($gembaWalk_ehs_capa_details->created_at))
-                    <tr>
-                        <td width="50%" style="padding:5px;"><b>{{ __('inspection.date') }}</b></td>
-                        <td width="2%" style="padding:5px;">:</td>
-                        <td width="48%" style="padding:5px;">
-                            {{ Displaydateformat($gembaWalk_ehs_capa_details->created_at) }}</td>
-                    </tr>
-                @endif
-                @if (isset($gembaWalk_ehs_capa_details->capa))
-                    <tr>
-                        <td width="50%" style="padding:5px;"><b>Whether the Inspection has been passed Without the
-                                CAPA?</b></td>
-                        <td width="2%" style="padding:5px;">:</td>
-                        <td width="48%" style="padding:5px;">
-                            @if ($gembaWalk_ehs_capa_details->capa == 1)
-                                Yes
-                            @elseif ($gembaWalk_ehs_capa_details->capa == 2)
-                                No
-                            @else
-                                {{ $gembaWalk_ehs_capa_details->capa }}
-                            @endif
-                        </td>
-                    </tr>
-                @else
-                    <tr>
-                        <td width="50%" style="padding:5px;"><b>Whether the Inspection has been passed Without the
-                                CAPA?</b></td>
-                        <td width="2%" style="padding:5px;">:</td>
-                        <td width="48%" style="padding:5px;">-</td>
-                    </tr>
-                @endif
 
-                @if (isset($gembaWalk_ehs_capa_details->remarks))
-                    <tr>
-                        <td width="50%" style="padding:5px;"><b>Remarks</b></td>
-                        <td width="2%" style="padding:5px;">:</td>
-                        <td width="48%" style="padding:5px;">{{ $gembaWalk_ehs_capa_details->remarks }}</td>
-                    </tr>
-                @else
-                    <tr>
-                        <td width="50%" style="padding:5px;"><b>Remarks</b></td>
-                        <td width="2%" style="padding:5px;">:</td>
-                        <td width="48%" style="padding:5px;">-</td>
-                        <!-- Displaying 'N/A' if Remarks is not set -->
-                    </tr>
-                @endif
-            </table>
-        </div>
 
         <br>
 
@@ -465,7 +340,7 @@
                     <tr>
                         <td
                             style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                            Floor Manager Action
+                            Action Taken
                         </td>
                     </tr>
                 </table>
@@ -521,74 +396,7 @@
     @endif
 
     @if ($gembaWalk->gemba_walk_status == GEMBA_WALK_INSPECTION_CLOSED)
-        <div>
-            <div style="width:100%;">
-                <table style="width:100%;">
-                    <tr>
-                        <td
-                            style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                            Recommended CAPA Action
-                        </td>
-                    </tr>
-                </table>
-            </div>
-            <table width="100%" style="width:100%;">
-                @if (isset($gembaWalk_ehs_capa_details->created_by))
-                    <tr>
-                        <td width="50%" style="padding:5px;"><b>Created By</b></td>
-                        <td width="2%" style="padding:5px;">:</td>
-                        <td width="48%" style="padding:5px;">
-                            {{ getUserName($gembaWalk_ehs_capa_details->created_by) }}
-                        </td>
-                    </tr>
-                @endif
-                @if (isset($gembaWalk_ehs_capa_details->created_at))
-                    <tr>
-                        <td width="50%" style="padding:5px;"><b>{{ __('inspection.date') }}</b></td>
-                        <td width="2%" style="padding:5px;">:</td>
-                        <td width="48%" style="padding:5px;">
-                            {{ Displaydateformat($gembaWalk_ehs_capa_details->created_at) }}</td>
-                    </tr>
-                @endif
-                @if (isset($gembaWalk_ehs_capa_details->capa))
-                    <tr>
-                        <td width="50%" style="padding:5px;"><b>Whether the Inspection has been passed Without the
-                                CAPA?</b></td>
-                        <td width="2%" style="padding:5px;">:</td>
-                        <td width="48%" style="padding:5px;">
-                            @if ($gembaWalk_ehs_capa_details->capa == 1)
-                                Yes
-                            @elseif ($gembaWalk_ehs_capa_details->capa == 2)
-                                No
-                            @else
-                                {{ $gembaWalk_ehs_capa_details->capa }}
-                            @endif
-                        </td>
-                    </tr>
-                @else
-                    <tr>
-                        <td width="50%" style="padding:5px;"><b>Whether the Inspection has been passed Without the
-                                CAPA?</b></td>
-                        <td width="2%" style="padding:5px;">:</td>
-                        <td width="48%" style="padding:5px;">Yes</td>
-                    </tr>
-                @endif
-                @if (isset($gembaWalk_ehs_capa_details->remarks))
-                    <tr>
-                        <td width="50%" style="padding:5px;"><b>Remarks</b></td>
-                        <td width="2%" style="padding:5px;">:</td>
-                        <td width="48%" style="padding:5px;">{{ $gembaWalk_ehs_capa_details->remarks }}</td>
-                    </tr>
-                @else
-                    <tr>
-                        <td width="50%" style="padding:5px;"><b>Remarks</b></td>
-                        <td width="2%" style="padding:5px;">:</td>
-                        <td width="48%" style="padding:5px;">-</td>
-                        <!-- Displaying 'N/A' if Remarks is not set -->
-                    </tr>
-                @endif
-            </table>
-        </div>
+
         <br>
         @if (isset($gembaWalk_ehs_floor_manager_details))
 
@@ -598,7 +406,7 @@
                         <tr>
                             <td
                                 style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                                {{ __('inspection.observer_action') }}
+                                Action Taken
                             </td>
                         </tr>
                     </table>
@@ -649,6 +457,20 @@
                             <td width="2%" style="padding:5px;">:</td>
                             <td width="48%" style="padding:5px;">-</td>
                         </tr>
+                    @endif
+
+                    @if ($gembaWalk)
+                        <tr>
+                            <td width="50%" style="padding:5px;"><b>Images</b></td>
+                            <td width="2%" style="padding:5px;">:</td>
+                            <td width="48%" style="padding:5px;"> <a href="{{ asset($gembaWalk->file_path) }}"
+                                    target="_blank">
+                                    <img src="{{ asset('public/' . $gembaWalk->file_path) }}" alt="image"
+                                        style="max-width: 100px; max-height: 100px;">
+                                </a></td>
+                        </tr>
+                    @else
+                        <small class="text-muted">No file uploaded yet.</small>
                     @endif
 
                     @if (isset($gembaWalk_ehs_floor_manager_details->capa_action_date))
@@ -785,6 +607,7 @@
 
         </div>
         <br>
+        <div class="page-break"></div>
     </div>
 </body>
 

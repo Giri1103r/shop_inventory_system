@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'Gemba Walk Add')
-@section('pageurl', admin_url('gemba-walk/add'))
+@section('title', 'Gemba Walk')
+@section('pageurl', admin_url('inspection/gemba-walk/add'))
 
 @section('content')
     <div class="clearfix"></div>
@@ -141,7 +141,7 @@
                                             <div class="mt-4 row">
                                                 <div
                                                     class="card-header-inner d-flex justify-content-between align-items-center">
-                                                    <h4 class="text-white">{{__('inspection.checklist_details')}}</h4>
+                                                    <h4 class="text-white">{{ __('inspection.checklist_details') }}</h4>
                                                     {{-- <button type="button"
                                                         class="btn mb-2 btn-primary addChecklistDetails">Add
                                                         More</button> --}}
@@ -155,7 +155,7 @@
                                                             <div class="col-md-4">
                                                                 <div class="form-group  form-input">
                                                                     <label for="location_id" class="require form-label">
-                                                                        {{__('inspection.location')}}</label>
+                                                                        {{ __('inspection.location') }}</label>
                                                                     <select name="gemba_walk[0][location_id]"
                                                                         id="location_id" class=" form-control single-select"
                                                                         style="width: 100%">
@@ -194,7 +194,8 @@
 
                                                             <div class="col-md-4 mt-2">
                                                                 <div class="form-group form-input ">
-                                                                    <label class="form-label require">{{__('inspection.exact_location')}}</label>
+                                                                    <label
+                                                                        class="form-label require">{{ __('inspection.exact_location') }}</label>
                                                                     <input type="text"
                                                                         name="gemba_walk[0][exact_location]"
                                                                         id="exact_location_0" class="form-control"
@@ -204,7 +205,8 @@
 
                                                             <div class="col-md-4 mt-2">
                                                                 <div class="form-group form-input ">
-                                                                    <label class="form-label require">{{__('inspection.date_of_observation')}}</label>
+                                                                    <label
+                                                                        class="form-label require">{{ __('inspection.date_of_observation') }}</label>
                                                                     <input type="text"
                                                                         name="gemba_walk[0][date_of_observation]"
                                                                         id="date_of_observation_0" class="form-control">
@@ -215,7 +217,7 @@
                                                                 <div class="form-group form-input ">
                                                                     <label for="observation_type"
                                                                         class=" require form-label">
-                                                                         {{__('inspection.observation_type')}}</label>
+                                                                        {{ __('inspection.observation_type') }}</label>
                                                                     <select name="gemba_walk[0][observation_type]"
                                                                         id="observation_type_0"
                                                                         class=" form-control single-select"
@@ -230,7 +232,8 @@
 
                                                             <div class="col-md-4 mt-2">
                                                                 <div class="form-group form-input ">
-                                                                    <label class="form-label require">{{__('inspection.description')}}</label>
+                                                                    <label
+                                                                        class="form-label require">{{ __('inspection.description') }}</label>
                                                                     <textarea class="form-control" name="gemba_walk[0][checklist_description]" id="checklist_description_0"></textarea>
 
                                                                 </div>
@@ -240,11 +243,11 @@
                                                             <div class="col-md-4 mt-2">
                                                                 <div class="form-group  form-input">
                                                                     <label for="hazard" class="require form-label">
-                                                                        {{__('inspection.hazard')}}</label>
-                                                                    <select name="gemba_walk[0][hazard]" id="hazard"
-                                                                        class=" form-control single-select"
+                                                                        {{ __('inspection.hazard') }}</label>
+                                                                    <select name="gemba_walk[0][hazard][]" id="hazard"
+                                                                        class=" form-control single-select" multiple
                                                                         style="width: 100%">
-                                                                        <option value="">Select Hazard</option>
+                                                                        <option value=""></option>
                                                                         @foreach ($hazard as $haza)
                                                                             <option value="{{ encryptId($haza->id) }}">
                                                                                 {{ $haza->hazard_name }}</option>
@@ -253,24 +256,72 @@
                                                                 </div>
                                                             </div>
 
+                                                            <div class="col-md-4 mt-4">
+                                                                <div class="form-group form-input">
+                                                                    <label
+                                                                        class="form-label require">{{ __('inspection.capa_is_passed') }}</label>
 
-                                                            <div class="col-md-4 mt-2  form-input file-upload-block"
-                                                                id="file-upload-0">
-                                                                <label for="evidence_0"
-                                                                    class="form-label require ">{{__('inspection.evidence')}}</label>
-                                                                <input type="file" class="form-control"
-                                                                    name="gemba_walk[0][evidence]" id="evidence_0">
-                                                                <div class="text-danger"></div>
-
+                                                                    <div class="mb-2">
+                                                                        <label class="me-3">
+                                                                            <input type="radio" name="is_passed"
+                                                                                value="{{ encryptId(1) }}"
+                                                                                id="capa_yes"
+                                                                                class="validate-radio-required"> Yes
+                                                                        </label>
+                                                                        <label>
+                                                                            <input type="radio" name="is_passed"
+                                                                                value="{{ encryptId(2) }}"
+                                                                                id="capa_no"
+                                                                                class="validate-radio-required"> No
+                                                                        </label>
+                                                                    </div>
+                                                                </div>
                                                             </div>
 
-                                                            <div class="col-md-4 mt-2">
-                                                                <div class="form-group form-input">
-                                                                    <label class="form-label require">{{__('inspection.capa')}}</label>
-                                                                    <input type="text"
-                                                                        name="gemba_walk[0][checklist_capa]"
-                                                                        id="checklist_capa" class="form-control"
-                                                                        placeholder=" Enter Recommended actions  ">
+                                                            <div class="row">
+                                                                <div class="col-md-12 mb-2" id="verified_by"
+                                                                    style="display: none;">
+                                                                    <div class="row">
+                                                                        <!-- File Upload Input (Left Column) -->
+                                                                        <div class="col-md-4 mt-2 form-input file-upload-block"
+                                                                            id="file-upload-0">
+                                                                            <label for="evidence_0"
+                                                                                class="form-label require">
+                                                                                {{ __('inspection.evidence') }}
+                                                                            </label>
+                                                                            <input type="file" class="form-control"
+                                                                                name="gemba_walk[0][evidence]"
+                                                                                id="evidence_0">
+                                                                            <div class="text-danger"></div>
+                                                                        </div>
+
+                                                                        <!-- CAPA Textarea (Right Column) -->
+                                                                        <div class="col-md-8 mt-2">
+                                                                            <div class="form-group form-input">
+                                                                                <label class="form-label require">
+                                                                                    {{ __('inspection.capa') }}
+                                                                                </label>
+                                                                                <textarea class="form-control" name="gemba_walk[0][checklist_capa]" id="checklist_capa"
+                                                                                    placeholder="Enter Recommended actions"></textarea>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="row">
+                                                                <div class="col-md-12 mb-2" id="remark_section"
+                                                                    style="display: none;">
+                                                                    <div class="row">
+
+                                                                        <div class="col-md-12 mt-2">
+                                                                            <div class="form-group form-input">
+                                                                                <label
+                                                                                    class="form-label require">Remark</label>
+                                                                                <textarea class="form-control" name="capa_remark" id="checklist_remark_0"></textarea>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
                                                                 </div>
                                                             </div>
 
@@ -279,7 +330,7 @@
                                                             <div class="col-md-4 mt-2">
                                                                 <div class="form-group  form-input">
                                                                     <label for="" class=" require form-label">
-                                                                        {{__('inspection.status')}}</label>
+                                                                        {{ __('inspection.status') }}</label>
                                                                     <select name="gemba_walk[0][current_status]"
                                                                         id="current_status_0"
                                                                         class=" form-control single-select"
@@ -295,10 +346,10 @@
                                                             <div class="col-md-4 mt-2">
                                                                 <div class="form-group form-input">
                                                                     <label for="responsible_person_id"
-                                                                        class="form-label require">{{__('inspection.observer_person')}}</label>
-                                                                    <select name="gemba_walk[0][responsible_person_id]"
+                                                                        class="form-label require">{{ __('inspection.observer_person') }}</label>
+                                                                    <select name="gemba_walk[0][responsible_person_id][]"
                                                                         id="responsible_person_id"
-                                                                        class="form-control single-select"
+                                                                        class="form-control single-select" multiple
                                                                         style="width: 100%">
                                                                         <option value="">Select Observer Person
                                                                         </option>
@@ -315,117 +366,13 @@
                                                             </div>
                                                         </div>
 
-                                                        {{-- <div class="row mt-2 observationContainer">
-                                                            <div class="col-md-4 form-input observationRow">
-                                                                <label class="form-label">Observation</label>
-                                                                <textarea class="form-control" name="gemba_walk[0][checklist_observation][0]" id="checklist_observation_0"></textarea>
 
-                                                            </div>
-
-                                                            <div class="col-md-2 mt-2">
-                                                                <button type="button"
-                                                                    class="btn btn-primary addChecklistObservation"
-                                                                    style="margin-top: 30px;" data-index=0>Add
-                                                                    More</button>
-                                                            </div>
-                                                        </div> --}}
                                                     </div>
                                                 </div>
 
-                                                {{-- <div class="form-observation">
-                                                    <div class="row mt-4 form-obs">
-                                                        <div class="card-header-inner p-2">
-                                                            <h4 class="text-white">GembaWalk Inspection Observation</h4>
-                                                        </div>
-
-                                                        <div class="col-md-12 mb-2">
-                                                            <div class="form-group form-input">
-                                                                <label
-                                                                    class="form-label require">{{ __('inspection.obs') }}</label>
-
-                                                                <!-- Radio Buttons for Observation Needed -->
-                                                                <div class="mb-2">
-                                                                    <label class="me-3">
-                                                                        <input type="radio" name="observation_needed"
-                                                                            value="{{ encryptId(1) }}"
-                                                                            class="validate-radio-required"> Yes
-                                                                    </label>
-                                                                    <label>
-                                                                        <input type="radio" name="observation_needed"
-                                                                            value="{{ encryptId(2) }}"
-                                                                            class="validate-radio-required"> No
-                                                                    </label>
-                                                                </div>
 
 
-                                                            </div>
-                                                        </div>
 
-                                                    </div>
-                                                </div> --}}
-
-
-                                                <div class="form-capa">
-                                                    <div class="row mt-4">
-                                                        <div class="card-header-inner p-2">
-                                                            <h4 class="text-white">Recommended CAPA Action</h4>
-                                                        </div>
-
-                                                        <div class="col-md-12 mb-2">
-                                                            <div class="form-group form-input">
-                                                                <label class="form-label require">{{__('inspection.capa_is_passed')}}</label>
-
-                                                                <div class="mb-2">
-                                                                    <label class="me-3">
-                                                                        <input type="radio" name="is_passed"
-                                                                            value="{{ encryptId(1) }}" id="capa_yes"
-                                                                            class="validate-radio-required"> Yes
-                                                                    </label>
-                                                                    <label>
-                                                                        <input type="radio" name="is_passed"
-                                                                            value="{{ encryptId(2) }}" id="capa_no"
-                                                                            class="validate-radio-required"> No
-                                                                    </label>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4 mb-2" id="verified_by" style="display: none;">
-                                                    {{-- @if (isset(Auth::user()->signature_upload))
-                                                        <label class="form-label"
-                                                            style="display: block; ">{{ __('inspection.signature') }}</label>
-                                                        <img src="{{ admin_url(Auth::user()->signature_upload) }}"
-                                                            alt="Signature Upload" style="width: 150px; margin-top:10px">
-                                                    @else
-                                                        <div class="form-group form-input">
-                                                            <label for="gemba_walk_verified_by"
-                                                                class="form-label">Signature Upload</label>
-                                                            <input type="file" class="form-control"
-                                                                name="gemba_walk_verified_by" id="gemba_walk_verified_by">
-                                                        </div>
-                                                    @endif --}}
-
-                                                    <div>
-                                                            <label class="form-label">EHS Office Name</label>
-                                                            <input type="text" name="officer_name"
-                                                                class="form-control" value="{{ Auth::user()->name }}"
-                                                                readonly>
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-md-4 mt-2" id="remark_section" style="display: none;">
-                                                    <div class="form-group form-input">
-                                                        <label class="form-label require">Remark</label>
-                                                        <textarea class="form-control" name="capa_remark" id="checklist_remark_0"></textarea>
-                                                    </div>
-                                                </div>
-
-                                                <input type="hidden" name="officer_name" class="form-control"
-                                                    value="{{ Auth::user()->name }}" readonly>
-
-                                                <input type="hidden" name="capa_date" id="capa_date"
-                                                    value="{{ todaydate() }}">
 
 
                                                 <div class="submit-button mt-4" style="text-align: right;">
