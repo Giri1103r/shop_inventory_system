@@ -272,25 +272,23 @@
                     $inspection_details->id,
                     FORKLIFT_INSPECTION,
                 );
-            @endphp
+            @endphp --}}
             <tr>
                 <td colspan="5"
                     style="border: 2px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
-                    <img src="{{ admin_url($prepared_by_signature) }}" alt="Checked By Signature"
-                        style="height: 50px;">
+                    
                     <div>Checked & Prepared By: {{ getUsername($inspection_details->created_by) }}</div>
                 </td>
                 <td colspan="5"
                     style="border: 2px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
                     @if ($inspection_details->updated_by != null)
-                        <img src="{{ admin_url($verified_by_signature) }}" alt="Verified By Signature"
-                            style="height: 50px;">
+
                         <div>Verified By: {{ getUsername($inspection_details->updated_by) }}</div>
                     @else
                         <p>Inspection has not been Verified Yet</p>
                     @endif
                 </td>
-            </tr> --}}
+            </tr>
 
         </tbody>
     </table>

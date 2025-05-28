@@ -287,7 +287,7 @@ class SandBucketInspectionController extends Controller
             $id = $inspection->id;
             $inspection_details = $this->sandbucket_details->store($id);
             $inspection_file = $this->files->file_upload($inspection_type, $id);
-            $signature_update = $this->signature->CheckedBySignature($id, $inspection_type);
+            // $signature_update = $this->signature->CheckedBySignature($id, $inspection_type);
             $ehsOfficer = GetEHSOfficer();
             $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
             $mailsubject = 'SAND BUCKET INSPECTION';
@@ -407,7 +407,7 @@ class SandBucketInspectionController extends Controller
         try {
             $id = decryptId($request->id);
             $inspection_updates = $this->detector->EHSOfficerUpdate($id);
-            $signature_update = $this->signature->signatureUpload(SAND_BUCKET_INSPECTION);
+            // $signature_update = $this->signature->signatureUpload(SAND_BUCKET_INSPECTION);
             $inspection_details = $this->detector->selectOne($id);
             if ($request->is_passed == 1) {
                 $message = 'Detector Inspeciton Approved Successfully';
@@ -478,7 +478,7 @@ class SandBucketInspectionController extends Controller
             $id = decryptId($request->id);
             $safety_gallery_inspection = $this->detector->capaSubmit($id);
             $inspection_details = $this->detector->selectOne($id);
-            $signature_update = $this->signature->signatureUpload(SAND_BUCKET_INSPECTION);
+            // $signature_update = $this->signature->signatureUpload(SAND_BUCKET_INSPECTION);
             $ehsOfficers = $inspection_details->verified_by;
             $userIds = [
                 'users' => $ehsOfficers,
@@ -539,7 +539,7 @@ class SandBucketInspectionController extends Controller
             $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->remarks;
             $safety_gallery_inspection = $this->detector->capaVerifySubmit($id, $status, $remarks);
-            $signature_update = $this->signature->signatureUpload(SAND_BUCKET_INSPECTION);
+            // $signature_update = $this->signature->signatureUpload(SAND_BUCKET_INSPECTION);
             $inspection_details = $this->detector->selectOne($id);
             if ($status == 1) {
                 $message = 'CAPA Action Verified Successfully';
@@ -613,7 +613,7 @@ class SandBucketInspectionController extends Controller
             $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->level_one_manager;
             $safety_gallery_inspection = $this->detector->levelOneManagerSubmit($id, $status, $remarks);
-            $signature_update = $this->signature->signatureUpload(SAND_BUCKET_INSPECTION);
+            // $signature_update = $this->signature->signatureUpload(SAND_BUCKET_INSPECTION);
             $inspection_details = $this->detector->selectOne($id);
             if ($status == 1) {
                 $message = 'Level One Manager Verified Successfully';
@@ -687,7 +687,7 @@ class SandBucketInspectionController extends Controller
             $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->level_two_manager;
             $safety_gallery_inspection = $this->detector->levelTwoManagerSubmit($id, $status, $remarks);
-            $signature_update = $this->signature->signatureUpload(SAND_BUCKET_INSPECTION);
+            // $signature_update = $this->signature->signatureUpload(SAND_BUCKET_INSPECTION);
             $inspection_details = $this->detector->selectOne($id);
             if ($status == 1) {
                 $message = 'detector Inspeciton Approved Successfully!';
@@ -699,7 +699,6 @@ class SandBucketInspectionController extends Controller
                 $web_link =   admin_url('fire/fire-sand-bucket-inspection/verification/' . encryptId($inspection_details->id) . '/capa');
                 $to_status = L2_MANAGER_REJECTED;
                 $users = array_merge([$inspection_details->created_by], [$inspection_details->verified_by], [$inspection_details->l1_manager_verified_by]);
-
             }
 
             $mailsubject = 'SAND BUCKET INSPECTION';
@@ -897,7 +896,7 @@ class SandBucketInspectionController extends Controller
                 }
 
                 $signatureRow = $row;
-                $sheet->getRowDimension($signatureRow)->setRowHeight(80);
+                $sheet->getRowDimension($signatureRow)->setRowHeight(30);
 
                 $sheet->mergeCells("A{$signatureRow}:D{$signatureRow}");
                 $sheet->mergeCells("E{$signatureRow}:G{$signatureRow}");
@@ -908,50 +907,13 @@ class SandBucketInspectionController extends Controller
                     'alignment' => ['wrapText' => true, 'horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_BOTTOM],
                 ]);
 
-                if (file_exists($prepared_by_signature)) {
-                    $drawing = new Drawing();
-                    $drawing->setName('Prepared By');
-                    $drawing->setDescription('Prepared By Signature');
-                    $drawing->setPath($prepared_by_signature);
-                    $drawing->setCoordinates("C{$signatureRow}");
-                    $drawing->setOffsetX(5);
-                    $drawing->setOffsetY(5);
-                    $drawing->setHeight(40);
-                    $drawing->setWorksheet($sheet);
-                    $sheet->setCellValue("A{$signatureRow}", "Prepared By:\n" . getUsername($detector->checked_by));
-                } else {
-                    $sheet->setCellValue("A{$signatureRow}", "Prepared By:\nInspection not yet started");
-                }
+                $preparedBy = getUsername($detector->checked_by) ?: 'INSPECTION HAS NOT BEEN PREPARED YET';
+                $verifiedBy = getUsername($detector->verified_by) ?: 'INSPECTION HAS NOT BEEN VERIFIED YET';
+                $approvedBy = getUsername($detector->approved_by) ?: 'INSPECTION HAS NOT BEEN APPROVED YET';
 
-                if (file_exists($verified_by_signature)) {
-                    $drawing = new Drawing();
-                    $drawing->setName('Verified By');
-                    $drawing->setDescription('Verified By Signature');
-                    $drawing->setPath($verified_by_signature);
-                    $drawing->setCoordinates("F{$signatureRow}");
-                    $drawing->setOffsetX(5);
-                    $drawing->setOffsetY(5);
-                    $drawing->setHeight(40);
-                    $drawing->setWorksheet($sheet);
-                    $sheet->setCellValue("E{$signatureRow}", "Verified By:\n" . getUsername($detector->verified_by));
-                } else {
-                    $sheet->setCellValue("E{$signatureRow}", "Verified By:\nInspection not yet completed");
-                }
-
-                if (file_exists($approved_by_signature)) {
-                    $drawing = new Drawing();
-                    $drawing->setName('Approved By');
-                    $drawing->setDescription('Approved By Signature');
-                    $drawing->setPath($approved_by_signature);
-                    $drawing->setCoordinates("I{$signatureRow}");
-                    $drawing->setOffsetX(5);
-                    $drawing->setOffsetY(5);
-                    $drawing->setHeight(40);
-                    $drawing->setWorksheet($sheet);
-                    $sheet->setCellValue("H{$signatureRow}", "Approved By:\n" . getUsername($detector->approved_by));
-                } else {
-                    $sheet->setCellValue("H{$signatureRow}", "Approved By:\nApproval pending");
-                }
+                $sheet->setCellValue("A{$signatureRow}", "Prepared By:\n" . $preparedBy);
+                $sheet->setCellValue("E{$signatureRow}", "Verified By:\n" . $verifiedBy);
+                $sheet->setCellValue("H{$signatureRow}", "Approved By:\n" . $approvedBy);
 
                 $row += 5;
 
@@ -973,7 +935,6 @@ class SandBucketInspectionController extends Controller
             $writer->save($filePath);
 
             return response()->download($filePath)->deleteFileAfterSend(true);
-
         } catch (\Exception $e) {
             report($e);
             Session::flash('error', 'Something went wrong!');
@@ -1222,7 +1183,7 @@ class SandBucketInspectionController extends Controller
             }
 
             $signatureRow = $row;
-            $sheet->getRowDimension($signatureRow)->setRowHeight(80);
+            $sheet->getRowDimension($signatureRow)->setRowHeight(30);
 
             $sheet->mergeCells("A{$signatureRow}:D{$signatureRow}");
             $sheet->mergeCells("E{$signatureRow}:G{$signatureRow}");
@@ -1230,54 +1191,21 @@ class SandBucketInspectionController extends Controller
 
             $sheet->getStyle("A{$signatureRow}:K{$signatureRow}")->applyFromArray([
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                'alignment' => ['wrapText' => true, 'horizontal' => Alignment::HORIZONTAL_CENTER,
-                'vertical' => Alignment::VERTICAL_BOTTOM],
+                'alignment' => [
+                    'wrapText' => true,
+                    'horizontal' => Alignment::HORIZONTAL_CENTER,
+                    'vertical' => Alignment::VERTICAL_BOTTOM
+                ],
             ]);
 
-            if (file_exists($prepared_by_signature)) {
-                $drawing = new Drawing();
-                $drawing->setName('Prepared By');
-                $drawing->setDescription('Prepared By Signature');
-                $drawing->setPath($prepared_by_signature);
-                $drawing->setCoordinates("C{$signatureRow}");
-                $drawing->setOffsetX(5);
-                $drawing->setOffsetY(5);
-                $drawing->setHeight(40);
-                $drawing->setWorksheet($sheet);
-                $sheet->setCellValue("A{$signatureRow}", "Prepared By:\n" . getUsername($detector->created_by));
-            }else {
-                $sheet->setCellValue("A{$signatureRow}", "Prepared By:\nInspection not yet started");
-            }
 
-            if (file_exists($verified_by_signature)) {
-                $drawing = new Drawing();
-                $drawing->setName('Verified By');
-                $drawing->setDescription('Verified By Signature');
-                $drawing->setPath($verified_by_signature);
-                $drawing->setCoordinates("F{$signatureRow}");
-                $drawing->setOffsetX(5);
-                $drawing->setOffsetY(5);
-                $drawing->setHeight(40);
-                $drawing->setWorksheet($sheet);
-                $sheet->setCellValue("E{$signatureRow}", "Verified By:\n" . getUsername($detector->updated_by));
-            }else {
-                $sheet->setCellValue("E{$signatureRow}", "Verified By:\nInspection not yet completed");
-            }
+            $preparedBy = getUsername($detector->created_by) ?: 'INSPECTION HAS NOT BEEN PREPARED YET';
+            $verifiedBy = getUsername($detector->updated_by) ?: 'INSPECTION HAS NOT BEEN VERIFIED YET';
+            $approvedBy = getUsername($detector->approved_by) ?: 'INSPECTION HAS NOT BEEN APPROVED YET';
 
-            if (file_exists($approved_by_signature)) {
-                $drawing = new Drawing();
-                $drawing->setName('Approved By');
-                $drawing->setDescription('Approved By Signature');
-                $drawing->setPath($approved_by_signature);
-                $drawing->setCoordinates("I{$signatureRow}");
-                $drawing->setOffsetX(5);
-                $drawing->setOffsetY(5);
-                $drawing->setHeight(40);
-                $drawing->setWorksheet($sheet);
-                $sheet->setCellValue("H{$signatureRow}", "Approved By:\n" . getUsername($detector->approved_by));
-            } else {
-                $sheet->setCellValue("H{$signatureRow}", "Approved By:\nApproval pending");
-            }
+            $sheet->setCellValue("A{$signatureRow}", "Prepared By:\n" . $preparedBy);
+            $sheet->setCellValue("E{$signatureRow}", "Verified By:\n" . $verifiedBy);
+            $sheet->setCellValue("H{$signatureRow}", "Approved By:\n" . $approvedBy);
 
             $writer = new Xlsx($spreadsheet);
             $fileName = 'Sand Bucket Inspection.xlsx';
@@ -1285,7 +1213,6 @@ class SandBucketInspectionController extends Controller
             $writer->save($filePath);
 
             return response()->download($filePath)->deleteFileAfterSend(true);
-
         } catch (\Exception $e) {
             report($e);
             Session::flash('error', 'Something went wrong!');

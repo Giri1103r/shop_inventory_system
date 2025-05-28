@@ -876,70 +876,53 @@ class FireMockDrillInspectionController extends Controller
                     $dataRow++;
                 }
 
-                // Signature section
                 $signatureRowStart = $dataRow;
-                $sheet->getRowDimension($signatureRowStart)->setRowHeight(80);
+                $sheet->getRowDimension($signatureRowStart)->setRowHeight(30);
+
+                $preparedBy = getUsername($inspection_detail->created_by);
+                $verifiedBy = getUsername($inspection_detail->updated_by);
+                $approvedBy = getUsername($inspection_detail->approved_by);
+
+                $preparedBy = !empty($preparedBy) ? $preparedBy : "INSPECTION HAS NOT BEEN PREPARED YET";
+                $verifiedBy = !empty($verifiedBy) ? $verifiedBy : "INSPECTION HAS NOT BEEN VERIFIED YET";
+                $approvedBy = !empty($approvedBy) ? $approvedBy : "INSPECTION HAS NOT BEEN APPROVED YET";
 
                 $sheet->mergeCells("A{$signatureRowStart}:D{$signatureRowStart}");
                 $sheet->getStyle("A{$signatureRowStart}:D{$signatureRowStart}")->applyFromArray([
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+                    'alignment' => [
+                        'horizontal' => Alignment::HORIZONTAL_CENTER,
+                        'vertical' => Alignment::VERTICAL_CENTER,
+                        'wrapText' => true,
+                    ],
                 ]);
-                if (file_exists($prepared_by_signature)) {
-                    $drawing = new Drawing();
-                    $drawing->setName('Prepared Signature');
-                    $drawing->setDescription('Prepared By');
-                    $drawing->setPath($prepared_by_signature);
-                    $drawing->setCoordinates("C{$signatureRowStart}");
-                    $drawing->setOffsetX(5);
-                    $drawing->setOffsetY(5);
-                    $drawing->setHeight(40);
-                    $drawing->setWorksheet($sheet);
-                    $sheet->setCellValue("A{$signatureRowStart}", "\n\n\nPrepared By:\n" . getUsername($inspection_detail->created_by));
-                } else {
-                    $sheet->setCellValue("A{$signatureRowStart}", "Prepared By:\nInspection not yet started");
-                }
+                $sheet->setCellValue("A{$signatureRowStart}", "Prepared By:$preparedBy");
 
                 $sheet->mergeCells("E{$signatureRowStart}:H{$signatureRowStart}");
                 $sheet->getStyle("E{$signatureRowStart}:H{$signatureRowStart}")->applyFromArray([
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+                    'alignment' => [
+                        'horizontal' => Alignment::HORIZONTAL_CENTER,
+                        'vertical' => Alignment::VERTICAL_CENTER,
+                        'wrapText' => true,
+                    ],
                 ]);
-                if (file_exists($verified_by_signature)) {
-                    $drawing = new Drawing();
-                    $drawing->setName('Verified Signature');
-                    $drawing->setDescription('Verified By');
-                    $drawing->setPath($verified_by_signature);
-                    $drawing->setCoordinates("F{$signatureRowStart}");
-                    $drawing->setOffsetX(5);
-                    $drawing->setOffsetY(5);
-                    $drawing->setHeight(40);
-                    $drawing->setWorksheet($sheet);
-                    $sheet->setCellValue("E{$signatureRowStart}", "\n\n\nVerified By:\n" . getUsername($inspection_detail->updated_by));
-                } else {
-                    $sheet->setCellValue("E{$signatureRowStart}", "Verified By:\nInspection not yet completed");
-                }
+                $sheet->setCellValue("E{$signatureRowStart}", "Verified By:$verifiedBy");
 
                 $sheet->mergeCells("I{$signatureRowStart}:L{$signatureRowStart}");
                 $sheet->getStyle("I{$signatureRowStart}:L{$signatureRowStart}")->applyFromArray([
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+                    'alignment' => [
+                        'horizontal' => Alignment::HORIZONTAL_CENTER,
+                        'vertical' => Alignment::VERTICAL_CENTER,
+                        'wrapText' => true,
+                    ],
                 ]);
+                $sheet->setCellValue("I{$signatureRowStart}", "Approved By:$approvedBy");
 
-                if (file_exists($approved_by_signature)) {
-                    $drawing = new Drawing();
-                    $drawing->setName('Approved Signature');
-                    $drawing->setDescription('Approved By');
-                    $drawing->setPath($approved_by_signature);
-                    $drawing->setCoordinates("J{$signatureRowStart}");
-                    $drawing->setOffsetX(5);
-                    $drawing->setOffsetY(5);
-                    $drawing->setHeight(40);
-                    $drawing->setWorksheet($sheet);
-                    $sheet->setCellValue("I{$signatureRowStart}", "\n\n\nApproved By:\n" . getUsername($inspection_detail->approved_by));
-                } else {
-                    $sheet->setCellValue("I{$signatureRowStart}", "Approved By:\nApproval pending");
-                }
+                $approvedBy = getUsername($inspection_detail->approved_by);
+                $approvedBy = !empty($approvedBy) ? $approvedBy : "INSPECTION HAS NOT BEEN APPROVED YET";
+                $sheet->setCellValue("I{$signatureRowStart}", "Approved By:\n" . $approvedBy);
 
                 $lastRow = $signatureRowStart;
                 $sheet->getStyle("A{$titleRow}:L{$lastRow}")->applyFromArray([
@@ -1177,93 +1160,59 @@ class FireMockDrillInspectionController extends Controller
 
             $row = 5;
             $sr = 1;
-                foreach ($inspection_data as $detail) {
+            foreach ($inspection_data as $detail) {
 
-                    $sheet->setCellValue("A{$row}", $sr);
-                    $sheet->setCellValue("B{$row}", $detail['observation'] ?? '');
-                    $sheet->setCellValue("C{$row}", Displaydateformat($detail['date_of_observation']) ?? '');
-                    $sheet->setCellValue("D{$row}", getShift($detail['shift_id']) ?? '');
-                    $sheet->setCellValue("E{$row}", getUnitname($detail['unit_id']) ?? '');
-                    $sheet->setCellValue("F{$row}", $detail['capa_remarks'] ?? '');
-                    $sheet->setCellValue("G{$row}", $detail['action_taken'] ?? '');
-                    $sheet->setCellValue("H{$row}", getUsername($detail['emp_id']) ?? '');
-                    $sheet->setCellValue("I{$row}", Displaydateformat($detail['date_of_compliance']) ?? '');
-                    $sheet->setCellValue("J{$row}", $detail['date_of_clousure'] ? Displaydateformat($detail['date_of_clousure']) : 'The Action was not Completed');
-                    $sheet->setCellValue("K{$row}", $detail->status == '1' ? 'Active' : 'InActive');
-                    $sheet->setCellValue("L{$row}", $detail['remarks'] ?? '');
+                $sheet->setCellValue("A{$row}", $sr);
+                $sheet->setCellValue("B{$row}", $detail['observation'] ?? '');
+                $sheet->setCellValue("C{$row}", Displaydateformat($detail['date_of_observation']) ?? '');
+                $sheet->setCellValue("D{$row}", getShift($detail['shift_id']) ?? '');
+                $sheet->setCellValue("E{$row}", getUnitname($detail['unit_id']) ?? '');
+                $sheet->setCellValue("F{$row}", $detail['capa_remarks'] ?? '');
+                $sheet->setCellValue("G{$row}", $detail['action_taken'] ?? '');
+                $sheet->setCellValue("H{$row}", getUsername($detail['emp_id']) ?? '');
+                $sheet->setCellValue("I{$row}", Displaydateformat($detail['date_of_compliance']) ?? '');
+                $sheet->setCellValue("J{$row}", $detail['date_of_clousure'] ? Displaydateformat($detail['date_of_clousure']) : 'The Action was not Completed');
+                $sheet->setCellValue("K{$row}", $detail->status == '1' ? 'Active' : 'InActive');
+                $sheet->setCellValue("L{$row}", $detail['remarks'] ?? '');
 
-                    $sheet->getStyle("A{$row}:L{$row}")->applyFromArray([
-                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
-                    ]);
+                $sheet->getStyle("A{$row}:L{$row}")->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                ]);
 
-                    $sr++;
-                    $row++;
-                }
+                $sr++;
+                $row++;
+            }
 
 
             $signatureRow = $row;
-            $sheet->getRowDimension($signatureRow)->setRowHeight(80);
+            $sheet->getRowDimension($signatureRow)->setRowHeight(20);
+
+            $preparedBy = getUsername($fire_mock_drill->created_by);
+            $verifiedBy = getUsername($fire_mock_drill->updated_by);
+            $approvedBy = getUsername($fire_mock_drill->approved_by);
 
             $sheet->mergeCells("A{$signatureRow}:D{$signatureRow}");
             $sheet->getStyle("A{$signatureRow}:D{$signatureRow}")->applyFromArray([
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
             ]);
-            if (file_exists($prepared_by_signature)) {
-                $drawing = new Drawing();
-                $drawing->setName('Prepared Signature');
-                $drawing->setDescription('Prepared By');
-                $drawing->setPath($prepared_by_signature);
-                $drawing->setCoordinates("B{$signatureRow}");
-                $drawing->setOffsetX(5);
-                $drawing->setOffsetY(5);
-                $drawing->setHeight(40);
-                $drawing->setWorksheet($sheet);
-                $sheet->setCellValue("A{$signatureRow}", "\n\n\nPrepared By:\n" . getUsername($fire_mock_drill->created_by));
-            } else {
-                $sheet->setCellValue("A{$signatureRow}", "Prepared By:\nInspection not yet started");
-            }
+            $sheet->setCellValue("A{$signatureRow}", "Prepared By: " . (!empty($preparedBy) ? $preparedBy : "INSPECTION HAS NOT BEEN PREPARED YET"));
 
             $sheet->mergeCells("E{$signatureRow}:H{$signatureRow}");
             $sheet->getStyle("E{$signatureRow}:H{$signatureRow}")->applyFromArray([
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
             ]);
-            if (file_exists($verified_by_signature)) {
-                $drawing = new Drawing();
-                $drawing->setName('Verified Signature');
-                $drawing->setDescription('Verified By');
-                $drawing->setPath($verified_by_signature);
-                $drawing->setCoordinates("F{$signatureRow}");
-                $drawing->setOffsetX(5);
-                $drawing->setOffsetY(5);
-                $drawing->setHeight(40);
-                $drawing->setWorksheet($sheet);
-                $sheet->setCellValue("E{$signatureRow}", "\n\n\nVerified By:\n" . getUsername($fire_mock_drill->updated_by));
-            } else {
-                $sheet->setCellValue("E{$signatureRow}", "Verified By:\nInspection not yet completed");
-            }
+            $sheet->setCellValue("E{$signatureRow}", "Verified By: " . (!empty($verifiedBy) ? $verifiedBy : "INSPECTION HAS NOT BEEN VERIFIED YET"));
 
             $sheet->mergeCells("I{$signatureRow}:L{$signatureRow}");
             $sheet->getStyle("I{$signatureRow}:L{$signatureRow}")->applyFromArray([
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
             ]);
-            if (file_exists($approved_by_signature)) {
-                $drawing = new Drawing();
-                $drawing->setName('Approved Signature');
-                $drawing->setDescription('Approved By');
-                $drawing->setPath($approved_by_signature);
-                $drawing->setCoordinates("J{$signatureRow}");
-                $drawing->setOffsetX(5);
-                $drawing->setOffsetY(5);
-                $drawing->setHeight(40);
-                $drawing->setWorksheet($sheet);
-                $sheet->setCellValue("I{$signatureRow}", "\n\n\nApproved By:\n" . getUsername($fire_mock_drill->approved_by));
-            } else {
-                $sheet->setCellValue("I{$signatureRow}", "Approved By:\nApproval pending");
-            }
+            $sheet->setCellValue("I{$signatureRow}", "Approved By: " . (!empty($approvedBy) ? $approvedBy : "INSPECTION HAS NOT BEEN APPROVED YET"));
+
 
             $writer = new Xlsx($spreadsheet);
             $fileName = 'Fire Mock Drill Observation.xlsx';
