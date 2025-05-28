@@ -94,7 +94,7 @@ class FirePumpHouseController extends Controller
                         })
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            $btn = '<a href="' . admin_url('fire/daily-fire-pump-house-inspection/view/' . encryptId($row->fire_id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
+                            $btn = '<a href="' . admin_url('fire/daily-fire-pump-house-inspection/view/' . encryptId($row->fire_id)) . '"   class="view-icon me-1" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
                             // if (CheckUserRole(ROLE_SUPERADMIN)) {
                             // $btn .= '<a href="' . admin_url('inspection/master/checklist-sub-type/edit/' . encryptId($row->id)) . '" class="edit-icon " title="' . __('common.edit') . '"><i class="fa-solid fa-pen-to-square"></i> ';
                             // }
@@ -143,7 +143,7 @@ class FirePumpHouseController extends Controller
             $getoption = string_to_array($options->type);
             if (count($checklist_details) <= 0) {
                 Session::flash('success', __('inspection.checklist_add'));
-                return redirect(admin_url('inspection/master/checklist-sub-type-data/add'));    
+                return redirect(admin_url('inspection/master/checklist-sub-type-data/add'));
             }
             $staticDocno  = $this->static_docno->select('id', 'doc_no', 'issue_date', 'rev_dt')->where([
                 ['type', "DailyFirePumpHouseChecklist"],
@@ -370,17 +370,17 @@ class FirePumpHouseController extends Controller
                 $signatureStartRow = $row;
                 $signatureEndRow = $signatureStartRow + 3;
 
-                if (file_exists($CreatorSignature)) {
+                if ($details->created_by) {
                     $sheet->mergeCells("A$signatureStartRow:S$signatureStartRow");
-                    $drawing = new Drawing();
-                    $drawing->setName('Creator Signature');
-                    $drawing->setDescription('Creator Signature');
-                    $drawing->setPath($CreatorSignature);
-                    $drawing->setCoordinates("I$signatureStartRow");
-                    $drawing->setOffsetX(90);
-                    $drawing->setOffsetY(5);
-                    $drawing->setWidthAndHeight(120, 60);
-                    $drawing->setWorksheet($sheet);
+                    // $drawing = new Drawing();
+                    // $drawing->setName('Creator Signature');
+                    // $drawing->setDescription('Creator Signature');
+                    // $drawing->setPath($CreatorSignature);
+                    // $drawing->setCoordinates("I$signatureStartRow");
+                    // $drawing->setOffsetX(90);
+                    // $drawing->setOffsetY(5);
+                    // $drawing->setWidthAndHeight(120, 60);
+                    // $drawing->setWorksheet($sheet);
                     $sheet->getRowDimension($signatureStartRow)->setRowHeight(80);
                     $sheet->getStyle("A$signatureStartRow:S$signatureStartRow")->applyFromArray([
                         'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
@@ -390,7 +390,7 @@ class FirePumpHouseController extends Controller
                         ],
                     ]);
 
-                    $textRow = $signatureStartRow + 1;
+                    $textRow = $signatureStartRow ;
                     $sheet->mergeCells("A$textRow:S$textRow");
                     $sheet->setCellValue("A$textRow", "Creator Signature: " . getUserName($details->created_by));
 
@@ -516,7 +516,8 @@ class FirePumpHouseController extends Controller
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);
-            return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
+            Session::flash('error', 'Something went wrong!');
+            return redirect(admin_url('fire/daily-fire-pump-house-inspection/list'));
         }
     }
 
@@ -675,20 +676,20 @@ class FirePumpHouseController extends Controller
             $signatureStartRow = $row;
             $signatureEndRow = $signatureStartRow + 3;
 
-            if (file_exists($CreatorSignature)) {
+            if ($dailyFire->created_by) {
                 $sheet->mergeCells("A$signatureStartRow:S$signatureStartRow");
 
-                $drawing = new Drawing();
-                $drawing->setName('Creator Signature');
-                $drawing->setDescription('Creator Signature');
-                $drawing->setPath($CreatorSignature);
-                $drawing->setCoordinates("I$signatureStartRow");
-                $drawing->setOffsetX(90);
-                $drawing->setOffsetY(5);
-                $drawing->setWidthAndHeight(120, 60);
-                $drawing->setWorksheet($sheet);
+                // $drawing = new Drawing();
+                // $drawing->setName('Creator Signature');
+                // $drawing->setDescription('Creator Signature');
+                // $drawing->setPath($CreatorSignature);
+                // $drawing->setCoordinates("I$signatureStartRow");
+                // $drawing->setOffsetX(90);
+                // $drawing->setOffsetY(5);
+                // $drawing->setWidthAndHeight(120, 60);
+                // $drawing->setWorksheet($sheet);
 
-                $sheet->getRowDimension($signatureStartRow)->setRowHeight(80);
+
 
                 $sheet->getStyle("A$signatureStartRow:S$signatureStartRow")->applyFromArray([
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
@@ -698,7 +699,7 @@ class FirePumpHouseController extends Controller
                     ],
                 ]);
 
-                $textRow = $signatureStartRow + 1;
+                $textRow = $signatureStartRow ;
                 $sheet->mergeCells("A$textRow:S$textRow");
 
                 $sheet->setCellValue("A$textRow", "Creator Signature: " . getUserName($dailyFire->created_by));
