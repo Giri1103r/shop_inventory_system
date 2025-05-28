@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html>
 
@@ -260,14 +259,16 @@
 
             <tr>
                 <td colspan="4" style="border: 1px solid black; text-align: center; padding: 10px;">
-                    <img src="{{ admin_url($creator_signature) }}" alt="Checked By Signature"
-                        style="height: 50px;"><br>
+                    {{-- <img src="{{ admin_url($creator_signature) }}" alt="Checked By Signature"
+                        style="height: 50px;"> --}}
+                        <br>
                     <strong>Checked & Prepared By:</strong><br>{{ getUsername($details->checked_by) }}
                 </td>
                 <td colspan="4" style="border: 1px solid black; text-align: center; padding: 10px;">
                     @if ($details->verified_by != null)
-                        <img src="{{ admin_url($verifier_signature) }}" alt="Verified By Signature"
-                            style="height: 50px;"><br>
+                        {{-- <img src="{{ admin_url($verifier_signature) }}" alt="Verified By Signature"
+                            style="height: 50px;"> --}}
+                        <br>
                         <strong>Verified By:</strong><br>{{ getUsername($details->verified_by) }}
                     @else
                         <p>Inspection has not been Verified Yet</p>
@@ -275,8 +276,9 @@
                 </td>
                 <td colspan="4" style="border: 1px solid black; text-align: center; padding: 10px;">
                     @if ($details->approved_by != null)
-                        <img src="{{ admin_url($approver_signature) }}" alt="Approved By Signature"
-                            style="height: 50px;"><br>
+                        {{-- <img src="{{ admin_url($approver_signature) }}" alt="Approved By Signature"
+                            style="height: 50px;"> --}}
+                        <br>
                         <strong>Approved By:</strong><br>{{ getUsername($details->approved_by) }}
                     @else
                         <p>Inspection has not been Approved Yet</p>

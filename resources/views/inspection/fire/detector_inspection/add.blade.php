@@ -175,7 +175,7 @@
                                                         accept="image/*">
                                                 </div>
                                             </div>
-                                            <div class="col-md-4 form-group form-input mb-2">
+                                            {{-- <div class="col-md-4 form-group form-input mb-2">
                                                 @if (isset(Auth::user()->signature_upload))
                                                     <label class="form-label"
                                                         style="display: block; ">{{ __('inspection.signature') }}</label>
@@ -191,7 +191,7 @@
                                                         <div id="signature_upload" class="text-danger"></div>
                                                     </div>
                                                 @endif
-                                            </div>
+                                            </div> --}}
                                             <input type="hidden" name="document_reference_id"
                                                 value="{{ encryptId($document_no->id) }}">
                                         </div>
@@ -452,7 +452,7 @@
                     e.preventDefault();
                     location.reload();
                 });
-             
+
                 var fromDatepicker = flatpickr("#inspection_date", {
                     dateFormat: "d-m-Y",
                     onChange: function(selectedDates) {
@@ -558,10 +558,10 @@
                         observation: {
                             required: true,
                         },
-                        signature_image: {
-                            required: true,
-                           filesize: 15728640,
-                        },
+                        // signature_image: {
+                        //     required: true,
+                        //    filesize: 15728640,
+                        // },
 
                     },
                     messages: {
@@ -570,10 +570,10 @@
                             minlength: "Minimum Characters should be 3",
                             maxlength: "Maximum Characters should not exceed 100",
                         },
-                        signature_image: {
-                            required: 'Please upload your signature',
-                            filesize: 'File size should not exceed 15MB',
-                        },
+                        // signature_image: {
+                        //     required: 'Please upload your signature',
+                        //     filesize: 'File size should not exceed 15MB',
+                        // },
                         issue_date: {
                             required: "Date Of Audit is required",
                         },

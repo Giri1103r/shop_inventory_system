@@ -80,6 +80,9 @@ class MedicineReceivingController extends Controller
                         ->editColumn('expire_date', function ($row) {
                             return displaydateformat($row->expire_date);
                         })
+                          ->editColumn('created_date', function ($row) {
+                            return displaydateformat($row->created_at);
+                        })
                         ->addColumn('approvedStatus', function ($row) {
 
                             if ($row->approvedStatus == STATUS_OHC_OPEN) {
@@ -938,7 +941,7 @@ class MedicineReceivingController extends Controller
                 'From Status',
                 'To Status',
                 'Created_by',
-                'Created_at'
+                'Stock Entry Date'
             ];
 
             $i = 1;
@@ -1069,7 +1072,7 @@ class MedicineReceivingController extends Controller
                 'From Status',
                 'To Status',
                 'Created_by',
-                'Created_at'
+                'Stock Entry Date'
             ];
 
             $data = array(

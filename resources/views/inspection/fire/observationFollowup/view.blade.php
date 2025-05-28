@@ -378,7 +378,7 @@
                                                     </div>
                                                 </div>
 
-                                                @php
+                                                {{-- @php
                                                     $signature = GetFireSignature(
                                                         $observation->ehs_capa_verified_by,
                                                         $observation->observationid,
@@ -394,7 +394,7 @@
                                                                 style="width: 150px; margin-top: -10px;" />
                                                         </div>
                                                     </div>
-                                                @endif
+                                                @endif --}}
                                             </div>
 
 
@@ -440,7 +440,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                @php
+                                                {{-- @php
                                                     $signature = GetFireSignature(
                                                         $observation->l2_manager_verified_by,
                                                         $observation->observationid,
@@ -456,7 +456,7 @@
                                                                 style="width: 150px; margin-top: -10px;" />
                                                         </div>
                                                     </div>
-                                                @endif
+                                                @endif --}}
                                             </div>
 
 
@@ -499,7 +499,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                @php
+                                                {{-- @php
                                                     $signature = GetFireSignature(
                                                         $observation->l2_manager_verified_by,
                                                         $observation->observationid,
@@ -515,7 +515,7 @@
                                                                 style="width: 150px; margin-top: -10px;" />
                                                         </div>
                                                     </div>
-                                                @endif
+                                                @endif --}}
                                             </div>
 
 

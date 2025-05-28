@@ -171,7 +171,7 @@ class OHCHygieneCleaningChecklistController extends Controller
             }
 
             $ohc_hygiene_inspection = $this->ohc_hygiene->store();
-            $signature_update = $this->signature->requestorsignatureUpload(DAILY_OHC_HYGIENE_CLEANING_CHECKLIST, $ohc_hygiene_inspection->id);
+            // $signature_update = $this->signature->requestorsignatureUpload(DAILY_OHC_HYGIENE_CLEANING_CHECKLIST, $ohc_hygiene_inspection->id);
             $inspection_details = $this->ohc_hygiene->selectOne($ohc_hygiene_inspection->id);
             $nursingofficer = getNursingOfficer();
             if (!empty($nursingofficer)) {
@@ -223,14 +223,14 @@ class OHCHygieneCleaningChecklistController extends Controller
         try {
             $id = decryptId($request->id);
             $inspection_details = $this->ohc_hygiene->selectOne($id);
-            $cleaner_signature = GetOHCSignature($inspection_details->created_by, $inspection_details->id, DAILY_OHC_HYGIENE_CLEANING_CHECKLIST);
-            $nursing_signature = GetOHCSignature($inspection_details->updated_by, $inspection_details->id, DAILY_OHC_HYGIENE_CLEANING_CHECKLIST);
+            // $cleaner_signature = GetOHCSignature($inspection_details->created_by, $inspection_details->id, DAILY_OHC_HYGIENE_CLEANING_CHECKLIST);
+            // $nursing_signature = GetOHCSignature($inspection_details->updated_by, $inspection_details->id, DAILY_OHC_HYGIENE_CLEANING_CHECKLIST);
             $document_no = $this->document_reference->selectOne($inspection_details->document_reference_id);
 
             $data = [
                 'inspection_details' => $inspection_details,
-                'cleaner_signature' => $cleaner_signature,
-                'nursing_signature' => $nursing_signature,
+                // 'cleaner_signature' => $cleaner_signature,
+                // 'nursing_signature' => $nursing_signature,
                 'document_no' => $document_no,
 
             ];
@@ -246,14 +246,14 @@ class OHCHygieneCleaningChecklistController extends Controller
         try {
             $id = decryptId($request->id);
             $inspection_details = $this->ohc_hygiene->selectOne($id);
-            $cleaner_signature = GetOHCSignature($inspection_details->created_by, $inspection_details->id, DAILY_OHC_HYGIENE_CLEANING_CHECKLIST);
-            $nursing_signature = GetOHCSignature($inspection_details->updated_by, $inspection_details->id, DAILY_OHC_HYGIENE_CLEANING_CHECKLIST);
+            // $cleaner_signature = GetOHCSignature($inspection_details->created_by, $inspection_details->id, DAILY_OHC_HYGIENE_CLEANING_CHECKLIST);
+            // $nursing_signature = GetOHCSignature($inspection_details->updated_by, $inspection_details->id, DAILY_OHC_HYGIENE_CLEANING_CHECKLIST);
             $document_no = $this->document_reference->selectOne($inspection_details->document_reference_id);
 
             $data = [
                 'inspection_details' => $inspection_details,
-                'cleaner_signature' => $cleaner_signature,
-                'nursing_signature' => $nursing_signature,
+                // 'cleaner_signature' => $cleaner_signature,
+                // 'nursing_signature' => $nursing_signature,
                 'document_no' => $document_no,
 
             ];
@@ -273,7 +273,7 @@ class OHCHygieneCleaningChecklistController extends Controller
             // dd($id);
             $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->capa_remarks;
-            $signature_update = $this->signature->signatureUpload(DAILY_OHC_HYGIENE_CLEANING_CHECKLIST);
+            // $signature_update = $this->signature->signatureUpload(DAILY_OHC_HYGIENE_CLEANING_CHECKLIST);
             if ($status == 1) {
                 $message = 'OHC HYGIENE CLEANING CHECKLIST - APPROVED';
                 $to_status = NURSING_OFFICER_SUBMITTED_THE_CHECKLIST;
@@ -321,7 +321,6 @@ class OHCHygieneCleaningChecklistController extends Controller
             return redirect(admin_url('ohc/ohc-hygiene-cleaning-checklist/list'));
         } catch (Exception $ex) {
             report($ex);
-            report($ex);
             Session::flash('error', 'Something went wrong!');
             return redirect(admin_url('ohc/ohc-hygiene-cleaning-checklist/list'));
         }
@@ -338,8 +337,8 @@ class OHCHygieneCleaningChecklistController extends Controller
 
             $inspection_detail = $this->ohc_hygiene->selectOne($id);
             $inspection_type = DAILY_OHC_HYGIENE_CLEANING_CHECKLIST;
-            $nursing_signature = GetOHCSignature($inspection_detail->updated_by, $inspection_detail->id, $inspection_type);
-            $cleaner_signature = GetOHCSignature($inspection_detail->created_by, $inspection_detail->id, $inspection_type);
+            // $nursing_signature = GetOHCSignature($inspection_detail->updated_by, $inspection_detail->id, $inspection_type);
+            // $cleaner_signature = GetOHCSignature($inspection_detail->created_by, $inspection_detail->id, $inspection_type);
 
             for ($i = 1; $i <= 50; $i++) {
                 $sheet->getRowDimension($i)->setRowHeight(25);
@@ -421,33 +420,17 @@ class OHCHygieneCleaningChecklistController extends Controller
             $sheet->mergeCells("M{$row}:N{$row}");
             $sheet->mergeCells("O{$row}:P{$row}");
 
-            if (!empty($cleaner_signature)) {
-                $drawing = new Drawing();
-                $drawing->setName('Cleaner Signature');
-                $drawing->setPath($cleaner_signature);
-                $drawing->setCoordinates("M{$row}");
-                $drawing->setOffsetX(10);
-                $drawing->setOffsetY(10);
-                $drawing->setWidth(50);
-                $drawing->setHeight(50);
-                $drawing->setWorksheet($sheet);
-                $sheet->getRowDimension($row)->setRowHeight($drawing->getHeight() + 20);
-            }
+            $cleanerName = getUsername($inspection_detail->created_by);
+            $nursingName = getUsername($inspection_detail->updated_by);
 
-            if (!empty($nursing_signature)) {
-                $drawing = new Drawing();
-                $drawing->setName('Nursing Officer Signature');
-                $drawing->setPath($nursing_signature);
-                $drawing->setCoordinates("O{$row}");
-                $drawing->setOffsetX(10);
-                $drawing->setOffsetY(10);
-                $drawing->setWidth(50);
-                $drawing->setHeight(50);
-                $drawing->setWorksheet($sheet);
-                $sheet->getRowDimension($row)->setRowHeight($drawing->getHeight() + 20);
+            $sheet->setCellValue("M{$row}", !empty($cleanerName) ? $cleanerName : 'INSPECTION NOT CHECKED YET');
+
+            if (!empty($nursingName)) {
+                $sheet->setCellValue("O{$row}", $nursingName);
             } else {
                 $sheet->setCellValue("O{$row}", 'INSPECTION HAS NOT BEEN VERIFIED YET');
             }
+
 
             $sheet->mergeCells("Q{$row}:R{$row}")->setCellValue("Q{$row}", $inspection_detail->cleaner_remarks ?? '');
             $sheet->mergeCells("S{$row}:T{$row}")->setCellValue("S{$row}", $inspection_detail->nursing_officer_remarks ?? 'INSPECTION HAS NOT BEEN VERIFIED YET');
@@ -468,7 +451,6 @@ class OHCHygieneCleaningChecklistController extends Controller
 
             return response()->download($filePath)->deleteFileAfterSend(true);
         } catch (\Exception $e) {
-            dd($e);
             return back()->with('error', $e->getMessage());
         }
     }
@@ -575,29 +557,15 @@ class OHCHygieneCleaningChecklistController extends Controller
                 $sheet->mergeCells("M{$inspectionRow}:N{$inspectionRow}");
                 $sheet->mergeCells("O{$inspectionRow}:P{$inspectionRow}");
 
-                if (file_exists($cleaner_signature)) {
-                    $drawing = new Drawing();
-                    $drawing->setPath($cleaner_signature);
-                    $drawing->setCoordinates("M{$inspectionRow}");
-                    $drawing->setOffsetX(5);
-                    $drawing->setOffsetY(5);
-                    $drawing->setWidth(50);
-                    $drawing->setHeight(50);
-                    $drawing->setWorksheet($sheet);
-                    $sheet->getRowDimension($inspectionRow)->setRowHeight($drawing->getHeight() + 20);
-                }
+                $cleanerName = getUsername($inspection_detail->created_by);
+                $nursingName = getUsername($inspection_detail->updated_by);
 
-                if (file_exists($nursing_signature)) {
-                    $drawing = new Drawing();
-                    $drawing->setName('Nursing Officer Signature');
-                    $drawing->setPath($nursing_signature);
-                    $drawing->setCoordinates("O$inspectionRow");
-                    $drawing->setOffsetX(10);
-                    $drawing->setOffsetY(10);
-                    $drawing->setWidth(50);
-                    $drawing->setHeight(50);
-                    $drawing->setWorksheet($sheet);
-                    $sheet->getRowDimension($inspectionRow)->setRowHeight($drawing->getHeight() + 20);
+                $sheet->setCellValue("M{$inspectionRow}", !empty($cleanerName) ? $cleanerName : 'INSPECTION NOT CHECKED YET');
+
+                if (!empty($nursingName)) {
+                    $sheet->setCellValue("O{$inspectionRow}", $nursingName);
+                } else {
+                    $sheet->setCellValue("O{$inspectionRow}", 'INSPECTION HAS NOT BEEN VERIFIED YET');
                 }
 
 
@@ -672,7 +640,6 @@ class OHCHygieneCleaningChecklistController extends Controller
             $filename = "OHC HYGIENE CLEANING CHECKLIST.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            report($ex);
             report($ex);
         }
     }

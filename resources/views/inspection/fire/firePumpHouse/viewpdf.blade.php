@@ -289,9 +289,9 @@
         @endphp
         <tr>
             <th colspan="18" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">
-                <img src="{{ admin_url($signature) }}" alt="Signature Upload"
-                    style="width: 150px; margin-top: -10px;" />
-                <div style="margin-top: 5px;">Requestor Signature</div>
+                {{-- <img src="{{ admin_url($signature) }}" alt="Signature Upload"
+                    style="width: 150px; margin-top: -10px;" /> --}}
+                <div style="margin-top: 5px;">Requestor Signature:{{getUsername($dailyFire->created_by)}}</div>
             </th>
         </tr>
 

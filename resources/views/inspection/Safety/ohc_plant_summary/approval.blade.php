@@ -92,7 +92,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        @php
+                                        {{-- @php
                                             $signature = GetSafetySignature(
                                                 $inspection_details->created_by,
                                                 $inspection_details->id,
@@ -108,7 +108,7 @@
                                                         style="width: 100px; margin-top: -10px;" />
                                                 </div>
                                             </div>
-                                        @endif
+                                        @endif --}}
                                     </div>
                                     <hr>
                                     @foreach ($inspection as $details)
@@ -241,7 +241,7 @@
                                                     value="{{ todayDate() }}" readonly>
                                             </div>
 
-                                            <div class="col-md-4 form-group form-input mb-2">
+                                            {{-- <div class="col-md-4 form-group form-input mb-2">
                                                 @if (isset(Auth::user()->signature_upload))
                                                     <label class="form-label"
                                                         style="display: block; ">{{ __('inspection.signature') }}</label>
@@ -257,7 +257,7 @@
                                                         <div id="signature_upload" class="text-danger"></div>
                                                     </div>
                                                 @endif
-                                            </div>
+                                            </div> --}}
 
                                             <div class="col-md-12 mb-2 form-input" id="capa_remarks">
                                                 <label for="capa_remarks" class="form-label">Remarks</label>
@@ -290,10 +290,6 @@
                     minlength: 3,
                     maxlength: 100,
                     noSpaces: true,
-                },
-                signature_image: {
-                    required: true,
-                    filesize: 15728640,
                 }
             },
             messages: {
@@ -301,10 +297,6 @@
                     required: "Remarks is Required",
                     minlength: "Minimum Characters should be 3",
                     maxlength: "Maximum Characters should not exceed 100",
-                },
-                signature_image: {
-                    required: "Signature is Required",
-                     filesize: "File must be less than 15MB."
                 }
             },
             errorElement: 'div',

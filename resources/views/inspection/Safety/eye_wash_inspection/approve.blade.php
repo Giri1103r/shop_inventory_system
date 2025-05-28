@@ -101,7 +101,7 @@
                                             </div>
                                         </div>
 
-                                        @php
+                                        {{-- @php
                                         $signature = GetSafetySignature(
                                             $inspection_details->created_by,
                                             $inspection_details->id,
@@ -117,7 +117,7 @@
                                                     style="width: 100px; margin-top: -10px;" />
                                             </div>
                                         </div>
-                                    @endif
+                                    @endif --}}
                                     </div>
                                     <hr>
                                     @foreach ($inspection as $details)
@@ -298,14 +298,14 @@
                                                 <input type="text" name="date" id = "date" class="form-control"
                                                     value="{{ todayDate() }}" readonly>
                                             </div>
-                                            <div class="col-md-4 form-group form-input mb-2">
+                                            {{-- <div class="col-md-4 form-group form-input mb-2">
                                                 @if (isset(Auth::user()->signature_upload))
                                                     <label class="form-label"
                                                         style="display: block; ">{{ __('inspection.signature') }}</label>
                                                     <img src="{{ admin_url(Auth::user()->signature_upload) }}"
                                                         alt="Signature Upload" style="width: 150px; margin-top:-10px">
                                                 @else
-                                                    <div class="form-input col-md-12 mb-2">
+                                                    <div class="form-input col-md-8 mb-2">
                                                         <label class="form-label require">Signature</label>
                                                         <input type="file" name="signature_image"
                                                             id="signature_upload" class="form-control form-control-sm"
@@ -314,9 +314,9 @@
                                                         <div id="signature_upload" class="text-danger"></div>
                                                     </div>
                                                 @endif
-                                            </div>
+                                            </div> --}}
 
-                                            <div class="col-md-12 form-input">
+                                            <div class="col-md-8 form-input">
                                                 <label class="form-label required">Whether the Inspection has been
                                                     passed Without the CAPA
                                                     ?</label>
@@ -330,7 +330,7 @@
                                                     <label for="no">NO</label>
                                                 </div>
                                             </div>
-                                            <div class="col-md-12 mb-2 form-input" id="remarks">
+                                            <div class="col-md-8 mb-2 form-input" id="remarks">
                                                 <label for="remarks" class="form-label">Remarks</label>
                                                 <textarea id="remarks" class="form-control" rows="3" placeholder="Please Enter Remarks" name="remarks"></textarea>
                                             </div>
@@ -357,7 +357,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                @php
+                                                 @php
                                                     $signature = GetSafetySignature(
                                                         $inspection_details->verified_by,
                                                         $inspection_details->id,
@@ -375,7 +375,7 @@
                                                     </div>
                                                 </div>
                                             @endif
-                                            @if (isset($signature))
+                                            {{-- @if (isset($signature))
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label class="form-label"
@@ -384,7 +384,7 @@
                                                             style="width: 150px; margin-top: -10px;" />
                                                     </div>
                                                 </div>
-                                            @endif
+                                            @endif --}}
                                             @if ($inspection_details->approved_by)
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
@@ -397,7 +397,7 @@
                                                 </div>
                                             @endif
                                             @if (isset($inspection_details->capa_recomendation))
-                                                <div class="col-md-12 mb-2">
+                                                <div class="col-md-8 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label">{{ __('inspection.capa_recomendation') }}</label>
@@ -407,7 +407,7 @@
                                                     </div>
                                                 </div>
                                             @else
-                                                <div class="col-md-12 mb-2">
+                                                <div class="col-md-8 mb-2">
                                                     <div class="form-group form-input">
                                                         <label class="form-label">{{ __('inspection.remarks') }}</label>
                                                         <div class="view_data">
@@ -440,7 +440,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                @php
+                                                {{-- @php
                                                     $signature = GetSafetySignature(
                                                         $inspection_details->created_by,
                                                         $inspection_details->id,
@@ -456,8 +456,8 @@
                                                                 style="width: 150px; margin-top: -10px;" />
                                                         </div>
                                                     </div>
-                                                @endif
-                                                <div class="col-md-12 mb-2">
+                                                @endif --}}
+                                                <div class="col-md-8 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label ">{{ __('inspection.capa_action_remarks') }}</label>
@@ -492,7 +492,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                @php
+                                                {{-- @php
                                                     $signature = GetSafetySignature(
                                                         $inspection_details->verified_by,
                                                         $inspection_details->id,
@@ -508,8 +508,8 @@
                                                                 style="width: 150px; margin-top: -10px;" />
                                                         </div>
                                                     </div>
-                                                @endif
-                                                <div class="col-md-12 mb-2">
+                                                @endif --}}
+                                                <div class="col-md-8 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label ">{{ __('inspection.capa_reverifcation_remarks') }}</label>
@@ -545,7 +545,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            @php
+                                            {{-- @php
                                                 $signature = GetSafetySignature(
                                                     $inspection_details->l1_manager_verification,
                                                     $inspection_details->id,
@@ -561,8 +561,8 @@
                                                             style="width: 150px; margin-top: -10px;" />
                                                     </div>
                                                 </div>
-                                            @endif
-                                            <div class="col-md-12 mb-2">
+                                            @endif --}}
+                                            <div class="col-md-8 mb-2">
                                                 <div class="form-group form-input">
                                                     <label
                                                         class="form-label ">{{ __('inspection.level_one_manager_remarks') }}</label>
@@ -596,7 +596,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-md-12 mb-2">
+                                            <div class="col-md-8 mb-2">
                                                 <div class="form-group form-input">
                                                     <label
                                                         class="form-label ">{{ __('inspection.level_two_manager_remarks') }}</label>
@@ -605,7 +605,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            @php
+                                            {{-- @php
                                                 $signature = GetSafetySignature(
                                                     $inspection_details->l2_manager_verification,
                                                     $inspection_details->id,
@@ -621,7 +621,7 @@
                                                             style="width: 150px; margin-top: -10px;" />
                                                     </div>
                                                 </div>
-                                            @endif
+                                            @endif --}}
                                         </div>
                                     @endif
                                 @endif
@@ -653,14 +653,14 @@
                                                 <input type="text" name="date" id = "date" class="form-control"
                                                     value="{{ todayDate() }}" readonly>
                                             </div>
-                                            <div class="col-md-4 form-group form-input mb-2">
+                                            {{-- <div class="col-md-4 form-group form-input mb-2">
                                                 @if (isset(Auth::user()->signature_upload))
                                                     <label class="form-label"
                                                         style="display: block; ">{{ __('inspection.signature') }}</label>
                                                     <img src="{{ admin_url(Auth::user()->signature_upload) }}"
                                                         alt="Signature Upload" style="width: 150px; margin-top:-10px">
                                                 @else
-                                                    <div class="form-input col-md-12 mb-2">
+                                                    <div class="form-input col-md-8 mb-2">
                                                         <label class="form-label require">Signature</label>
                                                         <input type="file" name="signature_image"
                                                             id="signature_upload" class="form-control form-control-sm"
@@ -669,8 +669,8 @@
                                                         <div id="signature_upload" class="text-danger"></div>
                                                     </div>
                                                 @endif
-                                            </div>
-                                            <div class="col-md-12 mb-2 form-input" id="capa_remarks">
+                                            </div> --}}
+                                            <div class="col-md-8 mb-2 form-input" id="capa_remarks">
                                                 <label for="capa_remarks" class="form-label">Remarks</label>
                                                 <textarea id="capa_remarks" class="form-control" rows="3" placeholder="Please provide Remarks..."
                                                     name="capa_remarks"></textarea>
@@ -706,14 +706,14 @@
                                                 <input type="text" name="date" id = "date" class="form-control"
                                                     value="{{ todayDate() }}" readonly>
                                             </div>
-                                            <div class="col-md-4 form-group form-input mb-2">
+                                            {{-- <div class="col-md-4 form-group form-input mb-2">
                                                 @if (isset(Auth::user()->signature_upload))
                                                     <label class="form-label"
                                                         style="display: block; ">{{ __('inspection.signature') }}</label>
                                                     <img src="{{ admin_url(Auth::user()->signature_upload) }}"
                                                         alt="Signature Upload" style="width: 150px; margin-top:-10px">
                                                 @else
-                                                    <div class="form-input col-md-12 mb-2">
+                                                    <div class="form-input col-md-8 mb-2">
                                                         <label class="form-label require">Signature</label>
                                                         <input type="file" name="signature_image"
                                                             id="signature_upload" class="form-control form-control-sm"
@@ -722,8 +722,8 @@
                                                         <div id="signature_upload" class="text-danger"></div>
                                                     </div>
                                                 @endif
-                                            </div>
-                                            <div class="col-md-12 mb-2 form-input" id="capa_recomendation">
+                                            </div> --}}
+                                            <div class="col-md-8 mb-2 form-input" id="capa_recomendation">
                                                 <label for="remarks" class="form-label">Remarks</label>
                                                 <textarea id="" class="form-control" rows="3" placeholder="Please Provide Remarks" name="remarks"></textarea>
                                             </div>
@@ -758,14 +758,14 @@
                                                 <input type="text" name="date" id = "date" class="form-control"
                                                     value="{{ todayDate() }}" readonly>
                                             </div>
-                                            <div class="col-md-4 form-group form-input mb-2">
+                                            {{-- <div class="col-md-4 form-group form-input mb-2">
                                                 @if (isset(Auth::user()->signature_upload))
                                                     <label class="form-label"
                                                         style="display: block; ">{{ __('inspection.signature') }}</label>
                                                     <img src="{{ admin_url(Auth::user()->signature_upload) }}"
                                                         alt="Signature Upload" style="width: 150px; margin-top:-10px">
                                                 @else
-                                                    <div class="form-input col-md-12 mb-2">
+                                                    <div class="form-input col-md-8 mb-2">
                                                         <label class="form-label require">Signature</label>
                                                         <input type="file" name="signature_image"
                                                             id="signature_upload" class="form-control form-control-sm"
@@ -774,9 +774,9 @@
                                                         <div id="signature_upload" class="text-danger"></div>
                                                     </div>
                                                 @endif
-                                            </div>
+                                            </div> --}}
                                         </div>
-                                        <div class="col-md-12 mb-2 form-input" id="capa_recomendation">
+                                        <div class="col-md-8 mb-2 form-input" id="capa_recomendation">
                                             <label for="remarks" class="form-label">Remarks</label>
                                             <textarea id="remarks" class="form-control" rows="3" placeholder="Please Provide Remarks"
                                                 name="level_one_manager"></textarea>
@@ -811,14 +811,14 @@
                                                 <input type="text" name="date" id = "date" class="form-control"
                                                     value="{{ todayDate() }}" readonly>
                                             </div>
-                                            <div class="col-md-4 form-group form-input mb-2">
+                                            {{-- <div class="col-md-4 form-group form-input mb-2">
                                                 @if (isset(Auth::user()->signature_upload))
                                                     <label class="form-label"
                                                         style="display: block; ">{{ __('inspection.signature') }}</label>
                                                     <img src="{{ admin_url(Auth::user()->signature_upload) }}"
                                                         alt="Signature Upload" style="width: 150px; margin-top:-10px">
                                                 @else
-                                                    <div class="form-input col-md-12 mb-2">
+                                                    <div class="form-input col-md-8 mb-2">
                                                         <label class="form-label require">Signature</label>
                                                         <input type="file" name="signature_image"
                                                             id="signature_upload" class="form-control form-control-sm"
@@ -827,9 +827,9 @@
                                                         <div id="signature_upload" class="text-danger"></div>
                                                     </div>
                                                 @endif
-                                            </div>
+                                            </div> --}}
                                         </div>
-                                        <div class="col-md-12 mb-2 form-input" id="capa_recomendation">
+                                        <div class="col-md-8 mb-2 form-input" id="capa_recomendation">
                                             <label for="remarks" class="form-label">Remarks</label>
                                             <textarea id="remarks" class="form-control" rows="3" placeholder="Please Provide Remarks"
                                                 name="level_two_manager"></textarea>

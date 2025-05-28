@@ -177,10 +177,6 @@
                             </div>
                         </div>
                     </div>
-
                 </div>
             </div>
-
-        @stop
-        @push('script')
-        @endpush
+      @stop

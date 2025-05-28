@@ -274,10 +274,10 @@ return [
     'chemical_inactive_msg' => 'Do you want to Active the Chemical',
 
     // gembaWalk
-    'observer_person' => 'Observer Person',
-    'observer_name' => 'Observer Name',
+    'observer_person' => 'Name of Observer',
+    'observer_name' => 'Name Of Observer',
     'capa_action_date' => 'Recommended CAPA Action Date',
-    'observer_action' => 'Recommended CAPA - Observer Action',
+    'observer_action' => 'Action Required',
     'observation_type' => 'Obsertvation Type',
 
     'checklist_details' => 'Gemba Walk (Safety Walk Observation)',
@@ -286,7 +286,7 @@ return [
     'hazard' => 'Hazard',
     'evidence' => 'Evidence',
     'capa' => 'Recommended CAPA',
-    'capa_is_passed' =>'Whether the Inspection  has been passed Without the CAPA?'
+    'capa_is_passed' =>'Recommended CAPA Action'
 
 
 

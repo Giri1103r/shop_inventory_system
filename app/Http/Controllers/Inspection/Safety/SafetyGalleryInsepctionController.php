@@ -180,7 +180,7 @@ class SafetyGalleryInsepctionController extends Controller
             $unit = $this->unit->getUnit();
             $document_no = $this->document_reference->selectUsingName('SafetyGalleryInspection');
             if (count($checklistQuestions) <= 0) {
-                 Session::flash('success', __('inspection.checklist_add'));
+                Session::flash('success', __('inspection.checklist_add'));
                 return redirect(admin_url('inspection/master/checklist-sub-type-data/add'));
             }
             $data = array(
@@ -209,16 +209,7 @@ class SafetyGalleryInsepctionController extends Controller
                 'location_id' => 'required',
                 'unit_id' => 'required',
                 'inspection_date' => 'required',
-                'signature_upload' => [
-                    function ($attribute, $value, $fail) {
-                        $user = Auth::user();
-                        if (!$user || !$user->signature_upload) {
-                            if (empty($value)) {
-                                $fail('Signature is required.');
-                            }
-                        }
-                    }
-                ],
+
             ];
 
             $messages = [
@@ -240,7 +231,7 @@ class SafetyGalleryInsepctionController extends Controller
             $id = $safety_gallery_inspection->id;
             $ehsOfficer = GetEHSOfficer();
             $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
-            $signature_update = $this->signature->signatureUpload(SAFETY_GALLERY_INSPECTION, $safety_gallery_inspection->id);
+            // $signature_update = $this->signature->signatureUpload(SAFETY_GALLERY_INSPECTION, $safety_gallery_inspection->id);
             $mailsubject = 'Safety Gallery inspection';
             $notificationData = array(
                 'notification_type' => SAFETY_INSPECTION,
@@ -339,7 +330,7 @@ class SafetyGalleryInsepctionController extends Controller
         try {
             $id = decryptId($request->id);
             $inspection_updates = $this->safetygallery->EHSOfficerUpdate($id);
-            $signature_update = $this->signature->signatureUpload(SAFETY_GALLERY_INSPECTION, $id);
+            // $signature_update = $this->signature->signatureUpload(SAFETY_GALLERY_INSPECTION, $id);
             $inspection_details = $this->safetygallery->selectOne($id);
             if ($request->is_passed == 1) {
                 $message = 'Safetygallery Inspeciton Approved Successfully';
@@ -409,7 +400,7 @@ class SafetyGalleryInsepctionController extends Controller
             $id = decryptId($request->id);
             $safety_gallery_inspection = $this->safetygallery->capaSubmit($id);
             $inspection_details = $this->safetygallery->selectOne($id);
-            $signature_update = $this->signature->signatureUpload(SAFETY_GALLERY_INSPECTION, $id);
+            // $signature_update = $this->signature->signatureUpload(SAFETY_GALLERY_INSPECTION, $id);
             $ehsOfficers = $inspection_details->verified_by;
             $userIds = [
                 'users' => $ehsOfficers,
@@ -470,7 +461,7 @@ class SafetyGalleryInsepctionController extends Controller
             $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->remarks;
             $safety_gallery_inspection = $this->safetygallery->capaVerifySubmit($id, $status, $remarks);
-            $signature_update = $this->signature->signatureUpload(SAFETY_GALLERY_INSPECTION, $id);
+            // $signature_update = $this->signature->signatureUpload(SAFETY_GALLERY_INSPECTION, $id);
             $inspection_details = $this->safetygallery->selectOne($id);
             if ($status == 1) {
                 $message = 'CAPA Action Verified Successfully';
@@ -544,7 +535,7 @@ class SafetyGalleryInsepctionController extends Controller
             $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->level_one_manager;
             $safety_gallery_inspection = $this->safetygallery->levelOneManagerSubmit($id, $status, $remarks);
-            $signature_update = $this->signature->signatureUpload(SAFETY_GALLERY_INSPECTION, $id);
+            // $signature_update = $this->signature->signatureUpload(SAFETY_GALLERY_INSPECTION, $id);
             $inspection_details = $this->safetygallery->selectOne($id);
             if ($status == 1) {
                 $message = 'Level One Manager Verified Successfully';
@@ -618,7 +609,7 @@ class SafetyGalleryInsepctionController extends Controller
             $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->level_two_manager;
             $safety_gallery_inspection = $this->safetygallery->levelTwoManagerSubmit($id, $status, $remarks);
-            $signature_update = $this->signature->signatureUpload(SAFETY_GALLERY_INSPECTION, $id);
+            // $signature_update = $this->signature->signatureUpload(SAFETY_GALLERY_INSPECTION, $id);
             $inspection_details = $this->safetygallery->selectOne($id);
             if ($status == 1) {
                 $message = 'Safety Gallery Inspeciton Approved Successfully!';
@@ -630,7 +621,6 @@ class SafetyGalleryInsepctionController extends Controller
                 $web_link =   admin_url('safety/safety-gallery-inspection/verification/' . encryptId($inspection_details->id) . '/capa');
                 $to_status = L2_MANAGER_REJECTED;
                 $users = array_merge([$inspection_details->created_by], [$inspection_details->verified_by], [$inspection_details->l1_manager_verified_by]);
-
             }
 
             $mailsubject = 'Safety Gallery inspection';
@@ -725,9 +715,10 @@ class SafetyGalleryInsepctionController extends Controller
                 $user_responses = json_decode($inspection->responses, true);
                 $inspection_type = SAFETY_GALLERY_INSPECTION;
 
-                $createdBySig = GetSafetySignature($inspection->checked_by, $inspection->inspection_id, $inspection_type);
-                $verifiedBySig = GetSafetySignature($inspection->verified_by, $inspection->inspection_id, $inspection_type);
-                $approvedBySig = GetSafetySignature($inspection->approved_by, $inspection->inspection_id, $inspection_type);
+                // $createdBySig = GetSafetySignature($inspection->checked_by, $inspection->inspection_id, $inspection_type);
+                // $verifiedBySig = GetSafetySignature($inspection->verified_by, $inspection->inspection_id, $inspection_type);
+                // $approvedBySig = GetSafetySignature($inspection->approved_by, $inspection->inspection_id, $inspection_type);
+
                 $document_no = $this->document_reference->selectOne($inspection->document_reference_id);
 
                 $leftLogoPath = public_path('assets/images/logo-dark.png');
@@ -827,43 +818,47 @@ class SafetyGalleryInsepctionController extends Controller
                 $signatureRow = $currentRow;
                 $sheet->getRowDimension($signatureRow)->setRowHeight(60);
 
-                $approvedByName = getUserName($inspection->checked_by);
-                $sheet->mergeCells("A$signatureRow:E$signatureRow")->setCellValue("A$signatureRow", "CHECKED AND PREPARED BY: $approvedByName");
-                if (file_exists($createdBySig)) {
-                    $drawing = new Drawing();
-                    $drawing->setPath($createdBySig);
-                    $drawing->setCoordinates("B{$signatureRow}");
-                    $drawing->setOffsetX(60);
-                    $drawing->setOffsetY(10);
-                    $drawing->setHeight(50);
-                    $drawing->setWorksheet($sheet);
-                }
+                $checkedByName = getUserName($inspection->checked_by);
+                $checkedByText = !empty($checkedByName) ? $checkedByName : "Inspection has not been checked yet";
+                $sheet->mergeCells("A$signatureRow:E$signatureRow")->setCellValue("A$signatureRow", "CHECKED AND PREPARED BY: $checkedByText");
 
-                $approvedByName = getUserName($inspection->verified_by);
-                $sheet->mergeCells("F$signatureRow:K$signatureRow")->setCellValue("F$signatureRow", "VERIFIED BY: $approvedByName");
-                if (file_exists($verifiedBySig)) {
-                    $drawing = new Drawing();
-                    $drawing->setPath($verifiedBySig);
-                    $drawing->setCoordinates("F{$signatureRow}");
-                    $drawing->setOffsetX(60);
-                    $drawing->setOffsetY(10);
-                    $drawing->setHeight(50);
-                    $drawing->setWorksheet($sheet);
-                }
+                $verifiedByName = getUserName($inspection->verified_by);
+                $verifiedByText = !empty($verifiedByName) ? $verifiedByName : "Inspection has not been verified yet";
+                $sheet->mergeCells("F$signatureRow:K$signatureRow")->setCellValue("F$signatureRow", "VERIFIED BY: $verifiedByText");
 
                 $approvedByName = getUserName($inspection->approved_by);
-                $sheet->mergeCells("L$signatureRow:P$signatureRow")->setCellValue("L$signatureRow", "APPROVED BY: $approvedByName");
-                if (file_exists($approvedBySig)) {
-                    $drawing = new Drawing();
-                    $drawing->setPath($approvedBySig);
-                    $drawing->setCoordinates("M{$signatureRow}");
-                    $drawing->setOffsetX(60);
-                    $drawing->setOffsetY(10);
-                    $drawing->setHeight(50);
-                    $drawing->setWorksheet($sheet);
-                }
+                $approvedByText = !empty($approvedByName) ? $approvedByName : "Inspection has not been approved yet";
+                $sheet->mergeCells("L$signatureRow:P$signatureRow")->setCellValue("L$signatureRow", "APPROVED BY: $approvedByText");
 
-                $sheet->getRowDimension($signatureRow)->setRowHeight(60);
+                // if (file_exists($createdBySig)) {
+                //     $drawing = new Drawing();
+                //     $drawing->setPath($createdBySig);
+                //     $drawing->setCoordinates("B{$signatureRow}");
+                //     $drawing->setOffsetX(60);
+                //     $drawing->setOffsetY(10);
+                //     $drawing->setHeight(50);
+                //     $drawing->setWorksheet($sheet);
+                // }
+                // if (file_exists($verifiedBySig)) {
+                //     $drawing = new Drawing();
+                //     $drawing->setPath($verifiedBySig);
+                //     $drawing->setCoordinates("F{$signatureRow}");
+                //     $drawing->setOffsetX(60);
+                //     $drawing->setOffsetY(10);
+                //     $drawing->setHeight(50);
+                //     $drawing->setWorksheet($sheet);
+                // }
+                // if (file_exists($approvedBySig)) {
+                //     $drawing = new Drawing();
+                //     $drawing->setPath($approvedBySig);
+                //     $drawing->setCoordinates("M{$signatureRow}");
+                //     $drawing->setOffsetX(60);
+                //     $drawing->setOffsetY(10);
+                //     $drawing->setHeight(50);
+                //     $drawing->setWorksheet($sheet);
+                // }
+
+                $sheet->getRowDimension($signatureRow)->setRowHeight(20);
                 $sheet->getStyle("A$signatureRow:P$signatureRow")->applyFromArray([
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                     'alignment' => [
@@ -1001,9 +996,10 @@ class SafetyGalleryInsepctionController extends Controller
             $forklift = $this->safetygallery->selectOne($id);
             $user_response = json_decode($forklift->responses, true);
             $inspection_type = SAFETY_GALLERY_INSPECTION;
-            $inspection_created_by = GetSafetySignature($forklift->created_by, $forklift->id, $inspection_type);
-            $inspection_verified_by = GetSafetySignature($forklift->verified_by, $forklift->id, $inspection_type);
-            $inspection_approved_by = GetSafetySignature($forklift->approved_by, $forklift->id, $inspection_type);
+            // $inspection_created_by = GetSafetySignature($forklift->created_by, $forklift->id, $inspection_type);
+            // $inspection_verified_by = GetSafetySignature($forklift->verified_by, $forklift->id, $inspection_type);
+            // $inspection_approved_by = GetSafetySignature($forklift->approved_by, $forklift->id, $inspection_type);
+
             $document_no = $this->document_reference->selectOne($forklift->document_reference_id);
 
             $sheet->getDefaultColumnDimension()->setWidth(14);
@@ -1111,62 +1107,70 @@ class SafetyGalleryInsepctionController extends Controller
                 $srNo++;
             }
 
-            $sheet->mergeCells("A{$row}:D{$row}")->setCellValue("A{$row}", "CHECKED AND PREPARED BY :- ");
+            $createdByName = getUsername($forklift->created_by);
+            $createdByText = !empty($createdByName) ? $createdByName : "Inspection has not been checked yet";
+            $sheet->mergeCells("A{$row}:D{$row}")->setCellValue("A{$row}", "CHECKED AND PREPARED BY :- $createdByText");
             $sheet->getStyle("A{$row}:D{$row}")->applyFromArray([
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
             ]);
 
-            if (file_exists($inspection_created_by)) {
-                $drawing = new Drawing();
-                $drawing->setName('CHECKED AND PREPARED BY');
-                $drawing->setPath($inspection_created_by);
-                $drawing->setCoordinates("B{$row}");
-                $drawing->setOffsetX(80);
-                $drawing->setOffsetY(15);
-                $drawing->setWidth(120);
-                $drawing->setHeight(50);
-                $drawing->setWorksheet($sheet);
-                $sheet->getRowDimension($row)->setRowHeight(60);
-            }
-
-            $sheet->mergeCells("E{$row}:I{$row}")->setCellValue("E{$row}", "VERIFIED BY :- ");
+            $verifiedByName = getUsername($forklift->verified_by);
+            $verifiedByText = !empty($verifiedByName) ? $verifiedByName : "Inspection has not been verified yet";
+            $sheet->mergeCells("E{$row}:I{$row}")->setCellValue("E{$row}", "VERIFIED BY :- $verifiedByText");
             $sheet->getStyle("E{$row}:I{$row}")->applyFromArray([
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
             ]);
 
-            if (file_exists($inspection_verified_by)) {
-                $drawing = new Drawing();
-                $drawing->setName('VERIFIED BY');
-                $drawing->setPath($inspection_verified_by);
-                $drawing->setCoordinates("F{$row}");
-                $drawing->setOffsetX(80);
-                $drawing->setOffsetY(15);
-                $drawing->setWidth(120);
-                $drawing->setHeight(50);
-                $drawing->setWorksheet($sheet);
-                $sheet->getRowDimension($row)->setRowHeight(60);
-            }
-
-            $sheet->mergeCells("J{$row}:M{$row}")->setCellValue("J{$row}", "APPROVED BY :- ");
+            $approvedByName = getUsername($forklift->approved_by);
+            $approvedByText = !empty($approvedByName) ? $approvedByName : "Inspection has not been approved yet";
+            $sheet->mergeCells("J{$row}:M{$row}")->setCellValue("J{$row}", "APPROVED BY :- $approvedByText");
             $sheet->getStyle("J{$row}:M{$row}")->applyFromArray([
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
             ]);
 
-            if (file_exists($inspection_approved_by)) {
-                $drawing = new Drawing();
-                $drawing->setName('APPROVED BY');
-                $drawing->setPath($inspection_approved_by);
-                $drawing->setCoordinates("K{$row}");
-                $drawing->setOffsetX(80);
-                $drawing->setOffsetY(15);
-                $drawing->setWidth(120);
-                $drawing->setHeight(50);
-                $drawing->setWorksheet($sheet);
-                $sheet->getRowDimension($row)->setRowHeight(60);
-            }
+
+            // if (file_exists($inspection_created_by)) {
+            //     $drawing = new Drawing();
+            //     $drawing->setName('CHECKED AND PREPARED BY');
+            //     $drawing->setPath($inspection_created_by);
+            //     $drawing->setCoordinates("B{$row}");
+            //     $drawing->setOffsetX(80);
+            //     $drawing->setOffsetY(15);
+            //     $drawing->setWidth(120);
+            //     $drawing->setHeight(50);
+            //     $drawing->setWorksheet($sheet);
+            //     $sheet->getRowDimension($row)->setRowHeight(60);
+            // }
+
+            // if (file_exists($inspection_verified_by)) {
+            //     $drawing = new Drawing();
+            //     $drawing->setName('VERIFIED BY');
+            //     $drawing->setPath($inspection_verified_by);
+            //     $drawing->setCoordinates("F{$row}");
+            //     $drawing->setOffsetX(80);
+            //     $drawing->setOffsetY(15);
+            //     $drawing->setWidth(120);
+            //     $drawing->setHeight(50);
+            //     $drawing->setWorksheet($sheet);
+            //     $sheet->getRowDimension($row)->setRowHeight(60);
+            // }
+
+            // if (file_exists($inspection_approved_by)) {
+            //     $drawing = new Drawing();
+            //     $drawing->setName('APPROVED BY');
+            //     $drawing->setPath($inspection_approved_by);
+            //     $drawing->setCoordinates("K{$row}");
+            //     $drawing->setOffsetX(80);
+            //     $drawing->setOffsetY(15);
+            //     $drawing->setWidth(120);
+            //     $drawing->setHeight(50);
+            //     $drawing->setWorksheet($sheet);
+            //     $sheet->getRowDimension($row)->setRowHeight(60);
+            // }
+
 
 
             $writer = new Xlsx($spreadsheet);

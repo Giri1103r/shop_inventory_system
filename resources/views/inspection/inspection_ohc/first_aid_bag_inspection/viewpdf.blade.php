@@ -261,22 +261,20 @@
                     <td style="border: 1px solid black; padding: 8px; text-align: center;">
                         {{ Displaydateformat($medicines['expired_date']) }}</td>
                     <td style="border: 1px solid black; padding: 8px; text-align: center;">
-                        {{ ($medicines['emp_id']) }}</td>
+                        {{ $medicines['emp_id'] }}</td>
                     <td style="border: 1px solid black; padding: 8px; text-align: center;">
                         {{ $medicines['remarks'] }}</td>
                 </tr>
             @endforeach
-            @if ($inspection_created_by)
-                <tr>
-                    <td colspan="7"
-                        style="border: 1px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
-                        <img src="{{ admin_url($inspection_created_by) }}"
-                            alt="Checked By Signature" style="height: 50px; margin-top:2px;">
-                        <div>Checked & Prepared By: {{ getUsername($inspection_detail->created_by) }}</div>
-                    </td>
-                </tr>
-            @endif
 
+            <tr>
+                <td colspan="7"
+                    style="border: 1px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
+                    {{-- <img src="{{ admin_url($inspection_created_by) }}"
+                            alt="Checked By Signature" style="height: 50px; margin-top:2px;"> --}}
+                    <div>Checked & Prepared By: {{ getUsername($inspection_detail->created_by) }}</div>
+                </td>
+            </tr>
         </tbody>
     </table>
     <br>

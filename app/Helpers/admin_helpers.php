@@ -399,10 +399,10 @@ if (!function_exists('gettotalCount')) {
                 $count = Department::count();
                 break;
             case 'employee':
-                $count = Employee::count();
+                $count = Employee::where('status',1)->count();
                 break;
             case 'work':
-                $count = Work::count();
+                $count = Work::where('status',1)->count();
                 break;
             case 'ppe_request':
                 $count = PpeRequest::count();

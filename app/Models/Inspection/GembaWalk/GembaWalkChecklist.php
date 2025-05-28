@@ -56,6 +56,21 @@ class GembaWalkChecklist extends Model
 
         if (!empty($gembaWalkData) && is_array($gembaWalkData)) {
             foreach ($gembaWalkData as $index => $walk) {
+
+                // for Hazard
+                $decryptedHazards = array_map(function ($id) {
+                    return decryptId($id);
+                }, $walk['hazard']);
+                $hazardIds = implode(',', $decryptedHazards);
+
+                // for responsible person
+
+                $decryptedObserverPerson = array_map(function ($id) {
+                    return decryptId($id);
+                }, $walk['responsible_person_id']);
+                $ObserversIds = implode(',', $decryptedObserverPerson);
+
+// dd( $walk['checklist_capa']);
                 $data = [
                     'gemba_walk_id' => $gembaWalk_id,
                     'location_id' => decryptId($walk['location_id']),
@@ -65,10 +80,10 @@ class GembaWalkChecklist extends Model
                     'date_of_observation' => DBdateformat($walk['date_of_observation']),
                     'observation_type_id' => $walk['observation_type'],
                     'description' => $walk['checklist_description'],
-                    'hazard' => decryptId($walk['hazard']),
+                    'hazard' =>  $hazardIds,
                     'capa' => $walk['checklist_capa'],
                     // 'date_of_compliance' => DBdateformat($walk['date_of_compliance']),
-                    'responsibility_id' => decryptId($walk['responsible_person_id']),
+                    'responsibility_id' =>  $ObserversIds,
                     'gemba_walk_checklist_status' => $walk['current_status'],
                     'remark' => $walk['checklist_remark'],
                     // 'observation' => json_encode($walk['checklist_observation']),
@@ -325,5 +340,9 @@ class GembaWalkChecklist extends Model
         }
 
         return response()->json(['error' => 'Invalid data'], 400);
+    }
+
+    public function selectOne($id){
+        return $this->where('gemba_walk_id',$id)->first();
     }
 }

@@ -340,7 +340,7 @@
                         </td>
                     </tr>
                 @endif
-                @if (isset($signature))
+                {{-- @if (isset($signature))
                     <tr>
                         <td width="50%" style="padding:5px;"><b>{{ __('inspection.signature') }}</b></td>
                         <td width="2%" style="padding:5px;">:</td>
@@ -350,7 +350,7 @@
                                 style="width: 150px; margin-top: -10px;" /></td>
 
                     </tr>
-                @endif
+                @endif --}}
                 @php
                     $signature = GetSignature($observation->approved_by, $observation->id, OBSERVATION_FOLLOWUP);
                 @endphp
@@ -365,7 +365,7 @@
                         </tr>
                     @endif
                 @endif
-                @if (isset($signature))
+                {{-- @if (isset($signature))
                     <tr>
                         <td width="50%" style="padding:5px;"><b>{{ __('inspection.signature') }}</b></td>
                         <td width="2%" style="padding:5px;">:</td>
@@ -375,7 +375,7 @@
                                 style="width: 150px; margin-top: -10px;" /></td>
 
                     </tr>
-                @endif
+                @endif --}}
                 @if (isset($observation->capa_recomendation))
                     <tr>
                         <td width="50%" style="padding:5px;"><b>{{ __('inspection.capa_recomendation') }}</b></td>
@@ -422,7 +422,7 @@
                 @php
                     $signature = GetSignature($observation->approved_by, $observation->id, OBSERVATION_FOLLOWUP);
                 @endphp
-                @if (isset($signature))
+                {{-- @if (isset($signature))
                     <tr>
                         <td width="50%" style="padding:5px;"><b>{{ __('inspection.signature') }}</b></td>
                         <td width="2%" style="padding:5px;">:</td>
@@ -432,7 +432,7 @@
                                 style="width: 150px; margin-top: -10px;" /></td>
 
                     </tr>
-                @endif
+                @endif --}}
                 <tr>
                     <td width="50%" style="padding:5px;"><b>{{ __('inspection.capa_action_remarks') }}</b></td>
                     <td width="2%" style="padding:5px;">:</td>
@@ -471,7 +471,7 @@
                 @php
                     $signature = GetSignature($observation->verified_by, $observation->id, OBSERVATION_FOLLOWUP);
                 @endphp
-                @if (isset($signature))
+                {{-- @if (isset($signature))
                     <tr>
                         <td width="50%" style="padding:5px;"><b>{{ __('inspection.signature') }}</b></td>
                         <td width="2%" style="padding:5px;">:</td>
@@ -481,7 +481,7 @@
                                 style="width: 150px; margin-top: -10px;" /></td>
 
                     </tr>
-                @endif
+                @endif --}}
                 <tr>
                     <td width="50%" style="padding:5px;"><b>{{ __('inspection.capa_reverifcation_remarks') }}</b>
                     </td>
@@ -519,7 +519,7 @@
                     <td width="48%" style="padding:5px;"> {{ Displaydateformat($observation->created_at) }}
                     </td>
                 </tr>
-                @php
+                {{-- @php
                     $signature = GetSignature(
                         $observation->l1_manager_verified_by,
                         $observation->id,
@@ -536,7 +536,7 @@
                                 style="width: 150px; margin-top: -10px;" /></td>
 
                     </tr>
-                @endif
+                @endif --}}
                 <tr>
                     <td width="50%" style="padding:5px;"><b>{{ __('inspection.level_one_manager_remarks') }}</b>
                     </td>
@@ -573,7 +573,7 @@
                     <td width="48%" style="padding:5px;"> {{ Displaydateformat($observation->created_at) }}
                     </td>
                 </tr>
-                @php
+                {{-- @php
                     $signature = GetSignature(
                         $observation->l2_manager_verified_by,
                         $observation->id,
@@ -590,7 +590,7 @@
                                 style="width: 150px; margin-top: -10px;" /></td>
 
                     </tr>
-                @endif
+                @endif --}}
 
                 <tr>
                     <td width="50%" style="padding:5px;"><b>{{ __('inspection.level_two_manager_remarks') }}</b>

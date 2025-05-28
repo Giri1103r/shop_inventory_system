@@ -323,13 +323,6 @@
                 @php
                     $total_columns = 2 + count($units); // 2 static columns + dynamic columns from $units
                 @endphp
-
-                <tr>
-                    <td colspan="{{ $total_columns }}"
-                        style="border: 1px solid #000; vertical-align:middle; text-align:left">
-                        Prepared By: {{ getUsername($inspection_details->created_by) }}
-                    </td>
-                </tr>
             </tbody>
 
         </table>

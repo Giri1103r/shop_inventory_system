@@ -226,7 +226,7 @@
                                                 @enderror
                                             </div>
 
-                                            <div class="col-md-4 form-group form-input mb-2">
+                                            {{-- <div class="col-md-4 form-group form-input mb-2">
                                                 @if (isset(Auth::user()->signature_upload))
                                                     <label class="form-label"
                                                         style="display: block; ">{{ __('inspection.signature') }}</label>
@@ -245,7 +245,8 @@
                                                         @enderror
                                                     </div>
                                                 @endif
-                                            </div>
+                                            </div> --}}
+
                                             {{-- <div class=""> --}}
                                             <table class="container p-5">
                                                 <thead>
@@ -503,10 +504,6 @@
                             capacity: {
                                 required: "{{ __('Capacity is Required') }}",
                             },
-                            signature_image: {
-                                required: "Signature is required",
-                                filesize: "File size must be less than 15MB."
-                            }
                         },
                         errorElement: 'span',
                         errorPlacement: function(error, element) {

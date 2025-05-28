@@ -53,13 +53,14 @@ class GembaWalk extends Model
             ->leftJoin('inspection_gemba_walk_status', 'inspection_gemba_walk_status.id', '=', 'inspection_gemba_walk.gemba_walk_status')
             ->leftJoin('inspection_gemba_walk_checklist', 'inspection_gemba_walk_checklist.gemba_walk_id', '=', 'inspection_gemba_walk.id');
 
-        $org_total =  $query;
-        $org_total_counts = $org_total->count();
+
 
         if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_OFFICER)) {
         } else {
-            $query->where('inspection_gemba_walk_checklist.responsibility_id', Auth::id());
+            $query->whereRaw("FIND_IN_SET(?, inspection_gemba_walk_checklist.responsibility_id)", [Auth::id()]);
         }
+
+
 
         if ($request->search['value'] != null || $request->search['value'] != '') {
             $search = $request->search['value'];
@@ -104,6 +105,8 @@ class GembaWalk extends Model
             $query->whereBetween('inspection_gemba_walk.created_at', [$startDate, $endDate]);
         }
 
+        $org_total =  $query;
+        $org_total_counts = $org_total->count();
 
         $data_count = $query;
         $total_records = $data_count->count();
@@ -291,6 +294,8 @@ class GembaWalk extends Model
         return $this->where('id', $id)->first();
     }
 
+
+
     public function selectSingnature($id)
     {
         $data =  $this->select(
@@ -334,6 +339,8 @@ class GembaWalk extends Model
             'gemba_walk_status' => $gembaWalk_status,
             'updated_by' => Auth::id(),
             'updated_at' => now(),
+            'verified_by' => Auth::id(),
+
         );
         return $this->where('id', $gembaWalk_id)->update($update_array);
     }

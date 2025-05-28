@@ -34,7 +34,7 @@
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
                                                 <label
-                                                    class="form-label require">{{ __('inspection.inspection_date') }}</label>
+                                                    class="form-label ">{{ __('inspection.inspection_date') }}</label>
                                                 <div class="view_data">
                                                     {{ Displaydateformat($inspection_details->inspection_date) }}
                                                 </div>
@@ -43,7 +43,7 @@
 
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
-                                                <label class="form-label require">{{ __('inspection.next_due') }}</label>
+                                                <label class="form-label ">{{ __('inspection.next_due') }}</label>
                                                 <div class="view_data">
                                                     {{ Displaydateformat($inspection_details->next_due) }}
                                                 </div>
@@ -76,15 +76,15 @@
                                             </tbody>
                                         </table>
                                     </div>
-                                    <div class="row m-2">
+                                    {{-- <div class="row m-2">
                                         <div class="col-md-4 form-group form-input mb-2">
                                             <label class="form-label"
                                                 style="display: block; ">{{ __('inspection.signature') }}</label>
                                             <img src="{{ admin_url($inspection_file) }}" alt="Signature Upload"
                                                 style="width: 100px; margin-top:-10px">
                                         </div>
-                                    </div>
-                                    <div class="row">
+                                    </div> --}}
+                                    <div class="row mt-3">
                                         @if (isset($inspection_details->approval_remarks))
                                             <div class="card-header-inner p-2">
                                                 <h4 class="text-white">EHS Officer Approval</h4>
@@ -106,14 +106,14 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-4 mb-2">
+                                                {{-- <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label class="form-label"
                                                             style="display: block;">{{ __('inspection.signature') }}</label>
                                                         <img src="{{ admin_url($verified_by) }}" alt="Signature Upload"
                                                             style="width: 100px; margin-top: -10px;" />
                                                     </div>
-                                                </div>
+                                                </div> --}}
 
                                                 <div class="form-group form-input">
                                                     <label class="form-label ">{{ __('inspection.remarks') }}</label>

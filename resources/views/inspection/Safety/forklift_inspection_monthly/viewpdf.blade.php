@@ -232,7 +232,7 @@
                         {{ $item['remarks'] }}</td>
                 </tr>
             @endforeach
-
+{{--
             @php
                 $creator_signature = GetSafetySignature(
                     $forklift_details->created_by,
@@ -249,20 +249,20 @@
                     $forklift_details->id,
                     MONTHLY_FORKLIFT_INSPECTION,
                 );
-            @endphp
+            @endphp --}}
 
             <!-- Signature Section in a Single Row -->
             <tr>
                 <td colspan="4"
                     style="border: 1px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
-                    <img src="{{ admin_url($creator_signature) }}" alt="Checked By Signature" style="height: 50px;">
+                    {{-- <img src="{{ admin_url($creator_signature) }}" alt="Checked By Signature" style="height: 50px;"> --}}
                     <div>Checked & Prepared By: {{ getUsername($forklift_details->created_by) }}</div>
                 </td>
                 <td colspan="4"
                     style="border: 1px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
                     @if ($forklift_details->verified_by != null)
-                        <img src="{{ admin_url($verifier_signature) }}" alt="Verified By Signature"
-                            style="height: 50px;">
+                        {{-- <img src="{{ admin_url($verifier_signature) }}" alt="Verified By Signature"
+                            style="height: 50px;"> --}}
                         <div>Verified By: {{ getUsername($forklift_details->verified_by) }}</div>
                     @else
                         <p>Inspection has not been Verified Yet</p>
@@ -271,8 +271,8 @@
                 <td colspan="4"
                     style="border: 1px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
                     @if ($forklift_details->approved_by != null)
-                        <img src="{{ admin_url($approver_signature) }}" alt="Approved By Signature"
-                            style="height: 50px;">
+                        {{-- <img src="{{ admin_url($approver_signature) }}" alt="Approved By Signature"
+                            style="height: 50px;"> --}}
                         <div>Approved By: {{ getUsername($forklift_details->approved_by) }}</div>
                     @else
                         <p>Inspection has not been Approved Yet</p>

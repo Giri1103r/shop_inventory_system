@@ -141,7 +141,7 @@
                                                     @enderror
                                                 </div>
                                             </div>
-                                            <div class="col-md-4 form-group form-input mb-2">
+                                            {{-- <div class="col-md-4 form-group form-input mb-2">
                                                 @if (isset(Auth::user()->signature_upload))
                                                     <label class="form-label"
                                                         style="display: block; ">{{ __('inspection.signature') }}</label>
@@ -157,7 +157,7 @@
                                                         <div id="signature_upload" class="text-danger"></div>
                                                     </div>
                                                 @endif
-                                            </div>
+                                            </div> --}}
                                             {{-- <div class=""> --}}
                                             <table class="container p-5">
                                                 <thead>
@@ -288,10 +288,10 @@
                         unit_id: {
                             required: true,
                         },
-                        signature_image: {
-                            required: true,
-                            filesize: 15728640,
-                        },
+                        // signature_image: {
+                        //     required: true,
+                        //     filesize: 15728640,
+                        // },
                         resource_code: {
                             required: true,
                             minlength: 3,
@@ -318,10 +318,10 @@
                         unit_id: {
                             required: "Unit is required",
                         },
-                        signature_image: {
-                            required: "Signature is required",
-                            filesize: "File size must be less than 15MB."
-                        },
+                        // signature_image: {
+                        //     required: "Signature is required",
+                        //     filesize: "File size must be less than 15MB."
+                        // },
                         resource_code: {
                             required: 'Resource Code is required',
                             remote: 'Resource Code already exists',

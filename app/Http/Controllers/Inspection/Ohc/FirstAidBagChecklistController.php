@@ -131,7 +131,7 @@ class FirstAidBagChecklistController extends Controller
         return view('inspection.inspection_ohc.first_aid_bag_inspection.list', $data);
     }
 
-      public function fetchemployeename(Request $request)
+    public function fetchemployeename(Request $request)
     {
         $name = $request->input('search');
 
@@ -154,7 +154,7 @@ class FirstAidBagChecklistController extends Controller
             $mergedResults->map(function ($employee) {
                 return [
                     'id' => $employee->emp_name,
-                  'text' => $employee->emp_id . ' - ' . $employee->emp_name,
+                    'text' => $employee->emp_id . ' - ' . $employee->emp_name,
 
                 ];
             })
@@ -227,7 +227,7 @@ class FirstAidBagChecklistController extends Controller
             $store = $this->medicine_checklist->store();
             $inspection_type = FIRST_AID_BAG_INSPECTION_CHECKLIST;
             $inspection_details = $this->medicine_checklist->selectOne($store->id);
-            $files = $this->signature->requestorsignatureUpload($inspection_type, $inspection_details->id);
+            // $files = $this->signature->requestorsignatureUpload($inspection_type, $inspection_details->id);
 
             Session::flash('success', 'Your data has been added successfully');
             return redirect(admin_url('ohc/emergency-floor-first-aid-bag/checklist/list'));
@@ -245,12 +245,12 @@ class FirstAidBagChecklistController extends Controller
             $id = decryptId($request->id);
             $inspection_details = $this->medicine_checklist->selectOne($id);
             $inspection_type = FIRST_AID_BAG_INSPECTION_CHECKLIST;
-            $signature = GetOHCSignature($inspection_details->created_by, $inspection_details->id, $inspection_type);
+            // $signature = GetOHCSignature($inspection_details->created_by, $inspection_details->id, $inspection_type);
             $inspection_data = json_decode($inspection_details->inspection_data, true);
 
             $data = array(
                 'inspection_details' => $inspection_details,
-                'signature' => $signature,
+                // 'signature' => $signature,
                 'inspection_data' => $inspection_data,
             );
 
@@ -275,8 +275,8 @@ class FirstAidBagChecklistController extends Controller
             $inspection_detail = $this->medicine_checklist->selectOne($id);
             $inspection_type = FIRST_AID_BAG_INSPECTION_CHECKLIST;
             $inspection_data = json_decode($inspection_detail->inspection_data, true);
-            $inspection_updated_by = GetOHCSignature($inspection_detail->updated_by, $inspection_detail->id, $inspection_type);
-            $inspection_created_by = GetOHCSignature($inspection_detail->created_by, $inspection_detail->id, $inspection_type);
+            // $inspection_updated_by = GetOHCSignature($inspection_detail->updated_by, $inspection_detail->id, $inspection_type);
+            // $inspection_created_by = GetOHCSignature($inspection_detail->created_by, $inspection_detail->id, $inspection_type);
 
             for ($i = 1; $i <= 200; $i++) {
                 $sheet->getRowDimension($i)->setRowHeight(25);
@@ -406,7 +406,7 @@ class FirstAidBagChecklistController extends Controller
             }
 
             $signatureRow = $row;
-            $sheet->getRowDimension($signatureRow)->setRowHeight(80);
+            $sheet->getRowDimension($signatureRow)->setRowHeight(20);
             $sheet->mergeCells("A{$signatureRow}:S{$signatureRow}");
 
             $sheet->getStyle("A{$signatureRow}:S{$signatureRow}")->applyFromArray([
@@ -414,22 +414,27 @@ class FirstAidBagChecklistController extends Controller
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
             ]);
 
-            if (file_exists($inspection_created_by)) {
-                $drawing = new Drawing();
-                $drawing->setName('Checked and Prepared By');
-                $drawing->setPath($inspection_created_by);
-                $drawing->setCoordinates("I{$signatureRow}");
-                $drawing->setOffsetX(50);
-                $drawing->setOffsetY(10);
-                $drawing->setWidth(70);
-                $drawing->setHeight(70);
-                $drawing->setWorksheet($sheet);
-            }
+            // if (file_exists($inspection_created_by)) {
+            //     $drawing = new Drawing();
+            //     $drawing->setName('Checked and Prepared By');
+            //     $drawing->setPath($inspection_created_by);
+            //     $drawing->setCoordinates("I{$signatureRow}");
+            //     $drawing->setOffsetX(50);
+            //     $drawing->setOffsetY(10);
+            //     $drawing->setWidth(70);
+            //     $drawing->setHeight(70);
+            //     $drawing->setWorksheet($sheet);
+            // }
+
+            $createdBy = getUsername($inspection_detail->created_by);
+            $createdByText = !empty($createdBy) ? $createdBy : "Inspection has not been prepared yet";
 
             $richTextSig = new RichText();
-            $richTextSig->createTextRun("Checked and Prepared By: ")->getFont()->setBold(true);
-            $richTextSig->createText(getUsername($inspection_detail->created_by));
+            $boldPart = $richTextSig->createTextRun("Checked and Prepared By: ");
+            $boldPart->getFont()->setBold(true);
+            $richTextSig->createText($createdByText);
             $sheet->getCell("A{$signatureRow}")->setValue($richTextSig);
+
 
             $writer = new Xlsx($spreadsheet);
             $fileName = 'First Aid Bag Checklist.xlsx';
@@ -564,23 +569,28 @@ class FirstAidBagChecklistController extends Controller
                 }
 
                 $signatureRow = $inspectionRow;
-                $sheet->getRowDimension($signatureRow)->setRowHeight(80);
+                $sheet->getRowDimension($signatureRow)->setRowHeight(20);
                 $sheet->mergeCells("A$signatureRow:S$signatureRow");
 
-                if (file_exists($inspection_created_by)) {
-                    $drawing = new Drawing();
-                    $drawing->setName('Checked By');
-                    $drawing->setPath($inspection_created_by);
-                    $drawing->setCoordinates("I$signatureRow");
-                    $drawing->setOffsetX(50);
-                    $drawing->setOffsetY(10);
-                    $drawing->setWidth(70);
-                    $drawing->setHeight(70);
-                    $drawing->setWorksheet($sheet);
-                }
+                // if (file_exists($inspection_created_by)) {
+                //     $drawing = new Drawing();
+                //     $drawing->setName('Checked By');
+                //     $drawing->setPath($inspection_created_by);
+                //     $drawing->setCoordinates("I$signatureRow");
+                //     $drawing->setOffsetX(50);
+                //     $drawing->setOffsetY(10);
+                //     $drawing->setWidth(70);
+                //     $drawing->setHeight(70);
+                //     $drawing->setWorksheet($sheet);
+                // }
 
-                $sheet->setCellValue("A$signatureRow", "Checked and Prepared By: " . getUsername($inspection_detail->created_by));
-                $sheet->getStyle("A$signatureRow:S$signatureRow")->applyFromArray(['alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER]]);
+                $createdBy = getUsername($inspection_detail->created_by);
+                $createdByText = !empty($createdBy) ? $createdBy : "Inspection has not been prepared yet";
+
+                $sheet->setCellValue("A$signatureRow", "Checked and Prepared By: " . $createdByText);
+                $sheet->getStyle("A$signatureRow:S$signatureRow")->applyFromArray([
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER]
+                ]);
 
                 $sheet->getStyle("A$currentRow:S$signatureRow")->applyFromArray([
                     'borders' => ['outline' => ['borderStyle' => Border::BORDER_MEDIUM]],

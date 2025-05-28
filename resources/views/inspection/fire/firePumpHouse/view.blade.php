@@ -132,7 +132,7 @@
                                             @endforeach
                                         </tbody>
                                     </table>
-                                    <div class="mt-3 col-md-4 form-input">
+                                    {{-- <div class="mt-3 col-md-4 form-input">
                                         <label class="form-label">Signature</label>
                                         <div>
                                             <a href="{{ asset($dailyFire->file_path) }}" target="_blank">
@@ -140,7 +140,7 @@
                                                     style="max-width: 20%;">
                                             </a>
                                         </div>
-                                    </div>
+                                    </div> --}}
                                     <div class="mt-3 col-md-4 form-input">
                                         <label class="form-label view_label">Date</label>
                                         <div class="view_data">

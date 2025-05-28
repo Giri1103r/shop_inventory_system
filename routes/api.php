@@ -27,6 +27,9 @@ use App\Http\Controllers\Api\Inspection\Safety\MonthlyEyeWashController;
 use App\Http\Controllers\Api\Inspection\Safety\MonthlyForkLiftInspection;
 use App\Http\Controllers\Api\Inspection\Fire\MonthlyFirePumpHouseController;
 use App\Http\Controllers\Api\{LoginController, NotificationController, AdminController};
+use App\Http\Controllers\Api\Inspection\Fire\DetectorInspectionController;
+use App\Http\Controllers\Api\Inspection\Fire\FireModularInspectionController;
+use App\Http\Controllers\Api\Inspection\Fire\FireSandBucketInspectionController;
 use App\Http\Controllers\Api\Inspection\Audit\Master\TaskMasterController;
 use App\Http\Controllers\Api\Inspection\Fire\HydrantRiserController;
 use App\Http\Controllers\Api\Inspection\Ohc\EmergencyBuyerFirstAidBagChecklistController;
@@ -127,7 +130,7 @@ Route::middleware('api')->prefix('v1')->group(function () {
                 Route::group(['prefix' => 'audit-assessment/'], function () {
                     Route::post('list', [AuditAssessmentController::class, 'list']);
                     Route::post('view', [AuditAssessmentController::class, 'view']);
-                    Route::post('add', [AuditAssessmentController::class, 'add']);
+                    Route::post('add', [AuditAssessmentController::class, 'store']);
                 });
 
                 Route::group(['prefix' => 'audit-analysis/'], function () {
@@ -207,10 +210,27 @@ Route::middleware('api')->prefix('v1')->group(function () {
                     Route::post('view', [SprinklerSystemController::class, 'View']);
                 });
 
+                Route::group(['prefix' => 'detector-inspection/'], function () {
+                    Route::post('list', [DetectorInspectionController::class, 'List']);
+                    Route::post('add', [DetectorInspectionController::class, 'Add']);
+                    Route::post('view', [DetectorInspectionController::class, 'View']);
+                });
+
+                Route::group(['prefix' => 'fire-sand-bucket-inspection/'], function () {
+                    Route::post('list', [FireSandBucketInspectionController::class, 'List']);
+                    Route::post('add', [FireSandBucketInspectionController::class, 'Add']);
+                    Route::post('view', [FireSandBucketInspectionController::class, 'View']);
+});
                 Route::group(['prefix' => 'hydrant-and-riser/'], function () {
                     Route::post('list', [HydrantRiserController::class, 'list']);
                     Route::post('view', [HydrantRiserController::class, 'view']);
                     Route::post('add', [HydrantRiserController::class, 'store']);
+                });
+
+                Route::group(['prefix' => 'fire-modular-inspection/'], function () {
+                    Route::post('list', [FireModularInspectionController::class, 'List']);
+                    Route::post('add', [FireModularInspectionController::class, 'Add']);
+                    Route::post('view', [FireModularInspectionController::class, 'View']);
                 });
             });
 

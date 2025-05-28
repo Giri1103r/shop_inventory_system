@@ -273,16 +273,18 @@
                 @endif
                 <td colspan="1"
                     style="border: 2px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
-                    <img src="{{ admin_url($cleaner_signature) }}" alt="Checked By Signature"
-                        style="height: 50px; margin-top:2px;">
+                    {{-- <img src="{{ admin_url($cleaner_signature) }}" alt="Checked By Signature"
+                        style="height: 50px; margin-top:2px;"> --}}
+                    <p>{{ getUsername($inspection_details->created_by) }}</p>
 
                 </td>
 
                 <td colspan="1"
                     style="border: 2px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
                     @if ($inspection_details->updated_by != null)
-                        <img src="{{ admin_url($nursing_signature) }}" alt="Verified By Signature"
-                            style="height: 50px;">
+                        {{-- <img src="{{ admin_url($nursing_signature) }}" alt="Verified By Signature"
+                            style="height: 50px;"> --}}
+                        <p>{{ getUsername($inspection_details->updated_by) }}</p>
                     @else
                         <p>Inspection has not been Verified Yet</p>
                     @endif
