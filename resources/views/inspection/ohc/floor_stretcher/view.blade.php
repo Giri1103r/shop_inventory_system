@@ -165,8 +165,8 @@
                                         <div class="col-md-4 form-group form-input mb-2">
                                             <label class="form-label"
                                                     style="display: block; ">{{ __('inspection.signature') }}</label>
-                                                <img src="{{ admin_url($inspection_file->file_path) }}"
-                                                    alt="Signature Upload" style="width: 100px; margin-top:-10px">
+                                                {{-- <img src="{{ admin_url($inspection_file->file_path) }}"
+                                                    alt="Signature Upload" style="width: 100px; margin-top:-10px"> --}}
                                         </div>
                                     </div>
                                 </div>
