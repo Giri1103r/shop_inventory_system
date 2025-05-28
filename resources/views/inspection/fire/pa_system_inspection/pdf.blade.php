@@ -143,7 +143,6 @@
     </htmlpagefooter>
 
     @foreach ($content as $detail => $group)
-
         @php
             $first = $group->first();
         @endphp
@@ -182,7 +181,8 @@
                             </tr>
                             <tr>
                                 <td style="border: 1px solid black;width:70;">Issue Dt.</td>
-                                <td style="border: 1px solid black;">{{ Displaydateformat($document_no->issue_date) }}</td>
+                                <td style="border: 1px solid black;">{{ Displaydateformat($document_no->issue_date) }}
+                                </td>
                             </tr>
                             <tr>
                                 <td style="border: 1px solid black;width:70;">Rev.& Dt.</td>
@@ -194,35 +194,29 @@
             </tr>
 
 
-                <tr style="background-color: #ddd;">
-                    <th style="border: 1px solid black; padding: 8px; text-align: left;"
-                        colspan="4">
-                        DATE OF INSPECTION: {{ Displaydateformat($first->date_of_inspection) ?? 'N/A' }}
-                    </th>
-                    <th style="border: 1px solid black; padding: 8px; text-align: left;"
-                        colspan="3">
-                        UNIT: {{ getUnitname($first->unit) ?? 'N/A' }}
-                    </th>
-                    <th style="border: 1px solid black; padding: 8px;text-align: left;"
-                        colspan="3">
-                        SHIFT: {{ $first->shift ?? 'N/A' }}
-                    </th>
-                </tr>
-                <tr style="background-color: #ddd;">
-                    <th style="border: 1px solid black; padding: 8px; text-align: left;"
-                        colspan="4">
-                        NEXT DUE: {{ Displaydateformat($first->next_due) ?? 'N/A' }}
-                    </th>
-                    <th style="border: 1px solid black; padding: 8px; text-align: left;"
-                        colspan="3">
-                        LOCATION: {{ getLocationname($first->location) ?? 'N/A' }}
-                    </th>
-                    <th style="border: 1px solid black; padding: 8px; text-align: left;"
-                        colspan="3">
-                        FREQUENCY:  {{ getFrequencyname($first->frequency) ?? 'N/A' }}
-                    </th>
+            <tr style="background-color: #ddd;">
+                <th style="border: 1px solid black; padding: 8px; text-align: left;" colspan="4">
+                    DATE OF INSPECTION: {{ Displaydateformat($first->date_of_inspection) ?? 'N/A' }}
+                </th>
+                <th style="border: 1px solid black; padding: 8px; text-align: left;" colspan="3">
+                    UNIT: {{ getUnitname($first->unit) ?? 'N/A' }}
+                </th>
+                <th style="border: 1px solid black; padding: 8px;text-align: left;" colspan="3">
+                    SHIFT: {{ $first->shift ?? 'N/A' }}
+                </th>
+            </tr>
+            <tr style="background-color: #ddd;">
+                <th style="border: 1px solid black; padding: 8px; text-align: left;" colspan="4">
+                    NEXT DUE: {{ Displaydateformat($first->next_due) ?? 'N/A' }}
+                </th>
+                <th style="border: 1px solid black; padding: 8px; text-align: left;" colspan="3">
+                    LOCATION: {{ getLocationname($first->location) ?? 'N/A' }}
+                </th>
+                <th style="border: 1px solid black; padding: 8px; text-align: left;" colspan="3">
+                    FREQUENCY: {{ getFrequencyname($first->frequency) ?? 'N/A' }}
+                </th>
 
-                </tr>
+            </tr>
 
             <tr style="background-color: #ddd;">
                 <th style="border: 1px solid black; padding: 8px;" rowspan="2">SR. NO</th>
@@ -311,7 +305,7 @@
                 </tr>
             @endforeach
 
-            <tr>
+            {{-- <tr>
                 @php
                     $createdSignature  = GetFireSignature($details->created_by, $details->id, FIRE_PA_SYSTEM_INSPECTION);
                     $verifiedSignature = GetFireSignature($details->verified_by, $details->id, FIRE_PA_SYSTEM_INSPECTION);
@@ -332,6 +326,33 @@
                     <img src="{{ admin_url($approvedSignature) }}" alt="Signature Upload"
                         style="width: 150px; margin-top: -2px;" />
                     <div style="margin-top: 5px;">Approved By</div>
+                </th>
+            </tr> --}}
+
+            <tr>
+
+                <th style="border: 1px solid black; padding: 8px;" colspan="4">
+                    @if (isset($details->created_by))
+                        <div style="margin-top: 5px;">Checked By:{{ getUsername($details->created_by) }}</div>
+                    @else
+                        <div style="margin-top: 5px;"> Not Yet Checked</div>
+                    @endif
+                </th>
+                <th style="border: 1px solid black; padding: 8px;" colspan="3">
+
+                    @if (isset($details->verified_by))
+                        <div style="margin-top: 5px;">Verified By:{{ getUsername($details->verified_by) }}</div>
+                    @else
+                        <div style="margin-top: 5px;"> Inspection has not been Verified Yet</div>
+                    @endif
+                </th>
+                <th style="border: 1px solid black; padding: 8px;" colspan="4">
+
+                    @if (isset($details->approved_by))
+                        <div style="margin-top: 5px;">Approved By:{{ getUsername($details->approved_by) }}</div>
+                    @else
+                        <div style="margin-top: 5px;"> Inspection has not been Approved Yet</div>
+                    @endif
                 </th>
             </tr>
 

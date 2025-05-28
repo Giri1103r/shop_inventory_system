@@ -150,7 +150,7 @@ class MedicalRequisitionSlipController extends Controller
 
                     return $datatables;
                 } catch (Exception $ex) {
-                     report($ex);
+                    report($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }
@@ -183,7 +183,7 @@ class MedicalRequisitionSlipController extends Controller
             );
             return view('inspection.inspection_ohc.medical_requisition_slip.add', $data);
         } catch (Exception $ex) {
-             report($ex);
+            report($ex);
         }
     }
 
@@ -220,7 +220,7 @@ class MedicalRequisitionSlipController extends Controller
                 $medicine_requisition_floor_checklist = $this->medicine_requisition_floor_checklist->store($medicine_requisition_floor_details);
                 // signature
                 $id = ($medicine_requisition_floor_details->id);
-                $signature = $this->signature->requestorsignatureUpload(OHC_TYPE_MEDICINE_REQUISTION_FLOOR, $id);
+                // $signature = $this->signature->requestorsignatureUpload(OHC_TYPE_MEDICINE_REQUISTION_FLOOR, $id);
 
                 $data = [
                     'type' => OHC_TYPE_MEDICINE_REQUISTION_FLOOR,
@@ -236,7 +236,7 @@ class MedicalRequisitionSlipController extends Controller
                 $this->inspection_ohc_status_log->store($data);
 
                 $getfloormanager = getFloormanager();
-                if(!empty($getfloormanager)){
+                if (!empty($getfloormanager)) {
                     $getfloormanagers = $getfloormanager->pluck('id')->toArray();
                     $details = $this->medicine_requisition_floor_details->Selectone($id);
                     $mailsubject = 'Medicine Requistion Slip Floor';
@@ -274,14 +274,14 @@ class MedicalRequisitionSlipController extends Controller
 
                 Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
-                 report($ex);
+                dd($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
             return redirect(admin_url('ohc/medical-requisition-slip/list'));
         } catch (Exception $ex) {
 
-             report($ex);
+            dd($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/medical-requisition-slip/list'));
         }
@@ -542,7 +542,7 @@ class MedicalRequisitionSlipController extends Controller
                     $getmedicalassistants = $getmedicalassistant->pluck('id')->toArray();
                     $details = $this->medicine_requisition_floor_details->Selectone($id);
                     $mailsubject = 'Medicine Requistion Slip Floor approved';
-                    if(!empty($getmedicalassistant) || !empty( $getsafetyofficer)){
+                    if (!empty($getmedicalassistant) || !empty($getsafetyofficer)) {
                         $notificationData = array(
                             'notification_type' => OHC_INSPECTION,
                             'module_type' => 3,
@@ -573,7 +573,6 @@ class MedicalRequisitionSlipController extends Controller
                             Mail::to($recipients)->queue(new OccupationalHealthEmail($details));
                         }
                     }
-
                 } else if ($request->action == "reject") {
                     $details = $this->medicine_requisition_floor_details->Selectone($id);
                     $userIds = [
@@ -613,14 +612,14 @@ class MedicalRequisitionSlipController extends Controller
 
                 Session::flash('success', 'Your data has been Responded successfully!');
             } catch (Exception $ex) {
-                 report($ex);
+                report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
             return redirect(admin_url('ohc/medical-requisition-slip/list'));
         } catch (Exception $ex) {
 
-             report($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/medical-requisition-slip/list'));
         }
@@ -728,14 +727,14 @@ class MedicalRequisitionSlipController extends Controller
 
                 Session::flash('success', 'Your data has been Responded successfully!');
             } catch (Exception $ex) {
-                 report($ex);
+                report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
             return redirect(admin_url('ohc/medical-requisition-slip/list'));
         } catch (Exception $ex) {
 
-             report($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/medical-requisition-slip/list'));
         }
@@ -794,9 +793,8 @@ class MedicalRequisitionSlipController extends Controller
 
                 // Title Section
                 $sheet->mergeCells("G{$currentRow}:M" . ($currentRow + 2));
-                $sheet->setCellValue("G{$currentRow}", "MEDICAL REQUISITION SLIP (मेडिकल मांग-पर्ची)
-");
-                $sheet->getStyle("G{$currentRow}")->applyFromArray([
+                $sheet->setCellValue("G{$currentRow}", "MEDICAL REQUISITION SLIP (मेडिकल मांग-पर्ची)");
+                $sheet->getStyle("G{$currentRow}:M{$currentRow}")->applyFromArray([
                     'font' => ['bold' => true, 'size' => 14],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
@@ -816,8 +814,8 @@ class MedicalRequisitionSlipController extends Controller
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                     'font' => ['bold' => true],
                 ]);
-                // row
 
+                // row
                 $sheet->mergeCells("A" . ($currentRow + 3) . ":G" . ($currentRow + 3));
                 $richText1 = new RichText();
                 $richText1->createTextRun(' DEPARTMENT:- ')->getFont()->setBold(true);
@@ -867,82 +865,60 @@ class MedicalRequisitionSlipController extends Controller
 
                     $sheet->getStyle("A$inspectionRow:S$inspectionRow")->applyFromArray([
                         'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_LEFT, 'vertical' => Alignment::VERTICAL_CENTER],
+                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                     ]);
 
                     $inspectionRow++;
                 }
 
                 $signatureStartRow = $inspectionRow;
-                if (file_exists($CreatorSignature)) {
-                    $sheet->mergeCells("A$signatureStartRow:F" . ($signatureStartRow + 2));
 
-                    $drawing = new Drawing();
-                    $drawing->setName('Creator Signature');
-                    $drawing->setPath($CreatorSignature);
-                    $drawing->setCoordinates("A$signatureStartRow");
-                    $drawing->setOffsetX(100);
-                    $drawing->setOffsetY(5);
-                    $drawing->setWidth(70);
-                    $drawing->setHeight(70);
-                    $drawing->setWorksheet($sheet);
-                    $sheet->getRowDimension($signatureStartRow + 2)->setRowHeight(40);
-                    // Label + Name
-                    $sheet->setCellValue("A" . ($signatureStartRow + 3), "CREATOR SIGNATURE: " . getUserName($medicinerequisition->created_by));
-                    $sheet->mergeCells("A" . ($signatureStartRow + 3) . ":F" . ($signatureStartRow + 3));
+                $signatureRow = $signatureStartRow;
+                $sheet->getRowDimension($signatureRow)->setRowHeight(30);
 
-                    $sheet->getStyle("A$signatureStartRow:F" . ($signatureStartRow + 3))->applyFromArray([
-                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
-                    ]);
+                $sheet->mergeCells("A{$signatureRow}:F{$signatureRow}");
+                $sheet->mergeCells("G{$signatureRow}:N{$signatureRow}");
+                $sheet->mergeCells("O{$signatureRow}:S{$signatureRow}");
+
+                $sheet->getStyle("A{$signatureRow}:S{$signatureRow}")->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+                ]);
+                // Prepared
+                $richText = new RichText();
+                $name = getUsername($medicinerequisition->created_by);
+
+                if (!empty($name)) {
+                    $richText->createTextRun("CREATOR NAME : " . $name)->getFont()->setBold(true);
+                } else {
+                    $richText->createTextRun("Inspection has not been Prepared Yet")->getFont()->setBold(true);
                 }
 
-                if (file_exists($floorManagerSignature)) {
-                    $sheet->mergeCells("G$signatureStartRow:L" . ($signatureStartRow + 2));
+                $sheet->getCell("A{$signatureRow}")->setValue($richText);
 
-                    $drawing = new Drawing();
-                    $drawing->setName('Verified Signature');
-                    $drawing->setPath($floorManagerSignature);
-                    $drawing->setCoordinates("G$signatureStartRow");
-                    $drawing->setOffsetX(100);
-                    $drawing->setOffsetY(5);
-                    $drawing->setWidth(70);
-                    $drawing->setHeight(70);
-                    $drawing->setWorksheet($sheet);
-                    $sheet->getRowDimension($signatureStartRow + 2)->setRowHeight(40);
-                    // Label + Name
-                    $sheet->setCellValue("G" . ($signatureStartRow + 3), "FLOOR MANAGER SIGNATURE: " . getUserName($medicinerequisition->verified_by));
-                    $sheet->mergeCells("G" . ($signatureStartRow + 3) . ":L" . ($signatureStartRow + 3));
+                // Verified
+                $richText = new RichText();
+                $name = getUsername($medicinerequisition->verified_by);
 
-                    $sheet->getStyle("G$signatureStartRow:L" . ($signatureStartRow + 3))->applyFromArray([
-                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
-                    ]);
+                if (!empty($name)) {
+                    $richText->createTextRun("FLOOR MANAGER NAME : " . $name)->getFont()->setBold(true);
+                } else {
+                    $richText->createTextRun("Inspection has not been Verified Yet")->getFont()->setBold(true);
                 }
 
-                if (file_exists($safetyofficerSignature)) {
-                    $sheet->mergeCells("M$signatureStartRow:S" . ($signatureStartRow + 2));
+                $sheet->getCell("G{$signatureRow}")->setValue($richText);
 
-                    $drawing = new Drawing();
-                    $drawing->setName('Approved Signature');
-                    $drawing->setPath($safetyofficerSignature);
-                    $drawing->setCoordinates("M$signatureStartRow");
-                    $drawing->setOffsetX(100);
-                    $drawing->setOffsetY(5);
-                    $drawing->setWidth(70);
-                    $drawing->setHeight(70);
-                    $drawing->setWorksheet($sheet);
-                    $sheet->getRowDimension($signatureStartRow + 2)->setRowHeight(60);
-                    // Label + Name
-                    $sheet->setCellValue("M" . ($signatureStartRow + 3), "SAFETY OFFICER SIGNATURE: " . getUserName($medicinerequisition->approved_by));
-                    $sheet->mergeCells("M" . ($signatureStartRow + 3) . ":S" . ($signatureStartRow + 3));
+                // approved
+                $richText = new RichText();
+                $name = getUsername($medicinerequisition->approved_by);
 
-                    $sheet->getStyle("M$signatureStartRow:S" . ($signatureStartRow + 3))->applyFromArray([
-                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
-                    ]);
+                if (!empty($name)) {
+                    $richText->createTextRun("SAFETY OFFICER NAME : " . $name)->getFont()->setBold(true);
+                } else {
+                    $richText->createTextRun("Inspection has not been Approved Yet")->getFont()->setBold(true);
                 }
 
+                $sheet->getCell("O{$signatureRow}")->setValue($richText);
                 $row =  $signatureStartRow + 5;
             }
             $fileName = 'Medical Requisition Slip.xlsx';
@@ -955,7 +931,7 @@ class MedicalRequisitionSlipController extends Controller
             ]);
         } catch (Exception $ex) {
 
-             report($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/medical-requisition-slip/list'));
         }
@@ -974,9 +950,8 @@ class MedicalRequisitionSlipController extends Controller
                 return redirect()->back()->with('error',   __('inspection.excess_error'));
             }
 
-            foreach( $allData as $details){
+            foreach ($allData as $details) {
                 $document_no = $this->document_reference->selectOne($details->document_reference_id);
-
             }
 
 
@@ -1001,15 +976,13 @@ class MedicalRequisitionSlipController extends Controller
             $view = view('inspection.inspection_ohc.medical_requisition_slip.pdf', $data);
             $html = $view->render();
 
-
-
             $mpdf->WriteHTML($html);
 
             $filename = "Medicine Requisition Slip Floor.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 
-             report($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/medical-requisition-slip/list'));
         }
@@ -1135,81 +1108,60 @@ class MedicalRequisitionSlipController extends Controller
 
                 $sheet->getStyle("A$inspectionRow:S$inspectionRow")->applyFromArray([
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_LEFT, 'vertical' => Alignment::VERTICAL_CENTER],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                 ]);
 
                 $inspectionRow++;
             }
 
             $signatureStartRow = $inspectionRow;
-            if (file_exists($CreatorSignature)) {
-                $sheet->mergeCells("A$signatureStartRow:F" . ($signatureStartRow + 2));
 
-                $drawing = new Drawing();
-                $drawing->setName('Creator Signature');
-                $drawing->setPath($CreatorSignature);
-                $drawing->setCoordinates("A$signatureStartRow");
-                $drawing->setOffsetX(100);
-                $drawing->setOffsetY(5);
-                $drawing->setWidth(70);
-                $drawing->setHeight(70);
-                $drawing->setWorksheet($sheet);
-                $sheet->getRowDimension($signatureStartRow + 2)->setRowHeight(40);
-                // Label + Name
-                $sheet->setCellValue("A" . ($signatureStartRow + 3), "CREATOR SIGNATURE: " . getUserName($medicinerequisition->created_by));
-                $sheet->mergeCells("A" . ($signatureStartRow + 3) . ":F" . ($signatureStartRow + 3));
+            $signatureRow = $signatureStartRow;
+            $sheet->getRowDimension($signatureRow)->setRowHeight(30);
 
-                $sheet->getStyle("A$signatureStartRow:F" . ($signatureStartRow + 3))->applyFromArray([
-                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
-                ]);
+            $sheet->mergeCells("A{$signatureRow}:F{$signatureRow}");
+            $sheet->mergeCells("G{$signatureRow}:N{$signatureRow}");
+            $sheet->mergeCells("O{$signatureRow}:S{$signatureRow}");
+
+            $sheet->getStyle("A{$signatureRow}:S{$signatureRow}")->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+            ]);
+            // Prepared
+            $richText = new RichText();
+            $name = getUsername($medicinerequisition->created_by);
+
+            if (!empty($name)) {
+                $richText->createTextRun("CREATOR NAME : " . $name)->getFont()->setBold(true);
+            } else {
+                $richText->createTextRun("Inspection has not been Prepared Yet")->getFont()->setBold(true);
             }
 
-            if (file_exists($floorManagerSignature)) {
-                $sheet->mergeCells("G$signatureStartRow:L" . ($signatureStartRow + 2));
+            $sheet->getCell("A{$signatureRow}")->setValue($richText);
 
-                $drawing = new Drawing();
-                $drawing->setName('Verified Signature');
-                $drawing->setPath($floorManagerSignature);
-                $drawing->setCoordinates("G$signatureStartRow");
-                $drawing->setOffsetX(100);
-                $drawing->setOffsetY(5);
-                $drawing->setWidth(70);
-                $drawing->setHeight(70);
-                $drawing->setWorksheet($sheet);
-                $sheet->getRowDimension($signatureStartRow + 2)->setRowHeight(40);
-                // Label + Name
-                $sheet->setCellValue("G" . ($signatureStartRow + 3), "FLOOR MANAGER SIGNATURE: " . getUserName($medicinerequisition->verified_by));
-                $sheet->mergeCells("G" . ($signatureStartRow + 3) . ":L" . ($signatureStartRow + 3));
+            // Verified
+            $richText = new RichText();
+            $name = getUsername($medicinerequisition->verified_by);
 
-                $sheet->getStyle("G$signatureStartRow:L" . ($signatureStartRow + 3))->applyFromArray([
-                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
-                ]);
+            if (!empty($name)) {
+                $richText->createTextRun("FLOOR MANAGER NAME : " . $name)->getFont()->setBold(true);
+            } else {
+                $richText->createTextRun("Inspection has not been Verified Yet")->getFont()->setBold(true);
             }
 
-            if (file_exists($safetyofficerSignature)) {
-                $sheet->mergeCells("M$signatureStartRow:S" . ($signatureStartRow + 2));
+            $sheet->getCell("G{$signatureRow}")->setValue($richText);
 
-                $drawing = new Drawing();
-                $drawing->setName('Approved Signature');
-                $drawing->setPath($safetyofficerSignature);
-                $drawing->setCoordinates("M$signatureStartRow");
-                $drawing->setOffsetX(100);
-                $drawing->setOffsetY(5);
-                $drawing->setWidth(70);
-                $drawing->setHeight(70);
-                $drawing->setWorksheet($sheet);
-                $sheet->getRowDimension($signatureStartRow + 2)->setRowHeight(60);
-                // Label + Name
-                $sheet->setCellValue("M" . ($signatureStartRow + 3), "SAFETY OFFICER SIGNATURE: " . getUserName($medicinerequisition->approved_by));
-                $sheet->mergeCells("M" . ($signatureStartRow + 3) . ":S" . ($signatureStartRow + 3));
+            // approved
+            $richText = new RichText();
+            $name = getUsername($medicinerequisition->approved_by);
 
-                $sheet->getStyle("M$signatureStartRow:S" . ($signatureStartRow + 3))->applyFromArray([
-                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
-                ]);
+            if (!empty($name)) {
+                $richText->createTextRun("SAFETY OFFICER NAME : " . $name)->getFont()->setBold(true);
+            } else {
+                $richText->createTextRun("Inspection has not been Approved Yet")->getFont()->setBold(true);
             }
+
+            $sheet->getCell("O{$signatureRow}")->setValue($richText);
 
             $fileName = 'Medical Requisition Slip.xlsx';
             $writer = new Xlsx($spreadsheet);

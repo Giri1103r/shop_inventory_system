@@ -181,7 +181,7 @@ class EmergencyBuyerFirstAidBagChecklistController extends Controller
                 $emergency_buyer_first_aid_bag_id = $emergency_buyer_first_aid_bag->id;
                 $inspection_type = OHC_TYPE_EMERGENCY_BUYER_FIRST_AID_BAG_CHECKLIST;
                 $inspection_details = $this->emergency_buyer_first_aid_bag->selectOne($emergency_buyer_first_aid_bag_id);
-                $files = $this->signature->requestorsignatureUpload($inspection_type, $inspection_details->id);
+                // $files = $this->signature->requestorsignatureUpload($inspection_type, $inspection_details->id);
 
                 Session::flash('success', 'Your data has been created successfully!');
                 return redirect(admin_url('ohc/emergency-buyer-first-aid-bag/checklist/list'));
@@ -210,7 +210,7 @@ class EmergencyBuyerFirstAidBagChecklistController extends Controller
 
             $data = array(
                 'inspection_details' => $inspection_details,
-                'inspection_file' => $inspection_file,
+                // 'inspection_file' => $inspection_file,
                 'inspection_data' => $inspection_data,
             );
 
@@ -399,7 +399,7 @@ class EmergencyBuyerFirstAidBagChecklistController extends Controller
             $sheet->getStyle("A{$row}:F{$row}")->applyFromArray([
                 'font' => ['bold' => true],
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                'alignment' => ['vertical' => Alignment::VERTICAL_CENTER],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER,'vertical' => Alignment::VERTICAL_CENTER],
             ]);
             $row++;
 
@@ -408,29 +408,29 @@ class EmergencyBuyerFirstAidBagChecklistController extends Controller
             $sheet->getStyle("A{$row}:F{$row}")->applyFromArray([
                 'font' => ['bold' => true],
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                'alignment' => ['vertical' => Alignment::VERTICAL_CENTER],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER,'vertical' => Alignment::VERTICAL_CENTER],
             ]);
             $row++;
 
             $signatureRow = $row;
-            $sheet->getRowDimension($signatureRow)->setRowHeight(80);
+            $sheet->getRowDimension($signatureRow)->setRowHeight(30);
             $sheet->mergeCells("A{$signatureRow}:F{$signatureRow}");
             $sheet->getStyle("A{$signatureRow}:F{$signatureRow}")->applyFromArray([
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER,'vertical' => Alignment::VERTICAL_CENTER],
             ]);
 
-            if (file_exists($inspection_created_by)) {
-                $drawing = new Drawing();
-                $drawing->setName('Inspection and checked By');
-                $drawing->setPath($inspection_created_by);
-                $drawing->setCoordinates("C{$signatureRow}");
-                $drawing->setOffsetX(50);
-                $drawing->setOffsetY(10);
-                $drawing->setWidth(70);
-                $drawing->setHeight(70);
-                $drawing->setWorksheet($sheet);
-            }
+            // if (file_exists($inspection_created_by)) {
+            //     $drawing = new Drawing();
+            //     $drawing->setName('Inspection and checked By');
+            //     $drawing->setPath($inspection_created_by);
+            //     $drawing->setCoordinates("C{$signatureRow}");
+            //     $drawing->setOffsetX(50);
+            //     $drawing->setOffsetY(10);
+            //     $drawing->setWidth(70);
+            //     $drawing->setHeight(70);
+            //     $drawing->setWorksheet($sheet);
+            // }
 
             $richText = new RichText();
             $richText->createTextRun("Inspected and checked By: " . getUsername($inspection_detail->created_by))->getFont()->setBold(true);
@@ -569,7 +569,7 @@ class EmergencyBuyerFirstAidBagChecklistController extends Controller
                 $sheet->getStyle("A{$dataRow}:F{$dataRow}")->applyFromArray([
                     'font' => ['bold' => true],
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                    'alignment' => ['vertical' => Alignment::VERTICAL_CENTER],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER,'vertical' => Alignment::VERTICAL_CENTER],
                 ]);
                 $sheet->getRowDimension($dataRow)->setRowHeight(40);
                 $dataRow++;
@@ -580,35 +580,35 @@ class EmergencyBuyerFirstAidBagChecklistController extends Controller
                 $sheet->getStyle("A{$dataRow}:F{$dataRow}")->applyFromArray([
                     'font' => ['bold' => true],
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                    'alignment' => ['vertical' => Alignment::VERTICAL_CENTER],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER,'vertical' => Alignment::VERTICAL_CENTER],
                 ]);
                 $sheet->getRowDimension($dataRow)->setRowHeight(40);
                 $dataRow++;
 
                 // Signature Row
                 $signatureRow = $dataRow;
-                $sheet->getRowDimension($signatureRow)->setRowHeight(80);
+                $sheet->getRowDimension($signatureRow)->setRowHeight(30);
                 $sheet->mergeCells("A{$signatureRow}:F{$signatureRow}");
 
                 $sheet->getStyle("A{$signatureRow}:F{$signatureRow}")->applyFromArray([
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
+                   'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER,'vertical' => Alignment::VERTICAL_CENTER],
                 ]);
 
-                if (file_exists($inspection_created_by)) {
-                    $drawing = new Drawing();
-                    $drawing->setName('Signature');
-                    $drawing->setPath($inspection_created_by);
-                    $drawing->setCoordinates("C{$signatureRow}");
-                    $drawing->setOffsetX(50);
-                    $drawing->setOffsetY(10);
-                    $drawing->setWidth(70);
-                    $drawing->setHeight(70);
-                    $drawing->setWorksheet($sheet);
-                }
+                // if (file_exists($inspection_created_by)) {
+                //     $drawing = new Drawing();
+                //     $drawing->setName('Signature');
+                //     $drawing->setPath($inspection_created_by);
+                //     $drawing->setCoordinates("C{$signatureRow}");
+                //     $drawing->setOffsetX(50);
+                //     $drawing->setOffsetY(10);
+                //     $drawing->setWidth(70);
+                //     $drawing->setHeight(70);
+                //     $drawing->setWorksheet($sheet);
+                // }
 
                 $richText = new RichText();
-                $richText->createTextRun("Inspected and checked By: " . getUsername($inspection_detail->created_by))->getFont()->setBold(true);
+                $richText->createTextRun("Inspected and checked By: " . getUsername($inspection_detail->created_by) )->getFont()->setBold(true);
                 $sheet->getCell("A{$signatureRow}")->setValue($richText);
 
                 // Border for complete block

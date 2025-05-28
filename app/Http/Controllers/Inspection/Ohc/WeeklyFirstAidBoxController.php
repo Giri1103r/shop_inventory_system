@@ -163,7 +163,7 @@ class WeeklyFirstAidBoxController extends Controller
                 $weekly_first_aid_id = $weekly_first_aid->id;
                 $inspection_type = OHC_TYPE_WEEEKLY_FIRST_AID_MEDICINE_STORE;
                 $inspection_details = $this->weekly_first_aid->selectOne($weekly_first_aid_id);
-                $files = $this->signature->requestorsignatureUpload($inspection_type, $inspection_details->id);
+                // $files = $this->signature->requestorsignatureUpload($inspection_type, $inspection_details->id);
 
 
                 Session::flash('success', 'Your data has been created successfully!');
@@ -416,34 +416,34 @@ class WeeklyFirstAidBoxController extends Controller
             $sheet->getStyle("A{$row}:H{$row}")->applyFromArray([
                 'font' => ['bold' => true],
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                'alignment' => ['vertical' => Alignment::VERTICAL_CENTER],
+                'alignment' => ['vertical' =>  Alignment::VERTICAL_CENTER,'horizontal'=>Alignment::HORIZONTAL_CENTER],
             ]);
             $row++;
 
             // Signature
             $signatureRow = $row;
-            $sheet->getRowDimension($signatureRow)->setRowHeight(80);
+            // $sheet->getRowDimension($signatureRow)->setRowHeight(80);
             $sheet->mergeCells("A{$signatureRow}:H{$signatureRow}");
             $sheet->getStyle("A{$signatureRow}:H{$signatureRow}")->applyFromArray([
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER,'vertical' =>  Alignment::VERTICAL_CENTER],
             ]);
 
-            if (file_exists($inspection_created_by)) {
-                $drawing = new Drawing();
-                $drawing->setName('Inspection and checked By');
-                $drawing->setPath($inspection_created_by);
-                $drawing->setCoordinates("D{$signatureRow}");
-                $drawing->setOffsetX(50);
-                $drawing->setOffsetY(10);
-                $drawing->setWidth(70);
-                $drawing->setHeight(70);
-                $drawing->setWorksheet($sheet);
-            }
+            // if (file_exists($inspection_created_by)) {
+            //     $drawing = new Drawing();
+            //     $drawing->setName('Inspection and checked By');
+            //     $drawing->setPath($inspection_created_by);
+            //     $drawing->setCoordinates("D{$signatureRow}");
+            //     $drawing->setOffsetX(50);
+            //     $drawing->setOffsetY(10);
+            //     $drawing->setWidth(70);
+            //     $drawing->setHeight(70);
+            //     $drawing->setWorksheet($sheet);
+            // }
 
-            $richText = new RichText();
-            $richText->createTextRun("Inspected and checked By: " . getUsername($inspection_detail->created_by))->getFont()->setBold(true);
-            $sheet->getCell("A{$signatureRow}")->setValue($richText);
+             $richText = new RichText();
+             $richText->createTextRun("Inspected and checked By: " . getUsername($inspection_detail->created_by))->getFont()->setBold(true);
+             $sheet->getCell("A{$signatureRow}")->setValue($richText);
 
             // Download Excel
             $writer = new Xlsx($spreadsheet);
@@ -578,35 +578,37 @@ class WeeklyFirstAidBoxController extends Controller
 
                 // Remark
                 $sheet->mergeCells("A{$dataRow}:H{$dataRow}");
+                $sheet->getRowDimension($dataRow)->setRowHeight(30);
+
                 $sheet->setCellValue("A{$dataRow}", "Remark By:- " . $inspection_detail->remark_by);
                 $sheet->getRowDimension($dataRow)->setRowHeight(20);
                 $sheet->getStyle("A{$dataRow}:H{$dataRow}")->applyFromArray([
                                     'font' => ['bold' => true],
                                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                                    'alignment' => ['vertical' => Alignment::VERTICAL_CENTER],
+                                    'alignment' => ['vertical' => Alignment::VERTICAL_CENTER,'horizontal' => Alignment::HORIZONTAL_CENTER],
                                 ]);
                 $dataRow++;
 
                 // Signature Section
                 $signatureRowStart = $dataRow;
-                $sheet->getRowDimension($signatureRowStart)->setRowHeight(80);
+                $sheet->getRowDimension($signatureRowStart)->setRowHeight(30);
                 $sheet->mergeCells("A{$signatureRowStart}:H{$signatureRowStart}");
                 $sheet->getStyle("A{$signatureRowStart}:H{$signatureRowStart}")->applyFromArray([
                                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
+                                    'alignment' => ['vertical' => Alignment::VERTICAL_CENTER,'horizontal' => Alignment::HORIZONTAL_CENTER],
                                 ]);
 
-                if (file_exists($inspection_created_by)) {
-                    $drawing = new Drawing();
-                    $drawing->setName('Signature');
-                    $drawing->setPath($inspection_created_by);
-                    $drawing->setCoordinates("D{$signatureRowStart}");
-                    $drawing->setOffsetX(50);
-                    $drawing->setOffsetY(10);
-                    $drawing->setWidth(70);
-                    $drawing->setHeight(70);
-                    $drawing->setWorksheet($sheet);
-                }
+                // if (file_exists($inspection_created_by)) {
+                //     $drawing = new Drawing();
+                //     $drawing->setName('Signature');
+                //     $drawing->setPath($inspection_created_by);
+                //     $drawing->setCoordinates("D{$signatureRowStart}");
+                //     $drawing->setOffsetX(50);
+                //     $drawing->setOffsetY(10);
+                //     $drawing->setWidth(70);
+                //     $drawing->setHeight(70);
+                //     $drawing->setWorksheet($sheet);
+                // }
 
                 $richText = new RichText();
                 $richText->createTextRun("Inspected and checked By: " . getUsername($inspection_detail->created_by))->getFont()->setBold(true);

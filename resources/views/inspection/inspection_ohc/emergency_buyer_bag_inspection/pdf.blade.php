@@ -155,7 +155,7 @@
             </table>
         </div>
 
-        
+
 
         <table width="100%" style="width:100%; border-collapse: collapse; margin-top: 10px;">
             <tr>
@@ -163,14 +163,14 @@
                 <td colspan="4" style="border:1px solid black; height:50px; text-align: center;">
                     <img src="{{ url('public/assets/images/logo-dark.png') }}" style="width:125px; height:50px;">
                 </td>
-                
+
 
                 <!-- Title -->
-                <td colspan="6" style="border:1px solid black; text-align: center;">
+                <td colspan="8" style="border:1px solid black; text-align: center;">
                     <h3 style="margin:0;"><b>{{ __('title.emergency_buyer_first_aid_bag') }}</b></h3>
                 </td>
 
-                
+
             </tr>
 
             <tr>
@@ -244,7 +244,7 @@
                         <td style="border: 1px solid black; padding: 8px; text-align: center;">
                             {{ $medicines['freeze_quantity'] }}
                         </td>
-                        
+
                         <td style="border: 1px solid black; padding: 8px; text-align: center;">
                             {{ $medicines['available_quantity'] }}
                         </td>
@@ -257,30 +257,30 @@
                     </tr>
                 @endforeach
                 <tr>
-                    <td colspan="6" style="border: 1px solid black; font-weight: bold;">
+                    <td colspan="6" style="border: 1px solid black; font-weight: bold; text-align: center;">
                         PPE'S For Visitors:- 05 Air Plugs, 05 Pairs Cotton Gloves, 02 Piars Rubber Gloves, 05 Mask, 04 specticals.
                     </td>
                 </tr>
 
                 <tr>
-                    <td colspan="6" style="border: 1px solid black;">
-                       
+                    <td colspan="6" style="border: 1px solid black; text-align: center;">
+
                         <strong>Remark By:-</strong>
                         {{ $details->remark_by}}
                     </td>
                 </tr>
-                @php
+                {{-- @php
                     $inspection_created_by = GetOHCSignature(
                         $details->created_by,
                         $details->id,
                         OHC_TYPE_WEEEKLY_FIRST_AID_MEDICINE_STORE,
                     );
-                @endphp
+                @endphp --}}
 
                 <tr>
                     <td colspan="6" style="border: 1px solid black; text-align: center; font-weight: bold;">
-                        <img src="{{ admin_url($inspection_created_by) }}" alt="Checked By Signature"
-                            style="height: 50px; margin-top:2px;"><br>
+                        {{-- <img src="{{ admin_url($inspection_created_by) }}" alt="Checked By Signature"
+                            style="height: 50px; margin-top:2px;"><br> --}}
                         Checked & Prepared By: {{ getUsername($details->created_by) }}
                     </td>
                 </tr>

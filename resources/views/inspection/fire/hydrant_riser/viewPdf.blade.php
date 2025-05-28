@@ -344,51 +344,74 @@
         @endforeach
 
 
-        @php
-        $prepared_by_signature = GetFireSignature(
-            $hydrant_details->created_by,
-            $hydrant_details->id,
-            HYDRANT_RISER,
-        );
-        $verified_by_signature = GetFireSignature(
-            $hydrant_details->verified_by,
-            $hydrant_details->id,
-            HYDRANT_RISER,
-        );
-        $verified_by_signature = GetFireSignature(
-            $hydrant_details->approved_by,
-            $hydrant_details->id,
-            HYDRANT_RISER,
-        );
-    @endphp
-    <tr>
-        <td colspan="5"
-            style="border: 2px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
-            <img src="{{ admin_url($prepared_by_signature) }}" alt="Checked By Signature"
-                style="height: 50px;">
-            <div>Checked & Prepared By: {{ getUsername($hydrant_details->created_by) }}</div>
-        </td>
-        <td colspan="5"
-            style="border: 2px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
-            {{-- @if ($hydrant_details->updated_by != null) --}}
+        {{-- @php
+            $prepared_by_signature = GetFireSignature(
+                $hydrant_details->created_by,
+                $hydrant_details->id,
+                HYDRANT_RISER,
+            );
+            $verified_by_signature = GetFireSignature(
+                $hydrant_details->verified_by,
+                $hydrant_details->id,
+                HYDRANT_RISER,
+            );
+            $verified_by_signature = GetFireSignature(
+                $hydrant_details->approved_by,
+                $hydrant_details->id,
+                HYDRANT_RISER,
+            );
+        @endphp
+        <tr>
+            <td colspan="5"
+                style="border: 2px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
+                <img src="{{ admin_url($prepared_by_signature) }}" alt="Checked By Signature" style="height: 50px;">
+                <div>Checked & Prepared By: {{ getUsername($hydrant_details->created_by) }}</div>
+            </td>
+            <td colspan="5"
+                style="border: 2px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
                 <img src="{{ admin_url($verified_by_signature) }}" alt="Verified By Signature"
                     style="height: 50px;">
                 <div>Verified By: {{ getUsername($hydrant_details->verified_by) }}</div>
-            {{-- @else --}}
-                {{-- <p>Inspection has not been Verified Yet</p> --}}
-            {{-- @endif --}}
-        </td>
-        <td colspan="5"
-            style="border: 2px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
-            {{-- @if ($hydrant_details->approved_by != null) --}}
+
+            </td>
+            <td colspan="5"
+                style="border: 2px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
                 <img src="{{ admin_url($verified_by_signature) }}" alt="Verified By Signature"
                     style="height: 50px;">
                 <div>Approved By: {{ getUsername($hydrant_details->approved_by) }}</div>
-            {{-- @else --}}
-                {{-- <p>Inspection has not been Verified Yet</p> --}}
-            {{-- @endif --}}
-        </td>
-    </tr>
+
+            </td>
+        </tr> --}}
+
+        <tr>
+            <td colspan="5" style="border: 1px solid black; padding: 6px; text-align: center;">
+                <div class="view_data">
+                    @if (!empty($hydrant_details->checked_by))
+                        <p style="margin: 0;">Checked By:- {{ getUsername($hydrant_details->checked_by) }}</p>
+                    @else
+                        <p style="margin: 0;">Checked By:- Not yet checked</p>
+                    @endif
+                </div>
+            </td>
+            <td colspan="4" style="border: 1px solid black; padding: 6px; text-align: center;">
+                <div class="view_data">
+                    @if (!empty($hydrant_details->verified_by))
+                        <p style="margin: 0;">Verified By:- {{ getUsername($hydrant_details->verified_by) }}</p>
+                    @else
+                        <p style="margin: 0;">Verified By:- Not yet verified</p>
+                    @endif
+                </div>
+            </td>
+            <td colspan="5" style="border: 1px solid black; padding: 6px; text-align: center;">
+                <div class="view_data">
+                    @if (!empty($hydrant_details->approved_by))
+                        <p style="margin: 0;">Approved By:- {{ getUsername($hydrant_details->approved_by) }}</p>
+                    @else
+                        <p style="margin: 0;">Approved By:- Not yet approved</p>
+                    @endif
+                </div>
+            </td>
+        </tr>
     </table>
 
 

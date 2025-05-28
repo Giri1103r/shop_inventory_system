@@ -152,7 +152,7 @@ class SafetyPettyDetails extends Model
                 'date' => DBdateformat($request->date[$index]),
                 'amount' => $request->amount[$index],
                 'description' => $request->description[$index],
-                'amount_given_by' => $amount,
+                'amount_given_by' => $request->amnt_givenby_id[$index],
                 'amount_received_by' => $request->amnt_receivedby_id[$index],
                 'remark' => $request->remark[$index],
                 'created_by' => Auth::id(),

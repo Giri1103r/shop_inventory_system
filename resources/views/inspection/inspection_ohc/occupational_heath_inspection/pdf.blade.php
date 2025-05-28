@@ -168,7 +168,7 @@
               <th colspan="6" style="border:1px solid black;">
                   <h3>
                       <span><b> OCCUPATIONAL HEALTH CENTER</b></span>
-                      
+
                   </h3>
               </th>
 
@@ -318,7 +318,7 @@
               );
           @endphp
 
-          <tr>
+          {{-- <tr>
               <th colspan="6" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">
                   <img src="{{ admin_url($signature) }}" alt="Signature Upload"
                       style="width: 150px; margin-top: -10px;" />
@@ -334,7 +334,30 @@
                       style="width: 150px; margin-top: -10px;" />
                   <div style="margin-top: 5px;">Approved By:{{getUsername($detail->approved_by)}}</div>
               </th>
-          </tr>
+          </tr> --}}
+
+
+          <tr>
+            <th colspan="6" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">
+                @if ($detail->created_by != null)
+                    <div style="margin-top: 5px;">Checked By:{{ getUsername($detail->created_by) }}</div>
+                @endif
+            </th>
+            <th colspan="6" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">
+                @if ($detail->verified_by != null)
+                    <div style="margin-top: 5px;">Verified By:{{ getUsername($detail->verified_by) }}</div>
+                @else
+                    <div style="margin-top: 5px;">Has Not Yet Been Verified</div>
+                @endif
+            </th>
+            <th colspan="6" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">
+                @if ($detail->approved_by != null)
+                    <div style="margin-top: 5px;">Approved By:{{ getUsername($detail->approved_by) }}</div>
+                @else
+                    <div style="margin-top: 5px;">Has Not Yet Been Approved</div>
+                @endif
+            </th>
+        </tr>
 
       </table>
         <br>

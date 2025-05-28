@@ -560,23 +560,23 @@
                 });
             }
 
-            $('#amnt_givenby_id').on('select2:select', function(e) {
-                var loginId = $(this).val();
-                if (loginId) {
-                    updateGivenBySignatureField(loginId);
-                } else {
-                    $('#signature_givenby').hide();
-                }
-            });
+            // $('#amnt_givenby_id').on('select2:select', function(e) {
+            //     var loginId = $(this).val();
+            //     if (loginId) {
+            //         updateGivenBySignatureField(loginId);
+            //     } else {
+            //         $('#signature_givenby').hide();
+            //     }
+            // });
 
-            $('#amnt_receivedby_id').on('select2:select', function(e) {
-                var loginId = $(this).val();
-                if (loginId) {
-                    updateReceivedBySignatureField(loginId);
-                } else {
-                    $('#signature_receivedby').hide();
-                }
-            });
+            // $('#amnt_receivedby_id').on('select2:select', function(e) {
+            //     var loginId = $(this).val();
+            //     if (loginId) {
+            //         updateReceivedBySignatureField(loginId);
+            //     } else {
+            //         $('#signature_receivedby').hide();
+            //     }
+            // });
 
             $.validator.addMethod("noSpaces", function(value, element) {
                 return this.optional(element) || value.trim().length > 0;

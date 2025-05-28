@@ -123,7 +123,7 @@
                 </td>
                 <td border="0"
                     style="width:50%;float:right;text-align:right;font-size: 24px;font-weight:bold;font-family: Georgia, serif;">
-                     FIRST AID BAG INSPECTION CHECKLIST</td>
+                    FIRST AID BAG INSPECTION CHECKLIST</td>
             </tr>
         </table>
     </htmlpageheader>
@@ -149,14 +149,14 @@
             <tr>
                 <td
                     style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                    EMERGENCY BUYER BAG IBSPECTION 
+                    EMERGENCY BUYER BAG IBSPECTION
                 </td>
             </tr>
         </table>
     </div>
 
     <table width="100%" style="width:100%;">
-       
+
 
         <tr>
             <td width="50%" style="padding:5px;"><b> Date od Inspection</b></td>
@@ -187,7 +187,7 @@
                 {{ Displaydateformat(isset($inspection_details->due_date) ? $inspection_details->due_date : '') }}
             </td>
         </tr>
-       
+
         <tr>
             <td width="50%" style="padding:5px;"><b>Unit</b></td>
             <td width="2%" style="padding:5px;">:</td>
@@ -234,24 +234,18 @@
     <table style="width: 100%; border-collapse: collapse; padding: 5px;">
         <thead>
             <tr>
-                <th
-                    style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
+                <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
                     {{ __('inspection.sr_no') }}</th>
-                <th
-                    style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center; ">
-                   Medicine Name</th>
-                <th
-                    style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center; ">
+                <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center; ">
+                    Medicine Name</th>
+                <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center; ">
                     Freeze Quantity</th>
-                <th
-                    style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
+                <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
                     Available Quantity</th>
-                <th
-                    style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
+                <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
                     Expiry Date</th>
-                
-                <th
-                    style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
+
+                <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
                     {{ __('inspection.remarks') }}</th>
             </tr>
 
@@ -273,14 +267,17 @@
                         {{ $medicines['remarks'] }}</td>
                 </tr>
             @endforeach
-            <tr>
-                <td colspan="7"
-                    style="border: 1px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
-                    <img src="{{ admin_url($inspection_created_by) }}" alt="Checked By Signature"
-                        style="height: 50px; margin-top:2px;">
-                    <div>Checked & Prepared By: {{ getUsername($inspection_details->created_by) }}</div>
-                </td>
-            </tr>
+
+                <tr>
+                    <td colspan="7"
+                        style="border: 1px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
+                        {{-- <img src="{{ admin_url($inspection_created_by) }}" alt="Checked By Signature"
+                            style="height: 50px; margin-top:2px;"> --}}
+                        <div>Checked & Prepared By: {{ getUsername($inspection_details->created_by) }}</div>
+                    </td>
+                </tr>
+            
+
 
             <tr>
                 <td colspan="7"
@@ -289,7 +286,7 @@
                     {{ isset($inspection_details->remark_by) ? $inspection_details->remark_by : '' }}
                 </td>
             </tr>
-            
+
 
         </tbody>
     </table>

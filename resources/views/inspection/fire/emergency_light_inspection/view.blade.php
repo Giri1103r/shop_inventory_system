@@ -107,7 +107,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        @php
+                                        {{-- @php
                                             $signature = GetFireSignature(
                                                 $inspection->created_by,
                                                 $inspection->id,
@@ -123,7 +123,7 @@
                                                         style="width: 100px; margin-top: -10px;" />
                                                 </div>
                                             </div>
-                                        @endif
+                                        @endif --}}
                                     </div>
                                     {{-- <hr>
                                     <div class="form-observation">
@@ -220,13 +220,13 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    @php
+                                                    {{-- @php
                                                         $signature = GetFireSignature(
                                                             $inspection->verified_by,
                                                             $inspection->id,
                                                             EMERGENCY_LIGHT_INSPECTION,
                                                         );
-                                                    @endphp
+                                                    @endphp --}}
                                                 @endif
                                                 @if (isset($inspection->created_at))
                                                     <div class="col-md-4 mb-2">
@@ -238,7 +238,7 @@
                                                         </div>
                                                     </div>
                                                 @endif
-                                                @if (isset($signature))
+                                                {{-- @if (isset($signature))
                                                     <div class="col-md-4 mb-2">
                                                         <div class="form-group form-input">
                                                             <label class="form-label"
@@ -247,7 +247,7 @@
                                                                 style="width: 150px; margin-top: -10px;" />
                                                         </div>
                                                     </div>
-                                                @endif
+                                                @endif --}}
                                                 @if (isset($inspection->approved_by))
                                                     @if ($inspection->verified_by == $inspection->approved_by)
                                                         <div class="col-md-4 mb-2">
@@ -259,7 +259,7 @@
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        @php
+                                                        {{-- @php
                                                             $signature = GetFireSignature(
                                                                 $inspection->approved_by,
                                                                 $inspection->id,
@@ -276,7 +276,7 @@
                                                                         style="width: 150px; margin-top: -10px;" />
                                                                 </div>
                                                             </div>
-                                                        @endif
+                                                        @endif --}}
                                                     @endif
                                                 @endif
 
@@ -325,7 +325,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                @php
+                                                {{-- @php
                                                     $signature = GetFireSignature(
                                                         $inspection->created_by,
                                                         $inspection->id,
@@ -341,7 +341,7 @@
                                                                 style="width: 150px; margin-top: -10px;" />
                                                         </div>
                                                     </div>
-                                                @endif
+                                                @endif --}}
                                                 <div class="col-md-12 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
@@ -378,7 +378,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            @php
+                                            {{-- @php
                                                 $signature = GetFireSignature(
                                                     $inspection->verified_by,
                                                     $inspection->id,
@@ -394,7 +394,7 @@
                                                             style="width: 150px; margin-top: -10px;" />
                                                     </div>
                                                 </div>
-                                            @endif
+                                            @endif --}}
                                             <div class="col-md-12 mb-2">
                                                 <div class="form-group form-input">
                                                     <label
@@ -430,7 +430,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            @php
+                                            {{-- @php
                                                 $signature = GetFireSignature(
                                                     $inspection->l1_manager_verification,
                                                     $inspection->id,
@@ -446,7 +446,7 @@
                                                             style="width: 150px; margin-top: -10px;" />
                                                     </div>
                                                 </div>
-                                            @endif
+                                            @endif --}}
                                             <div class="col-md-12 mb-2">
                                                 <div class="form-group form-input">
                                                     <label
@@ -481,7 +481,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            @php
+                                            {{-- @php
                                                 $signature = GetFireSignature(
                                                     $inspection->l2_manager_verification,
                                                     $inspection->id,
@@ -497,7 +497,7 @@
                                                             style="width: 150px; margin-top: -10px;" />
                                                     </div>
                                                 </div>
-                                            @endif
+                                            @endif --}}
 
                                             <div class="col-md-12 mb-2">
                                                 <div class="form-group form-input">

@@ -100,7 +100,7 @@
                                             {{ getUnitname(isset($occupational_health_center->unit) ? $occupational_health_center->unit : '') }}
                                         </div>
                                     </div>
-                                    @if (!empty($requestorsignature) && !empty($requestorsignature->requestor_file_path))
+                                    {{-- @if (!empty($requestorsignature) && !empty($requestorsignature->requestor_file_path))
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
                                                 <label class="form-label" style="display: block;">
@@ -120,7 +120,7 @@
                                                     alt="Signature Upload" style="width: 150px; margin-top: -10px;" />
                                             </div>
                                         </div>
-                                    @endif
+                                    @endif --}}
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('common.created_by') }}</label>
                                         <div class="view_data">
@@ -253,13 +253,13 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                @php
+                                                {{-- @php
                                                     $signature = GetOHCSignature(
                                                         $occupational_health_center->verified_by,
                                                         $occupational_health_center->id,
                                                         OHC_TYPE_OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST,
                                                     );
-                                                @endphp
+                                                @endphp --}}
                                             @endif
                                             @if (isset($occupational_health_center->created_at))
                                                 <div class="col-md-4 mb-2">
@@ -271,7 +271,7 @@
                                                     </div>
                                                 </div>
                                             @endif
-                                            @if (isset(Auth::user()->signature_upload))
+                                            {{-- @if (isset(Auth::user()->signature_upload))
                                                 <label class="form-label"
                                                     style="display: block;">{{ __('inspection.signature') }}</label>
                                                 <img src="{{ asset(Auth::user()->signature_upload) }}"
@@ -285,7 +285,7 @@
                                                             style="width: 150px; margin-top: -10px;" />
                                                     </div>
                                                 </div>
-                                            @endif
+                                            @endif --}}
                                             @if ($occupational_health_center->approved_by)
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
@@ -341,7 +341,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                @php
+                                                {{-- @php
                                                     $signature = GetOHCSignature(
                                                         $occupational_health_center->created_by,
                                                         $occupational_health_center->id,
@@ -357,7 +357,7 @@
                                                                 style="width: 150px; margin-top: -10px;" />
                                                         </div>
                                                     </div>
-                                                @endif
+                                                @endif --}}
                                                 <div class="col-md-12 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
@@ -393,7 +393,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                @php
+                                                {{-- @php
                                                     $signature = GetOHCSignature(
                                                         $occupational_health_center->verified_by,
                                                         $occupational_health_center->id,
@@ -409,7 +409,7 @@
                                                                 style="width: 150px; margin-top: -10px;" />
                                                         </div>
                                                     </div>
-                                                @endif
+                                                @endif --}}
                                                 <div class="col-md-12 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
@@ -448,7 +448,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        @if (isset(Auth::user()->signature_upload))
+                                        {{-- @if (isset(Auth::user()->signature_upload))
                                             <label class="form-label"
                                                 style="display: block;">{{ __('inspection.signature') }}</label>
                                             <img src="{{ asset(Auth::user()->signature_upload) }}" alt="Signature Upload"
@@ -462,7 +462,7 @@
                                                         style="width: 150px; margin-top: -10px;" />
                                                 </div>
                                             </div>
-                                        @endif
+                                        @endif --}}
                                         <div class="col-md-12 mb-2">
                                             <div class="form-group form-input">
                                                 <label
@@ -497,7 +497,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        @php
+                                        {{-- @php
                                             $signature = GetOHCSignature(
                                                 $occupational_health_center->l2_manager_verified_by,
                                                 $occupational_health_center->id,
@@ -518,7 +518,7 @@
                                                         style="width: 150px; margin-top: -10px;" />
                                                 </div>
                                             </div>
-                                        @endif
+                                        @endif --}}
 
                                         <div class="col-md-12 mb-2">
                                             <div class="form-group form-input">

@@ -156,7 +156,7 @@
     </div>
 
     <table width="100%" style="width:100%;">
-      
+
         <tr>
             <td width="50%" style="padding:5px;"><b>Unit</b></td>
             <td width="2%" style="padding:5px;">:</td>
@@ -171,7 +171,7 @@
                 {{ getDepartment(isset($medicinerequisition->department) ? $medicinerequisition->department : '') }}
             </td>
         </tr>
-        <tr>
+        {{-- <tr>
             <td width="50%" style="padding:5px;"><b>Signature</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
@@ -179,14 +179,13 @@
                     <img src="{{ admin_url($requestorsignature->file_path) }}" alt="Requestor Signature"
                         style="width: 150px; height: auto;" />
                 @elseif (!empty($signatureview) && !empty($signatureview->signature_upload))
-                    {{-- Fixed typo --}}
                     <img src="{{ admin_url($signatureview->signature_upload) }}" alt="Approver Signature"
                         style="width: 150px; height: auto;" />
                 @else
                     <span>No signature available</span>
                 @endif
             </td>
-        </tr>
+        </tr> --}}
         <tr>
             <td width="50%" style="padding:5px;"><b>Created By</b></td>
             <td width="2%" style="padding:5px;">:</td>
@@ -218,14 +217,12 @@
             style="width: 100%; border-collapse: collapse; font-family: Arial, sans-serif; text-align: center; border: 1px solid black;">
 
             <tr>
-                <th  colspan="6" style="border:1px solid black;height:50;width:40">
+                <th colspan="6" style="border:1px solid black;height:50;width:40">
                     <img src="{{ url('public/assets/images/logo-dark.png') }}" style="width:125px;height:50px;">
                 </th>
                 <th colspan="6" style="border:1px solid black;">
                     <h3>
                         <span><b> Medicine Requisition Slip Floor</b></span>
-                        <br>
-                        <span><b>PN International Pvt Ltd. </b></span>
                     </h3>
                 </th>
 
@@ -234,15 +231,15 @@
                         <thead>
                             <tr>
                                 <td style="border: 1px solid black;width:70;">Doc.No</td>
-                                <td style="border: 1px solid black;">{{$document_no->doc_no}}</td>
+                                <td style="border: 1px solid black;">{{ $document_no->doc_no }}</td>
                             </tr>
                             <tr>
                                 <td style="border: 1px solid black;width:70;">Issue Dt.</td>
-                                <td style="border: 1px solid black;">{{$document_no->issue_date}}</td>
+                                <td style="border: 1px solid black;">{{ $document_no->issue_date }}</td>
                             </tr>
                             <tr>
                                 <td style="border: 1px solid black;width:70;">Rev.& Dt.</td>
-                                <td style="border: 1px solid black;">{{$document_no->rev_dt}}</td>
+                                <td style="border: 1px solid black;">{{ $document_no->rev_dt }}</td>
                             </tr>
                         </thead>
                     </table>
@@ -282,9 +279,11 @@
             @foreach ($medicineRequisitionDetails as $details)
                 <tr>
                     <td style="border: 1px solid black; padding: 8px;" colspan="2">{{ $loop->iteration }}</td>
-                    <td style="border: 1px solid black; padding: 8px;" colspan="4">{{ getMedicinename($details->medicine_id) }}
+                    <td style="border: 1px solid black; padding: 8px;" colspan="4">
+                        {{ getMedicinename($details->medicine_id) }}
                     </td>
-                    <td style="border: 1px solid black; padding: 8px;" colspan="4">{{ $details->freeze_quantity }}</td>
+                    <td style="border: 1px solid black; padding: 8px;" colspan="4">{{ $details->freeze_quantity }}
+                    </td>
                     <td style="border: 1px solid black; padding: 8px;"colspan="4">{{ $details->quantity }}</td>
                     <td style="border: 1px solid black; padding: 8px;"colspan="6">{{ $details->remarks }}</td>
 
@@ -309,7 +308,7 @@
                 );
             @endphp
 
-            <tr>
+            {{-- <tr>
                 <th colspan="6" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">
                     <img src="{{ admin_url($createdSignature) }}" alt="Signature Upload"
                         style="width: 150px; margin-top: -10px;" />
@@ -324,6 +323,33 @@
                     <img src="{{ admin_url($SafetyOfficerManagerSignature) }}" alt="Signature Upload"
                         style="width: 150px; margin-top: -10px;" />
                     <div style="margin-top: 5px;">Medical Assistant / Safety Officer Signature</div>
+                </th>
+            </tr> --}}
+
+            <tr>
+                <th colspan="6" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">
+                    @if ($medicinerequisition->created_by != null)
+                        <div style="margin-top: 5px;">Requestor Name :
+                            {{ getUsername($medicinerequisition->created_by) }}</div>
+                    @else
+                        <div style="margin-top: 5px;"> Not Available</div>
+                    @endif
+                </th>
+                <th colspan="6" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">
+                    @if ($medicinerequisition->verified_by != null)
+                        <div style="margin-top: 5px;">Floor Manager Signature :
+                            {{ getUsername($medicinerequisition->verified_by) }}</div>
+                    @else
+                        <div style="margin-top: 5px;">Not Yet Been Verified Yet</div>
+                    @endif
+                </th>
+                <th colspan="6" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">
+                    @if ($medicinerequisition->approved_by != null)
+                        <div style="margin-top: 5px;">Medical Assistant / Safety Officer Signature :
+                            {{ getUsername($medicinerequisition->approved_by) }}</div>
+                    @else
+                        <div style="margin-top: 5px;">Not Yet Been Approved Yet</div>
+                    @endif
                 </th>
             </tr>
         </table>
@@ -404,7 +430,7 @@
                     {{ Displaytimeformat(isset($floormanger->created_at) ? $floormanger->created_at : '') }}
                 </td>
             </tr>
-            <tr>
+            {{-- <tr>
                 <td width="50%" style="padding:5px;"><b>Signature</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
@@ -419,7 +445,7 @@
                     @endif
 
                 </td>
-            </tr>
+            </tr> --}}
             <tr>
                 <td width="50%" style="padding:5px;"><b>Remarks</b></td>
                 <td width="2%" style="padding:5px;">:</td>
@@ -464,7 +490,7 @@
                     {{ Displaytimeformat(isset($safetyofficer->created_at) ? $safetyofficer->created_at : '') }}
                 </td>
             </tr>
-            @php
+            {{-- @php
                 $approvedSignature = GetOHCSignature(
                     $safetyofficer->approved_by,
                     $medicinerequisition->id,
@@ -484,7 +510,7 @@
 
 
                 </td>
-            </tr>
+            </tr> --}}
             <tr>
                 <td width="50%" style="padding:5px;"><b>Remarks</b></td>
                 <td width="2%" style="padding:5px;">:</td>

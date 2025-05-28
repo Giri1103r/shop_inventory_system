@@ -241,13 +241,14 @@
     </tr>
 
     @foreach ($group as $detail)
-
         <tr>
             <td style="border: 1px solid black; padding: 6px; text-align: center;">{{ $loop->iteration }}</td>
             <td style="border: 1px solid black; padding: 6px;">{{ $detail->fire_point_no }}</td>
-            <td style="border: 1px solid black; padding: 6px; text-align: center;">{{ GetDeptName($detail->department) }}</td>
+            <td style="border: 1px solid black; padding: 6px; text-align: center;">
+                {{ GetDeptName($detail->department) }}</td>
 
-            <td style="border: 1px solid black; padding: 6px; text-align: center;">{{ getLocationname($detail->location) }}</td>
+            <td style="border: 1px solid black; padding: 6px; text-align: center;">
+                {{ getLocationname($detail->location) }}</td>
             <td style="border: 1px solid black; padding: 6px; text-align: center;">
                 {{ getExtinguisherTypeName($detail->extinguisher_type) }}
             </td>
@@ -290,7 +291,7 @@
         </tr>
     @endforeach
 
-    @php
+    {{-- @php
         $approved_by = GetFireSignature($first->approved_by, $first->fire_id, $inspection_type);
         $verified_by = GetFireSignature($first->verified_by, $first->fire_id, $inspection_type);
         $checked_by = GetFireSignature($first->checked_by, $first->fire_id, $inspection_type);
@@ -323,6 +324,36 @@
                 @if (!empty($first->approved_by))
                     <img src="{{ admin_url($approved_by) }}" alt=""
                         style="max-height: 60px; display: block; margin: 0 auto 5px;">
+                    <p style="margin: 0;">Approved By:- {{ getUsername($first->approved_by) }}</p>
+                @else
+                    <p style="margin: 0;">Approved By:- Not yet approved</p>
+                @endif
+            </div>
+        </td>
+    </tr> --}}
+
+    <tr>
+        <td colspan="5" style="border: 1px solid black; padding: 6px; text-align: center;">
+            <div class="view_data">
+                @if (!empty($first->checked_by))
+                    <p style="margin: 0;">Checked By:- {{ getUsername($first->checked_by) }}</p>
+                @else
+                    <p style="margin: 0;">Checked By:- Not yet checked</p>
+                @endif
+            </div>
+        </td>
+        <td colspan="5" style="border: 1px solid black; padding: 6px; text-align: center;">
+            <div class="view_data">
+                @if (!empty($first->verified_by))
+                    <p style="margin: 0;">Verified By:- {{ getUsername($first->verified_by) }}</p>
+                @else
+                    <p style="margin: 0;">Verified By:- Not yet verified</p>
+                @endif
+            </div>
+        </td>
+        <td colspan="5" style="border: 1px solid black; padding: 6px; text-align: center;">
+            <div class="view_data">
+                @if (!empty($first->approved_by))
                     <p style="margin: 0;">Approved By:- {{ getUsername($first->approved_by) }}</p>
                 @else
                     <p style="margin: 0;">Approved By:- Not yet approved</p>

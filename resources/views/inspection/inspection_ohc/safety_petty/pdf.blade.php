@@ -206,9 +206,9 @@
                 </th>
                 <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="5">DESCRIPTION
                 </th>
-                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="6">AMOUNT GIVEN BY(Signature)
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="6">AMOUNT GIVEN BY
                 </th>
-                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="6">AMOUNT RECEIVED BY(Signature)
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="6">AMOUNT RECEIVED BY
                 </th>
                 <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">REMARK
                 </th>
@@ -240,10 +240,12 @@
                     {{ isset($details->description) ? $details->description : '' }}
                 </td>
                 <td colspan="6" style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
-                    {!! getGivenSignatureBlock($type, $sub_type_given, $details->safety_petty_id, $details->amount_given_by) !!}
+                    {{-- {!! getGivenSignatureBlock($type, $sub_type_given, $details->safety_petty_id, $details->amount_given_by) !!} --}}
+                    {{getUsername($details->amount_given_by)}}
                 </td>
                 <td colspan="6" style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
-                    {!! getReceivedSignatureBlock($type, $sub_type_received, $details->safety_petty_id, $details->amount_received_by) !!}
+                    {{-- {!! getReceivedSignatureBlock($type, $sub_type_received, $details->safety_petty_id, $details->amount_received_by) !!} --}}
+                    {{getUsername($details->amount_received_by)}}
                 </td>
                 <td colspan="4" style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
                     {{ isset($details->remark) ? $details->remark : '' }}

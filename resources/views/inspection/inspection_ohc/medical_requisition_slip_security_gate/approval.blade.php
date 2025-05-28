@@ -83,7 +83,7 @@
                                             {{ getDepartment(isset($medicinerequisition->department) ? $medicinerequisition->department : '') }}
                                         </div>
                                     </div>
-                                    @if (!empty($requestorsignature) && !empty($requestorsignature->file_path))
+                                    {{-- @if (!empty($requestorsignature) && !empty($requestorsignature->file_path))
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
                                                 <label class="form-label" style="display: block;">
@@ -103,7 +103,7 @@
                                                     alt="Signature Upload" style="width: 150px; margin-top: -10px;" />
                                             </div>
                                         </div>
-                                    @endif
+                                    @endif --}}
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('common.created_by') }}</label>
                                         <div class="view_data">
@@ -195,7 +195,7 @@
                                                                 id="date" name="date" readonly
                                                                 value="{{ date('d-m-Y H:i:s') }}">
                                                         </div>
-                                                        <div class="col-md-4 form-group form-input mb-2">
+                                                        {{-- <div class="col-md-4 form-group form-input mb-2">
                                                             @if (isset(Auth::user()->signature_upload))
                                                                 <label class="form-label"
                                                                     style="display: block; ">{{ __('inspection.signature') }}</label>
@@ -213,7 +213,7 @@
                                                                     <div id="signature_upload" class="text-danger"></div>
                                                                 </div>
                                                             @endif
-                                                        </div>
+                                                        </div> --}}
                                                         <div class="col-md-12 mb-3">
                                                             <div class="mb-1">
                                                                 <label for="remarks"

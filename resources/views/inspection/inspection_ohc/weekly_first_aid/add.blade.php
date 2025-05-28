@@ -212,8 +212,16 @@
 
                                             </div>
 
+                                            <div class="col-md-12 mt-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label">Remark By</label>
+                                                    <textarea class="form-control" name="remark_by" id="remark_by"></textarea>
+
+                                                </div>
+                                            </div>
+
                                             <div class="row m-2">
-                                                <div class="col-md-4 form-group form-input mb-2">
+                                                {{-- <div class="col-md-4 form-group form-input mb-2">
                                                     @if (isset(Auth::user()->signature_upload))
                                                         <label class="form-label"
                                                             style="display: block; ">{{ __('inspection.signature') }}</label>
@@ -229,15 +237,9 @@
                                                             <div id="signature_upload" class="text-danger"></div>
                                                         </div>
                                                     @endif
-                                                </div>
+                                                </div> --}}
 
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label class="form-label">Remark By</label>
-                                                        <textarea class="form-control" name="remark_by" id="remark_by"></textarea>
 
-                                                    </div>
-                                                </div>
                                             </div>
 
                                             <div class="submit-button m-2" style="text-align: right;">

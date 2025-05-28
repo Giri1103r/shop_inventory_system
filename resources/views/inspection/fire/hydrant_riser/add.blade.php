@@ -179,7 +179,7 @@
                                                         accept="image/*">
                                                 </div>
                                             </div>
-                                            <div class="col-md-4 form-group form-input mb-2">
+                                            {{-- <div class="col-md-4 form-group form-input mb-2">
                                                 @if (isset(Auth::user()->signature_upload))
                                                     <label class="form-label"
                                                         style="display: block; ">{{ __('inspection.signature') }}</label>
@@ -195,7 +195,7 @@
                                                         <div id="signature_upload" class="text-danger"></div>
                                                     </div>
                                                 @endif
-                                            </div>
+                                            </div> --}}
                                             <input type="hidden" name="document_reference_id"
                                                 value="{{ encryptId($document_no->id) }}">
                                         </div>
@@ -399,7 +399,7 @@
                                                     </div>
 
                                                 </div>
-                                                <div class="col-md-12 mb-2">
+                                                <div class="col-md-6 mb-2">
                                                     <div class="form-group form-input">
                                                         <label class="form-label require">Approach</label>
                                                         <textarea name="approach[1]" id="approach[1]" class="form-control" style="resize: none;">{{ old('approach.1') }}</textarea>
@@ -410,7 +410,7 @@
                                                     @enderror
                                                 </div>
 
-                                                <div class="col-md-12 mb-2">
+                                                <div class="col-md-6 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.remarks') }}</label>
@@ -515,7 +515,7 @@
                     e.preventDefault();
                     location.reload();
                 });
-               
+
                 var fromDatepicker = flatpickr("#inspection_date", {
                     dateFormat: "d-m-Y",
                     onChange: function(selectedDates) {
@@ -640,14 +640,14 @@
                         device_image: {
                             required: true,
                             // extension: "jpg",
-                             filesize: 15728640,
+                            filesize: 15728640,
                         },
                         observation_needed: {
                             required: true,
                         },
                         signature_image: {
                             required: true,
-                             filesize: 15728640,
+                            filesize: 15728640,
                         },
 
                     },
@@ -659,7 +659,7 @@
                         },
                         signature_image: {
                             required: 'Please upload your signature',
-                             filesize: "File size should not exceed 15MB",
+                            filesize: "File size should not exceed 15MB",
                         },
                         issue_date: {
                             required: "Date Of Audit is required",
@@ -990,7 +990,7 @@
                                                     </div>
 
                                                 </div>
-                                                <div class="col-md-12 mb-2">
+                                                <div class="col-md-6 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">Approach</label>
@@ -1002,7 +1002,7 @@
                                                     @enderror
                                                 </div>
 
-                                                <div class="col-md-12 mb-2">
+                                                <div class="col-md-6 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.remarks') }}</label>

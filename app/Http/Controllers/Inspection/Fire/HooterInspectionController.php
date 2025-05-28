@@ -25,6 +25,7 @@ use App\Mail\Inspection\Fire\FireInspection;
 use App\Models\Inspection\Fire\FireStatusLog;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use App\Models\Inspection\Fire\FireFileUpload;
+use PhpOffice\PhpSpreadsheet\RichText\RichText;
 use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 use App\Models\Inspection\Fire\HooterInspection;
 use App\Models\Inspection\InspectionStaticDocno;
@@ -155,7 +156,7 @@ class HooterInspectionController extends Controller
                             $btn .= '<a href="' . admin_url('fire/hooter-inspection/export/excel/' . encryptId($row->inspection_id)) . '" style="margin-right: 5px;" title="Excel"> <i class="fas fa-file-excel" style="color: #1D6F42;" aria-hidden="true"></i></a>';
                             return $btn;
                         })
-                        ->rawColumns(['action', 'created_date', 'created_by', 'status', 'inspection_status', 'date_of_inspection','next_due'])
+                        ->rawColumns(['action', 'created_date', 'created_by', 'status', 'inspection_status', 'date_of_inspection', 'next_due'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -282,7 +283,7 @@ class HooterInspectionController extends Controller
 
             // $checklist_store = $this->checklist_follow->store($inspection_type, $id);
 
-            $signature_update = $this->signature->CheckedBySignature($id, $inspection_type);
+            // $signature_update = $this->signature->CheckedBySignature($id, $inspection_type);
 
             $ehsOfficer = GetEHSOfficer();
             $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
@@ -403,7 +404,7 @@ class HooterInspectionController extends Controller
         try {
             $id = decryptId($request->id);
             $inspection_updates = $this->hooter->EHSOfficerUpdate($id);
-            $signature_update = $this->signature->signatureUpload(HOOTER_INSPECTION);
+            // $signature_update = $this->signature->signatureUpload(HOOTER_INSPECTION);
             $inspection_details = $this->hooter->selectOne($id);
             if ($request->is_passed == 1) {
                 $message = 'Hooter Inspeciton Approved Successfully';
@@ -473,7 +474,7 @@ class HooterInspectionController extends Controller
             $id = decryptId($request->id);
             $safety_gallery_inspection = $this->hooter->capaSubmit($id);
             $inspection_details = $this->hooter->selectOne($id);
-            $signature_update = $this->signature->signatureUpload(HOOTER_INSPECTION);
+            // $signature_update = $this->signature->signatureUpload(HOOTER_INSPECTION);
             $ehsOfficers = $inspection_details->verified_by;
             $userIds = [
                 'users' => $ehsOfficers,
@@ -534,7 +535,7 @@ class HooterInspectionController extends Controller
             $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->remarks;
             $safety_gallery_inspection = $this->hooter->capaVerifySubmit($id, $status, $remarks);
-            $signature_update = $this->signature->signatureUpload(HOOTER_INSPECTION);
+            // $signature_update = $this->signature->signatureUpload(HOOTER_INSPECTION);
             $inspection_details = $this->hooter->selectOne($id);
             if ($status == 1) {
                 $message = 'CAPA Action Verified Successfully';
@@ -608,7 +609,7 @@ class HooterInspectionController extends Controller
             $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->level_one_manager;
             $safety_gallery_inspection = $this->hooter->levelOneManagerSubmit($id, $status, $remarks);
-            $signature_update = $this->signature->signatureUpload(HOOTER_INSPECTION);
+            // $signature_update = $this->signature->signatureUpload(HOOTER_INSPECTION);
             $inspection_details = $this->hooter->selectOne($id);
             if ($status == 1) {
                 $message = 'Level One Manager Verified Successfully';
@@ -684,7 +685,7 @@ class HooterInspectionController extends Controller
             $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->level_two_manager;
             $safety_gallery_inspection = $this->hooter->levelTwoManagerSubmit($id, $status, $remarks);
-            $signature_update = $this->signature->signatureUpload(HOOTER_INSPECTION);
+            // $signature_update = $this->signature->signatureUpload(HOOTER_INSPECTION);
             $inspection_details = $this->hooter->selectOne($id);
             if ($status == 1) {
                 $message = 'Hooter Inspeciton Approved Successfully!';
@@ -696,7 +697,6 @@ class HooterInspectionController extends Controller
                 $web_link =   admin_url('fire/hooter-inspection/verification/' . encryptId($inspection_details->id) . '/capa');
                 $to_status = L2_MANAGER_REJECTED;
                 $users = array_merge([$inspection_details->created_by], [$inspection_details->verified_by], [$inspection_details->l1_manager_verified_by]);
-
             }
             // dd($users);
 
@@ -897,7 +897,7 @@ class HooterInspectionController extends Controller
                 }
 
                 $signatureRowStart = $dataRow;
-                $sheet->getRowDimension($signatureRowStart)->setRowHeight(80);
+                $sheet->getRowDimension($signatureRowStart)->setRowHeight(30);
 
                 $sheet->mergeCells("A{$signatureRowStart}:D{$signatureRowStart}");
                 $sheet->getStyle("A{$signatureRowStart}:D{$signatureRowStart}")->applyFromArray([
@@ -909,21 +909,32 @@ class HooterInspectionController extends Controller
                     ],
                 ]);
 
-                if (file_exists($prepared_by_signature)) {
-                    $drawing = new Drawing();
-                    $drawing->setName('Signature');
-                    $drawing->setDescription('Prepared By');
-                    $drawing->setPath($prepared_by_signature);
-                    $drawing->setCoordinates("B{$signatureRowStart}");
-                    $drawing->setOffsetX(60);
-                    $drawing->setOffsetY(5);
-                    $drawing->setHeight(40);
-                    $drawing->setWorksheet($sheet);
+                $richText = new RichText();
+                $name = getUsername($inspection_detail->checked_by);
 
-                    $sheet->setCellValue("A{$signatureRowStart}", "\n\n\nPrepared By:\n" . getUsername($inspection_detail->checked_by));
+                if (!empty($name)) {
+                    $richText->createTextRun("Checked By :" . $name)->getFont()->setBold(true);
                 } else {
-                    $sheet->setCellValue("A{$signatureRowStart}", "Prepared By:\nInspection not yet started");
+                    $richText->createTextRun("Inspection has not been Checked Yet")->getFont()->setBold(true);
                 }
+
+                $sheet->getCell("A{$signatureRowStart}")->setValue($richText);
+
+                // if (file_exists($prepared_by_signature)) {
+                //     $drawing = new Drawing();
+                //     $drawing->setName('Signature');
+                //     $drawing->setDescription('Prepared By');
+                //     $drawing->setPath($prepared_by_signature);
+                //     $drawing->setCoordinates("B{$signatureRowStart}");
+                //     $drawing->setOffsetX(60);
+                //     $drawing->setOffsetY(5);
+                //     $drawing->setHeight(40);
+                //     $drawing->setWorksheet($sheet);
+
+                //     $sheet->setCellValue("A{$signatureRowStart}", "\n\n\nPrepared By:\n" . getUsername($inspection_detail->checked_by));
+                // } else {
+                //     $sheet->setCellValue("A{$signatureRowStart}", "Prepared By:\nInspection not yet started");
+                // }
 
                 $sheet->mergeCells("E{$signatureRowStart}:G{$signatureRowStart}");
                 $sheet->getStyle("E{$signatureRowStart}:G{$signatureRowStart}")->applyFromArray([
@@ -935,21 +946,32 @@ class HooterInspectionController extends Controller
                     ],
                 ]);
 
-                if (file_exists($verified_by_signature)) {
-                    $drawing = new Drawing();
-                    $drawing->setName('Signature');
-                    $drawing->setDescription('Verified By');
-                    $drawing->setPath($verified_by_signature);
-                    $drawing->setCoordinates("F{$signatureRowStart}");
-                    $drawing->setOffsetX(5);
-                    $drawing->setOffsetY(5);
-                    $drawing->setHeight(40);
-                    $drawing->setWorksheet($sheet);
+                $richText = new RichText();
+                $name = getUsername($inspection_detail->verified_by);
 
-                    $sheet->setCellValue("E{$signatureRowStart}", "\n\n\nVerified By:\n" . getUsername($inspection_detail->verified_by));
+                if (!empty($name)) {
+                    $richText->createTextRun("Verified By :" . $name)->getFont()->setBold(true);
                 } else {
-                    $sheet->setCellValue("E{$signatureRowStart}", "Verified By:\nInspection not yet completed");
+                    $richText->createTextRun("Inspection has not been Verified Yet")->getFont()->setBold(true);
                 }
+
+                $sheet->getCell("E{$signatureRowStart}")->setValue($richText);
+
+                // if (file_exists($verified_by_signature)) {
+                //     $drawing = new Drawing();
+                //     $drawing->setName('Signature');
+                //     $drawing->setDescription('Verified By');
+                //     $drawing->setPath($verified_by_signature);
+                //     $drawing->setCoordinates("F{$signatureRowStart}");
+                //     $drawing->setOffsetX(5);
+                //     $drawing->setOffsetY(5);
+                //     $drawing->setHeight(40);
+                //     $drawing->setWorksheet($sheet);
+
+                //     $sheet->setCellValue("E{$signatureRowStart}", "\n\n\nVerified By:\n" . getUsername($inspection_detail->verified_by));
+                // } else {
+                //     $sheet->setCellValue("E{$signatureRowStart}", "Verified By:\nInspection not yet completed");
+                // }
 
                 $sheet->mergeCells("H{$signatureRowStart}:K{$signatureRowStart}");
                 $sheet->getStyle("H{$signatureRowStart}:K{$signatureRowStart}")->applyFromArray([
@@ -961,27 +983,38 @@ class HooterInspectionController extends Controller
                     ],
                 ]);
 
-                if (file_exists($approved_by_signature)) {
-                    $drawing = new Drawing();
-                    $drawing->setName('Signature');
-                    $drawing->setDescription('Approved By');
-                    $drawing->setPath($approved_by_signature);
-                    $drawing->setCoordinates("J{$signatureRowStart}");
-                    $drawing->setOffsetX(5);
-                    $drawing->setOffsetY(5);
-                    $drawing->setHeight(40);
-                    $drawing->setWorksheet($sheet);
+                $richText = new RichText();
+                $name = getUsername($inspection_detail->approved_by);
 
-                    $sheet->setCellValue("H{$signatureRowStart}", "\n\n\nApproved By:\n" . getUsername($inspection_detail->approved_by));
+                if (!empty($name)) {
+                    $richText->createTextRun("Approved By :" . $name)->getFont()->setBold(true);
                 } else {
-                    $sheet->setCellValue("H{$signatureRowStart}", "Approved By:\nApproval pending");
+                    $richText->createTextRun("Inspection has not been Approved Yet")->getFont()->setBold(true);
                 }
 
+                $sheet->getCell("H{$signatureRowStart}")->setValue($richText);
 
-                $row = $signatureRowStart + 6;
+                // if (file_exists($approved_by_signature)) {
+                //     $drawing = new Drawing();
+                //     $drawing->setName('Signature');
+                //     $drawing->setDescription('Approved By');
+                //     $drawing->setPath($approved_by_signature);
+                //     $drawing->setCoordinates("J{$signatureRowStart}");
+                //     $drawing->setOffsetX(5);
+                //     $drawing->setOffsetY(5);
+                //     $drawing->setHeight(40);
+                //     $drawing->setWorksheet($sheet);
+
+                //     $sheet->setCellValue("H{$signatureRowStart}", "\n\n\nApproved By:\n" . getUsername($inspection_detail->approved_by));
+                // } else {
+                //     $sheet->setCellValue("H{$signatureRowStart}", "Approved By:\nApproval pending");
+                // }
+
+
+                $row = $signatureRowStart + 4;
             }
 
-            $fileName = 'hooter_inspection_' . now()->format('YmdHis') . '.xlsx';
+            $fileName = 'Hooter Inspection.xlsx';
             $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
             $tempFile = storage_path("app/public/{$fileName}");
             $writer->save($tempFile);
@@ -1127,7 +1160,7 @@ class HooterInspectionController extends Controller
             }
 
             $signatureRowStart = $row;
-            $sheet->getRowDimension($signatureRowStart)->setRowHeight(80);
+            $sheet->getRowDimension($signatureRowStart)->setRowHeight(30);
 
             // Prepared By
             $sheet->mergeCells("A{$signatureRowStart}:D{$signatureRowStart}");
@@ -1136,20 +1169,31 @@ class HooterInspectionController extends Controller
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
             ]);
 
-            if (file_exists($prepared_by_signature)) {
-                $drawing = new Drawing();
-                $drawing->setName('Signature');
-                $drawing->setDescription('Prepared By');
-                $drawing->setPath($prepared_by_signature);
-                $drawing->setCoordinates("C{$signatureRowStart}");
-                $drawing->setOffsetX(5);
-                $drawing->setOffsetY(5);
-                $drawing->setHeight(40);
-                $drawing->setWorksheet($sheet);
-                $sheet->setCellValue("A{$signatureRowStart}", "\n\n\nPrepared By:\n" . getUsername($inspection->created_by));
-            } else {
-                $sheet->setCellValue("A{$signatureRowStart}", "Prepared By:\nInspection not yet started");
-            }
+             $richText = new RichText();
+                $name = getUsername($inspection->created_by);
+
+                if (!empty($name)) {
+                    $richText->createTextRun("Prepared By :" . $name)->getFont()->setBold(true);
+                } else {
+                    $richText->createTextRun("Inspection has not been Prepared Yet")->getFont()->setBold(true);
+                }
+
+                $sheet->getCell("A{$signatureRowStart}")->setValue($richText);
+
+            // if (file_exists($prepared_by_signature)) {
+            //     $drawing = new Drawing();
+            //     $drawing->setName('Signature');
+            //     $drawing->setDescription('Prepared By');
+            //     $drawing->setPath($prepared_by_signature);
+            //     $drawing->setCoordinates("C{$signatureRowStart}");
+            //     $drawing->setOffsetX(5);
+            //     $drawing->setOffsetY(5);
+            //     $drawing->setHeight(40);
+            //     $drawing->setWorksheet($sheet);
+            //     $sheet->setCellValue("A{$signatureRowStart}", "\n\n\nPrepared By:\n" . getUsername($inspection->created_by));
+            // } else {
+            //     $sheet->setCellValue("A{$signatureRowStart}", "Prepared By:\nInspection not yet started");
+            // }
 
             // Verified By
             $sheet->mergeCells("E{$signatureRowStart}:H{$signatureRowStart}");
@@ -1158,20 +1202,31 @@ class HooterInspectionController extends Controller
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
             ]);
 
-            if (file_exists($verified_by_signature)) {
-                $drawing = new Drawing();
-                $drawing->setName('Signature');
-                $drawing->setDescription('Verified By');
-                $drawing->setPath($verified_by_signature);
-                $drawing->setCoordinates("G{$signatureRowStart}");
-                $drawing->setOffsetX(5);
-                $drawing->setOffsetY(5);
-                $drawing->setHeight(40);
-                $drawing->setWorksheet($sheet);
-                $sheet->setCellValue("E{$signatureRowStart}", "\n\n\nVerified By:\n" . getUsername($inspection->updated_by));
-            } else {
-                $sheet->setCellValue("E{$signatureRowStart}", "Verified By:\nInspection not yet completed");
-            }
+             $richText = new RichText();
+                $name = getUsername($inspection->verified_by);
+
+                if (!empty($name)) {
+                    $richText->createTextRun("Verified By :" . $name)->getFont()->setBold(true);
+                } else {
+                    $richText->createTextRun("Inspection has not been Verified Yet")->getFont()->setBold(true);
+                }
+
+                $sheet->getCell("E{$signatureRowStart}")->setValue($richText);
+
+            // if (file_exists($verified_by_signature)) {
+            //     $drawing = new Drawing();
+            //     $drawing->setName('Signature');
+            //     $drawing->setDescription('Verified By');
+            //     $drawing->setPath($verified_by_signature);
+            //     $drawing->setCoordinates("G{$signatureRowStart}");
+            //     $drawing->setOffsetX(5);
+            //     $drawing->setOffsetY(5);
+            //     $drawing->setHeight(40);
+            //     $drawing->setWorksheet($sheet);
+            //     $sheet->setCellValue("E{$signatureRowStart}", "\n\n\nVerified By:\n" . getUsername($inspection->updated_by));
+            // } else {
+            //     $sheet->setCellValue("E{$signatureRowStart}", "Verified By:\nInspection not yet completed");
+            // }
 
             // Approved By
             $sheet->mergeCells("I{$signatureRowStart}:K{$signatureRowStart}");
@@ -1179,21 +1234,32 @@ class HooterInspectionController extends Controller
                 'borders'   => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
             ]);
+             $richText = new RichText();
+                $name = getUsername($inspection->approved_by);
 
-            if (file_exists($approved_by_signature)) {
-                $drawing = new Drawing();
-                $drawing->setName('Signature');
-                $drawing->setDescription('Approved By');
-                $drawing->setPath($approved_by_signature);
-                $drawing->setCoordinates("J{$signatureRowStart}");
-                $drawing->setOffsetX(5);
-                $drawing->setOffsetY(5);
-                $drawing->setHeight(40);
-                $drawing->setWorksheet($sheet);
-                $sheet->setCellValue("I{$signatureRowStart}", "\n\n\nApproved By:\n" . getUsername($inspection->approved_by));
-            } else {
-                $sheet->setCellValue("I{$signatureRowStart}", "Approved By:\nApproval pending");
-            }
+                if (!empty($name)) {
+                    $richText->createTextRun("Approved By :" . $name)->getFont()->setBold(true);
+                } else {
+                    $richText->createTextRun("Inspection has not been Approved Yet")->getFont()->setBold(true);
+                }
+
+                $sheet->getCell("I{$signatureRowStart}")->setValue($richText);
+
+
+            // if (file_exists($approved_by_signature)) {
+            //     $drawing = new Drawing();
+            //     $drawing->setName('Signature');
+            //     $drawing->setDescription('Approved By');
+            //     $drawing->setPath($approved_by_signature);
+            //     $drawing->setCoordinates("J{$signatureRowStart}");
+            //     $drawing->setOffsetX(5);
+            //     $drawing->setOffsetY(5);
+            //     $drawing->setHeight(40);
+            //     $drawing->setWorksheet($sheet);
+            //     $sheet->setCellValue("I{$signatureRowStart}", "\n\n\nApproved By:\n" . getUsername($inspection->approved_by));
+            // } else {
+            //     $sheet->setCellValue("I{$signatureRowStart}", "Approved By:\nApproval pending");
+            // }
 
             $writer   = new Xlsx($spreadsheet);
             $fileName = 'Hooter Inspection.xlsx';
@@ -1202,7 +1268,7 @@ class HooterInspectionController extends Controller
 
             return response()->download($filePath)->deleteFileAfterSend(true);
         } catch (\Exception $e) {
-            report($e);
+            dd($e);
             Session::flash('error', 'Something went wrong!');
             return redirect(admin_url('fire/hooter-inspection/list'));
         }

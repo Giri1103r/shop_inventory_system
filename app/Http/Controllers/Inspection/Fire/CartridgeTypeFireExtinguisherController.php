@@ -306,7 +306,7 @@ class CartridgeTypeFireExtinguisherController extends Controller
             $inspection_file = $this->files->file_upload($inspection_type, $id);
 
             // $checklist_store = $this->checklist_follow->store($inspection_type, $id);
-            $signature_update = $this->signature->CheckedBySignature($id, $inspection_type);
+            // $signature_update = $this->signature->CheckedBySignature($id, $inspection_type);
 
             $ehsOfficer = GetEHSOfficer();
             $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
@@ -428,7 +428,7 @@ class CartridgeTypeFireExtinguisherController extends Controller
         try {
             $id = decryptId($request->id);
             $inspection_updates = $this->cartridge_type->EHSOfficerUpdate($id);
-            $signature_update = $this->signature->signatureUpload(CARTRIDGE_TYPE_FIRE_EXTINGUISHER_INSPECTION);
+            // $signature_update = $this->signature->signatureUpload(CARTRIDGE_TYPE_FIRE_EXTINGUISHER_INSPECTION);
             $inspection_details = $this->cartridge_type->selectOne($id);
             if ($request->is_passed == 1) {
                 $message = 'Cartridge Type Fire Inspeciton Approved Successfully';
@@ -498,7 +498,7 @@ class CartridgeTypeFireExtinguisherController extends Controller
             $id = decryptId($request->id);
             $safety_gallery_inspection = $this->cartridge_type->capaSubmit($id);
             $inspection_details = $this->cartridge_type->selectOne($id);
-            $signature_update = $this->signature->signatureUpload(CARTRIDGE_TYPE_FIRE_EXTINGUISHER_INSPECTION);
+            // $signature_update = $this->signature->signatureUpload(CARTRIDGE_TYPE_FIRE_EXTINGUISHER_INSPECTION);
             $ehsOfficers = $inspection_details->verified_by;
             $userIds = [
                 'users' => $ehsOfficers,
@@ -559,7 +559,7 @@ class CartridgeTypeFireExtinguisherController extends Controller
             $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->remarks;
             $safety_gallery_inspection = $this->cartridge_type->capaVerifySubmit($id, $status, $remarks);
-            $signature_update = $this->signature->signatureUpload(CARTRIDGE_TYPE_FIRE_EXTINGUISHER_INSPECTION);
+            // $signature_update = $this->signature->signatureUpload(CARTRIDGE_TYPE_FIRE_EXTINGUISHER_INSPECTION);
             $inspection_details = $this->cartridge_type->selectOne($id);
             if ($status == 1) {
                 $message = 'CAPA Action Verified Successfully';
@@ -633,7 +633,7 @@ class CartridgeTypeFireExtinguisherController extends Controller
             $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->level_one_manager;
             $safety_gallery_inspection = $this->cartridge_type->levelOneManagerSubmit($id, $status, $remarks);
-            $signature_update = $this->signature->signatureUpload(CARTRIDGE_TYPE_FIRE_EXTINGUISHER_INSPECTION);
+            // $signature_update = $this->signature->signatureUpload(CARTRIDGE_TYPE_FIRE_EXTINGUISHER_INSPECTION);
             $inspection_details = $this->cartridge_type->selectOne($id);
             if ($status == 1) {
                 $message = 'Level One Manager Verified Successfully';
@@ -707,7 +707,7 @@ class CartridgeTypeFireExtinguisherController extends Controller
             $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->level_two_manager;
             $safety_gallery_inspection = $this->cartridge_type->levelTwoManagerSubmit($id, $status, $remarks);
-            $signature_update = $this->signature->signatureUpload(CARTRIDGE_TYPE_FIRE_EXTINGUISHER_INSPECTION);
+            // $signature_update = $this->signature->signatureUpload(CARTRIDGE_TYPE_FIRE_EXTINGUISHER_INSPECTION);
             $inspection_details = $this->cartridge_type->selectOne($id);
             if ($status == 1) {
                 $message = 'Cartridge Type Fire Inspeciton Approved Successfully!';
@@ -987,7 +987,7 @@ class CartridgeTypeFireExtinguisherController extends Controller
 
 
                 $signatureRowStart = $dataRow;
-                $sheet->getRowDimension($signatureRowStart)->setRowHeight(80);
+                $sheet->getRowDimension($signatureRowStart)->setRowHeight(30);
 
                 $sheet->mergeCells("A{$signatureRowStart}:E{$signatureRowStart}");
                 $sheet->getStyle("A{$signatureRowStart}:E{$signatureRowStart}")->applyFromArray([
@@ -999,21 +999,32 @@ class CartridgeTypeFireExtinguisherController extends Controller
                     ],
                 ]);
 
-                if (file_exists($prepared_by_signature)) {
-                    $drawing = new Drawing();
-                    $drawing->setName('Signature');
-                    $drawing->setDescription('Prepared By');
-                    $drawing->setPath($prepared_by_signature);
-                    $drawing->setCoordinates("C{$signatureRowStart}");
-                    $drawing->setOffsetX(10);
-                    $drawing->setOffsetY(5);
-                    $drawing->setHeight(40);
-                    $drawing->setWorksheet($sheet);
+                $richText = new RichText();
+                $name = getUsername($detail->created_by);
 
-                    $sheet->setCellValue("A{$signatureRowStart}", "\n\n\nPrepared By:\n" . getUsername($inspection_detail->checked_by));
+                if (!empty($name)) {
+                    $richText->createTextRun("Prepared By :" . $name)->getFont()->setBold(true);
                 } else {
-                    $sheet->setCellValue("A{$signatureRowStart}", "Prepared By:\nInspection not yet started");
+                    $richText->createTextRun("Inspection has not been Prepared Yet")->getFont()->setBold(true);
                 }
+
+                $sheet->getCell("A{$signatureRowStart}")->setValue($richText);
+
+                // if (file_exists($prepared_by_signature)) {
+                //     $drawing = new Drawing();
+                //     $drawing->setName('Signature');
+                //     $drawing->setDescription('Prepared By');
+                //     $drawing->setPath($prepared_by_signature);
+                //     $drawing->setCoordinates("C{$signatureRowStart}");
+                //     $drawing->setOffsetX(10);
+                //     $drawing->setOffsetY(5);
+                //     $drawing->setHeight(40);
+                //     $drawing->setWorksheet($sheet);
+
+                //     $sheet->setCellValue("A{$signatureRowStart}", "\n\n\nPrepared By:\n" . getUsername($inspection_detail->checked_by));
+                // } else {
+                //     $sheet->setCellValue("A{$signatureRowStart}", "Prepared By:\nInspection not yet started");
+                // }
 
                 $sheet->mergeCells("F{$signatureRowStart}:L{$signatureRowStart}");
                 $sheet->getStyle("F{$signatureRowStart}:L{$signatureRowStart}")->applyFromArray([
@@ -1025,21 +1036,32 @@ class CartridgeTypeFireExtinguisherController extends Controller
                     ],
                 ]);
 
-                if (file_exists($verified_by_signature)) {
-                    $drawing = new Drawing();
-                    $drawing->setName('Signature');
-                    $drawing->setDescription('Verified By');
-                    $drawing->setPath($verified_by_signature);
-                    $drawing->setCoordinates("I{$signatureRowStart}");
-                    $drawing->setOffsetX(50);
-                    $drawing->setOffsetY(5);
-                    $drawing->setHeight(40);
-                    $drawing->setWorksheet($sheet);
+                $richText = new RichText();
+                $name = getUsername($detail->verified_by);
 
-                    $sheet->setCellValue("F{$signatureRowStart}", "\n\n\nVerified By:\n" . getUsername($inspection_detail->updated_by));
+                if (!empty($name)) {
+                    $richText->createTextRun("Verified By :" . $name)->getFont()->setBold(true);
                 } else {
-                    $sheet->setCellValue("F{$signatureRowStart}", "Verified By:\nInspection not yet completed");
+                    $richText->createTextRun("Inspection has not been Verified Yet")->getFont()->setBold(true);
                 }
+
+                $sheet->getCell("F{$signatureRowStart}")->setValue($richText);
+
+                // if (file_exists($verified_by_signature)) {
+                //     $drawing = new Drawing();
+                //     $drawing->setName('Signature');
+                //     $drawing->setDescription('Verified By');
+                //     $drawing->setPath($verified_by_signature);
+                //     $drawing->setCoordinates("I{$signatureRowStart}");
+                //     $drawing->setOffsetX(50);
+                //     $drawing->setOffsetY(5);
+                //     $drawing->setHeight(40);
+                //     $drawing->setWorksheet($sheet);
+
+                //     $sheet->setCellValue("F{$signatureRowStart}", "\n\n\nVerified By:\n" . getUsername($inspection_detail->updated_by));
+                // } else {
+                //     $sheet->setCellValue("F{$signatureRowStart}", "Verified By:\nInspection not yet completed");
+                // }
 
                 $sheet->mergeCells("M{$signatureRowStart}:P{$signatureRowStart}");
                 $sheet->getStyle("M{$signatureRowStart}:P{$signatureRowStart}")->applyFromArray([
@@ -1051,24 +1073,35 @@ class CartridgeTypeFireExtinguisherController extends Controller
                     ],
                 ]);
 
-                if (file_exists($approved_by_signature)) {
-                    $drawing = new Drawing();
-                    $drawing->setName('Signature');
-                    $drawing->setDescription('Approved By');
-                    $drawing->setPath($approved_by_signature);
-                    $drawing->setCoordinates("N{$signatureRowStart}");
-                    $drawing->setOffsetX(5);
-                    $drawing->setOffsetY(5);
-                    $drawing->setHeight(40);
-                    $drawing->setWorksheet($sheet);
+                $richText = new RichText();
+                $name = getUsername($detail->approved_by);
 
-                    $sheet->setCellValue("M{$signatureRowStart}", "\n\n\nApproved By:\n" . getUsername($inspection_detail->approved_by));
+                if (!empty($name)) {
+                    $richText->createTextRun("Approved By :" . $name)->getFont()->setBold(true);
                 } else {
-                    $sheet->setCellValue("M{$signatureRowStart}", "Approved By:\nApproval pending");
+                    $richText->createTextRun("Inspection has not been Approved Yet")->getFont()->setBold(true);
                 }
 
+                $sheet->getCell("M{$signatureRowStart}")->setValue($richText);
 
-                $row = $signatureRowStart + 6;
+                // if (file_exists($approved_by_signature)) {
+                //     $drawing = new Drawing();
+                //     $drawing->setName('Signature');
+                //     $drawing->setDescription('Approved By');
+                //     $drawing->setPath($approved_by_signature);
+                //     $drawing->setCoordinates("N{$signatureRowStart}");
+                //     $drawing->setOffsetX(5);
+                //     $drawing->setOffsetY(5);
+                //     $drawing->setHeight(40);
+                //     $drawing->setWorksheet($sheet);
+
+                //     $sheet->setCellValue("M{$signatureRowStart}", "\n\n\nApproved By:\n" . getUsername($inspection_detail->approved_by));
+                // } else {
+                //     $sheet->setCellValue("M{$signatureRowStart}", "Approved By:\nApproval pending");
+                // }
+
+
+                $row = $signatureRowStart + 4;
             }
 
             $writer = new Xlsx($spreadsheet);
@@ -1311,67 +1344,100 @@ class CartridgeTypeFireExtinguisherController extends Controller
 
 
             $signatureRow = $row;
-            $sheet->getRowDimension($signatureRow)->setRowHeight(80);
+            $sheet->getRowDimension($signatureRow)->setRowHeight(30);
 
             $sheet->mergeCells("A{$signatureRow}:E{$signatureRow}");
             $sheet->getStyle("A{$signatureRow}:E{$signatureRow}")->applyFromArray([
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
             ]);
-            if (file_exists($prepared_by_signature)) {
-                $drawing = new Drawing();
-                $drawing->setName('Prepared Signature');
-                $drawing->setDescription('Prepared By');
-                $drawing->setPath($prepared_by_signature);
-                $drawing->setCoordinates("C{$signatureRow}");
-                $drawing->setOffsetX(5);
-                $drawing->setOffsetY(5);
-                $drawing->setHeight(40);
-                $drawing->setWorksheet($sheet);
-                $sheet->setCellValue("A{$signatureRow}", "\n\n\nPrepared By:\n" . getUsername($cartridge_type->created_by));
+
+            $richText = new RichText();
+            $name = getUsername($cartridge_type->created_by);
+
+            if (!empty($name)) {
+                $richText->createTextRun("Prepared By :" . $name)->getFont()->setBold(true);
             } else {
-                $sheet->setCellValue("A{$signatureRow}", "Prepared By:\nInspection not yet started");
+                $richText->createTextRun("Inspection has not been Prepared Yet")->getFont()->setBold(true);
             }
+
+            $sheet->getCell("A{$signatureRow}")->setValue($richText);
+
+            // if (file_exists($prepared_by_signature)) {
+            //     $drawing = new Drawing();
+            //     $drawing->setName('Prepared Signature');
+            //     $drawing->setDescription('Prepared By');
+            //     $drawing->setPath($prepared_by_signature);
+            //     $drawing->setCoordinates("C{$signatureRow}");
+            //     $drawing->setOffsetX(5);
+            //     $drawing->setOffsetY(5);
+            //     $drawing->setHeight(40);
+            //     $drawing->setWorksheet($sheet);
+            //     $sheet->setCellValue("A{$signatureRow}", "\n\n\nPrepared By:\n" . getUsername($cartridge_type->created_by));
+            // } else {
+            //     $sheet->setCellValue("A{$signatureRow}", "Prepared By:\nInspection not yet started");
+            // }
 
             $sheet->mergeCells("F{$signatureRow}:L{$signatureRow}");
             $sheet->getStyle("F{$signatureRow}:L{$signatureRow}")->applyFromArray([
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
             ]);
-            if (file_exists($verified_by_signature)) {
-                $drawing = new Drawing();
-                $drawing->setName('Verified Signature');
-                $drawing->setDescription('Verified By');
-                $drawing->setPath($verified_by_signature);
-                $drawing->setCoordinates("H{$signatureRow}");
-                $drawing->setOffsetX(5);
-                $drawing->setOffsetY(5);
-                $drawing->setHeight(40);
-                $drawing->setWorksheet($sheet);
-                $sheet->setCellValue("F{$signatureRow}", "\n\n\nVerified By:\n" . getUsername($cartridge_type->updated_by));
+            $richText = new RichText();
+            $name = getUsername($cartridge_type->verified_by);
+
+            if (!empty($name)) {
+                $richText->createTextRun("Verified By :" . $name)->getFont()->setBold(true);
             } else {
-                $sheet->setCellValue("F{$signatureRow}", "Verified By:\nInspection not yet completed");
+                $richText->createTextRun("Inspection has not been Verified Yet")->getFont()->setBold(true);
             }
+
+            $sheet->getCell("F{$signatureRow}")->setValue($richText);
+            // if (file_exists($verified_by_signature)) {
+            //     $drawing = new Drawing();
+            //     $drawing->setName('Verified Signature');
+            //     $drawing->setDescription('Verified By');
+            //     $drawing->setPath($verified_by_signature);
+            //     $drawing->setCoordinates("H{$signatureRow}");
+            //     $drawing->setOffsetX(5);
+            //     $drawing->setOffsetY(5);
+            //     $drawing->setHeight(40);
+            //     $drawing->setWorksheet($sheet);
+            //     $sheet->setCellValue("F{$signatureRow}", "\n\n\nVerified By:\n" . getUsername($cartridge_type->updated_by));
+            // } else {
+            //     $sheet->setCellValue("F{$signatureRow}", "Verified By:\nInspection not yet completed");
+            // }
 
             $sheet->mergeCells("M{$signatureRow}:P{$signatureRow}");
             $sheet->getStyle("M{$signatureRow}:P{$signatureRow}")->applyFromArray([
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
             ]);
-            if (file_exists($approved_by_signature)) {
-                $drawing = new Drawing();
-                $drawing->setName('Approved Signature');
-                $drawing->setDescription('Approved By');
-                $drawing->setPath($approved_by_signature);
-                $drawing->setCoordinates("N{$signatureRow}");
-                $drawing->setOffsetX(5);
-                $drawing->setOffsetY(5);
-                $drawing->setHeight(40);
-                $drawing->setWorksheet($sheet);
-                $sheet->setCellValue("M{$signatureRow}", "\n\n\nApproved By:\n" . getUsername($cartridge_type->approved_by));
+            $richText = new RichText();
+            $name = getUsername($cartridge_type->approved_by);
+
+            if (!empty($name)) {
+                $richText->createTextRun("Approved By :" . $name)->getFont()->setBold(true);
             } else {
-                $sheet->setCellValue("M{$signatureRow}", "Approved By:\nApproval pending");
+                $richText->createTextRun("Inspection has not been Approved Yet")->getFont()->setBold(true);
             }
+
+            $sheet->getCell("M{$signatureRow}")->setValue($richText);
+            
+            // if (file_exists($approved_by_signature)) {
+            //     $drawing = new Drawing();
+            //     $drawing->setName('Approved Signature');
+            //     $drawing->setDescription('Approved By');
+            //     $drawing->setPath($approved_by_signature);
+            //     $drawing->setCoordinates("N{$signatureRow}");
+            //     $drawing->setOffsetX(5);
+            //     $drawing->setOffsetY(5);
+            //     $drawing->setHeight(40);
+            //     $drawing->setWorksheet($sheet);
+            //     $sheet->setCellValue("M{$signatureRow}", "\n\n\nApproved By:\n" . getUsername($cartridge_type->approved_by));
+            // } else {
+            //     $sheet->setCellValue("M{$signatureRow}", "Approved By:\nApproval pending");
+            // }
 
             $writer = new Xlsx($spreadsheet);
             $fileName = 'Catridge Type Fire Extinguisher.xlsx';

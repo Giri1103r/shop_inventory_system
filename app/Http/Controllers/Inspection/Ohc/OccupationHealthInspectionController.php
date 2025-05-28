@@ -264,7 +264,7 @@ class OccupationHealthInspectionController extends Controller
                 ];
                 $id = $occupation_inspection->id;
                 $this->inspection_ohc_status_log->store($data);
-                $signature = $this->signature->requestorsignatureUpload(OHC_TYPE_OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST, $id);
+                // $signature = $this->signature->requestorsignatureUpload(OHC_TYPE_OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST, $id);
 
 
                 $ehsOfficer = GetEHSOfficer();
@@ -394,7 +394,7 @@ class OccupationHealthInspectionController extends Controller
             $request = Request();
             $id = decryptId($request->id);
 
-            $signature_update = $this->signature->signatureUpload(OHC_TYPE_OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST);
+            // $signature_update = $this->signature->signatureUpload(OHC_TYPE_OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST);
             $occupational_health_center = $this->occupation_inspection->Selectone($id);
             if ($request->is_passed == 1) {
                 $message = 'Occupational Health Center Inspection Checklist Approved Successfully';
@@ -468,7 +468,7 @@ class OccupationHealthInspectionController extends Controller
             $id = decryptId($request->id);
             $occupation_inspection_inspection = $this->occupation_inspection->capaSubmit($id);
             $weeklyAmbulance = $this->occupation_inspection->Selectone($id);
-            $signature_update = $this->signature->signatureUpload(OHC_TYPE_OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST);
+            // $signature_update = $this->signature->signatureUpload(OHC_TYPE_OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST);
             $ehsOfficers = $weeklyAmbulance->verified_by;
             $userIds = [
                 'users' => $ehsOfficers,
@@ -532,7 +532,7 @@ class OccupationHealthInspectionController extends Controller
             $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->remarks;
             $occupation_inspection_inspection = $this->occupation_inspection->capaVerifySubmit($id, $status, $remarks);
-            $signature_update = $this->signature->signatureUpload(OHC_TYPE_OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST);
+            // $signature_update = $this->signature->signatureUpload(OHC_TYPE_OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST);
             $inspection_details = $this->occupation_inspection->Selectone($id);
             if ($status == 1) {
                 $message = 'CAPA Action Verified Successfully';
@@ -610,7 +610,7 @@ class OccupationHealthInspectionController extends Controller
             $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->level_one_manager;
             $occupation_inspection_inspection = $this->occupation_inspection->levelOneManagerSubmit($id, $status, $remarks);
-            $signature_update = $this->signature->signatureUpload(OHC_TYPE_OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST);
+            // $signature_update = $this->signature->signatureUpload(OHC_TYPE_OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST);
             $weekAmbulance = $this->occupation_inspection->Selectone($id);
             if ($status == 1) {
                 $message = 'Level One Manager Verified Successfully';
@@ -687,7 +687,7 @@ class OccupationHealthInspectionController extends Controller
             $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->level_two_manager;
             $occupation_inspection_inspection = $this->occupation_inspection->levelTwoManagerSubmit($id, $status, $remarks);
-            $signature_update = $this->signature->signatureUpload(OHC_TYPE_OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST);
+            // $signature_update = $this->signature->signatureUpload(OHC_TYPE_OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST);
             $weeklyAmbulance = $this->occupation_inspection->Selectone($id);
             if ($status == 1) {
                 $message = 'Occupational Health Center Inspection Checklist  Approved Successfully!';
@@ -826,7 +826,7 @@ class OccupationHealthInspectionController extends Controller
                 // Title Section
                 $sheet->mergeCells("G{$currentRow}:M" . ($currentRow + 2));
                 $sheet->setCellValue("G{$currentRow}", "OCCUPATIONAL HEALTH CENTER");
-                $sheet->getStyle("G{$currentRow}")->applyFromArray([
+                $sheet->getStyle("G{$currentRow}:M{$currentRow}")->applyFromArray([
                     'font' => ['bold' => true, 'size' => 14],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
@@ -891,10 +891,11 @@ class OccupationHealthInspectionController extends Controller
                 $richText2->createText(getFrequencyname($occupational_health_center->frequency));
                 $sheet->getCell("O" . ($currentRow + 4))->setValue($richText2);
 
-                $sheet->getStyle("A" . ($currentRow + 4) . ":S" . ($currentRow + 3))->applyFromArray([
+                $sheet->getStyle("A" . ($currentRow + 4) . ":S" . ($currentRow + 4))->applyFromArray([
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                 ]);
+
 
                 // Table Header
                 $headerRow = $currentRow + 5;
@@ -978,97 +979,146 @@ class OccupationHealthInspectionController extends Controller
 
                 $row = $inspectionRow;
 
-                $CreatorSignature = GetOHCSignature($occupational_health_center->created_by, $details->id, OHC_TYPE_OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST);
-                $VerifiedSignature = GetOHCSignature($occupational_health_center->verified_by, $details->id, OHC_TYPE_OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST);
-                $ApprovedSignature = GetOHCSignature($occupational_health_center->approved_by, $details->id, OHC_TYPE_OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST);
+                $signatureRow = $row;
 
-                if (file_exists($CreatorSignature)) {
-                    $sheet->mergeCells("A$row:F" . ($row + 2));
+                $sheet->getRowDimension($signatureRow)->setRowHeight(30);
 
-                    $drawing = new Drawing();
-                    $drawing->setName('Creator Signature');
-                    $drawing->setPath($CreatorSignature);
-                    $drawing->setCoordinates("A$row");
-                    $drawing->setOffsetX(100);
-                    $drawing->setOffsetY(5);
-                    $drawing->setWidth(70);
-                    $drawing->setHeight(70);
-                    $drawing->setWorksheet($sheet);
-                    $sheet->getRowDimension($row + 2)->setRowHeight(25);
-                    // Label + Name
-                    $sheet->setCellValue("A" . ($row + 3), "Checked By: " . getUserName($occupational_health_center->created_by));
-                    $sheet->mergeCells("A" . ($row + 3) . ":F" . ($row + 3));
+                $sheet->mergeCells("A{$signatureRow}:F{$signatureRow}");
+                $sheet->mergeCells("G{$signatureRow}:L{$signatureRow}");
+                $sheet->mergeCells("M{$signatureRow}:S{$signatureRow}");
 
-                    $sheet->getStyle("A$row:F" . ($row + 3))->applyFromArray([
-                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
-                    ]);
+
+                $sheet->getStyle("A{$signatureRow}:S{$signatureRow}")->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+                ]);
+                // Prepared
+                $richText = new RichText();
+                $name = getUsername($occupational_health_center->created_by);
+
+                if (!empty($name)) {
+                    $richText->createTextRun("Checked by: " . $name)->getFont()->setBold(true);
+                } else {
+                    $richText->createTextRun("Inspection has not been Prepared Yet")->getFont()->setBold(true);
                 }
 
-                if (file_exists($VerifiedSignature)) {
-                    $sheet->mergeCells("G$row:L" . ($row + 2));
+                $sheet->getCell("A{$signatureRow}")->setValue($richText);
 
-                    $drawing = new Drawing();
-                    $drawing->setName('Verified Signature');
-                    $drawing->setPath($VerifiedSignature);
-                    $drawing->setCoordinates("G$row");
-                    $drawing->setOffsetX(100);
-                    $drawing->setOffsetY(5);
-                    $drawing->setWidth(70);
-                    $drawing->setHeight(70);
-                    $drawing->setWorksheet($sheet);
-                    $sheet->getRowDimension($row + 2)->setRowHeight(25);
-                    // Label + Name
-                    $sheet->setCellValue("G" . ($row + 3), "Verified By: " . getUserName($occupational_health_center->verified_by));
-                    $sheet->mergeCells("G" . ($row + 3) . ":L" . ($row + 3));
+                // Verified
+                $richText = new RichText();
+                $name = getUsername($occupational_health_center->verified_by);
 
-                    $sheet->getStyle("G$row:L" . ($row + 3))->applyFromArray([
-                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
-                    ]);
-                }
-                else{
-                    $sheet->setCellValue("G" . ($row + 3), "Inpection Yet Start " );
-                    $sheet->mergeCells("G" . ($row + 3) . ":L" . ($row + 3));
-
-                    $sheet->getStyle("G$row:L" . ($row + 3))->applyFromArray([
-                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
-                    ]);
+                if (!empty($name)) {
+                    $richText->createTextRun("Verified by : " . $name)->getFont()->setBold(true);
+                } else {
+                    $richText->createTextRun("Inspection has not been Verified Yet")->getFont()->setBold(true);
                 }
 
-                if (file_exists($ApprovedSignature)) {
-                    $sheet->mergeCells("M$row:S" . ($row + 2));
+                $sheet->getCell("G{$signatureRow}")->setValue($richText);
 
-                    $drawing = new Drawing();
-                    $drawing->setName('Approved Signature');
-                    $drawing->setPath($ApprovedSignature);
-                    $drawing->setCoordinates("M$row");
-                    $drawing->setOffsetX(100);
-                    $drawing->setOffsetY(5);
-                    $drawing->setWidth(70);
-                    $drawing->setHeight(70);
-                    $drawing->setWorksheet($sheet);
-                    $sheet->getRowDimension($row + 2)->setRowHeight(25);
-                    // Label + Name
-                    $sheet->setCellValue("M" . ($row + 3), "Approved By: " . getUserName($occupational_health_center->approved_by));
-                    $sheet->mergeCells("M" . ($row + 3) . ":S" . ($row + 3));
 
-                    $sheet->getStyle("M$row:S" . ($row + 3))->applyFromArray([
-                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
-                    ]);
-                }else{
-                    $sheet->setCellValue("M" . ($row + 3), "Inpection Yet Start " );
-                    $sheet->mergeCells("M" . ($row + 3) . ":S" . ($row + 3));
+                // Approved
+                $richText = new RichText();
+                $name = getUsername($occupational_health_center->approved_by);
 
-                    $sheet->getStyle("M$row:S" . ($row + 3))->applyFromArray([
-                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
-                    ]);
+                if (!empty($name)) {
+                    $richText->createTextRun("Approved by: " . $name)->getFont()->setBold(true);
+                } else {
+                    $richText->createTextRun("Inspection has not been Approved Yet")->getFont()->setBold(true);
                 }
 
-                $row = $row + 6;
+                $sheet->getCell("M{$signatureRow}")->setValue($richText);
+
+                // $CreatorSignature = GetOHCSignature($occupational_health_center->created_by, $details->id, OHC_TYPE_OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST);
+                // $VerifiedSignature = GetOHCSignature($occupational_health_center->verified_by, $details->id, OHC_TYPE_OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST);
+                // $ApprovedSignature = GetOHCSignature($occupational_health_center->approved_by, $details->id, OHC_TYPE_OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST);
+
+                // if (file_exists($CreatorSignature)) {
+                //     $sheet->mergeCells("A$row:F" . ($row + 2));
+
+                //     $drawing = new Drawing();
+                //     $drawing->setName('Creator Signature');
+                //     $drawing->setPath($CreatorSignature);
+                //     $drawing->setCoordinates("A$row");
+                //     $drawing->setOffsetX(100);
+                //     $drawing->setOffsetY(5);
+                //     $drawing->setWidth(70);
+                //     $drawing->setHeight(70);
+                //     $drawing->setWorksheet($sheet);
+                //     $sheet->getRowDimension($row + 2)->setRowHeight(25);
+                //     // Label + Name
+                //     $sheet->setCellValue("A" . ($row + 3), "Checked By: " . getUserName($occupational_health_center->created_by));
+                //     $sheet->mergeCells("A" . ($row + 3) . ":F" . ($row + 3));
+
+                //     $sheet->getStyle("A$row:F" . ($row + 3))->applyFromArray([
+                //         'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                //         'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                //     ]);
+                // }
+
+                // if (file_exists($VerifiedSignature)) {
+                //     $sheet->mergeCells("G$row:L" . ($row + 2));
+
+                //     $drawing = new Drawing();
+                //     $drawing->setName('Verified Signature');
+                //     $drawing->setPath($VerifiedSignature);
+                //     $drawing->setCoordinates("G$row");
+                //     $drawing->setOffsetX(100);
+                //     $drawing->setOffsetY(5);
+                //     $drawing->setWidth(70);
+                //     $drawing->setHeight(70);
+                //     $drawing->setWorksheet($sheet);
+                //     $sheet->getRowDimension($row + 2)->setRowHeight(25);
+                //     // Label + Name
+                //     $sheet->setCellValue("G" . ($row + 3), "Verified By: " . getUserName($occupational_health_center->verified_by));
+                //     $sheet->mergeCells("G" . ($row + 3) . ":L" . ($row + 3));
+
+                //     $sheet->getStyle("G$row:L" . ($row + 3))->applyFromArray([
+                //         'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                //         'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                //     ]);
+                // } else {
+                //     $sheet->setCellValue("G" . ($row + 3), "Inpection Yet Start ");
+                //     $sheet->mergeCells("G" . ($row + 3) . ":L" . ($row + 3));
+
+                //     $sheet->getStyle("G$row:L" . ($row + 3))->applyFromArray([
+                //         'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                //         'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                //     ]);
+                // }
+
+                // if (file_exists($ApprovedSignature)) {
+                //     $sheet->mergeCells("M$row:S" . ($row + 2));
+
+                //     $drawing = new Drawing();
+                //     $drawing->setName('Approved Signature');
+                //     $drawing->setPath($ApprovedSignature);
+                //     $drawing->setCoordinates("M$row");
+                //     $drawing->setOffsetX(100);
+                //     $drawing->setOffsetY(5);
+                //     $drawing->setWidth(70);
+                //     $drawing->setHeight(70);
+                //     $drawing->setWorksheet($sheet);
+                //     $sheet->getRowDimension($row + 2)->setRowHeight(25);
+                //     // Label + Name
+                //     $sheet->setCellValue("M" . ($row + 3), "Approved By: " . getUserName($occupational_health_center->approved_by));
+                //     $sheet->mergeCells("M" . ($row + 3) . ":S" . ($row + 3));
+
+                //     $sheet->getStyle("M$row:S" . ($row + 3))->applyFromArray([
+                //         'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                //         'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                //     ]);
+                // } else {
+                //     $sheet->setCellValue("M" . ($row + 3), "Inpection Yet Start ");
+                //     $sheet->mergeCells("M" . ($row + 3) . ":S" . ($row + 3));
+
+                //     $sheet->getStyle("M$row:S" . ($row + 3))->applyFromArray([
+                //         'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                //         'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                //     ]);
+                // }
+
+                $row = $row + 4;
             }
 
 
@@ -1302,10 +1352,11 @@ class OccupationHealthInspectionController extends Controller
             $richText2->createText(getFrequencyname($occupational_health_center->frequency));
             $sheet->getCell("O" . ($currentRow + 4))->setValue($richText2);
 
-            $sheet->getStyle("A" . ($currentRow + 4) . ":S" . ($currentRow + 3))->applyFromArray([
+            $sheet->getStyle("A" . ($currentRow + 4) . ":S" . ($currentRow + 4))->applyFromArray([
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
             ]);
+
 
             // Table Header
             $headerRow = $currentRow + 5;
@@ -1387,80 +1438,127 @@ class OccupationHealthInspectionController extends Controller
                 }
             }
 
-            $row = $inspectionRow;
+            $signatureRow = $inspectionRow;
 
-            $CreatorSignature = GetOHCSignature($occupational_health_center->created_by, $id, OHC_TYPE_OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST);
-            $VerifiedSignature = GetOHCSignature($occupational_health_center->verified_by, $id, OHC_TYPE_OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST);
-            $ApprovedSignature = GetOHCSignature($occupational_health_center->approved_by, $id, OHC_TYPE_OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST);
+            $sheet->getRowDimension($signatureRow)->setRowHeight(30);
 
-            if (file_exists($CreatorSignature)) {
-                $sheet->mergeCells("A$row:F" . ($row + 2));
+            $sheet->mergeCells("A{$signatureRow}:F{$signatureRow}");
+            $sheet->mergeCells("G{$signatureRow}:L{$signatureRow}");
+            $sheet->mergeCells("M{$signatureRow}:S{$signatureRow}");
 
-                $drawing = new Drawing();
-                $drawing->setName('Creator Signature');
-                $drawing->setPath($CreatorSignature);
-                $drawing->setCoordinates("A$row");
-                $drawing->setOffsetX(100);
-                $drawing->setOffsetY(5);
-                $drawing->setWidth(70);
-                $drawing->setHeight(70);
-                $drawing->setWorksheet($sheet);
-                $sheet->getRowDimension($row + 2)->setRowHeight(40);
-                // Label + Name
-                $sheet->setCellValue("A" . ($row + 3), "Checked By: " . getUserName($occupational_health_center->created_by));
-                $sheet->mergeCells("A" . ($row + 3) . ":F" . ($row + 3));
 
-                $sheet->getStyle("A$row:F" . ($row + 3))->applyFromArray([
-                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
-                ]);
+            $sheet->getStyle("A{$signatureRow}:S{$signatureRow}")->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+            ]);
+            // Prepared
+            $richText = new RichText();
+            $name = getUsername($occupational_health_center->created_by);
+
+            if (!empty($name)) {
+                $richText->createTextRun("Checked by: " . $name)->getFont()->setBold(true);
+            } else {
+                $richText->createTextRun("Inspection has not been Prepared Yet")->getFont()->setBold(true);
             }
 
-            if (file_exists($VerifiedSignature)) {
-                $sheet->mergeCells("G$row:L" . ($row + 2));
+            $sheet->getCell("A{$signatureRow}")->setValue($richText);
 
-                $drawing = new Drawing();
-                $drawing->setName('Verified Signature');
-                $drawing->setPath($VerifiedSignature);
-                $drawing->setCoordinates("G$row");
-                $drawing->setOffsetX(100);
-                $drawing->setOffsetY(5);
-                $drawing->setWidth(70);
-                $drawing->setHeight(70);
-                $drawing->setWorksheet($sheet);
-                $sheet->getRowDimension($row + 2)->setRowHeight(40);
-                // Label + Name
-                $sheet->setCellValue("G" . ($row + 3), "Verified By: " . getUserName($occupational_health_center->verified_by));
-                $sheet->mergeCells("G" . ($row + 3) . ":L" . ($row + 3));
+            // Verified
+            $richText = new RichText();
+            $name = getUsername($occupational_health_center->verified_by);
 
-                $sheet->getStyle("G$row:L" . ($row + 3))->applyFromArray([
-                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
-                ]);
+            if (!empty($name)) {
+                $richText->createTextRun("Verified by : " . $name)->getFont()->setBold(true);
+            } else {
+                $richText->createTextRun("Inspection has not been Verified Yet")->getFont()->setBold(true);
             }
 
-            if (file_exists($ApprovedSignature)) {
-                $sheet->mergeCells("M$row:S" . ($row + 2));
+            $sheet->getCell("G{$signatureRow}")->setValue($richText);
 
-                $drawing = new Drawing();
-                $drawing->setName('Approved Signature');
-                $drawing->setPath($ApprovedSignature);
-                $drawing->setCoordinates("M$row");
-                $drawing->setOffsetX(100);
-                $drawing->setOffsetY(5);
-                $drawing->setWidth(70);
-                $drawing->setHeight(70);
-                $drawing->setWorksheet($sheet);
-                $sheet->getRowDimension($row + 2)->setRowHeight(60);
-                // Label + Name
-                $sheet->setCellValue("M" . ($row + 3), "Approved By: " . getUserName($occupational_health_center->approved_by));
-                $sheet->mergeCells("M" . ($row + 3) . ":S" . ($row + 3));
 
-                $sheet->getStyle("M$row:S" . ($row + 3))->applyFromArray([
-                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
-                ]);
+            // Approved
+            $richText = new RichText();
+            $name = getUsername($occupational_health_center->approved_by);
+
+            if (!empty($name)) {
+                $richText->createTextRun("Approved by: " . $name)->getFont()->setBold(true);
+            } else {
+                $richText->createTextRun("Inspection has not been Approved Yet")->getFont()->setBold(true);
             }
+
+            $sheet->getCell("M{$signatureRow}")->setValue($richText);
+
+
+
+
+            // if (file_exists($CreatorSignature)) {
+            //     $sheet->mergeCells("A$row:F" . ($row + 2));
+
+            //     $drawing = new Drawing();
+            //     $drawing->setName('Creator Signature');
+            //     $drawing->setPath($CreatorSignature);
+            //     $drawing->setCoordinates("A$row");
+            //     $drawing->setOffsetX(100);
+            //     $drawing->setOffsetY(5);
+            //     $drawing->setWidth(70);
+            //     $drawing->setHeight(70);
+            //     $drawing->setWorksheet($sheet);
+            //     $sheet->getRowDimension($row + 2)->setRowHeight(40);
+            //     // Label + Name
+            //     $sheet->setCellValue("A" . ($row + 3), "Checked By: " . getUserName($occupational_health_center->created_by));
+            //     $sheet->mergeCells("A" . ($row + 3) . ":F" . ($row + 3));
+
+            //     $sheet->getStyle("A$row:F" . ($row + 3))->applyFromArray([
+            //         'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+            //         'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+            //     ]);
+            // }
+
+            // if (file_exists($VerifiedSignature)) {
+            //     $sheet->mergeCells("G$row:L" . ($row + 2));
+
+            //     $drawing = new Drawing();
+            //     $drawing->setName('Verified Signature');
+            //     $drawing->setPath($VerifiedSignature);
+            //     $drawing->setCoordinates("G$row");
+            //     $drawing->setOffsetX(100);
+            //     $drawing->setOffsetY(5);
+            //     $drawing->setWidth(70);
+            //     $drawing->setHeight(70);
+            //     $drawing->setWorksheet($sheet);
+            //     $sheet->getRowDimension($row + 2)->setRowHeight(40);
+            //     // Label + Name
+            //     $sheet->setCellValue("G" . ($row + 3), "Verified By: " . getUserName($occupational_health_center->verified_by));
+            //     $sheet->mergeCells("G" . ($row + 3) . ":L" . ($row + 3));
+
+            //     $sheet->getStyle("G$row:L" . ($row + 3))->applyFromArray([
+            //         'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+            //         'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+            //     ]);
+            // }
+
+            // if (file_exists($ApprovedSignature)) {
+            //     $sheet->mergeCells("M$row:S" . ($row + 2));
+
+            //     $drawing = new Drawing();
+            //     $drawing->setName('Approved Signature');
+            //     $drawing->setPath($ApprovedSignature);
+            //     $drawing->setCoordinates("M$row");
+            //     $drawing->setOffsetX(100);
+            //     $drawing->setOffsetY(5);
+            //     $drawing->setWidth(70);
+            //     $drawing->setHeight(70);
+            //     $drawing->setWorksheet($sheet);
+            //     $sheet->getRowDimension($row + 2)->setRowHeight(60);
+            //     // Label + Name
+            //     $sheet->setCellValue("M" . ($row + 3), "Approved By: " . getUserName($occupational_health_center->approved_by));
+            //     $sheet->mergeCells("M" . ($row + 3) . ":S" . ($row + 3));
+
+            //     $sheet->getStyle("M$row:S" . ($row + 3))->applyFromArray([
+            //         'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+            //         'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+            //     ]);
+            // }
 
 
 

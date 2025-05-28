@@ -86,7 +86,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    @php
+                                    {{-- @php
                                         $signature = GetOHCSignature(
                                             $daily_vital->created_by,
                                             $daily_vital->id,
@@ -102,7 +102,7 @@
                                                     style="width: 100px; margin-top: -10px;" />
                                             </div>
                                         </div>
-                                    @endif
+                                    @endif --}}
 
                                     @php
                                         $user_response = json_decode($daily_vital->responses, true);
