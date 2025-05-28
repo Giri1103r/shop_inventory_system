@@ -247,7 +247,6 @@
                                                                     <select name="gemba_walk[0][hazard][]" id="hazard"
                                                                         class=" form-control single-select" multiple
                                                                         style="width: 100%">
-                                                                        <option value=""></option>
                                                                         @foreach ($hazard as $haza)
                                                                             <option value="{{ encryptId($haza->id) }}">
                                                                                 {{ $haza->hazard_name }}</option>
@@ -825,7 +824,7 @@
                             maxlength: 2000,
 
                         },
-                        "gemba_walk[0][hazard]": {
+                        "gemba_walk[0][hazard][]": {
                             required: true,
                             // minlength: 3,
                             // maxlength: 200,
@@ -844,7 +843,7 @@
                         "gemba_walk[0][date_of_compliance]": {
                             required: true,
                         },
-                        "gemba_walk[0][responsible_person_id]": {
+                        "gemba_walk[0][responsible_person_id][]": {
                             required: true
                         },
                         "gemba_walk[0][current_status]": {
