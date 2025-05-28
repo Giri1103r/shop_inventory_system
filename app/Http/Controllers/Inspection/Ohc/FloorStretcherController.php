@@ -355,20 +355,20 @@ class FloorStretcherController extends Controller
 
                 $sheet->getRowDimension($row)->setRowHeight(80);
 
-                if (!empty($signature) && isset($signature['file_path'])) {
-                    $signaturePath = public_path(str_replace('public/', '', $signature['file_path']));
+                // if (!empty($signature) && isset($signature['file_path'])) {
+                //     $signaturePath = public_path(str_replace('public/', '', $signature['file_path']));
 
-                    if (file_exists($signaturePath)) {
-                        $sign = new Drawing();
-                        $sign->setName('Signature');
-                        $sign->setPath($signaturePath);
-                        $sign->setCoordinates("F{$row}");
-                        $sign->setOffsetX(5);
-                        $sign->setOffsetY(25);
-                        $sign->setHeight(40);
-                        $sign->setWorksheet($sheet);
-                    }
-                }
+                //     if (file_exists($signaturePath)) {
+                //         $sign = new Drawing();
+                //         $sign->setName('Signature');
+                //         $sign->setPath($signaturePath);
+                //         $sign->setCoordinates("F{$row}");
+                //         $sign->setOffsetX(5);
+                //         $sign->setOffsetY(25);
+                //         $sign->setHeight(40);
+                //         $sign->setWorksheet($sheet);
+                //     }
+                // }
 
                 $sheet->mergeCells("A{$row}:J{$row}")->setCellValue("A{$row}", 'Auditor (Name & Signature):- ' . getUsername($data->created_by));
 
@@ -617,20 +617,20 @@ class FloorStretcherController extends Controller
 
             $sheet->getRowDimension($row)->setRowHeight(80);
 
-            if (!empty($signature) && isset($signature['file_path'])) {
-                $signaturePath = public_path(str_replace('public/', '', $signature['file_path']));
+            // if (!empty($signature) && isset($signature['file_path'])) {
+            //     $signaturePath = public_path(str_replace('public/', '', $signature['file_path']));
 
-                if (file_exists($signaturePath)) {
-                    $sign = new Drawing();
-                    $sign->setName('Signature');
-                    $sign->setPath($signaturePath);
-                    $sign->setCoordinates("F{$row}");
-                    $sign->setOffsetX(5);
-                    $sign->setOffsetY(25);
-                    $sign->setHeight(40);
-                    $sign->setWorksheet($sheet);
-                }
-            }
+            //     if (file_exists($signaturePath)) {
+            //         $sign = new Drawing();
+            //         $sign->setName('Signature');
+            //         $sign->setPath($signaturePath);
+            //         $sign->setCoordinates("F{$row}");
+            //         $sign->setOffsetX(5);
+            //         $sign->setOffsetY(25);
+            //         $sign->setHeight(40);
+            //         $sign->setWorksheet($sheet);
+            //     }
+            // }
 
             $sheet->mergeCells("A{$row}:J{$row}")->setCellValue("A{$row}", 'Auditor (Name & Signature):- ' . $username);
 
