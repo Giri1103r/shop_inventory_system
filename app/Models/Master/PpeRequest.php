@@ -51,24 +51,20 @@ class PpeRequest extends Model
 
         if (in_array(ROLE_EHS_HEAD, $userRole)) {
             $query->orderBy('ppe_pperequest.id', 'DESC');
-        }
-         elseif (in_array(ROLE_HOD, $userRole)) {
+        } elseif (in_array(ROLE_HOD, $userRole)) {
             $companyId = $user->company_id;
-            $query->where('ppe_pperequest.company_id', $companyId)
+            $departmentId = $user->department_id;
+            $query->where('ppe_pperequest.company_id', $companyId)->where('ppe_pperequest.department', $departmentId)
                 ->orderBy('ppe_pperequest.id', 'DESC');
-        }
-        elseif (in_array(ROLE_STORE_MANAGER, $userRole)) {
+        } elseif (in_array(ROLE_STORE_MANAGER, $userRole)) {
             $query->orderBy('ppe_pperequest.id', 'DESC');
-        }
-          elseif (in_array(ROLE_EHS_OFFICER, $userRole)) {
+        } elseif (in_array(ROLE_EHS_OFFICER, $userRole)) {
             $query->orderBy('ppe_pperequest.id', 'DESC');
-        }
-        elseif (in_array(ROLE_ADMIN, $userRole) ) {
-              $query->orderBy('ppe_pperequest.id', 'DESC');
-        } elseif (in_array(ROLE_SUPERADMIN, $userRole) ) {
-              $query->orderBy('ppe_pperequest.id', 'DESC');
-        }
-         else {
+        } elseif (in_array(ROLE_ADMIN, $userRole)) {
+            $query->orderBy('ppe_pperequest.id', 'DESC');
+        } elseif (in_array(ROLE_SUPERADMIN, $userRole)) {
+            $query->orderBy('ppe_pperequest.id', 'DESC');
+        } else {
             $query->where('ppe_pperequest.created_by', Auth::id());
         }
 
