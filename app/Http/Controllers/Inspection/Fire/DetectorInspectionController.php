@@ -297,7 +297,7 @@ class DetectorInspectionController extends Controller
             $inspection_details = $this->detector_details->store($id);
             $inspection_file = $this->files->file_upload($inspection_type, $id);
             // $checklist_store = $this->checklist_follow->store($inspection_type, $id);
-            $signature_update = $this->signature->CheckedBySignature($id, $inspection_type);
+            // $signature_update = $this->signature->CheckedBySignature($id, $inspection_type);
 
             $ehsOfficer = GetEHSOfficer();
             $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
@@ -418,7 +418,7 @@ class DetectorInspectionController extends Controller
         try {
             $id = decryptId($request->id);
             $inspection_updates = $this->detector->EHSOfficerUpdate($id);
-            $signature_update = $this->signature->signatureUpload(DETECTOR_INSPECTION);
+            // $signature_update = $this->signature->signatureUpload(DETECTOR_INSPECTION);
             $inspection_details = $this->detector->selectOne($id);
             if ($request->is_passed == 1) {
                 $message = 'Detector Inspeciton Approved Successfully';
@@ -488,7 +488,7 @@ class DetectorInspectionController extends Controller
             $id = decryptId($request->id);
             $safety_gallery_inspection = $this->detector->capaSubmit($id);
             $inspection_details = $this->detector->selectOne($id);
-            $signature_update = $this->signature->signatureUpload(DETECTOR_INSPECTION);
+            // $signature_update = $this->signature->signatureUpload(DETECTOR_INSPECTION);
             $ehsOfficers = $inspection_details->verified_by;
             $userIds = [
                 'users' => $ehsOfficers,
@@ -549,7 +549,7 @@ class DetectorInspectionController extends Controller
             $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->remarks;
             $safety_gallery_inspection = $this->detector->capaVerifySubmit($id, $status, $remarks);
-            $signature_update = $this->signature->signatureUpload(DETECTOR_INSPECTION);
+            // $signature_update = $this->signature->signatureUpload(DETECTOR_INSPECTION);
             $inspection_details = $this->detector->selectOne($id);
             if ($status == 1) {
                 $message = 'CAPA Action Verified Successfully';
@@ -623,7 +623,7 @@ class DetectorInspectionController extends Controller
             $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->level_one_manager;
             $safety_gallery_inspection = $this->detector->levelOneManagerSubmit($id, $status, $remarks);
-            $signature_update = $this->signature->signatureUpload(DETECTOR_INSPECTION);
+            // $signature_update = $this->signature->signatureUpload(DETECTOR_INSPECTION);
             $inspection_details = $this->detector->selectOne($id);
             if ($status == 1) {
                 $message = 'Level One Manager Verified Successfully';
@@ -697,7 +697,7 @@ class DetectorInspectionController extends Controller
             $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->level_two_manager;
             $safety_gallery_inspection = $this->detector->levelTwoManagerSubmit($id, $status, $remarks);
-            $signature_update = $this->signature->signatureUpload(DETECTOR_INSPECTION);
+            // $signature_update = $this->signature->signatureUpload(DETECTOR_INSPECTION);
             $inspection_details = $this->detector->selectOne($id);
             if ($status == 1) {
                 $message = 'Detector Inspeciton Approved Successfully!';
@@ -787,9 +787,6 @@ class DetectorInspectionController extends Controller
 
                 $document_no = $this->document_reference->selectOne($inspection_detail->document_reference_id);
 
-                $prepared_by_signature = GetFireSignature($inspection_detail->checked_by, $inspection_detail->fire_id, DETECTOR_INSPECTION);
-                $verified_by_signature = GetFireSignature($inspection_detail->verified_by, $inspection_detail->fire_id, DETECTOR_INSPECTION);
-                $approved_by_signature = GetFireSignature($inspection_detail->approved_by, $inspection_detail->fire_id, DETECTOR_INSPECTION);
 
                 $titleRow = $row;
 
@@ -961,7 +958,11 @@ class DetectorInspectionController extends Controller
                 }
 
                 $signatureRowStart = $dataRow;
-                $sheet->getRowDimension($signatureRowStart)->setRowHeight(80);
+                $sheet->getRowDimension($signatureRowStart)->setRowHeight(30);
+
+                $preparedBy = getUsername($inspection_detail->created_by) ?: 'INSPECTION HAS NOT BEEN PREPARED YET';
+                $verifiedBy = getUsername($inspection_detail->verified_by) ?: 'INSPECTION HAS NOT BEEN VERIFIED YET';
+                $approvedBy = getUsername($inspection_detail->approved_by) ?: 'INSPECTION HAS NOT BEEN APPROVED YET';
 
                 $sheet->mergeCells("A{$signatureRowStart}:C{$signatureRowStart}");
                 $sheet->getStyle("A{$signatureRowStart}:C{$signatureRowStart}")->applyFromArray([
@@ -972,23 +973,8 @@ class DetectorInspectionController extends Controller
                         'wrapText' => true
                     ],
                 ]);
+                $sheet->setCellValue("A{$signatureRowStart}", "Prepared By:\n" . $preparedBy);
 
-                if (file_exists($prepared_by_signature)) {
-                    $drawing = new Drawing();
-                    $drawing->setName('Prepared Signature');
-                    $drawing->setDescription('Prepared By');
-                    $drawing->setPath($prepared_by_signature);
-                    $drawing->setCoordinates("B{$signatureRowStart}");
-                    $drawing->setOffsetX(5);
-                    $drawing->setOffsetY(5);
-                    $drawing->setHeight(40);
-                    $drawing->setWorksheet($sheet);
-                    $sheet->setCellValue("A{$signatureRowStart}", "\n\n\nPrepared By:\n" . getUsername($inspection_detail->created_by));
-                } else {
-                    $sheet->setCellValue("A{$signatureRowStart}", "Prepared By:\nInspection not yet started");
-                }
-
-                // Verified By
                 $sheet->mergeCells("D{$signatureRowStart}:H{$signatureRowStart}");
                 $sheet->getStyle("D{$signatureRowStart}:H{$signatureRowStart}")->applyFromArray([
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
@@ -998,23 +984,8 @@ class DetectorInspectionController extends Controller
                         'wrapText' => true
                     ],
                 ]);
+                $sheet->setCellValue("D{$signatureRowStart}", "Verified By:\n" . $verifiedBy);
 
-                if (file_exists($verified_by_signature)) {
-                    $drawing = new Drawing();
-                    $drawing->setName('Verified Signature');
-                    $drawing->setDescription('Verified By');
-                    $drawing->setPath($verified_by_signature);
-                    $drawing->setCoordinates("F{$signatureRowStart}");
-                    $drawing->setOffsetX(5);
-                    $drawing->setOffsetY(5);
-                    $drawing->setHeight(40);
-                    $drawing->setWorksheet($sheet);
-                    $sheet->setCellValue("D{$signatureRowStart}", "\n\n\nVerified By:\n" . getUsername($inspection_detail->verified_by));
-                } else {
-                    $sheet->setCellValue("D{$signatureRowStart}", "Verified By:\nInspection not yet completed");
-                }
-
-                // Approved By
                 $sheet->mergeCells("I{$signatureRowStart}:L{$signatureRowStart}");
                 $sheet->getStyle("I{$signatureRowStart}:L{$signatureRowStart}")->applyFromArray([
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
@@ -1024,26 +995,9 @@ class DetectorInspectionController extends Controller
                         'wrapText' => true
                     ],
                 ]);
-
-                if (file_exists($approved_by_signature)) {
-                    $drawing = new Drawing();
-                    $drawing->setName('Approved Signature');
-                    $drawing->setDescription('Approved By');
-                    $drawing->setPath($approved_by_signature);
-                    $drawing->setCoordinates("J{$signatureRowStart}");
-                    $drawing->setOffsetX(5);
-                    $drawing->setOffsetY(5);
-                    $drawing->setHeight(40);
-                    $drawing->setWorksheet($sheet);
-                    $sheet->setCellValue("I{$signatureRowStart}", "\n\n\nApproved By:\n" . getUsername($inspection_detail->approved_by));
-                } else {
-                    $sheet->setCellValue("I{$signatureRowStart}", "Approved By:\nApproval pending");
-                }
-
-
+                $sheet->setCellValue("I{$signatureRowStart}", "Approved By:\n" . $approvedBy);
 
                 $row = $signatureRowStart + 6;
-
                 $lastRow = $signatureRowStart;
 
                 $sheet->getStyle("A{$titleRow}:L{$lastRow}")->applyFromArray([
@@ -1175,11 +1129,8 @@ class DetectorInspectionController extends Controller
             $sheet = $spreadsheet->getActiveSheet();
 
             $detector = $this->detector->find($id);
-            $inspection_data = $this->detector_details->GetDetails($detector->id);
+            $inspection_data = $this->detector_details->GetDetails($id);
             $document_no = $this->document_reference->selectOne($detector->document_reference_id);
-            $prepared_by_signature = GetFireSignature($detector->created_by, $detector->id, DETECTOR_INSPECTION);
-            $verified_by_signature = GetFireSignature($detector->updated_by, $detector->id, DETECTOR_INSPECTION);
-            $approved_by_signature = GetFireSignature($detector->approved_by, $detector->id, DETECTOR_INSPECTION);
 
             foreach (range('A', 'L') as $col) {
                 $sheet->getColumnDimension($col)->setAutoSize(true);
@@ -1330,67 +1281,45 @@ class DetectorInspectionController extends Controller
 
 
             $signatureRow = $row;
-            $sheet->getRowDimension($signatureRow)->setRowHeight(80);
+            $sheet->getRowDimension($signatureRow)->setRowHeight(30);
+
+            $preparedBy = getUsername($detector->created_by) ?: 'INSPECTION HAS NOT BEEN PREPARED YET';
+            $verifiedBy = getUsername($detector->updated_by) ?: 'INSPECTION HAS NOT BEEN VERIFIED YET';
+            $approvedBy = getUsername($detector->approved_by) ?: 'INSPECTION HAS NOT BEEN APPROVED YET';
 
             $sheet->mergeCells("A{$signatureRow}:C{$signatureRow}");
             $sheet->getStyle("A{$signatureRow}:C{$signatureRow}")->applyFromArray([
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+                'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_CENTER,
+                    'vertical' => Alignment::VERTICAL_CENTER,
+                    'wrapText' => true,
+                ],
             ]);
-            if (file_exists($prepared_by_signature)) {
-                $drawing = new Drawing();
-                $drawing->setName('Prepared Signature');
-                $drawing->setDescription('Prepared By');
-                $drawing->setPath($prepared_by_signature);
-                $drawing->setCoordinates("B{$signatureRow}");
-                $drawing->setOffsetX(5);
-                $drawing->setOffsetY(5);
-                $drawing->setHeight(40);
-                $drawing->setWorksheet($sheet);
-                $sheet->setCellValue("A{$signatureRow}", "\n\n\nPrepared By:\n" . getUsername($detector->created_by));
-            } else {
-                $sheet->setCellValue("A{$signatureRow}", "Prepared By:\nInspection not yet started");
-            }
+            $sheet->setCellValue("A{$signatureRow}", "Prepared By:\n" . $preparedBy);
 
             $sheet->mergeCells("D{$signatureRow}:H{$signatureRow}");
             $sheet->getStyle("D{$signatureRow}:H{$signatureRow}")->applyFromArray([
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+                'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_CENTER,
+                    'vertical' => Alignment::VERTICAL_CENTER,
+                    'wrapText' => true,
+                ],
             ]);
-            if (file_exists($verified_by_signature)) {
-                $drawing = new Drawing();
-                $drawing->setName('Verified Signature');
-                $drawing->setDescription('Verified By');
-                $drawing->setPath($verified_by_signature);
-                $drawing->setCoordinates("F{$signatureRow}");
-                $drawing->setOffsetX(5);
-                $drawing->setOffsetY(5);
-                $drawing->setHeight(40);
-                $drawing->setWorksheet($sheet);
-                $sheet->setCellValue("D{$signatureRow}", "\n\n\nVerified By:\n" . getUsername($detector->updated_by));
-            } else {
-                $sheet->setCellValue("D{$signatureRow}", "Verified By:\nInspection not yet completed");
-            }
+            $sheet->setCellValue("D{$signatureRow}", "Verified By:\n" . $verifiedBy);
 
             $sheet->mergeCells("I{$signatureRow}:L{$signatureRow}");
             $sheet->getStyle("I{$signatureRow}:L{$signatureRow}")->applyFromArray([
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+                'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_CENTER,
+                    'vertical' => Alignment::VERTICAL_CENTER,
+                    'wrapText' => true,
+                ],
             ]);
-            if (file_exists($approved_by_signature)) {
-                $drawing = new Drawing();
-                $drawing->setName('Approved Signature');
-                $drawing->setDescription('Approved By');
-                $drawing->setPath($approved_by_signature);
-                $drawing->setCoordinates("J{$signatureRow}");
-                $drawing->setOffsetX(5);
-                $drawing->setOffsetY(5);
-                $drawing->setHeight(40);
-                $drawing->setWorksheet($sheet);
-                $sheet->setCellValue("I{$signatureRow}", "\n\n\nApproved By:\n" . getUsername($detector->approved_by));
-            } else {
-                $sheet->setCellValue("I{$signatureRow}", "Approved By:\nApproval pending");
-            }
+            $sheet->setCellValue("I{$signatureRow}", "Approved By:\n" . $approvedBy);
+
 
             $writer = new Xlsx($spreadsheet);
             $fileName = 'Detector Inspection Checklist.xlsx';

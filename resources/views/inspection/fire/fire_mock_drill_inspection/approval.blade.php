@@ -45,7 +45,7 @@
                                         </div>
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
-                                                <label class="form-label ">{{ __('inspection.rev_data') }}</label>
+                                                <label class="form-label ">{{ __('inspection.rev_date') }}</label>
                                                 <div class="view_data">
                                                     {{ $document_no->rev_dt }}
                                                 </div>
@@ -55,10 +55,20 @@
                                             <div class="form-group form-input">
                                                 <label class="form-label ">{{ __('inspection.inspection_date') }}</label>
                                                 <div class="view_data">
-                                                    {{ Displaydateformat($inspection->date) }}
+                                                    {{ Displaydateformat($inspection->inspection_date) }}
                                                 </div>
                                             </div>
                                         </div>
+                                        @if (isset($inspection->date_of_closure))
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label ">{{ __('inspection.date_of_closure') }}</label>
+                                                    <div class="view_data">
+                                                        {{ Displaydateformat($inspection->date_of_closure) }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endif
                                         {{-- @php
                                             $signature = GetFireSignature(
                                                 $inspection->created_by,
@@ -151,7 +161,7 @@
                                                             <label
                                                                 class="form-label ">{{ __('inspection.employee') }}</label>
                                                             <div class="view_data">
-                                                                {{ $details->emp_id }}
+                                                                {{ getUsername($details->emp_id) }}
                                                             </div>
                                                         </div>
                                                     </div>
@@ -161,15 +171,6 @@
                                                                 class="form-label ">{{ __('inspection.date_of_compliance') }}</label>
                                                             <div class="view_data">
                                                                 {{ Displaydateformat($details->date_of_compliance) }}
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-4 mb-2">
-                                                        <div class="form-group form-input">
-                                                            <label
-                                                                class="form-label ">{{ __('inspection.date_of_closure') }}</label>
-                                                            <div class="view_data">
-                                                                {{ $details->date_of_closure }}
                                                             </div>
                                                         </div>
                                                     </div>
@@ -196,9 +197,8 @@
                                         @endforeach
                                     </div>
                                     @if (
-                                        ($inspection->inspection_status == WAITING_FOR_EHS_OFFICER_VERIFICATION &&
-                                            (checkUserRole(ROLE_EHS_OFFICER)) ||  ($inspection->inspection_status == WAITING_FOR_EHS_OFFICER_VERIFICATION &&
-                                            isAdmin())) )
+                                        ($inspection->inspection_status == WAITING_FOR_EHS_OFFICER_VERIFICATION && checkUserRole(ROLE_EHS_OFFICER)) ||
+                                            ($inspection->inspection_status == WAITING_FOR_EHS_OFFICER_VERIFICATION && isAdmin()))
                                         <div class="row mt-3">
                                             <div class="card-header-inner">
                                                 <h4 class="text-white">{{ __('inspection.ehs_officer_verify') }}</h4>
@@ -590,15 +590,16 @@
                                     @endif
 
                                     @if (
-                                       ( ($inspection->inspection_status == WAITING_FOR_CAPA_ACTION ||
+                                        (($inspection->inspection_status == WAITING_FOR_CAPA_ACTION ||
                                             $inspection->inspection_status == L2_MANAGER_REJECTED ||
                                             $inspection->inspection_status == EHS_OFFICER_REJECTED ||
                                             $inspection->inspection_status == L1_MANAGER_REJECTED) &&
-                                            (checkUserRole(ROLE_FIRE_ASSOCIATES)) ||  ($inspection->inspection_status == WAITING_FOR_CAPA_ACTION ||
-                                            $inspection->inspection_status == L2_MANAGER_REJECTED ||
-                                            $inspection->inspection_status == EHS_OFFICER_REJECTED ||
-                                            $inspection->inspection_status == L1_MANAGER_REJECTED) &&
-                                            isAdmin()))
+                                            checkUserRole(ROLE_FIRE_ASSOCIATES)) ||
+                                            (($inspection->inspection_status == WAITING_FOR_CAPA_ACTION ||
+                                                $inspection->inspection_status == L2_MANAGER_REJECTED ||
+                                                $inspection->inspection_status == EHS_OFFICER_REJECTED ||
+                                                $inspection->inspection_status == L1_MANAGER_REJECTED) &&
+                                                isAdmin()))
                                         <div class="row mt-3">
                                             <div class="card-header-inner">
                                                 <h4 class="text-white">{{ __('inspection.capa_action') }}</h4>
@@ -653,7 +654,9 @@
                                         </form>
                                     @endif
 
-                                    @if ((($inspection->inspection_status == WAITING_FOR_CAPA_VERIFICATION && checkUserRole(ROLE_EHS_OFFICER))) || ($inspection->inspection_status == WAITING_FOR_CAPA_VERIFICATION && isAdmin()) )
+                                    @if (
+                                        ($inspection->inspection_status == WAITING_FOR_CAPA_VERIFICATION && checkUserRole(ROLE_EHS_OFFICER)) ||
+                                            ($inspection->inspection_status == WAITING_FOR_CAPA_VERIFICATION && isAdmin()))
                                         <form method="POST" id="forklistassessmentAdd"
                                             action="{{ admin_url('fire/fire-mock-drill-observation/capa/reverify/submit') }}"
                                             autocomplete="off" enctype="multipart/form-data">
@@ -705,7 +708,9 @@
                                         </form>
                                     @endif
 
-                                    @if (($inspection->inspection_status == WAITING_FOR_L1_VERIFICATION && checkUserRole(ROLE_L1_MANAGER)) ||($inspection->inspection_status == WAITING_FOR_L1_VERIFICATION && isAdmin()))
+                                    @if (
+                                        ($inspection->inspection_status == WAITING_FOR_L1_VERIFICATION && checkUserRole(ROLE_L1_MANAGER)) ||
+                                            ($inspection->inspection_status == WAITING_FOR_L1_VERIFICATION && isAdmin()))
                                         <form method="POST" id="levelOneManager"
                                             action="{{ admin_url('fire/fire-mock-drill-observation/level-one/verify/submit') }}"
                                             autocomplete="off" enctype="multipart/form-data">
@@ -759,7 +764,9 @@
                                         </form>
                                     @endif
 
-                                    @if (($inspection->inspection_status == WAITING_FOR_L2_VERIFICATION && checkUserRole(ROLE_L2_MANAGER)) || ($inspection->inspection_status == WAITING_FOR_L2_VERIFICATION && isAdmin()) )
+                                    @if (
+                                        ($inspection->inspection_status == WAITING_FOR_L2_VERIFICATION && checkUserRole(ROLE_L2_MANAGER)) ||
+                                            ($inspection->inspection_status == WAITING_FOR_L2_VERIFICATION && isAdmin()))
                                         <form method="POST" id="levelTwoManager"
                                             action="{{ admin_url('fire/fire-mock-drill-observation/level-two/verify/submit') }}"
                                             autocomplete="off" enctype="multipart/form-data">
@@ -822,189 +829,189 @@
 
     @stop
     @push('script')
-    <script>
-        $('#forklistassessmentAdd').validate({
-            rules: {
-                remarks: {
-                    required: true,
-                    minlength: 3,
-                    maxlength: 100,
-                    noSpaces: true,
+        <script>
+            $('#forklistassessmentAdd').validate({
+                rules: {
+                    remarks: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 100,
+                        noSpaces: true,
+                    },
+                    // signature_image: {
+                    //     required: true,
+                    //     filesize: 15728640,
+                    // }
                 },
-                // signature_image: {
-                //     required: true,
-                //     filesize: 15728640,
-                // }
-            },
-            messages: {
-                remarks: {
-                    required: "Remarks is Required",
-                    minlength: "Minimum Characters should be 3",
-                    maxlength: "Maximum Characters should not exceed 100",
+                messages: {
+                    remarks: {
+                        required: "Remarks is Required",
+                        minlength: "Minimum Characters should be 3",
+                        maxlength: "Maximum Characters should not exceed 100",
+                    },
+                    // signature_image: {
+                    //     required: "Signature is Required",
+                    //     filesize: "File size should not exceed 15MB",
+                    // }
                 },
-                // signature_image: {
-                //     required: "Signature is Required",
-                //     filesize: "File size should not exceed 15MB",
-                // }
-            },
-            errorElement: 'div',
-            errorPlacement: function(error, element) {
-                error.addClass('invalid-feedback');
-                element.closest('.form-input').append(error);
-            },
-            highlight: function(element) {
-                $(element).addClass('is-invalid');
-            },
-            unhighlight: function(element) {
-                $(element).removeClass('is-invalid');
-                $(element).closest('.form-input').find('.invalid-feedback').remove();
-            },
-            submitHandler: function(form) {
-                form.submit();
-            },
-            invalidHandler: function(event, validator) {
-                var errors = validator.numberOfInvalids();
-                validator.errorList.forEach(function(error) {});
-            }
-        });
+                errorElement: 'div',
+                errorPlacement: function(error, element) {
+                    error.addClass('invalid-feedback');
+                    element.closest('.form-input').append(error);
+                },
+                highlight: function(element) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function(element) {
+                    $(element).removeClass('is-invalid');
+                    $(element).closest('.form-input').find('.invalid-feedback').remove();
+                },
+                submitHandler: function(form) {
+                    form.submit();
+                },
+                invalidHandler: function(event, validator) {
+                    var errors = validator.numberOfInvalids();
+                    validator.errorList.forEach(function(error) {});
+                }
+            });
 
-        $.validator.addMethod("noSpaces", function(value) {
-            return value.trim().length > 0;
-        }, "Spaces are not allowed");
+            $.validator.addMethod("noSpaces", function(value) {
+                return value.trim().length > 0;
+            }, "Spaces are not allowed");
 
-        $('#capaAction').validate({
-            rules: {
-                capa_remarks: {
-                    required: true,
-                    minlength: 3,
-                    maxlength: 100,
-                    noSpaces: true,
+            $('#capaAction').validate({
+                rules: {
+                    capa_remarks: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 100,
+                        noSpaces: true,
+                    },
+                    // signature_image: {
+                    //     required: true,
+                    //     filesize: 15728640,
+                    // }
                 },
-                // signature_image: {
-                //     required: true,
-                //     filesize: 15728640,
-                // }
-            },
-            messages: {
-                capa_remarks: {
-                    required: "Remarks is Required",
-                    minlength: "Minimum Characters should be 3",
-                    maxlength: "Maximum Characters should not exceed 100",
+                messages: {
+                    capa_remarks: {
+                        required: "Remarks is Required",
+                        minlength: "Minimum Characters should be 3",
+                        maxlength: "Maximum Characters should not exceed 100",
+                    },
+                    // signature_image: {
+                    //     required: "Signature is Required",
+                    //      filesize: "File size should not exceed 15MB",
+                    // }
                 },
-                // signature_image: {
-                //     required: "Signature is Required",
-                //      filesize: "File size should not exceed 15MB",
-                // }
-            },
-            errorElement: 'div',
-            errorPlacement: function(error, element) {
-                error.addClass('invalid-feedback');
-                element.closest('.form-input').append(error);
-            },
-            highlight: function(element) {
-                $(element).addClass('is-invalid');
-            },
-            unhighlight: function(element) {
-                $(element).removeClass('is-invalid');
-                $(element).closest('.form-input').find('.invalid-feedback').remove();
-            },
-            submitHandler: function(form) {
-                form.submit();
-            },
-            invalidHandler: function(event, validator) {
-                var errors = validator.numberOfInvalids();
-                validator.errorList.forEach(function(error) {});
-            }
-        });
+                errorElement: 'div',
+                errorPlacement: function(error, element) {
+                    error.addClass('invalid-feedback');
+                    element.closest('.form-input').append(error);
+                },
+                highlight: function(element) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function(element) {
+                    $(element).removeClass('is-invalid');
+                    $(element).closest('.form-input').find('.invalid-feedback').remove();
+                },
+                submitHandler: function(form) {
+                    form.submit();
+                },
+                invalidHandler: function(event, validator) {
+                    var errors = validator.numberOfInvalids();
+                    validator.errorList.forEach(function(error) {});
+                }
+            });
 
-        $('#levelOneManager').validate({
-            rules: {
-                level_one_manager: {
-                    required: true,
-                    minlength: 3,
-                    maxlength: 100,
-                    noSpaces: true,
+            $('#levelOneManager').validate({
+                rules: {
+                    level_one_manager: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 100,
+                        noSpaces: true,
+                    },
+                    // signature_image: {
+                    //     required: true,
+                    //     filesize: 15728640,
+                    // }
                 },
-                // signature_image: {
-                //     required: true,
-                //     filesize: 15728640,
-                // }
-            },
-            messages: {
-                level_one_manager: {
-                    required: "Remarks is Required",
-                    minlength: "Minimum Characters should be 3",
-                    maxlength: "Maximum Characters should not exceed 100",
+                messages: {
+                    level_one_manager: {
+                        required: "Remarks is Required",
+                        minlength: "Minimum Characters should be 3",
+                        maxlength: "Maximum Characters should not exceed 100",
+                    },
+                    // signature_image: {
+                    //     required: "Signature is Required",
+                    //     filesize: "File size should not exceed 15MB",
+                    // }
                 },
-                // signature_image: {
-                //     required: "Signature is Required",
-                //     filesize: "File size should not exceed 15MB",
-                // }
-            },
-            errorElement: 'div',
-            errorPlacement: function(error, element) {
-                error.addClass('invalid-feedback');
-                element.closest('.form-input').append(error);
-            },
-            highlight: function(element) {
-                $(element).addClass('is-invalid');
-            },
-            unhighlight: function(element) {
-                $(element).removeClass('is-invalid');
-                $(element).closest('.form-input').find('.invalid-feedback').remove();
-            },
-            submitHandler: function(form) {
-                form.submit();
-            },
-            invalidHandler: function(event, validator) {
-                var errors = validator.numberOfInvalids();
-                validator.errorList.forEach(function(error) {});
-            }
-        });
+                errorElement: 'div',
+                errorPlacement: function(error, element) {
+                    error.addClass('invalid-feedback');
+                    element.closest('.form-input').append(error);
+                },
+                highlight: function(element) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function(element) {
+                    $(element).removeClass('is-invalid');
+                    $(element).closest('.form-input').find('.invalid-feedback').remove();
+                },
+                submitHandler: function(form) {
+                    form.submit();
+                },
+                invalidHandler: function(event, validator) {
+                    var errors = validator.numberOfInvalids();
+                    validator.errorList.forEach(function(error) {});
+                }
+            });
 
-        $('#levelTwoManager').validate({
-            rules: {
-                level_two_manager: {
-                    required: true,
-                    minlength: 3,
-                    maxlength: 100,
-                    noSpaces: true,
+            $('#levelTwoManager').validate({
+                rules: {
+                    level_two_manager: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 100,
+                        noSpaces: true,
+                    },
+                    // signature_image: {
+                    //     required: true,
+                    //     filesize: 15728640,
+                    // }
                 },
-                // signature_image: {
-                //     required: true,
-                //     filesize: 15728640,
-                // }
-            },
-            messages: {
-                level_two_manager: {
-                    required: "Remarks is Required",
-                    minlength: "Minimum Characters should be 3",
-                    maxlength: "Maximum Characters should not exceed 100",
+                messages: {
+                    level_two_manager: {
+                        required: "Remarks is Required",
+                        minlength: "Minimum Characters should be 3",
+                        maxlength: "Maximum Characters should not exceed 100",
+                    },
+                    // signature_image: {
+                    //     required: "Signature is Required",
+                    //     filesize: "File size should not exceed 15MB",
+                    // }
                 },
-                // signature_image: {
-                //     required: "Signature is Required",
-                //     filesize: "File size should not exceed 15MB",
-                // }
-            },
-            errorElement: 'div',
-            errorPlacement: function(error, element) {
-                error.addClass('invalid-feedback');
-                element.closest('.form-input').append(error);
-            },
-            highlight: function(element) {
-                $(element).addClass('is-invalid');
-            },
-            unhighlight: function(element) {
-                $(element).removeClass('is-invalid');
-                $(element).closest('.form-input').find('.invalid-feedback').remove();
-            },
-            submitHandler: function(form) {
-                form.submit();
-            },
-            invalidHandler: function(event, validator) {
-                var errors = validator.numberOfInvalids();
-                validator.errorList.forEach(function(error) {});
-            }
-        });
-    </script>
-@endpush
+                errorElement: 'div',
+                errorPlacement: function(error, element) {
+                    error.addClass('invalid-feedback');
+                    element.closest('.form-input').append(error);
+                },
+                highlight: function(element) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function(element) {
+                    $(element).removeClass('is-invalid');
+                    $(element).closest('.form-input').find('.invalid-feedback').remove();
+                },
+                submitHandler: function(form) {
+                    form.submit();
+                },
+                invalidHandler: function(event, validator) {
+                    var errors = validator.numberOfInvalids();
+                    validator.errorList.forEach(function(error) {});
+                }
+            });
+        </script>
+    @endpush

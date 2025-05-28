@@ -112,7 +112,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        @php
+                                        {{-- @php
                                             $signature = GetFireSignature(
                                                 $inspection->created_by,
                                                 $inspection->id,
@@ -128,7 +128,7 @@
                                                         style="width: 100px; margin-top: -10px;" />
                                                 </div>
                                             </div>
-                                        @endif
+                                        @endif --}}
                                     </div>
                                     <hr>
                                     @foreach ($inspection_details as $details)
@@ -275,11 +275,11 @@
                                                     </div>
                                                 </div>
                                                 @php
-                                                    $signature = GetFireSignature(
-                                                        $inspection->verified_by,
-                                                        $inspection->id,
-                                                        DETECTOR_INSPECTION,
-                                                    );
+                                                    // $signature = GetFireSignature(
+                                                    //     $inspection->verified_by,
+                                                    //     $inspection->id,
+                                                    //     DETECTOR_INSPECTION,
+                                                    // );
                                                     $updated_time = GetFireUpdatedTime(
                                                         $inspection->verified_by,
                                                         $inspection->id,
@@ -298,7 +298,7 @@
                                                     </div>
                                                 </div>
                                             @endif
-                                            @if (isset($signature))
+                                            {{-- @if (isset($signature))
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label class="form-label"
@@ -307,7 +307,7 @@
                                                             style="width:80px; margin-top: -10px;" />
                                                     </div>
                                                 </div>
-                                            @endif
+                                            @endif --}}
                                             @if (isset($inspection->approved_by))
                                                 @if ($inspection->verified_by == $inspection->approved_by)
                                                     <div class="col-md-4 mb-2">
@@ -319,14 +319,14 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    @php
+                                                    {{-- @php
                                                         $signature = GetFireSignature(
                                                             $inspection->approved_by,
                                                             $inspection->id,
                                                             DETECTOR_INSPECTION,
                                                         );
-                                                    @endphp
-                                                    @if (isset($signature))
+                                                    @endphp --}}
+                                                    {{-- @if (isset($signature))
                                                     <div class="col-md-4 mb-2">
                                                         <div class="form-group form-input">
                                                             <label class="form-label"
@@ -335,7 +335,7 @@
                                                                 style="width:80px; margin-top: -10px;" />
                                                         </div>
                                                     </div>
-                                                @endif
+                                                @endif --}}
                                                 @endif
                                             @endif
 
@@ -375,11 +375,11 @@
                                                 </div>
                                             </div>
                                             @php
-                                                $signature = GetFireSignature(
-                                                    $inspection->created_by,
-                                                    $inspection->id,
-                                                    DETECTOR_INSPECTION,
-                                                );
+                                                // $signature = GetFireSignature(
+                                                //     $inspection->created_by,
+                                                //     $inspection->id,
+                                                //     DETECTOR_INSPECTION,
+                                                // );
 
                                                 $updated_time = GetFireUpdatedTime(
                                                     $inspection->created_by,
@@ -396,7 +396,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            @if (isset($signature))
+                                            {{-- @if (isset($signature))
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label class="form-label"
@@ -405,7 +405,7 @@
                                                             style="width:80px; margin-top: -10px;" />
                                                     </div>
                                                 </div>
-                                            @endif
+                                            @endif --}}
                                             <div class="col-md-12 mb-2">
                                                 <div class="form-group form-input">
                                                     <label
@@ -436,11 +436,11 @@
                                                 </div>
                                             </div>
                                             @php
-                                                $signature = GetFireSignature(
-                                                    $inspection->verified_by,
-                                                    $inspection->id,
-                                                    DETECTOR_INSPECTION,
-                                                );
+                                                // $signature = GetFireSignature(
+                                                //     $inspection->verified_by,
+                                                //     $inspection->id,
+                                                //     DETECTOR_INSPECTION,
+                                                // );
 
                                                 $updated_time = GetFireUpdatedTime(
                                                     $inspection->verified_by,
@@ -457,7 +457,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            @if (isset($signature))
+                                            {{-- @if (isset($signature))
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label class="form-label"
@@ -466,7 +466,7 @@
                                                             style="width:80px; margin-top: -10px;" />
                                                     </div>
                                                 </div>
-                                            @endif
+                                            @endif --}}
                                             <div class="col-md-12 mb-2">
                                                 <div class="form-group form-input">
                                                     <label
@@ -496,11 +496,11 @@
                                             </div>
                                         </div>
                                         @php
-                                            $signature = GetFireSignature(
-                                                $inspection->l1_manager_verified_by,
-                                                $inspection->id,
-                                                DETECTOR_INSPECTION,
-                                            );
+                                            // $signature = GetFireSignature(
+                                            //     $inspection->l1_manager_verified_by,
+                                            //     $inspection->id,
+                                            //     DETECTOR_INSPECTION,
+                                            // );
 
                                             $updated_time = GetFireUpdatedTime(
                                                 $inspection->l1_manager_verified_by,
@@ -517,7 +517,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        @if (isset($signature))
+                                        {{-- @if (isset($signature))
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label"
@@ -526,7 +526,7 @@
                                                         style="width:80px; margin-top: -10px;" />
                                                 </div>
                                             </div>
-                                        @endif
+                                        @endif --}}
                                         <div class="col-md-12 mb-2">
                                             <div class="form-group form-input">
                                                 <label
@@ -554,11 +554,11 @@
                                             </div>
                                         </div>
                                         @php
-                                            $signature = GetFireSignature(
-                                                $inspection->l2_manager_verified_by,
-                                                $inspection->id,
-                                                DETECTOR_INSPECTION,
-                                            );
+                                            // $signature = GetFireSignature(
+                                            //     $inspection->l2_manager_verified_by,
+                                            //     $inspection->id,
+                                            //     DETECTOR_INSPECTION,
+                                            // );
 
                                             $updated_time = GetFireUpdatedTime(
                                                 $inspection->l2_manager_verified_by,
@@ -575,7 +575,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        @if (isset($signature))
+                                        {{-- @if (isset($signature))
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label"
@@ -584,7 +584,7 @@
                                                         style="width:80px; margin-top: -10px;" />
                                                 </div>
                                             </div>
-                                        @endif
+                                        @endif --}}
                                         {{-- @if ($inspection->approved_by)
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
@@ -595,13 +595,13 @@
                                                 </div>
                                             </div>
                                         @endif --}}
-                                        @php
+                                        {{-- @php
                                             $signature = GetFireSignature(
                                                 $inspection->approved_by,
                                                 $inspection->id,
                                                 DETECTOR_INSPECTION,
                                             );
-                                        @endphp
+                                        @endphp --}}
                                         {{-- @if (isset($signature))
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
