@@ -232,40 +232,21 @@ class Work extends Model
                 //     continue;
                 // }
 
-
                 $locationExists = DB::table('masters_location')->where('company_id', $companyExists->id)->where('location_name', $item['subdepartment'])->first();
                 // if (!$locationExists) {
                 //     continue;
                 // }
-                // dd( $locationExists, $item['subdepartment']);
-                // Clean and normalize the unit name
-                $cleanUnit = isset($item['Unit']) ? str_replace(["\r", "\n"], '', trim($item['Unit'])) : null;
 
-                // Normalize using mapping
-                $unitMap = [
-                    'UN1T1' => 'unit1',
-                    'UN1T11' => 'unit2',
-                    'UN1T111' => 'unit3',
-                    'UN1T1V(SAND1LA)' => 'unit4',
-                ];
-
-                $normalizedUnit = isset($unitMap[$cleanUnit]) ? $unitMap[$cleanUnit] : strtolower($cleanUnit);
-// dd($normalizedUnit);
-                // Now check if unit exists with the normalized unit name
-                $unitExists = DB::table('masters_unit')
-                    ->where('company_id', $companyExists->id)
-                    ->where('location_id', $locationExists->id)
-                    ->where('unit_name', $normalizedUnit)
-                    ->first();
-
+                $unitExists = DB::table('masters_unit')->where('company_id', $companyExists->id)->where('location_id', $locationExists->id)->where('unit_name', $item['unit'])->first();
                 // if (!$unitExists) {
                 //     continue;
                 // }
-              
+
                 $departmentExists = DB::table('masters_department')->where('company_id', $companyExists->id)->where('location_id', $locationExists->id)->where('unit_id', $unitExists->id)->where('department_name', $item['department'])->first();
                 // if (!$departmentExists) {
                 //     continue;
                 // }
+
                 // Prepare data for insertion or update
                 $valuesToInsertOrUpdate = [
                     'emp_name' => $item['emp_name'] ?? null,
