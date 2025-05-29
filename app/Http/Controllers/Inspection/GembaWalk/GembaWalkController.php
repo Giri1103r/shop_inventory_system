@@ -306,14 +306,15 @@ class GembaWalkController extends Controller
                     $email_id = $user->email;
                     if (!empty($email_id)) {
                         $gembaWalk_details = $this->gembaWalk->selectmail($gembaWalk_id);
-                        $gembaWalk_checklist = $this->gembaWalk->selectmail($gembaWalk_id);
+                        $gembaWalk_checklist = $this->gembaWalkCheckList->selectmail($gembaWalk_id);
                         $gembaWalk = $gembaWalk_details->toArray();
+                        $gembaWalkChecklist = $gembaWalk_checklist->toArray();
                         $gembaWalk['name'] = $user->name;
                         $gembaWalk['email_id'] = $email_id;
                         $gembaWalk['mail_subject'] = $mailsubject;
 
                         // Send email
-                        Mail::to($gembaWalk['email_id'])->queue(new GembaWalkMail($gembaWalk));
+                        Mail::to($gembaWalk['email_id'])->queue(new GembaWalkMail($gembaWalk, $gembaWalkChecklist));
                     }
                 }
             }
@@ -491,12 +492,13 @@ class GembaWalkController extends Controller
 
                         if ($gembaWalk_details) {
                             $gembaWalk_array = $gembaWalk_details->toArray();
-
+                            $gembaWalk_checklist = $this->gembaWalkCheckList->selectmail($gembaWalk_id);
+                            $gembaWalkChecklist = $gembaWalk_checklist->toArray();
                             $gembaWalk_array['name'] = $user->name;
                             $gembaWalk_array['email_id'] = $email_id;
                             $gembaWalk_array['mail_subject'] = $mailsubject;
 
-                            Mail::to($gembaWalk_array['email_id'])->queue(new GembaWalkMail($gembaWalk_array));
+                            Mail::to($gembaWalk_array['email_id'])->queue(new GembaWalkMail($gembaWalk_array, $gembaWalkChecklist));
                         }
                     }
                 }
@@ -632,13 +634,14 @@ class GembaWalkController extends Controller
                         if (!empty($email_id)) {
                             $gembaWalk_details = $this->gembaWalk->selectmail($gembaWalk_id);
                             $gembaWalk = $gembaWalk_details->toArray();
-
+                            $gembaWalk_checklist = $this->gembaWalkCheckList->selectmail($gembaWalk_id);
+                            $gembaWalkChecklist = $gembaWalk_checklist->toArray();
                             $gembaWalk['name'] = $user->name;
                             $gembaWalk['email_id'] = $email_id;
                             $gembaWalk['mail_subject'] = $mailsubject;
 
                             // Send email
-                            Mail::to($gembaWalk['email_id'])->queue(new GembaWalkMail($gembaWalk));
+                            Mail::to($gembaWalk['email_id'])->queue(new GembaWalkMail($gembaWalk, $gembaWalkChecklist));
                         }
                     }
                 }
@@ -703,13 +706,14 @@ class GembaWalkController extends Controller
                         if (!empty($email_id)) {
                             $gembaWalk_details = $this->gembaWalk->selectmail($gembaWalk_id);
                             $gembaWalk = $gembaWalk_details->toArray();
-
+                            $gembaWalk_checklist = $this->gembaWalkCheckList->selectmail($gembaWalk_id);
+                            $gembaWalkChecklist = $gembaWalk_checklist->toArray();
                             $gembaWalk['name'] = $user->name;
                             $gembaWalk['email_id'] = $email_id;
                             $gembaWalk['mail_subject'] = $mailsubject;
 
                             // Send email
-                            Mail::to($gembaWalk['email_id'])->queue(new GembaWalkMail($gembaWalk));
+                            Mail::to($gembaWalk['email_id'])->queue(new GembaWalkMail($gembaWalk,  $gembaWalkChecklist));
                         }
                     }
                 }

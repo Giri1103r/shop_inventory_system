@@ -264,17 +264,6 @@
                                                 </div>
                                             </div>
                                         @endif
-
-
-                                        <div class="col-md-4 mb-2">
-                                            <div class="form-group form-input">
-                                                <label class="form-label">GembaWalk Status</label>
-                                                <div class="view_data">
-                                                    {{ getGembaWalkStatus(isset($gembaWalk->gemba_walk_checklist_status) ? $gembaWalk->gemba_walk_checklist_status : '') }}
-                                                </div>
-                                            </div>
-                                        </div>
-
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
                                                 <label class="form-label">{{ __('inspection.observer_person') }}</label>
@@ -293,6 +282,17 @@
 
                                             </div>
                                         </div>
+
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label">GembaWalk Status</label>
+                                                <div class="view_data">
+                                                    {{ getGembaWalkStatus(isset($gembaWalk->gemba_walk_checklist_status) ? $gembaWalk->gemba_walk_checklist_status : '') }}
+                                                </div>
+                                            </div>
+                                        </div>
+
+
 
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">

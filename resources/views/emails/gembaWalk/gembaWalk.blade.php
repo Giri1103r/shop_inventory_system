@@ -64,6 +64,101 @@
                             <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
                                 valign="top"> {{ getShift($details['shift_id']) }}</td>
                         </tr>
+                        <tr>
+                            <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
+                                <b>Location</b>
+                            </td>
+                            <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
+                                valign="top"> {{ getUnitname($details['location_id']) }}</td>
+                        </tr>
+                        <tr>
+                            <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
+                                <b>Unit</b>
+                            </td>
+                            <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
+                                valign="top"> {{ getUnitname($details['unit_id']) }}</td>
+                        </tr>
+                        <tr>
+                            <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
+                                <b>Department</b>
+                            </td>
+                            <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
+                                valign="top"> {{ getDepartment($details['department_id']) }}</td>
+                        </tr>
+                        <tr>
+                            <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
+                                <b>Excat Location</b>
+                            </td>
+                            <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
+                                valign="top"> {{ $details['exact_location'] }}</td>
+                        </tr>
+
+                        <tr>
+                            <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
+                                <b>Type of Hazard</b>
+                            </td>
+                            <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
+                                valign="top">
+                                @php
+                                    $hazardIds = explode(',', $gembaWalkChecklist['hazard'] ?? '');
+                                @endphp
+                                @foreach ($hazardIds as $hazardId)
+                                    {{ getGembaWalkHazardName($hazardId) }}@if (!$loop->last)
+                                        ,
+                                    @endif
+                                @endforeach
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
+                                <b>Observation Date</b>
+                            </td>
+                            <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
+                                valign="top"> {{ displaydateformat($gembaWalkChecklist['date_of_observation']) }}</td>
+                        </tr>
+                        <tr>
+                            <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
+                                <b>Risk Category</b>
+                            </td>
+                            <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
+                                valign="top"> {{ getRiskcategory($gembaWalkChecklist['risk_category']) }}</td>
+                        </tr>
+
+                        <tr>
+                            <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
+                                <b>Description</b>
+                            </td>
+                            <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
+                                valign="top"> {{ $gembaWalkChecklist['description'] }}</td>
+                        </tr>
+
+                        <tr>
+                            <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
+                                <b>Responsible Person for Recommanded CAPA</b>
+                            </td>
+                            <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
+                                valign="top">
+                                @php
+                                    $responsibilityIds = explode(',', $gembaWalkChecklist['responsibility_id'] ?? '');
+                                @endphp
+                                @foreach ($responsibilityIds as $index => $responsibilityId)
+                                    {{ getUsername($responsibilityId) }}@if (!$loop->last)
+                                        ,
+                                    @endif
+                                @endforeach
+                            </td>
+                        </tr>
+
+                        <tr>
+                            @if (isset($details['data']->department))
+                                <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
+                                    <b>Recommended CAPA Taken By</b>
+                                </td>
+                                <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
+                                    valign="top"> {{ getUsername($details['verified_by']->verified_by) }}</td>
+                            @endif
+                        </tr>
 
                         <tr>
                             <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">

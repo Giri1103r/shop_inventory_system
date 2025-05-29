@@ -131,10 +131,10 @@ class GembaWalkChecklist extends Model
 
         return response()->json(['error' => 'Invalid data'], 400);
     }
-    // public function selectMail($id)
-    // {
-    //     return $this->where('inspection_gemba_walk_checklist.gemba_walk_id', $id)->where('status', 1)->first();
-    // }
+    public function selectMail($id)
+    {
+        return $this->where('gemba_walk_id', $id)->where('status', 1)->first();
+    }
     public function gembaWalkPotentialCount()
     {
         $request = request();
