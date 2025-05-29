@@ -306,6 +306,7 @@ class GembaWalkController extends Controller
                     $email_id = $user->email;
                     if (!empty($email_id)) {
                         $gembaWalk_details = $this->gembaWalk->selectmail($gembaWalk_id);
+                        $gembaWalk_checklist = $this->gembaWalk->selectmail($gembaWalk_id);
                         $gembaWalk = $gembaWalk_details->toArray();
                         $gembaWalk['name'] = $user->name;
                         $gembaWalk['email_id'] = $email_id;
@@ -800,7 +801,7 @@ class GembaWalkController extends Controller
             $html = view('inspection.gembaWalk.generalpdf', $data)->render();
             $mpdf->WriteHTML($html);
 
-            $filename = "Gemba Walk Details.pdf";
+            $filename = "Gemba Walk (Safety Observation).pdf";
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);
@@ -1134,13 +1135,13 @@ class GembaWalkController extends Controller
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
             }
-            
+
 
 
 
             $data = array(
                 'content' => $allData,
-                'pagetitle' => "Gemba Walk Details",
+                'pagetitle' => "Gemba Walk (Safety Observation)",
             );
 
 
@@ -1161,7 +1162,7 @@ class GembaWalkController extends Controller
 
             $mpdf->WriteHTML($html);
 
-            $filename = "Gemba Walk.pdf";
+            $filename = "Gemba Walk (Safety Observation).pdf";
             $mpdf->Output($filename, 'd');
         } catch (Exception $ex) {
             report($ex);
@@ -1463,7 +1464,7 @@ class GembaWalkController extends Controller
         return response()->json(
             $employees->map(function ($employee) {
                 return [
-                    'id' => encryptId($employee->login_id),
+                    'id' => ($employee->login_id),
                     'text' => $employee->emp_name . ' - ' . $employee->emp_id,
                 ];
             })

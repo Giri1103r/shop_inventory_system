@@ -23,6 +23,7 @@ class GembaWalk extends Model
         'document_reference_id',
         'company_id',
         'date',
+        'time',
         'shift_id',
         'gemba_walk_status',
         // 'observation_needed',
@@ -201,6 +202,7 @@ class GembaWalk extends Model
             $insert_array = array(
                 'document_reference_id' => $request->document_reference_id,
                 'date' => DBdateformat($request->document_upload_date),
+                'time' => $request->time,
                 'shift_id' => decryptId($request->shift),
                 'company_id' => Auth::user()->company_id,
                 // 'observation_needed' => decryptId($request->observation_needed),
@@ -216,6 +218,7 @@ class GembaWalk extends Model
                 'date' => DBdateformat($request->document_upload_date),
                 'shift_id' => decryptId($request->shift),
                 'company_id' => Auth::user()->company_id,
+                'time' => $request->time,
                 // 'observation_needed' => decryptId($request->observation_needed),
                 'capa_needed' => decryptId($request->is_passed),
                 // 'responsible_person_id' => decryptId($request->responsible_person_id),

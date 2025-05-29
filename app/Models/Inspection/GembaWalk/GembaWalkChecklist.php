@@ -26,6 +26,7 @@ class GembaWalkChecklist extends Model
         'exact_location',
         'date_of_observation',
         'observation_type_id',
+        'risk_category',
         'description',
         'hazard',
         'capa',
@@ -66,11 +67,10 @@ class GembaWalkChecklist extends Model
                 // for responsible person
 
                 $decryptedObserverPerson = array_map(function ($id) {
-                    return decryptId($id);
+                    return ($id);
                 }, $walk['responsible_person_id']);
                 $ObserversIds = implode(',', $decryptedObserverPerson);
 
-// dd( $walk['checklist_capa']);
                 $data = [
                     'gemba_walk_id' => $gembaWalk_id,
                     'location_id' => decryptId($walk['location_id']),
@@ -78,6 +78,7 @@ class GembaWalkChecklist extends Model
                     'department_id' => decryptId($walk['department_id']),
                     'exact_location' => $walk['exact_location'],
                     'date_of_observation' => DBdateformat($walk['date_of_observation']),
+                    'risk_category' => decryptId($walk['risk_category']),
                     'observation_type_id' => $walk['observation_type'],
                     'description' => $walk['checklist_description'],
                     'hazard' =>  $hazardIds,
@@ -130,7 +131,10 @@ class GembaWalkChecklist extends Model
 
         return response()->json(['error' => 'Invalid data'], 400);
     }
-
+    // public function selectMail($id)
+    // {
+    //     return $this->where('inspection_gemba_walk_checklist.gemba_walk_id', $id)->where('status', 1)->first();
+    // }
     public function gembaWalkPotentialCount()
     {
         $request = request();
@@ -342,7 +346,8 @@ class GembaWalkChecklist extends Model
         return response()->json(['error' => 'Invalid data'], 400);
     }
 
-    public function selectOne($id){
-        return $this->where('gemba_walk_id',$id)->first();
+    public function selectOne($id)
+    {
+        return $this->where('gemba_walk_id', $id)->first();
     }
 }

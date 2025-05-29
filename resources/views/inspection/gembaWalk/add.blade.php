@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Gemba Walk')
+@section('title', 'Gemba Walk Inspection (Safety Walk Observation)')
 @section('pageurl', admin_url('inspection/gemba-walk/add'))
 
 @section('content')
@@ -84,7 +84,13 @@
                                                             id="document_upload_date" class="form-control">
                                                     </div>
                                                 </div>
-
+                                                <div class="col-md-4">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label require ">Time</label>
+                                                        <input type="text" name="time" id="time"
+                                                            class="form-control">
+                                                    </div>
+                                                </div>
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label class="form-label require">Shift</label>
@@ -230,6 +236,8 @@
                                                                 </div>
                                                             </div>
 
+
+
                                                             <div class="col-md-4 mt-2">
                                                                 <div class="form-group form-input ">
                                                                     <label
@@ -238,7 +246,24 @@
 
                                                                 </div>
                                                             </div>
-
+                                                            <div class="col-md-4 mt-2">
+                                                                <div class="form-group form-input ">
+                                                                    <label for="risk_category"
+                                                                        class=" require form-label">
+                                                                        {{ __('inspection.risk_category') }}</label>
+                                                                    <select name="gemba_walk[0][risk_category]"
+                                                                        id="risk_category_0"
+                                                                        class=" form-control single-select"
+                                                                        style="width: 100%">
+                                                                        <option value="">Select Risk Category
+                                                                        </option>
+                                                                        <option value="{{ encryptId(1) }}">Low</option>
+                                                                        <option value="{{ encryptId(2) }}">High</option>
+                                                                        <option value="{{ encryptId(3) }}">Moderate
+                                                                        </option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
 
                                                             <div class="col-md-4 mt-2">
                                                                 <div class="form-group  form-input">
@@ -265,7 +290,8 @@
                                                                             <input type="radio" name="is_passed"
                                                                                 value="{{ encryptId(1) }}"
                                                                                 id="capa_yes"
-                                                                                class="validate-radio-required"> Yes
+                                                                                class="validate-radio-required" checked>
+                                                                            Yes
                                                                         </label>
                                                                         <label>
                                                                             <input type="radio" name="is_passed"
@@ -295,13 +321,30 @@
                                                                         </div>
 
                                                                         <!-- CAPA Textarea (Right Column) -->
-                                                                        <div class="col-md-8 mt-2">
+                                                                        <div class="col-md-4 mt-2">
                                                                             <div class="form-group form-input">
                                                                                 <label class="form-label require">
                                                                                     {{ __('inspection.capa') }}
                                                                                 </label>
                                                                                 <textarea class="form-control" name="gemba_walk[0][checklist_capa]" id="checklist_capa"
                                                                                     placeholder="Enter Recommended actions"></textarea>
+                                                                            </div>
+                                                                        </div>
+
+                                                                        <div class="col-md-4 mt-2">
+                                                                            <div class="form-group form-input">
+                                                                                <label for="responsible_person_id"
+                                                                                    class="form-label require">Responsible
+                                                                                    Person For Recommended CAPA</label>
+                                                                                <select
+                                                                                    name="gemba_walk[0][responsible_person_id][]"
+                                                                                    id="responsible_person_id"
+                                                                                    class="form-control single-select"
+                                                                                    multiple style="width: 100%">
+                                                                                    <option value="">Select Observer
+                                                                                        Person
+                                                                                    </option>
+                                                                                </select>
                                                                             </div>
                                                                         </div>
                                                                     </div>
@@ -342,19 +385,7 @@
                                                                 </div>
                                                             </div>
 
-                                                            <div class="col-md-4 mt-2">
-                                                                <div class="form-group form-input">
-                                                                    <label for="responsible_person_id"
-                                                                        class="form-label require">{{ __('inspection.observer_person') }}</label>
-                                                                    <select name="gemba_walk[0][responsible_person_id][]"
-                                                                        id="responsible_person_id"
-                                                                        class="form-control single-select" multiple
-                                                                        style="width: 100%">
-                                                                        <option value="">Select Observer Person
-                                                                        </option>
-                                                                    </select>
-                                                                </div>
-                                                            </div>
+
 
                                                             <div class="col-md-4 mt-2">
                                                                 <div class="form-group form-input">
@@ -411,8 +442,8 @@
             $('#verified_by').hide();
             $('#remark_section').hide();
 
-            $('input[name="is_passed"]').change(function() {
-                const selectedValue = $(this).val();
+            function handlePassedSelection() {
+                const selectedValue = $('input[name="is_passed"]:checked').val();
 
                 if (selectedValue === '{{ encryptId(1) }}') {
                     $('#verified_by').show();
@@ -421,9 +452,15 @@
                     $('#remark_section').show();
                     $('#verified_by').hide();
                 }
+            }
 
-            });
+            // Run once on load
+            handlePassedSelection();
+
+            // Run on change
+            $('input[name="is_passed"]').change(handlePassedSelection);
         });
+
 
         $(document).ready(function() {
 
@@ -514,35 +551,61 @@
             //     dropdownCssClass: 'form-control',
             //     selectionCssClass: 'form-control'
             // });
+            const loggedInUser = {
+                id: {{ auth()->user()->id }},
+                name: "{{ auth()->user()->name }}"
+            };
+            $(document).ready(function() {
+                const $select = $('#responsible_person_id');
 
-            $('#responsible_person_id').select2({
-                ajax: {
-                    url: "{{ url('inspection/gemba-walk/employeeName') }}",
-                    dataType: 'json',
-                    delay: 250,
-                    data: function(params) {
-                        return {
-                            search: params.term
-                        };
+                // Append and select the logged-in user manually
+                const lockedOption = new Option(loggedInUser.name, loggedInUser.id, true, true);
+                $select.append(lockedOption).trigger('change');
+
+                // Initialize Select2
+                $select.select2({
+                    ajax: {
+                        url: "{{ url('inspection/gemba-walk/employeeName') }}",
+                        dataType: 'json',
+                        delay: 250,
+                        data: function(params) {
+                            return {
+                                search: params.term
+                            };
+                        },
+                        processResults: function(data) {
+                            return {
+                                results: $.map(data, function(item) {
+                                    return {
+                                        id: item.id,
+                                        text: item.text
+                                    };
+                                })
+                            };
+                        }
                     },
-                    processResults: function(data) {
-                        return {
-                            results: $.map(data, function(item) {
-                                return {
-                                    id: item.id,
-                                    text: item.text
-                                };
-                            })
-                        };
-                    },
-                    error: function(xhr, textStatus, errorThrown) {
-                        console.log("Error in AJAX request:", textStatus, errorThrown);
+                    minimumInputLength: 1,
+                    dropdownCssClass: 'form-control',
+                    selectionCssClass: 'form-control'
+                });
+
+                // Prevent removing the logged-in user from selection
+                $select.on('select2:unselecting', function(e) {
+                    if (e.params.args.data.id == loggedInUser.id) {
+                        e.preventDefault(); // Prevent removing current user
                     }
-                },
-                minimumInputLength: 1,
-                dropdownCssClass: 'form-control',
-                selectionCssClass: 'form-control'
+                });
+
+                // Optional: visually lock the logged-in user
+                $select.on('select2:select', function(e) {
+                    if (e.params.data.id == loggedInUser.id) {
+                        let selected = $('.select2-selection__choice[title="' + loggedInUser.name +
+                            '"]');
+                        selected.css('background', '#ccc').append(' 🔒'); // Visual lock
+                    }
+                });
             });
+
 
             flatpickr("#document_upload_date", {
                 dateFormat: "d-m-Y"
@@ -551,6 +614,13 @@
                 enableTime: false,
                 dateFormat: "d-m-Y"
             });
+            flatpickr("#time", {
+                enableTime: true,
+                noCalendar: true, // ✅ correct spelling
+                dateFormat: "H:i", // 24-hour format (e.g., 14:30)
+                time_24hr: true // Optional: force 24hr instead of AM/PM
+            });
+
             flatpickr("#date_of_compliance_0", {
                 enableTime: false,
                 dateFormat: "d-m-Y"
@@ -786,6 +856,9 @@
                         shift: {
                             required: true
                         },
+                        time: {
+                            required: true
+                        },
                         gemba_walk_prepared_by: {
                             required: true,
                             //  extension: "jpg|jpeg|png",
@@ -830,6 +903,12 @@
                             // maxlength: 200,
 
                         },
+                        "gemba_walk[0][risk_category]": {
+                            required: true,
+                            // minlength: 3,
+                            // maxlength: 200,
+
+                        },
                         "gemba_walk[0][evidence]": {
                             required: true,
                             filesize: 15728640,
@@ -866,6 +945,9 @@
                         document_upload_date: {
                             required: "Please select a date."
                         },
+                        time: {
+                            required: "Please select a time."
+                        },
                         shift: {
                             required: "Please select a shift."
                         },
@@ -898,6 +980,11 @@
                             required: "Please enter a description.",
                             minlength: "Checklist Description must be at least 3 characters.",
                             maxlength: "Checklist Description cannot exceed 2000 characters.",
+
+                        },
+                        "gemba_walk[0][risk_category]": {
+                            required: "Please select the risk category.",
+
 
                         },
                         "gemba_walk[0][hazard]": {

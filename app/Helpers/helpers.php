@@ -2651,6 +2651,19 @@ if (!function_exists('getMonth')) {
             }
         }
     }
+
+    if (!function_exists('getRiskCategory')) {
+        function getRiskCategory($type_id)
+        {
+            if ($type_id == 1) {
+                return 'Low';
+            } elseif ($type_id == 2) {
+                return 'High';
+            } elseif ($type_id == 3) {
+                return 'Moderate';
+            }
+        }
+    }
     if (!function_exists('getLeadingName')) {
         function getLeadingName($type_id)
         {
@@ -2703,7 +2716,7 @@ if (!function_exists('getMonth')) {
         }
     }
 
-      if (!function_exists('getGembaWalkHazardName')) {
+    if (!function_exists('getGembaWalkHazardName')) {
 
         function getGembaWalkHazardName($id)
         {

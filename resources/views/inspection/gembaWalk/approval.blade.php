@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Gemba Walk')
+@section('title', 'Gemba Walk Inspection (Safety Walk Observation)')
 @section('pageurl', admin_url('inspection/gemba-walk/list'))
 
 @section('content')
@@ -77,7 +77,14 @@
                                                 </div>
                                             </div>
                                         </div>
-
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label">Time</label>
+                                                <div class="view_data">
+                                                    {{ isset($gembaWalk->time) ? $gembaWalk->time : '' }}
+                                                </div>
+                                            </div>
+                                        </div>
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
                                                 <label class="form-label">Shift</label>
@@ -121,7 +128,7 @@
                                 @foreach ($gembaWalk_details as $gembaWalk)
                                     <div class="row">
                                         <div class="card-header-inner">
-                                            <h4 class="text-white">Gemba Walk</h4>
+                                            <h4 class="text-white">{{ __('inspection.checklist_details') }}</h4>
                                         </div>
                                     </div>
                                     <div class="row">
@@ -186,7 +193,14 @@
                                                 </div>
                                             </div>
                                         </div>
-
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label">{{ __('inspection.risk_category') }}</label>
+                                                <div class="view_data">
+                                                    {{ getRiskCategory(isset($gembaWalk->risk_category) ? $gembaWalk->risk_category : '') }}
+                                                </div>
+                                            </div>
+                                        </div>
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
                                                 <label class="form-label">{{ __('inspection.description') }}</label>
@@ -527,7 +541,7 @@
 
                                                     <div class="col-md-4 mb-2">
                                                         <div class="form-group form-input">
-                                                            <label class="form-label">Name Of the Observer</label>
+                                                            <label class="form-label">{{ __('inspection.observer_person') }}</label>
                                                             <input type="text" name="officer_name"
                                                                 class="form-control" value="{{ Auth::user()->name }}"
                                                                 readonly>
@@ -665,7 +679,7 @@
 
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label class="form-label">Name Of the Observer</label>
+                                                        <label class="form-label">{{ __('inspection.observer_person') }}</label>
                                                         <div class="view_data">
                                                             {{ isset($gembaWalk_ehs_floor_manager_details->name) ? $gembaWalk_ehs_floor_manager_details->name : '' }}
                                                         </div>

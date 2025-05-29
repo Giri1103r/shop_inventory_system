@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Gemba Walk Inspection | KARAM</title>
+    <title>Gemba Walk Inspection (Safety Walk Observation) | KARAM</title>
 
     <style>
         .badge {
@@ -214,12 +214,13 @@
                     <th>Date of Observation</th>
                     <th>Type (Unsafe Act / Unsafe Condition)</th>
                     <th>Description</th>
+                    <th>{{ __('inspection.risk_category') }}</th>
                     <th>Hazard</th>
                     <th>Image</th>
                     <th>Recommended Corrective & Preventive</th>
                     <th>Status</th>
                     <th>Remark</th>
-                    <th>Observer Person</th>
+                    <th>{{ __('inspection.observer_person') }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -233,6 +234,7 @@
                         <td>{{ displaydateformat($gembaWalk->date_of_observation ?? 'N/A') }}</td>
                         <td>{{ getObservationType($gembaWalk->observation_type_id ?? 'N/A') }}</td>
                         <td>{{ $gembaWalk->description ?? 'N/A' }}</td>
+                        <td>{{ getRiskCategory($gembaWalk->risk_category ?? 'N/A') }}</td>
                         <td>{{ getGembaWalkHazardName($gembaWalk->hazard ?? 'N/A') }}</td>
                         <td>
                             @if (!empty($gembaWalk->file_path))

@@ -23,13 +23,13 @@
 
                         <tr>
                             <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
-                                <b>Gemba Walk  ID</b>
+                                <b>Gemba Walk ID</b>
                             </td>
                             <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
                                 valign="top"> {{ $details['gemba_walk_auto_id'] }}</td>
                         </tr>
 
-                       {{-- <tr>
+                        {{-- <tr>
                             <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
                                 <b>Document No</b>
                             </td>
@@ -43,7 +43,20 @@
                             <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
                                 valign="top"> {{Displaydateformat($details['issue_date']) }}</td>
                         </tr> --}}
-
+                        <tr>
+                            <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
+                                <b>Date</b>
+                            </td>
+                            <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
+                                valign="top"> {{ displaydateformat($details['date']) }}</td>
+                        </tr>
+                        <tr>
+                            <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
+                                <b>Time</b>
+                            </td>
+                            <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
+                                valign="top"> {{ $details['time'] }}</td>
+                        </tr>
                         <tr>
                             <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
                                 <b>Shift</b>
@@ -65,10 +78,10 @@
                                 <b>Created Date</b>
                             </td>
                             <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
-                                valign="top"> {{Displaydateformat($details['created_at']) }}</td>
+                                valign="top"> {{ Displaydateformat($details['created_at']) }}</td>
                         </tr>
-                        
-                        
+
+
                     </tbody>
                 </table>
 
