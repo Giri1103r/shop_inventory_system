@@ -213,12 +213,13 @@ class Work extends Model
     // }
     public function store($worktemp)
     {
+
         $insertedRecords = [];
         $batchSize = 500;
 
         // Convert to array
         $worktemp = $worktemp->toArray();
-
+// dd($worktemp);
         // Process in chunks
         foreach (array_chunk($worktemp, $batchSize) as $chunk) {
             foreach ($chunk as $item) {
