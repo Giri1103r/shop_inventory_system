@@ -262,7 +262,7 @@
 
             @foreach ($checkPoints as $checkPoint)
                 <tr>
-                    @if ($firstRow)
+                    {{-- @if ($firstRow)
                         <td rowspan="{{ $rowCount }}" colspan="1"
                             style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
                             {{ $srNo++ }}
@@ -272,7 +272,11 @@
                             {{ getSubcategoryname($groupId) }}
                         </td>
                         @php $firstRow = false; @endphp
-                    @endif
+                    @endif --}}
+
+                    <td colspan="2" style="border: 1px solid black; padding: 8px;">
+                        {{$loop->iteration}}
+                    </td>
 
                     {{-- CHECK ITEM (4 columns) --}}
                     <td colspan="4" style="border: 1px solid black; padding: 8px;">

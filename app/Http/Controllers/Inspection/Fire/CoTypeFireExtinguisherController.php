@@ -357,7 +357,7 @@ class CoTypeFireExtinguisherController extends Controller
                 return redirect(admin_url('fire/fire-extinguisher/co2/list'));
             }
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('fire/fire-extinguisher/co2/list'));
         }

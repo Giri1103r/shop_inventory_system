@@ -183,7 +183,7 @@ class SafetyPettyController extends Controller
             Session::flash('success', __('Your data has been created successfully'));
             return redirect(admin_url('ohc/safety-petty-logbook/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('ohc/safety-petty-logbook/list'));
         }
@@ -302,7 +302,7 @@ class SafetyPettyController extends Controller
             $filename = "Safety Petty Logbook.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/safety-petty-logbook/list'));
         }
@@ -729,4 +729,4 @@ class SafetyPettyController extends Controller
             return redirect(admin_url('ohc/safety-petty-logbook/list'));
         }
     }
-}   
+}

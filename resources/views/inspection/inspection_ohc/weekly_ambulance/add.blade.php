@@ -235,45 +235,43 @@
                                             </div>
                                         </div>
 
-                                        @if ($signature_upload->signature_upload != '')
-                                        <label class="form-label view_label">Requestor Signature</label>
+                                        {{-- @if ($signature_upload->signature_upload != '')
+                                            <label class="form-label view_label">Requestor Signature</label>
 
-                                        <p>
-                                            <a href="{{ asset($signature_upload->signature_upload) }}"
-                                                target="_blank">
-                                                <img src="{{ asset($signature_upload->signature_upload) }}"
-                                                    style="width: 100px" alt="image">
-                                            </a>
-                                        </p>
-                                    @else
-                                        <div class="col-md-4 mb-3">
-                                            <div class="form-group form-input">
+                                            <p>
+                                                <a href="{{ asset($signature_upload->signature_upload) }}"
+                                                    target="_blank">
+                                                    <img src="{{ asset($signature_upload->signature_upload) }}"
+                                                        style="width: 100px" alt="image">
+                                                </a>
+                                            </p>
+                                        @else
+                                            <div class="col-md-4 mb-3">
+                                                <div class="form-group form-input">
 
 
-                                            <label for="signature_image"
-                                                class="form-label fw-bold require">Requestor Signature</label>
-                                            <input type="file"
-                                                class="form-control  validate-file-required"
-                                                accept="image/png, image/jpeg, image/jpg" name="signature_image"
-                                                id="signature_image">
-                                            <div class="text-danger"></div>
-                                            <small>Allowed file types: png, jpeg, jpg</small>
-                                        </div>
-                                            <!-- Preview Container -->
-                                            <div id="imagePreviewContainer" class="mt-2"
-                                                style="display: none;">
-                                                <img id="imagePreview" src="#" alt="Signature Preview"
-                                                    class="img-thumbnail" width="200">
+                                                    <label for="signature_image"
+                                                        class="form-label fw-bold require">Requestor Signature</label>
+                                                    <input type="file" class="form-control  validate-file-required"
+                                                        accept="image/png, image/jpeg, image/jpg" name="signature_image"
+                                                        id="signature_image">
+                                                    <div class="text-danger"></div>
+                                                    <small>Allowed file types: png, jpeg, jpg</small>
+                                                </div>
+                                                <!-- Preview Container -->
+                                                <div id="imagePreviewContainer" class="mt-2" style="display: none;">
+                                                    <img id="imagePreview" src="#" alt="Signature Preview"
+                                                        class="img-thumbnail" width="200">
+                                                </div>
                                             </div>
-                                        </div>
-                                    @endif
+                                        @endif --}}
                                 </div>
                                 <hr>
                                 <div class="submit-button" style="text-align: right;">
                                     <x-button-submit class="submit"></x-button-submit>
                                     <x-button-reset class="submit"></x-button-reset>
                                     <x-button-cancel
-                                        href="{{ admin_url('ohc/weekly-ambulance/inspection/checklist') }}"></x-button-cancel>
+                                        href="{{ admin_url('ohc/weekly-ambulance/inspection/checklist/list') }}"></x-button-cancel>
                                 </div>
 
                                 </form>

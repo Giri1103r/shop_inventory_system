@@ -435,7 +435,7 @@ class PhysicalMedicalExaminationController extends Controller
 
             return response()->download($filePath)->deleteFileAfterSend(true);
         } catch (\Exception $e) {
-            dd($e);
+            report($e);
             return back()->with('error', $e->getMessage());
         }
     }
@@ -587,7 +587,7 @@ class PhysicalMedicalExaminationController extends Controller
 
             return response()->download($filePath)->deleteFileAfterSend(true);
         } catch (\Exception $e) {
-            dd($e);
+            report($e);
             return back()->with('error', 'Something went wrong');
         }
     }

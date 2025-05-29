@@ -923,18 +923,23 @@ class OccupationHealthInspectionController extends Controller
                     $rowCount = count($checkPoints);
                     $firstRowInGroup = true;
 
+
+
                     foreach ($checkPoints as $checkPoint) {
 
-                        if ($firstRowInGroup) {
-                            $sheet->mergeCells("A$inspectionRow:A" . ($inspectionRow + $rowCount - 1))
-                                ->setCellValue("A$inspectionRow", $srNo);
+                        // if ($firstRowInGroup) {
+                        //     $sheet->mergeCells("A$inspectionRow:A" . ($inspectionRow + $rowCount - 1))
+                        //         ->setCellValue("A$inspectionRow", $srNo);
 
-                            $sheet->mergeCells("B$inspectionRow:C" . ($inspectionRow + $rowCount - 1))
-                                ->setCellValue("B$inspectionRow", getSubcategoryname($groupId));
+                        //     $sheet->mergeCells("B$inspectionRow:C" . ($inspectionRow + $rowCount - 1))
+                        //         ->setCellValue("B$inspectionRow", getSubcategoryname($groupId));
 
-                            $firstRowInGroup = false;
-                            $srNo++;
-                        }
+                        //     $firstRowInGroup = false;
+                        //
+                        // }
+                        $sheet->mergeCells("A$inspectionRow:C$inspectionRow")
+                            ->setCellValue("A$inspectionRow", $srNo);
+
 
 
                         $sheet->mergeCells("D$inspectionRow:I$inspectionRow")
@@ -974,6 +979,7 @@ class OccupationHealthInspectionController extends Controller
                         ]);
 
                         $inspectionRow++;
+                        $srNo++;
                     }
                 }
 
@@ -1386,16 +1392,19 @@ class OccupationHealthInspectionController extends Controller
 
                 foreach ($checkPoints as $checkPoint) {
 
-                    if ($firstRowInGroup) {
-                        $sheet->mergeCells("A$inspectionRow:A" . ($inspectionRow + $rowCount - 1))
+                    // if ($firstRowInGroup) {
+                    //     $sheet->mergeCells("A$inspectionRow:A" . ($inspectionRow + $rowCount - 1))
+                    //         ->setCellValue("A$inspectionRow", $srNo);
+
+                    //     $sheet->mergeCells("B$inspectionRow:C" . ($inspectionRow + $rowCount - 1))
+                    //         ->setCellValue("B$inspectionRow", getSubcategoryname($groupId));
+
+                    //     $firstRowInGroup = false;
+                    //     $srNo++;
+                    // }
+
+                     $sheet->mergeCells("A$inspectionRow:C$inspectionRow")
                             ->setCellValue("A$inspectionRow", $srNo);
-
-                        $sheet->mergeCells("B$inspectionRow:C" . ($inspectionRow + $rowCount - 1))
-                            ->setCellValue("B$inspectionRow", getSubcategoryname($groupId));
-
-                        $firstRowInGroup = false;
-                        $srNo++;
-                    }
 
 
                     $sheet->mergeCells("D$inspectionRow:I$inspectionRow")
@@ -1435,6 +1444,7 @@ class OccupationHealthInspectionController extends Controller
                     ]);
 
                     $inspectionRow++;
+                    $srNo++;
                 }
             }
 

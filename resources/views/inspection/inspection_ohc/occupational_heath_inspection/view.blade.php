@@ -158,12 +158,12 @@
                                         <table class="table table-bordered">
                                             <thead class="bg-secondary text-white">
                                                 <tr>
-                                                    <th colspan="3">Check Points</th>
+                                                    <th style="text-align: center;" colspan="2">Check Points</th>
                                                     @foreach ($getoption as $option)
-                                                        <th>{{ $option }}</th>
+                                                        <th style="text-align: center;" >{{ $option }}</th>
                                                     @endforeach
-                                                    <th>Quantity</th>
-                                                    <th colspan="3">Remarks</th>
+                                                    <th style="text-align: center;" >Quantity</th>
+                                                    <th  style="text-align: center;" colspan="3">Remarks</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -180,13 +180,13 @@
 
                                                     @foreach ($checkPoints as $index => $checkPoint)
                                                         <tr>
-                                                            @if ($index == 0)
+                                                            {{-- @if ($index == 0)
                                                                 <td rowspan="{{ $rowCount }}">
                                                                     {{ getSubcategoryname($groupId) }}
                                                                 </td>
-                                                            @endif
+                                                            @endif --}}
 
-                                                            <td colspan="2">{{ getSubcategoryDataname($checkPoint) }}
+                                                            <td style="text-align: center;" colspan="2">{{ getSubcategoryDataname($checkPoint) }}
                                                             </td>
 
                                                             @foreach ($getoption as $option)
@@ -219,12 +219,12 @@
                                                                 </td>
                                                             @endforeach
 
-                                                            <td>
+                                                            <td style="text-align: center;" >
                                                                 {{ $quantity[$checkPoint] ?? 'No Quantity Available' }}
                                                             </td>
 
 
-                                                            <td colspan="3">
+                                                            <td style="text-align: center;" colspan="3">
                                                                 {{ $remarks[$checkPoint] ?? 'No Remarks' }}
                                                             </td>
                                                         </tr>

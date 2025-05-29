@@ -580,6 +580,7 @@ class MonthlyMedicineStoreController extends Controller
 
             return response()->download($filePath)->deleteFileAfterSend(true);
         } catch (\Exception $e) {
+            report($e);
             return back()->with('error', $e->getMessage());
         }
     }
@@ -788,6 +789,7 @@ class MonthlyMedicineStoreController extends Controller
 
             return response()->download($filePath)->deleteFileAfterSend(true);
         } catch (\Exception $e) {
+            report($e);
             return back()->with('error', $e->getMessage());
         }
     }

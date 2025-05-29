@@ -271,10 +271,10 @@ class MSDSController extends Controller
             foreach ($allData as $msdsIndex => $msds) {
                 $titleRow = $row;
                 $firstData = $msds->first();
-                $inspection_details = $this->msdsDetails->getDetails($firstData->id);
-                $document_no = $this->document_reference->selectUsingName('MSDS');
 
+                $document_no = $this->document_reference->selectUsingName('MSDS');
                 $logoPath = public_path('assets/images/logo-dark.png');
+
                 if (file_exists($logoPath)) {
                     $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
                     $drawing->setName('Logo');
@@ -294,7 +294,12 @@ class MSDSController extends Controller
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                 ]);
 
-                $docHeaders = ['M' . $row . ':N' . $row => 'Doc. No.', 'M' . ($row + 1) . ':N' . ($row + 1) => 'Issue Dt.', 'M' . ($row + 2) . ':N' . ($row + 2) => 'Rev. & Dt.'];
+                $docHeaders = [
+                    'M' . $row . ':N' . $row => 'Doc. No.',
+                    'M' . ($row + 1) . ':N' . ($row + 1) => 'Issue Dt.',
+                    'M' . ($row + 2) . ':N' . ($row + 2) => 'Rev. & Dt.',
+                ];
+
                 foreach ($docHeaders as $cellRange => $label) {
                     $startCell = explode(':', $cellRange)[0];
                     $sheet->mergeCells($cellRange)->setCellValue($startCell, $label);
@@ -315,6 +320,7 @@ class MSDSController extends Controller
 
                 $row += 3;
 
+                // Location/Dept/Unit header
                 $sheet->getStyle("A{$row}:O{$row}")->applyFromArray([
                     'font' => ['bold' => true],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
@@ -326,6 +332,7 @@ class MSDSController extends Controller
                 $sheet->mergeCells("K{$row}:O{$row}")->setCellValue("K{$row}", 'Unit: ' . getUnitName($firstData->unit_id));
                 $row++;
 
+                // Table Headers
                 $sheet->getStyle("A{$row}:O{$row}")->applyFromArray([
                     'font' => ['bold' => true],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
@@ -342,10 +349,11 @@ class MSDSController extends Controller
                 $sheet->mergeCells("M{$row}:O{$row}")->setCellValue("M{$row}", 'Remarks');
                 $row++;
 
-                foreach ($inspection_details as $index => $msdsDetails) {
+                // Data Rows
+                foreach ($msds as $index => $msdsDetails) {
                     $sheet->mergeCells("A{$row}:B{$row}")->setCellValue("A{$row}", $index + 1);
                     $sheet->setCellValue("C{$row}", $msdsDetails->item_code ?? '');
-                    $sheet->mergeCells("D{$row}:F{$row}")->setCellValue("D{$row}", ($msdsDetails->name_of_chemical) ?? '');
+                    $sheet->mergeCells("D{$row}:F{$row}")->setCellValue("D{$row}", $msdsDetails->name_of_chemical ?? '');
                     $sheet->setCellValue("G{$row}", $msdsDetails->storage_capacity ?? '');
                     $sheet->setCellValue("H{$row}", getNFARating($msdsDetails->nfa_rating) ?? '');
                     $sheet->setCellValue("I{$row}", $msdsDetails->nfa_rating_value ?? '');
@@ -378,14 +386,17 @@ class MSDSController extends Controller
                         'font' => ['color' => ['rgb' => $color], 'bold' => true, 'size' => 14],
                         'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                     ]);
+
                     $sheet->mergeCells("M{$row}:O{$row}")->setCellValue("M{$row}", $msdsDetails->remark ?? '');
                     $sheet->getStyle("A{$row}:O{$row}")->applyFromArray([
                         'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                         'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                     ]);
+
                     $row++;
                 }
 
+                // Outline border for each section
                 $sheet->getStyle("A{$titleRow}:O{$row}")->applyFromArray([
                     'borders' => [
                         'outline' => [
@@ -397,6 +408,7 @@ class MSDSController extends Controller
 
                 $row += 5;
             }
+
 
             foreach (range('A', 'O') as $col) {
                 $sheet->getColumnDimension($col)->setAutoSize(true);
@@ -624,6 +636,7 @@ class MSDSController extends Controller
             ], 500);
         }
     }
+    
     public function getDepartment(Request $request)
     {
         $location = decryptId($request->location);

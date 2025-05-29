@@ -219,7 +219,6 @@ class FloorStretcherController extends Controller
             return view('inspection.ohc.floor_stretcher.view', $data);
         } catch (Exception $ex) {
             report($ex);
-            report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('ohc/floor_stretcher/checklist/list'));
         }
@@ -434,7 +433,6 @@ class FloorStretcherController extends Controller
             $filename = "Floor-Stretcher Inspection.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            report($ex);
             report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('ohc/floor_stretcher/checklist/list'));
