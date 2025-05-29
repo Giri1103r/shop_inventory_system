@@ -215,7 +215,6 @@ class CronController extends Controller
             $toDate = todayDbdate();
 
             $office_id = $this->company->getcompany();
-
             $responses = [];
             $errors = [];
 

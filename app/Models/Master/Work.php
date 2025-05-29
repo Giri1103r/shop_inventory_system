@@ -228,24 +228,24 @@ class Work extends Model
                 }
 
                 $companyExists = DB::table('company_management')->where('short_name', $item['company'])->first();
-                if (!$companyExists) {
-                    continue;
-                }
+                // if (!$companyExists) {
+                //     continue;
+                // }
 
                 $locationExists = DB::table('masters_location')->where('company_id', $companyExists->id)->where('location_name', $item['subdepartment'])->first();
-                if (!$locationExists) {
-                    continue;
-                }
+                // if (!$locationExists) {
+                //     continue;
+                // }
 
                 $unitExists = DB::table('masters_unit')->where('company_id', $companyExists->id)->where('location_id', $locationExists->id)->where('unit_name', $item['unit'])->first();
-                if (!$unitExists) {
-                    continue;
-                }
+                // if (!$unitExists) {
+                //     continue;
+                // }
 
                 $departmentExists = DB::table('masters_department')->where('company_id', $companyExists->id)->where('location_id', $locationExists->id)->where('unit_id', $unitExists->id)->where('department_name', $item['department'])->first();
-                if (!$departmentExists) {
-                    continue;
-                }
+                // if (!$departmentExists) {
+                //     continue;
+                // }
 
                 // Prepare data for insertion or update
                 $valuesToInsertOrUpdate = [
