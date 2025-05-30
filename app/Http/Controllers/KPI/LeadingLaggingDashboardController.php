@@ -46,6 +46,59 @@ class LeadingLaggingDashboardController extends Controller
         $leading_array = [];
         $lagging_array = [];
 
+        $inspection_audit_count = array_sum([
+            'inspection_count' => array_sum(InspectionCount($from_date = '', $to_date = '')),
+            'audit_assesment_count' => gettotalCount('audit_assessment'),
+            'audit_analysis_count' => gettotalCount('audit_analysis'),
+            'monthly_audit' => gettotalCount('monthly_audit'),
+            'inter_unit_audit' => gettotalCount('inter_unit_audit'),
+        ]);
+
+
+        $gemba_walk_count     = InspectionCount($from_date = '', $to_date = '')['GembaWalk'];
+        $internal_audit_count = gettotalCount('monthly_audit') + gettotalCount('inter_unit_audit');
+        $daily_6s_audit       = gettotalCount('audit_analysis');
+        $safety_work_permit   = gettotalCount('safetypermit');
+        $fire_mock_drill      = gettotalCount('fire_mock_drill');
+        $safety_walk          = gettotalCount('safety_walk');
+        $training_schedule          = gettotalCount('training_schedule');
+        $training_men_hours = gettotalCount('training_men_hours');
+
+        $leading_array = [
+            [
+                'name'  => 'Gemba Walk Count',
+                'value' => $gemba_walk_count,
+            ],
+            [
+                'name'  => 'Internal Audit Count',
+                'value' => $internal_audit_count,
+            ],
+            [
+                'name'  => 'Daily 6S Audit',
+                'value' => $daily_6s_audit,
+            ],
+            [
+                'name'  => 'Safety Work Permit',
+                'value' => $safety_work_permit,
+            ],
+            [
+                'name'  => 'Fire Mock Drill',
+                'value' => $fire_mock_drill,
+            ],
+            [
+                'name'  => 'Safety Walk',
+                'value' => $safety_walk,
+            ],
+            [
+                'name'  => 'Training Schedule',
+                'value' => $training_schedule,
+            ],
+            [
+                'name'  => 'Training Men Hours',
+                'value' => $training_men_hours,
+            ],
+        ];
+
         if ($leadings) {
             foreach ($leadings as $leading) {
                 $leading_array[] = [

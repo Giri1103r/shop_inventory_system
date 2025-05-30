@@ -163,6 +163,10 @@
             <div class="card container dashboard_card mt-3 p-2">
                 <div class="card-header">
                     <h4 class="text-white">{{ __('common.leading') }}</h4>
+                    <svg id="download_leading" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                        fill="white" style="cursor: pointer;" viewBox="0 0 24 24">
+                        <path d="M5 20h14v-2H5v2zm7-18L5.33 9h3.34v4h4.66V9h3.34L12 2z" />
+                    </svg>
                 </div>
                 <div class="row" id="leading_container">
                     <div class="card-body">
@@ -172,6 +176,10 @@
 
                 <div class="card-header">
                     <h4 class="text-white">{{ __('common.lagging') }}</h4>
+                    <svg id="download_lagging" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                        fill="white" style="cursor: pointer;" viewBox="0 0 24 24">
+                        <path d="M5 20h14v-2H5v2zm7-18L5.33 9h3.34v4h4.66V9h3.34L12 2z" />
+                    </svg>
                 </div>
                 <div class="row" id="lagging_container">
 
@@ -185,6 +193,36 @@
 
 @push('script')
     <script>
+        function downloadSectionAsImage(containerId, iconId, filename) {
+            const icon = document.getElementById(iconId);
+            const container = document.getElementById(containerId);
+
+            icon.style.display = 'none';
+
+            setTimeout(() => {
+                html2canvas(container, {
+                    backgroundColor: "#ffffff",
+                    scale: 2,
+                    useCORS: true
+                }).then(canvas => {
+                    const link = document.createElement('a');
+                    link.download = filename + '.png';
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+
+                    icon.style.display = 'inline';
+                });
+            }, 100);
+        }
+
+        document.getElementById('download_leading').addEventListener('click', function() {
+            downloadSectionAsImage('leading_container', 'download_leading', 'Leading_KPI');
+        });
+
+        document.getElementById('download_lagging').addEventListener('click', function() {
+            downloadSectionAsImage('lagging_container', 'download_lagging', 'Lagging_KPI');
+        });
+
         function filterDashboard() {
             Fromdate = $("#fromDate").val();
             Todate = $("#toDate").val();

@@ -399,10 +399,10 @@ if (!function_exists('gettotalCount')) {
                 $count = Department::count();
                 break;
             case 'employee':
-                $count = Employee::where('status',1)->count();
+                $count = Employee::where('status', 1)->count();
                 break;
             case 'work':
-                $count = Work::where('status',1)->count();
+                $count = Work::where('status', 1)->count();
                 break;
             case 'ppe_request':
                 $count = PpeRequest::count();
@@ -434,6 +434,10 @@ if (!function_exists('gettotalCount')) {
             case 'ohc_first_aid':
                 $count = FirstAid::count();
                 break;
+            case 'training_men_hours':
+                $count = TrainingSchedule::whereYear('created_at', date('Y'))
+                    ->sum(DB::raw('CAST(training_man_hours AS DECIMAL(10,2))')).' hrs';
+                break;
             case 'major_accident':
                 $count = InjuryDetails::where('nature_of_injury', MAJOR_ACCIDENT)->count();
                 break;
@@ -445,6 +449,9 @@ if (!function_exists('gettotalCount')) {
                 break;
             case 'un_safe_condition':
                 $count = InitialIncident::whereRaw("FIND_IN_SET(?, ua_or_uc)", [UNSAFE_CONDITION])->count();
+                break;
+            case 'training_schedule':
+                $count = TrainingSchedule::whereYear('created_at', date('Y'))->count();
                 break;
             case 'near_miss':
                 $nearmiss = DB::table('ims_master_incident_type')
