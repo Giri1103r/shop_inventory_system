@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Gemba Walk Inspection (Safety  Observation)')
+@section('title', 'Gemba Walk Inspection (Safety Observation)')
 @section('pageurl', admin_url('inspection/gemba-walk/list'))
 
 @section('content')
@@ -28,7 +28,7 @@
                                 @if ($gembaWalk)
                                     <div class="row">
                                         <div class="card-header-inner">
-                                            <h4 class="text-white">Gemba Walk Inspection (Safety  Observation)</h4>
+                                            <h4 class="text-white">Gemba Walk Inspection (Safety Observation)</h4>
                                         </div>
                                     </div>
 
@@ -77,14 +77,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-md-4 mb-2">
-                                            <div class="form-group form-input">
-                                                <label class="form-label">Time</label>
-                                                <div class="view_data">
-                                                    {{ isset($gembaWalk->time) ? $gembaWalk->time : '' }}
-                                                </div>
-                                            </div>
-                                        </div>
+
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
                                                 <label class="form-label">Shift</label>
@@ -184,7 +177,14 @@
                                                 </div>
                                             </div>
                                         </div>
-
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label">Observation Time</label>
+                                                <div class="view_data">
+                                                    {{ isset($gembaWalk->time) ? $gembaWalk->time : '' }}
+                                                </div>
+                                            </div>
+                                        </div>
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
                                                 <label class="form-label">{{ __('inspection.observation_type') }}</label>
@@ -311,7 +311,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                         <div class="col-md-4 mb-2">
+                                        <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
                                                 <label class="form-label">Name Of the Observer</label>
                                                 <div class="view_data">
@@ -1063,7 +1063,7 @@
                         required: "Remark is required",
                         minlength: "Minimum 3 characters",
                         maxlength: "Maximum 100 characters",
-                     
+
                     },
                     gemba_walk_verified_by: {
                         required: "Signature is required",
