@@ -4,6 +4,7 @@
 use Carbon\Carbon;
 use App\Models\User;
 use App\Models\FcmToken;
+use App\Models\IMS\Incident\InitialIncident;
 use App\Models\LeftMenu;
 use Illuminate\Support\Str;
 use App\Models\Master\Fleet;
@@ -80,6 +81,9 @@ use App\Models\KPI\HSCInputsLagging;
 use App\Models\KPI\HSCInputsLeading;
 use App\Models\KPI\LeadingLagging;
 use App\Models\Master\PpeStockinventory;
+use App\Models\OhcManagement\Opd\FirstAid;
+use App\Models\OhcManagement\Opd\PrescribetoPatient;
+use App\Models\OhcManagement\Opd\RoadsideFirstAid;
 
 if (!function_exists('get_encryptVal')) {
 
@@ -2703,7 +2707,7 @@ if (!function_exists('getMonth')) {
         }
     }
 
-      if (!function_exists('getGembaWalkHazardName')) {
+    if (!function_exists('getGembaWalkHazardName')) {
 
         function getGembaWalkHazardName($id)
         {
@@ -3422,6 +3426,163 @@ if (!function_exists('GetLaggingCount')) {
         }
 
         return $query->sum('kpi_hsc_inputs_lagging.value');
+    }
+}
+
+
+if (!function_exists('GetFirstAidCount')) {
+    function GetFirstAidCount(
+        $company,
+        $location_id,
+        $unit_id,
+        $department_id,
+        $year,
+        $month
+    ) {
+        $year = $year ?: Carbon::now();
+        $request = Request();
+
+        $query = FirstAid::select('masters_employee.*', 'ohc_opd_first_aid.*', 'ohc_opd_first_aid.created_at as first_aid_created_at', 'ohc_opd_first_aid.updated_at as first_aid_updated_at')
+            ->leftJoin('masters_employee', 'ohc_opd_first_aid.emp_id', '=', 'masters_employee.emp_id')
+            ->whereYear('ohc_opd_first_aid.created_at', $year);
+
+
+        if (!empty($company)) {
+            $query->where('masters_employee.company', decryptId($company));
+        }
+
+        if (!empty($location_id)) {
+            $query->where('masters_employee.location', decryptId($location_id));
+        }
+
+        if (!empty($unit_id)) {
+            $query->where('masters_employee.unit', decryptId($unit_id));
+        }
+
+        if (!empty($department_id)) {
+            $query->where('masters_employee.department', decryptId($department_id));
+        }
+
+
+        if (!empty($month)) {
+            $query->whereMonth('first_aid_created_at', $month);
+        }
+        return $query->count();
+    }
+}
+
+
+if (!function_exists('GetRoadSideFirstAid')) {
+    function GetRoadSideFirstAid(
+        $company,
+        $location_id,
+        $unit_id,
+        $department_id,
+        $year,
+        $month
+    ) {
+        $year = $year ?: Carbon::now();
+        $request = Request();
+
+        $query = RoadsideFirstAid::select('masters_employee.*', 'ohc_opd_roadside_first_aid.*', 'ohc_opd_roadside_first_aid.created_at as first_aid_created_at', 'ohc_opd_roadside_first_aid.updated_at as first_aid_updated_at')
+            ->leftJoin('masters_employee', 'ohc_opd_roadside_first_aid.created_by', '=', 'masters_employee.emp_id')
+            ->whereYear('ohc_opd_roadside_first_aid.created_at', $year);
+
+        if (!empty($company)) {
+            $query->where('masters_employee.company', decryptId($company));
+        }
+
+        if (!empty($location_id)) {
+            $query->where('masters_employee.location', decryptId($location_id));
+        }
+
+        if (!empty($unit_id)) {
+            $query->where('masters_employee.unit', decryptId($unit_id));
+        }
+
+        if (!empty($department_id)) {
+            $query->where('masters_employee.department', decryptId($department_id));
+        }
+
+
+        if (!empty($month)) {
+            $query->whereMonth('first_aid_created_at', $month);
+        }
+        return $query->count();
+    }
+}
+if (!function_exists('GetPrescribeToPatient')) {
+    function GetPrescribeToPatient(
+        $company,
+        $location_id,
+        $unit_id,
+        $department_id,
+        $year,
+        $month
+    ) {
+        $year = $year ?: Carbon::now();
+        $request = Request();
+
+        $query = PrescribetoPatient::whereYear('ohc_management_opd_patient.created_at', $year);
+
+        if (!empty($company)) {
+            $query->where('ohc_management_opd_patient.company_name', decryptId($company));
+        }
+
+        if (!empty($unit_id)) {
+            $query->where('ohc_management_opd_patient.unit_id', decryptId($unit_id));
+        }
+
+
+
+        if (!empty($department_id)) {
+            $query->where('ohc_management_opd_patient.department_id', decryptId($department_id));
+        }
+
+        if (!empty($month)) {
+            $query->whereMonth('ohc_management_opd_patient.created_at', $month);
+        }
+        return $query->count();
+    }
+}
+
+
+
+if (!function_exists('GetImsInitialIncidentReport')) {
+    function GetImsInitialIncidentReport(
+        $type,
+        $company,
+        $location_id,
+        $unit_id,
+        $department_id,
+        $year,
+        $month
+    ) {
+        $year = $year ?: Carbon::now();
+        $request = Request();
+
+        $query = InitialIncident::whereYear('ims_initial_incident.created_at', $year)->where('iir_type', $type);
+
+        if (!empty($company)) {
+            $query->where('ims_initial_incident.company_id', decryptId($company));
+        }
+
+        if (!empty($location_id)) {
+            $query->where('masters_employee.location_id', decryptId($location_id));
+        }
+
+        if (!empty($unit_id)) {
+            $query->where('ims_initial_incident.unit_id', decryptId($unit_id));
+        }
+
+        if (!empty($department_id)) {
+            $query->where('ims_initial_incident.department', decryptId($department_id));
+        }
+
+        if (!empty($month)) {
+            $query->whereMonth('ims_initial_incident.created_at', $month);
+        }
+        return $query->count();
     }
 }
 

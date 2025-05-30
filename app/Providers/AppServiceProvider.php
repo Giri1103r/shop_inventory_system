@@ -121,6 +121,8 @@ class AppServiceProvider extends ServiceProvider
         defined('CHEMICAL_DEPARTMENT') or define('CHEMICAL_DEPARTMENT', 53);
 
 
+        defined('FIRE_INCIDENT_REPORT') or define('FIRE_INCIDENT_REPORT', 5);
+        defined('NEAR_MISS_INCIDENT_REPORT') or define('NEAR_MISS_INCIDENT_REPORT', 8);
 
         // Safety Permit
         defined('STATUS_EHS_VERIFICATION_PENDING') or define('STATUS_EHS_VERIFICATION_PENDING', 1);

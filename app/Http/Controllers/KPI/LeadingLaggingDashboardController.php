@@ -63,10 +63,33 @@ class LeadingLaggingDashboardController extends Controller
             }
         }
 
-        if ($laggings) {
+        $lagging_array = [
+            [
+                'name'  => 'First Aid',
+                'value' => getFirstAidCount($company, $location_id, $unit_id, $department_id, $year, $month),
+            ],
+            [
+                'name'  => 'Road Side First Aid',
+                'value' => GetRoadSideFirstAid($company, $location_id, $unit_id, $department_id, $year, $month),
+            ],
+            [
+                'name'  => 'Prescribe to Patient',
+                'value' => GetPrescribeToPatient($company, $location_id, $unit_id, $department_id, $year, $month),
+            ],
+            [
+                'name'  => 'No of Fire Incidence',
+                'value' => GetImsInitialIncidentReport(FIRE_INCIDENT_REPORT, $company, $location_id, $unit_id, $department_id, $year, $month),
+            ],
+            [
+                'name'  => 'Nos Of Near Miss Incidence',
+                'value' => GetImsInitialIncidentReport(NEAR_MISS_INCIDENT_REPORT, $company, $location_id, $unit_id, $department_id, $year, $month),
+            ],
+        ];
+
+        if (!empty($laggings)) {
             foreach ($laggings as $lagging) {
                 $lagging_array[] = [
-                    'name' => $lagging->value,
+                    'name'  => $lagging->value,
                     'value' => GetLaggingCount(
                         $lagging->id,
                         $company,
@@ -75,10 +98,11 @@ class LeadingLaggingDashboardController extends Controller
                         $department_id,
                         $year,
                         $month
-                    )
+                    ),
                 ];
             }
         }
+
 
         if ($request->ajax()) {
             return response()->json([
