@@ -237,7 +237,7 @@
             <tr>
                 <td
                     style="width:100%; background-color: #ce0f1f; color:#ffffff; padding: 10px 10px 10px; font-weight:bold;">
-                   {{ __('inspection.checklist_details') }}
+                    {{ __('inspection.checklist_details') }}
                 </td>
             </tr>
         </table>
@@ -265,7 +265,8 @@
                             {{-- <th>Date of Compliance</th> --}}
                             <th>Status</th>
                             <th>Remark</th>
-                            <th>Observer Person</th>
+                            <th>Recommanded Person for CAPA</th>
+                            <th>Name Of the Observer</th>
                             {{-- <th>Observation</th> --}}
 
 
@@ -316,7 +317,7 @@
                                     @endforeach
                                 </td>
 
-
+                                <td>{{ getUsername($gembaWalk->created_by ?? 'N/A') }}</td>
 
                             </tr>
                         @endforeach

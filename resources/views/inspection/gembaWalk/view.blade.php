@@ -309,6 +309,14 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label">Name Of the Observer</label>
+                                                <div class="view_data">
+                                                    {{ getUsername(isset($gembaWalk->created_by) ? $gembaWalk->created_by : '') }}
+                                                </div>
+                                            </div>
+                                        </div>
                                         {{-- <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
                                                 <label class="form-label">Date of Observation</label>
