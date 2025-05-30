@@ -69,28 +69,28 @@
                                 <b>Location</b>
                             </td>
                             <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
-                                valign="top"> {{ getUnitname($details['location_id']) }}</td>
+                                valign="top"> {{ getLocationname($gembaWalkChecklist['location_id']) }}</td>
                         </tr>
                         <tr>
                             <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
                                 <b>Unit</b>
                             </td>
                             <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
-                                valign="top"> {{ getUnitname($details['unit_id']) }}</td>
+                                valign="top"> {{ getUnitname($gembaWalkChecklist['unit_id']) }}</td>
                         </tr>
                         <tr>
                             <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
                                 <b>Department</b>
                             </td>
                             <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
-                                valign="top"> {{ getDepartment($details['department_id']) }}</td>
+                                valign="top"> {{ getDepartment($gembaWalkChecklist['department_id']) }}</td>
                         </tr>
                         <tr>
                             <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
                                 <b>Excat Location</b>
                             </td>
                             <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
-                                valign="top"> {{ $details['exact_location'] }}</td>
+                                valign="top"> {{ $gembaWalkChecklist['exact_location'] }}</td>
                         </tr>
 
                         <tr>
@@ -124,7 +124,13 @@
                             <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
                                 valign="top"> {{ getRiskcategory($gembaWalkChecklist['risk_category']) }}</td>
                         </tr>
-
+  <tr>
+                            <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
+                                <b>Observation Type</b>
+                            </td>
+                            <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
+                                valign="top"> {{ getObservationType($gembaWalkChecklist['observation_type_id']) }}</td>
+                        </tr>
                         <tr>
                             <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
                                 <b>Description</b>
@@ -151,9 +157,9 @@
                         </tr>
 
                         <tr>
-                            @if (isset($details['data']->department))
+                            @if (isset($details['data']->verified_by))
                                 <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
-                                    <b>Recommended CAPA Taken By</b>
+                                    <b>Verified By</b>
                                 </td>
                                 <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
                                     valign="top"> {{ getUsername($details['verified_by']->verified_by) }}</td>

@@ -201,7 +201,14 @@
                                                 </div>
                                             </div>
                                         </div>
-
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label">Observation Type</label>
+                                                <div class="view_data">
+                                                    {{ $gembaWalk->observation_type_id == '1' ? 'Unsafe Act' : 'Unsafe Condition' }}
+                                                </div>
+                                            </div>
+                                        </div>
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
                                                 <label class="form-label">{{ __('inspection.hazard') }}</label>
